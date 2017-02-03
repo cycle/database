@@ -1,0 +1,42 @@
+{
+  "name": "spiral/components",
+  "type": "framework",
+  "description": "Spiral, Core Components",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Anton Titov / Wolfy-J",
+      "email": "wolfy.jd@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.0",
+    "ext-mbstring": "*",
+    "ext-openssl": "*",
+    "psr/log": "*",
+    "psr/http-message": "^1.0",
+    "container-interop/container-interop": "^1.1",
+    "symfony/finder": "^3.0",
+    "symfony/event-dispatcher": "^3.0",
+    "doctrine/inflector": "^v1.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~5.0",
+    "mockery/mockery": "^0.9.4",
+    "vlucas/phpdotenv": "^2.1",
+    "guzzlehttp/guzzle": "~6.0"
+  },
+  "autoload": {
+    "files": [
+      "source/functions.php"
+    ],
+    "psr-4": {
+      "Spiral\\": "source/Spiral/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Spiral\\Tests\\": "tests/"
+    }
+  }
+}
