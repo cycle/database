@@ -8,4 +8,4 @@ build/logs/*
 build/
 *.db
 clover.xml
-coveralls.json
+clover.json
