@@ -430,7 +430,7 @@ abstract class PDODriver extends Component implements LoggerAwareInterface
                  * @var ParameterInterface $parameter []
                  */
                 foreach ($nestedParameters as &$nestedParameter) {
-                    if ($nestedParameter->getValue() instanceof \DateTime) {
+                    if ($nestedParameter->getValue() instanceof \DateTimeInterface) {
 
                         //Original parameter must not be altered
                         $nestedParameter = $nestedParameter->withValue(
@@ -445,7 +445,7 @@ abstract class PDODriver extends Component implements LoggerAwareInterface
                 $flatten = array_merge($flatten, $nestedParameters);
 
             } else {
-                if ($parameter->getValue() instanceof \DateTime) {
+                if ($parameter->getValue() instanceof \DateTimeInterface) {
                     //Original parameter must not be altered
                     $parameter = $parameter->withValue(
                         $this->normalizeTimestamp($parameter->getValue())
