@@ -124,7 +124,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         ]);
         $manager = new DatabaseManager($config);
 
-        $driver = $manager->createDriver(
+        $driver = $manager->makeDriver(
             'sqlite',
             SQLiteDriver::class,
             'sqlite:memory:',
@@ -150,14 +150,14 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         $manager = new DatabaseManager($config);
 
 
-        $driver = $manager->createDriver(
+        $driver = $manager->makeDriver(
             'sqlite',
             SQLiteDriver::class,
             'sqlite:memory:',
             'sqlite'
         );
 
-        $driver = $manager->createDriver(
+        $driver = $manager->makeDriver(
             'sqlite',
             SQLiteDriver::class,
             'sqlite:memory:',
@@ -175,7 +175,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         ]);
         $manager = new DatabaseManager($config);
 
-        $manager->createDriver(
+        $manager->makeDriver(
             'sqlite',
             SQLiteDriver::class,
             'sqlite:memory:',
@@ -202,7 +202,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         ]);
         $manager = new DatabaseManager($config);
 
-        $manager->createDriver(
+        $manager->makeDriver(
             'sqlite',
             SQLiteDriver::class,
             'sqlite:memory:',
@@ -223,7 +223,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         ]);
         $manager = new DatabaseManager($config);
 
-        $driver = $manager->createDriver(
+        $driver = $manager->makeDriver(
             'sqlite',
             SQLiteDriver::class,
             'sqlite:memory:',
@@ -244,7 +244,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         ]);
         $manager = new DatabaseManager($config);
 
-        $driver = $manager->createDriver(
+        $driver = $manager->makeDriver(
             'sqlite',
             SQLiteDriver::class,
             'sqlite:memory:',

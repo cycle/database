@@ -80,12 +80,13 @@ class DatabasesConfig extends InjectableConfig
 
     /**
      * @param string $database
+     * @param string $id Connection id/name.
      *
      * @return string
      */
-    public function databaseDriver(string $database): string
+    public function databaseDriver(string $database, string $id = 'connection'): string
     {
-        return $this->config['databases'][$database]['connection'];
+        return $this->config['databases'][$database][$id];
     }
 
     /**

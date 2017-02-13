@@ -188,18 +188,7 @@ class DatabaseManager extends Component implements SingletonInterface, InjectorI
         }
 
         //No need to benchmark here, due connection will happen later
-        $instance = $this->getFactory()->make(
-            Database::class,
-            [
-                'name'   => $database,
-                'prefix' => $this->config->databasePrefix($database),
-                'driver' => $this->driver(
-                    $this->config->databaseDriver($database)
-                ),
-            ]
-        );
-
-        return $this->databases[$database] = $instance;
+        return $this->databases[$database] = $this->makeDatabase($database);
     }
 
     /**
@@ -233,7 +222,7 @@ class DatabaseManager extends Component implements SingletonInterface, InjectorI
      *
      * @return Driver
      */
-    public function createDriver(
+    public function makeDriver(
         string $name,
         string $driver,
         string $dns,
@@ -359,5 +348,25 @@ class DatabaseManager extends Component implements SingletonInterface, InjectorI
         }
 
         return $this->container->get(FactoryInterface::class);
+    }
+
+    /**
+     * @param string $database
+     *
+     * @return mixed|null|object
+     */
+    protected function makeDatabase(string $database): Database
+    {
+        $instance = $this->getFactory()->make(
+            Database::class,
+            [
+                'name'   => $database,
+                'prefix' => $this->config->databasePrefix($database),
+                'driver' => $this->driver($this->config->databaseDriver($database)),
+                //shard or more drivers?
+            ]
+        );
+
+        return $instance;
     }
 }
