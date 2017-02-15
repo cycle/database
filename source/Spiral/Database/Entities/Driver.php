@@ -61,8 +61,7 @@ abstract class Driver extends PDODriver
      * @param ContainerInterface $container Required to build instances of query builders and
      *                                      compilers. Also provides support for scope specific
      *                                      functionality like magic paginators and logs (yes, you
-     *                                      can store LogsInterface in this container set profiling
-     *                                      listener.
+     *                                      can store LogsInterface in this container).
      */
     public function __construct(string $name, array $options, ContainerInterface $container = null)
     {
