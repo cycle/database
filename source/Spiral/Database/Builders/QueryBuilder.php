@@ -69,7 +69,7 @@ abstract class QueryBuilder extends Component implements ExpressionInterface
 
     /**
      * Get interpolated (populated with parameters) SQL which will be run against database, please
-     * use this method for debugging purposes only.
+     * use this method for debug purposes only.
      *
      * @return string
      */
