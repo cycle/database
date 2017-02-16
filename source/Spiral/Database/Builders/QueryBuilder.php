@@ -44,8 +44,6 @@ abstract class QueryBuilder extends Component implements ExpressionInterface
     }
 
     /**
-     * Get associated driver instance.
-     *
      * @return Driver
      */
     public function getDriver(): Driver
