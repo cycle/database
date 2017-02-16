@@ -164,7 +164,7 @@ abstract class QueryBuilder extends Component implements ExpressionInterface
      */
     protected function iocContainer()
     {
-        //Falling back to driver specific container
+        //Falling back to driver specific scope (used by auto paginators)
         return $this->driver->iocContainer();
     }
 }
