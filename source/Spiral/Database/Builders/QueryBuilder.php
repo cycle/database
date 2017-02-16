@@ -108,10 +108,7 @@ abstract class QueryBuilder extends Component implements ExpressionInterface
 
     /**
      * Helper methods used to correctly fetch and split identifiers provided by function
-     * parameters.
-     * It support array list, string or comma separated list. Attention, this method will not work
-     * with complex parameters (such as functions) provided as one comma separated string, please
-     * use arrays in this case.
+     * parameters. Example: fI(['name, email']) => 'name', 'email'
      *
      * @param array $identifiers
      *
