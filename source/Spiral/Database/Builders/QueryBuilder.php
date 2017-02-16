@@ -54,7 +54,7 @@ abstract class QueryBuilder extends Component implements ExpressionInterface
     /**
      * {@inheritdoc}
      *
-     * @param QueryCompiler $compiler Associated compiled to be used by default.
+     * @param QueryCompiler $compiler Associated compiler to be used by default.
      */
     abstract public function sqlStatement(QueryCompiler $compiler = null): string;
 
