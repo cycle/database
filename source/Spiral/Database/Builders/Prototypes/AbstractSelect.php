@@ -31,6 +31,8 @@ use Spiral\Pagination\Traits\PaginatorTrait;
  * @method int min($identifier) Perform aggregation (MIN) based on column or expression value.
  * @method int max($identifier) Perform aggregation (MAX) based on column or expression value.
  * @method int sum($identifier) Perform aggregation (SUM) based on column or expression value.
+ *
+ * @deprecated
  */
 abstract class AbstractSelect extends AbstractWhere implements
     \IteratorAggregate,
