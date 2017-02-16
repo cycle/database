@@ -138,7 +138,7 @@ abstract class QueryBuilder extends Component implements ExpressionInterface
     {
         $result = [];
         foreach ($parameters as $parameter) {
-            if ($parameter instanceof self) {
+            if ($parameter instanceof QueryBuilder) {
                 $result = array_merge($result, $parameter->getParameters());
                 continue;
             }
