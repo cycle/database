@@ -11,7 +11,7 @@
   ],
   "require": {
     "php": ">=7.0",
-    "spiral/common": "^0.9",
+    "spiral/common": "^1.0",
     "spiral/pagination": "~1.0"
   },
   "require-dev": {
