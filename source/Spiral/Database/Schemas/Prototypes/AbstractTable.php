@@ -55,8 +55,8 @@ abstract class AbstractTable implements TableInterface
     /**
      * Table states.
      */
-    const STATUS_NEW              = 0;
-    const STATUS_EXISTS           = 1;
+    const STATUS_NEW = 0;
+    const STATUS_EXISTS = 1;
     const STATUS_DECLARED_DROPPED = 2;
 
     /**
@@ -732,8 +732,12 @@ abstract class AbstractTable implements TableInterface
                         unset($column);
                     }
 
-                    //We must not register column change as index change!
-                    $target->initial->findIndex($index->getColumns())->columns($columns);
+                    $targetIndex = $target->initial->findIndex($index->getColumns());
+                    if (!empty($targetIndex)) {
+                        //Target index got renamed or removed.
+                        $targetIndex->columns($columns);
+                    }
+
                     $index->columns($columns);
                 }
             }
