@@ -16,6 +16,7 @@ use Spiral\Database\Builders\DeleteQuery;
 use Spiral\Database\Builders\InsertQuery;
 use Spiral\Database\Builders\SelectQuery;
 use Spiral\Database\Builders\UpdateQuery;
+use Spiral\Database\Exceptions\ConnectionException;
 use Spiral\Database\Schemas\Prototypes\AbstractTable;
 
 /**
@@ -230,7 +231,13 @@ abstract class Driver extends PDODriver
                 $this->logger()->info('Begin transaction');
             }
 
-            return $this->getPDO()->beginTransaction();
+            try {
+                return $this->getPDO()->beginTransaction();
+            } catch (ConnectionException $e) {
+                $this->reconnect();
+
+                return $this->getPDO()->beginTransaction();
+            }
         }
 
         $this->savepointCreate($this->transactionLevel);
@@ -251,8 +258,13 @@ abstract class Driver extends PDODriver
             if ($this->isProfiling()) {
                 $this->logger()->info('Commit transaction');
             }
+            try {
+                return $this->getPDO()->commit();
+            } catch (ConnectionException $e) {
+                $this->reconnect();
 
-            return $this->getPDO()->commit();
+                return $this->getPDO()->commit();
+            }
         }
 
         $this->savepointRelease($this->transactionLevel + 1);
@@ -273,8 +285,13 @@ abstract class Driver extends PDODriver
             if ($this->isProfiling()) {
                 $this->logger()->info('Rollback transaction');
             }
+            try {
+                return $this->getPDO()->rollBack();
+            } catch (ConnectionException $e) {
+                $this->reconnect();
 
-            return $this->getPDO()->rollBack();
+                return $this->getPDO()->rollBack();
+            }
         }
 
         $this->savepointRollback($this->transactionLevel + 1);
