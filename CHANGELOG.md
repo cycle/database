@@ -1,6 +1,10 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
+1.0.1 (15.06.2018)
+-----
+- MySQL driver can reconnect now
+
 1.0.0 (02.03.2018)
 -----
 * Improved handling of renamed indexes associated with renamed columns
