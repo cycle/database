@@ -12,6 +12,7 @@ use PDO;
 use Psr\Log\LoggerAwareInterface;
 use Spiral\Core\Component;
 use Spiral\Core\Exceptions\ScopeException;
+use Spiral\Database\Exceptions\ConnectionException;
 use Spiral\Database\Exceptions\DriverException;
 use Spiral\Database\Exceptions\QueryException;
 use Spiral\Database\Helpers\QueryInterpolator;
@@ -209,6 +210,19 @@ abstract class PDODriver extends Component implements LoggerAwareInterface
     }
 
     /**
+     * Reconnect driver.
+     *
+     * @return self
+     */
+    public function reconnect(): PDODriver
+    {
+        $this->pdo = null;
+        $this->connect();
+
+        return $this;
+    }
+
+    /**
      * Check if driver already connected.
      *
      * @return bool
@@ -297,7 +311,7 @@ abstract class PDODriver extends Component implements LoggerAwareInterface
 
     /**
      * Create instance of PDOStatement using provided SQL query and set of parameters and execute
-     * it.
+     * it. Will attempt singular reconnect.
      *
      * @param string $query
      * @param array  $parameters Parameters to be binded into query.
@@ -312,7 +326,32 @@ abstract class PDODriver extends Component implements LoggerAwareInterface
         array $parameters = [],
         $class = QueryStatement::class
     ): \PDOStatement {
+        try {
+            return $this->runStatement($query, $parameters, $class);
+        } catch (ConnectionException $e) {
+            $this->reconnect();
 
+            return $this->runStatement($query, $parameters, $class);
+        }
+    }
+
+    /**
+     * Create instance of PDOStatement using provided SQL query and set of parameters and execute
+     * it.
+     *
+     * @param string $query
+     * @param array  $parameters Parameters to be binded into query.
+     * @param string $class      Class to be used to represent results.
+     *
+     * @return \PDOStatement
+     *
+     * @throws QueryException
+     */
+    public function runStatement(
+        string $query,
+        array $parameters = [],
+        $class = QueryStatement::class
+    ): \PDOStatement {
         try {
             //Filtered and normalized parameters
             $parameters = $this->flattenParameters($parameters);
@@ -503,7 +542,6 @@ abstract class PDODriver extends Component implements LoggerAwareInterface
      */
     protected function clarifyException(\PDOException $exception, string $query): QueryException
     {
-        //@todo more exceptions to be thrown
         return new QueryException($exception, $query);
     }
 

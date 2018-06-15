@@ -14,6 +14,8 @@ use Spiral\Database\DatabaseInterface;
 use Spiral\Database\Drivers\MySQL\Schemas\MySQLTable;
 use Spiral\Database\Entities\AbstractHandler;
 use Spiral\Database\Entities\Driver;
+use Spiral\Database\Exceptions\ConnectionException;
+use Spiral\Database\Exceptions\QueryException;
 
 /**
  * Talks to mysql databases.
@@ -90,5 +92,19 @@ class MySQLDriver extends Driver
     public function getHandler(LoggerInterface $logger = null): AbstractHandler
     {
         return new MySQLHandler($this, $logger);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @see https://dev.mysql.com/doc/refman/5.6/en/error-messages-client.html#error_cr_conn_host_error
+     */
+    protected function clarifyException(\PDOException $exception, string $query): QueryException
+    {
+        if ($exception->getCode() > 2000) {
+            return new ConnectionException($exception, $query);
+        }
+
+        return new QueryException($exception, $query);
     }
 }

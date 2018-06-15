@@ -159,6 +159,7 @@ class SQLServerDriver extends Driver
         if ($this->isProfiling()) {
             $this->logger()->info("Transaction: rollback savepoint 'SVP{$name}'");
         }
+
         $this->statement('ROLLBACK TRANSACTION ' . $this->identifier("SVP{$name}"));
     }
 }
