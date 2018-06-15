@@ -9,7 +9,6 @@
 namespace Spiral\Database;
 
 use Interop\Container\ContainerInterface;
-use Spiral\Core\Component;
 use Spiral\Core\Container;
 use Spiral\Core\Container\InjectorInterface;
 use Spiral\Core\Container\SingletonInterface;
@@ -73,7 +72,7 @@ use Spiral\Database\Exceptions\DBALException;
  *
  * echo $manager->database('runtime')->select()->from('users')->count();
  */
-class DatabaseManager extends Component implements SingletonInterface, InjectorInterface
+class DatabaseManager implements SingletonInterface, InjectorInterface
 {
     /**
      * @var Database[]
