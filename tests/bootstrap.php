@@ -15,4 +15,4 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 
 //File component fixtures
 define('FIXTURE_DIRECTORY', __DIR__ . '/Files/fixtures/');
-define('ENABLE_PROFILING', getenv('PROFILING') ?? false);
+define('ENABLE_PROFILING', getenv('PROFILING') ?? true);

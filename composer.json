@@ -20,7 +20,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Spiral\\": "src/Spiral/"
+      "Spiral\\Database\\": "src/"
     }
   },
   "autoload-dev": {
