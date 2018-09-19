@@ -83,7 +83,6 @@ interface DatabaseInterface
      * Start database transaction.
      *
      * @link http://en.wikipedia.org/wiki/Database_transaction
-     *
      * @return bool
      */
     public function begin();
