@@ -13,12 +13,13 @@ use Spiral\Database\Driver\Driver;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Injection\ExpressionInterface;
 use Spiral\Database\Injection\ParameterInterface;
+use Spiral\Database\QueryInterface;
 
 /**
  * QueryBuilder classes generate set of control tokens for query compilers, this is query level
  * abstraction.
  */
-abstract class QueryBuilder implements ExpressionInterface
+abstract class QueryBuilder implements ExpressionInterface, QueryInterface
 {
     /**
      * @var Driver

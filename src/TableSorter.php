@@ -16,6 +16,8 @@ use Spiral\Database\Schema\AbstractTable;
  * Saves multiple linked tables at once but treating their cross dependency.
  *
  * Attention, not every DBMS support transactional schema manipulations!
+ *
+ * @todo move to schemas
  */
 class TableSorter
 {
