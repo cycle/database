@@ -23,11 +23,11 @@ abstract class BaseTest extends TestCase
     public static $config;
     public const DRIVER = null;
 
-    private static $driverCache = [];
-    private static $pdo;
+    protected static $driverCache = [];
+    protected static $pdo;
 
     /** @var Driver */
-    private $driver;
+    protected $driver;
 
     /**
      * @param string $name

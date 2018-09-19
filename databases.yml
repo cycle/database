@@ -23,7 +23,6 @@ services:
     mysql_55:
         image: mysql:5.5
         restart: 'always'
-        command: --default-authentication-plugin=mysql_native_password
         ports:
           - "13305:3306"
         environment:

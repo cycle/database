@@ -29,7 +29,7 @@ require dirname(__DIR__) . '/vendor/autoload.php';
         'check'  => function () {
             return !in_array('mysql', \PDO::getAvailableDrivers());
         },
-        'conn'   => 'mysql:host=127.0.0.1;dbname=spiral',
+        'conn'   => 'mysql:host=127.0.0.1:13306;dbname=spiral',
         'user'   => 'root',
         'pass'   => 'root'
     ],
@@ -38,7 +38,7 @@ require dirname(__DIR__) . '/vendor/autoload.php';
         'check'  => function () {
             return !in_array('mysql', \PDO::getAvailableDrivers());
         },
-        'conn'   => 'mysql:host=127.0.0.1:3308;dbname=spiral',
+        'conn'   => 'mysql:host=127.0.0.1:13305;dbname=spiral',
         'user'   => 'root',
         'pass'   => 'root'
     ],
@@ -47,7 +47,7 @@ require dirname(__DIR__) . '/vendor/autoload.php';
         'check'  => function () {
             return !in_array('pgsql', \PDO::getAvailableDrivers());
         },
-        'conn'   => 'pgsql:host=127.0.0.1;dbname=spiral',
+        'conn'   => 'pgsql:host=127.0.0.1:15432;dbname=spiral',
         'user'   => 'postgres',
         'pass'   => 'postgres'
     ],
@@ -56,7 +56,7 @@ require dirname(__DIR__) . '/vendor/autoload.php';
         'check'  => function () {
             return !in_array('sqlsrv', \PDO::getAvailableDrivers());
         },
-        'conn'   => 'sqlsrv:Server=127.0.0.1;Database=tempdb',
+        'conn'   => 'sqlsrv:Server=127.0.0.1:11433;Database=tempdb',
         'user'   => 'sa',
         'pass'   => 'SSpaSS__1'
     ],

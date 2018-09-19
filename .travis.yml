@@ -11,12 +11,13 @@ php:
 #  - nightly
 
 before_install:
-  - cd tests && sudo docker-compose up -d && cd ..
+  - docker-compose up -f databases.yml -d
 
 install:
   - composer install --no-interaction --prefer-source
 
 script:
   - vendor/bin/phpunit tests/Database/SQLite/
- # - vendor/bin/phpunit tests/Database/MySQL/
- # - vendor/bin/phpunit tests/Database/Postgres/
+  #- vendor/bin/phpunit tests/Database/MySQL/
+  #- vendor/bin/phpunit tests/Database/MySQL56/
+  #- vendor/bin/phpunit tests/Database/Postgres/
