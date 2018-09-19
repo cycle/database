@@ -13,17 +13,34 @@ use Spiral\Database\Driver\Driver;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Exception\QueryException;
 use Spiral\Database\Injection\FragmentInterface;
+use Spiral\Database\Query\Traits\HavingTrait;
+use Spiral\Database\Query\Traits\JoinTrait;
+use Spiral\Database\Query\Traits\TokenTrait;
+use Spiral\Database\Query\Traits\WhereTrait;
 use Spiral\Database\QueryStatement;
-use Spiral\Logger\Traits\LoggerTrait;
+use Spiral\Pagination\PaginatorAwareInterface;
+use Spiral\Pagination\Traits\LimitsTrait;
+use Spiral\Pagination\Traits\PaginatorTrait;
 
 /**
  * SelectQuery extends AbstractSelect with ability to specify selection tables and perform UNION
  * of multiple select queries.
  */
-class SelectQuery extends AbstractSelect implements \JsonSerializable, \Countable
+class SelectQuery extends QueryBuilder implements
+    \JsonSerializable,
+    \Countable,
+    \IteratorAggregate,
+    PaginatorAwareInterface
 {
-    //See SQL generation below
-    use LoggerTrait;
+    use TokenTrait, WhereTrait, HavingTrait, JoinTrait, LimitsTrait, PaginatorTrait;
+
+    const QUERY_TYPE = Compiler::SELECT_QUERY;
+
+    /**
+     * Sort directions.
+     */
+    const SORT_ASC  = 'ASC';
+    const SORT_DESC = 'DESC';
 
     /**
      * Table names to select data from.
@@ -39,6 +56,34 @@ class SelectQuery extends AbstractSelect implements \JsonSerializable, \Countabl
      * @var array
      */
     protected $unionTokens = [];
+
+    /**
+     * Query must return only unique rows.
+     *
+     * @var bool|string
+     */
+    protected $distinct = false;
+
+    /**
+     * Columns or expressions to be fetched from database, can include aliases (AS).
+     *
+     * @var array
+     */
+    protected $columns = ['*'];
+
+    /**
+     * Columns/expression associated with their sort direction (ASK|DESC).
+     *
+     * @var array
+     */
+    protected $ordering = [];
+
+    /**
+     * Columns/expressions to group by.
+     *
+     * @var array
+     */
+    protected $grouping = [];
 
     /**
      * {@inheritdoc}
@@ -58,6 +103,61 @@ class SelectQuery extends AbstractSelect implements \JsonSerializable, \Countabl
         if (!empty($columns)) {
             $this->columns = $this->fetchIdentifiers($columns);
         }
+    }
+
+    /**
+     * Mark query to return only distinct results.
+     *
+     * @param bool|string $distinct You are only allowed to use string value for Postgres databases.
+     *
+     * @return self|$this
+     */
+    public function distinct($distinct = true): self
+    {
+        $this->distinct = $distinct;
+
+        return $this;
+    }
+
+    /**
+     * Sort result by column/expression. You can apply multiple sortings to query via calling method
+     * few times or by specifying values using array of sort parameters.
+     *
+     * $select->orderBy([
+     *      'id'   => SelectQuery::SORT_DESC,
+     *      'name' => SelectQuery::SORT_ASC
+     * ]);
+     *
+     * @param string|array $expression
+     * @param string       $direction Sorting direction, ASC|DESC.
+     * @return self|$this
+     */
+    public function orderBy($expression, $direction = self::SORT_ASC): self
+    {
+        if (!is_array($expression)) {
+            $this->ordering[] = [$expression, $direction];
+
+            return $this;
+        }
+
+        foreach ($expression as $nested => $direction) {
+            $this->ordering[] = [$nested, $direction];
+        }
+
+        return $this;
+    }
+
+    /**
+     * Column or expression to group query by.
+     *
+     * @param string $expression
+     * @return self|$this
+     */
+    public function groupBy($expression): self
+    {
+        $this->grouping[] = $expression;
+
+        return $this;
     }
 
     /**
@@ -145,7 +245,11 @@ class SelectQuery extends AbstractSelect implements \JsonSerializable, \Countabl
      */
     public function getParameters(): array
     {
-        $parameters = parent::getParameters();
+        $parameters = $this->flattenParameters(array_merge(
+            $this->onParameters,
+            $this->whereParameters,
+            $this->havingParameters
+        ));
 
         //Unions always located at the end of query.
         foreach ($this->joinTokens as $join) {
@@ -250,9 +354,6 @@ class SelectQuery extends AbstractSelect implements \JsonSerializable, \Countabl
      */
     public function count(string $column = '*'): int
     {
-        /**
-         * @var AbstractSelect $select
-         */
         $select = clone $this;
 
         //To be escaped in compiler
@@ -290,9 +391,6 @@ class SelectQuery extends AbstractSelect implements \JsonSerializable, \Countabl
             throw new BuilderException('Aggregation methods can support exactly one column');
         }
 
-        /**
-         * @var AbstractSelect $select
-         */
         $select = clone $this;
 
         //To be escaped in compiler
@@ -326,12 +424,6 @@ class SelectQuery extends AbstractSelect implements \JsonSerializable, \Countabl
     {
         if (empty($compiler)) {
             $compiler = $this->compiler->resetQuoter();
-        }
-
-        if ((!empty($this->getLimit()) || !empty($this->getOffset())) && empty($this->ordering)) {
-            $this->getLogger()->warning(
-                "Usage of LIMIT/OFFSET without proper ORDER BY statement is ambiguous"
-            );
         }
 
         //11 parameters!

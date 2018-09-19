@@ -227,7 +227,7 @@ trait JoinTrait
      */
     public function on(...$args)
     {
-        $this->whereToken(
+        $this->createToken(
             'AND',
             $args,
             $this->joinTokens[$this->activeJoin]['on'],
@@ -249,7 +249,7 @@ trait JoinTrait
      */
     public function andOn(...$args)
     {
-        $this->whereToken(
+        $this->createToken(
             'AND',
             $args,
             $this->joinTokens[$this->activeJoin]['on'],
@@ -271,7 +271,7 @@ trait JoinTrait
      */
     public function orOn(...$args)
     {
-        $this->whereToken(
+        $this->createToken(
             'OR',
             $args,
             $this->joinTokens[$this->activeJoin]['on'],
@@ -295,7 +295,7 @@ trait JoinTrait
      */
     public function onWhere(...$args)
     {
-        $this->whereToken(
+        $this->createToken(
             'AND',
             $args,
             $this->joinTokens[$this->activeJoin]['on'],
@@ -319,7 +319,7 @@ trait JoinTrait
      */
     public function andOnWhere(...$args)
     {
-        $this->whereToken(
+        $this->createToken(
             'AND',
             $args,
             $this->joinTokens[$this->activeJoin]['on'],
@@ -343,7 +343,7 @@ trait JoinTrait
      */
     public function orOnWhere(...$args)
     {
-        $this->whereToken(
+        $this->createToken(
             'OR',
             $args,
             $this->joinTokens[$this->activeJoin]['on'],
@@ -358,15 +358,15 @@ trait JoinTrait
      *
      * @see AbstractWhere
      *
-     * @param string                 $joiner     Boolean joiner (AND | OR).
-     * @param array                  $parameters Set of parameters collected from where functions.
-     * @param array                  $tokens     Array to aggregate compiled tokens. Reference.
-     * @param \Closure|null|callable $wrapper    Callback or closure used to wrap/collect every
-     *                                           potential parameter.
+     * @param string   $joiner     Boolean joiner (AND | OR).
+     * @param array    $parameters Set of parameters collected from where functions.
+     * @param array    $tokens     Array to aggregate compiled tokens. Reference.
+     * @param callable $wrapper    Callback or closure used to wrap/collect every potential
+     *                             parameter.
      *
      * @throws BuilderException
      */
-    abstract protected function whereToken(
+    abstract protected function createToken(
         $joiner,
         array $parameters,
         &$tokens = [],

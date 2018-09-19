@@ -23,6 +23,12 @@ use Spiral\Database\Query\QueryBuilder;
 class Compiler
 {
     /**
+     * Tokens for nested OR and AND conditions.
+     */
+    public const TOKEN_AND = '@AND';
+    public const TOKEN_OR  = '@OR';
+
+    /**
      * Query types for parameter ordering.
      */
     const SELECT_QUERY = 'select';

@@ -50,8 +50,6 @@ class QueryStatement extends PDOStatement
     }
 
     /**
-     * Just an alias.
-     *
      * @return int
      */
     public function countColumns(): int
@@ -80,12 +78,24 @@ class QueryStatement extends PDOStatement
      *
      * @return array
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         return [
             'query' => $this->queryString,
             'count' => $this->rowCount(),
-            'rows'  => $this->rowCount() > static::DUMP_LIMIT ? '[TOO MANY ROWS]' : $this->fetchAll(\PDO::FETCH_ASSOC)
+            'rows'  => $this->dumpRows()
         ];
+    }
+
+    /**
+     * @return array|string
+     */
+    private function dumpRows()
+    {
+        if ($this->rowCount() > static::DUMP_LIMIT) {
+            return '[TOO MANY ROWS]';
+        }
+
+        return $this->fetchAll(\PDO::FETCH_ASSOC);
     }
 }

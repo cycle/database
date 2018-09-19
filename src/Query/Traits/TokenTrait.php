@@ -6,155 +6,14 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database\Query;
+namespace Spiral\Database\Query\Traits;
 
+use Spiral\Database\Driver\Compiler;
 use Spiral\Database\Exception\BuilderException;
-use Spiral\Database\Injection\ExpressionInterface;
-use Spiral\Database\Injection\FragmentInterface;
-use Spiral\Database\Injection\Parameter;
-use Spiral\Database\Injection\ParameterInterface;
+use Spiral\Database\Query\QueryBuilder;
 
-/**
- * Abstract query with WHERE conditions generation support. Provides simplified way to generate
- * WHERE tokens using set of where methods. Class support different where conditions, simplified
- * definitions
- * (using arrays) and closures to describe nested conditions:.
- *
- * 1) Simple token/nested query or expression
- * $select->where(new SQLFragment('(SELECT count(*) from `table`)'));
- *
- * 2) Simple assessment
- * $select->where('column', $value);
- * $select->where('column', new SQLFragment('CONCAT(columnA, columnB)'));
- *
- * 3) Assessment with specified operator (operator will be converted to uppercase automatically)
- * $select->where('column', '=', $value);
- * $select->where('column', 'IN', [1, 2, 3]);
- * $select->where('column', 'LIKE', $string);
- * $select->where('column', 'IN', new SQLFragment('(SELECT id from `table` limit 1)'));
- *
- * 4) Between and not between statements
- * $select->where('column', 'between', 1, 10);
- * $select->where('column', 'not between', 1, 10);
- * $select->where('column', 'not between', new SQLFragment('MIN(price)'), $maximum);
- *
- * 5) Closure with nested conditions
- * $this->where(function(AbstractWhere $select){
- *      $select->where("name", "Wolfy-J")->orWhere("balance", ">", 100)
- * });
- *
- * 6) Simplified array based condition definition
- * $select->where(["column" => 1]);
- * $select->where(["column" => [
- *      ">" => 1,
- *      "<" => 10
- * ]]);
- *
- * Tokens "@or" and "@and" used to aggregate nested conditions.
- * $select->where([
- *      "@or" => [
- *          ["id" => 1],
- *          ["column" => ["like" => "name"]]
- *      ]
- * ]);
- *
- * $select->where([
- *      "@or" => [
- *          ["id" => 1], ["id" => 2], ["id" => 3], ["id" => 4], ["id" => 5]
- *      ],
- *      "column" => [
- *          "like" => "name"
- *      ],
- *      "x" => [
- *          ">" => 1,
- *          "<" => 10
- *      ]
- * ]);
- *
- * To describe between or not between condition use array with two arguments.
- * $select->where([
- *      "column" => [
- *          "between" => [1, 100]
- *      ]
- * ]);
- */
-abstract class AbstractWhere extends QueryBuilder
+trait TokenTrait
 {
-    /**
-     * Tokens for nested OR and AND conditions.
-     */
-    const TOKEN_AND = '@AND';
-    const TOKEN_OR = '@OR';
-
-    /**
-     * Set of generated where tokens, format must be supported by QueryCompilers.
-     *
-     * @var array
-     */
-    protected $whereTokens = [];
-
-    /**
-     * Parameters collected while generating WHERE tokens, must be in a same order as parameters
-     * in resulted query.
-     *
-     * @var array
-     */
-    protected $whereParameters = [];
-
-    /**
-     * Simple WHERE condition with various set of arguments.
-     *
-     * @see AbstractWhere
-     *
-     * @param mixed ...$args [(column, value), (column, operator, value)]
-     *
-     * @return self|$this
-     *
-     * @throws BuilderException
-     */
-    public function where(...$args): AbstractWhere
-    {
-        $this->whereToken('AND', $args, $this->whereTokens, $this->whereWrapper());
-
-        return $this;
-    }
-
-    /**
-     * Simple AND WHERE condition with various set of arguments.
-     *
-     * @see AbstractWhere
-     *
-     * @param mixed ...$args [(column, value), (column, operator, value)]
-     *
-     * @return self|$this
-     *
-     * @throws BuilderException
-     */
-    public function andWhere(...$args): AbstractWhere
-    {
-        $this->whereToken('AND', $args, $this->whereTokens, $this->whereWrapper());
-
-        return $this;
-    }
-
-    /**
-     * Simple OR WHERE condition with various set of arguments.
-     *
-     * @see AbstractWhere
-     *
-     * @param mixed ...$args [(column, value), (column, operator, value)]
-     *
-     * @return self|$this
-     *
-     * @throws BuilderException
-     */
-    public function orWhere(...$args): AbstractWhere
-    {
-        $this->whereToken('OR', $args, $this->whereTokens, $this->whereWrapper());
-
-        return $this;
-    }
-
     /**
      * Convert various amount of where function arguments into valid where token.
      *
@@ -168,7 +27,7 @@ abstract class AbstractWhere extends QueryBuilder
      *
      * @throws BuilderException
      */
-    protected function whereToken($joiner, array $parameters, &$tokens = [], callable $wrapper)
+    protected function createToken($joiner, array $parameters, &$tokens = [], callable $wrapper)
     {
         list($identifier, $valueA, $valueB, $valueC) = $parameters + array_fill(0, 5, null);
 
@@ -181,7 +40,7 @@ abstract class AbstractWhere extends QueryBuilder
         if (is_array($identifier)) {
             if (count($identifier) == 1) {
                 $this->arrayWhere(
-                    $joiner == 'AND' ? self::TOKEN_AND : self::TOKEN_OR,
+                    $joiner == 'AND' ? Compiler::TOKEN_AND : Compiler::TOKEN_OR,
                     $identifier,
                     $tokens,
                     $wrapper
@@ -191,7 +50,7 @@ abstract class AbstractWhere extends QueryBuilder
             }
 
             $tokens[] = [$joiner, '('];
-            $this->arrayWhere(self::TOKEN_AND, $identifier, $tokens, $wrapper);
+            $this->arrayWhere(Compiler::TOKEN_AND, $identifier, $tokens, $wrapper);
             $tokens[] = ['', ')'];
 
             return;
@@ -256,13 +115,13 @@ abstract class AbstractWhere extends QueryBuilder
      */
     private function arrayWhere(string $grouper, array $where, &$tokens, callable $wrapper)
     {
-        $joiner = ($grouper == self::TOKEN_AND ? 'AND' : 'OR');
+        $joiner = ($grouper == Compiler::TOKEN_AND ? 'AND' : 'OR');
 
         foreach ($where as $key => $value) {
             $token = strtoupper($key);
 
             //Grouping identifier (@OR, @AND), MongoDB like style
-            if ($token == self::TOKEN_AND || $token == self::TOKEN_OR) {
+            if ($token == Compiler::TOKEN_AND || $token == Compiler::TOKEN_OR) {
                 $tokens[] = [$joiner, '('];
 
                 foreach ($value as $nested) {
@@ -271,8 +130,8 @@ abstract class AbstractWhere extends QueryBuilder
                         continue;
                     }
 
-                    $tokens[] = [$token == self::TOKEN_AND ? 'AND' : 'OR', '('];
-                    $this->arrayWhere(self::TOKEN_AND, $nested, $tokens, $wrapper);
+                    $tokens[] = [$token == Compiler::TOKEN_AND ? 'AND' : 'OR', '('];
+                    $this->arrayWhere(Compiler::TOKEN_AND, $nested, $tokens, $wrapper);
                     $tokens[] = ['', ')'];
                 }
 
@@ -351,37 +210,5 @@ abstract class AbstractWhere extends QueryBuilder
         }
 
         return $tokens;
-    }
-
-    /**
-     * Applied to every potential parameter while where tokens generation. Used to prepare and
-     * collect where parameters.
-     *
-     * @return \Closure
-     */
-    private function whereWrapper()
-    {
-        return function ($parameter) {
-            if ($parameter instanceof FragmentInterface) {
-                //We are only not creating bindings for plan fragments
-                if (!$parameter instanceof ParameterInterface && !$parameter instanceof QueryBuilder) {
-                    return $parameter;
-                }
-            }
-
-            if (is_array($parameter)) {
-                throw new BuilderException('Arrays must be wrapped with Parameter instance');
-            }
-
-            //Wrapping all values with ParameterInterface
-            if (!$parameter instanceof ParameterInterface && !$parameter instanceof ExpressionInterface) {
-                $parameter = new Parameter($parameter, Parameter::DETECT_TYPE);
-            };
-
-            //Let's store to sent to driver when needed
-            $this->whereParameters[] = $parameter;
-
-            return $parameter;
-        };
     }
 }

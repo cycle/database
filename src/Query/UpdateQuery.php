@@ -8,21 +8,29 @@
 
 namespace Spiral\Database\Query;
 
-use Spiral\Database\Driver\Driver;
 use Spiral\Database\Driver\Compiler;
+use Spiral\Database\Driver\Driver;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Injection\ParameterInterface;
+use Spiral\Database\Query\Traits\TokenTrait;
+use Spiral\Database\Query\Traits\WhereTrait;
 
 /**
  * Update statement builder.
  */
-class UpdateQuery extends AbstractAffect
+class UpdateQuery extends QueryBuilder
 {
-    /**
-     * Query type.
-     */
+    use TokenTrait, WhereTrait;
+
     const QUERY_TYPE = Compiler::UPDATE_QUERY;
+
+    /**
+     * Every affect builder must be associated with specific table.
+     *
+     * @var string
+     */
+    protected $table = '';
 
     /**
      * Column names associated with their values.
@@ -43,9 +51,14 @@ class UpdateQuery extends AbstractAffect
         array $where = [],
         array $values = []
     ) {
-        parent::__construct($driver, $compiler, $table, $where);
+        parent::__construct($driver, $compiler);
 
+        $this->table = $table;
         $this->values = $values;
+
+        if (!empty($where)) {
+            $this->where($where);
+        }
     }
 
     /**
@@ -143,5 +156,17 @@ class UpdateQuery extends AbstractAffect
         }
 
         return $compiler->compileUpdate($this->table, $this->values, $this->whereTokens);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * Affect queries will return count of affected rows.
+     *
+     * @return int
+     */
+    public function run(): int
+    {
+        return $this->pdoStatement()->rowCount();
     }
 }

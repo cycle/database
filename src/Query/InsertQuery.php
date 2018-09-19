@@ -8,8 +8,8 @@
 
 namespace Spiral\Database\Query;
 
-use Spiral\Database\Driver\Driver;
 use Spiral\Database\Driver\Compiler;
+use Spiral\Database\Driver\Driver;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Injection\Parameter;
 
@@ -18,9 +18,6 @@ use Spiral\Database\Injection\Parameter;
  */
 class InsertQuery extends QueryBuilder
 {
-    /**
-     * Query type.
-     */
     const QUERY_TYPE = Compiler::INSERT_QUERY;
 
     /**

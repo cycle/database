@@ -9,17 +9,47 @@
 namespace Spiral\Database\Query;
 
 use Spiral\Database\Driver\Compiler;
+use Spiral\Database\Driver\Driver;
+use Spiral\Database\Query\Traits\TokenTrait;
+use Spiral\Database\Query\Traits\WhereTrait;
 
 
 /**
  * Update statement builder.
  */
-class DeleteQuery extends AbstractAffect
+class DeleteQuery extends QueryBuilder
 {
-    /**
-     * Query type.
-     */
+    use TokenTrait, WhereTrait;
+
     const QUERY_TYPE = Compiler::DELETE_QUERY;
+
+    /**
+     * Every affect builder must be associated with specific table.
+     *
+     * @var string
+     */
+    protected $table = '';
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param string $table Associated table name.
+     * @param array  $where Initial set of where rules specified as array.
+     */
+    public function __construct(
+        Driver $driver,
+        Compiler $compiler,
+        string $table = '',
+        array $where = []
+    ) {
+        parent::__construct($driver, $compiler);
+
+        $this->table = $table;
+
+        if (!empty($where)) {
+            $this->where($where);
+        }
+    }
 
     /**
      * Change target table.
@@ -53,5 +83,17 @@ class DeleteQuery extends AbstractAffect
         }
 
         return $compiler->compileDelete($this->table, $this->whereTokens);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * Affect queries will return count of affected rows.
+     *
+     * @return int
+     */
+    public function run(): int
+    {
+        return $this->pdoStatement()->rowCount();
     }
 }

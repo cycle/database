@@ -8,7 +8,6 @@
 
 namespace Spiral\Database\Query;
 
-use Psr\Container\ContainerInterface;
 use Spiral\Database\Driver\Compiler;
 use Spiral\Database\Driver\Driver;
 use Spiral\Database\Exception\BuilderException;
@@ -155,14 +154,5 @@ abstract class QueryBuilder implements ExpressionInterface
     protected function pdoStatement(): \PDOStatement
     {
         return $this->driver->statement($this->sqlStatement(), $this->getParameters());
-    }
-
-    /**
-     * @return ContainerInterface
-     */
-    protected function iocContainer()
-    {
-        //Falling back to driver specific scope (used by auto paginators)
-        return $this->driver->iocContainer();
     }
 }
