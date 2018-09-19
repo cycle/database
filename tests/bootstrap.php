@@ -14,6 +14,6 @@ mb_internal_encoding('UTF-8');
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 //todo: move connections to config
-
+echo getenv("DEBUG");
 //File component fixtures
 define('ENABLE_PROFILING', false);//getenv('PROFILING') ?? true);

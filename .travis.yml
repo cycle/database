@@ -11,6 +11,8 @@ php:
 #  - nightly
 
 before_install:
+  - sudo service mysql stop
+  - sudo service postgres stop
   - cd tests && docker-compose up -d
 
 install:
