@@ -24,7 +24,7 @@ abstract class BaseTest extends TestCase
     public const DRIVER = null;
 
     protected static $driverCache = [];
-    protected static $pdo;
+    protected static $pdoCache;
 
     /** @var Driver */
     protected $driver;
@@ -67,10 +67,10 @@ abstract class BaseTest extends TestCase
             );
         }
 
-        if (empty(static::$pdo)) {
-            static::$pdo = $this->driver->getPDO();
+        if (empty(static::$pdoCache[static::DRIVER])) {
+            static::$pdoCache[static::DRIVER] = $this->driver->getPDO();
         } else {
-            $this->driver = $this->driver->withPDO(self::$pdo);
+            $this->driver[static::DRIVER] = $this->driver->withPDO(self::$pdoCache[static::DRIVER]);
         }
 
         if (self::$config['debug']) {
