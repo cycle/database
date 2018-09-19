@@ -11,7 +11,6 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerTrait;
 use Psr\Log\LogLevel;
-use Spiral\Core\Container;
 use Spiral\Database\Database;
 use Spiral\Database\Driver\AbstractHandler;
 use Spiral\Database\Driver\Driver;
@@ -62,8 +61,7 @@ abstract class BaseTest extends TestCase
                     'username'   => $config['user'],
                     'password'   => $config['pass'],
                     'options'    => []
-                ],
-                new Container()
+                ]
             );
         }
 

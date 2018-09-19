@@ -227,6 +227,8 @@ abstract class PDODriver implements LoggerAwareInterface
      * @param PDO $pdo
      *
      * @return self
+     *
+     * @deprecated
      */
     public function withPDO(PDO $pdo): PDODriver
     {
