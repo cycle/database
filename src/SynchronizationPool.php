@@ -9,7 +9,7 @@
 namespace Spiral\Database;
 
 use Psr\Log\LoggerInterface;
-use Spiral\Database\AbstractHandler as Behaviour;
+use Spiral\Database\Driver\AbstractHandler as Behaviour;
 use Spiral\Database\Driver\Driver;
 use Spiral\Database\Schema\AbstractTable;
 use Spiral\Support\DFSSorter;
