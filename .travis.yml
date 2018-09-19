@@ -11,7 +11,7 @@ php:
 #  - nightly
 
 before_install:
-  - cd tests && sudo docker-compose up -d
+  - cd tests && sudo docker-compose up -d && cd ..
 
 install:
   - composer install --no-interaction --prefer-source

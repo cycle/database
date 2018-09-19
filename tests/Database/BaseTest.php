@@ -21,6 +21,7 @@ use Spiral\Database\Schema\StateComparator;
 abstract class BaseTest extends TestCase
 {
     public static $config;
+    public const DRIVER = null;
 
     private static $driverCache = [];
     private static $pdo;
@@ -36,10 +37,10 @@ abstract class BaseTest extends TestCase
      */
     protected function db(string $name = 'default', string $prefix = '')
     {
-        if (isset(static::$driverCache[$this->driverID()])) {
-            $driver = static::$driverCache[$this->driverID()];
+        if (isset(static::$driverCache[static::DRIVER])) {
+            $driver = static::$driverCache[static::DRIVER];
         } else {
-            static::$driverCache[$this->driverID()] = $driver = $this->getDriver();
+            static::$driverCache[static::DRIVER] = $driver = $this->getDriver();
         }
 
         return new Database($driver, $name, $prefix);
@@ -50,7 +51,7 @@ abstract class BaseTest extends TestCase
      */
     public function getDriver(): Driver
     {
-        $config = self::$config[$this->driverID()];
+        $config = self::$config[static::DRIVER];
         if (!isset($this->driver)) {
             $class = $config['driver'];
 
@@ -77,12 +78,6 @@ abstract class BaseTest extends TestCase
         }
 
         return $this->driver;
-    }
-
-    /** @return string */
-    protected function driverID(): string
-    {
-        return static::DRIVER;
     }
 
     protected function dropDatabase(Database $database = null)
