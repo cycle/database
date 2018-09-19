@@ -1,17 +1,14 @@
 language: php
 
-sudo: required
-
-services:
-  - docker
-
 php:
-#  - 7.1
+  - 7.1
   - 7.2
-#  - nightly
+  - nightly
 
 before_install:
-  - cd tests && docker-compose up -d
+  - composer self-update
+  - mysql -e 'CREATE DATABASE spiral;'
+  - psql -c 'create database spiral;' -U postgres
 
 install:
   - composer install --no-interaction --prefer-source
