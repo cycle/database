@@ -1,0 +1,20 @@
+language: php
+
+sudo: required
+
+services:
+  - docker
+
+php:
+  - 7.1
+  - 7.2
+  - nightly
+
+before_install:
+  - cd tests && docker-compose up -d
+
+install:
+  - composer install --no-interaction --prefer-source
+
+script:
+  - vendor/bin/phpunit
