@@ -8,7 +8,7 @@
 
 namespace Spiral\Database\Injection;
 
-use Spiral\Database\Driver\QueryCompiler;
+use Spiral\Database\Driver\Compiler;
 
 /**
  * SQLExpression provides ability to mock part of SQL code responsible for operations involving
@@ -34,7 +34,7 @@ class Expression extends Fragment implements ExpressionInterface
     /**
      * {@inheritdoc}
      */
-    public function sqlStatement(QueryCompiler $compiler = null): string
+    public function sqlStatement(Compiler $compiler = null): string
     {
         if (empty($compiler)) {
             //We might need to throw an exception here in some cases

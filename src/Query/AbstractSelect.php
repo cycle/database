@@ -8,7 +8,7 @@
 
 namespace Spiral\Database\Query;
 
-use Spiral\Database\Driver\QueryCompiler;
+use Spiral\Database\Driver\Compiler;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Injection\ExpressionInterface;
 use Spiral\Database\Injection\FragmentInterface;
@@ -42,7 +42,7 @@ abstract class AbstractSelect extends AbstractWhere implements
     /**
      * Query type.
      */
-    const QUERY_TYPE = QueryCompiler::SELECT_QUERY;
+    const QUERY_TYPE = Compiler::SELECT_QUERY;
 
     /**
      * Sort directions.

@@ -17,6 +17,7 @@ use Spiral\Database\Exception\DriverException;
 use Spiral\Database\Exception\QueryException;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
+use Spiral\Database\Query\QueryInterpolator;
 use Spiral\Database\QueryStatement;
 use Spiral\Debug\Traits\BenchmarkTrait;
 use Spiral\Debug\Traits\LoggerTrait;

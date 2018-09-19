@@ -9,7 +9,7 @@ namespace Spiral\Database\Tests;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Spiral\Database\Driver\QueryCompiler;
+use Spiral\Database\Driver\Compiler;
 use Spiral\Database\Injection\Expression;
 use Spiral\Database\Injection\ExpressionInterface;
 use Spiral\Database\Injection\FragmentInterface;
@@ -28,7 +28,7 @@ class ExpressionTest extends TestCase
         //Compiler-less
         $this->assertSame($expression->sqlStatement(), (string)$expression);
 
-        $compiler = m::mock(QueryCompiler::class);
+        $compiler = m::mock(Compiler::class);
         $compiler->shouldReceive('quote')->with('expression')->andReturn('"expression"');
 
         $this->assertSame('"expression"', $expression->sqlStatement($compiler));

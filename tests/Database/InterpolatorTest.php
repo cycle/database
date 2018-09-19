@@ -8,7 +8,7 @@
 namespace Spiral\Database\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Spiral\Database\Driver\QueryInterpolator;
+use Spiral\Database\Query\QueryInterpolator;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
 

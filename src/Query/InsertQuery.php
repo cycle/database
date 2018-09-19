@@ -9,7 +9,7 @@
 namespace Spiral\Database\Query;
 
 use Spiral\Database\Driver\Driver;
-use Spiral\Database\Driver\QueryCompiler;
+use Spiral\Database\Driver\Compiler;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Injection\Parameter;
 
@@ -21,7 +21,7 @@ class InsertQuery extends QueryBuilder
     /**
      * Query type.
      */
-    const QUERY_TYPE = QueryCompiler::INSERT_QUERY;
+    const QUERY_TYPE = Compiler::INSERT_QUERY;
 
     /**
      * @var string
@@ -47,7 +47,7 @@ class InsertQuery extends QueryBuilder
      *
      * @param string $table Associated table name.
      */
-    public function __construct(Driver $driver, QueryCompiler $compiler, string $table = '')
+    public function __construct(Driver $driver, Compiler $compiler, string $table = '')
     {
         parent::__construct($driver, $compiler);
         $this->table = $table;
@@ -152,7 +152,7 @@ class InsertQuery extends QueryBuilder
     /**
      * {@inheritdoc}
      */
-    public function sqlStatement(QueryCompiler $compiler = null): string
+    public function sqlStatement(Compiler $compiler = null): string
     {
         if (empty($compiler)) {
             $compiler = $this->compiler->resetQuoter();

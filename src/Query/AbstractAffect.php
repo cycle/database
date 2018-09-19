@@ -9,7 +9,7 @@
 namespace Spiral\Database\Query;
 
 use Spiral\Database\Driver\Driver;
-use Spiral\Database\Driver\QueryCompiler;
+use Spiral\Database\Driver\Compiler;
 
 /**
  * Generic prototype for affect queries with WHERE and JOIN supports. At this moment used as parent
@@ -32,7 +32,7 @@ abstract class AbstractAffect extends AbstractWhere
      */
     public function __construct(
         Driver $driver,
-        QueryCompiler $compiler,
+        Compiler $compiler,
         string $table = '',
         array $where = []
     ) {

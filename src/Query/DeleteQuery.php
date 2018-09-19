@@ -8,7 +8,7 @@
 
 namespace Spiral\Database\Query;
 
-use Spiral\Database\Driver\QueryCompiler;
+use Spiral\Database\Driver\Compiler;
 
 
 /**
@@ -19,7 +19,7 @@ class DeleteQuery extends AbstractAffect
     /**
      * Query type.
      */
-    const QUERY_TYPE = QueryCompiler::DELETE_QUERY;
+    const QUERY_TYPE = Compiler::DELETE_QUERY;
 
     /**
      * Change target table.
@@ -46,7 +46,7 @@ class DeleteQuery extends AbstractAffect
     /**
      * {@inheritdoc}
      */
-    public function sqlStatement(QueryCompiler $compiler = null): string
+    public function sqlStatement(Compiler $compiler = null): string
     {
         if (empty($compiler)) {
             $compiler = $this->compiler->resetQuoter();

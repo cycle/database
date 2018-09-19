@@ -20,7 +20,7 @@ use Spiral\Database\Query\QueryBuilder;
  *
  * Source of Compiler must be optimized in nearest future.
  */
-class QueryCompiler
+class Compiler
 {
     /**
      * Query types for parameter ordering.
@@ -62,7 +62,7 @@ class QueryCompiler
      *
      * @return self
      */
-    public function resetQuoter(): QueryCompiler
+    public function resetQuoter(): Compiler
     {
         $this->quoter->reset();
 

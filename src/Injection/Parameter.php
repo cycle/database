@@ -65,7 +65,7 @@ class Parameter implements ParameterInterface
     /**
      * {@inheritdoc}
      */
-    public function withValue($value, int $type = self::DETECT_TYPE): Parameter
+    public function withValue($value, int $type = self::DETECT_TYPE): ParameterInterface
     {
         $parameter = clone $this;
         $parameter->value = $value;

@@ -7,13 +7,13 @@
 
 namespace Spiral\Database\Driver\SQLServer;
 
-use Spiral\Database\Driver\QueryCompiler;
+use Spiral\Database\Driver\Compiler;
 use Spiral\Database\Injection\Fragment;
 
 /**
  * Microsoft SQL server specific syntax compiler.
  */
-class SQLServerCompiler extends QueryCompiler
+class SQLServerCompiler extends Compiler
 {
     /**
      * Column to be used as ROW_NUMBER in fallback selection mechanism, attention! Amount of columns

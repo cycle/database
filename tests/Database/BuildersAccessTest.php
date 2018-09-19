@@ -6,7 +6,7 @@
  */
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\Driver\QueryCompiler;
+use Spiral\Database\Driver\Compiler;
 use Spiral\Database\Query\DeleteQuery;
 use Spiral\Database\Query\InsertQuery;
 use Spiral\Database\Query\SelectQuery;
@@ -49,7 +49,7 @@ abstract class BuildersAccessTest extends BaseTest
     public function testCompilerAccess()
     {
         $this->assertInstanceOf(
-            QueryCompiler::class,
+            Compiler::class,
             $this->db()->getDriver()->queryCompiler('')
         );
     }

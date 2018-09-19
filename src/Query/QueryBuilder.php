@@ -10,9 +10,8 @@ namespace Spiral\Database\Query;
 
 use Interop\Container\ContainerInterface;
 use Spiral\Core\Component;
+use Spiral\Database\Driver\Compiler;
 use Spiral\Database\Driver\Driver;
-use Spiral\Database\Driver\QueryCompiler;
-use Spiral\Database\Driver\QueryInterpolator;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Injection\ExpressionInterface;
 use Spiral\Database\Injection\ParameterInterface;
@@ -29,15 +28,15 @@ abstract class QueryBuilder extends Component implements ExpressionInterface
     protected $driver = null;
 
     /**
-     * @var QueryCompiler
+     * @var Compiler
      */
     protected $compiler = null;
 
     /**
-     * @param Driver        $driver   Associated driver.
-     * @param QueryCompiler $compiler Driver specific QueryCompiler instance (one per builder).
+     * @param Driver   $driver   Associated driver.
+     * @param Compiler $compiler Driver specific QueryCompiler instance (one per builder).
      */
-    public function __construct(Driver $driver, QueryCompiler $compiler)
+    public function __construct(Driver $driver, Compiler $compiler)
     {
         $this->driver = $driver;
         $this->compiler = $compiler;
@@ -54,9 +53,9 @@ abstract class QueryBuilder extends Component implements ExpressionInterface
     /**
      * {@inheritdoc}
      *
-     * @param QueryCompiler $compiler Associated compiler to be used by default.
+     * @param Compiler $compiler Associated compiler to be used by default.
      */
-    abstract public function sqlStatement(QueryCompiler $compiler = null): string;
+    abstract public function sqlStatement(Compiler $compiler = null): string;
 
     /**
      * Get ordered list of builder parameters in a form of ParameterInterface array.

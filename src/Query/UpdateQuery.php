@@ -9,7 +9,7 @@
 namespace Spiral\Database\Query;
 
 use Spiral\Database\Driver\Driver;
-use Spiral\Database\Driver\QueryCompiler;
+use Spiral\Database\Driver\Compiler;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Injection\ParameterInterface;
@@ -22,7 +22,7 @@ class UpdateQuery extends AbstractAffect
     /**
      * Query type.
      */
-    const QUERY_TYPE = QueryCompiler::UPDATE_QUERY;
+    const QUERY_TYPE = Compiler::UPDATE_QUERY;
 
     /**
      * Column names associated with their values.
@@ -38,7 +38,7 @@ class UpdateQuery extends AbstractAffect
      */
     public function __construct(
         Driver $driver,
-        QueryCompiler $compiler,
+        Compiler $compiler,
         string $table = '',
         array $where = [],
         array $values = []
@@ -132,7 +132,7 @@ class UpdateQuery extends AbstractAffect
     /**
      * {@inheritdoc}
      */
-    public function sqlStatement(QueryCompiler $compiler = null): string
+    public function sqlStatement(Compiler $compiler = null): string
     {
         if (empty($this->values)) {
             throw new BuilderException('Update values must be specified');

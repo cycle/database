@@ -8,10 +8,6 @@
 
 namespace Spiral\Database\Schema;
 
-use Spiral\Database\Schema\AbstractColumn;
-use Spiral\Database\Schema\AbstractIndex;
-use Spiral\Database\Schema\AbstractReference;
-
 /**
  * TableSchema helper used to store original table elements and run comparation between them.
  *

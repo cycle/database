@@ -8,7 +8,7 @@
 
 namespace Spiral\Database\Driver\Postgres;
 
-use Spiral\Database\Driver\QueryCompiler as AbstractCompiler;
+use Spiral\Database\Driver\Compiler as AbstractCompiler;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Query\InsertQuery;
 

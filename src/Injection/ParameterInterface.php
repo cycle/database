@@ -37,10 +37,9 @@ interface ParameterInterface extends FragmentInterface
      * Create copy of self with new value but same type.
      *
      * @param mixed $value
-     *
-     * @return self
+     * @return self|$this
      */
-    public function withValue($value);
+    public function withValue($value): ParameterInterface;
 
     /**
      * Parameter type.

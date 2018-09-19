@@ -9,7 +9,7 @@
 namespace Spiral\Database\Query;
 
 use Spiral\Database\Driver\Driver;
-use Spiral\Database\Driver\QueryCompiler;
+use Spiral\Database\Driver\Compiler;
 use Spiral\Database\QueryStatement;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Exception\QueryException;
@@ -48,7 +48,7 @@ class SelectQuery extends AbstractSelect implements \JsonSerializable, \Countabl
      */
     public function __construct(
         Driver $driver,
-        QueryCompiler $compiler,
+        Compiler $compiler,
         array $from = [],
         array $columns = []
     ) {
@@ -322,7 +322,7 @@ class SelectQuery extends AbstractSelect implements \JsonSerializable, \Countabl
     /**
      * {@inheritdoc}
      */
-    public function sqlStatement(QueryCompiler $compiler = null): string
+    public function sqlStatement(Compiler $compiler = null): string
     {
         if (empty($compiler)) {
             $compiler = $this->compiler->resetQuoter();
