@@ -9,7 +9,6 @@
 namespace Spiral\Database\Driver;
 
 use Psr\Container\ContainerInterface;
-use Psr\Log\LoggerInterface;
 use Spiral\Core\Container;
 use Spiral\Core\FactoryInterface;
 use Spiral\Database\Exception\ConnectionException;
@@ -198,14 +197,11 @@ abstract class Driver extends PDODriver
     }
 
     /**
-     * Handler responsible for schema related operations. Handlers responsible for sync flow of
-     * tables and columns, provide logger to aggregate all logger operations.
-     *
-     * @param LoggerInterface $logger
+     * Handler responsible for schema related operations.
      *
      * @return AbstractHandler
      */
-    abstract public function getHandler(LoggerInterface $logger = null): AbstractHandler;
+    abstract public function getHandler(): AbstractHandler;
 
     /**
      * Start SQL transaction with specified isolation level (not all DBMS support it). Nested

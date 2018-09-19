@@ -7,13 +7,12 @@
 
 namespace Spiral\Database\Driver\SQLServer;
 
-use Psr\Container\ContainerInterface;
 use PDO;
-use Psr\Log\LoggerInterface;
+use Psr\Container\ContainerInterface;
 use Spiral\Database\DatabaseInterface;
-use Spiral\Database\Driver\SQLServer\Schema\SQLServerTable;
 use Spiral\Database\Driver\AbstractHandler;
 use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\SQLServer\Schema\SQLServerTable;
 use Spiral\Database\Exception\DriverException;
 
 class SQLServerDriver extends Driver
@@ -107,9 +106,9 @@ class SQLServerDriver extends Driver
     /**
      * {@inheritdoc}
      */
-    public function getHandler(LoggerInterface $logger = null): AbstractHandler
+    public function getHandler(): AbstractHandler
     {
-        return new SQLServerHandler($this, $logger);
+        return new SQLServerHandler($this);
     }
 
     /**

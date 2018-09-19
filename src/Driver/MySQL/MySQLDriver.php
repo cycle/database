@@ -9,7 +9,6 @@
 namespace Spiral\Database\Driver\MySQL;
 
 use PDO;
-use Psr\Log\LoggerInterface;
 use Spiral\Database\DatabaseInterface;
 use Spiral\Database\Driver\AbstractHandler;
 use Spiral\Database\Driver\Driver;
@@ -89,9 +88,9 @@ class MySQLDriver extends Driver
     /**
      * {@inheritdoc}
      */
-    public function getHandler(LoggerInterface $logger = null): AbstractHandler
+    public function getHandler(): AbstractHandler
     {
-        return new MySQLHandler($this, $logger);
+        return new MySQLHandler($this);
     }
 
     /**

@@ -8,9 +8,6 @@
 
 namespace Spiral\Database\Driver\Postgres;
 
-use Psr\Container\ContainerInterface;
-use Psr\Log\LoggerInterface;
-use Spiral\Core\MemoryInterface;
 use Spiral\Database\DatabaseInterface;
 use Spiral\Database\Driver\AbstractHandler;
 use Spiral\Database\Driver\Driver;
@@ -45,29 +42,6 @@ class PostgresDriver extends Driver
      * @var array
      */
     private $primaryKeys = [];
-
-    /**
-     * Used to store information about associated primary keys.
-     *
-     * @var MemoryInterface
-     */
-    protected $memory = null;
-
-    /**
-     * @param string             $name
-     * @param array              $options
-     * @param ContainerInterface $container
-     * @param MemoryInterface    $memory Optional.
-     */
-    public function __construct(
-        $name,
-        array $options,
-        ContainerInterface $container = null,
-        MemoryInterface $memory = null
-    ) {
-        parent::__construct($name, $options, $container);
-        $this->memory = $memory;
-    }
 
     /**
      * {@inheritdoc}
@@ -114,10 +88,6 @@ class PostgresDriver extends Driver
      */
     public function getPrimary(string $prefix, string $table)
     {
-        if (!empty($this->memory) && empty($this->primaryKeys)) {
-            $this->primaryKeys = (array)$this->memory->loadData($this->getSource() . '.keys');
-        }
-
         if (!empty($this->primaryKeys) && array_key_exists($table, $this->primaryKeys)) {
             return $this->primaryKeys[$table];
         }
@@ -134,11 +104,6 @@ class PostgresDriver extends Driver
             $this->primaryKeys[$table] = $this->primaryKeys[$table][0];
         } else {
             $this->primaryKeys[$table] = null;
-        }
-
-        //Caching
-        if (!empty($this->memory)) {
-            $this->memory->saveData($this->getSource() . '.keys', $this->primaryKeys);
         }
 
         return $this->primaryKeys[$table];
@@ -172,8 +137,8 @@ class PostgresDriver extends Driver
     /**
      * {@inheritdoc}
      */
-    public function getHandler(LoggerInterface $logger = null): AbstractHandler
+    public function getHandler(): AbstractHandler
     {
-        return new PostgresHandler($this, $logger);
+        return new PostgresHandler($this);
     }
 }
