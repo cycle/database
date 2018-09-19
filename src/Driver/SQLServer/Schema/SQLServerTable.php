@@ -8,7 +8,7 @@
 namespace Spiral\Database\Driver\SQLServer\Schema;
 
 use Psr\Log\LoggerInterface;
-use Spiral\Database\AbstractHandler as Behaviour;
+use Spiral\Database\Driver\AbstractHandler as Behaviour;
 use Spiral\Database\Schema\AbstractColumn;
 use Spiral\Database\Schema\AbstractIndex;
 use Spiral\Database\Schema\AbstractReference;
