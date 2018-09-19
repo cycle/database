@@ -328,15 +328,6 @@ class PostgresColumn extends AbstractColumn
     private function normalizeDefault()
     {
         if ($this->hasDefaultValue()) {
-            if ($this->phpType() == self::FLOAT || $this->phpType() == self::INT) {
-                if (preg_match('/^\(?(.*?)\)?(?!::(.+))?$/', $this->defaultValue, $matches)) {
-                    //Negative numeric values
-                    $this->defaultValue = $matches[1];
-                }
-
-                return;
-            }
-
             if (preg_match('/^\'?(.*?)\'?::(.+)/', $this->defaultValue, $matches)) {
                 //In database: 'value'::TYPE
                 $this->defaultValue = $matches[1];
@@ -346,6 +337,15 @@ class PostgresColumn extends AbstractColumn
                 );
             } elseif ($this->type == 'boolean') {
                 $this->defaultValue = (strtolower($this->defaultValue) == 'true');
+            }
+
+            if ($this->phpType() == self::FLOAT || $this->phpType() == self::INT) {
+                if (preg_match('/^\(?(.*?)\)?(?!::(.+))?$/', $this->defaultValue, $matches)) {
+                    //Negative numeric values
+                    $this->defaultValue = $matches[1];
+                }
+
+                return;
             }
         }
     }

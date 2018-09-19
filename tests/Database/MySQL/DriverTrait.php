@@ -37,9 +37,9 @@ trait DriverTrait
             $this->driver = new MySQLDriver(
                 'mysql',
                 [
-                    'connection' => 'mysql:host=localhost;dbname=spiral',
+                    'connection' => 'mysql:host=127.0.0.1;dbname=spiral',
                     'username'   => 'root',
-                    'password'   => '',
+                    'password'   => 'root',
                     'options'    => []
                 ],
                 $container ?? new Container()

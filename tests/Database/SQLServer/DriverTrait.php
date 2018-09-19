@@ -38,9 +38,9 @@ trait DriverTrait
                 'sqlserver',
                 [
                     //todo move to env
-                    'connection' => 'sqlsrv:Server=WOLFY-PC;Database=spiral',
-                    'username'   => '',
-                    'password'   => '',
+                    'connection' => 'sqlsrv:Server=127.0.0.1;Database=tempdb',
+                    'username'   => 'sa',
+                    'password'   => 'SSpaSS__1',
                     'options'    => []
                 ],
                 $container ?? new Container()
