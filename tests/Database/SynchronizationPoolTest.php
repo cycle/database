@@ -6,7 +6,7 @@
  */
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\SynchronizationPool;
+use Spiral\Database\SortedPool;
 use Spiral\Database\Schema\AbstractTable;
 
 abstract class SynchronizationPoolTest extends BaseTest
@@ -360,7 +360,7 @@ abstract class SynchronizationPoolTest extends BaseTest
 
     protected function saveTables(array $tables)
     {
-        $pool = new SynchronizationPool($tables);
+        $pool = new SortedPool($tables);
         $this->assertSame($tables, $pool->getTables());
         $pool->run();
     }

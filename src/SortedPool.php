@@ -17,7 +17,7 @@ use Spiral\Database\Schema\AbstractTable;
  *
  * Attention, not every DBMS support transactional schema manipulations!
  */
-class SynchronizationPool
+class SortedPool
 {
     const STATE_NEW    = 1;
     const STATE_PASSED = 2;
@@ -53,7 +53,6 @@ class SynchronizationPool
     public function __construct(array $tables)
     {
         $this->tables = $tables;
-
         $this->collectDrivers();
     }
 
