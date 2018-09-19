@@ -11,7 +11,7 @@ namespace Spiral\Database\Schema;
 /**
  * Compares two table states.
  */
-class StateComparator
+class TableComparator
 {
     /**
      * @var TableState

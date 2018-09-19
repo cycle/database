@@ -17,7 +17,7 @@ use Spiral\Database\Schema\AbstractTable;
  *
  * Attention, not every DBMS support transactional schema manipulations!
  */
-class SortedPool
+class TableSorter
 {
     const STATE_NEW    = 1;
     const STATE_PASSED = 2;

@@ -16,7 +16,7 @@ use Spiral\Database\Database;
 use Spiral\Database\Driver\AbstractHandler;
 use Spiral\Database\Driver\Driver;
 use Spiral\Database\Schema\AbstractTable;
-use Spiral\Database\Schema\StateComparator;
+use Spiral\Database\Schema\TableComparator;
 
 abstract class BaseTest extends TestCase
 {
@@ -105,7 +105,7 @@ abstract class BaseTest extends TestCase
 
     protected function assertSameAsInDB(AbstractTable $current)
     {
-        $comparator = new StateComparator(
+        $comparator = new TableComparator(
             $current->getState(),
             $this->schema($current->getName())->getState()
         );
@@ -115,7 +115,7 @@ abstract class BaseTest extends TestCase
         }
     }
 
-    protected function makeMessage(string $table, StateComparator $comparator)
+    protected function makeMessage(string $table, TableComparator $comparator)
     {
         if ($comparator->isPrimaryChanged()) {
             return "Table '{$table}' not synced, primary indexes are different.";
