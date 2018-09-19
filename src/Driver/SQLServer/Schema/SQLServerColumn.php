@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Driver\SQLServer\Schema;
 
-use Spiral\Database\Driver;
+use Spiral\Database\Driver\Driver;
 use Spiral\Database\Schema\AbstractColumn;
 
 /**

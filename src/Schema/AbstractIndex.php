@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Schema;
 
-use Spiral\Database\Driver;
+use Spiral\Database\Driver\Driver;
 use Spiral\Database\Schema\IndexInterface;
 
 /**

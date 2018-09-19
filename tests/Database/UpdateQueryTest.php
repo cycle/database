@@ -9,7 +9,7 @@ namespace Spiral\Database\Tests;
 use Spiral\Database\Query\QueryBuilder;
 use Spiral\Database\Query\UpdateQuery;
 use Spiral\Database\Database;
-use Spiral\Database\QueryInterpolator;
+use Spiral\Database\Driver\QueryInterpolator;
 use Spiral\Database\Injection\ParameterInterface;
 use Spiral\Database\Schema\AbstractTable;
 

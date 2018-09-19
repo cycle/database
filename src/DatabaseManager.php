@@ -15,7 +15,7 @@ use Spiral\Core\Container\SingletonInterface;
 use Spiral\Core\FactoryInterface;
 use Spiral\Database\Config\DatabasesConfig;
 use Spiral\Database\Database;
-use Spiral\Database\Driver;
+use Spiral\Database\Driver\Driver;
 use Spiral\Database\Exception\DatabaseException;
 use Spiral\Database\Exception\DBALException;
 

@@ -6,13 +6,13 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database;
+namespace Spiral\Database\Driver;
 
-use Spiral\Database\Query\QueryBuilder;
 use Spiral\Database\Exception\CompilerException;
 use Spiral\Database\Injection\ExpressionInterface;
 use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Injection\ParameterInterface;
+use Spiral\Database\Query\QueryBuilder;
 
 /**
  * Responsible for conversion of set of query parameters (where tokens, table names and etc) into

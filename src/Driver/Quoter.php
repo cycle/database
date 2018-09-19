@@ -7,7 +7,7 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database;
+namespace Spiral\Database\Driver;
 
 /**
  * Class responsible for "intelligent" table and column name quoting.

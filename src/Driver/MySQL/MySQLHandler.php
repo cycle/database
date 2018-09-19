@@ -8,7 +8,7 @@
 namespace Spiral\Database\Driver\MySQL;
 
 use Spiral\Database\Driver\MySQL\Schema\MySQLTable;
-use Spiral\Database\AbstractHandler;
+use Spiral\Database\Driver\AbstractHandler;
 use Spiral\Database\Exception\Driver\MySQLDriverException;
 use Spiral\Database\Exception\SchemaException;
 use Spiral\Database\Schema\AbstractColumn;

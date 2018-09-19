@@ -8,13 +8,10 @@
 namespace Spiral\Database\Schema;
 
 use Psr\Log\LoggerInterface;
-use Spiral\Database\AbstractHandler as Behaviour;
-use Spiral\Database\Driver;
+use Spiral\Database\Driver\AbstractHandler as Behaviour;
+use Spiral\Database\Driver\Driver;
 use Spiral\Database\Exception\SchemaException;
 use Spiral\Database\Exception\SchemaHandlerException;
-use Spiral\Database\Schema\StateComparator;
-use Spiral\Database\Schema\TableInterface;
-use Spiral\Database\Schema\TableState;
 
 /**
  * AbstractTable class used to describe and manage state of specified table. It provides ability to

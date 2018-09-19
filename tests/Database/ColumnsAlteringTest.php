@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\AbstractHandler;
+use Spiral\Database\Driver\AbstractHandler;
 use Spiral\Database\Database;
 use Spiral\Database\Schema\AbstractColumn;
 use Spiral\Database\Schema\AbstractTable;

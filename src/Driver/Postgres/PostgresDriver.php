@@ -11,12 +11,12 @@ namespace Spiral\Database\Driver\Postgres;
 use Interop\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Spiral\Core\MemoryInterface;
-use Spiral\Database\Query\InsertQuery;
 use Spiral\Database\DatabaseInterface;
+use Spiral\Database\Driver\AbstractHandler;
+use Spiral\Database\Driver\Driver;
 use Spiral\Database\Driver\Postgres\Schema\PostgresTable;
-use Spiral\Database\AbstractHandler;
-use Spiral\Database\Driver;
 use Spiral\Database\Exception\DriverException;
+use Spiral\Database\Query\InsertQuery;
 
 /**
  * Talks to postgres databases.

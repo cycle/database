@@ -9,9 +9,9 @@ namespace Spiral\Database\Tests;
 
 use Interop\Container\ContainerInterface;
 use PHPUnit\Framework\TestCase;
-use Spiral\Database\AbstractHandler;
+use Spiral\Database\Driver\AbstractHandler;
 use Spiral\Database\Database;
-use Spiral\Database\Driver;
+use Spiral\Database\Driver\Driver;
 use Spiral\Database\Schema\AbstractTable;
 use Spiral\Database\Schema\StateComparator;
 

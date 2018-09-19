@@ -12,7 +12,7 @@ use Psr\Log\LoggerTrait;
 use Psr\Log\LogLevel;
 use Spiral\Core\Container;
 use Spiral\Database\Driver\Postgres\PostgresDriver;
-use Spiral\Database\Driver;
+use Spiral\Database\Driver\Driver;
 
 trait DriverTrait
 {

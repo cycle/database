@@ -8,7 +8,7 @@
 
 namespace Spiral\Database\Driver\SQLite\Schema;
 
-use Spiral\Database\Driver;
+use Spiral\Database\Driver\Driver;
 use Spiral\Database\Schema\AbstractReference;
 use Spiral\Database\Schema\ReferenceInterface;
 

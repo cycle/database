@@ -8,8 +8,8 @@
 
 namespace Spiral\Database\Query;
 
-use Spiral\Database\Query\AbstractAffect;
-use Spiral\Database\QueryCompiler;
+use Spiral\Database\Driver\QueryCompiler;
+
 
 /**
  * Update statement builder.

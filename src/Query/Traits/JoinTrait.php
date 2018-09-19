@@ -49,7 +49,7 @@ use Spiral\Database\Query\QueryBuilder;
  *
  * @see AbstractWhere
  */
-trait JoinsTrait
+trait JoinTrait
 {
     /**
      * Name/id of last join, every ON and ON WHERE call will be associated with this join.

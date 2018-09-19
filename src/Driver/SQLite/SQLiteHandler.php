@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Driver\SQLite;
 
-use Spiral\Database\AbstractHandler;
+use Spiral\Database\Driver\AbstractHandler;
 use Spiral\Database\Exception\DBALException;
 use Spiral\Database\Exception\SchemaHandlerException;
 use Spiral\Database\Schema\AbstractColumn;

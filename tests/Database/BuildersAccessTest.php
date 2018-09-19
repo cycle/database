@@ -6,12 +6,12 @@
  */
 namespace Spiral\Database\Tests;
 
+use Spiral\Database\Driver\QueryCompiler;
 use Spiral\Database\Query\DeleteQuery;
 use Spiral\Database\Query\InsertQuery;
 use Spiral\Database\Query\SelectQuery;
 use Spiral\Database\Query\UpdateQuery;
-use Spiral\Database\Driver;
-use Spiral\Database\QueryCompiler;
+use Spiral\Database\Driver\Driver;
 use Spiral\Database\Table;
 use Spiral\Database\Schema\AbstractTable;
 

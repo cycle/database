@@ -10,10 +10,10 @@ namespace Spiral\Database\Query;
 
 use Interop\Container\ContainerInterface;
 use Spiral\Core\Component;
-use Spiral\Database\Driver;
-use Spiral\Database\QueryCompiler;
+use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\QueryCompiler;
+use Spiral\Database\Driver\QueryInterpolator;
 use Spiral\Database\Exception\BuilderException;
-use Spiral\Database\QueryInterpolator;
 use Spiral\Database\Injection\ExpressionInterface;
 use Spiral\Database\Injection\ParameterInterface;
 

@@ -6,17 +6,17 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database;
+namespace Spiral\Database\Driver;
 
 use Interop\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Spiral\Core\Container;
 use Spiral\Core\FactoryInterface;
+use Spiral\Database\Exception\ConnectionException;
 use Spiral\Database\Query\DeleteQuery;
 use Spiral\Database\Query\InsertQuery;
 use Spiral\Database\Query\SelectQuery;
 use Spiral\Database\Query\UpdateQuery;
-use Spiral\Database\Exception\ConnectionException;
 use Spiral\Database\Schema\AbstractTable;
 
 /**

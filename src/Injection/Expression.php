@@ -8,7 +8,7 @@
 
 namespace Spiral\Database\Injection;
 
-use Spiral\Database\QueryCompiler;
+use Spiral\Database\Driver\QueryCompiler;
 
 /**
  * SQLExpression provides ability to mock part of SQL code responsible for operations involving

@@ -6,7 +6,7 @@
  */
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\AbstractHandler;
+use Spiral\Database\Driver\AbstractHandler;
 use Spiral\Database\Schema\AbstractTable;
 
 abstract class IsolationTest extends BaseTest

@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Driver\Postgres\Schema;
 
-use Spiral\Database\Driver;
+use Spiral\Database\Driver\Driver;
 use Spiral\Database\Injection\Fragment;
 use Spiral\Database\Schema\ColumnInterface;
 use Spiral\Database\Schema\AbstractColumn;

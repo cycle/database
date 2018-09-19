@@ -8,7 +8,7 @@
 
 namespace Spiral\Database\Driver\SQLite;
 
-use Spiral\Database\QueryCompiler as AbstractCompiler;
+use Spiral\Database\Driver\QueryCompiler as AbstractCompiler;
 
 /**
  * SQLite specific syntax compiler.

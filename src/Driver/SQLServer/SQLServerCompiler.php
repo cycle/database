@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Driver\SQLServer;
 
-use Spiral\Database\QueryCompiler;
+use Spiral\Database\Driver\QueryCompiler;
 use Spiral\Database\Injection\Fragment;
 
 /**

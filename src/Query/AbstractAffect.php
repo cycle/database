@@ -8,8 +8,8 @@
 
 namespace Spiral\Database\Query;
 
-use Spiral\Database\Driver;
-use Spiral\Database\QueryCompiler;
+use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\QueryCompiler;
 
 /**
  * Generic prototype for affect queries with WHERE and JOIN supports. At this moment used as parent

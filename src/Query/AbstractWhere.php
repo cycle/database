@@ -8,7 +8,6 @@
 
 namespace Spiral\Database\Query;
 
-use Spiral\Database\Query\QueryBuilder;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Injection\ExpressionInterface;
 use Spiral\Database\Injection\FragmentInterface;
@@ -85,7 +84,7 @@ abstract class AbstractWhere extends QueryBuilder
      * Tokens for nested OR and AND conditions.
      */
     const TOKEN_AND = '@AND';
-    const TOKEN_OR  = '@OR';
+    const TOKEN_OR = '@OR';
 
     /**
      * Set of generated where tokens, format must be supported by QueryCompilers.

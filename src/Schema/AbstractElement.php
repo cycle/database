@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Schema;
 
-use Spiral\Database\Driver;
+use Spiral\Database\Driver\Driver;
 
 /**
  * Aggregates common functionality for columns, indexes and foreign key schemas.

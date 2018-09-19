@@ -11,9 +11,9 @@ namespace Spiral\Database\Driver\MySQL;
 use PDO;
 use Psr\Log\LoggerInterface;
 use Spiral\Database\DatabaseInterface;
+use Spiral\Database\Driver\AbstractHandler;
+use Spiral\Database\Driver\Driver;
 use Spiral\Database\Driver\MySQL\Schema\MySQLTable;
-use Spiral\Database\AbstractHandler;
-use Spiral\Database\Driver;
 use Spiral\Database\Exception\ConnectionException;
 use Spiral\Database\Exception\QueryException;
 

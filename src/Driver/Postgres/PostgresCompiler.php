@@ -8,7 +8,7 @@
 
 namespace Spiral\Database\Driver\Postgres;
 
-use Spiral\Database\QueryCompiler as AbstractCompiler;
+use Spiral\Database\Driver\QueryCompiler as AbstractCompiler;
 
 /**
  * Postgres syntax specific compiler.

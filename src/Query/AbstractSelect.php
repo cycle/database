@@ -8,14 +8,13 @@
 
 namespace Spiral\Database\Query;
 
-use Spiral\Database\Query\QueryBuilder;
-use Spiral\Database\Query\Traits\JoinsTrait;
-use Spiral\Database\QueryCompiler;
+use Spiral\Database\Driver\QueryCompiler;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Injection\ExpressionInterface;
 use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
+use Spiral\Database\Query\Traits\JoinTrait;
 use Spiral\Pagination\PaginatorAwareInterface;
 use Spiral\Pagination\Traits\LimitsTrait;
 use Spiral\Pagination\Traits\PaginatorTrait;
@@ -38,7 +37,7 @@ abstract class AbstractSelect extends AbstractWhere implements
     \IteratorAggregate,
     PaginatorAwareInterface
 {
-    use JoinsTrait, LimitsTrait, PaginatorTrait;
+    use JoinTrait, LimitsTrait, PaginatorTrait;
 
     /**
      * Query type.
@@ -48,7 +47,7 @@ abstract class AbstractSelect extends AbstractWhere implements
     /**
      * Sort directions.
      */
-    const SORT_ASC  = 'ASC';
+    const SORT_ASC = 'ASC';
     const SORT_DESC = 'DESC';
 
     /**

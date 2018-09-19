@@ -9,14 +9,13 @@
 namespace Spiral\Database;
 
 use Spiral\Core\Container\InjectableInterface;
+use Spiral\Database\Driver\Driver;
+use Spiral\Database\Exception\DriverException;
+use Spiral\Database\Exception\QueryException;
 use Spiral\Database\Query\DeleteQuery;
 use Spiral\Database\Query\InsertQuery;
 use Spiral\Database\Query\SelectQuery;
 use Spiral\Database\Query\UpdateQuery;
-use Spiral\Database\DatabaseInterface;
-use Spiral\Database\DatabaseManager;
-use Spiral\Database\Exception\DriverException;
-use Spiral\Database\Exception\QueryException;
 
 /**
  * Database class is high level abstraction at top of Driver. Databases usually linked to real

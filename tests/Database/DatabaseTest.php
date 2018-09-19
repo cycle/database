@@ -11,7 +11,7 @@ namespace Spiral\tests\Cases\Database;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Spiral\Database\Database;
-use Spiral\Database\Driver;
+use Spiral\Database\Driver\Driver;
 use Spiral\Database\QueryStatement;
 use Spiral\Database\Table;
 
