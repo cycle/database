@@ -8,9 +8,6 @@
 
 namespace Spiral\Database\Driver;
 
-use Psr\Container\ContainerInterface;
-use Spiral\Core\Container;
-use Spiral\Core\FactoryInterface;
 use Spiral\Database\Exception\ConnectionException;
 use Spiral\Database\Query\DeleteQuery;
 use Spiral\Database\Query\InsertQuery;
@@ -49,29 +46,6 @@ abstract class Driver extends PDODriver
     private $transactionLevel = 0;
 
     /**
-     * Defines IoC scope for all driver specific builders.
-     *
-     * @var ContainerInterface
-     */
-    protected $container = null;
-
-    /**
-     * @param string             $name
-     * @param array              $options
-     * @param ContainerInterface $container Required to build instances of query builders and
-     *                                      compilers. Also provides support for scope specific
-     *                                      functionality like magic paginators and logs (yes, you
-     *                                      can store LogsInterface in this container).
-     */
-    public function __construct(string $name, array $options, ContainerInterface $container = null)
-    {
-        parent::__construct($name, $options);
-
-        //Factory with default fallback
-        $this->container = $container ?? new Container();
-    }
-
-    /**
      * Check if table exists.
      *
      * @param string $name
@@ -106,10 +80,9 @@ abstract class Driver extends PDODriver
      */
     public function tableSchema(string $table, string $prefix = ''): AbstractTable
     {
-        return $this->getFactory()->make(
-            static::TABLE_SCHEMA_CLASS,
-            ['driver' => $this, 'name' => $table, 'prefix' => $prefix]
-        );
+        $schema = static::TABLE_SCHEMA_CLASS;
+
+        return new $schema($this, $table, $prefix);
     }
 
     /**
@@ -122,10 +95,9 @@ abstract class Driver extends PDODriver
      */
     public function queryCompiler(string $prefix = ''): Compiler
     {
-        return $this->getFactory()->make(
-            static::QUERY_COMPILER,
-            ['driver' => $this, 'quoter' => new Quoter($this, $prefix)]
-        );
+        $compiler = static::QUERY_COMPILER;
+
+        return new $compiler(new Quoter($this, $prefix));
     }
 
     /**
@@ -139,9 +111,10 @@ abstract class Driver extends PDODriver
      */
     public function insertBuilder(string $prefix, array $parameters = []): InsertQuery
     {
-        return $this->getFactory()->make(
-            InsertQuery::class,
-            ['driver' => $this, 'compiler' => $this->queryCompiler($prefix)] + $parameters
+        return new InsertQuery(
+            $this,
+            $this->queryCompiler($prefix),
+            $parameters['table'] ?? ''
         );
     }
 
@@ -156,9 +129,10 @@ abstract class Driver extends PDODriver
      */
     public function selectBuilder(string $prefix, array $parameters = []): SelectQuery
     {
-        return $this->getFactory()->make(
-            SelectQuery::class,
-            ['driver' => $this, 'compiler' => $this->queryCompiler($prefix)] + $parameters
+        return new SelectQuery($this,
+            $this->queryCompiler($prefix),
+            $parameters['from'] ?? [],
+            $parameters['columns'] ?? []
         );
     }
 
@@ -173,9 +147,11 @@ abstract class Driver extends PDODriver
      */
     public function deleteBuilder(string $prefix, array $parameters = []): DeleteQuery
     {
-        return $this->getFactory()->make(
-            DeleteQuery::class,
-            ['driver' => $this, 'compiler' => $this->queryCompiler($prefix)] + $parameters
+        return new DeleteQuery(
+            $this,
+            $this->queryCompiler($prefix),
+            $parameters['table'] ?? '',
+            $parameters['where'] ?? []
         );
     }
 
@@ -190,9 +166,12 @@ abstract class Driver extends PDODriver
      */
     public function updateBuilder(string $prefix, array $parameters = []): UpdateQuery
     {
-        return $this->getFactory()->make(
-            UpdateQuery::class,
-            ['driver' => $this, 'compiler' => $this->queryCompiler($prefix)] + $parameters
+        return new UpdateQuery(
+            $this,
+            $this->queryCompiler($prefix),
+            $parameters['table'] ?? '',
+            $parameters['where'] ?? [],
+            $parameters['values'] ?? []
         );
     }
 
@@ -293,20 +272,6 @@ abstract class Driver extends PDODriver
         $this->savepointRollback($this->transactionLevel + 1);
 
         return true;
-    }
-
-    /**
-     * Get driver specific factory.
-     *
-     * @return FactoryInterface
-     */
-    protected function getFactory(): FactoryInterface
-    {
-        if ($this->container instanceof FactoryInterface) {
-            return $this->container;
-        }
-
-        return $this->container->get(FactoryInterface::class);
     }
 
     /**
