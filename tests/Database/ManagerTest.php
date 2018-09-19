@@ -6,7 +6,7 @@
  */
 namespace Spiral\tests\Cases\Database;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Spiral\Core\FactoryInterface;

@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Driver\SQLServer;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use PDO;
 use Psr\Log\LoggerInterface;
 use Spiral\Database\DatabaseInterface;
@@ -123,7 +123,7 @@ class SQLServerDriver extends Driver
     protected function savepointCreate(string $name)
     {
         if ($this->isProfiling()) {
-            $this->logger()->info("Transaction: new savepoint 'SVP{$name}'");
+            $this->getLogger()->info("Transaction: new savepoint 'SVP{$name}'");
         }
 
         $this->statement('SAVE TRANSACTION ' . $this->identifier("SVP{$name}"));
@@ -140,7 +140,7 @@ class SQLServerDriver extends Driver
     protected function savepointRelease(string $name)
     {
         if ($this->isProfiling()) {
-            $this->logger()->info("Transaction: release savepoint 'SVP{$name}'");
+            $this->getLogger()->info("Transaction: release savepoint 'SVP{$name}'");
         }
 
         //SQLServer automatically commits nested transactions with parent transaction
@@ -157,7 +157,7 @@ class SQLServerDriver extends Driver
     protected function savepointRollback(string $name)
     {
         if ($this->isProfiling()) {
-            $this->logger()->info("Transaction: rollback savepoint 'SVP{$name}'");
+            $this->getLogger()->info("Transaction: rollback savepoint 'SVP{$name}'");
         }
 
         $this->statement('ROLLBACK TRANSACTION ' . $this->identifier("SVP{$name}"));

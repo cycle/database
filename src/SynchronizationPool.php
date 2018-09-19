@@ -12,7 +12,6 @@ use Psr\Log\LoggerInterface;
 use Spiral\Database\Driver\AbstractHandler as Behaviour;
 use Spiral\Database\Driver\Driver;
 use Spiral\Database\Schema\AbstractTable;
-use Spiral\Support\DFSSorter;
 
 /**
  * Saves multiple linked tables at once but treating their cross dependency.
@@ -21,6 +20,24 @@ use Spiral\Support\DFSSorter;
  */
 class SynchronizationPool
 {
+    const STATE_NEW    = 1;
+    const STATE_PASSED = 2;
+
+    /** @var array string[] */
+    private $keys = [];
+
+    /** @var array */
+    private $states = [];
+
+    /** @var array mixed[] */
+    private $stack = [];
+
+    /** @var array mixed[] */
+    private $objects = [];
+
+    /** @var array mixed[] */
+    private $dependencies = [];
+
     /**
      * @var AbstractTable[]
      */
@@ -59,12 +76,11 @@ class SynchronizationPool
         /*
          * Tables has to be sorted using topological graph to execute operations in a valid order.
          */
-        $sorter = new DFSSorter();
         foreach ($this->tables as $table) {
-            $sorter->addItem($table->getName(), $table, $table->getDependencies());
+            $this->addItem($table->getName(), $table, $table->getDependencies());
         }
 
-        return $sorter->sort();
+        return $this->sort();
     }
 
     /**
@@ -80,7 +96,10 @@ class SynchronizationPool
         $hasChanges = false;
         foreach ($this->tables as $table) {
             //todo: test drop
-            if ($table->getComparator()->hasChanges() || $table->getStatus() == AbstractTable::STATUS_DECLARED_DROPPED) {
+            if (
+                $table->getComparator()->hasChanges()
+                || $table->getStatus() == AbstractTable::STATUS_DECLARED_DROPPED
+            ) {
                 $hasChanges = true;
                 break;
             }
@@ -206,5 +225,58 @@ class SynchronizationPool
                 $this->drivers[] = $table->getDriver();
             }
         }
+    }
+
+    /**
+     * @param string $key          Item key, has to be used as reference in dependencies.
+     * @param mixed  $item
+     * @param array  $dependencies Must include keys object depends on.
+     * @return self
+     */
+    private function addItem(string $key, $item, array $dependencies)
+    {
+        $this->keys[] = $key;
+        $this->objects[$key] = $item;
+        $this->dependencies[$key] = $dependencies;
+
+        return $this;
+    }
+
+    /**
+     * Return sorted stack.
+     *
+     * @return array
+     */
+    private function sort(): array
+    {
+        $items = array_values($this->keys);
+        $this->states = $this->stack = [];
+
+        foreach ($items as $item) {
+            $this->dfs($item, $this->dependencies[$item]);
+        }
+
+        return $this->stack;
+    }
+
+    /**
+     * @param string $key
+     * @param array  $dependencies
+     */
+    private function dfs(string $key, array $dependencies)
+    {
+        if (isset($this->states[$key])) {
+            return;
+        }
+
+        $this->states[$key] = self::STATE_NEW;
+        foreach ($dependencies as $dependency) {
+            $this->dfs($dependency, $this->dependencies[$dependency]);
+        }
+
+        $this->stack[] = $this->objects[$key];
+        $this->states[$key] = self::STATE_PASSED;
+
+        return;
     }
 }

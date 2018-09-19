@@ -44,10 +44,11 @@ class PostgresHandler extends AbstractHandler
         }
 
         //Postgres columns should be altered using set of operations
-        $query = \Spiral\interpolate('ALTER TABLE {table} {operations}', [
-            'table'      => $this->identify($table),
-            'operations' => trim(implode(', ', $operations), ', '),
-        ]);
+        $query = sprintf(
+            'ALTER TABLE %s %s',
+            $this->identify($table),
+            trim(implode(', ', $operations), ', ')
+        );
 
         $this->run($query);
     }
@@ -62,11 +63,12 @@ class PostgresHandler extends AbstractHandler
         AbstractColumn $initial,
         AbstractColumn $column
     ) {
-        $statement = \Spiral\interpolate('ALTER TABLE {table} RENAME COLUMN {column} TO {name}', [
-            'table'  => $this->identify($table),
-            'column' => $this->identify($initial),
-            'name'   => $this->identify($column)
-        ]);
+        $statement = sprintf(
+            'ALTER TABLE %s RENAME COLUMN %s TO %s',
+            $this->identify($table),
+            $this->identify($initial),
+            $this->identify($column)
+        );
 
         $this->run($statement);
     }

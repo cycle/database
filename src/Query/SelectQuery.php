@@ -8,13 +8,13 @@
 
 namespace Spiral\Database\Query;
 
-use Spiral\Database\Driver\Driver;
 use Spiral\Database\Driver\Compiler;
-use Spiral\Database\QueryStatement;
+use Spiral\Database\Driver\Driver;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Exception\QueryException;
 use Spiral\Database\Injection\FragmentInterface;
-use Spiral\Debug\Traits\LoggerTrait;
+use Spiral\Database\QueryStatement;
+use Spiral\Logger\Traits\LoggerTrait;
 
 /**
  * SelectQuery extends AbstractSelect with ability to specify selection tables and perform UNION
@@ -329,7 +329,7 @@ class SelectQuery extends AbstractSelect implements \JsonSerializable, \Countabl
         }
 
         if ((!empty($this->getLimit()) || !empty($this->getOffset())) && empty($this->ordering)) {
-            $this->logger()->warning(
+            $this->getLogger()->warning(
                 "Usage of LIMIT/OFFSET without proper ORDER BY statement is ambiguous"
             );
         }

@@ -8,7 +8,7 @@
 
 namespace Spiral\Database\Driver;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Spiral\Core\Container;
 use Spiral\Core\FactoryInterface;
@@ -228,7 +228,7 @@ abstract class Driver extends PDODriver
             }
 
             if ($this->isProfiling()) {
-                $this->logger()->info('Begin transaction');
+                $this->getLogger()->info('Begin transaction');
             }
 
             try {
@@ -256,7 +256,7 @@ abstract class Driver extends PDODriver
 
         if ($this->transactionLevel == 0) {
             if ($this->isProfiling()) {
-                $this->logger()->info('Commit transaction');
+                $this->getLogger()->info('Commit transaction');
             }
             try {
                 return $this->getPDO()->commit();
@@ -283,7 +283,7 @@ abstract class Driver extends PDODriver
 
         if ($this->transactionLevel == 0) {
             if ($this->isProfiling()) {
-                $this->logger()->info('Rollback transaction');
+                $this->getLogger()->info('Rollback transaction');
             }
             try {
                 return $this->getPDO()->rollBack();
@@ -322,7 +322,7 @@ abstract class Driver extends PDODriver
     protected function isolationLevel(string $level)
     {
         if ($this->isProfiling()) {
-            $this->logger()->info("Set transaction isolation level to '{$level}'");
+            $this->getLogger()->info("Set transaction isolation level to '{$level}'");
         }
 
         if (!empty($level)) {
@@ -341,7 +341,7 @@ abstract class Driver extends PDODriver
     protected function savepointCreate(string $name)
     {
         if ($this->isProfiling()) {
-            $this->logger()->info("Transaction: new savepoint 'SVP{$name}'");
+            $this->getLogger()->info("Transaction: new savepoint 'SVP{$name}'");
         }
 
         $this->statement('SAVEPOINT ' . $this->identifier("SVP{$name}"));
@@ -358,7 +358,7 @@ abstract class Driver extends PDODriver
     protected function savepointRelease(string $name)
     {
         if ($this->isProfiling()) {
-            $this->logger()->info("Transaction: release savepoint 'SVP{$name}'");
+            $this->getLogger()->info("Transaction: release savepoint 'SVP{$name}'");
         }
 
         $this->statement('RELEASE SAVEPOINT ' . $this->identifier("SVP{$name}"));
@@ -375,7 +375,7 @@ abstract class Driver extends PDODriver
     protected function savepointRollback(string $name)
     {
         if ($this->isProfiling()) {
-            $this->logger()->info("Transaction: rollback savepoint 'SVP{$name}'");
+            $this->getLogger()->info("Transaction: rollback savepoint 'SVP{$name}'");
         }
 
         $this->statement('ROLLBACK TO SAVEPOINT ' . $this->identifier("SVP{$name}"));

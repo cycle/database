@@ -10,8 +10,6 @@ namespace Spiral\Database\Driver;
 
 use PDO;
 use Psr\Log\LoggerAwareInterface;
-use Spiral\Core\Component;
-use Spiral\Core\Exceptions\ScopeException;
 use Spiral\Database\Exception\ConnectionException;
 use Spiral\Database\Exception\DriverException;
 use Spiral\Database\Exception\QueryException;
@@ -19,16 +17,15 @@ use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
 use Spiral\Database\Query\QueryInterpolator;
 use Spiral\Database\QueryStatement;
-use Spiral\Debug\Traits\BenchmarkTrait;
-use Spiral\Debug\Traits\LoggerTrait;
+use Spiral\Logger\Traits\LoggerTrait;
 
 /**
  * Basic implementation of DBAL Driver, basically decorates PDO. Extends component to provide access
  *  to functionality like shared loggers and benchmarking.
  */
-abstract class PDODriver extends Component implements LoggerAwareInterface
+abstract class PDODriver implements LoggerAwareInterface
 {
-    use LoggerTrait, BenchmarkTrait;
+    use LoggerTrait;
 
     /**
      * One of DatabaseInterface types, must be set on implementation.
@@ -87,8 +84,6 @@ abstract class PDODriver extends Component implements LoggerAwareInterface
     /**
      * @param string $name
      * @param array  $options
-     *
-     * @throws ScopeException
      */
     public function __construct(string $name, array $options)
     {
@@ -188,14 +183,7 @@ abstract class PDODriver extends Component implements LoggerAwareInterface
             return $this->pdo;
         }
 
-        $benchmark = $this->benchmark('connect', $this->options['connection']);
-        try {
-            $this->pdo = $this->createPDO();
-        } finally {
-            $this->benchmark($benchmark);
-        }
-
-        return $this->pdo;
+        return $this->pdo = $this->createPDO();
     }
 
     /**
@@ -359,7 +347,6 @@ abstract class PDODriver extends Component implements LoggerAwareInterface
 
             if ($this->isProfiling()) {
                 $queryString = QueryInterpolator::interpolate($query, $parameters);
-                $benchmark = $this->benchmark($this->name, $queryString);
             }
 
             //PDOStatement instance (prepared)
@@ -368,18 +355,12 @@ abstract class PDODriver extends Component implements LoggerAwareInterface
             //Mounting all input parameters
             $pdoStatement = $this->bindParameters($pdoStatement, $parameters);
 
-            try {
-                $pdoStatement->execute();
-            } finally {
-                if (!empty($benchmark)) {
-                    $this->benchmark($benchmark);
-                }
-            }
+            $pdoStatement->execute();
 
             //Only exists if profiling on
             if (!empty($queryString)) {
                 //This is place you can use to handle ALL sql messages passed thought the driver
-                $this->logger()->info($queryString, compact('query', 'parameters'));
+                $this->getLogger()->info($queryString, compact('query', 'parameters'));
             }
         } catch (\PDOException $e) {
             if (empty($queryString)) {
@@ -387,10 +368,10 @@ abstract class PDODriver extends Component implements LoggerAwareInterface
             }
 
             //Logging error even when no profiling is enabled
-            $this->logger()->error($queryString, compact('query', 'parameters'));
+            $this->getLogger()->error($queryString, compact('query', 'parameters'));
 
             //Logging error even when no profiling is enabled
-            $this->logger()->alert($e->getMessage());
+            $this->getLogger()->alert($e->getMessage());
 
             //Converting exception into query or integrity exception
             throw $this->clarifyException($e, $queryString);
@@ -431,7 +412,7 @@ abstract class PDODriver extends Component implements LoggerAwareInterface
         $result = $sequence ? (int)$pdo->lastInsertId($sequence) : (int)$pdo->lastInsertId();
 
         if ($this->isProfiling()) {
-            $this->logger()->debug("Given insert ID: {$result}");
+            $this->getLogger()->debug("Given insert ID: {$result}");
         }
 
         return $result;

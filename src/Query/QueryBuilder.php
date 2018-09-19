@@ -8,8 +8,7 @@
 
 namespace Spiral\Database\Query;
 
-use Interop\Container\ContainerInterface;
-use Spiral\Core\Component;
+use Psr\Container\ContainerInterface;
 use Spiral\Database\Driver\Compiler;
 use Spiral\Database\Driver\Driver;
 use Spiral\Database\Exception\BuilderException;
@@ -20,7 +19,7 @@ use Spiral\Database\Injection\ParameterInterface;
  * QueryBuilder classes generate set of control tokens for query compilers, this is query level
  * abstraction.
  */
-abstract class QueryBuilder extends Component implements ExpressionInterface
+abstract class QueryBuilder implements ExpressionInterface
 {
     /**
      * @var Driver

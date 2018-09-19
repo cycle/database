@@ -8,13 +8,12 @@
 
 namespace Spiral\Database;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Spiral\Core\Container;
 use Spiral\Core\Container\InjectorInterface;
 use Spiral\Core\Container\SingletonInterface;
 use Spiral\Core\FactoryInterface;
 use Spiral\Database\Config\DatabasesConfig;
-use Spiral\Database\Database;
 use Spiral\Database\Driver\Driver;
 use Spiral\Database\Exception\DatabaseException;
 use Spiral\Database\Exception\DBALException;

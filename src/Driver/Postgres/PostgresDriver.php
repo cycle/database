@@ -8,7 +8,7 @@
 
 namespace Spiral\Database\Driver\Postgres;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Spiral\Core\MemoryInterface;
 use Spiral\Database\DatabaseInterface;

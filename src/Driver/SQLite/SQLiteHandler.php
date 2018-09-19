@@ -209,13 +209,12 @@ class SQLiteHandler extends AbstractHandler
         $sourceColumns = array_map([$this, 'identify'], $sourceColumns);
         $targetColumns = array_map([$this, 'identify'], $targetColumns);
 
-        $query = \Spiral\interpolate('INSERT INTO {to} ({target}) SELECT {columns} FROM {source}',
-            [
-                'source'  => $this->identify($source),
-                'to'      => $this->identify($to),
-                'columns' => implode(', ', $sourceColumns),
-                'target'  => implode(', ', $targetColumns),
-            ]
+        $query = sprintf(
+            'INSERT INTO %s (%s) SELECT %s FROM %s',
+            $this->identify($to),
+            implode(', ', $targetColumns),
+            implode(', ', $sourceColumns),
+            $this->identify($source)
         );
 
         $this->run($query);
