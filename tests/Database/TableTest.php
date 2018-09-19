@@ -20,7 +20,7 @@ abstract class TableTest extends BaseTest
 
     public function setUp()
     {
-        $this->database = $this->database();
+        $this->database = $this->db();
 
         $schema = $this->database->table('table')->getSchema();
         $schema->primary('id');
@@ -36,7 +36,7 @@ abstract class TableTest extends BaseTest
 
     public function tearDown()
     {
-        $this->dropAll($this->database());
+        $this->dropDatabase($this->db());
     }
 
     public function testGetSchema()

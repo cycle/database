@@ -19,14 +19,14 @@ abstract class BuildersAccessTest extends BaseTest
 {
     public function testDriverAccess()
     {
-        $this->assertInstanceOf(Driver::class, $this->database()->getDriver());
+        $this->assertInstanceOf(Driver::class, $this->db()->getDriver());
     }
 
     public function testTableAccess()
     {
         $this->assertInstanceOf(
             Table::class,
-            $this->database()->table('sample')
+            $this->db()->table('sample')
         );
     }
 
@@ -34,15 +34,15 @@ abstract class BuildersAccessTest extends BaseTest
     {
         $this->assertInstanceOf(
             AbstractTable::class,
-            $this->database()->table('sample')->getSchema()
+            $this->db()->table('sample')->getSchema()
         );
     }
 
     public function testTableDatabaseAccess()
     {
         $this->assertEquals(
-            $this->database(),
-            $this->database()->table('sample')->getDatabase()
+            $this->db(),
+            $this->db()->table('sample')->getDatabase()
         );
     }
 
@@ -50,7 +50,7 @@ abstract class BuildersAccessTest extends BaseTest
     {
         $this->assertInstanceOf(
             QueryCompiler::class,
-            $this->database()->getDriver()->queryCompiler('')
+            $this->db()->getDriver()->queryCompiler('')
         );
     }
 
@@ -58,43 +58,43 @@ abstract class BuildersAccessTest extends BaseTest
 
     public function testSelectQueryAccess()
     {
-        $this->assertInstanceOf(SelectQuery::class, $this->database()->select());
+        $this->assertInstanceOf(SelectQuery::class, $this->db()->select());
     }
 
     public function testInsertQueryAccess()
     {
-        $this->assertInstanceOf(InsertQuery::class, $this->database()->insert());
+        $this->assertInstanceOf(InsertQuery::class, $this->db()->insert());
     }
 
     public function testUpdateQueryAccess()
     {
-        $this->assertInstanceOf(UpdateQuery::class, $this->database()->update());
+        $this->assertInstanceOf(UpdateQuery::class, $this->db()->update());
     }
 
     public function testDeleteQueryAccess()
     {
-        $this->assertInstanceOf(DeleteQuery::class, $this->database()->delete());
+        $this->assertInstanceOf(DeleteQuery::class, $this->db()->delete());
     }
 
     //via table
 
     public function testSelectQueryAccessThoughtTable()
     {
-        $this->assertInstanceOf(SelectQuery::class, $this->database()->table('sample')->select());
+        $this->assertInstanceOf(SelectQuery::class, $this->db()->table('sample')->select());
     }
 
     public function testSelectQueryAccessThoughtTableIterator()
     {
-        $this->assertInstanceOf(SelectQuery::class, $this->database()->table('sample')->getIterator());
+        $this->assertInstanceOf(SelectQuery::class, $this->db()->table('sample')->getIterator());
     }
 
     public function testUpdateQueryAccessThoughtTable()
     {
-        $this->assertInstanceOf(UpdateQuery::class, $this->database()->table('sample')->update());
+        $this->assertInstanceOf(UpdateQuery::class, $this->db()->table('sample')->update());
     }
 
     public function testDeleteQueryAccessThoughtTable()
     {
-        $this->assertInstanceOf(DeleteQuery::class, $this->database()->table('sample')->delete());
+        $this->assertInstanceOf(DeleteQuery::class, $this->db()->table('sample')->delete());
     }
 }

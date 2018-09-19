@@ -23,7 +23,7 @@ abstract class QueryResultTest extends BaseQueryTest
 
     public function setUp()
     {
-        $this->database = $this->database();
+        $this->database = $this->db();
 
         $schema = $this->database->table('sample_table')->getSchema();
         $schema->primary('id');
@@ -51,7 +51,7 @@ abstract class QueryResultTest extends BaseQueryTest
 
     public function tearDown()
     {
-        $this->dropAll($this->database);
+        $this->dropDatabase($this->database);
     }
 
     public function testInstance()

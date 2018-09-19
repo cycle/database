@@ -7,19 +7,26 @@
 
 namespace Spiral\Database\Tests;
 
-use Interop\Container\ContainerInterface;
 use PHPUnit\Framework\TestCase;
-use Spiral\Database\Driver\AbstractHandler;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerTrait;
+use Psr\Log\LogLevel;
+use Spiral\Core\Container;
 use Spiral\Database\Database;
+use Spiral\Database\Driver\AbstractHandler;
 use Spiral\Database\Driver\Driver;
 use Spiral\Database\Schema\AbstractTable;
 use Spiral\Database\Schema\StateComparator;
 
 abstract class BaseTest extends TestCase
 {
-    static private $driversCache = [];
+    public static $config;
 
-    const PROFILING = ENABLE_PROFILING;
+    private static $driverCache = [];
+    private static $pdo;
+
+    /** @var Driver */
+    private $driver;
 
     /**
      * @param string $name
@@ -27,12 +34,12 @@ abstract class BaseTest extends TestCase
      *
      * @return Database|null When non empty null will be given, for safety, for science.
      */
-    protected function database(string $name = 'default', string $prefix = '')
+    protected function db(string $name = 'default', string $prefix = '')
     {
-        if (isset(self::$driversCache[$this->driverID()])) {
-            $driver = self::$driversCache[$this->driverID()];
+        if (isset(static::$driverCache[$this->driverID()])) {
+            $driver = static::$driverCache[$this->driverID()];
         } else {
-            self::$driversCache[$this->driverID()] = $driver = $this->getDriver();
+            static::$driverCache[$this->driverID()] = $driver = $this->getDriver();
         }
 
         return new Database($driver, $name, $prefix);
@@ -41,14 +48,44 @@ abstract class BaseTest extends TestCase
     /**
      * @return Driver
      */
-    abstract protected function getDriver(ContainerInterface $container = null): Driver;
+    public function getDriver(): Driver
+    {
+        $config = self::$config[$this->driverID()];
+        if (!isset($this->driver)) {
+            $class = $config['driver'];
 
-    /**
-     * @return string
-     */
-    abstract protected function driverID(): string;
+            $this->driver = new $class(
+                'mysql',
+                [
+                    'connection' => $config['conn'],
+                    'username'   => $config['user'],
+                    'password'   => $config['pass'],
+                    'options'    => []
+                ],
+                new Container()
+            );
+        }
 
-    protected function dropAll(Database $database = null)
+        if (empty(static::$pdo)) {
+            static::$pdo = $this->driver->getPDO();
+        } else {
+            $this->driver = $this->driver->withPDO(self::$pdo);
+        }
+
+        if (self::$config['debug']) {
+            $this->driver->setProfiling(true)->setLogger(new TestLogger());
+        }
+
+        return $this->driver;
+    }
+
+    /** @return string */
+    protected function driverID(): string
+    {
+        return static::DRIVER;
+    }
+
+    protected function dropDatabase(Database $database = null)
     {
         if (empty($database)) {
             return;
@@ -119,5 +156,28 @@ abstract class BaseTest extends TestCase
 
 
         return "Table '{$table}' not synced, no idea why, add more messages :P";
+    }
+}
+
+
+class TestLogger implements LoggerInterface
+{
+    use LoggerTrait;
+
+    public function log($level, $message, array $context = [])
+    {
+        if ($level == LogLevel::ERROR) {
+            echo " \n! \033[31m" . $message . "\033[0m";
+        } elseif ($level == LogLevel::ALERT) {
+            echo " \n! \033[35m" . $message . "\033[0m";
+        } elseif (strpos($message, 'SHOW') === 0) {
+            echo " \n> \033[34m" . $message . "\033[0m";
+        } else {
+            if (strpos($message, 'SELECT') === 0) {
+                echo " \n> \033[32m" . $message . "\033[0m";
+            } else {
+                echo " \n> \033[33m" . $message . "\033[0m";
+            }
+        }
     }
 }

@@ -4,9 +4,10 @@
  *
  * @author Wolfy-J
  */
+
 namespace Spiral\Database\Tests\Postgres;
 
 class SynchronizationPoolTest extends \Spiral\Database\Tests\SynchronizationPoolTest
 {
-    use DriverTrait;
+    const DRIVER = 'postgres';
 }

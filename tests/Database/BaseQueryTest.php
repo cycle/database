@@ -21,7 +21,7 @@ abstract class BaseQueryTest extends BaseTest
         //Preparing query
         $query = str_replace(
             ['{', '}'],
-            explode('.', $this->database()->getDriver()->identifier('.')),
+            explode('.', $this->db()->getDriver()->identifier('.')),
             $query
         );
 

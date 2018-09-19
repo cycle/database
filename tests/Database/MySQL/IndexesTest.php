@@ -4,9 +4,10 @@
  *
  * @author Wolfy-J
  */
+
 namespace Spiral\Database\Tests\MySQL;
 
 class IndexesTest extends \Spiral\Database\Tests\IndexesTest
 {
-    use DriverTrait;
+    const DRIVER = 'mysql';
 }

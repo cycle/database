@@ -4,9 +4,10 @@
  *
  * @author Wolfy-J
  */
+
 namespace Spiral\Database\Tests\MySQL;
 
 class SchemaConsistencyTest extends \Spiral\Database\Tests\SchemaConsistencyTest
 {
-    use DriverTrait;
+    const DRIVER = 'mysql';
 }

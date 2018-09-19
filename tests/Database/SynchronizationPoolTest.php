@@ -13,12 +13,12 @@ abstract class SynchronizationPoolTest extends BaseTest
 {
     public function tearDown()
     {
-        $this->dropAll($this->database());
+        $this->dropDatabase($this->db());
     }
 
     public function schema(string $table, string $prefix = ''): AbstractTable
     {
-        return $this->database('default', $prefix)->table($table)->getSchema();
+        return $this->db('default', $prefix)->table($table)->getSchema();
     }
 
     public function testCreateNotLinkedTables()

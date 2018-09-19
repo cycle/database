@@ -4,13 +4,14 @@
  *
  * @author Wolfy-J
  */
+
 namespace Spiral\Database\Tests\SQLServer;
 
 use Spiral\Database\Driver\SQLServer\SQLServerCompiler;
 
 class QueryResultTest extends \Spiral\Database\Tests\QueryResultTest
 {
-    use DriverTrait;
+    const DRIVER = 'sqlserver';
 
     //ROW NUMBER COLUMN! FALLBACK
     public function testCountColumns()

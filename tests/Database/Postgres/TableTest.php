@@ -4,11 +4,12 @@
  *
  * @author Wolfy-J
  */
+
 namespace Spiral\Database\Tests\Postgres;
 
 class TableTest extends \Spiral\Database\Tests\TableTest
 {
-    use DriverTrait;
+    const DRIVER = 'postgres';
 
     //Applause, PG
     public function testGetColumns()

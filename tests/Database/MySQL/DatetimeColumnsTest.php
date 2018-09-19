@@ -4,6 +4,7 @@
  *
  * @author Wolfy-J
  */
+
 namespace Spiral\Database\Tests\MySQL;
 
 /**
@@ -11,7 +12,7 @@ namespace Spiral\Database\Tests\MySQL;
  */
 class DatetimeColumnsTest extends \Spiral\Database\Tests\DatetimeColumnsTest
 {
-    use DriverTrait;
+    const DRIVER = 'mysql';
 
     public function setUp()
     {

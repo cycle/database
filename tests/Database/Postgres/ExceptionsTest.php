@@ -4,9 +4,10 @@
  *
  * @author Wolfy-J
  */
+
 namespace Spiral\Database\Tests\Postgres;
 
 class ExceptionsTest extends \Spiral\Database\Tests\ExceptionsTest
 {
-    use DriverTrait;
+    const DRIVER = 'postgres';
 }

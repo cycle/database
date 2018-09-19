@@ -4,9 +4,10 @@
  *
  * @author Wolfy-J
  */
+
 namespace Spiral\Database\Tests\SQLite;
 
 class DefaultValuesTest extends \Spiral\Database\Tests\DefaultValuesTest
 {
-    use DriverTrait;
+    const DRIVER = 'sqlite';
 }

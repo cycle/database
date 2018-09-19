@@ -13,12 +13,12 @@ abstract class IsolationTest extends BaseTest
 {
     public function tearDown()
     {
-        $this->dropAll($this->database());
+        $this->dropDatabase($this->db());
     }
 
     public function schema(string $prefix, string $table): AbstractTable
     {
-        return $this->database('default', $prefix)->table($table)->getSchema();
+        return $this->db('default', $prefix)->table($table)->getSchema();
     }
 
     public function testGetPrefix()

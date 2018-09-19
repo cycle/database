@@ -4,11 +4,12 @@
  *
  * @author Wolfy-J
  */
+
 namespace Spiral\Database\Tests\SQLite;
 
 class SelectQueryTest extends \Spiral\Database\Tests\SelectQueryTest
 {
-    use DriverTrait;
+    const DRIVER = 'sqlite';
 
     public function testOffsetNoLimit()
     {

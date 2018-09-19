@@ -4,13 +4,14 @@
  *
  * @author Wolfy-J
  */
+
 namespace Spiral\Database\Tests\Postgres;
 
 use Spiral\Database\Injection\FragmentInterface;
 
 class SchemaConsistencyTest extends \Spiral\Database\Tests\SchemaConsistencyTest
 {
-    use DriverTrait;
+    const DRIVER = 'postgres';
 
     public function testPrimary()
     {

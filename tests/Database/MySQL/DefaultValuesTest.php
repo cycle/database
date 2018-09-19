@@ -4,11 +4,12 @@
  *
  * @author Wolfy-J
  */
+
 namespace Spiral\Database\Tests\MySQL;
 
 class DefaultValuesTest extends \Spiral\Database\Tests\DefaultValuesTest
 {
-    use DriverTrait;
+    const DRIVER = 'mysql';
 
     /**
      * @expectedException \Spiral\Database\Exception\Driver\MySQLDriverException

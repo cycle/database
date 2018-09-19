@@ -4,22 +4,21 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Database\Tests\MySQL;
+
+namespace Spiral\Database\Tests\MySQL56;
 
 /**
  * MySQL 5.6 and higher
  */
-class DatetimeColumns56Test extends \Spiral\Database\Tests\DatetimeColumnsTest
+class DatetimeColumnsTest extends \Spiral\Database\Tests\DatetimeColumnsTest
 {
-    use DriverTrait;
+    const DRIVER = 'mysql56';
 
     public function setUp()
     {
         parent::setUp();
-        $pdo = $this->database->getDriver()->getPDO();
 
-        $version = $pdo->getAttribute(\PDO::ATTR_SERVER_VERSION);
-
+        $version = $this->database->getDriver()->getPDO()->getAttribute(\PDO::ATTR_SERVER_VERSION);
         if (version_compare('5.6', $version, '>=')) {
             $this->markTestSkipped('TestCase is specific to 5.6+ drivers only');
         }

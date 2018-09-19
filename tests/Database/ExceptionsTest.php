@@ -21,7 +21,7 @@ abstract class ExceptionsTest extends BaseTest
 
     public function setUp()
     {
-        $this->database = $this->database();
+        $this->database = $this->db();
     }
 
     public function testSelectionException()

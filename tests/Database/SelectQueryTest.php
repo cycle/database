@@ -24,7 +24,7 @@ abstract class SelectQueryTest extends BaseQueryTest
 
     public function setUp()
     {
-        $this->database = $this->database();
+        $this->database = $this->db();
     }
 
     public function schema(string $table): AbstractTable
@@ -161,7 +161,7 @@ abstract class SelectQueryTest extends BaseQueryTest
 
     public function testPrefixedSelectWithFullySpecificColumnNameInWhere()
     {
-        $select = $this->database('prefixed', 'prefix_')->select()->distinct()->from(['users'])
+        $select = $this->db('prefixed', 'prefix_')->select()->distinct()->from(['users'])
             ->where('users.balance', 12);
 
         $this->assertSameQuery(
@@ -172,7 +172,7 @@ abstract class SelectQueryTest extends BaseQueryTest
 
     public function testPrefixedSelectWithFullySpecificColumnNameInWhereButAliased()
     {
-        $select = $this->database('prefixed', 'prefix_')->select()->distinct()->from(['users as u'])
+        $select = $this->db('prefixed', 'prefix_')->select()->distinct()->from(['users as u'])
             ->where('u.balance', 12);
 
         $this->assertSameQuery(
@@ -620,7 +620,7 @@ abstract class SelectQueryTest extends BaseQueryTest
 
     public function testMultipleOrderByFullySpecifiedPrefixed()
     {
-        $select = $this->database('prefixed', 'prefix_')->select()
+        $select = $this->db('prefixed', 'prefix_')->select()
             ->from(['users'])
             ->where(['name' => 'Anton'])
             ->orderBy('users.value', SelectQuery::SORT_ASC);
@@ -633,7 +633,7 @@ abstract class SelectQueryTest extends BaseQueryTest
 
     public function testMultipleOrderByFullySpecifiedAliasedAndPrefixed()
     {
-        $select = $this->database('prefixed', 'prefix_')->select()
+        $select = $this->db('prefixed', 'prefix_')->select()
             ->from(['users as u'])
             ->where(['name' => 'Anton'])
             ->orderBy('u.value', SelectQuery::SORT_ASC);
@@ -674,7 +674,7 @@ abstract class SelectQueryTest extends BaseQueryTest
 
     public function testMultipleGroupByFullySpecifiedPrefixed()
     {
-        $select = $this->database('prefixed', 'prefix_')->select()
+        $select = $this->db('prefixed', 'prefix_')->select()
             ->from(['users'])
             ->where(['name' => 'Anton'])
             ->groupBy('users.value');
@@ -687,7 +687,7 @@ abstract class SelectQueryTest extends BaseQueryTest
 
     public function testMultipleGroupByFullySpecifiedAliasedAndPrefixed()
     {
-        $select = $this->database('prefixed', 'prefix_')->select()
+        $select = $this->db('prefixed', 'prefix_')->select()
             ->from(['users as u'])
             ->where(['name' => 'Anton'])
             ->groupBy('u.value');
@@ -776,7 +776,7 @@ abstract class SelectQueryTest extends BaseQueryTest
 
     public function testAllColumnsWithPrefix()
     {
-        $select = $this->database('prefixed', 'prefix_')->select()
+        $select = $this->db('prefixed', 'prefix_')->select()
             ->columns('users.*')
             ->from(['users'])
             ->where(['name' => 'Anton']);
@@ -789,7 +789,7 @@ abstract class SelectQueryTest extends BaseQueryTest
 
     public function testAllColumnsWithPrefixAliased()
     {
-        $select = $this->database('prefixed', 'prefix_')->select()
+        $select = $this->db('prefixed', 'prefix_')->select()
             ->columns('u.*')
             ->from(['users as u'])
             ->where(['name' => 'Anton']);
@@ -828,7 +828,7 @@ abstract class SelectQueryTest extends BaseQueryTest
 
     public function testOneFullySpecifiedColumnWithPrefix()
     {
-        $select = $this->database('prefixed', 'prefix_')->select()
+        $select = $this->db('prefixed', 'prefix_')->select()
             ->columns('users.name')
             ->from(['users'])
             ->where(['name' => 'Anton']);
@@ -841,7 +841,7 @@ abstract class SelectQueryTest extends BaseQueryTest
 
     public function testOneFullySpecifiedColumnWithPrefixButAliased()
     {
-        $select = $this->database('prefixed', 'prefix_')->select()
+        $select = $this->db('prefixed', 'prefix_')->select()
             ->columns('u.name')
             ->from(['users as u'])
             ->where(['name' => 'Anton']);
@@ -854,7 +854,7 @@ abstract class SelectQueryTest extends BaseQueryTest
 
     public function testColumnWithAlias()
     {
-        $select = $this->database('prefixed', 'prefix_')->select()
+        $select = $this->db('prefixed', 'prefix_')->select()
             ->columns('u.name as u_name')
             ->from(['users as u'])
             ->where(['u_name' => 'Anton']);
@@ -965,7 +965,7 @@ abstract class SelectQueryTest extends BaseQueryTest
 
     public function testHavingPrefixedSelectWithFullySpecificColumnNameInHaving()
     {
-        $select = $this->database('prefixed', 'prefix_')->select()->distinct()->from(['users'])
+        $select = $this->db('prefixed', 'prefix_')->select()->distinct()->from(['users'])
             ->having('users.balance', 12);
 
         $this->assertSameQuery(
@@ -976,7 +976,7 @@ abstract class SelectQueryTest extends BaseQueryTest
 
     public function testHavingPrefixedSelectWithFullySpecificColumnNameInHavingButAliased()
     {
-        $select = $this->database('prefixed', 'prefix_')->select()->distinct()->from(['users as u'])
+        $select = $this->db('prefixed', 'prefix_')->select()->distinct()->from(['users as u'])
             ->having('u.balance', 12);
 
         $this->assertSameQuery(
@@ -1442,7 +1442,7 @@ abstract class SelectQueryTest extends BaseQueryTest
 
     public function testColumnNameAndTableAsExpressionPrefixed()
     {
-        $select = $this->database('prefixed', 'prefix_')
+        $select = $this->db('prefixed', 'prefix_')
             ->select(new Expression('users.name'))
             ->from(['users']);
 
@@ -1454,7 +1454,7 @@ abstract class SelectQueryTest extends BaseQueryTest
 
     public function testColumnNameAndTableAsExpressionPrefixedAliased()
     {
-        $select = $this->database('prefixed', 'prefix_')
+        $select = $this->db('prefixed', 'prefix_')
             ->select(new Expression('u.name'))
             ->from(['users as u']);
 
@@ -1488,7 +1488,7 @@ abstract class SelectQueryTest extends BaseQueryTest
 
     public function testWhereValueAndTableAsExpressionPrefixed()
     {
-        $select = $this->database('prefixed', 'prefix_')->select()->from(['users'])
+        $select = $this->db('prefixed', 'prefix_')->select()->from(['users'])
             ->where('balance', '>', new Expression('users.origin_balance'));
 
         $this->assertSameQuery(
@@ -1499,7 +1499,7 @@ abstract class SelectQueryTest extends BaseQueryTest
 
     public function testWhereValueAndTableAsExpressionPrefixedAliased()
     {
-        $select = $this->database('prefixed', 'prefix_')->select()->from(['users as u'])
+        $select = $this->db('prefixed', 'prefix_')->select()->from(['users as u'])
             ->where('balance', '>', new Expression('u.origin_balance'));
 
         $this->assertSameQuery(
@@ -1510,7 +1510,7 @@ abstract class SelectQueryTest extends BaseQueryTest
 
     public function testShortWhereValueAsExpressionPrefixed()
     {
-        $select = $this->database('prefixed', 'prefix_')->select()->from(['users'])
+        $select = $this->db('prefixed', 'prefix_')->select()->from(['users'])
             ->where([
                 'balance' => ['>' => new Expression('users.origin_balance')]
             ]);
@@ -1523,7 +1523,7 @@ abstract class SelectQueryTest extends BaseQueryTest
 
     public function testOrderByExpression()
     {
-        $select = $this->database('prefixed', 'prefix_')->select()->from(['users'])
+        $select = $this->db('prefixed', 'prefix_')->select()->from(['users'])
             ->orderBy(new Expression('users.balance'));
 
         $this->assertSameQuery(
@@ -1546,7 +1546,7 @@ abstract class SelectQueryTest extends BaseQueryTest
 
     public function testGroupByExpressionWithPrefix()
     {
-        $select = $this->database('prefixed', 'prefix_')->select()
+        $select = $this->db('prefixed', 'prefix_')->select()
             ->from(['users'])
             ->groupBy(new Expression('RESOLVE_USER(users.id)'));
 
@@ -1925,7 +1925,7 @@ abstract class SelectQueryTest extends BaseQueryTest
 
     public function testJoinAliasesWithPrefixes()
     {
-        $select = $this->database('prefixed', 'prefix_')->select()
+        $select = $this->db('prefixed', 'prefix_')->select()
             ->from(['users'])
             ->leftJoin('photos as p')
             ->on([
@@ -1942,7 +1942,7 @@ abstract class SelectQueryTest extends BaseQueryTest
 
     public function testJoinAliasesWithPrefixesAlternative()
     {
-        $select = $this->database('prefixed', 'prefix_')->select()
+        $select = $this->db('prefixed', 'prefix_')->select()
             ->from(['users'])
             ->leftJoin('photos', 'p')
             ->on([
@@ -1959,7 +1959,7 @@ abstract class SelectQueryTest extends BaseQueryTest
 
     public function testJoinAliasesWithPrefixesAndAliases()
     {
-        $select = $this->database('prefixed', 'prefix_')->select()
+        $select = $this->db('prefixed', 'prefix_')->select()
             ->from(['users as u'])
             ->leftJoin('photos as p')
             ->on([
@@ -1980,7 +1980,7 @@ abstract class SelectQueryTest extends BaseQueryTest
     {
         $statuses = new Parameter(['active', 'disabled']);
 
-        $select = $this->database('prefixed', 'prefix_')
+        $select = $this->db('prefixed', 'prefix_')
             ->select('COUNT(*)', 'groups.id', 'u.id', 'SUM(t.amount)')
             ->from(['users as u'])
             ->leftJoin('transactions as t')->on(['t.user_id' => 'u.id'])
@@ -2003,10 +2003,10 @@ abstract class SelectQueryTest extends BaseQueryTest
 
     public function testJoinQuery()
     {
-        $select = $this->database('prefixed', 'prefix_')->select()
+        $select = $this->db('prefixed', 'prefix_')->select()
             ->from(['users as u'])
             ->leftJoin(
-                $this->database('prefixed', 'prefix_')
+                $this->db('prefixed', 'prefix_')
                     ->select()->from('posts AS p')
                     ->where('p.user_id', new Expression('u.id')),
                 'sub_posts'

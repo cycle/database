@@ -18,13 +18,13 @@ abstract class SchemaConsistencyTest extends BaseTest
 
     public function setUp()
     {
-        $this->database = $this->database();
-        $this->database = $this->database();
+        $this->database = $this->db();
+        $this->database = $this->db();
     }
 
     public function tearDown()
     {
-        $this->dropAll($this->database());
+        $this->dropDatabase($this->db());
     }
 
     public function schema(string $table): AbstractTable
