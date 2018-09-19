@@ -9,8 +9,8 @@
 namespace Spiral\Database\Driver\SQLite\Schema;
 
 use Spiral\Database\Driver\Driver;
-use Spiral\Database\Schema\AbstractReference;
 use Spiral\Database\ReferenceInterface;
+use Spiral\Database\Schema\AbstractReference;
 
 class SQLiteReference extends AbstractReference
 {
