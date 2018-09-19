@@ -9,8 +9,7 @@
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false"
-         stopOnError="false"
-        >
+         stopOnError="false">
 
     <testsuites>
         <testsuite name="Spiral DBAL">

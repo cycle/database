@@ -17,15 +17,15 @@ install:
   - composer install --no-interaction --prefer-source
 
 script:
-  - vendor/bin/phpunit tests/Database/SQLite/ --coverage-clover=sqlite.xml
-  - vendor/bin/phpunit tests/Database/MySQL/ --coverage-clover=mysql.xml
-  - vendor/bin/phpunit tests/Database/MySQL56/ --coverage-clover=mysql56.xml
+  #- vendor/bin/phpunit tests/Database/SQLite/ --coverage-clover=sqlite.xml
+ # - vendor/bin/phpunit tests/Database/MySQL/ --coverage-clover=mysql.xml
+ # - vendor/bin/phpunit tests/Database/MySQL56/ --coverage-clover=mysql56.xml
   - vendor/bin/phpunit tests/Database/Postgres/ --coverage-clover=postgres.xml
   #- vendor/bin/phpunit tests/Database/SQLServer/ --coverage-clover=sqlserver.xml
 
 after_success:
-  - bash <(curl -s https://codecov.io/bash) -f sqlite.xml
-  - bash <(curl -s https://codecov.io/bash) -f mysql.xml
-  - bash <(curl -s https://codecov.io/bash) -f mysql56.xml
+ # - bash <(curl -s https://codecov.io/bash) -f sqlite.xml
+ # - bash <(curl -s https://codecov.io/bash) -f mysql.xml
+ # - bash <(curl -s https://codecov.io/bash) -f mysql56.xml
   - bash <(curl -s https://codecov.io/bash) -f postgres.xml
   #- bash <(curl -s https://codecov.io/bash) -f sqlserver.xml
