@@ -6,9 +6,9 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database\Builder\Prototype;
+namespace Spiral\Database\Query\Prototype;
 
-use Spiral\Database\Builder\QueryBuilder;
+use Spiral\Database\Query\QueryBuilder;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Injection\ExpressionInterface;
 use Spiral\Database\Injection\FragmentInterface;

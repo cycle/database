@@ -15,8 +15,8 @@
     "spiral/pagination": "~1.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "~5.0",
-    "mockery/mockery": "^0.9.4"
+    "phpunit/phpunit": "~7.0",
+    "mockery/mockery": "^1.1"
   },
   "autoload": {
     "psr-4": {

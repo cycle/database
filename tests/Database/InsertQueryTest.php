@@ -6,7 +6,7 @@
  */
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\Builder\InsertQuery;
+use Spiral\Database\Query\InsertQuery;
 use Spiral\Database\Entity\Database;
 use Spiral\Database\Schema\Prototypes\AbstractTable;
 

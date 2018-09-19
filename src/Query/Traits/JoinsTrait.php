@@ -6,15 +6,15 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database\Builder\Traits;
+namespace Spiral\Database\Query\Traits;
 
-use Spiral\Database\Builder\QueryBuilder;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Injection\Expression;
 use Spiral\Database\Injection\ExpressionInterface;
 use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
+use Spiral\Database\Query\QueryBuilder;
 
 /**
  * Provides ability to generate QueryCompiler JOIN tokens including ON conditions and table/column

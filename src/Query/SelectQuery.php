@@ -6,9 +6,9 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database\Builder;
+namespace Spiral\Database\Query;
 
-use Spiral\Database\Builder\Prototype\AbstractSelect;
+use Spiral\Database\Query\Prototype\AbstractSelect;
 use Spiral\Database\Entity\Driver;
 use Spiral\Database\Entity\QueryCompiler;
 use Spiral\Database\Entity\QueryStatement;

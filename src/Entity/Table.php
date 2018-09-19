@@ -8,10 +8,10 @@
 
 namespace Spiral\Database\Entity;
 
-use Spiral\Database\Builder\DeleteQuery;
-use Spiral\Database\Builder\InsertQuery;
-use Spiral\Database\Builder\SelectQuery;
-use Spiral\Database\Builder\UpdateQuery;
+use Spiral\Database\Query\DeleteQuery;
+use Spiral\Database\Query\InsertQuery;
+use Spiral\Database\Query\SelectQuery;
+use Spiral\Database\Query\UpdateQuery;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Schema\Prototypes\AbstractTable;
 

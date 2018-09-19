@@ -12,10 +12,10 @@ use Interop\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Spiral\Core\Container;
 use Spiral\Core\FactoryInterface;
-use Spiral\Database\Builder\DeleteQuery;
-use Spiral\Database\Builder\InsertQuery;
-use Spiral\Database\Builder\SelectQuery;
-use Spiral\Database\Builder\UpdateQuery;
+use Spiral\Database\Query\DeleteQuery;
+use Spiral\Database\Query\InsertQuery;
+use Spiral\Database\Query\SelectQuery;
+use Spiral\Database\Query\UpdateQuery;
 use Spiral\Database\Exception\ConnectionException;
 use Spiral\Database\Schema\Prototypes\AbstractTable;
 

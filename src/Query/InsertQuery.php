@@ -6,7 +6,7 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database\Builder;
+namespace Spiral\Database\Query;
 
 use Spiral\Database\Entity\Driver;
 use Spiral\Database\Entity\QueryCompiler;

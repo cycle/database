@@ -4,11 +4,13 @@
  *
  * @author Wolfy-J
  */
+
 namespace Spiral\tests\Cases\Database;
 
+use PHPUnit\Framework\TestCase;
 use Spiral\Database\Config\DatabasesConfig;
 
-class ConfigTest extends \PHPUnit_Framework_TestCase
+class ConfigTest extends TestCase
 {
     public function testDefaultDatabase()
     {

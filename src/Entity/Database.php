@@ -9,10 +9,10 @@
 namespace Spiral\Database\Entity;
 
 use Spiral\Core\Container\InjectableInterface;
-use Spiral\Database\Builder\DeleteQuery;
-use Spiral\Database\Builder\InsertQuery;
-use Spiral\Database\Builder\SelectQuery;
-use Spiral\Database\Builder\UpdateQuery;
+use Spiral\Database\Query\DeleteQuery;
+use Spiral\Database\Query\InsertQuery;
+use Spiral\Database\Query\SelectQuery;
+use Spiral\Database\Query\UpdateQuery;
 use Spiral\Database\DatabaseInterface;
 use Spiral\Database\DatabaseManager;
 use Spiral\Database\Exception\DriverException;

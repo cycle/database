@@ -8,12 +8,13 @@
 namespace Spiral\Database\Tests;
 
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 use Spiral\Database\Entity\QueryCompiler;
 use Spiral\Database\Injection\Expression;
 use Spiral\Database\Injection\ExpressionInterface;
 use Spiral\Database\Injection\FragmentInterface;
 
-class ExpressionTest extends \PHPUnit_Framework_TestCase
+class ExpressionTest extends TestCase
 {
     public function testExpression()
     {

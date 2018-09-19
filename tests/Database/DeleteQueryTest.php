@@ -6,7 +6,7 @@
  */
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\Builder\DeleteQuery;
+use Spiral\Database\Query\DeleteQuery;
 use Spiral\Database\Entity\Database;
 use Spiral\Database\Schema\Prototypes\AbstractTable;
 

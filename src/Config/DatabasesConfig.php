@@ -11,16 +11,10 @@ namespace Spiral\Database\Config;
 use Spiral\Core\InjectableConfig;
 use Spiral\Core\Traits\Config\AliasTrait;
 
-/**
- * Databases config.
- */
 class DatabasesConfig extends InjectableConfig
 {
     use AliasTrait;
 
-    /**
-     * Configuration section.
-     */
     const CONFIG = 'databases';
 
     /**

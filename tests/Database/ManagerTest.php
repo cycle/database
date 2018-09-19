@@ -8,13 +8,14 @@ namespace Spiral\tests\Cases\Database;
 
 use Interop\Container\ContainerInterface;
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 use Spiral\Core\FactoryInterface;
 use Spiral\Database\Config\DatabasesConfig;
 use Spiral\Database\DatabaseManager;
 use Spiral\Database\Driver\SQLite\SQLiteDriver;
 use Spiral\Database\Entity\Database;
 
-class ManagerTest extends \PHPUnit_Framework_TestCase
+class ManagerTest extends TestCase
 {
     const DEFAULT_OPTIONS = [
         'connection' => 'sqlite:' . __DIR__ . 'Drivers/SQLite/fixture/runtime.db',

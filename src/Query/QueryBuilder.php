@@ -6,7 +6,7 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database\Builder;
+namespace Spiral\Database\Query;
 
 use Interop\Container\ContainerInterface;
 use Spiral\Core\Component;

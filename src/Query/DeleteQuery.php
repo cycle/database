@@ -6,9 +6,9 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database\Builder;
+namespace Spiral\Database\Query;
 
-use Spiral\Database\Builder\Prototype\AbstractAffect;
+use Spiral\Database\Query\Prototype\AbstractAffect;
 use Spiral\Database\Entity\QueryCompiler;
 
 /**

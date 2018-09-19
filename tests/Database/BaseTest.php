@@ -4,19 +4,18 @@
  *
  * @author Wolfy-J
  */
+
 namespace Spiral\Database\Tests;
 
 use Interop\Container\ContainerInterface;
+use PHPUnit\Framework\TestCase;
 use Spiral\Database\Entity\AbstractHandler;
 use Spiral\Database\Entity\Database;
 use Spiral\Database\Entity\Driver;
 use Spiral\Database\Schema\Prototypes\AbstractTable;
 use Spiral\Database\Schema\StateComparator;
 
-/**
- * ATTENTION, DO NOT CONNECT TO PRODUCTION DATABASE AT ANY COST.
- */
-abstract class BaseTest extends \PHPUnit_Framework_TestCase
+abstract class BaseTest extends TestCase
 {
     static private $driversCache = [];
 

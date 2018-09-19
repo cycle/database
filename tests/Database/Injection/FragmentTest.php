@@ -7,10 +7,11 @@
  */
 namespace Spiral\Database\Tests;
 
+use PHPUnit\Framework\TestCase;
 use Spiral\Database\Injection\Fragment;
 use Spiral\Database\Injection\FragmentInterface;
 
-class FragmentTest extends \PHPUnit_Framework_TestCase
+class FragmentTest extends TestCase
 {
     public function testFragment()
     {

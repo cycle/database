@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\Builder\SelectQuery;
+use Spiral\Database\Query\SelectQuery;
 use Spiral\Database\Entity\Database;
 use Spiral\Database\Injection\Expression;
 use Spiral\Database\Injection\Fragment;

@@ -6,8 +6,8 @@
  */
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\Builder\QueryBuilder;
-use Spiral\Database\Builder\UpdateQuery;
+use Spiral\Database\Query\QueryBuilder;
+use Spiral\Database\Query\UpdateQuery;
 use Spiral\Database\Entity\Database;
 use Spiral\Database\Helper\QueryInterpolator;
 use Spiral\Database\Injection\ParameterInterface;

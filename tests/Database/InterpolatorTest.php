@@ -7,11 +7,12 @@
  */
 namespace Spiral\Database\Tests;
 
+use PHPUnit\Framework\TestCase;
 use Spiral\Database\Helper\QueryInterpolator;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
 
-class InterpolatorTest extends \PHPUnit_Framework_TestCase
+class InterpolatorTest extends TestCase
 {
     public function testFlattening()
     {

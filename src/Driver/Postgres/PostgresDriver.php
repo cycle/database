@@ -11,7 +11,7 @@ namespace Spiral\Database\Driver\Postgres;
 use Interop\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Spiral\Core\MemoryInterface;
-use Spiral\Database\Builder\InsertQuery;
+use Spiral\Database\Query\InsertQuery;
 use Spiral\Database\DatabaseInterface;
 use Spiral\Database\Driver\Postgres\Schema\PostgresTable;
 use Spiral\Database\Entity\AbstractHandler;

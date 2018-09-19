@@ -9,6 +9,7 @@
 namespace Spiral\Database\Tests;
 
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 use Spiral\Database\Driver\MySQL\MySQLDriver;
 use Spiral\Database\Driver\Postgres\PostgresDriver;
 use Spiral\Database\Driver\SQLite\SQLiteDriver;
@@ -16,7 +17,7 @@ use Spiral\Database\Driver\SQLServer\SQLServerDriver;
 use Spiral\Database\Entity\PDODriver;
 use Spiral\Database\Entity\Quoter;
 
-class QuoterTest extends \PHPUnit_Framework_TestCase
+class QuoterTest extends TestCase
 {
     public function testPrefixless()
     {
