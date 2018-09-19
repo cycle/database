@@ -72,7 +72,7 @@ abstract class QueryBuilder implements ExpressionInterface
      */
     public function queryString(): string
     {
-        return QueryInterpolator::interpolate($this->sqlStatement(), $this->getParameters());
+        return Interpolator::interpolate($this->sqlStatement(), $this->getParameters());
     }
 
     /**

@@ -15,7 +15,7 @@ use Spiral\Database\Exception\DriverException;
 use Spiral\Database\Exception\QueryException;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
-use Spiral\Database\Query\QueryInterpolator;
+use Spiral\Database\Query\Interpolator;
 use Spiral\Database\QueryStatement;
 use Spiral\Logger\Traits\LoggerTrait;
 
@@ -346,7 +346,7 @@ abstract class PDODriver implements LoggerAwareInterface
             $parameters = $this->flattenParameters($parameters);
 
             if ($this->isProfiling()) {
-                $queryString = QueryInterpolator::interpolate($query, $parameters);
+                $queryString = Interpolator::interpolate($query, $parameters);
             }
 
             //PDOStatement instance (prepared)
@@ -364,7 +364,7 @@ abstract class PDODriver implements LoggerAwareInterface
             }
         } catch (\PDOException $e) {
             if (empty($queryString)) {
-                $queryString = QueryInterpolator::interpolate($query, $parameters);
+                $queryString = Interpolator::interpolate($query, $parameters);
             }
 
             //Logging error even when no profiling is enabled

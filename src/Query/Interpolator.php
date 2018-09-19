@@ -16,7 +16,7 @@ use Spiral\Database\Injection\ParameterInterface;
  * Simple helper class used to interpolate query with given values. To be used for profiling and
  * debug purposes only, unsafe SQL are generated!
  */
-class QueryInterpolator
+class Interpolator
 {
     /**
      * Helper method used to interpolate SQL query with set of parameters, must be used only for

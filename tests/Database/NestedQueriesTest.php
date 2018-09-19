@@ -8,7 +8,7 @@
 namespace Spiral\Database\Tests;
 
 use Spiral\Database\Database;
-use Spiral\Database\Query\QueryInterpolator;
+use Spiral\Database\Query\Interpolator;
 use Spiral\Database\Injection\Expression;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
@@ -314,7 +314,7 @@ abstract class NestedQueriesTest extends BaseQueryTest
     protected function assertSameParameters(array $parameters, QueryBuilder $builder)
     {
         $builderParameters = [];
-        foreach (QueryInterpolator::flattenParameters($builder->getParameters()) as $value) {
+        foreach (Interpolator::flattenParameters($builder->getParameters()) as $value) {
             $this->assertInstanceOf(ParameterInterface::class, $value);
             $this->assertFalse($value->isArray());
 

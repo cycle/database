@@ -8,7 +8,7 @@
 namespace Spiral\Database\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Spiral\Database\Query\QueryInterpolator;
+use Spiral\Database\Query\Interpolator;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
 
@@ -21,7 +21,7 @@ class InterpolatorTest extends TestCase
             new Parameter([1, 2, 3], \PDO::PARAM_INT)
         ];
 
-        $flattened = QueryInterpolator::flattenParameters($parameters);
+        $flattened = Interpolator::flattenParameters($parameters);
         $this->assertCount(4, $flattened);
 
         $this->assertArrayHasKey(':named', $flattened);
@@ -46,7 +46,7 @@ class InterpolatorTest extends TestCase
             ':balance' => new Parameter(120),
         ];
 
-        $interpolated = QueryInterpolator::interpolate($query, $parameters);
+        $interpolated = Interpolator::interpolate($query, $parameters);
 
         $this->assertSame(
             'SELECT * FROM table WHERE name = \'Anton\' AND id IN(1, 2, 3) AND balance > 120',
@@ -64,7 +64,7 @@ class InterpolatorTest extends TestCase
             new Parameter($date = new \DateTime('now')),
         ];
 
-        $interpolated = QueryInterpolator::interpolate($query, $parameters);
+        $interpolated = Interpolator::interpolate($query, $parameters);
 
         $this->assertSame(
             'SELECT * FROM table WHERE name = \'Anton\' AND id IN(1, 2, 3) AND registered > \'' . $date->format(\DateTime::ISO8601) . '\'',
