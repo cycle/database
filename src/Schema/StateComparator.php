@@ -8,10 +8,6 @@
 
 namespace Spiral\Database\Schema;
 
-use Spiral\Database\Schema\AbstractColumn;
-use Spiral\Database\Schema\AbstractIndex;
-use Spiral\Database\Schema\AbstractReference;
-
 /**
  * Compares two table states.
  */

@@ -8,7 +8,6 @@
 
 namespace Spiral\Database;
 
-use Psr\Log\LoggerInterface;
 use Spiral\Database\Driver\AbstractHandler as Behaviour;
 use Spiral\Database\Driver\Driver;
 use Spiral\Database\Schema\AbstractTable;
@@ -86,12 +85,10 @@ class SynchronizationPool
     /**
      * Synchronize tables.
      *
-     * @param LoggerInterface|null $logger
-     *
      * @throws \Exception
      * @throws \Throwable
      */
-    public function run(LoggerInterface $logger = null)
+    public function run()
     {
         $hasChanges = false;
         foreach ($this->tables as $table) {
@@ -114,14 +111,14 @@ class SynchronizationPool
 
         try {
             //Drop not-needed foreign keys and alter everything else
-            $this->dropForeigns($logger);
+            $this->dropForeigns();
 
             //Drop not-needed indexes
-            $this->dropIndexes($logger);
+            $this->dropIndexes();
 
             //Other changes [NEW TABLES WILL BE CREATED HERE!]
-            foreach ($this->runChanges($logger) as $table) {
-                $table->save(Behaviour::CREATE_FOREIGNS, $logger, true);
+            foreach ($this->runChanges() as $table) {
+                $table->save(Behaviour::CREATE_FOREIGNS, true);
             }
 
         } catch (\Throwable $e) {
@@ -168,46 +165,41 @@ class SynchronizationPool
         }
     }
 
-    /**
-     * @param LoggerInterface|null $logger
-     */
-    protected function dropForeigns(LoggerInterface $logger = null)
+
+    protected function dropForeigns()
     {
         foreach ($this->sortedTables() as $table) {
             if ($table->exists()) {
-                $table->save(Behaviour::DROP_FOREIGNS, $logger, false);
+                $table->save(Behaviour::DROP_FOREIGNS, false);
             }
         }
     }
 
-    /**
-     * @param LoggerInterface|null $logger
-     */
-    protected function dropIndexes(LoggerInterface $logger = null)
+    protected function dropIndexes()
     {
         foreach ($this->sortedTables() as $table) {
             if ($table->exists()) {
-                $table->save(Behaviour::DROP_INDEXES, $logger, false);
+                $table->save(Behaviour::DROP_INDEXES, false);
             }
         }
     }
 
-    /**
-     * @param LoggerInterface|null $logger
-     *
+    /***
      * @return AbstractTable[] Created or updated tables.
      */
-    protected function runChanges(LoggerInterface $logger = null): array
+    protected function runChanges(): array
     {
         $tables = [];
         foreach ($this->sortedTables() as $table) {
             if ($table->getStatus() == AbstractTable::STATUS_DECLARED_DROPPED) {
-                $table->save(Behaviour::DO_DROP, $logger);
+                $table->save(Behaviour::DO_DROP);
             } else {
                 $tables[] = $table;
                 $table->save(
-                    Behaviour::DO_ALL ^ Behaviour::DROP_FOREIGNS ^ Behaviour::DROP_INDEXES ^ Behaviour::CREATE_FOREIGNS,
-                    $logger
+                    Behaviour::DO_ALL
+                    ^ Behaviour::DROP_FOREIGNS
+                    ^ Behaviour::DROP_INDEXES
+                    ^ Behaviour::CREATE_FOREIGNS
                 );
             }
         }

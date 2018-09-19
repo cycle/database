@@ -48,11 +48,6 @@ class SQLiteHandler extends AbstractHandler
             throw new DBALException("Unable to change primary keys for existed table");
         }
 
-        //Now we have to work with temporary table in order to perform every change
-        $this->log('Rebuilding table {table} to apply required modifications.', [
-            'table' => $this->identify($table)
-        ]);
-
         $initial = clone $table;
         $initial->resetState();
 
@@ -194,16 +189,6 @@ class SQLiteHandler extends AbstractHandler
     {
         $sourceColumns = array_keys($mapping);
         $targetColumns = array_values($mapping);
-
-        $this->log(
-            'Copying table data from {source} to {to} using mapping ({columns}) => ({target}).',
-            [
-                'source'  => $this->identify($source),
-                'to'      => $this->identify($to),
-                'columns' => implode(', ', $sourceColumns),
-                'target'  => implode(', ', $targetColumns),
-            ]
-        );
 
         //Preparing mapping
         $sourceColumns = array_map([$this, 'identify'], $sourceColumns);

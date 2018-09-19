@@ -7,8 +7,8 @@
 
 namespace Spiral\Database\Driver\SQLServer;
 
-use Spiral\Database\Driver\SQLServer\Schema\SQLServerColumn;
 use Spiral\Database\Driver\AbstractHandler;
+use Spiral\Database\Driver\SQLServer\Schema\SQLServerColumn;
 use Spiral\Database\Exception\SchemaException;
 use Spiral\Database\Schema\AbstractColumn;
 use Spiral\Database\Schema\AbstractIndex;

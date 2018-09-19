@@ -7,7 +7,6 @@
 
 namespace Spiral\Database\Driver;
 
-use Psr\Log\LoggerInterface;
 use Spiral\Core\Exception\InvalidArgumentException;
 use Spiral\Database\Exception\DBALException;
 use Spiral\Database\Exception\DriverException;
@@ -58,23 +57,16 @@ abstract class AbstractHandler
     const DO_ALL = self::DO_FOREIGNS | self::DO_INDEXES | self::DO_COLUMNS | self::DO_DROP | self::DO_RENAME;
 
     /**
-     * @var LoggerInterface|null
-     */
-    private $logger = null;
-
-    /**
      * @var Driver
      */
     protected $driver;
 
     /**
-     * @param Driver               $driver
-     * @param LoggerInterface|null $logger
+     * @param Driver $driver
      */
-    public function __construct(Driver $driver, LoggerInterface $logger = null)
+    public function __construct(Driver $driver)
     {
         $this->driver = $driver;
-        $this->logger = $logger;
     }
 
     /**
@@ -96,9 +88,6 @@ abstract class AbstractHandler
      */
     public function createTable(AbstractTable $table)
     {
-        $this->log("Creating new table '{table}'.", ['table' => $table->getName()]);
-
-        //Executing!
         $this->run($this->createStatement($table));
 
         //Not all databases support adding index while table creation, so we can do it after
@@ -116,7 +105,6 @@ abstract class AbstractHandler
      */
     public function dropTable(AbstractTable $table)
     {
-        $this->log("Dropping table '{table}'.", ['table' => $table->getName()]);
         $this->run("DROP TABLE {$this->identify($table->getInitialName())}");
     }
 
@@ -135,12 +123,6 @@ abstract class AbstractHandler
         }
 
         if ($comparator->isRenamed() && $behaviour & self::DO_RENAME) {
-            $this->log('Renaming table {table} to {name}.', [
-                'table' => $this->identify($table->getInitialName()),
-                'name'  => $this->identify($table->getName())
-            ]);
-
-            //Executing renaming
             $this->renameTable($table->getInitialName(), $table->getName());
         }
 
@@ -174,7 +156,9 @@ abstract class AbstractHandler
      */
     public function createColumn(AbstractTable $table, AbstractColumn $column)
     {
-        $this->run("ALTER TABLE {$this->identify($table)} ADD COLUMN {$column->sqlStatement($this->driver)}");
+        $this->run(
+            "ALTER TABLE {$this->identify($table)} ADD COLUMN {$column->sqlStatement($this->driver)}"
+        );
     }
 
     /**
@@ -182,8 +166,6 @@ abstract class AbstractHandler
      *
      * @param AbstractTable  $table
      * @param AbstractColumn $column
-     *
-     * @return AbstractHandler
      */
     public function dropColumn(AbstractTable $table, AbstractColumn $column)
     {
@@ -391,19 +373,6 @@ abstract class AbstractHandler
     }
 
     /**
-     * Helper function, saves log message into logger if any attached.
-     *
-     * @param string $message
-     * @param array  $context
-     */
-    protected function log(string $message, array $context = [])
-    {
-        if (!empty($this->logger)) {
-            $this->logger->debug($message, $context);
-        }
-    }
-
-    /**
      * Create element identifier.
      *
      * @param AbstractElement|AbstractTable|string $element
@@ -436,11 +405,6 @@ abstract class AbstractHandler
              */
             list($current, $initial) = $pair;
 
-            $this->log('Altering foreign key [{statement}] to [{new}] in {table}.', [
-                'statement' => $initial->sqlStatement($this->driver),
-                'table'     => $this->identify($table),
-            ]);
-
             $this->alterForeign($table, $initial, $current);
         }
     }
@@ -452,11 +416,6 @@ abstract class AbstractHandler
     protected function createForeigns(AbstractTable $table, StateComparator $comparator)
     {
         foreach ($comparator->addedForeigns() as $foreign) {
-            $this->log('Adding foreign key [{statement}] into table {table}.', [
-                'statement' => $foreign->sqlStatement($this->driver),
-                'table'     => $this->identify($table),
-            ]);
-
             $this->createForeign($table, $foreign);
         }
     }
@@ -474,12 +433,6 @@ abstract class AbstractHandler
              */
             list($current, $initial) = $pair;
 
-            $this->log('Altering index [{statement}] to [{new}] in table {table}.', [
-                'statement' => $initial->sqlStatement($this->driver),
-                'new'       => $current->sqlStatement($this->driver),
-                'table'     => $this->identify($table),
-            ]);
-
             $this->alterIndex($table, $initial, $current);
         }
     }
@@ -491,11 +444,6 @@ abstract class AbstractHandler
     protected function createIndexes(AbstractTable $table, StateComparator $comparator)
     {
         foreach ($comparator->addedIndexes() as $index) {
-            $this->log('Adding index [{statement}] into table {table}.', [
-                'statement' => $index->sqlStatement($this->driver),
-                'table'     => $this->identify($table),
-            ]);
-
             $this->createIndex($table, $index);
         }
     }
@@ -513,12 +461,6 @@ abstract class AbstractHandler
              */
             list($current, $initial) = $pair;
 
-            $this->log('Altering column [{statement}] to [{new}] in table {table}.', [
-                'statement' => $initial->sqlStatement($this->driver),
-                'new'       => $current->sqlStatement($this->driver),
-                'table'     => $this->identify($table),
-            ]);
-
             $this->assertValid($current);
             $this->alterColumn($table, $initial, $current);
         }
@@ -531,11 +473,6 @@ abstract class AbstractHandler
     protected function createColumns(AbstractTable $table, StateComparator $comparator)
     {
         foreach ($comparator->addedColumns() as $column) {
-            $this->log('Adding column [{statement}] into table {table}.', [
-                'statement' => $column->sqlStatement($this->driver),
-                'table'     => $this->identify($table),
-            ]);
-
             $this->assertValid($column);
             $this->createColumn($table, $column);
         }
@@ -548,11 +485,6 @@ abstract class AbstractHandler
     protected function dropColumns(AbstractTable $table, StateComparator $comparator)
     {
         foreach ($comparator->droppedColumns() as $column) {
-            $this->log('Dropping column [{statement}] from table {table}.', [
-                'statement' => $column->sqlStatement($this->driver),
-                'table'     => $this->identify($table),
-            ]);
-
             $this->dropColumn($table, $column);
         }
     }
@@ -564,11 +496,6 @@ abstract class AbstractHandler
     protected function dropIndexes(AbstractTable $table, StateComparator $comparator)
     {
         foreach ($comparator->droppedIndexes() as $index) {
-            $this->log('Dropping index [{statement}] from table {table}.', [
-                'statement' => $index->sqlStatement($this->driver),
-                'table'     => $this->identify($table),
-            ]);
-
             $this->dropIndex($table, $index);
         }
     }
@@ -580,11 +507,6 @@ abstract class AbstractHandler
     protected function dropForeigns(AbstractTable $table, $comparator)
     {
         foreach ($comparator->droppedForeigns() as $foreign) {
-            $this->log('Dropping foreign key [{statement}] from table {table}.', [
-                'statement' => $foreign->sqlStatement($this->driver),
-                'table'     => $this->identify($table),
-            ]);
-
             $this->dropForeign($table, $foreign);
         }
     }

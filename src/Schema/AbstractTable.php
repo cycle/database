@@ -7,7 +7,6 @@
 
 namespace Spiral\Database\Schema;
 
-use Psr\Log\LoggerInterface;
 use Spiral\Database\Driver\AbstractHandler as Behaviour;
 use Spiral\Database\Driver\Driver;
 use Spiral\Database\Exception\SchemaException;
@@ -52,8 +51,8 @@ abstract class AbstractTable implements TableInterface
     /**
      * Table states.
      */
-    const STATUS_NEW = 0;
-    const STATUS_EXISTS = 1;
+    const STATUS_NEW              = 0;
+    const STATUS_EXISTS           = 1;
     const STATUS_DECLARED_DROPPED = 2;
 
     /**
@@ -627,25 +626,21 @@ abstract class AbstractTable implements TableInterface
      * does not exist it must be created. If table declared as dropped it will be removed from
      * the database.
      *
-     * @param int             $behaviour Operation to be performed while table being saved. In some
+     * @param int  $behaviour            Operation to be performed while table being saved. In some
      *                                   cases (when multiple tables are being updated) it is
      *                                   reasonable to drop foreing keys and indexes prior to
      *                                   dropping related columns. See sync bus class to get more
      *                                   details.
-     * @param LoggerInterface $logger    Optional, aggregates messages for data syncing.
-     * @param bool            $reset     When true schema will be marked as synced.
+     * @param bool $reset                When true schema will be marked as synced.
      *
      * @throws SchemaHandlerException
      *
      * @throws SchemaException
      */
-    public function save(
-        int $behaviour = Behaviour::DO_ALL,
-        LoggerInterface $logger = null,
-        bool $reset = true
-    ) {
+    public function save(int $behaviour = Behaviour::DO_ALL, bool $reset = true)
+    {
         //We need an instance of Handler of dbal operations
-        $handler = $this->driver->getHandler($logger);
+        $handler = $this->driver->getHandler();
 
         if ($this->status == self::STATUS_DECLARED_DROPPED && $behaviour & Behaviour::DO_DROP) {
             //We don't need syncer for this operation
