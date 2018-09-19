@@ -39,6 +39,14 @@ interface DatabaseInterface
     public function getType(): string;
 
     /**
+     * Check if table exists.
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function hasTable(string $name): bool;
+
+    /**
      * Execute statement and return number of affected rows.
      *
      * @param string $query
@@ -93,12 +101,4 @@ interface DatabaseInterface
      * @return bool
      */
     public function rollback();
-
-    /**
-     * Check if table exists.
-     *
-     * @param string $name
-     * @return bool
-     */
-    public function hasTable(string $name): bool;
 }
