@@ -17,4 +17,6 @@ install:
   - composer install --no-interaction --prefer-source
 
 script:
-  - vendor/bin/phpunit
+  - vendor/bin/phpunit tests/Database/SQLite/
+  - vendor/bin/phpunit tests/Database/MySQL/
+  - vendor/bin/phpunit tests/Database/Postgres/
