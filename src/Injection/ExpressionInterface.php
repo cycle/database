@@ -19,7 +19,6 @@ interface ExpressionInterface extends FragmentInterface
 {
     /**
      * @param Compiler|null $compiler
-     *
      * @return string
      */
     public function sqlStatement(Compiler $compiler = null): string;
