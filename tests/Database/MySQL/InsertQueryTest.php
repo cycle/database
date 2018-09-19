@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\MySQL;
+namespace Spiral\Database\Tests\MySQL;
 
-class InsertQueryTest extends \Spiral\Tests\Database\InsertQueryTest
+class InsertQueryTest extends \Spiral\Database\Tests\InsertQueryTest
 {
     use DriverTrait;
 }

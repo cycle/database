@@ -4,11 +4,11 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLite;
+namespace Spiral\Database\Tests\SQLite;
 
-use Spiral\Database\Drivers\SQLite\Schemas\SQLiteTable;
+use Spiral\Database\Driver\SQLite\Schema\SQLiteTable;
 
-class BuildersAccessTest extends \Spiral\Tests\Database\BuildersAccessTest
+class BuildersAccessTest extends \Spiral\Database\Tests\BuildersAccessTest
 {
     use DriverTrait;
 

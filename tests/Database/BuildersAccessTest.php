@@ -4,16 +4,16 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database;
+namespace Spiral\Database\Tests;
 
-use Spiral\Database\Builders\DeleteQuery;
-use Spiral\Database\Builders\InsertQuery;
-use Spiral\Database\Builders\SelectQuery;
-use Spiral\Database\Builders\UpdateQuery;
-use Spiral\Database\Entities\Driver;
-use Spiral\Database\Entities\QueryCompiler;
-use Spiral\Database\Entities\Table;
-use Spiral\Database\Schemas\Prototypes\AbstractTable;
+use Spiral\Database\Builder\DeleteQuery;
+use Spiral\Database\Builder\InsertQuery;
+use Spiral\Database\Builder\SelectQuery;
+use Spiral\Database\Builder\UpdateQuery;
+use Spiral\Database\Entity\Driver;
+use Spiral\Database\Entity\QueryCompiler;
+use Spiral\Database\Entity\Table;
+use Spiral\Database\Schema\Prototypes\AbstractTable;
 
 abstract class BuildersAccessTest extends BaseTest
 {

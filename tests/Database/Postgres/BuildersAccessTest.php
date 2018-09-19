@@ -4,12 +4,12 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\Postgres;
+namespace Spiral\Database\Tests\Postgres;
 
-use Spiral\Database\Drivers\Postgres\PostgresInsertQuery;
-use Spiral\Database\Drivers\Postgres\Schemas\PostgresTable;
+use Spiral\Database\Driver\Postgres\PostgresInsertQuery;
+use Spiral\Database\Driver\Postgres\Schema\PostgresTable;
 
-class BuildersAccessTest extends \Spiral\Tests\Database\BuildersAccessTest
+class BuildersAccessTest extends \Spiral\Database\Tests\BuildersAccessTest
 {
     use DriverTrait;
 

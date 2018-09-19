@@ -4,11 +4,11 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\Postgres;
+namespace Spiral\Database\Tests\Postgres;
 
-use Spiral\Database\Drivers\Postgres\PostgresInsertQuery;
+use Spiral\Database\Driver\Postgres\PostgresInsertQuery;
 
-class InsertQueryTest extends \Spiral\Tests\Database\InsertQueryTest
+class InsertQueryTest extends \Spiral\Database\Tests\InsertQueryTest
 {
     use DriverTrait;
 

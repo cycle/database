@@ -6,7 +6,7 @@
  */
 namespace Spiral\tests\Cases\Database;
 
-use Spiral\Database\Configs\DatabasesConfig;
+use Spiral\Database\Config\DatabasesConfig;
 
 class ConfigTest extends \PHPUnit_Framework_TestCase
 {

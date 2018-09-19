@@ -4,15 +4,15 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLite;
+namespace Spiral\Database\Tests\SQLite;
 
 use Interop\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerTrait;
 use Psr\Log\LogLevel;
 use Spiral\Core\Container;
-use Spiral\Database\Drivers\SQLite\SQLiteDriver;
-use Spiral\Database\Entities\Driver;
+use Spiral\Database\Driver\SQLite\SQLiteDriver;
+use Spiral\Database\Entity\Driver;
 
 trait DriverTrait
 {

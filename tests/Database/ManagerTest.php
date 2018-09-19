@@ -9,10 +9,10 @@ namespace Spiral\tests\Cases\Database;
 use Interop\Container\ContainerInterface;
 use Mockery as m;
 use Spiral\Core\FactoryInterface;
-use Spiral\Database\Configs\DatabasesConfig;
+use Spiral\Database\Config\DatabasesConfig;
 use Spiral\Database\DatabaseManager;
-use Spiral\Database\Drivers\SQLite\SQLiteDriver;
-use Spiral\Database\Entities\Database;
+use Spiral\Database\Driver\SQLite\SQLiteDriver;
+use Spiral\Database\Entity\Database;
 
 class ManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -97,7 +97,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Spiral\Database\Exceptions\DBALException
+     * @expectedException \Spiral\Database\Exception\DBALException
      * @expectedExceptionMessage Unable to create Database, no presets for 'test' found
      */
     public function testNoDatabase()
@@ -137,7 +137,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Spiral\Database\Exceptions\DBALException
+     * @expectedException \Spiral\Database\Exception\DBALException
      */
     public function testCreateDriverTwice()
     {
@@ -190,7 +190,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Spiral\Database\Exceptions\DBALException
+     * @expectedException \Spiral\Database\Exception\DBALException
      */
     public function testCreateDatabaseTwice()
     {
@@ -260,7 +260,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Spiral\Database\Exceptions\DBALException
+     * @expectedException \Spiral\Database\Exception\DBALException
      */
     public function testMissingDriver()
     {

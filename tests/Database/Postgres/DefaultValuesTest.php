@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\Postgres;
+namespace Spiral\Database\Tests\Postgres;
 
-class DefaultValuesTest extends \Spiral\Tests\Database\DefaultValuesTest
+class DefaultValuesTest extends \Spiral\Database\Tests\DefaultValuesTest
 {
     use DriverTrait;
 }

@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLServer;
+namespace Spiral\Database\Tests\SQLServer;
 
-class IsolationTest extends \Spiral\Tests\Database\IsolationTest
+class IsolationTest extends \Spiral\Database\Tests\IsolationTest
 {
     use DriverTrait;
 }

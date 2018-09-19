@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\Postgres;
+namespace Spiral\Database\Tests\Postgres;
 
-class NestedQueriesTest extends \Spiral\Tests\Database\NestedQueriesTest
+class NestedQueriesTest extends \Spiral\Database\Tests\NestedQueriesTest
 {
     use DriverTrait;
 }

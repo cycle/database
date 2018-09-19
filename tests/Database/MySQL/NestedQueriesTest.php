@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\MySQL;
+namespace Spiral\Database\Tests\MySQL;
 
-class NestedQueriesTest extends \Spiral\Tests\Database\NestedQueriesTest
+class NestedQueriesTest extends \Spiral\Database\Tests\NestedQueriesTest
 {
     use DriverTrait;
 }

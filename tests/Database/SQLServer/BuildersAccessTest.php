@@ -4,11 +4,11 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLServer;
+namespace Spiral\Database\Tests\SQLServer;
 
-use Spiral\Database\Drivers\SQLServer\Schemas\SQLServerTable;
+use Spiral\Database\Driver\SQLServer\Schema\SQLServerTable;
 
-class BuildersAccessTest extends \Spiral\Tests\Database\BuildersAccessTest
+class BuildersAccessTest extends \Spiral\Database\Tests\BuildersAccessTest
 {
     use DriverTrait;
 

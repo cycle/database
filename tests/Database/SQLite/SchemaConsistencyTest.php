@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLite;
+namespace Spiral\Database\Tests\SQLite;
 
-class SchemaConsistencyTest extends \Spiral\Tests\Database\SchemaConsistencyTest
+class SchemaConsistencyTest extends \Spiral\Database\Tests\SchemaConsistencyTest
 {
     use DriverTrait;
 }

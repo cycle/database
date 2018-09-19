@@ -7,10 +7,10 @@
  */
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\Injections\ExpressionInterface;
-use Spiral\Database\Injections\FragmentInterface;
-use Spiral\Database\Injections\Parameter;
-use Spiral\Database\Injections\ParameterInterface;
+use Spiral\Database\Injection\ExpressionInterface;
+use Spiral\Database\Injection\FragmentInterface;
+use Spiral\Database\Injection\Parameter;
+use Spiral\Database\Injection\ParameterInterface;
 
 class ParameterTest extends \PHPUnit_Framework_TestCase
 {

@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\MySQL;
+namespace Spiral\Database\Tests\MySQL;
 
-class DeleteQueryTest extends \Spiral\Tests\Database\DeleteQueryTest
+class DeleteQueryTest extends \Spiral\Database\Tests\DeleteQueryTest
 {
     use DriverTrait;
 }

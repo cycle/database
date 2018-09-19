@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLite;
+namespace Spiral\Database\Tests\SQLite;
 
-class IsolationTest extends \Spiral\Tests\Database\IsolationTest
+class IsolationTest extends \Spiral\Database\Tests\IsolationTest
 {
     use DriverTrait;
 }

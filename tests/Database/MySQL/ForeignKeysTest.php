@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\MySQL;
+namespace Spiral\Database\Tests\MySQL;
 
-class ForeignKeysTest extends \Spiral\Tests\Database\ForeignKeysTest
+class ForeignKeysTest extends \Spiral\Database\Tests\ForeignKeysTest
 {
     use DriverTrait;
 }

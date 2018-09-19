@@ -4,14 +4,14 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\MySQL;
+namespace Spiral\Database\Tests\MySQL;
 
-class DefaultValuesTest extends \Spiral\Tests\Database\DefaultValuesTest
+class DefaultValuesTest extends \Spiral\Database\Tests\DefaultValuesTest
 {
     use DriverTrait;
 
     /**
-     * @expectedException \Spiral\Database\Exceptions\Drivers\MySQLDriverException
+     * @expectedException \Spiral\Database\Exception\Driver\MySQLDriverException
      * @expectedExceptionMessage Column table.target of type text/blob can not have non empty
      *                           default value
      */

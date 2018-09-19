@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLite;
+namespace Spiral\Database\Tests\SQLite;
 
-class DefaultValuesTest extends \Spiral\Tests\Database\DefaultValuesTest
+class DefaultValuesTest extends \Spiral\Database\Tests\DefaultValuesTest
 {
     use DriverTrait;
 }

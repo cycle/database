@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\Postgres;
+namespace Spiral\Database\Tests\Postgres;
 
-class DatetimeColumnsTest extends \Spiral\Tests\Database\DatetimeColumnsTest
+class DatetimeColumnsTest extends \Spiral\Database\Tests\DatetimeColumnsTest
 {
     use DriverTrait;
 }

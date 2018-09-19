@@ -4,14 +4,14 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database;
+namespace Spiral\Database\Tests;
 
 use Interop\Container\ContainerInterface;
-use Spiral\Database\Entities\AbstractHandler;
-use Spiral\Database\Entities\Database;
-use Spiral\Database\Entities\Driver;
-use Spiral\Database\Schemas\Prototypes\AbstractTable;
-use Spiral\Database\Schemas\StateComparator;
+use Spiral\Database\Entity\AbstractHandler;
+use Spiral\Database\Entity\Database;
+use Spiral\Database\Entity\Driver;
+use Spiral\Database\Schema\Prototypes\AbstractTable;
+use Spiral\Database\Schema\StateComparator;
 
 /**
  * ATTENTION, DO NOT CONNECT TO PRODUCTION DATABASE AT ANY COST.

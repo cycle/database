@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLServer;
+namespace Spiral\Database\Tests\SQLServer;
 
-class ExceptionsTest extends \Spiral\Tests\Database\ExceptionsTest
+class ExceptionsTest extends \Spiral\Database\Tests\ExceptionsTest
 {
     use DriverTrait;
 }

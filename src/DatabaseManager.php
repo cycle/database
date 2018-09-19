@@ -13,11 +13,11 @@ use Spiral\Core\Container;
 use Spiral\Core\Container\InjectorInterface;
 use Spiral\Core\Container\SingletonInterface;
 use Spiral\Core\FactoryInterface;
-use Spiral\Database\Configs\DatabasesConfig;
-use Spiral\Database\Entities\Database;
-use Spiral\Database\Entities\Driver;
-use Spiral\Database\Exceptions\DatabaseException;
-use Spiral\Database\Exceptions\DBALException;
+use Spiral\Database\Config\DatabasesConfig;
+use Spiral\Database\Entity\Database;
+use Spiral\Database\Entity\Driver;
+use Spiral\Database\Exception\DatabaseException;
+use Spiral\Database\Exception\DBALException;
 
 /**
  * Automatic factory and configurator for Drivers and Databases.

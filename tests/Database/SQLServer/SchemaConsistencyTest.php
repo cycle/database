@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLServer;
+namespace Spiral\Database\Tests\SQLServer;
 
-class SchemaConsistencyTest extends \Spiral\Tests\Database\SchemaConsistencyTest
+class SchemaConsistencyTest extends \Spiral\Database\Tests\SchemaConsistencyTest
 {
     use DriverTrait;
 }

@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLite;
+namespace Spiral\Database\Tests\SQLite;
 
-class UpdateQueryTest extends \Spiral\Tests\Database\UpdateQueryTest
+class UpdateQueryTest extends \Spiral\Database\Tests\UpdateQueryTest
 {
     use DriverTrait;
 }

@@ -9,10 +9,10 @@
 namespace Spiral\tests\Cases\Database;
 
 use Mockery as m;
-use Spiral\Database\Entities\Database;
-use Spiral\Database\Entities\Driver;
-use Spiral\Database\Entities\QueryStatement;
-use Spiral\Database\Entities\Table;
+use Spiral\Database\Entity\Database;
+use Spiral\Database\Entity\Driver;
+use Spiral\Database\Entity\QueryStatement;
+use Spiral\Database\Entity\Table;
 
 class DatabaseTest extends \PHPUnit_Framework_TestCase
 {

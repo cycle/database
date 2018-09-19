@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLServer;
+namespace Spiral\Database\Tests\SQLServer;
 
-class DefaultValuesTest extends \Spiral\Tests\Database\DefaultValuesTest
+class DefaultValuesTest extends \Spiral\Database\Tests\DefaultValuesTest
 {
     use DriverTrait;
 }

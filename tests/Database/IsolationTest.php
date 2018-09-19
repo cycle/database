@@ -4,10 +4,10 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database;
+namespace Spiral\Database\Tests;
 
-use Spiral\Database\Entities\AbstractHandler;
-use Spiral\Database\Schemas\Prototypes\AbstractTable;
+use Spiral\Database\Entity\AbstractHandler;
+use Spiral\Database\Schema\Prototypes\AbstractTable;
 
 abstract class IsolationTest extends BaseTest
 {

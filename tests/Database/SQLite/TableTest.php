@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLite;
+namespace Spiral\Database\Tests\SQLite;
 
-class TableTest extends \Spiral\Tests\Database\TableTest
+class TableTest extends \Spiral\Database\Tests\TableTest
 {
     use DriverTrait;
 }

@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLite;
+namespace Spiral\Database\Tests\SQLite;
 
-class SynchronizationPoolTest extends \Spiral\Tests\Database\SynchronizationPoolTest
+class SynchronizationPoolTest extends \Spiral\Database\Tests\SynchronizationPoolTest
 {
     use DriverTrait;
 }

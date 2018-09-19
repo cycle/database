@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLite;
+namespace Spiral\Database\Tests\SQLite;
 
-class SchemaCreationTest extends \Spiral\Tests\Database\SchemaCreationTest
+class SchemaCreationTest extends \Spiral\Database\Tests\SchemaCreationTest
 {
     use DriverTrait;
 }

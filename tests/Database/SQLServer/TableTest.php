@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLServer;
+namespace Spiral\Database\Tests\SQLServer;
 
-class TableTest extends \Spiral\Tests\Database\TableTest
+class TableTest extends \Spiral\Database\Tests\TableTest
 {
     use DriverTrait;
 

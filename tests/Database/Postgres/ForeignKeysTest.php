@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\Postgres;
+namespace Spiral\Database\Tests\Postgres;
 
-class ForeignKeysTest extends \Spiral\Tests\Database\ForeignKeysTest
+class ForeignKeysTest extends \Spiral\Database\Tests\ForeignKeysTest
 {
     use DriverTrait;
 }

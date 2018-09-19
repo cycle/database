@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLite;
+namespace Spiral\Database\Tests\SQLite;
 
-class ExceptionsTest extends \Spiral\Tests\Database\ExceptionsTest
+class ExceptionsTest extends \Spiral\Database\Tests\ExceptionsTest
 {
     use DriverTrait;
 }

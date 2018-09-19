@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLite;
+namespace Spiral\Database\Tests\SQLite;
 
-class InsertQueryTest extends \Spiral\Tests\Database\InsertQueryTest
+class InsertQueryTest extends \Spiral\Database\Tests\InsertQueryTest
 {
     use DriverTrait;
 

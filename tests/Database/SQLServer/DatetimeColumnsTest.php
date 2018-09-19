@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLServer;
+namespace Spiral\Database\Tests\SQLServer;
 
-class DatetimeColumnsTest extends \Spiral\Tests\Database\DatetimeColumnsTest
+class DatetimeColumnsTest extends \Spiral\Database\Tests\DatetimeColumnsTest
 {
     use DriverTrait;
 }

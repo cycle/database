@@ -4,10 +4,10 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database;
+namespace Spiral\Database\Tests;
 
-use Spiral\Database\Helpers\SynchronizationPool;
-use Spiral\Database\Schemas\Prototypes\AbstractTable;
+use Spiral\Database\Helper\SynchronizationPool;
+use Spiral\Database\Schema\Prototypes\AbstractTable;
 
 abstract class SynchronizationPoolTest extends BaseTest
 {

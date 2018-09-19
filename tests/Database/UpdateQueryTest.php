@@ -4,14 +4,14 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database;
+namespace Spiral\Database\Tests;
 
-use Spiral\Database\Builders\QueryBuilder;
-use Spiral\Database\Builders\UpdateQuery;
-use Spiral\Database\Entities\Database;
-use Spiral\Database\Helpers\QueryInterpolator;
-use Spiral\Database\Injections\ParameterInterface;
-use Spiral\Database\Schemas\Prototypes\AbstractTable;
+use Spiral\Database\Builder\QueryBuilder;
+use Spiral\Database\Builder\UpdateQuery;
+use Spiral\Database\Entity\Database;
+use Spiral\Database\Helper\QueryInterpolator;
+use Spiral\Database\Injection\ParameterInterface;
+use Spiral\Database\Schema\Prototypes\AbstractTable;
 
 abstract class UpdateQueryTest extends BaseQueryTest
 {

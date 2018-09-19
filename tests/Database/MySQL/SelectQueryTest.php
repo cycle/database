@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\MySQL;
+namespace Spiral\Database\Tests\MySQL;
 
-class SelectQueryTest extends \Spiral\Tests\Database\SelectQueryTest
+class SelectQueryTest extends \Spiral\Database\Tests\SelectQueryTest
 {
     use DriverTrait;
 

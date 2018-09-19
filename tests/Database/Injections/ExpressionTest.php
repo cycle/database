@@ -8,10 +8,10 @@
 namespace Spiral\Database\Tests;
 
 use Mockery as m;
-use Spiral\Database\Entities\QueryCompiler;
-use Spiral\Database\Injections\Expression;
-use Spiral\Database\Injections\ExpressionInterface;
-use Spiral\Database\Injections\FragmentInterface;
+use Spiral\Database\Entity\QueryCompiler;
+use Spiral\Database\Injection\Expression;
+use Spiral\Database\Injection\ExpressionInterface;
+use Spiral\Database\Injection\FragmentInterface;
 
 class ExpressionTest extends \PHPUnit_Framework_TestCase
 {

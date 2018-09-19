@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database;
+namespace Spiral\Database\Tests;
 
-use Spiral\Database\Injections\FragmentInterface;
+use Spiral\Database\Injection\FragmentInterface;
 
 abstract class BaseQueryTest extends BaseTest
 {

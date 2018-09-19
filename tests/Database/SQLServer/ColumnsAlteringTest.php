@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLServer;
+namespace Spiral\Database\Tests\SQLServer;
 
-class ColumnsAlteringTest extends \Spiral\Tests\Database\ColumnsAlteringTest
+class ColumnsAlteringTest extends \Spiral\Database\Tests\ColumnsAlteringTest
 {
     use DriverTrait;
 }

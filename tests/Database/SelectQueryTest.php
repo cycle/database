@@ -5,14 +5,14 @@
  * @author Wolfy-J
  */
 
-namespace Spiral\Tests\Database;
+namespace Spiral\Database\Tests;
 
-use Spiral\Database\Builders\SelectQuery;
-use Spiral\Database\Entities\Database;
-use Spiral\Database\Injections\Expression;
-use Spiral\Database\Injections\Fragment;
-use Spiral\Database\Injections\Parameter;
-use Spiral\Database\Schemas\Prototypes\AbstractTable;
+use Spiral\Database\Builder\SelectQuery;
+use Spiral\Database\Entity\Database;
+use Spiral\Database\Injection\Expression;
+use Spiral\Database\Injection\Fragment;
+use Spiral\Database\Injection\Parameter;
+use Spiral\Database\Schema\Prototypes\AbstractTable;
 use Spiral\Pagination\PaginatorAwareInterface;
 
 abstract class SelectQueryTest extends BaseQueryTest
@@ -134,7 +134,7 @@ abstract class SelectQueryTest extends BaseQueryTest
     }
 
     /**
-     * @expectedException \Spiral\Database\Exceptions\BuilderException
+     * @expectedException \Spiral\Database\Exception\BuilderException
      * @expectedExceptionMessage Between statements expects exactly 2 values
      */
     public function testSelectWithWhereBetweenBadValue()
@@ -362,7 +362,7 @@ abstract class SelectQueryTest extends BaseQueryTest
     }
 
     /**
-     * @expectedException \Spiral\Database\Exceptions\BuilderException
+     * @expectedException \Spiral\Database\Exception\BuilderException
      * @expectedExceptionMessage Exactly 2 array values are required for between statement
      */
     public function testShortWhereWithBetweenConditionBadArguments()
@@ -491,7 +491,7 @@ abstract class SelectQueryTest extends BaseQueryTest
     }
 
     /**
-     * @expectedException \Spiral\Database\Exceptions\BuilderException
+     * @expectedException \Spiral\Database\Exception\BuilderException
      * @expectedExceptionMessage Nested conditions should have defined operator
      */
     public function testBadShortExpression()
@@ -938,7 +938,7 @@ abstract class SelectQueryTest extends BaseQueryTest
     }
 
     /**
-     * @expectedException \Spiral\Database\Exceptions\BuilderException
+     * @expectedException \Spiral\Database\Exception\BuilderException
      * @expectedExceptionMessage Between statements expects exactly 2 values
      */
     public function testHavingSelectWithHavingBetweenBadValue()
@@ -1166,7 +1166,7 @@ abstract class SelectQueryTest extends BaseQueryTest
     }
 
     /**
-     * @expectedException \Spiral\Database\Exceptions\BuilderException
+     * @expectedException \Spiral\Database\Exception\BuilderException
      * @expectedExceptionMessage Exactly 2 array values are required for between statement
      */
     public function testHavingShortHavingWithBetweenConditionBadArguments()
@@ -1587,7 +1587,7 @@ abstract class SelectQueryTest extends BaseQueryTest
     }
 
     /**
-     * @expectedException \Spiral\Database\Exceptions\BuilderException
+     * @expectedException \Spiral\Database\Exception\BuilderException
      * @expectedExceptionMessage Arrays must be wrapped with Parameter instance
      */
     public function testBadArrayParameter()
@@ -1598,7 +1598,7 @@ abstract class SelectQueryTest extends BaseQueryTest
     }
 
     /**
-     * @expectedException \Spiral\Database\Exceptions\BuilderException
+     * @expectedException \Spiral\Database\Exception\BuilderException
      * @expectedExceptionMessage Arrays must be wrapped with Parameter instance
      */
     public function testBadArrayParameterInShortWhere()

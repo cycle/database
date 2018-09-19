@@ -4,10 +4,10 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database;
+namespace Spiral\Database\Tests;
 
-use Spiral\Database\Entities\Database;
-use Spiral\Database\Exceptions\QueryException;
+use Spiral\Database\Entity\Database;
+use Spiral\Database\Exception\QueryException;
 
 /**
  * Add exception versions in a future versions.

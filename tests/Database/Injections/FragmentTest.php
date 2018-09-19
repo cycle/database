@@ -7,8 +7,8 @@
  */
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\Injections\Fragment;
-use Spiral\Database\Injections\FragmentInterface;
+use Spiral\Database\Injection\Fragment;
+use Spiral\Database\Injection\FragmentInterface;
 
 class FragmentTest extends \PHPUnit_Framework_TestCase
 {

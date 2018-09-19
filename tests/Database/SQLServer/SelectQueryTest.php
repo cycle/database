@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLServer;
+namespace Spiral\Database\Tests\SQLServer;
 
-class SelectQueryTest extends \Spiral\Tests\Database\SelectQueryTest
+class SelectQueryTest extends \Spiral\Database\Tests\SelectQueryTest
 {
     use DriverTrait;
 

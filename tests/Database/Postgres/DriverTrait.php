@@ -4,15 +4,15 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\Postgres;
+namespace Spiral\Database\Tests\Postgres;
 
 use Interop\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerTrait;
 use Psr\Log\LogLevel;
 use Spiral\Core\Container;
-use Spiral\Database\Drivers\Postgres\PostgresDriver;
-use Spiral\Database\Entities\Driver;
+use Spiral\Database\Driver\Postgres\PostgresDriver;
+use Spiral\Database\Entity\Driver;
 
 trait DriverTrait
 {

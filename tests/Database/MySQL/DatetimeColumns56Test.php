@@ -4,12 +4,12 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\MySQL;
+namespace Spiral\Database\Tests\MySQL;
 
 /**
  * MySQL 5.6 and higher
  */
-class DatetimeColumns56Test extends \Spiral\Tests\Database\DatetimeColumnsTest
+class DatetimeColumns56Test extends \Spiral\Database\Tests\DatetimeColumnsTest
 {
     use DriverTrait;
 
@@ -26,7 +26,7 @@ class DatetimeColumns56Test extends \Spiral\Tests\Database\DatetimeColumnsTest
     }
 
     /**
-     * @expectedException \Spiral\Database\Exceptions\SchemaHandlerException
+     * @expectedException \Spiral\Database\Exception\SchemaHandlerException
      * @expectedExceptionMessage SQLSTATE[42000]: Syntax error or access violation: 1067 Invalid
      *                           default value for 'target'
      */

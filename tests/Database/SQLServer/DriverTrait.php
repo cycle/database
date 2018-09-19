@@ -4,15 +4,15 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLServer;
+namespace Spiral\Database\Tests\SQLServer;
 
 use Interop\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerTrait;
 use Psr\Log\LogLevel;
 use Spiral\Core\Container;
-use Spiral\Database\Drivers\SQLServer\SQLServerDriver;
-use Spiral\Database\Entities\Driver;
+use Spiral\Database\Driver\SQLServer\SQLServerDriver;
+use Spiral\Database\Entity\Driver;
 
 trait DriverTrait
 {

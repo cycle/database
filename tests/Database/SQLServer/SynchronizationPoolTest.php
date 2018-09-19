@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLServer;
+namespace Spiral\Database\Tests\SQLServer;
 
-class SynchronizationPoolTest extends \Spiral\Tests\Database\SynchronizationPoolTest
+class SynchronizationPoolTest extends \Spiral\Database\Tests\SynchronizationPoolTest
 {
     use DriverTrait;
 }

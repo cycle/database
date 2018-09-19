@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLite;
+namespace Spiral\Database\Tests\SQLite;
 
-class NestedQueriesTest extends \Spiral\Tests\Database\NestedQueriesTest
+class NestedQueriesTest extends \Spiral\Database\Tests\NestedQueriesTest
 {
     use DriverTrait;
 }

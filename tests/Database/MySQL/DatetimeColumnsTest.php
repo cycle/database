@@ -4,12 +4,12 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\MySQL;
+namespace Spiral\Database\Tests\MySQL;
 
 /**
  * MySQL 5.6 and lower
  */
-class DatetimeColumnsTest extends \Spiral\Tests\Database\DatetimeColumnsTest
+class DatetimeColumnsTest extends \Spiral\Database\Tests\DatetimeColumnsTest
 {
     use DriverTrait;
 
@@ -25,7 +25,7 @@ class DatetimeColumnsTest extends \Spiral\Tests\Database\DatetimeColumnsTest
     }
 
     /**
-     * @expectedException \Spiral\Database\Exceptions\SchemaHandlerException
+     * @expectedException \Spiral\Database\Exception\SchemaHandlerException
      * @expectedExceptionMessage SQLSTATE[HY000]: General error: 1293 Incorrect table definition;
      *                           there can be only one TIMESTAMP column with CURRENT_TIMESTAMP in
      *                           DEFAULT or ON UPDATE clause
@@ -36,7 +36,7 @@ class DatetimeColumnsTest extends \Spiral\Tests\Database\DatetimeColumnsTest
     }
 
     /**
-     * @expectedException \Spiral\Database\Exceptions\SchemaHandlerException
+     * @expectedException \Spiral\Database\Exception\SchemaHandlerException
      * @expectedExceptionMessage SQLSTATE[42000]: Syntax error or access violation: 1067 Invalid
      *                           default value for 'target'
      */
@@ -46,7 +46,7 @@ class DatetimeColumnsTest extends \Spiral\Tests\Database\DatetimeColumnsTest
     }
 
     /**
-     * @expectedException \Spiral\Database\Exceptions\SchemaHandlerException
+     * @expectedException \Spiral\Database\Exception\SchemaHandlerException
      * @expectedExceptionMessage SQLSTATE[42000]: Syntax error or access violation: 1067 Invalid
      *                           default value for 'target'
      */
@@ -56,7 +56,7 @@ class DatetimeColumnsTest extends \Spiral\Tests\Database\DatetimeColumnsTest
     }
 
     /**
-     * @expectedException \Spiral\Database\Exceptions\SchemaHandlerException
+     * @expectedException \Spiral\Database\Exception\SchemaHandlerException
      * @expectedExceptionMessage SQLSTATE[42000]: Syntax error or access violation: 1067 Invalid
      *                           default value for 'target'
      */
@@ -66,7 +66,7 @@ class DatetimeColumnsTest extends \Spiral\Tests\Database\DatetimeColumnsTest
     }
 
     /**
-     * @expectedException \Spiral\Database\Exceptions\SchemaHandlerException
+     * @expectedException \Spiral\Database\Exception\SchemaHandlerException
      * @expectedExceptionMessage SQLSTATE[42000]: Syntax error or access violation: 1067 Invalid
      *                           default value for 'target'
      */

@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\Postgres;
+namespace Spiral\Database\Tests\Postgres;
 
-class ColumnsAlteringTest extends \Spiral\Tests\Database\ColumnsAlteringTest
+class ColumnsAlteringTest extends \Spiral\Database\Tests\ColumnsAlteringTest
 {
     use DriverTrait;
 }

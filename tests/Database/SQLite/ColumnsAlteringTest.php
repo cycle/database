@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLite;
+namespace Spiral\Database\Tests\SQLite;
 
-class ColumnsAlteringTest extends \Spiral\Tests\Database\ColumnsAlteringTest
+class ColumnsAlteringTest extends \Spiral\Database\Tests\ColumnsAlteringTest
 {
     use DriverTrait;
 }

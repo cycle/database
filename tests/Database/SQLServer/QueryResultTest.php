@@ -4,11 +4,11 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLServer;
+namespace Spiral\Database\Tests\SQLServer;
 
-use Spiral\Database\Drivers\SQLServer\SQLServerCompiler;
+use Spiral\Database\Driver\SQLServer\SQLServerCompiler;
 
-class QueryResultTest extends \Spiral\Tests\Database\QueryResultTest
+class QueryResultTest extends \Spiral\Database\Tests\QueryResultTest
 {
     use DriverTrait;
 

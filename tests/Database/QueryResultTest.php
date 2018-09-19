@@ -4,14 +4,14 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database;
+namespace Spiral\Database\Tests;
 
-use Spiral\Database\Entities\Database;
-use Spiral\Database\Entities\QueryStatement;
-use Spiral\Database\Entities\Table;
-use Spiral\Database\Injections\Parameter;
-use Spiral\Database\Schemas\Prototypes\AbstractColumn;
-use Spiral\Database\Schemas\Prototypes\AbstractTable;
+use Spiral\Database\Entity\Database;
+use Spiral\Database\Entity\QueryStatement;
+use Spiral\Database\Entity\Table;
+use Spiral\Database\Injection\Parameter;
+use Spiral\Database\Schema\Prototypes\AbstractColumn;
+use Spiral\Database\Schema\Prototypes\AbstractTable;
 use Spiral\Pagination\Paginator;
 
 abstract class QueryResultTest extends BaseQueryTest
@@ -234,7 +234,7 @@ abstract class QueryResultTest extends BaseQueryTest
     }
 
     /**
-     * @expectedException \Spiral\Database\Exceptions\BuilderException
+     * @expectedException \Spiral\Database\Exception\BuilderException
      */
     public function testBadAggregation()
     {
@@ -245,7 +245,7 @@ abstract class QueryResultTest extends BaseQueryTest
     }
 
     /**
-     * @expectedException \Spiral\Database\Exceptions\BuilderException
+     * @expectedException \Spiral\Database\Exception\BuilderException
      */
     public function testBadAggregation2()
     {
@@ -256,7 +256,7 @@ abstract class QueryResultTest extends BaseQueryTest
     }
 
     /**
-     * @expectedException \Spiral\Database\Exceptions\BuilderException
+     * @expectedException \Spiral\Database\Exception\BuilderException
      */
     public function testBadAggregation3()
     {
@@ -386,7 +386,7 @@ abstract class QueryResultTest extends BaseQueryTest
     }
 
     /**
-     * @expectedException \Spiral\Database\Exceptions\DriverException
+     * @expectedException \Spiral\Database\Exception\DriverException
      * @expectedExceptionMessage Array parameters can not be named
      */
     public function testNativeParametersError()

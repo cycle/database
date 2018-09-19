@@ -4,11 +4,11 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\MySQL;
+namespace Spiral\Database\Tests\MySQL;
 
-use Spiral\Database\Drivers\MySQL\Schemas\MySQLTable;
+use Spiral\Database\Driver\MySQL\Schema\MySQLTable;
 
-class BuildersAccessTest extends \Spiral\Tests\Database\BuildersAccessTest
+class BuildersAccessTest extends \Spiral\Database\Tests\BuildersAccessTest
 {
     use DriverTrait;
 

@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\Postgres;
+namespace Spiral\Database\Tests\Postgres;
 
-class TransactionsTest extends \Spiral\Tests\Database\TransactionsTest
+class TransactionsTest extends \Spiral\Database\Tests\TransactionsTest
 {
     use DriverTrait;
 }

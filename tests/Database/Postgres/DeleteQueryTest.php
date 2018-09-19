@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\Postgres;
+namespace Spiral\Database\Tests\Postgres;
 
-class DeleteQueryTest extends \Spiral\Tests\Database\DeleteQueryTest
+class DeleteQueryTest extends \Spiral\Database\Tests\DeleteQueryTest
 {
     use DriverTrait;
 }

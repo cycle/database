@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLServer;
+namespace Spiral\Database\Tests\SQLServer;
 
-class TransactionsTest extends \Spiral\Tests\Database\TransactionsTest
+class TransactionsTest extends \Spiral\Database\Tests\TransactionsTest
 {
     use DriverTrait;
 }

@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLite;
+namespace Spiral\Database\Tests\SQLite;
 
-class QueryResultTest extends \Spiral\Tests\Database\QueryResultTest
+class QueryResultTest extends \Spiral\Database\Tests\QueryResultTest
 {
     use DriverTrait;
 }

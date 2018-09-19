@@ -4,15 +4,15 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\MySQL;
+namespace Spiral\Database\Tests\MySQL;
 
 use Interop\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerTrait;
 use Psr\Log\LogLevel;
 use Spiral\Core\Container;
-use Spiral\Database\Drivers\MySQL\MySQLDriver;
-use Spiral\Database\Entities\Driver;
+use Spiral\Database\Driver\MySQL\MySQLDriver;
+use Spiral\Database\Entity\Driver;
 
 trait DriverTrait
 {

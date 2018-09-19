@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLServer;
+namespace Spiral\Database\Tests\SQLServer;
 
-class DeleteQueryTest extends \Spiral\Tests\Database\DeleteQueryTest
+class DeleteQueryTest extends \Spiral\Database\Tests\DeleteQueryTest
 {
     use DriverTrait;
 }

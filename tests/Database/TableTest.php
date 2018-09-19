@@ -4,12 +4,12 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database;
+namespace Spiral\Database\Tests;
 
-use Spiral\Database\Entities\Database;
-use Spiral\Database\Entities\Table;
-use Spiral\Database\Injections\Expression;
-use Spiral\Database\Schemas\Prototypes\AbstractTable;
+use Spiral\Database\Entity\Database;
+use Spiral\Database\Entity\Table;
+use Spiral\Database\Injection\Expression;
+use Spiral\Database\Schema\Prototypes\AbstractTable;
 
 abstract class TableTest extends BaseTest
 {

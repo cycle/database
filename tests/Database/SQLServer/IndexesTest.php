@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLServer;
+namespace Spiral\Database\Tests\SQLServer;
 
-class IndexesTest extends \Spiral\Tests\Database\IndexesTest
+class IndexesTest extends \Spiral\Database\Tests\IndexesTest
 {
     use DriverTrait;
 }

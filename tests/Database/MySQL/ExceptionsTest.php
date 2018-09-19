@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\MySQL;
+namespace Spiral\Database\Tests\MySQL;
 
-class ExceptionsTest extends \Spiral\Tests\Database\ExceptionsTest
+class ExceptionsTest extends \Spiral\Database\Tests\ExceptionsTest
 {
     use DriverTrait;
 }
