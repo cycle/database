@@ -13,14 +13,14 @@
         >
 
     <testsuites>
-        <testsuite name="Spiral Framework Core Tests">
+        <testsuite name="Spiral DBAL">
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>
 
     <filter>
         <whitelist>
-            <directory>source/Spiral</directory>
+            <directory>src/</directory>
         </whitelist>
     </filter>
 </phpunit>

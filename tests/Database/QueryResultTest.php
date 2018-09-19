@@ -266,13 +266,13 @@ abstract class QueryResultTest extends BaseQueryTest
         $table->select()->avg(1, 2);
     }
 
-    public function testClone()
+    public function testClose()
     {
         $table = $this->database->table('sample_table');
         $this->fillData();
         $result = $table->select()->getIterator();
 
-        $result->close();
+        $this->assertNull($result->close());
     }
 
     public function testSpanishInquisition()
