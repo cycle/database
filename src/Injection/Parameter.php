@@ -69,7 +69,6 @@ class Parameter implements ParameterInterface
     {
         $parameter = clone $this;
         $parameter->value = $value;
-
         $parameter->resolveType($value, $type);
 
         return $parameter;
