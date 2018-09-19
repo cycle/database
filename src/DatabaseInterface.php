@@ -86,7 +86,7 @@ interface DatabaseInterface
      * @return bool
      */
     public function begin();
-
+//todo: add return values
     /**
      * Commit the active database transaction.
      *
