@@ -10,10 +10,10 @@ namespace Spiral\tests\Cases\Database;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Spiral\Database\Entity\Database;
-use Spiral\Database\Entity\Driver;
-use Spiral\Database\Entity\QueryStatement;
-use Spiral\Database\Entity\Table;
+use Spiral\Database\Database;
+use Spiral\Database\Driver;
+use Spiral\Database\QueryStatement;
+use Spiral\Database\Table;
 
 class DatabaseTest extends TestCase
 {

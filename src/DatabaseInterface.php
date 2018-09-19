@@ -8,7 +8,7 @@
 
 namespace Spiral\Database;
 
-use Spiral\Database\Entity\QueryStatement;
+use Spiral\Database\QueryStatement;
 use Spiral\Database\Exception\QueryException;
 
 /**

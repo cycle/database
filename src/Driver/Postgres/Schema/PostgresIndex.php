@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Driver\Postgres\Schema;
 
-use Spiral\Database\Schema\Prototypes\AbstractIndex;
+use Spiral\Database\Schema\AbstractIndex;
 
 class PostgresIndex extends AbstractIndex
 {

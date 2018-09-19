@@ -6,7 +6,7 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database\Query\Prototype;
+namespace Spiral\Database\Query;
 
 use Spiral\Database\Query\QueryBuilder;
 use Spiral\Database\Exception\BuilderException;

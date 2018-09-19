@@ -7,9 +7,9 @@
 
 namespace Spiral\Database\Driver\MySQL\Schema;
 
-use Spiral\Database\Entity\Driver;
+use Spiral\Database\Driver;
 use Spiral\Database\Injection\Fragment;
-use Spiral\Database\Schema\Prototypes\AbstractColumn;
+use Spiral\Database\Schema\AbstractColumn;
 
 /**
  * Attention! You can use only one timestamp or datetime with DATETIME_NOW setting! Thought, it will

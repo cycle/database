@@ -8,13 +8,13 @@
 namespace Spiral\Database\Driver\MySQL;
 
 use Spiral\Database\Driver\MySQL\Schema\MySQLTable;
-use Spiral\Database\Entity\AbstractHandler;
+use Spiral\Database\AbstractHandler;
 use Spiral\Database\Exception\Driver\MySQLDriverException;
 use Spiral\Database\Exception\SchemaException;
-use Spiral\Database\Schema\Prototypes\AbstractColumn;
-use Spiral\Database\Schema\Prototypes\AbstractIndex;
-use Spiral\Database\Schema\Prototypes\AbstractReference;
-use Spiral\Database\Schema\Prototypes\AbstractTable;
+use Spiral\Database\Schema\AbstractColumn;
+use Spiral\Database\Schema\AbstractIndex;
+use Spiral\Database\Schema\AbstractReference;
+use Spiral\Database\Schema\AbstractTable;
 
 class MySQLHandler extends AbstractHandler
 {

@@ -7,8 +7,8 @@
 namespace Spiral\Database\Tests;
 
 use Spiral\Database\Query\DeleteQuery;
-use Spiral\Database\Entity\Database;
-use Spiral\Database\Schema\Prototypes\AbstractTable;
+use Spiral\Database\Database;
+use Spiral\Database\Schema\AbstractTable;
 
 abstract class DeleteQueryTest extends BaseQueryTest
 {

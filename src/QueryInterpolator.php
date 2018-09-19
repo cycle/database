@@ -6,7 +6,7 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database\Helper;
+namespace Spiral\Database;
 
 use Spiral\Database\Exception\InterpolatorException;
 use Spiral\Database\Injection\Parameter;

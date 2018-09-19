@@ -6,8 +6,8 @@
  */
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\Helper\SynchronizationPool;
-use Spiral\Database\Schema\Prototypes\AbstractTable;
+use Spiral\Database\SynchronizationPool;
+use Spiral\Database\Schema\AbstractTable;
 
 abstract class SynchronizationPoolTest extends BaseTest
 {

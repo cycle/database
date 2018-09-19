@@ -13,7 +13,7 @@ use Spiral\Core\FactoryInterface;
 use Spiral\Database\Config\DatabasesConfig;
 use Spiral\Database\DatabaseManager;
 use Spiral\Database\Driver\SQLite\SQLiteDriver;
-use Spiral\Database\Entity\Database;
+use Spiral\Database\Database;
 
 class ManagerTest extends TestCase
 {

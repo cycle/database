@@ -7,8 +7,8 @@
 
 namespace Spiral\Database\Driver\SQLite\Schema;
 
-use Spiral\Database\Entity\Driver;
-use Spiral\Database\Schema\Prototypes\AbstractColumn;
+use Spiral\Database\Driver;
+use Spiral\Database\Schema\AbstractColumn;
 
 class SQLiteColumn extends AbstractColumn
 {

@@ -6,7 +6,7 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database\Entity;
+namespace Spiral\Database;
 
 use Spiral\Core\Container\InjectableInterface;
 use Spiral\Database\Query\DeleteQuery;

@@ -10,10 +10,10 @@ use Spiral\Database\Query\DeleteQuery;
 use Spiral\Database\Query\InsertQuery;
 use Spiral\Database\Query\SelectQuery;
 use Spiral\Database\Query\UpdateQuery;
-use Spiral\Database\Entity\Driver;
-use Spiral\Database\Entity\QueryCompiler;
-use Spiral\Database\Entity\Table;
-use Spiral\Database\Schema\Prototypes\AbstractTable;
+use Spiral\Database\Driver;
+use Spiral\Database\QueryCompiler;
+use Spiral\Database\Table;
+use Spiral\Database\Schema\AbstractTable;
 
 abstract class BuildersAccessTest extends BaseTest
 {

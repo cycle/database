@@ -9,10 +9,10 @@ namespace Spiral\Database\Tests;
 
 use Interop\Container\ContainerInterface;
 use PHPUnit\Framework\TestCase;
-use Spiral\Database\Entity\AbstractHandler;
-use Spiral\Database\Entity\Database;
-use Spiral\Database\Entity\Driver;
-use Spiral\Database\Schema\Prototypes\AbstractTable;
+use Spiral\Database\AbstractHandler;
+use Spiral\Database\Database;
+use Spiral\Database\Driver;
+use Spiral\Database\Schema\AbstractTable;
 use Spiral\Database\Schema\StateComparator;
 
 abstract class BaseTest extends TestCase

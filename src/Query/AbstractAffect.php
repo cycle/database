@@ -6,10 +6,10 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database\Query\Prototype;
+namespace Spiral\Database\Query;
 
-use Spiral\Database\Entity\Driver;
-use Spiral\Database\Entity\QueryCompiler;
+use Spiral\Database\Driver;
+use Spiral\Database\QueryCompiler;
 
 /**
  * Generic prototype for affect queries with WHERE and JOIN supports. At this moment used as parent

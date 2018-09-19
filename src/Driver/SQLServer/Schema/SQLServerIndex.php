@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Driver\SQLServer\Schema;
 
-use Spiral\Database\Schema\Prototypes\AbstractIndex;
+use Spiral\Database\Schema\AbstractIndex;
 
 class SQLServerIndex extends AbstractIndex
 {

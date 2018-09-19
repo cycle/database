@@ -8,8 +8,8 @@
 
 namespace Spiral\Database\Driver\SQLite\Schema;
 
-use Spiral\Database\Entity\Driver;
-use Spiral\Database\Schema\Prototypes\AbstractIndex;
+use Spiral\Database\Driver;
+use Spiral\Database\Schema\AbstractIndex;
 
 class SQLiteIndex extends AbstractIndex
 {

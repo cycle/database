@@ -8,11 +8,11 @@
 namespace Spiral\Database\Driver\SQLServer;
 
 use Spiral\Database\Driver\SQLServer\Schema\SQLServerColumn;
-use Spiral\Database\Entity\AbstractHandler;
+use Spiral\Database\AbstractHandler;
 use Spiral\Database\Exception\SchemaException;
-use Spiral\Database\Schema\Prototypes\AbstractColumn;
-use Spiral\Database\Schema\Prototypes\AbstractIndex;
-use Spiral\Database\Schema\Prototypes\AbstractTable;
+use Spiral\Database\Schema\AbstractColumn;
+use Spiral\Database\Schema\AbstractIndex;
+use Spiral\Database\Schema\AbstractTable;
 
 class SQLServerHandler extends AbstractHandler
 {

@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Driver\Postgres\Schema;
 
-use Spiral\Database\Schema\Prototypes\AbstractReference;
+use Spiral\Database\Schema\AbstractReference;
 
 class PostgresReference extends AbstractReference
 {

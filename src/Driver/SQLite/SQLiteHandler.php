@@ -7,12 +7,12 @@
 
 namespace Spiral\Database\Driver\SQLite;
 
-use Spiral\Database\Entity\AbstractHandler;
+use Spiral\Database\AbstractHandler;
 use Spiral\Database\Exception\DBALException;
 use Spiral\Database\Exception\SchemaHandlerException;
-use Spiral\Database\Schema\Prototypes\AbstractColumn;
-use Spiral\Database\Schema\Prototypes\AbstractReference;
-use Spiral\Database\Schema\Prototypes\AbstractTable;
+use Spiral\Database\Schema\AbstractColumn;
+use Spiral\Database\Schema\AbstractReference;
+use Spiral\Database\Schema\AbstractTable;
 
 /**
  * Handler provides ability to exectute non supported changes using temporary

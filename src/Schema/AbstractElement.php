@@ -5,9 +5,9 @@
  * @author Wolfy-J
  */
 
-namespace Spiral\Database\Schema\Prototypes;
+namespace Spiral\Database\Schema;
 
-use Spiral\Database\Entity\Driver;
+use Spiral\Database\Driver;
 
 /**
  * Aggregates common functionality for columns, indexes and foreign key schemas.

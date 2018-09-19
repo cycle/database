@@ -6,7 +6,7 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database\Entity;
+namespace Spiral\Database;
 
 use PDOStatement;
 

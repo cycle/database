@@ -8,10 +8,10 @@
 
 namespace Spiral\Database\Query;
 
-use Spiral\Database\Query\Prototype\AbstractSelect;
-use Spiral\Database\Entity\Driver;
-use Spiral\Database\Entity\QueryCompiler;
-use Spiral\Database\Entity\QueryStatement;
+use Spiral\Database\Query\AbstractSelect;
+use Spiral\Database\Driver;
+use Spiral\Database\QueryCompiler;
+use Spiral\Database\QueryStatement;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Exception\QueryException;
 use Spiral\Database\Injection\FragmentInterface;

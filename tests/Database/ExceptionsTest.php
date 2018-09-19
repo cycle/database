@@ -6,7 +6,7 @@
  */
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\Entity\Database;
+use Spiral\Database\Database;
 use Spiral\Database\Exception\QueryException;
 
 /**

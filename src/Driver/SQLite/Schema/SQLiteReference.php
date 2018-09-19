@@ -8,8 +8,8 @@
 
 namespace Spiral\Database\Driver\SQLite\Schema;
 
-use Spiral\Database\Entity\Driver;
-use Spiral\Database\Schema\Prototypes\AbstractReference;
+use Spiral\Database\Driver;
+use Spiral\Database\Schema\AbstractReference;
 use Spiral\Database\Schema\ReferenceInterface;
 
 class SQLiteReference extends AbstractReference

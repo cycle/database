@@ -14,8 +14,8 @@ use Spiral\Database\Driver\MySQL\MySQLDriver;
 use Spiral\Database\Driver\Postgres\PostgresDriver;
 use Spiral\Database\Driver\SQLite\SQLiteDriver;
 use Spiral\Database\Driver\SQLServer\SQLServerDriver;
-use Spiral\Database\Entity\PDODriver;
-use Spiral\Database\Entity\Quoter;
+use Spiral\Database\PDODriver;
+use Spiral\Database\Quoter;
 
 class QuoterTest extends TestCase
 {

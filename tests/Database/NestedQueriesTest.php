@@ -9,12 +9,12 @@ namespace Spiral\Database\Tests;
 
 use Spiral\Database\Query\QueryBuilder;
 use Spiral\Database\Query\SelectQuery;
-use Spiral\Database\Entity\Database;
-use Spiral\Database\Helper\QueryInterpolator;
+use Spiral\Database\Database;
+use Spiral\Database\QueryInterpolator;
 use Spiral\Database\Injection\Expression;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
-use Spiral\Database\Schema\Prototypes\AbstractTable;
+use Spiral\Database\Schema\AbstractTable;
 use Spiral\Pagination\PaginatorAwareInterface;
 
 abstract class NestedQueriesTest extends BaseQueryTest

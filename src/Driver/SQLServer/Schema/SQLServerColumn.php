@@ -7,8 +7,8 @@
 
 namespace Spiral\Database\Driver\SQLServer\Schema;
 
-use Spiral\Database\Entity\Driver;
-use Spiral\Database\Schema\Prototypes\AbstractColumn;
+use Spiral\Database\Driver;
+use Spiral\Database\Schema\AbstractColumn;
 
 /**
  * @todo investigate potential issue with entity non handling enum correctly when multiple

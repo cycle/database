@@ -6,12 +6,12 @@
  */
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\Entity\Database;
-use Spiral\Database\Entity\QueryStatement;
-use Spiral\Database\Entity\Table;
+use Spiral\Database\Database;
+use Spiral\Database\QueryStatement;
+use Spiral\Database\Table;
 use Spiral\Database\Injection\Parameter;
-use Spiral\Database\Schema\Prototypes\AbstractColumn;
-use Spiral\Database\Schema\Prototypes\AbstractTable;
+use Spiral\Database\Schema\AbstractColumn;
+use Spiral\Database\Schema\AbstractTable;
 use Spiral\Pagination\Paginator;
 
 abstract class QueryResultTest extends BaseQueryTest

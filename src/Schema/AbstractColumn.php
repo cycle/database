@@ -5,9 +5,9 @@
  * @author Wolfy-J
  */
 
-namespace Spiral\Database\Schema\Prototypes;
+namespace Spiral\Database\Schema;
 
-use Spiral\Database\Entity\Driver;
+use Spiral\Database\Driver;
 use Spiral\Database\Exception\DefaultValueException;
 use Spiral\Database\Exception\SchemaException;
 use Spiral\Database\Injection\Fragment;

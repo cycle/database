@@ -11,8 +11,8 @@ namespace Spiral\Database\Driver\SQLite;
 use Psr\Log\LoggerInterface;
 use Spiral\Database\DatabaseInterface;
 use Spiral\Database\Driver\SQLite\Schema\SQLiteTable;
-use Spiral\Database\Entity\AbstractHandler;
-use Spiral\Database\Entity\Driver;
+use Spiral\Database\AbstractHandler;
+use Spiral\Database\Driver;
 use Spiral\Database\Exception\DriverException;
 
 /**

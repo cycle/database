@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Driver\MySQL\Schema;
 
-use Spiral\Database\Schema\Prototypes\AbstractIndex;
+use Spiral\Database\Schema\AbstractIndex;
 
 class MySQLIndex extends AbstractIndex
 {

@@ -8,7 +8,7 @@
 
 namespace Spiral\Database\Driver\MySQL;
 
-use Spiral\Database\Entity\QueryCompiler as AbstractCompiler;
+use Spiral\Database\QueryCompiler as AbstractCompiler;
 use Spiral\Database\Injection\ParameterInterface;
 
 /**

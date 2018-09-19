@@ -7,7 +7,7 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database\Entity;
+namespace Spiral\Database;
 
 /**
  * Class responsible for "intelligent" table and column name quoting.

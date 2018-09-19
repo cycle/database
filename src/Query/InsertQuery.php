@@ -8,8 +8,8 @@
 
 namespace Spiral\Database\Query;
 
-use Spiral\Database\Entity\Driver;
-use Spiral\Database\Entity\QueryCompiler;
+use Spiral\Database\Driver;
+use Spiral\Database\QueryCompiler;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Injection\Parameter;
 

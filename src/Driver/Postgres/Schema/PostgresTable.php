@@ -8,11 +8,11 @@
 namespace Spiral\Database\Driver\Postgres\Schema;
 
 use Psr\Log\LoggerInterface;
-use Spiral\Database\Entity\AbstractHandler as Behaviour;
-use Spiral\Database\Schema\Prototypes\AbstractColumn;
-use Spiral\Database\Schema\Prototypes\AbstractIndex;
-use Spiral\Database\Schema\Prototypes\AbstractReference;
-use Spiral\Database\Schema\Prototypes\AbstractTable;
+use Spiral\Database\AbstractHandler as Behaviour;
+use Spiral\Database\Schema\AbstractColumn;
+use Spiral\Database\Schema\AbstractIndex;
+use Spiral\Database\Schema\AbstractReference;
+use Spiral\Database\Schema\AbstractTable;
 
 
 class PostgresTable extends AbstractTable

@@ -12,8 +12,8 @@ use PDO;
 use Psr\Log\LoggerInterface;
 use Spiral\Database\DatabaseInterface;
 use Spiral\Database\Driver\SQLServer\Schema\SQLServerTable;
-use Spiral\Database\Entity\AbstractHandler;
-use Spiral\Database\Entity\Driver;
+use Spiral\Database\AbstractHandler;
+use Spiral\Database\Driver;
 use Spiral\Database\Exception\DriverException;
 
 class SQLServerDriver extends Driver

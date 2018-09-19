@@ -6,14 +6,14 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database\Entity;
+namespace Spiral\Database;
 
 use Spiral\Database\Query\DeleteQuery;
 use Spiral\Database\Query\InsertQuery;
 use Spiral\Database\Query\SelectQuery;
 use Spiral\Database\Query\UpdateQuery;
 use Spiral\Database\Exception\BuilderException;
-use Spiral\Database\Schema\Prototypes\AbstractTable;
+use Spiral\Database\Schema\AbstractTable;
 
 /**
  * Represent table level abstraction with simplified access to SelectQuery associated with such

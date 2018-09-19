@@ -5,11 +5,11 @@
  * @author Wolfy-J
  */
 
-namespace Spiral\Database\Schema\Prototypes;
+namespace Spiral\Database\Schema;
 
 use Psr\Log\LoggerInterface;
-use Spiral\Database\Entity\AbstractHandler as Behaviour;
-use Spiral\Database\Entity\Driver;
+use Spiral\Database\AbstractHandler as Behaviour;
+use Spiral\Database\Driver;
 use Spiral\Database\Exception\SchemaException;
 use Spiral\Database\Exception\SchemaHandlerException;
 use Spiral\Database\Schema\StateComparator;

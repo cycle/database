@@ -6,13 +6,12 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database\Helper;
+namespace Spiral\Database;
 
 use Psr\Log\LoggerInterface;
-use Spiral\Core\Component;
-use Spiral\Database\Entity\AbstractHandler as Behaviour;
-use Spiral\Database\Entity\Driver;
-use Spiral\Database\Schema\Prototypes\AbstractTable;
+use Spiral\Database\AbstractHandler as Behaviour;
+use Spiral\Database\Driver;
+use Spiral\Database\Schema\AbstractTable;
 use Spiral\Support\DFSSorter;
 
 /**
@@ -20,7 +19,7 @@ use Spiral\Support\DFSSorter;
  *
  * Attention, not every DBMS support transactional schema manipulations!
  */
-class SynchronizationPool extends Component
+class SynchronizationPool
 {
     /**
      * @var AbstractTable[]

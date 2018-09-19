@@ -5,7 +5,7 @@
  * @author Wolfy-J
  */
 
-namespace Spiral\Database\Entity;
+namespace Spiral\Database;
 
 use Psr\Log\LoggerInterface;
 use Spiral\Core\Exceptions\InvalidArgumentException;
@@ -13,11 +13,11 @@ use Spiral\Database\Exception\DBALException;
 use Spiral\Database\Exception\DriverException;
 use Spiral\Database\Exception\QueryException;
 use Spiral\Database\Exception\SchemaHandlerException;
-use Spiral\Database\Schema\Prototypes\AbstractColumn;
-use Spiral\Database\Schema\Prototypes\AbstractElement;
-use Spiral\Database\Schema\Prototypes\AbstractIndex;
-use Spiral\Database\Schema\Prototypes\AbstractReference;
-use Spiral\Database\Schema\Prototypes\AbstractTable;
+use Spiral\Database\Schema\AbstractColumn;
+use Spiral\Database\Schema\AbstractElement;
+use Spiral\Database\Schema\AbstractIndex;
+use Spiral\Database\Schema\AbstractReference;
+use Spiral\Database\Schema\AbstractTable;
 use Spiral\Database\Schema\StateComparator;
 
 /**

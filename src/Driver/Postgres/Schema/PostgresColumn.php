@@ -7,10 +7,10 @@
 
 namespace Spiral\Database\Driver\Postgres\Schema;
 
-use Spiral\Database\Entity\Driver;
+use Spiral\Database\Driver;
 use Spiral\Database\Injection\Fragment;
 use Spiral\Database\Schema\ColumnInterface;
-use Spiral\Database\Schema\Prototypes\AbstractColumn;
+use Spiral\Database\Schema\AbstractColumn;
 
 /**
  * @todo investigate potential issue with entity non handling enum correctly when multiple

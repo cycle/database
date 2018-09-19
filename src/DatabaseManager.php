@@ -14,8 +14,8 @@ use Spiral\Core\Container\InjectorInterface;
 use Spiral\Core\Container\SingletonInterface;
 use Spiral\Core\FactoryInterface;
 use Spiral\Database\Config\DatabasesConfig;
-use Spiral\Database\Entity\Database;
-use Spiral\Database\Entity\Driver;
+use Spiral\Database\Database;
+use Spiral\Database\Driver;
 use Spiral\Database\Exception\DatabaseException;
 use Spiral\Database\Exception\DBALException;
 

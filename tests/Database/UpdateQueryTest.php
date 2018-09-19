@@ -8,10 +8,10 @@ namespace Spiral\Database\Tests;
 
 use Spiral\Database\Query\QueryBuilder;
 use Spiral\Database\Query\UpdateQuery;
-use Spiral\Database\Entity\Database;
-use Spiral\Database\Helper\QueryInterpolator;
+use Spiral\Database\Database;
+use Spiral\Database\QueryInterpolator;
 use Spiral\Database\Injection\ParameterInterface;
-use Spiral\Database\Schema\Prototypes\AbstractTable;
+use Spiral\Database\Schema\AbstractTable;
 
 abstract class UpdateQueryTest extends BaseQueryTest
 {

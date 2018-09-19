@@ -6,10 +6,10 @@
  */
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\Entity\Database;
-use Spiral\Database\Entity\Table;
+use Spiral\Database\Database;
+use Spiral\Database\Table;
 use Spiral\Database\Injection\Expression;
-use Spiral\Database\Schema\Prototypes\AbstractTable;
+use Spiral\Database\Schema\AbstractTable;
 
 abstract class TableTest extends BaseTest
 {

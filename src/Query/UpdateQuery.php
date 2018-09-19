@@ -8,9 +8,9 @@
 
 namespace Spiral\Database\Query;
 
-use Spiral\Database\Query\Prototype\AbstractAffect;
-use Spiral\Database\Entity\Driver;
-use Spiral\Database\Entity\QueryCompiler;
+use Spiral\Database\Query\AbstractAffect;
+use Spiral\Database\Driver;
+use Spiral\Database\QueryCompiler;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Injection\ParameterInterface;

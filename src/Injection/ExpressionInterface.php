@@ -8,7 +8,7 @@
 
 namespace Spiral\Database\Injection;
 
-use Spiral\Database\Entity\QueryCompiler;
+use Spiral\Database\QueryCompiler;
 
 /**
  * Expressions require instance of QueryCompiler at moment of statementGeneration. For

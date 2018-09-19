@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Driver\MySQL\Schema;
 
-use Spiral\Database\Schema\Prototypes\AbstractReference;
+use Spiral\Database\Schema\AbstractReference;
 
 class MySQLReference extends AbstractReference
 {

@@ -6,7 +6,7 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database\Entity;
+namespace Spiral\Database;
 
 use PDO;
 use Psr\Log\LoggerAwareInterface;
@@ -15,7 +15,7 @@ use Spiral\Core\Exceptions\ScopeException;
 use Spiral\Database\Exception\ConnectionException;
 use Spiral\Database\Exception\DriverException;
 use Spiral\Database\Exception\QueryException;
-use Spiral\Database\Helper\QueryInterpolator;
+use Spiral\Database\QueryInterpolator;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
 use Spiral\Debug\Traits\BenchmarkTrait;

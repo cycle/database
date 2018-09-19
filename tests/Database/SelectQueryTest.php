@@ -8,11 +8,11 @@
 namespace Spiral\Database\Tests;
 
 use Spiral\Database\Query\SelectQuery;
-use Spiral\Database\Entity\Database;
+use Spiral\Database\Database;
 use Spiral\Database\Injection\Expression;
 use Spiral\Database\Injection\Fragment;
 use Spiral\Database\Injection\Parameter;
-use Spiral\Database\Schema\Prototypes\AbstractTable;
+use Spiral\Database\Schema\AbstractTable;
 use Spiral\Pagination\PaginatorAwareInterface;
 
 abstract class SelectQueryTest extends BaseQueryTest

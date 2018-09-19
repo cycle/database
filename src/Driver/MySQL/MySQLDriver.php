@@ -12,8 +12,8 @@ use PDO;
 use Psr\Log\LoggerInterface;
 use Spiral\Database\DatabaseInterface;
 use Spiral\Database\Driver\MySQL\Schema\MySQLTable;
-use Spiral\Database\Entity\AbstractHandler;
-use Spiral\Database\Entity\Driver;
+use Spiral\Database\AbstractHandler;
+use Spiral\Database\Driver;
 use Spiral\Database\Exception\ConnectionException;
 use Spiral\Database\Exception\QueryException;
 

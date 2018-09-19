@@ -4,12 +4,13 @@
  *
  * @author Wolfy-J
  */
+
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\Entity\AbstractHandler;
-use Spiral\Database\Entity\Database;
-use Spiral\Database\Schema\Prototypes\AbstractColumn;
-use Spiral\Database\Schema\Prototypes\AbstractTable;
+use Spiral\Database\AbstractHandler;
+use Spiral\Database\Database;
+use Spiral\Database\Schema\AbstractColumn;
+use Spiral\Database\Schema\AbstractTable;
 
 abstract class ColumnsAlteringTest extends BaseTest
 {
@@ -55,7 +56,6 @@ abstract class ColumnsAlteringTest extends BaseTest
             $schema->datetime('datetime')->defaultValue('2017-01-01 00:00:00');
             $schema->date('datetime')->nullable(true);
             $schema->time('datetime')->defaultValue('00:00');
-
 
             $schema->save(AbstractHandler::DO_ALL);
         }

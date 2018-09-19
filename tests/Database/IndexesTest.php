@@ -6,9 +6,9 @@
  */
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\Entity\AbstractHandler;
-use Spiral\Database\Schema\Prototypes\AbstractColumn;
-use Spiral\Database\Schema\Prototypes\AbstractTable;
+use Spiral\Database\AbstractHandler;
+use Spiral\Database\Schema\AbstractColumn;
+use Spiral\Database\Schema\AbstractTable;
 
 abstract class IndexesTest extends BaseTest
 {

@@ -6,7 +6,7 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database\Entity;
+namespace Spiral\Database;
 
 use Interop\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -17,7 +17,7 @@ use Spiral\Database\Query\InsertQuery;
 use Spiral\Database\Query\SelectQuery;
 use Spiral\Database\Query\UpdateQuery;
 use Spiral\Database\Exception\ConnectionException;
-use Spiral\Database\Schema\Prototypes\AbstractTable;
+use Spiral\Database\Schema\AbstractTable;
 
 /**
  * Driver abstraction is responsible for DBMS specific set of functions and used by Databases to

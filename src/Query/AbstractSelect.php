@@ -6,11 +6,11 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database\Query\Prototype;
+namespace Spiral\Database\Query;
 
 use Spiral\Database\Query\QueryBuilder;
 use Spiral\Database\Query\Traits\JoinsTrait;
-use Spiral\Database\Entity\QueryCompiler;
+use Spiral\Database\QueryCompiler;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Injection\ExpressionInterface;
 use Spiral\Database\Injection\FragmentInterface;
