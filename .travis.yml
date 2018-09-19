@@ -11,7 +11,7 @@ php:
 #  - nightly
 
 before_install:
-  - docker-compose up -f databases.yml -d
+  - docker-compose up -d
 
 install:
   - composer install --no-interaction --prefer-source
