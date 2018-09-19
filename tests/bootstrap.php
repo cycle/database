@@ -16,7 +16,7 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 \Spiral\Database\Tests\BaseTest::$config = [
     'debug'     => false,
     'sqlite'    => [
-        'driver' => \Spiral\Database\Driver\MySQL\MySQLDriver::class,
+        'driver' => \Spiral\Database\Driver\SQLite\SQLiteDriver::class,
         'check'  => function () {
             return !in_array('sqlite', \PDO::getAvailableDrivers());
         },
@@ -47,7 +47,7 @@ require dirname(__DIR__) . '/vendor/autoload.php';
         'check'  => function () {
             return !in_array('pgsql', \PDO::getAvailableDrivers());
         },
-        'conn'   => 'pgsql:host=127.0.0.1:15432;dbname=spiral',
+        'conn'   => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
         'user'   => 'postgres',
         'pass'   => 'postgres'
     ],
@@ -56,7 +56,7 @@ require dirname(__DIR__) . '/vendor/autoload.php';
         'check'  => function () {
             return !in_array('sqlsrv', \PDO::getAvailableDrivers());
         },
-        'conn'   => 'sqlsrv:Server=127.0.0.1:11433;Database=tempdb',
+        'conn'   => 'sqlsrv:Server=127.0.0.1,11433;Database=tempdb',
         'user'   => 'sa',
         'pass'   => 'SSpaSS__1'
     ],
