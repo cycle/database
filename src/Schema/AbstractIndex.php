@@ -8,7 +8,7 @@
 namespace Spiral\Database\Schema;
 
 use Spiral\Database\Driver\Driver;
-use Spiral\Database\Schema\IndexInterface;
+use Spiral\Database\IndexInterface;
 
 /**
  * Abstract index schema with read (see IndexInterface) and write abilities. Must be implemented

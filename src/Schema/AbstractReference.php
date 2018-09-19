@@ -9,6 +9,7 @@ namespace Spiral\Database\Schema;
 
 use Spiral\Database\Driver\Driver;
 use Spiral\Database\Exception\SchemaException;
+use Spiral\Database\ReferenceInterface;
 
 /**
  * Abstract foreign schema with read (see ReferenceInterface) and write abilities. Must be

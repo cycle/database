@@ -43,7 +43,6 @@ interface DatabaseInterface
      *
      * @param string $query
      * @param array  $parameters Parameters to be binded into query.
-     *
      * @return int
      *
      * @throws QueryException
@@ -55,7 +54,6 @@ interface DatabaseInterface
      *
      * @param string $query
      * @param array  $parameters Parameters to be binded into query.
-     *
      * @return QueryStatement
      *
      * @throws QueryException
@@ -67,7 +65,6 @@ interface DatabaseInterface
      * function must receive only one argument - DatabaseInterface instance.
      *
      * @param callable $callback
-     *
      * @return mixed
      *
      * @throws \Exception
@@ -101,7 +98,6 @@ interface DatabaseInterface
      * Check if table exists.
      *
      * @param string $name
-     *
      * @return bool
      */
     public function hasTable(string $name): bool;

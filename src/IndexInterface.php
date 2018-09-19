@@ -6,7 +6,7 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database\Schema;
+namespace Spiral\Database;
 
 /**
  * Represents single table index associated with set of columns.

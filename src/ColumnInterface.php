@@ -6,7 +6,7 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database\Schema;
+namespace Spiral\Database;
 
 /**
  * Represents table schema column abstraction.

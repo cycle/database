@@ -7,12 +7,12 @@
 
 namespace Spiral\Database\Schema;
 
+use Spiral\Database\ColumnInterface;
 use Spiral\Database\Driver\Driver;
 use Spiral\Database\Exception\DefaultValueException;
 use Spiral\Database\Exception\SchemaException;
 use Spiral\Database\Injection\Fragment;
 use Spiral\Database\Injection\FragmentInterface;
-use Spiral\Database\Schema\ColumnInterface;
 
 /**
  * Abstract column schema with read (see ColumnInterface) and write abilities. Must be implemented

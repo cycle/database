@@ -6,16 +6,13 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database\Schema;
+namespace Spiral\Database;
 
 /**
  * Represents single foreign key and it's options.
  */
 interface ReferenceInterface
 {
-    /**
-     * Default delete and update foreign key rules.
-     */
     const CASCADE   = 'CASCADE';
     const NO_ACTION = 'NO ACTION';
 

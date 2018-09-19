@@ -11,6 +11,7 @@ use Spiral\Database\Driver\AbstractHandler as Behaviour;
 use Spiral\Database\Driver\Driver;
 use Spiral\Database\Exception\SchemaException;
 use Spiral\Database\Exception\SchemaHandlerException;
+use Spiral\Database\TableInterface;
 
 /**
  * AbstractTable class used to describe and manage state of specified table. It provides ability to
