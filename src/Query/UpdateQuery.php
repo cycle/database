@@ -66,7 +66,6 @@ class UpdateQuery extends AbstractQuery
      * Change target table.
      *
      * @param string $table Table name without prefix.
-     *
      * @return self|$this
      */
     public function in(string $table): UpdateQuery
@@ -81,7 +80,6 @@ class UpdateQuery extends AbstractQuery
      * value to be set.
      *
      * @param array $values
-     *
      * @return self|$this
      */
     public function values(array $values): UpdateQuery
@@ -106,7 +104,6 @@ class UpdateQuery extends AbstractQuery
      *
      * @param string $column
      * @param mixed  $value
-     *
      * @return self|$this
      */
     public function set(string $column, $value): UpdateQuery

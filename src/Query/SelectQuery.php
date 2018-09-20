@@ -8,9 +8,9 @@
 
 namespace Spiral\Database\Query;
 
+use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Driver\Compiler;
 use Spiral\Database\Driver\CompilerInterface;
-use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Exception\QueryException;
 use Spiral\Database\Injection\FragmentInterface;
@@ -92,8 +92,12 @@ class SelectQuery extends AbstractQuery implements
      * @param array $from    Initial set of table names.
      * @param array $columns Initial set of columns to fetch.
      */
-    public function __construct(AbstractDriver $driver, Compiler $compiler, array $from = [], array $columns = [])
-    {
+    public function __construct(
+        AbstractDriver $driver,
+        Compiler $compiler,
+        array $from = [],
+        array $columns = []
+    ) {
         parent::__construct($driver, $compiler);
 
         $this->tables = $from;
@@ -105,7 +109,8 @@ class SelectQuery extends AbstractQuery implements
     /**
      * Mark query to return only distinct results.
      *
-     * @param bool|string|FragmentInterface $distinct You are only allowed to use string value for Postgres databases.
+     * @param bool|string|FragmentInterface $distinct You are only allowed to use string value for
+     *                                                Postgres databases.
      *
      * @return self|$this
      */
@@ -163,7 +168,6 @@ class SelectQuery extends AbstractQuery implements
      *
      * @param array|string|mixed $tables Array of names, comma separated string or set of
      *                                   parameters.
-     *
      * @return self|$this
      */
     public function from($tables): SelectQuery
@@ -189,7 +193,6 @@ class SelectQuery extends AbstractQuery implements
      *
      * @param array|string|mixed $columns Array of names, comma separated string or set of
      *                                    parameters.
-     *
      * @return self|$this
      */
     public function columns($columns): SelectQuery
@@ -269,7 +272,6 @@ class SelectQuery extends AbstractQuery implements
      * {@inheritdoc}
      *
      * @param bool $paginate Apply pagination to result, can be disabled in honor of count method.
-     *
      * @return QueryStatement
      */
     public function run(bool $paginate = true)
@@ -346,7 +348,6 @@ class SelectQuery extends AbstractQuery implements
      * not count united queries, or queries in complex joins.
      *
      * @param string $column Column to count by (every column by default).
-     *
      * @return int
      */
     public function count(string $column = '*'): int
@@ -372,7 +373,6 @@ class SelectQuery extends AbstractQuery implements
      *
      * @param string $method
      * @param array  $arguments
-     *
      * @return int|float
      *
      * @throws BuilderException

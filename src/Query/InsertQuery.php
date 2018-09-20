@@ -55,7 +55,6 @@ class InsertQuery extends AbstractQuery
      * Set target insertion table.
      *
      * @param string $into
-     *
      * @return self
      */
     public function into(string $into): InsertQuery
@@ -75,7 +74,6 @@ class InsertQuery extends AbstractQuery
      * $insert->columns("name, email");
      *
      * @param array|string $columns
-     *
      * @return self
      */
     public function columns(...$columns): InsertQuery
@@ -108,7 +106,6 @@ class InsertQuery extends AbstractQuery
      * ]);
      *
      * @param mixed $rowsets
-     *
      * @return self
      */
     public function values($rowsets): InsertQuery

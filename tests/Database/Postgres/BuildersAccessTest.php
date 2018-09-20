@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Tests\Postgres;
 
-use Spiral\Database\Driver\Postgres\PostgresInsertQuery;
+use Spiral\Database\Driver\Postgres\Query\PostgresInsertQuery;
 use Spiral\Database\Driver\Postgres\Schema\PostgresTable;
 
 class BuildersAccessTest extends \Spiral\Database\Tests\BuildersAccessTest
