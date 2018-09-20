@@ -14,7 +14,7 @@ use Spiral\Database\Query\DeleteQuery;
 use Spiral\Database\Query\InsertQuery;
 use Spiral\Database\Query\SelectQuery;
 use Spiral\Database\Query\UpdateQuery;
-use Spiral\Database\QueryStatement;
+use Spiral\Database\Statement;
 use Spiral\Database\Schema\AbstractTable;
 
 /**
@@ -171,11 +171,11 @@ interface DriverInterface
      *
      * @param string $statement
      * @param array  $parameters
-     * @return QueryStatement
+     * @return Statement
      *
      * @throws QueryException
      */
-    public function query(string $statement, array $parameters = []): QueryStatement;
+    public function query(string $statement, array $parameters = []): Statement;
 
     /**
      * Execute query and return number of affected rows.

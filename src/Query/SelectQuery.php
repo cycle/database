@@ -18,7 +18,7 @@ use Spiral\Database\Query\Traits\HavingTrait;
 use Spiral\Database\Query\Traits\JoinTrait;
 use Spiral\Database\Query\Traits\TokenTrait;
 use Spiral\Database\Query\Traits\WhereTrait;
-use Spiral\Database\QueryStatement;
+use Spiral\Database\Statement;
 use Spiral\Pagination\PaginatorAwareInterface;
 use Spiral\Pagination\Traits\LimitsTrait;
 use Spiral\Pagination\Traits\PaginatorTrait;
@@ -272,7 +272,7 @@ class SelectQuery extends AbstractQuery implements
      * {@inheritdoc}
      *
      * @param bool $paginate Apply pagination to result, can be disabled in honor of count method.
-     * @return QueryStatement
+     * @return Statement
      */
     public function run(bool $paginate = true)
     {
@@ -407,7 +407,7 @@ class SelectQuery extends AbstractQuery implements
     /**
      * {@inheritdoc}
      *
-     * @return \PDOStatement|QueryStatement
+     * @return \PDOStatement|Statement
      */
     public function getIterator()
     {

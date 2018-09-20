@@ -16,7 +16,7 @@ use Spiral\Database\Exception\QueryException;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
 use Spiral\Database\Query\Interpolator;
-use Spiral\Database\QueryStatement;
+use Spiral\Database\Statement;
 
 trait PDOTrait
 {
@@ -32,7 +32,7 @@ trait PDOTrait
     {
         if (!$this->isConnected()) {
             $this->pdo = $this->createPDO();
-            $this->pdo->setAttribute(\PDO::ATTR_STATEMENT_CLASS, [QueryStatement::class]);
+            $this->pdo->setAttribute(\PDO::ATTR_STATEMENT_CLASS, [Statement::class]);
         }
     }
 
@@ -86,11 +86,11 @@ trait PDOTrait
      *
      * @param string $statement
      * @param array  $parameters
-     * @return QueryStatement
+     * @return Statement
      *
      * @throws QueryException
      */
-    public function query(string $statement, array $parameters = []): QueryStatement
+    public function query(string $statement, array $parameters = []): Statement
     {
         //Forcing specific return class
         return $this->statement($statement, $parameters);
@@ -135,11 +135,11 @@ trait PDOTrait
      *
      * @param string $query
      * @param array  $parameters Parameters to be binded into query.
-     * @return QueryStatement
+     * @return Statement
      *
      * @throws QueryException
      */
-    protected function statement(string $query, array $parameters = []): QueryStatement
+    protected function statement(string $query, array $parameters = []): Statement
     {
         try {
             return $this->runStatement($query, $parameters);
@@ -156,11 +156,11 @@ trait PDOTrait
      *
      * @param string $query
      * @param array  $parameters Parameters to be binded into query.
-     * @return QueryStatement
+     * @return Statement
      *
      * @throws QueryException
      */
-    protected function runStatement(string $query, array $parameters = []): QueryStatement
+    protected function runStatement(string $query, array $parameters = []): Statement
     {
         try {
             //Mounting all input parameters
@@ -275,11 +275,11 @@ trait PDOTrait
     /**
      * Bind parameters into statement.
      *
-     * @param QueryStatement       $statement
+     * @param Statement            $statement
      * @param ParameterInterface[] $parameters Named hash of ParameterInterface.
-     * @return QueryStatement
+     * @return Statement
      */
-    private function bindParameters(QueryStatement $statement, array $parameters): QueryStatement
+    private function bindParameters(Statement $statement, array $parameters): Statement
     {
         foreach ($parameters as $index => $parameter) {
             if (is_numeric($index)) {

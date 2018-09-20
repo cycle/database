@@ -9,12 +9,12 @@ namespace Spiral\Database\Tests;
 
 use Spiral\Database\Database;
 use Spiral\Database\Injection\Parameter;
-use Spiral\Database\QueryStatement;
 use Spiral\Database\Schema\AbstractTable;
+use Spiral\Database\Statement;
 use Spiral\Database\Table;
 use Spiral\Pagination\Paginator;
 
-abstract class QueryResultTest extends BaseQueryTest
+abstract class StatementTest extends BaseQueryTest
 {
     /**
      * @var Database
@@ -58,7 +58,7 @@ abstract class QueryResultTest extends BaseQueryTest
     {
         $table = $this->database->table('sample_table');
 
-        $this->assertInstanceOf(QueryStatement::class, $table->select()->getIterator());
+        $this->assertInstanceOf(Statement::class, $table->select()->getIterator());
         $this->assertInstanceOf(\PDOStatement::class, $table->select()->getIterator());
     }
 
@@ -70,8 +70,6 @@ abstract class QueryResultTest extends BaseQueryTest
         $result = $table->select()->getIterator();
 
         $this->assertSame(3, $result->countColumns());
-
-        $this->assertInternalType('array', $result->__debugInfo());
     }
 
     public function testIterateOver()
@@ -295,7 +293,7 @@ abstract class QueryResultTest extends BaseQueryTest
 
         $count = 0;
         $select->runChunks(1, function ($result) use (&$count) {
-            $this->assertInstanceOf(QueryStatement::class, $result);
+            $this->assertInstanceOf(Statement::class, $result);
             $this->assertEquals($count + 1, $result->fetchColumn());
 
             $count++;
@@ -313,7 +311,7 @@ abstract class QueryResultTest extends BaseQueryTest
 
         $count = 0;
         $select->runChunks(1, function ($result) use (&$count) {
-            $this->assertInstanceOf(QueryStatement::class, $result);
+            $this->assertInstanceOf(Statement::class, $result);
 
             $count++;
             if ($count == 5) {

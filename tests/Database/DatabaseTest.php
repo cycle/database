@@ -12,7 +12,7 @@ use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Spiral\Database\Database;
 use Spiral\Database\Driver\AbstractDriver;
-use Spiral\Database\QueryStatement;
+use Spiral\Database\Statement;
 
 //class DatabaseTest extends TestCase
 //{

@@ -172,7 +172,7 @@ class Database implements DatabaseInterface, InjectableInterface
     /**
      * {@inheritdoc}
      */
-    public function query(string $query, array $parameters = []): QueryStatement
+    public function query(string $query, array $parameters = []): Statement
     {
         return $this->getDriver(self::READ)->query($query, $parameters);
     }

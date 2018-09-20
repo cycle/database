@@ -14,11 +14,8 @@ use PDOStatement;
  * Adds few quick methods to PDOStatement and fully compatible with it. By default uses
  * PDO::FETCH_ASSOC mode.
  */
-class QueryStatement extends PDOStatement
+class Statement extends PDOStatement
 {
-    // Limits after which no records will be dumped in __debugInfo.
-    const DUMP_LIMIT = 500;
-
     /**
      * You are seeing completely valid PDO specific protected constructor.
      */
@@ -35,7 +32,7 @@ class QueryStatement extends PDOStatement
      *
      * @return self|$this
      */
-    public function bind($columnID, &$variable): QueryStatement
+    public function bind($columnID, &$variable): Statement
     {
         if (is_numeric($columnID)) {
             //PDO columns are 1-indexed
@@ -68,32 +65,6 @@ class QueryStatement extends PDOStatement
      */
     public function toArray(): array
     {
-        return $this->fetchAll(\PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * Attention, this method WILL NOT work correctly with SQLite driver.
-     *
-     * @return array
-     */
-    public function __debugInfo(): array
-    {
-        return [
-            'query' => $this->queryString,
-            'count' => $this->rowCount(),
-            'rows'  => $this->dumpRows()
-        ];
-    }
-
-    /**
-     * @return array|string
-     */
-    private function dumpRows()
-    {
-        if ($this->rowCount() > static::DUMP_LIMIT) {
-            return '[TOO MANY ROWS]';
-        }
-
         return $this->fetchAll(\PDO::FETCH_ASSOC);
     }
 }
