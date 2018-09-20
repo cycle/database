@@ -53,6 +53,10 @@ abstract class TableTest extends BaseTest
 
         $this->assertTrue($table->exists());
         $this->assertSame(0, $table->count());
+
+        $this->assertTrue($table->hasColumn('value'));
+        $this->assertFalse($table->hasColumn('xx'));
+
     }
 
     public function testPrimaryKeys()
