@@ -207,30 +207,30 @@ abstract class AbstractDriver implements DriverInterface, LoggerAwareInterface
     }
 
     /**
-     * Convert PDO exception into query or integrity exception.
-     *
-     * @param \PDOException $exception
-     * @param string        $query
-     * @return QueryException
-     */
-    protected function clarifyException(\PDOException $exception, string $query): QueryException
-    {
-        return new QueryException($exception, $query);
-    }
-
-    /**
      * Convert DateTime object into local database representation. Driver will automatically force
      * needed timezone.
      *
      * @param \DateTimeInterface $value
      * @return string
      */
-    protected function normalizeTimestamp(\DateTimeInterface $value): string
+    protected function formatDatetime(\DateTimeInterface $value): string
     {
         //Immutable and prepared??
         $datetime = new \DateTime('now', $this->getTimezone());
         $datetime->setTimestamp($value->getTimestamp());
 
         return $datetime->format(static::DATETIME);
+    }
+
+    /**
+     * Convert PDO exception into query or integrity exception.
+     *
+     * @param \PDOException $exception
+     * @param string        $query
+     * @return QueryException
+     */
+    protected function mapException(\PDOException $exception, string $query): QueryException
+    {
+        return new QueryException($exception, $query);
     }
 }

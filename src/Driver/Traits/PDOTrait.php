@@ -10,9 +10,9 @@ namespace Spiral\Database\Driver\Traits;
 
 use PDO;
 use Psr\Log\LoggerInterface;
-use Spiral\Database\Exception\ConnectionException;
 use Spiral\Database\Exception\DriverException;
 use Spiral\Database\Exception\QueryException;
+use Spiral\Database\Exception\QueryException\ConnectionException;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
 use Spiral\Database\Query\Interpolator;
@@ -75,7 +75,7 @@ trait PDOTrait
     public function quote($value, int $type = PDO::PARAM_STR): string
     {
         if ($value instanceof \DateTimeInterface) {
-            $value = $this->normalizeTimestamp($value);
+            $value = $this->formatDatetime($value);
         }
 
         return $this->getPDO()->quote($value, $type);
@@ -184,7 +184,7 @@ trait PDOTrait
             $this->getLogger()->alert($e->getMessage());
 
             //Converting exception into query or integrity exception
-            throw $this->clarifyException($e, $queryString);
+            throw $this->mapException($e, $queryString);
         }
 
         return $statement;
@@ -242,7 +242,7 @@ trait PDOTrait
 
                         //Original parameter must not be altered
                         $nestedParameter = $nestedParameter->withValue(
-                            $this->normalizeTimestamp($nestedParameter->getValue())
+                            $this->formatDatetime($nestedParameter->getValue())
                         );
                     }
 
@@ -256,7 +256,7 @@ trait PDOTrait
                 if ($parameter->getValue() instanceof \DateTimeInterface) {
                     //Original parameter must not be altered
                     $parameter = $parameter->withValue(
-                        $this->normalizeTimestamp($parameter->getValue())
+                        $this->formatDatetime($parameter->getValue())
                     );
                 }
 
@@ -275,7 +275,7 @@ trait PDOTrait
     /**
      * Bind parameters into statement.
      *
-     * @param Statement            $statement
+     * @param Statement $statement
      * @param ParameterInterface[] $parameters Named hash of ParameterInterface.
      * @return Statement
      */
@@ -318,7 +318,7 @@ trait PDOTrait
      *
      * @return string
      */
-    abstract protected function normalizeTimestamp(\DateTimeInterface $value): string;
+    abstract protected function formatDatetime(\DateTimeInterface $value): string;
 
     /**
      * Convert PDO exception into query or integrity exception.
@@ -327,7 +327,10 @@ trait PDOTrait
      * @param string        $query
      * @return QueryException
      */
-    abstract protected function clarifyException(\PDOException $exception, string $query): QueryException;
+    abstract protected function mapException(
+        \PDOException $exception,
+        string $query
+    ): QueryException;
 
     /**
      * @return LoggerInterface

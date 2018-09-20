@@ -86,7 +86,7 @@ class MySQLDriver extends AbstractDriver
      *
      * @see https://dev.mysql.com/doc/refman/5.6/en/error-messages-client.html#error_cr_conn_host_error
      */
-    protected function clarifyException(\PDOException $exception, string $query): QueryException
+    protected function mapException(\PDOException $exception, string $query): QueryException
     {
         if ($exception->getCode() > 2000) {
             return new QueryException\ConnectionException($exception, $query);
