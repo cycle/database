@@ -51,7 +51,6 @@ class DeleteQuery extends AbstractQuery
      * Change target table.
      *
      * @param string $into Table name without prefix.
-     *
      * @return self
      */
     public function from(string $into): DeleteQuery

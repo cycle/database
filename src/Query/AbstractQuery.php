@@ -112,7 +112,7 @@ abstract class AbstractQuery implements QueryInterface
     {
         $result = [];
         foreach ($parameters as $parameter) {
-            if ($parameter instanceof AbstractQuery) {
+            if ($parameter instanceof QueryInterface) {
                 $result = array_merge($result, $parameter->getParameters());
                 continue;
             }

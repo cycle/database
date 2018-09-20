@@ -15,6 +15,7 @@ use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
 use Spiral\Database\Query\AbstractQuery;
+use Spiral\Database\Query\QueryInterface;
 
 /**
  * Provides ability to generate QueryCompiler JOIN tokens including ON conditions and table/column
@@ -83,10 +84,10 @@ trait JoinTrait
      *
      * @param string|AbstractQuery $type  Join type. Allowed values, LEFT, RIGHT, INNER and etc.
      * @param string               $outer Joined table name (without prefix), may include AS
-     *                                   statement.
+     *                                    statement.
      * @param string               $alias Joined table or query alias.
      * @param mixed                $on    Simplified on definition linking table names (no
-     *                                   parameters allowed) or closure.
+     *                                    parameters allowed) or closure.
      *
      * @return $this
      *
@@ -111,7 +112,7 @@ trait JoinTrait
      * @see  join()
      *
      * @param string|AbstractQuery $outer Joined table name (without prefix), may include AS
-     *                                   statement.
+     *                                    statement.
      * @param string               $alias Joined table or query alias.
      *
      * @return $this
@@ -138,10 +139,10 @@ trait JoinTrait
      * @see  join()
      *
      * @param string|AbstractQuery $outer Joined table name (without prefix), may include AS
-     *                                   statement.
+     *                                    statement.
      * @param string               $alias Joined table or query alias.
      * @param mixed                $on    Simplified on definition linking table names (no
-     *                                   parameters allowed) or closure.
+     *                                    parameters allowed) or closure.
      *
      * @return $this
      *
@@ -168,7 +169,7 @@ trait JoinTrait
      * @see  join()
      *
      * @param string|AbstractQuery $outer Joined table name (without prefix), may include AS
-     *                                   statement.
+     *                                    statement.
      * @param string               $alias Joined table or query alias.
      *
      * @return $this
@@ -196,7 +197,7 @@ trait JoinTrait
      * @see  join()
      *
      * @param string|AbstractQuery $outer Joined table name (without prefix), may include AS
-     *                                   statement.
+     *                                    statement.
      * @param string               $alias Joined table or query alias.
      *
      * @return $this
@@ -399,7 +400,7 @@ trait JoinTrait
         return function ($parameter) {
             if ($parameter instanceof FragmentInterface) {
                 //We are only not creating bindings for plan fragments
-                if (!$parameter instanceof ParameterInterface && !$parameter instanceof AbstractQuery) {
+                if (!$parameter instanceof ParameterInterface && !$parameter instanceof QueryInterface) {
                     return $parameter;
                 }
             }
