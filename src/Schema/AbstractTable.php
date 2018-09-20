@@ -44,16 +44,14 @@ use Spiral\Database\TableInterface;
  * @method AbstractColumn binary($column)
  * @method AbstractColumn tinyBinary($column)
  * @method AbstractColumn longBinary($column)
- *
- * @todo add AbstractView?
  */
 abstract class AbstractTable implements TableInterface
 {
     /**
      * Table states.
      */
-    const STATUS_NEW              = 0;
-    const STATUS_EXISTS           = 1;
+    const STATUS_NEW = 0;
+    const STATUS_EXISTS = 1;
     const STATUS_DECLARED_DROPPED = 2;
 
     /**
@@ -293,7 +291,7 @@ abstract class AbstractTable implements TableInterface
     /**
      * {@inheritdoc}
      */
-    public function hasForeign(string $column): bool
+    public function hasReference(string $column): bool
     {
         return $this->current->hasForeign($column);
     }
@@ -303,7 +301,7 @@ abstract class AbstractTable implements TableInterface
      *
      * @return AbstractReference[]
      */
-    public function getForeigns(): array
+    public function getReferences(): array
     {
         return $this->current->getForeigns();
     }
@@ -443,7 +441,7 @@ abstract class AbstractTable implements TableInterface
             throw new SchemaException("Undefined column '{$column}' in '{$this->getName()}'");
         }
 
-        if ($this->hasForeign($column)) {
+        if ($this->hasReference($column)) {
             return $this->current->findForeign($column);
         }
 
@@ -697,7 +695,7 @@ abstract class AbstractTable implements TableInterface
                 }
             }
 
-            foreach ($target->getForeigns() as $foreign) {
+            foreach ($target->getReferences() as $foreign) {
                 if ($column->getName() == $foreign->getColumn()) {
                     $target->current->forgetForeign($foreign);
                 }
@@ -735,7 +733,7 @@ abstract class AbstractTable implements TableInterface
                 }
             }
 
-            foreach ($target->getForeigns() as $foreign) {
+            foreach ($target->getReferences() as $foreign) {
                 if ($initial->getName() == $foreign->getColumn()) {
                     $foreign->column($name->getName());
                 }
@@ -780,7 +778,7 @@ abstract class AbstractTable implements TableInterface
             'primaryKeys' => $this->getPrimaryKeys(),
             'columns'     => array_values($this->getColumns()),
             'indexes'     => array_values($this->getIndexes()),
-            'references'  => array_values($this->getForeigns()),
+            'references'  => array_values($this->getReferences()),
         ];
     }
 

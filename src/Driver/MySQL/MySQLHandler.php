@@ -28,7 +28,7 @@ class MySQLHandler extends AbstractHandler
     ) {
 
         $foreignBackup = [];
-        foreach ($table->getForeigns() as $foreign) {
+        foreach ($table->getReferences() as $foreign) {
             if ($column->getName() == $foreign->getColumn()) {
                 $foreignBackup[] = $foreign;
                 $this->dropForeign($table, $foreign);

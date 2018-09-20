@@ -8,12 +8,12 @@
 namespace Spiral\Database\Driver;
 
 use Spiral\Core\Exception\InvalidArgumentException;
+use Spiral\Database\ElementInterface;
 use Spiral\Database\Exception\DBALException;
 use Spiral\Database\Exception\DriverException;
 use Spiral\Database\Exception\QueryException;
 use Spiral\Database\Exception\SchemaHandlerException;
 use Spiral\Database\Schema\AbstractColumn;
-use Spiral\Database\Schema\AbstractElement;
 use Spiral\Database\Schema\AbstractIndex;
 use Spiral\Database\Schema\AbstractReference;
 use Spiral\Database\Schema\AbstractTable;
@@ -26,32 +26,32 @@ use Spiral\Database\Schema\TableComparator;
 abstract class AbstractHandler
 {
     //Foreign key modification behaviours
-    const DROP_FOREIGNS   = 0b000000001;
+    const DROP_FOREIGNS = 0b000000001;
     const CREATE_FOREIGNS = 0b000000010;
-    const ALTER_FOREIGNS  = 0b000000100;
+    const ALTER_FOREIGNS = 0b000000100;
 
     //All foreign keys related operations
     const DO_FOREIGNS = self::DROP_FOREIGNS | self::ALTER_FOREIGNS | self::CREATE_FOREIGNS;
 
     //Column modification behaviours
-    const DROP_COLUMNS   = 0b000001000;
+    const DROP_COLUMNS = 0b000001000;
     const CREATE_COLUMNS = 0b000010000;
-    const ALTER_COLUMNS  = 0b000100000;
+    const ALTER_COLUMNS = 0b000100000;
 
     //All columns related operations
     const DO_COLUMNS = self::DROP_COLUMNS | self::ALTER_COLUMNS | self::CREATE_COLUMNS;
 
     //Index modification behaviours
-    const DROP_INDEXES   = 0b001000000;
+    const DROP_INDEXES = 0b001000000;
     const CREATE_INDEXES = 0b010000000;
-    const ALTER_INDEXES  = 0b100000000;
+    const ALTER_INDEXES = 0b100000000;
 
     //All index related operations
     const DO_INDEXES = self::DROP_INDEXES | self::ALTER_INDEXES | self::CREATE_INDEXES;
 
     //General purpose schema operations
     const DO_RENAME = 0b10000000000;
-    const DO_DROP   = 0b01000000000;
+    const DO_DROP = 0b01000000000;
 
     //All operations
     const DO_ALL = self::DO_FOREIGNS | self::DO_INDEXES | self::DO_COLUMNS | self::DO_DROP | self::DO_RENAME;
@@ -316,7 +316,7 @@ abstract class AbstractHandler
         }
 
         //Constraints and foreign keys
-        foreach ($table->getForeigns() as $reference) {
+        foreach ($table->getReferences() as $reference) {
             $innerStatement[] = $reference->sqlStatement($this->driver);
         }
 
@@ -375,7 +375,7 @@ abstract class AbstractHandler
     /**
      * Create element identifier.
      *
-     * @param AbstractElement|AbstractTable|string $element
+     * @param ElementInterface|AbstractTable|string $element
      *
      * @return string
      */
@@ -385,7 +385,7 @@ abstract class AbstractHandler
             return $this->driver->identifier($element);
         }
 
-        if (!$element instanceof AbstractElement && !$element instanceof AbstractTable) {
+        if (!$element instanceof ElementInterface && !$element instanceof AbstractTable) {
             throw new InvalidArgumentException("Invalid argument type");
         }
 
