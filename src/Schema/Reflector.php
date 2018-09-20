@@ -6,26 +6,28 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database;
+namespace Spiral\Database\Schema;
 
-use Spiral\Database\Driver\AbstractHandler as Behaviour;
 use Spiral\Database\Driver\Driver;
-use Spiral\Database\Schema\AbstractTable;
+use Spiral\Database\Driver\HandlerInterface;
 
 /**
  * Saves multiple linked tables at once but treating their cross dependency.
- *
  * Attention, not every DBMS support transactional schema manipulations!
- *
- * @todo move to schemas
  */
-class Reflector 
+final class Reflector
 {
     const STATE_NEW    = 1;
     const STATE_PASSED = 2;
 
-    /** @var array string[] */
-    private $keys = [];
+    /** @var AbstractTable[] */
+    private $tables = [];
+
+    /** @var array mixed[] */
+    private $dependencies = [];
+
+    /** @var Driver[] */
+    private $drivers = [];
 
     /** @var array */
     private $states = [];
@@ -33,28 +35,16 @@ class Reflector
     /** @var array mixed[] */
     private $stack = [];
 
-    /** @var array mixed[] */
-    private $objects = [];
-
-    /** @var array mixed[] */
-    private $dependencies = [];
-
     /**
-     * @var AbstractTable[]
+     * Add table to the collection.
+     *
+     * @param AbstractTable $table
      */
-    private $tables = [];
-
-    /**
-     * @var Driver[]
-     */
-    private $drivers = [];
-
-    /**
-     * @param AbstractTable[] $tables
-     */
-    public function __construct(array $tables)
+    public function addTable(AbstractTable $table)
     {
-        $this->tables = $tables;
+        $this->tables[$table->getName()] = $table;
+        $this->dependencies[$table->getName()] = $table->getDependencies();
+
         $this->collectDrivers();
     }
 
@@ -63,37 +53,35 @@ class Reflector
      */
     public function getTables()
     {
-        return $this->tables;
+        return array_values($this->tables);
     }
 
     /**
-     * List of tables sorted in order of cross dependency.
+     * Return sorted stack.
      *
-     * @return AbstractTable[]
+     * @return array
      */
     public function sortedTables(): array
     {
-        /*
-         * Tables has to be sorted using topological graph to execute operations in a valid order.
-         */
-        foreach ($this->tables as $table) {
-            $this->addItem($table->getName(), $table, $table->getDependencies());
+        $items = array_keys($this->tables);
+        $this->states = $this->stack = [];
+
+        foreach ($items as $item) {
+            $this->sort($item, $this->dependencies[$item]);
         }
 
-        return $this->sort();
+        return $this->stack;
     }
 
     /**
      * Synchronize tables.
      *
-     * @throws \Exception
      * @throws \Throwable
      */
     public function run()
     {
         $hasChanges = false;
         foreach ($this->tables as $table) {
-            //todo: test drop
             if (
                 $table->getComparator()->hasChanges()
                 || $table->getStatus() == AbstractTable::STATUS_DECLARED_DROPPED
@@ -112,16 +100,15 @@ class Reflector
 
         try {
             //Drop not-needed foreign keys and alter everything else
-            $this->dropForeigns();
+            $this->dropForeignKeys();
 
             //Drop not-needed indexes
             $this->dropIndexes();
 
             //Other changes [NEW TABLES WILL BE CREATED HERE!]
-            foreach ($this->runChanges() as $table) {
-                $table->save(Behaviour::CREATE_FOREIGNS, true);
+            foreach ($this->commitChanges() as $table) {
+                $table->save(HandlerInterface::CREATE_FOREIGN_KEYS, true);
             }
-
         } catch (\Throwable $e) {
             $this->rollbackTransaction();
             throw $e;
@@ -131,56 +118,25 @@ class Reflector
     }
 
     /**
-     * Begin mass transaction.
+     * Drop all removed table references.
      */
-    protected function beginTransaction()
-    {
-        foreach ($this->drivers as $driver) {
-            $driver->beginTransaction();
-        }
-    }
-
-    /**
-     * Commit mass transaction.
-     */
-    protected function commitTransaction()
-    {
-        foreach ($this->drivers as $driver) {
-            /**
-             * @var Driver $driver
-             */
-            $driver->commitTransaction();
-        }
-    }
-
-    /**
-     * Roll back mass transaction.
-     */
-    protected function rollbackTransaction()
-    {
-        foreach (array_reverse($this->drivers) as $driver) {
-            /**
-             * @var Driver $driver
-             */
-            $driver->rollbackTransaction();
-        }
-    }
-
-
-    protected function dropForeigns()
+    protected function dropForeignKeys()
     {
         foreach ($this->sortedTables() as $table) {
             if ($table->exists()) {
-                $table->save(Behaviour::DROP_FOREIGNS, false);
+                $table->save(HandlerInterface::DROP_FOREIGN_KEYS, false);
             }
         }
     }
 
+    /**
+     * Drop all removed table indexes.
+     */
     protected function dropIndexes()
     {
         foreach ($this->sortedTables() as $table) {
             if ($table->exists()) {
-                $table->save(Behaviour::DROP_INDEXES, false);
+                $table->save(HandlerInterface::DROP_INDEXES, false);
             }
         }
     }
@@ -188,24 +144,25 @@ class Reflector
     /***
      * @return AbstractTable[] Created or updated tables.
      */
-    protected function runChanges(): array
+    protected function commitChanges(): array
     {
-        $tables = [];
+        $updated = [];
         foreach ($this->sortedTables() as $table) {
             if ($table->getStatus() == AbstractTable::STATUS_DECLARED_DROPPED) {
-                $table->save(Behaviour::DO_DROP);
-            } else {
-                $tables[] = $table;
-                $table->save(
-                    Behaviour::DO_ALL
-                    ^ Behaviour::DROP_FOREIGNS
-                    ^ Behaviour::DROP_INDEXES
-                    ^ Behaviour::CREATE_FOREIGNS
-                );
+                $table->save(HandlerInterface::DO_DROP);
+                continue;
             }
+
+            $updated[] = $table;
+            $table->save(
+                HandlerInterface::DO_ALL
+                ^ HandlerInterface::DROP_FOREIGN_KEYS
+                ^ HandlerInterface::DROP_INDEXES
+                ^ HandlerInterface::CREATE_FOREIGN_KEYS
+            );
         }
 
-        return $tables;
+        return $updated;
     }
 
     /**
@@ -221,42 +178,43 @@ class Reflector
     }
 
     /**
-     * @param string $key          Item key, has to be used as reference in dependencies.
-     * @param mixed  $item
-     * @param array  $dependencies Must include keys object depends on.
-     * @return self
+     * Begin mass transaction.
      */
-    private function addItem(string $key, $item, array $dependencies)
+    protected function beginTransaction()
     {
-        $this->keys[] = $key;
-        $this->objects[$key] = $item;
-        $this->dependencies[$key] = $dependencies;
-
-        return $this;
+        foreach ($this->drivers as $driver) {
+            /** @var Driver $driver */
+            $driver->beginTransaction();
+        }
     }
 
     /**
-     * Return sorted stack.
-     *
-     * @return array
+     * Commit mass transaction.
      */
-    private function sort(): array
+    protected function commitTransaction()
     {
-        $items = array_values($this->keys);
-        $this->states = $this->stack = [];
-
-        foreach ($items as $item) {
-            $this->dfs($item, $this->dependencies[$item]);
+        foreach ($this->drivers as $driver) {
+            /** @var Driver $driver */
+            $driver->commitTransaction();
         }
+    }
 
-        return $this->stack;
+    /**
+     * Roll back mass transaction.
+     */
+    protected function rollbackTransaction()
+    {
+        foreach (array_reverse($this->drivers) as $driver) {
+            /** @var Driver $driver */
+            $driver->rollbackTransaction();
+        }
     }
 
     /**
      * @param string $key
      * @param array  $dependencies
      */
-    private function dfs(string $key, array $dependencies)
+    private function sort(string $key, array $dependencies)
     {
         if (isset($this->states[$key])) {
             return;
@@ -264,10 +222,10 @@ class Reflector
 
         $this->states[$key] = self::STATE_NEW;
         foreach ($dependencies as $dependency) {
-            $this->dfs($dependency, $this->dependencies[$dependency]);
+            $this->sort($dependency, $this->dependencies[$dependency]);
         }
 
-        $this->stack[] = $this->objects[$key];
+        $this->stack[] = $this->tables[$key];
         $this->states[$key] = self::STATE_PASSED;
 
         return;

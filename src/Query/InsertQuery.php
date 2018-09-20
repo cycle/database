@@ -149,13 +149,13 @@ class InsertQuery extends QueryBuilder
     /**
      * {@inheritdoc}
      */
-    public function sqlStatement(Compiler $compiler = null): string
+    public function sqlStatement(Compiler $quoter = null): string
     {
-        if (empty($compiler)) {
-            $compiler = $this->compiler->resetQuoter();
+        if (empty($quoter)) {
+            $quoter = $this->compiler->resetQuoter();
         }
 
-        return $compiler->compileInsert($this->table, $this->columns, $this->rowsets);
+        return $quoter->compileInsert($this->table, $this->columns, $this->rowsets);
     }
 
     /**

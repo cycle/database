@@ -160,7 +160,7 @@ abstract class ColumnsAlteringTest extends BaseTest
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
 
-        $schema->column('email')->setType('text');
+        $schema->column('email')->type('text');
         $schema->save();
 
         $this->assertSameAsInDB($schema);
@@ -187,7 +187,7 @@ abstract class ColumnsAlteringTest extends BaseTest
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
 
-        $schema->column('floated')->setType('double');
+        $schema->column('floated')->type('double');
         $schema->save();
 
         $this->assertSameAsInDB($schema);
@@ -199,7 +199,7 @@ abstract class ColumnsAlteringTest extends BaseTest
         $this->assertTrue($schema->exists());
 
         $schema->column('balance')->defaultValue(1);
-        $schema->column('balance')->setType('float');
+        $schema->column('balance')->type('float');
         $schema->save();
 
         $this->assertSameAsInDB($schema);

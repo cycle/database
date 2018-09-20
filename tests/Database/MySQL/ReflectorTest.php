@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Tests\MySQL;
 
-class SynchronizationPoolTest extends \Spiral\Database\Tests\SynchronizationPoolTest
+class ReflectorTest extends \Spiral\Database\Tests\ReflectorTest
 {
     const DRIVER = 'mysql';
 }

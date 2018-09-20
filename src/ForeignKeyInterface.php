@@ -11,7 +11,7 @@ namespace Spiral\Database;
 /**
  * Represents single foreign key and it's options.
  */
-interface ForeignInterface extends ElementInterface
+interface ForeignKeyInterface extends ElementInterface
 {
     const CASCADE = 'CASCADE';
     const NO_ACTION = 'NO ACTION';

@@ -11,54 +11,21 @@ use Spiral\Core\Exception\InvalidArgumentException;
 use Spiral\Database\ElementInterface;
 use Spiral\Database\Exception\DBALException;
 use Spiral\Database\Exception\DriverException;
+use Spiral\Database\Exception\HandlerException;
 use Spiral\Database\Exception\QueryException;
-use Spiral\Database\Exception\SchemaHandlerException;
 use Spiral\Database\Schema\AbstractColumn;
+use Spiral\Database\Schema\AbstractForeignKey;
 use Spiral\Database\Schema\AbstractIndex;
-use Spiral\Database\Schema\AbstractReference;
 use Spiral\Database\Schema\AbstractTable;
-use Spiral\Database\Schema\StateComparator;
+use Spiral\Database\Schema\Comparator;
 
 /**
  * Handler class implements set of DBMS specific operations for schema manipulations. Can be used
  * on separate basis (for example in migrations).
  */
-abstract class AbstractHandler
+abstract class AbstractHandler implements HandlerInterface
 {
-    //Foreign key modification behaviours
-    const DROP_FOREIGNS = 0b000000001;
-    const CREATE_FOREIGNS = 0b000000010;
-    const ALTER_FOREIGNS = 0b000000100;
-
-    //All foreign keys related operations
-    const DO_FOREIGNS = self::DROP_FOREIGNS | self::ALTER_FOREIGNS | self::CREATE_FOREIGNS;
-
-    //Column modification behaviours
-    const DROP_COLUMNS = 0b000001000;
-    const CREATE_COLUMNS = 0b000010000;
-    const ALTER_COLUMNS = 0b000100000;
-
-    //All columns related operations
-    const DO_COLUMNS = self::DROP_COLUMNS | self::ALTER_COLUMNS | self::CREATE_COLUMNS;
-
-    //Index modification behaviours
-    const DROP_INDEXES = 0b001000000;
-    const CREATE_INDEXES = 0b010000000;
-    const ALTER_INDEXES = 0b100000000;
-
-    //All index related operations
-    const DO_INDEXES = self::DROP_INDEXES | self::ALTER_INDEXES | self::CREATE_INDEXES;
-
-    //General purpose schema operations
-    const DO_RENAME = 0b10000000000;
-    const DO_DROP = 0b01000000000;
-
-    //All operations
-    const DO_ALL = self::DO_FOREIGNS | self::DO_INDEXES | self::DO_COLUMNS | self::DO_DROP | self::DO_RENAME;
-
-    /**
-     * @var Driver
-     */
+    /** @var Driver */
     protected $driver;
 
     /**
@@ -80,11 +47,7 @@ abstract class AbstractHandler
     }
 
     /**
-     * Create table based on a given schema.
-     *
-     * @param AbstractTable $table
-     *
-     * @throws SchemaHandlerException
+     * @inheritdoc
      */
     public function createTable(AbstractTable $table)
     {
@@ -97,11 +60,7 @@ abstract class AbstractHandler
     }
 
     /**
-     * Drop table from database.
-     *
-     * @param AbstractTable $table
-     *
-     * @throws SchemaHandlerException
+     * @inheritdoc
      */
     public function dropTable(AbstractTable $table)
     {
@@ -109,12 +68,9 @@ abstract class AbstractHandler
     }
 
     /**
-     * Sync given table schema.
-     *
-     * @param AbstractTable $table
-     * @param int           $behaviour See behaviour constants.
+     * @inheritdoc
      */
-    public function syncTable(AbstractTable $table, int $behaviour = self::DO_ALL)
+    public function syncTable(AbstractTable $table, int $operation = self::DO_ALL)
     {
         $comparator = $table->getComparator();
 
@@ -122,7 +78,7 @@ abstract class AbstractHandler
             throw new DBALException("Unable to change primary keys for existed table");
         }
 
-        if ($comparator->isRenamed() && $behaviour & self::DO_RENAME) {
+        if ($comparator->isRenamed() && $operation & self::DO_RENAME) {
             $this->renameTable($table->getInitialName(), $table->getName());
         }
 
@@ -130,16 +86,11 @@ abstract class AbstractHandler
          * This is schema synchronization code, if you are reading it you are either experiencing
          * VERY weird bug, or you are very curious. Please contact me in a any scenario :)
          */
-        $this->executeChanges($table, $behaviour, $comparator);
+        $this->executeChanges($table, $operation, $comparator);
     }
 
     /**
-     * Rename table from one name to another.
-     *
-     * @param string $table
-     * @param string $name
-     *
-     * @throws SchemaHandlerException
+     * @inheritdoc
      */
     public function renameTable(string $table, string $name)
     {
@@ -147,12 +98,7 @@ abstract class AbstractHandler
     }
 
     /**
-     * Driver specific column add command.
-     *
-     * @param AbstractTable  $table
-     * @param AbstractColumn $column
-     *
-     * @throws SchemaHandlerException
+     * @inheritdoc
      */
     public function createColumn(AbstractTable $table, AbstractColumn $column)
     {
@@ -162,10 +108,7 @@ abstract class AbstractHandler
     }
 
     /**
-     * Driver specific column remove (drop) command.
-     *
-     * @param AbstractTable  $table
-     * @param AbstractColumn $column
+     * @inheritdoc
      */
     public function dropColumn(AbstractTable $table, AbstractColumn $column)
     {
@@ -178,27 +121,7 @@ abstract class AbstractHandler
     }
 
     /**
-     * Driver specific column alter command.
-     *
-     * @param AbstractTable  $table
-     * @param AbstractColumn $initial
-     * @param AbstractColumn $column
-     *
-     * @throws SchemaHandlerException
-     */
-    abstract public function alterColumn(
-        AbstractTable $table,
-        AbstractColumn $initial,
-        AbstractColumn $column
-    );
-
-    /**
-     * Driver specific index adding command.
-     *
-     * @param AbstractTable $table
-     * @param AbstractIndex $index
-     *
-     * @throws SchemaHandlerException
+     * @inheritdoc
      */
     public function createIndex(AbstractTable $table, AbstractIndex $index)
     {
@@ -206,12 +129,7 @@ abstract class AbstractHandler
     }
 
     /**
-     * Driver specific index remove (drop) command.
-     *
-     * @param AbstractTable $table
-     * @param AbstractIndex $index
-     *
-     * @throws SchemaHandlerException
+     * @inheritdoc
      */
     public function dropIndex(AbstractTable $table, AbstractIndex $index)
     {
@@ -219,13 +137,7 @@ abstract class AbstractHandler
     }
 
     /**
-     * Driver specific index alter command, by default it will remove and add index.
-     *
-     * @param AbstractTable $table
-     * @param AbstractIndex $initial
-     * @param AbstractIndex $index
-     *
-     * @throws SchemaHandlerException
+     * @inheritdoc
      */
     public function alterIndex(AbstractTable $table, AbstractIndex $initial, AbstractIndex $index)
     {
@@ -234,56 +146,32 @@ abstract class AbstractHandler
     }
 
     /**
-     * Driver specific foreign key adding command.
-     *
-     * @param AbstractTable     $table
-     * @param AbstractReference $foreign
-     *
-     * @throws SchemaHandlerException
+     * @inheritdoc
      */
-    public function createForeign(AbstractTable $table, AbstractReference $foreign)
+    public function createForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey)
     {
-        $this->run("ALTER TABLE {$this->identify($table)} ADD {$foreign->sqlStatement($this->driver)}");
+        $this->run("ALTER TABLE {$this->identify($table)} ADD {$foreignKey->sqlStatement($this->driver)}");
     }
 
     /**
-     * Driver specific foreign key remove (drop) command.
-     *
-     * @param AbstractTable     $table
-     * @param AbstractReference $foreign
-     *
-     * @throws SchemaHandlerException
+     * @inheritdoc
      */
-    public function dropForeign(AbstractTable $table, AbstractReference $foreign)
+    public function dropForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey)
     {
-        $this->dropConstrain($table, $foreign->getName());
+        $this->dropConstrain($table, $foreignKey->getName());
     }
 
     /**
-     * Driver specific foreign key alter command, by default it will remove and add foreign key.
-     *
-     * @param AbstractTable     $table
-     * @param AbstractReference $initial
-     * @param AbstractReference $foreign
-     *
-     * @throws SchemaHandlerException
+     * @inheritdoc
      */
-    public function alterForeign(
-        AbstractTable $table,
-        AbstractReference $initial,
-        AbstractReference $foreign
-    ) {
-        $this->dropForeign($table, $initial);
-        $this->createForeign($table, $foreign);
+    public function alterForeignKey(AbstractTable $table, AbstractForeignKey $initial, AbstractForeignKey $foreignKey)
+    {
+        $this->dropForeignKey($table, $initial);
+        $this->createForeignKey($table, $foreignKey);
     }
 
     /**
-     * Drop column constraint using it's name.
-     *
-     * @param AbstractTable $table
-     * @param string        $constraint
-     *
-     * @throws SchemaHandlerException
+     * @inheritdoc
      */
     public function dropConstrain(AbstractTable $table, $constraint)
     {
@@ -291,11 +179,7 @@ abstract class AbstractHandler
     }
 
     /**
-     * Get statement needed to create table. Indexes will be created separately.
-     *
-     * @param AbstractTable $table
-     *
-     * @return string
+     * @inheritdoc
      */
     protected function createStatement(AbstractTable $table)
     {
@@ -316,7 +200,7 @@ abstract class AbstractHandler
         }
 
         //Constraints and foreign keys
-        foreach ($table->getReferences() as $reference) {
+        foreach ($table->getForeignKeys() as $reference) {
             $innerStatement[] = $reference->sqlStatement($this->driver);
         }
 
@@ -327,30 +211,27 @@ abstract class AbstractHandler
     }
 
     /**
-     * @param AbstractTable   $table
-     * @param int             $behaviour
-     * @param StateComparator $comparator
+     * @param AbstractTable $table
+     * @param int           $operation
+     * @param Comparator    $comparator
      */
-    protected function executeChanges(
-        AbstractTable $table,
-        int $behaviour,
-        StateComparator $comparator
-    ) {
+    protected function executeChanges(AbstractTable $table, int $operation, Comparator $comparator)
+    {
         //Remove all non needed table constraints
-        $this->dropConstrains($table, $behaviour, $comparator);
+        $this->dropConstrains($table, $operation, $comparator);
 
-        if ($behaviour & self::CREATE_COLUMNS) {
+        if ($operation & self::CREATE_COLUMNS) {
             //After drops and before creations we can add new columns
             $this->createColumns($table, $comparator);
         }
 
-        if ($behaviour & self::ALTER_COLUMNS) {
+        if ($operation & self::ALTER_COLUMNS) {
             //We can alter columns now
             $this->alterColumns($table, $comparator);
         }
 
         //Add new constrains and modify existed one
-        $this->setConstrains($table, $behaviour, $comparator);
+        $this->setConstrains($table, $operation, $comparator);
     }
 
     /**
@@ -358,17 +239,16 @@ abstract class AbstractHandler
      *
      * @param string $statement
      * @param array  $parameters
-     *
      * @return \PDOStatement
      *
-     * @throws SchemaHandlerException
+     * @throws HandlerException
      */
     protected function run(string $statement, array $parameters = []): \PDOStatement
     {
         try {
             return $this->driver->statement($statement, $parameters);
         } catch (QueryException $e) {
-            throw new SchemaHandlerException($e);
+            throw new HandlerException($e);
         }
     }
 
@@ -376,10 +256,9 @@ abstract class AbstractHandler
      * Create element identifier.
      *
      * @param ElementInterface|AbstractTable|string $element
-     *
      * @return string
      */
-    protected function identify($element)
+    protected function identify($element): string
     {
         if (is_string($element)) {
             return $this->driver->identifier($element);
@@ -393,38 +272,38 @@ abstract class AbstractHandler
     }
 
     /**
-     * @param AbstractTable   $table
-     * @param StateComparator $comparator
+     * @param AbstractTable $table
+     * @param Comparator    $comparator
      */
-    protected function alterForeigns(AbstractTable $table, StateComparator $comparator)
+    protected function alterForeignKeys(AbstractTable $table, Comparator $comparator)
     {
-        foreach ($comparator->alteredForeigns() as $pair) {
+        foreach ($comparator->alteredForeignKeys() as $pair) {
             /**
-             * @var AbstractReference $initial
-             * @var AbstractReference $current
+             * @var AbstractForeignKey $initial
+             * @var AbstractForeignKey $current
              */
             list($current, $initial) = $pair;
 
-            $this->alterForeign($table, $initial, $current);
+            $this->alterForeignKey($table, $initial, $current);
         }
     }
 
     /**
-     * @param AbstractTable   $table
-     * @param StateComparator $comparator
+     * @param AbstractTable $table
+     * @param Comparator    $comparator
      */
-    protected function createForeigns(AbstractTable $table, StateComparator $comparator)
+    protected function createForeignKeys(AbstractTable $table, Comparator $comparator)
     {
-        foreach ($comparator->addedForeigns() as $foreign) {
-            $this->createForeign($table, $foreign);
+        foreach ($comparator->addedForeignKeys() as $foreign) {
+            $this->createForeignKey($table, $foreign);
         }
     }
 
     /**
-     * @param AbstractTable   $table
-     * @param StateComparator $comparator
+     * @param AbstractTable $table
+     * @param Comparator    $comparator
      */
-    protected function alterIndexes(AbstractTable $table, StateComparator $comparator)
+    protected function alterIndexes(AbstractTable $table, Comparator $comparator)
     {
         foreach ($comparator->alteredIndexes() as $pair) {
             /**
@@ -438,10 +317,10 @@ abstract class AbstractHandler
     }
 
     /**
-     * @param AbstractTable   $table
-     * @param StateComparator $comparator
+     * @param AbstractTable $table
+     * @param Comparator    $comparator
      */
-    protected function createIndexes(AbstractTable $table, StateComparator $comparator)
+    protected function createIndexes(AbstractTable $table, Comparator $comparator)
     {
         foreach ($comparator->addedIndexes() as $index) {
             $this->createIndex($table, $index);
@@ -449,10 +328,10 @@ abstract class AbstractHandler
     }
 
     /**
-     * @param AbstractTable   $table
-     * @param StateComparator $comparator
+     * @param AbstractTable $table
+     * @param Comparator    $comparator
      */
-    protected function alterColumns(AbstractTable $table, StateComparator $comparator)
+    protected function alterColumns(AbstractTable $table, Comparator $comparator)
     {
         foreach ($comparator->alteredColumns() as $pair) {
             /**
@@ -467,10 +346,10 @@ abstract class AbstractHandler
     }
 
     /**
-     * @param AbstractTable   $table
-     * @param StateComparator $comparator
+     * @param AbstractTable $table
+     * @param Comparator    $comparator
      */
-    protected function createColumns(AbstractTable $table, StateComparator $comparator)
+    protected function createColumns(AbstractTable $table, Comparator $comparator)
     {
         foreach ($comparator->addedColumns() as $column) {
             $this->assertValid($column);
@@ -479,10 +358,10 @@ abstract class AbstractHandler
     }
 
     /**
-     * @param AbstractTable   $table
-     * @param StateComparator $comparator
+     * @param AbstractTable $table
+     * @param Comparator    $comparator
      */
-    protected function dropColumns(AbstractTable $table, StateComparator $comparator)
+    protected function dropColumns(AbstractTable $table, Comparator $comparator)
     {
         foreach ($comparator->droppedColumns() as $column) {
             $this->dropColumn($table, $column);
@@ -490,10 +369,10 @@ abstract class AbstractHandler
     }
 
     /**
-     * @param AbstractTable   $table
-     * @param StateComparator $comparator
+     * @param AbstractTable $table
+     * @param Comparator    $comparator
      */
-    protected function dropIndexes(AbstractTable $table, StateComparator $comparator)
+    protected function dropIndexes(AbstractTable $table, Comparator $comparator)
     {
         foreach ($comparator->droppedIndexes() as $index) {
             $this->dropIndex($table, $index);
@@ -501,13 +380,13 @@ abstract class AbstractHandler
     }
 
     /**
-     * @param AbstractTable   $table
-     * @param StateComparator $comparator
+     * @param AbstractTable $table
+     * @param Comparator    $comparator
      */
-    protected function dropForeigns(AbstractTable $table, $comparator)
+    protected function dropForeignKeys(AbstractTable $table, Comparator $comparator)
     {
-        foreach ($comparator->droppedForeigns() as $foreign) {
-            $this->dropForeign($table, $foreign);
+        foreach ($comparator->droppedForeignKeys() as $foreign) {
+            $this->dropForeignKey($table, $foreign);
         }
     }
 
@@ -524,52 +403,46 @@ abstract class AbstractHandler
     }
 
     /**
-     * @param AbstractTable   $table
-     * @param int             $behaviour
-     * @param StateComparator $comparator
+     * @param AbstractTable $table
+     * @param int           $operation
+     * @param Comparator    $comparator
      */
-    protected function dropConstrains(
-        AbstractTable $table,
-        int $behaviour,
-        StateComparator $comparator
-    ) {
-        if ($behaviour & self::DROP_FOREIGNS) {
-            $this->dropForeigns($table, $comparator);
+    protected function dropConstrains(AbstractTable $table, int $operation, Comparator $comparator)
+    {
+        if ($operation & self::DROP_FOREIGN_KEYS) {
+            $this->dropForeignKeys($table, $comparator);
         }
 
-        if ($behaviour & self::DROP_INDEXES) {
+        if ($operation & self::DROP_INDEXES) {
             $this->dropIndexes($table, $comparator);
         }
 
-        if ($behaviour & self::DROP_COLUMNS) {
+        if ($operation & self::DROP_COLUMNS) {
             $this->dropColumns($table, $comparator);
         }
     }
 
     /**
-     * @param AbstractTable   $table
-     * @param int             $behaviour
-     * @param StateComparator $comparator
+     * @param AbstractTable $table
+     * @param int           $operation
+     * @param Comparator    $comparator
      */
-    protected function setConstrains(
-        AbstractTable $table,
-        int $behaviour,
-        StateComparator $comparator
-    ) {
-        if ($behaviour & self::CREATE_INDEXES) {
+    protected function setConstrains(AbstractTable $table, int $operation, Comparator $comparator)
+    {
+        if ($operation & self::CREATE_INDEXES) {
             $this->createIndexes($table, $comparator);
         }
 
-        if ($behaviour & self::ALTER_INDEXES) {
+        if ($operation & self::ALTER_INDEXES) {
             $this->alterIndexes($table, $comparator);
         }
 
-        if ($behaviour & self::CREATE_FOREIGNS) {
-            $this->createForeigns($table, $comparator);
+        if ($operation & self::CREATE_FOREIGN_KEYS) {
+            $this->createForeignKeys($table, $comparator);
         }
 
-        if ($behaviour & self::ALTER_FOREIGNS) {
-            $this->alterForeigns($table, $comparator);
+        if ($operation & self::ALTER_FOREIGN_KEYS) {
+            $this->alterForeignKeys($table, $comparator);
         }
     }
 }

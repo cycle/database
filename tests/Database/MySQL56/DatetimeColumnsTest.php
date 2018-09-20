@@ -15,7 +15,7 @@ class DatetimeColumnsTest extends \Spiral\Database\Tests\DatetimeColumnsTest
     const DRIVER = 'mysql56';
 
     /**
-     * @expectedException \Spiral\Database\Exception\SchemaHandlerException
+     * @expectedException \Spiral\Database\Exception\HandlerException
      * @expectedExceptionMessage SQLSTATE[HY000]: General error: 1293 Incorrect table definition;
      *                           there can be only one TIMESTAMP column with CURRENT_TIMESTAMP in
      *                           DEFAULT or ON UPDATE clause
@@ -26,7 +26,7 @@ class DatetimeColumnsTest extends \Spiral\Database\Tests\DatetimeColumnsTest
     }
 
     /**
-     * @expectedException \Spiral\Database\Exception\SchemaHandlerException
+     * @expectedException \Spiral\Database\Exception\HandlerException
      * @expectedExceptionMessage SQLSTATE[42000]: Syntax error or access violation: 1067 Invalid
      *                           default value for 'target'
      */
@@ -36,7 +36,7 @@ class DatetimeColumnsTest extends \Spiral\Database\Tests\DatetimeColumnsTest
     }
 
     /**
-     * @expectedException \Spiral\Database\Exception\SchemaHandlerException
+     * @expectedException \Spiral\Database\Exception\HandlerException
      * @expectedExceptionMessage SQLSTATE[42000]: Syntax error or access violation: 1067 Invalid
      *                           default value for 'target'
      */
@@ -46,7 +46,7 @@ class DatetimeColumnsTest extends \Spiral\Database\Tests\DatetimeColumnsTest
     }
 
     /**
-     * @expectedException \Spiral\Database\Exception\SchemaHandlerException
+     * @expectedException \Spiral\Database\Exception\HandlerException
      * @expectedExceptionMessage SQLSTATE[42000]: Syntax error or access violation: 1067 Invalid
      *                           default value for 'target'
      */
@@ -56,7 +56,7 @@ class DatetimeColumnsTest extends \Spiral\Database\Tests\DatetimeColumnsTest
     }
 
     /**
-     * @expectedException \Spiral\Database\Exception\SchemaHandlerException
+     * @expectedException \Spiral\Database\Exception\HandlerException
      * @expectedExceptionMessage SQLSTATE[42000]: Syntax error or access violation: 1067 Invalid
      *                           default value for 'target'
      */

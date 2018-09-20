@@ -15,7 +15,7 @@ use Spiral\Database\Database;
 use Spiral\Database\Driver\AbstractHandler;
 use Spiral\Database\Driver\Driver;
 use Spiral\Database\Schema\AbstractTable;
-use Spiral\Database\Schema\TableComparator;
+use Spiral\Database\Schema\Comparator;
 
 abstract class BaseTest extends TestCase
 {
@@ -87,11 +87,11 @@ abstract class BaseTest extends TestCase
         foreach ($database->getTables() as $table) {
             $schema = $table->getSchema();
 
-            foreach ($schema->getForeigns() as $foreign) {
-                $schema->dropForeign($foreign->getColumn());
+            foreach ($schema->getForeignKeys() as $foreign) {
+                $schema->dropForeignKey($foreign->getColumn());
             }
 
-            $schema->save(AbstractHandler::DROP_FOREIGNS);
+            $schema->save(AbstractHandler::DROP_FOREIGN_KEYS);
         }
 
         foreach ($database->getTables() as $table) {
@@ -103,7 +103,7 @@ abstract class BaseTest extends TestCase
 
     protected function assertSameAsInDB(AbstractTable $current)
     {
-        $comparator = new TableComparator(
+        $comparator = new Comparator(
             $current->getState(),
             $this->schema($current->getName())->getState()
         );
@@ -113,7 +113,7 @@ abstract class BaseTest extends TestCase
         }
     }
 
-    protected function makeMessage(string $table, TableComparator $comparator)
+    protected function makeMessage(string $table, Comparator $comparator)
     {
         if ($comparator->isPrimaryChanged()) {
             return "Table '{$table}' not synced, primary indexes are different.";
@@ -139,11 +139,11 @@ abstract class BaseTest extends TestCase
                     $names) . "' have been changed.";
         }
 
-        if ($comparator->droppedForeigns()) {
+        if ($comparator->droppedForeignKeys()) {
             return "Table '{$table}' not synced, FKs are missing.";
         }
 
-        if ($comparator->addedForeigns()) {
+        if ($comparator->addedForeignKeys()) {
             return "Table '{$table}' not synced, new FKs found.";
         }
 

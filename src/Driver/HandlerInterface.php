@@ -8,7 +8,180 @@
 
 namespace Spiral\Database\Driver;
 
+use Spiral\Database\Exception\HandlerException;
+use Spiral\Database\Schema\AbstractColumn;
+use Spiral\Database\Schema\AbstractForeignKey;
+use Spiral\Database\Schema\AbstractIndex;
+use Spiral\Database\Schema\AbstractTable;
+
+/**
+ * Perform low level operations on schemas.
+ */
 interface HandlerInterface
 {
+    //Foreign key modification behaviours
+    const DROP_FOREIGN_KEYS   = 0b000000001;
+    const CREATE_FOREIGN_KEYS = 0b000000010;
+    const ALTER_FOREIGN_KEYS  = 0b000000100;
 
+    //All foreign keys related operations
+    const DO_FOREIGN_KEYS = self::DROP_FOREIGN_KEYS | self::ALTER_FOREIGN_KEYS | self::CREATE_FOREIGN_KEYS;
+
+    //Column modification behaviours
+    const DROP_COLUMNS   = 0b000001000;
+    const CREATE_COLUMNS = 0b000010000;
+    const ALTER_COLUMNS  = 0b000100000;
+
+    //All columns related operations
+    const DO_COLUMNS = self::DROP_COLUMNS | self::ALTER_COLUMNS | self::CREATE_COLUMNS;
+
+    //Index modification behaviours
+    const DROP_INDEXES   = 0b001000000;
+    const CREATE_INDEXES = 0b010000000;
+    const ALTER_INDEXES  = 0b100000000;
+
+    //All index related operations
+    const DO_INDEXES = self::DROP_INDEXES | self::ALTER_INDEXES | self::CREATE_INDEXES;
+
+    //General purpose schema operations
+    const DO_RENAME = 0b10000000000;
+    const DO_DROP   = 0b01000000000;
+
+    //All operations
+    const DO_ALL = self::DO_FOREIGN_KEYS | self::DO_INDEXES | self::DO_COLUMNS | self::DO_DROP | self::DO_RENAME;
+
+    /**
+     * Create table based on a given schema.
+     *
+     * @param AbstractTable $table
+     * @throws HandlerException
+     */
+    public function createTable(AbstractTable $table);
+
+    /**
+     * Drop table from database.
+     *
+     * @param AbstractTable $table
+     * @throws HandlerException
+     */
+    public function dropTable(AbstractTable $table);
+
+    /**
+     * Sync given table schema.
+     *
+     * @param AbstractTable $table
+     * @param int           $operation See behaviour constants.
+     */
+    public function syncTable(AbstractTable $table, int $operation = self::DO_ALL);
+
+    /**
+     * Rename table from one name to another.
+     *
+     * @param string $table
+     * @param string $name
+     *
+     * @throws HandlerException
+     */
+    public function renameTable(string $table, string $name);
+
+    /**
+     * Driver specific column add command.
+     *
+     * @param AbstractTable  $table
+     * @param AbstractColumn $column
+     *
+     * @throws HandlerException
+     */
+    public function createColumn(AbstractTable $table, AbstractColumn $column);
+
+    /**
+     * Driver specific column remove (drop) command.
+     *
+     * @param AbstractTable  $table
+     * @param AbstractColumn $column
+     */
+    public function dropColumn(AbstractTable $table, AbstractColumn $column);
+
+    /**
+     * Driver specific column alter command.
+     *
+     * @param AbstractTable  $table
+     * @param AbstractColumn $initial
+     * @param AbstractColumn $column
+     *
+     * @throws HandlerException
+     */
+    public function alterColumn(AbstractTable $table, AbstractColumn $initial, AbstractColumn $column);
+
+    /**
+     * Driver specific index adding command.
+     *
+     * @param AbstractTable $table
+     * @param AbstractIndex $index
+     *
+     * @throws HandlerException
+     */
+    public function createIndex(AbstractTable $table, AbstractIndex $index);
+
+    /**
+     * Driver specific index remove (drop) command.
+     *
+     * @param AbstractTable $table
+     * @param AbstractIndex $index
+     *
+     * @throws HandlerException
+     */
+    public function dropIndex(AbstractTable $table, AbstractIndex $index);
+
+    /**
+     * Driver specific index alter command, by default it will remove and add index.
+     *
+     * @param AbstractTable $table
+     * @param AbstractIndex $initial
+     * @param AbstractIndex $index
+     *
+     * @throws HandlerException
+     */
+    public function alterIndex(AbstractTable $table, AbstractIndex $initial, AbstractIndex $index);
+
+    /**
+     * Driver specific foreign key adding command.
+     *
+     * @param AbstractTable      $table
+     * @param AbstractForeignKey $foreignKey
+     *
+     * @throws HandlerException
+     */
+    public function createForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey);
+
+    /**
+     * Driver specific foreign key remove (drop) command.
+     *
+     * @param AbstractTable      $table
+     * @param AbstractForeignKey $foreignKey
+     *
+     * @throws HandlerException
+     */
+    public function dropForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey);
+
+    /**
+     * Driver specific foreign key alter command, by default it will remove and add foreign key.
+     *
+     * @param AbstractTable      $table
+     * @param AbstractForeignKey $initial
+     * @param AbstractForeignKey $foreignKey
+     *
+     * @throws HandlerException
+     */
+    public function alterForeignKey(AbstractTable $table, AbstractForeignKey $initial, AbstractForeignKey $foreignKey);
+
+    /**
+     * Drop column constraint using it's name.
+     *
+     * @param AbstractTable $table
+     * @param string        $constraint
+     *
+     * @throws HandlerException
+     */
+    public function dropConstrain(AbstractTable $table, $constraint);
 }

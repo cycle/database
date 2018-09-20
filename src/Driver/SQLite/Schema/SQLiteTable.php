@@ -9,7 +9,7 @@ namespace Spiral\Database\Driver\SQLite\Schema;
 
 use Spiral\Database\Schema\AbstractColumn;
 use Spiral\Database\Schema\AbstractIndex;
-use Spiral\Database\Schema\AbstractReference;
+use Spiral\Database\Schema\AbstractForeignKey;
 use Spiral\Database\Schema\AbstractTable;
 
 class SQLiteTable extends AbstractTable
@@ -79,7 +79,7 @@ class SQLiteTable extends AbstractTable
 
         $result = [];
         foreach ($this->driver->query($query) as $schema) {
-            $result[] = SQLiteReference::createInstance(
+            $result[] = SQLiteForeign::createInstance(
                 $this->getName(),
                 $this->getPrefix(),
                 $schema
@@ -145,8 +145,8 @@ class SQLiteTable extends AbstractTable
     /**
      * {@inheritdoc}
      */
-    protected function createForeign(string $name): AbstractReference
+    protected function createForeign(string $name): AbstractForeignKey
     {
-        return new SQLiteReference($this->getName(), $this->getPrefix(), $name);
+        return new SQLiteForeign($this->getName(), $this->getPrefix(), $name);
     }
 }

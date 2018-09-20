@@ -7,16 +7,16 @@
 
 namespace Spiral\Database\Driver\MySQL\Schema;
 
-use Spiral\Database\Schema\AbstractReference;
+use Spiral\Database\Schema\AbstractForeignKey;
 
-class MySQLReference extends AbstractReference
+class MySQLForeign extends AbstractForeignKey
 {
     /**
      * @param string $table
      * @param string $tablePrefix
      * @param array  $schema
      *
-     * @return MySQLReference
+     * @return MySQLForeign
      */
     public static function createInstance(string $table, string $tablePrefix, array $schema): self
     {

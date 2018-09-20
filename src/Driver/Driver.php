@@ -20,7 +20,7 @@ use Spiral\Database\Schema\AbstractTable;
  * hide implementation specific functionality. Extends PDODriver and adds ability to create driver
  * specific query builders and schemas (basically operates like a factory).
  */
-abstract class Driver extends PDODriver
+abstract class Driver extends PDODriver implements DriverInterface
 {
     /**
      * Schema table class.
@@ -178,9 +178,9 @@ abstract class Driver extends PDODriver
     /**
      * Handler responsible for schema related operations.
      *
-     * @return AbstractHandler
+     * @return HandlerInterface
      */
-    abstract public function getHandler(): AbstractHandler;
+    abstract public function getHandler(): HandlerInterface;
 
     /**
      * Start SQL transaction with specified isolation level (not all DBMS support it). Nested

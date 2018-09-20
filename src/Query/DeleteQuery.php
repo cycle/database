@@ -36,14 +36,9 @@ class DeleteQuery extends QueryBuilder
      * @param string $table Associated table name.
      * @param array  $where Initial set of where rules specified as array.
      */
-    public function __construct(
-        Driver $driver,
-        Compiler $compiler,
-        string $table = '',
-        array $where = []
-    ) {
+    public function __construct(Driver $driver, Compiler $compiler, string $table = '', array $where = [])
+    {
         parent::__construct($driver, $compiler);
-
         $this->table = $table;
 
         if (!empty($where)) {
@@ -76,13 +71,13 @@ class DeleteQuery extends QueryBuilder
     /**
      * {@inheritdoc}
      */
-    public function sqlStatement(Compiler $compiler = null): string
+    public function sqlStatement(Compiler $quoter = null): string
     {
-        if (empty($compiler)) {
-            $compiler = $this->compiler->resetQuoter();
+        if (empty($quoter)) {
+            $quoter = $this->compiler->resetQuoter();
         }
 
-        return $compiler->compileDelete($this->table, $this->whereTokens);
+        return $quoter->compileDelete($this->table, $this->whereTokens);
     }
 
     /**

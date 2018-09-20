@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Tests\SQLite;
 
-class SynchronizationPoolTest extends \Spiral\Database\Tests\SynchronizationPoolTest
+class ReflectorTest extends \Spiral\Database\Tests\ReflectorTest
 {
     const DRIVER = 'sqlite';
 }

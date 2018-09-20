@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Tests\SQLServer;
 
-class SynchronizationPoolTest extends \Spiral\Database\Tests\SynchronizationPoolTest
+class ReflectorTest extends \Spiral\Database\Tests\ReflectorTest
 {
     const DRIVER = 'sqlserver';
 }

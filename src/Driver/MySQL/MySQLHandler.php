@@ -13,7 +13,7 @@ use Spiral\Database\Exception\Driver\MySQLDriverException;
 use Spiral\Database\Exception\SchemaException;
 use Spiral\Database\Schema\AbstractColumn;
 use Spiral\Database\Schema\AbstractIndex;
-use Spiral\Database\Schema\AbstractReference;
+use Spiral\Database\Schema\AbstractForeignKey;
 use Spiral\Database\Schema\AbstractTable;
 
 class MySQLHandler extends AbstractHandler
@@ -28,10 +28,10 @@ class MySQLHandler extends AbstractHandler
     ) {
 
         $foreignBackup = [];
-        foreach ($table->getReferences() as $foreign) {
+        foreach ($table->getForeignKeys() as $foreign) {
             if ($column->getName() == $foreign->getColumn()) {
                 $foreignBackup[] = $foreign;
-                $this->dropForeign($table, $foreign);
+                $this->dropForeignKey($table, $foreign);
             }
         }
 
@@ -39,7 +39,7 @@ class MySQLHandler extends AbstractHandler
 
         //Restoring FKs
         foreach ($foreignBackup as $foreign) {
-            $this->createForeign($table, $foreign);
+            $this->createForeignKey($table, $foreign);
         }
     }
 
@@ -64,9 +64,9 @@ class MySQLHandler extends AbstractHandler
     /**
      * {@inheritdoc}
      */
-    public function dropForeign(AbstractTable $table, AbstractReference $foreign)
+    public function dropForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey)
     {
-        $this->run("ALTER TABLE {$this->identify($table)} DROP FOREIGN KEY {$this->identify($foreign)}");
+        $this->run("ALTER TABLE {$this->identify($table)} DROP FOREIGN KEY {$this->identify($foreignKey)}");
     }
 
     /**

@@ -420,14 +420,14 @@ class SelectQuery extends QueryBuilder implements
     /**
      * {@inheritdoc}
      */
-    public function sqlStatement(Compiler $compiler = null): string
+    public function sqlStatement(Compiler $quoter = null): string
     {
-        if (empty($compiler)) {
-            $compiler = $this->compiler->resetQuoter();
+        if (empty($quoter)) {
+            $quoter = $this->compiler->resetQuoter();
         }
 
         //11 parameters!
-        return $compiler->compileSelect(
+        return $quoter->compileSelect(
             $this->tables,
             $this->distinct,
             $this->columns,

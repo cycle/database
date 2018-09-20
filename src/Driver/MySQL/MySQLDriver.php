@@ -12,6 +12,7 @@ use PDO;
 use Spiral\Database\DatabaseInterface;
 use Spiral\Database\Driver\AbstractHandler;
 use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\HandlerInterface;
 use Spiral\Database\Driver\MySQL\Schema\MySQLTable;
 use Spiral\Database\Exception\ConnectionException;
 use Spiral\Database\Exception\QueryException;
@@ -88,7 +89,7 @@ class MySQLDriver extends Driver
     /**
      * {@inheritdoc}
      */
-    public function getHandler(): AbstractHandler
+    public function getHandler(): HandlerInterface
     {
         return new MySQLHandler($this);
     }

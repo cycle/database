@@ -20,7 +20,7 @@ use Spiral\Database\Query\QueryBuilder;
  *
  * Source of Compiler must be optimized in nearest future.
  */
-class Compiler
+class Compiler implements CompilerInterface
 {
     /**
      * Tokens for nested OR and AND conditions.
@@ -36,11 +36,7 @@ class Compiler
     const DELETE_QUERY = 'delete';
     const INSERT_QUERY = 'insert';
 
-    /**
-     * Quotes names and expressions.
-     *
-     * @var Quoter
-     */
+    /** @var Quoter */
     private $quoter = null;
 
     /**
@@ -70,7 +66,7 @@ class Compiler
      */
     public function resetQuoter(): Compiler
     {
-        $this->quoter->reset();
+        $this->quoter->resetAliases();
 
         return $this;
     }

@@ -145,17 +145,17 @@ class UpdateQuery extends QueryBuilder
     /**
      * {@inheritdoc}
      */
-    public function sqlStatement(Compiler $compiler = null): string
+    public function sqlStatement(Compiler $quoter = null): string
     {
         if (empty($this->values)) {
             throw new BuilderException('Update values must be specified');
         }
 
-        if (empty($compiler)) {
-            $compiler = $this->compiler->resetQuoter();
+        if (empty($quoter)) {
+            $quoter = $this->compiler->resetQuoter();
         }
 
-        return $compiler->compileUpdate($this->table, $this->values, $this->whereTokens);
+        return $quoter->compileUpdate($this->table, $this->values, $this->whereTokens);
     }
 
     /**

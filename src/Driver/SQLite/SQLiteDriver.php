@@ -9,8 +9,8 @@
 namespace Spiral\Database\Driver\SQLite;
 
 use Spiral\Database\DatabaseInterface;
-use Spiral\Database\Driver\AbstractHandler;
 use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\HandlerInterface;
 use Spiral\Database\Driver\SQLite\Schema\SQLiteTable;
 use Spiral\Database\Exception\DriverException;
 
@@ -95,7 +95,7 @@ class SQLiteDriver extends Driver
     /**
      * {@inheritdoc}
      */
-    public function getHandler(): AbstractHandler
+    public function getHandler(): HandlerInterface
     {
         return new SQLiteHandler($this);
     }

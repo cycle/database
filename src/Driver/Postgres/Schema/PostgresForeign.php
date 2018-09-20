@@ -7,16 +7,16 @@
 
 namespace Spiral\Database\Driver\Postgres\Schema;
 
-use Spiral\Database\Schema\AbstractReference;
+use Spiral\Database\Schema\AbstractForeignKey;
 
-class PostgresReference extends AbstractReference
+class PostgresForeign extends AbstractForeignKey
 {
     /**
      * @param string $table
      * @param string $tablePrefix
      * @param array  $schema
      *
-     * @return PostgresReference
+     * @return PostgresForeign
      */
     public static function createInstance(string $table, string $tablePrefix, array $schema): self
     {

@@ -11,19 +11,19 @@ namespace Spiral\Database\Schema;
 /**
  * Compares two table states.
  */
-final class StateComparator
+final class Comparator
 {
-    /** @var TableState */
+    /** @var State */
     private $initial = null;
 
-    /** @var TableState */
+    /** @var State */
     private $current = null;
 
     /**
-     * @param TableState $initial
-     * @param TableState $current
+     * @param State $initial
+     * @param State $current
      */
-    public function __construct(TableState $initial, TableState $current)
+    public function __construct(State $initial, State $current)
     {
         $this->initial = $initial;
         $this->current = $current;
@@ -49,9 +49,9 @@ final class StateComparator
             count($this->addedIndexes()),
             count($this->droppedIndexes()),
             count($this->alteredIndexes()),
-            count($this->addedForeigns()),
-            count($this->droppedForeigns()),
-            count($this->alteredForeigns()),
+            count($this->addedForeignKeys()),
+            count($this->droppedForeignKeys()),
+            count($this->alteredForeignKeys()),
         ];
 
         return array_sum($difference) != 0;
@@ -186,14 +186,14 @@ final class StateComparator
     }
 
     /**
-     * @return AbstractReference[]
+     * @return AbstractForeignKey[]
      */
-    public function addedForeigns(): array
+    public function addedForeignKeys(): array
     {
         $difference = [];
-        foreach ($this->current->getReferences() as $name => $foreign) {
-            if (!$this->initial->hasForeign($foreign->getColumn())) {
-                $difference[] = $foreign;
+        foreach ($this->current->getForeignKeys() as $name => $foreignKey) {
+            if (!$this->initial->hasForeignKey($foreignKey->getColumn())) {
+                $difference[] = $foreignKey;
             }
         }
 
@@ -201,14 +201,14 @@ final class StateComparator
     }
 
     /**
-     * @return AbstractReference[]
+     * @return AbstractForeignKey[]
      */
-    public function droppedForeigns(): array
+    public function droppedForeignKeys(): array
     {
         $difference = [];
-        foreach ($this->initial->getReferences() as $name => $foreign) {
-            if (!$this->current->hasForeign($foreign->getColumn())) {
-                $difference[] = $foreign;
+        foreach ($this->initial->getForeignKeys() as $name => $foreignKey) {
+            if (!$this->current->hasForeignKey($foreignKey->getColumn())) {
+                $difference[] = $foreignKey;
             }
         }
 
@@ -220,19 +220,19 @@ final class StateComparator
      *
      * @return array
      */
-    public function alteredForeigns(): array
+    public function alteredForeignKeys(): array
     {
         $difference = [];
 
-        foreach ($this->current->getReferences() as $name => $foreign) {
-            if (!$this->initial->hasForeign($foreign->getColumn())) {
+        foreach ($this->current->getForeignKeys() as $name => $foreignKey) {
+            if (!$this->initial->hasForeignKey($foreignKey->getColumn())) {
                 //Added into schema
                 continue;
             }
 
-            $initial = $this->initial->findForeign($foreign->getColumn());
-            if (!$foreign->compare($initial)) {
-                $difference[] = [$foreign, $initial];
+            $initial = $this->initial->findForeignKey($foreignKey->getColumn());
+            if (!$foreignKey->compare($initial)) {
+                $difference[] = [$foreignKey, $initial];
             }
         }
 

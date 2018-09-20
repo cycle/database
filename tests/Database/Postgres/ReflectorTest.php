@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Tests\Postgres;
 
-class SynchronizationPoolTest extends \Spiral\Database\Tests\SynchronizationPoolTest
+class ReflectorTest extends \Spiral\Database\Tests\ReflectorTest
 {
     const DRIVER = 'postgres';
 }

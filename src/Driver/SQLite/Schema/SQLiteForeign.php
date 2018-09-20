@@ -9,9 +9,9 @@
 namespace Spiral\Database\Driver\SQLite\Schema;
 
 use Spiral\Database\Driver\Driver;
-use Spiral\Database\Schema\AbstractReference;
+use Spiral\Database\Schema\AbstractForeignKey;
 
-class SQLiteReference extends AbstractReference
+class SQLiteForeign extends AbstractForeignKey
 {
     /**
      * In SQLite we have no predictable name.
@@ -45,10 +45,10 @@ class SQLiteReference extends AbstractReference
     /**
      * Name insensitive compare.
      *
-     * @param AbstractReference $initial
+     * @param AbstractForeignKey $initial
      * @return bool
      */
-    public function compare(AbstractReference $initial): bool
+    public function compare(AbstractForeignKey $initial): bool
     {
         return $this->getColumn() == $initial->getColumn()
             && $this->getForeignTable() == $initial->getForeignTable()
@@ -62,7 +62,7 @@ class SQLiteReference extends AbstractReference
      * @param string $tablePrefix
      * @param array  $schema
      *
-     * @return SQLiteReference
+     * @return SQLiteForeign
      */
     public static function createInstance(string $table, string $tablePrefix, array $schema): self
     {

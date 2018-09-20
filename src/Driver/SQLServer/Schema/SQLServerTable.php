@@ -10,7 +10,7 @@ namespace Spiral\Database\Driver\SQLServer\Schema;
 use Spiral\Database\Driver\AbstractHandler as Behaviour;
 use Spiral\Database\Schema\AbstractColumn;
 use Spiral\Database\Schema\AbstractIndex;
-use Spiral\Database\Schema\AbstractReference;
+use Spiral\Database\Schema\AbstractForeignKey;
 use Spiral\Database\Schema\AbstractTable;
 
 class SQLServerTable extends AbstractTable
@@ -20,9 +20,9 @@ class SQLServerTable extends AbstractTable
      *
      * SQLServer will reload schemas after successful savw.
      */
-    public function save(int $behaviour = Behaviour::DO_ALL, bool $reset = true)
+    public function save(int $operation = Behaviour::DO_ALL, bool $reset = true)
     {
-        parent::save($behaviour, $reset);
+        parent::save($operation, $reset);
 
         if ($reset) {
             foreach ($this->fetchColumns() as $column) {
@@ -96,7 +96,7 @@ class SQLServerTable extends AbstractTable
 
         $result = [];
         foreach ($references as $schema) {
-            $result[] = SQlServerReference::createInstance(
+            $result[] = SQlServerForeign::createInstance(
                 $this->getName(),
                 $this->getPrefix(),
                 $schema
@@ -148,8 +148,8 @@ class SQLServerTable extends AbstractTable
     /**
      * {@inheritdoc}
      */
-    protected function createForeign(string $name): AbstractReference
+    protected function createForeign(string $name): AbstractForeignKey
     {
-        return new SQlServerReference($this->getName(), $this->getPrefix(), $name);
+        return new SQlServerForeign($this->getName(), $this->getPrefix(), $name);
     }
 }

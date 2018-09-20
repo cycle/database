@@ -10,7 +10,7 @@ namespace Spiral\Database\Driver\Postgres\Schema;
 use Spiral\Database\Driver\AbstractHandler as Behaviour;
 use Spiral\Database\Schema\AbstractColumn;
 use Spiral\Database\Schema\AbstractIndex;
-use Spiral\Database\Schema\AbstractReference;
+use Spiral\Database\Schema\AbstractForeignKey;
 use Spiral\Database\Schema\AbstractTable;
 
 class PostgresTable extends AbstractTable
@@ -46,9 +46,9 @@ class PostgresTable extends AbstractTable
      *
      * SQLServer will reload schemas after successful savw.
      */
-    public function save(int $behaviour = Behaviour::DO_ALL, bool $reset = true)
+    public function save(int $operation = Behaviour::DO_ALL, bool $reset = true)
     {
-        parent::save($behaviour, $reset);
+        parent::save($operation, $reset);
 
         if ($reset) {
             foreach ($this->fetchColumns() as $column) {
@@ -144,7 +144,7 @@ class PostgresTable extends AbstractTable
         $result = [];
 
         foreach ($this->driver->query($query, [$this->getName()]) as $schema) {
-            $result[] = PostgresReference::createInstance(
+            $result[] = PostgresForeign::createInstance(
                 $this->getName(),
                 $this->getPrefix(),
                 $schema
@@ -209,8 +209,8 @@ class PostgresTable extends AbstractTable
     /**
      * {@inheritdoc}
      */
-    protected function createForeign(string $name): AbstractReference
+    protected function createForeign(string $name): AbstractForeignKey
     {
-        return new PostgresReference($this->getName(), $this->getPrefix(), $name);
+        return new PostgresForeign($this->getName(), $this->getPrefix(), $name);
     }
 }

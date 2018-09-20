@@ -16,16 +16,14 @@ use Spiral\Database\Injection\ParameterInterface;
  * Simple helper class used to interpolate query with given values. To be used for profiling and
  * debug purposes only, unsafe SQL are generated!
  */
-class Interpolator
+final class Interpolator
 {
     /**
      * Helper method used to interpolate SQL query with set of parameters, must be used only for
      * development purposes and never for real query!
      *
      * @param string               $query
-     * @param ParameterInterface[] $parameters Parameters to be binded into query. Named list are
-     *                                         supported.
-     *
+     * @param ParameterInterface[] $parameters Parameters to be binded into query. Named list are supported.
      * @return string
      */
     public static function interpolate(string $query, array $parameters = []): string
@@ -59,7 +57,6 @@ class Interpolator
      * Every value has to wrapped with parameter interface.
      *
      * @param array $parameters
-     *
      * @return ParameterInterface[]
      *
      * @throws InterpolatorException
@@ -97,7 +94,6 @@ class Interpolator
      * Get parameter value.
      *
      * @param mixed $parameter
-     *
      * @return string
      */
     protected static function resolveValue($parameter): string
@@ -144,7 +140,6 @@ class Interpolator
      * @param string $search
      * @param string $replace
      * @param string $subject
-     *
      * @return string
      */
     private static function replaceOnce(string $search, string $replace, string $subject): string

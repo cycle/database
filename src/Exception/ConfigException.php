@@ -8,8 +8,7 @@
 
 namespace Spiral\Database\Exception;
 
-
-class ConfigException
+class ConfigException extends DBALException
 {
 
 }

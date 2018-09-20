@@ -11,42 +11,27 @@ namespace Spiral\Database\Driver;
 
 /**
  * Class responsible for "intelligent" table and column name quoting.
- *
  * Attention, Quoter does not support string literals at this moment, use FragmentInterface.
  */
-class Quoter
+final class Quoter implements QuoterInterface
 {
-    /**
-     * Used to detect functions and expression.
-     *
-     * @var array
-     */
-    private $stops = [')', '(', ' '];
+    // Used to detect functions and expression.
+    private const STOPS = [')', '(', ' '];
 
-    /**
-     * Cached list of table aliases used to correctly inject prefixed tables into conditions.
-     *
-     * @var array
-     */
+    /** @var array */
     private $aliases = [];
 
-    /**
-     * @var PDODriver
-     */
+    /** @var DriverInterface */
     private $driver = null;
 
-    /**
-     * Database prefix.
-     *
-     * @var string
-     */
+    /** @var string */
     private $prefix = '';
 
     /**
-     * @param PDODriver $driver Driver needed to correctly quote identifiers and string quotes.
-     * @param string    $prefix
+     * @param DriverInterface $driver Driver needed to correctly quote identifiers and string quotes.
+     * @param string          $prefix
      */
-    public function __construct(PDODriver $driver, string $prefix)
+    public function __construct(DriverInterface $driver, string $prefix)
     {
         $this->driver = $driver;
         $this->prefix = $prefix;
@@ -72,14 +57,23 @@ class Quoter
     }
 
     /**
+     * Reset compiler aliases cache.
+     *
+     * @return self
+     */
+    public function resetAliases(): Quoter
+    {
+        $this->aliases = [];
+
+        return $this;
+    }
+
+    /**
      * Query query identifier, if identified stated as table - table prefix must be added.
      *
-     * @param string $identifier Identifier can include simple column operations and functions,
-     *                           having "." in it will automatically force table prefix to first
-     *                           value.
-     * @param bool   $isTable    Set to true to let quote method know that identifier is related
-     *                           to table name.
-     *
+     * @param string $identifier Identifier can include simple column operations and functions, having "." in it will
+     *                           automatically force table prefix to first value.
+     * @param bool   $isTable    Set to true to let quote method know that identifier is related to table name.
      * @return mixed|string
      */
     public function quote(string $identifier, bool $isTable = false): string
@@ -108,7 +102,6 @@ class Quoter
      * Quoting columns and tables in complex expression.
      *
      * @param string $identifier
-     *
      * @return string
      */
     protected function expression(string $identifier): string
@@ -131,7 +124,6 @@ class Quoter
      * @param string $identifier
      * @param string $alias
      * @param bool   $isTable
-     *
      * @return string
      */
     protected function aliasing(string $identifier, string $alias, bool $isTable): string
@@ -151,7 +143,6 @@ class Quoter
      * Processing pair of table and column.
      *
      * @param string $identifier
-     *
      * @return string
      */
     protected function paired(string $identifier): string
@@ -167,7 +158,6 @@ class Quoter
      *
      * @param string $identifier
      * @param bool   $isTable
-     *
      * @return string
      */
     protected function unpaired(string $identifier, bool $isTable): string
@@ -188,29 +178,16 @@ class Quoter
      * Check if string has expression markers.
      *
      * @param string $string
-     *
      * @return bool
      */
     protected function hasExpressions(string $string): bool
     {
-        foreach ($this->stops as $symbol) {
+        foreach (self::STOPS as $symbol) {
             if (strpos($string, $symbol) !== false) {
                 return true;
             }
         }
 
         return false;
-    }
-
-    /**
-     * Reset compiler aliases cache.
-     *
-     * @return self
-     */
-    public function reset(): Quoter
-    {
-        $this->aliases = [];
-
-        return $this;
     }
 }

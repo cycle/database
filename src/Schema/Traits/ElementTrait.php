@@ -10,7 +10,7 @@ namespace Spiral\Database\Schema\Traits;
 
 use Spiral\Database\Driver\Driver;
 
-trait TableElementTrait
+trait ElementTrait
 {
     /**
      * Element name.

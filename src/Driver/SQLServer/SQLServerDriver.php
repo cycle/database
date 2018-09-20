@@ -9,8 +9,8 @@ namespace Spiral\Database\Driver\SQLServer;
 
 use PDO;
 use Spiral\Database\DatabaseInterface;
-use Spiral\Database\Driver\AbstractHandler;
 use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\HandlerInterface;
 use Spiral\Database\Driver\SQLServer\Schema\SQLServerTable;
 use Spiral\Database\Exception\DriverException;
 
@@ -105,7 +105,7 @@ class SQLServerDriver extends Driver
     /**
      * {@inheritdoc}
      */
-    public function getHandler(): AbstractHandler
+    public function getHandler(): HandlerInterface
     {
         return new SQLServerHandler($this);
     }

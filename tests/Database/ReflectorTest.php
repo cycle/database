@@ -4,12 +4,13 @@
  *
  * @author Wolfy-J
  */
+
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\Reflector;
 use Spiral\Database\Schema\AbstractTable;
+use Spiral\Database\Schema\Reflector;
 
-abstract class SynchronizationPoolTest extends BaseTest
+abstract class ReflectorTest extends BaseTest
 {
     public function tearDown()
     {
@@ -55,7 +56,7 @@ abstract class SynchronizationPoolTest extends BaseTest
         $schemaB->primary('id');
         $schemaB->string('value');
         $schemaB->integer('a_id');
-        $schemaB->foreign('a_id')->references('a', 'id');
+        $schemaB->foreignKey('a_id')->references('a', 'id');
 
         $this->saveTables([$schemaA, $schemaB]);
 
@@ -74,7 +75,7 @@ abstract class SynchronizationPoolTest extends BaseTest
         $schemaA->primary('id');
         $schemaA->integer('value');
         $schemaB->integer('b_id');
-        $schemaB->foreign('b_id')->references('b', 'id');
+        $schemaB->foreignKey('b_id')->references('b', 'id');
 
         $schemaB->primary('id');
         $schemaB->string('value');
@@ -97,13 +98,13 @@ abstract class SynchronizationPoolTest extends BaseTest
         $schemaA->integer('value');
 
         $schemaA->integer('b_id');
-        $schemaA->foreign('b_id')->references('b', 'id');
+        $schemaA->foreignKey('b_id')->references('b', 'id');
 
         $schemaB->primary('id');
         $schemaB->string('value');
 
         $schemaB->integer('a_id');
-        $schemaB->foreign('a_id')->references('a', 'id');
+        $schemaB->foreignKey('a_id')->references('a', 'id');
 
         $this->saveTables([$schemaA, $schemaB]);
 
@@ -131,10 +132,10 @@ abstract class SynchronizationPoolTest extends BaseTest
         $this->assertSameAsInDB($schemaB);
 
         $schemaA->integer('b_id');
-        $schemaA->foreign('b_id')->references('b', 'id');
+        $schemaA->foreignKey('b_id')->references('b', 'id');
 
         $schemaB->integer('a_id');
-        $schemaB->foreign('a_id')->references('a', 'id');
+        $schemaB->foreignKey('a_id')->references('a', 'id');
 
         $this->saveTables([$schemaA, $schemaB]);
 
@@ -154,7 +155,7 @@ abstract class SynchronizationPoolTest extends BaseTest
         $schemaA->integer('value');
 
         $schemaA->integer('b_id');
-        $schemaA->foreign('b_id')->references('b', 'id');
+        $schemaA->foreignKey('b_id')->references('b', 'id');
 
         $schemaB->primary('id');
         $schemaB->string('value');
@@ -164,7 +165,7 @@ abstract class SynchronizationPoolTest extends BaseTest
         $this->assertSameAsInDB($schemaA);
         $this->assertSameAsInDB($schemaB);
 
-        $schemaA->dropForeign('b_id');
+        $schemaA->dropForeignKey('b_id');
 
         $this->saveTables([$schemaA, $schemaB]);
 
@@ -187,19 +188,19 @@ abstract class SynchronizationPoolTest extends BaseTest
         $schemaA->integer('value');
 
         $schemaA->integer('c_id');
-        $schemaA->foreign('c_id')->references('c', 'id');
+        $schemaA->foreignKey('c_id')->references('c', 'id');
 
         $schemaB->primary('id');
         $schemaB->string('value');
 
         $schemaB->integer('a_id');
-        $schemaB->foreign('a_id')->references('a', 'id');
+        $schemaB->foreignKey('a_id')->references('a', 'id');
 
         $schemaC->primary('id');
         $schemaC->boolean('value');
 
         $schemaC->integer('b_id');
-        $schemaC->foreign('b_id')->references('b', 'id');
+        $schemaC->foreignKey('b_id')->references('b', 'id');
 
         $this->saveTables([$schemaA, $schemaB, $schemaC]);
 
@@ -220,7 +221,7 @@ abstract class SynchronizationPoolTest extends BaseTest
         $schemaA->integer('value');
 
         $schemaA->integer('b_id');
-        $schemaA->foreign('b_id')->references('b', 'id');
+        $schemaA->foreignKey('b_id')->references('b', 'id');
 
         $schemaB->primary('id');
         $schemaB->string('value');
@@ -248,7 +249,7 @@ abstract class SynchronizationPoolTest extends BaseTest
         $schemaA->integer('value');
 
         $schemaA->integer('b_id');
-        $schemaA->foreign('b_id')->references('b', 'id');
+        $schemaA->foreignKey('b_id')->references('b', 'id');
 
         $schemaB->primary('id');
         $schemaB->string('value');
@@ -277,7 +278,7 @@ abstract class SynchronizationPoolTest extends BaseTest
         $schemaA->integer('value');
 
         $schemaA->integer('b_id');
-        $schemaA->foreign('b_id')->references('b', 'id');
+        $schemaA->foreignKey('b_id')->references('b', 'id');
 
         $schemaB->primary('id');
         $schemaB->string('value');
@@ -306,7 +307,7 @@ abstract class SynchronizationPoolTest extends BaseTest
         $schemaA->integer('value');
 
         $schemaA->integer('b_id');
-        $schemaA->foreign('b_id')->references('b', 'id');
+        $schemaA->foreignKey('b_id')->references('b', 'id');
 
         $schemaB->primary('id');
         $schemaB->string('value');
@@ -336,7 +337,7 @@ abstract class SynchronizationPoolTest extends BaseTest
         $schemaA->integer('value');
 
         $schemaA->integer('b_id');
-        $schemaA->foreign('b_id')->references('b', 'id');
+        $schemaA->foreignKey('b_id')->references('b', 'id');
 
         $schemaA->enum('status', ['active', 'disabled'])->defaultValue('active');
         $schemaA->index(['status']);
@@ -360,8 +361,13 @@ abstract class SynchronizationPoolTest extends BaseTest
 
     protected function saveTables(array $tables)
     {
-        $pool = new Reflector($tables);
-        $this->assertSame($tables, $pool->getTables());
-        $pool->run();
+        $reflector = new Reflector();
+
+        foreach ($tables as $table) {
+            $reflector->addTable($table);
+        }
+
+        $this->assertSame($tables, $reflector->getTables());
+        $reflector->run();
     }
 }

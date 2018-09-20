@@ -13,6 +13,7 @@ use Spiral\Database\Exception\DefaultValueException;
 use Spiral\Database\Exception\SchemaException;
 use Spiral\Database\Injection\Fragment;
 use Spiral\Database\Injection\FragmentInterface;
+use Spiral\Database\Schema\Traits\ElementTrait;
 
 /**
  * Abstract column schema with read (see ColumnInterface) and write abilities. Must be implemented
@@ -40,15 +41,17 @@ use Spiral\Database\Injection\FragmentInterface;
  * @method AbstractColumn|$this longBinary()
  * @method AbstractColumn|$this json()
  */
-abstract class AbstractColumn extends AbstractElement implements ColumnInterface
+abstract class AbstractColumn implements ColumnInterface
 {
+    use ElementTrait;
+
     /**
      * Default timestamp expression (driver specific).
      */
     const DATETIME_NOW = 'CURRENT_TIMESTAMP';
 
     /**
-     * Value to be excluded from comparation.
+     * Value to be excluded from comparision.
      */
     const EXCLUDE_FROM_COMPARE = ['timezone'];
 
@@ -242,7 +245,8 @@ abstract class AbstractColumn extends AbstractElement implements ColumnInterface
      */
     public function __construct(string $table, string $name, \DateTimeZone $timezone = null)
     {
-        parent::__construct($table, $name);
+        $this->table = $table;
+        $this->name = $name;
         $this->timezone = $timezone ?? new \DateTimeZone(date_default_timezone_get());
     }
 
@@ -414,12 +418,11 @@ abstract class AbstractColumn extends AbstractElement implements ColumnInterface
      * @todo Support native database types (simply bypass abstractType)!
      *
      * @param string $abstract Abstract or virtual type declared in mapping.
-     *
      * @return self|$this
      *
      * @throws SchemaException
      */
-    public function setType(string $abstract): AbstractColumn
+    public function type(string $abstract): AbstractColumn
     {
         if (isset($this->aliases[$abstract])) {
             //Make recursive
@@ -453,7 +456,6 @@ abstract class AbstractColumn extends AbstractElement implements ColumnInterface
      * Set column nullable/not nullable.
      *
      * @param bool $nullable
-     *
      * @return self|$this
      */
     public function nullable(bool $nullable = true): AbstractColumn
@@ -468,7 +470,6 @@ abstract class AbstractColumn extends AbstractElement implements ColumnInterface
      * Use Database::TIMESTAMP_NOW to use driver specific NOW() function.
      *
      * @param mixed $value
-     *
      * @return self|$this
      */
     public function defaultValue($value): AbstractColumn
@@ -492,12 +493,11 @@ abstract class AbstractColumn extends AbstractElement implements ColumnInterface
      * $table->status->enum('active', 'disabled');
      *
      * @param string|array $values Enum values (array or comma separated). String values only.
-     *
      * @return self
      */
     public function enum($values): AbstractColumn
     {
-        $this->setType('enum');
+        $this->type('enum');
         $this->enumValues = array_map('strval', is_array($values) ? $values : func_get_args());
 
         return $this;
@@ -514,14 +514,13 @@ abstract class AbstractColumn extends AbstractElement implements ColumnInterface
      * @link http://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address
      *
      * @param int $size Max string length.
-     *
      * @return self|$this
      *
      * @throws SchemaException
      */
     public function string(int $size = 255): AbstractColumn
     {
-        $this->setType('string');
+        $this->type('string');
 
         if ($size > 255) {
             throw new SchemaException("String size can't exceed 255 characters. Use text instead");
@@ -541,14 +540,13 @@ abstract class AbstractColumn extends AbstractElement implements ColumnInterface
      *
      * @param int $precision
      * @param int $scale
-     *
      * @return self|$this
      *
      * @throws SchemaException
      */
     public function decimal(int $precision, int $scale = 0): AbstractColumn
     {
-        $this->setType('decimal');
+        $this->type('decimal');
 
         if (empty($precision)) {
             throw new SchemaException('Invalid precision value');
@@ -565,49 +563,11 @@ abstract class AbstractColumn extends AbstractElement implements ColumnInterface
      *
      * @param string $type      Abstract type.
      * @param array  $arguments Not used.
-     *
      * @return self
      */
     public function __call(string $type, array $arguments = []): AbstractColumn
     {
-        return $this->setType($type);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function compare(ColumnInterface $initial): bool
-    {
-        $normalized = clone $initial;
-
-        if ($this == $normalized) {
-            return true;
-        }
-
-        $columnVars = get_object_vars($this);
-        $dbColumnVars = get_object_vars($normalized);
-
-        $difference = [];
-        foreach ($columnVars as $name => $value) {
-            if (in_array($name, static::EXCLUDE_FROM_COMPARE)) {
-                continue;
-            }
-
-            if ($name == 'defaultValue') {
-                //Default values has to compared using type-casted value
-                if ($this->getDefaultValue() != $initial->getDefaultValue()) {
-                    $difference[] = $name;
-                }
-
-                continue;
-            }
-
-            if ($value != $dbColumnVars[$name]) {
-                $difference[] = $name;
-            }
-        }
-
-        return empty($difference);
+        return $this->type($type);
     }
 
     /**
@@ -686,10 +646,47 @@ abstract class AbstractColumn extends AbstractElement implements ColumnInterface
     }
 
     /**
+     * @param AbstractColumn $initial
+     * @return bool
+     */
+    public function compare(AbstractColumn $initial): bool
+    {
+        $normalized = clone $initial;
+
+        if ($this == $normalized) {
+            return true;
+        }
+
+        $columnVars = get_object_vars($this);
+        $dbColumnVars = get_object_vars($normalized);
+
+        $difference = [];
+        foreach ($columnVars as $name => $value) {
+            if (in_array($name, static::EXCLUDE_FROM_COMPARE)) {
+                continue;
+            }
+
+            if ($name == 'defaultValue') {
+                //Default values has to compared using type-casted value
+                if ($this->getDefaultValue() != $initial->getDefaultValue()) {
+                    $difference[] = $name;
+                }
+
+                continue;
+            }
+
+            if ($value != $dbColumnVars[$name]) {
+                $difference[] = $name;
+            }
+        }
+
+        return empty($difference);
+    }
+
+    /**
      * Get database specific enum type definition options.
      *
      * @param Driver $driver
-     *
      * @return string
      */
     protected function quoteEnum(Driver $driver): string
@@ -710,7 +707,6 @@ abstract class AbstractColumn extends AbstractElement implements ColumnInterface
      * Must return driver specific default value.
      *
      * @param Driver $driver
-     *
      * @return string
      */
     protected function quoteDefault(Driver $driver): string
@@ -744,7 +740,6 @@ abstract class AbstractColumn extends AbstractElement implements ColumnInterface
      *
      * @param string $type
      * @param string $value
-     *
      * @return string|FragmentInterface|\DateTime
      *
      * @throws DefaultValueException

@@ -22,26 +22,26 @@ class PostgresInsertQuery extends InsertQuery
      *
      * @throws BuilderException
      */
-    public function sqlStatement(AbstractCompiler $compiler = null): string
+    public function sqlStatement(AbstractCompiler $quoter = null): string
     {
         if (
             !$this->driver instanceof PostgresDriver
-            || (!empty($compiler) && !$compiler instanceof PostgresCompiler)
+            || (!empty($quoter) && !$quoter instanceof PostgresCompiler)
         ) {
             throw new BuilderException(
                 'Postgres InsertQuery can be used only with Postgres driver and compiler'
             );
         }
 
-        if (empty($compiler)) {
-            $compiler = $this->compiler->resetQuoter();
+        if (empty($quoter)) {
+            $quoter = $this->compiler->resetQuoter();
         }
 
         /**
          * @var PostgresDriver   $driver
-         * @var PostgresCompiler $compiler
+         * @var PostgresCompiler $quoter
          */
-        return $compiler->compileInsert(
+        return $quoter->compileInsert(
             $this->table,
             $this->columns,
             $this->rowsets,

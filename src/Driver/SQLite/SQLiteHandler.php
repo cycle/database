@@ -9,9 +9,9 @@ namespace Spiral\Database\Driver\SQLite;
 
 use Spiral\Database\Driver\AbstractHandler;
 use Spiral\Database\Exception\DBALException;
-use Spiral\Database\Exception\SchemaHandlerException;
+use Spiral\Database\Exception\HandlerException;
 use Spiral\Database\Schema\AbstractColumn;
-use Spiral\Database\Schema\AbstractReference;
+use Spiral\Database\Schema\AbstractForeignKey;
 use Spiral\Database\Schema\AbstractTable;
 
 /**
@@ -25,7 +25,7 @@ class SQLiteHandler extends AbstractHandler
      *
      * @param AbstractTable $table
      *
-     * @throws SchemaHandlerException
+     * @throws HandlerException
      */
     public function dropTable(AbstractTable $table)
     {
@@ -35,11 +35,11 @@ class SQLiteHandler extends AbstractHandler
     /**
      * {@inheritdoc}
      */
-    public function syncTable(AbstractTable $table, int $behaviour = self::DO_ALL)
+    public function syncTable(AbstractTable $table, int $operation = self::DO_ALL)
     {
         if (!$this->requiresRebuild($table)) {
             //Nothing special, can be handled as usually
-            parent::syncTable($table, $behaviour);
+            parent::syncTable($table, $operation);
 
             return;
         }
@@ -103,7 +103,7 @@ class SQLiteHandler extends AbstractHandler
     /**
      * {@inheritdoc}
      */
-    public function createForeign(AbstractTable $table, AbstractReference $foreign)
+    public function createForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey)
     {
         //Not supported
     }
@@ -111,7 +111,7 @@ class SQLiteHandler extends AbstractHandler
     /**
      * {@inheritdoc}
      */
-    public function dropForeign(AbstractTable $table, AbstractReference $foreign)
+    public function dropForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey)
     {
         //Not supported
     }
@@ -119,10 +119,10 @@ class SQLiteHandler extends AbstractHandler
     /**
      * {@inheritdoc}
      */
-    public function alterForeign(
+    public function alterForeignKey(
         AbstractTable $table,
-        AbstractReference $initial,
-        AbstractReference $foreign
+        AbstractForeignKey $initial,
+        AbstractForeignKey $foreignKey
     ) {
         //Not supported
     }
@@ -143,9 +143,9 @@ class SQLiteHandler extends AbstractHandler
             count($comparator->droppedColumns()),
             count($comparator->alteredColumns()),
 
-            count($comparator->addedForeigns()),
-            count($comparator->droppedForeigns()),
-            count($comparator->alteredForeigns()),
+            count($comparator->addedForeignKeys()),
+            count($comparator->droppedForeignKeys()),
+            count($comparator->alteredForeignKeys()),
         ];
 
         return array_sum($difference) != 0;
@@ -183,7 +183,7 @@ class SQLiteHandler extends AbstractHandler
      * @param string $to
      * @param array  $mapping (destination => source)
      *
-     * @throws SchemaHandlerException
+     * @throws HandlerException
      */
     private function copyData(string $source, string $to, array $mapping)
     {

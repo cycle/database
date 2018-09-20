@@ -7,16 +7,16 @@
 
 namespace Spiral\Database\Driver\SQLServer\Schema;
 
-use Spiral\Database\Schema\AbstractReference;
+use Spiral\Database\Schema\AbstractForeignKey;
 
-class SQlServerReference extends AbstractReference
+class SQlServerForeign extends AbstractForeignKey
 {
     /**
      * @param string $table
      * @param string $tablePrefix
      * @param array  $schema
      *
-     * @return SQlServerReference
+     * @return SQlServerForeign
      */
     public static function createInstance(string $table, string $tablePrefix, array $schema): self
     {

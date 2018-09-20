@@ -39,7 +39,7 @@ abstract class SchemaCreationTest extends BaseTest
         $this->assertSame([], $schema->getPrimaryKeys());
         $this->assertSame([], $schema->getColumns());
         $this->assertSame([], $schema->getIndexes());
-        $this->assertSame([], $schema->getForeigns());
+        $this->assertSame([], $schema->getForeignKeys());
     }
 
     public function testSimpleCreation()

@@ -7,7 +7,6 @@
 
 namespace Spiral\Database\Driver\Postgres\Schema;
 
-use Spiral\Database\ColumnInterface;
 use Spiral\Database\Driver\Driver;
 use Spiral\Database\Injection\Fragment;
 use Spiral\Database\Schema\AbstractColumn;
@@ -164,7 +163,7 @@ class PostgresColumn extends AbstractColumn
             return $this;
         }
 
-        return $this->setType('primary');
+        return $this->type('primary');
     }
 
     /**
@@ -179,7 +178,7 @@ class PostgresColumn extends AbstractColumn
             return $this;
         }
 
-        return $this->setType('bigPrimary');
+        return $this->type('bigPrimary');
     }
 
     /**
@@ -471,7 +470,7 @@ class PostgresColumn extends AbstractColumn
     /**
      * {@inheritdoc}
      */
-    public function compare(ColumnInterface $initial): bool
+    public function compare(AbstractColumn $initial): bool
     {
         if (parent::compare($initial)) {
             return true;

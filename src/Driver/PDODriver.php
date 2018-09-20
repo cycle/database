@@ -23,7 +23,7 @@ use Spiral\Logger\Traits\LoggerTrait;
  * Basic implementation of DBAL Driver, basically decorates PDO. Extends component to provide access
  *  to functionality like shared loggers and benchmarking.
  */
-abstract class PDODriver implements LoggerAwareInterface
+abstract class PDODriver implements LoggerAwareInterface, DriverInterface
 {
     use LoggerTrait;
 
@@ -312,11 +312,8 @@ abstract class PDODriver implements LoggerAwareInterface
      *
      * @throws QueryException
      */
-    public function statement(
-        string $query,
-        array $parameters = [],
-        $class = QueryStatement::class
-    ): \PDOStatement {
+    public function statement(string $query, array $parameters = [], $class = QueryStatement::class): \PDOStatement
+    {
         try {
             return $this->runStatement($query, $parameters, $class);
         } catch (ConnectionException $e) {

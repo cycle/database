@@ -10,5 +10,4 @@ namespace Spiral\Database\Driver;
 
 interface CompilerInterface
 {
-
 }

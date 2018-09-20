@@ -6,10 +6,15 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database\Schema;
+namespace Spiral\Database;
 
 
 interface ElementInterface
 {
-
+    /**
+     * Get element name (unquoted).
+     *
+     * @return string
+     */
+    public function getName(): string;
 }

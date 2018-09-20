@@ -34,13 +34,13 @@ class Expression extends Fragment implements ExpressionInterface
     /**
      * {@inheritdoc}
      */
-    public function sqlStatement(Compiler $compiler = null): string
+    public function sqlStatement(Compiler $quoter = null): string
     {
-        if (empty($compiler)) {
+        if (empty($quoter)) {
             //We might need to throw an exception here in some cases
             return $this->statement;
         }
 
-        return $compiler->quote(parent::sqlStatement());
+        return $quoter->quote(parent::sqlStatement());
     }
 }

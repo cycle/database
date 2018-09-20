@@ -9,8 +9,8 @@
 namespace Spiral\Database\Driver\Postgres;
 
 use Spiral\Database\DatabaseInterface;
-use Spiral\Database\Driver\AbstractHandler;
 use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\HandlerInterface;
 use Spiral\Database\Driver\Postgres\Schema\PostgresTable;
 use Spiral\Database\Exception\DriverException;
 use Spiral\Database\Query\InsertQuery;
@@ -138,7 +138,7 @@ class PostgresDriver extends Driver
     /**
      * {@inheritdoc}
      */
-    public function getHandler(): AbstractHandler
+    public function getHandler(): HandlerInterface
     {
         return new PostgresHandler($this);
     }

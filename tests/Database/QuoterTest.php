@@ -25,25 +25,25 @@ class QuoterTest extends TestCase
 
         $this->assertEquals('*', $quoter->quote('*'));
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals('"column"', $quoter->quote('column'));
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals('"table"."column"', $quoter->quote('table.column'));
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals('"table".*', $quoter->quote('table.*'));
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals('"table_name"', $quoter->quote('table_name', true));
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '"table"."column" AS "column_alias"',
             $quoter->quote('table.column AS column_alias')
         );
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '"table_name" AS "table_name"',
             $quoter->quote('table_name AS table_name', true)
@@ -56,13 +56,13 @@ class QuoterTest extends TestCase
 
         $this->assertEquals('COUNT(*)', $quoter->quote('COUNT(*)'));
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals('SUM("column")', $quoter->quote('SUM(column)'));
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals('MIN("table"."column")', $quoter->quote('MIN(table.column)'));
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             'AVG("table"."column") AS "column_alias"',
             $quoter->quote('AVG(table.column) AS column_alias')
@@ -75,10 +75,10 @@ class QuoterTest extends TestCase
 
         $this->assertEquals('"column_a" + "column_b"', $quoter->quote('column_a + column_b'));
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals('"table"."column" * 10', $quoter->quote('table.column * 10'));
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '("table"."column" + "some_column") / "other_table"."column_b"',
             $quoter->quote('(table.column + some_column) / other_table.column_b')
@@ -91,25 +91,25 @@ class QuoterTest extends TestCase
 
         $this->assertEquals('*', $quoter->quote('*'));
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals('"column"', $quoter->quote('column'));
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals('"p_table"."column"', $quoter->quote('table.column'));
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals('"p_table".*', $quoter->quote('table.*'));
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals('"p_table_name"', $quoter->quote('table_name', true));
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '"p_table"."column" AS "column_alias"',
             $quoter->quote('table.column AS column_alias')
         );
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '"p_table_name" AS "table_name"',
             $quoter->quote('table_name AS table_name', true)
@@ -122,13 +122,13 @@ class QuoterTest extends TestCase
 
         $this->assertEquals('COUNT(*)', $quoter->quote('COUNT(*)'));
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals('SUM("column")', $quoter->quote('SUM(column)'));
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals('MIN("p_table"."column")', $quoter->quote('MIN(table.column)'));
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             'AVG("p_table"."column") AS "column_alias"',
             $quoter->quote('AVG(table.column) AS column_alias')
@@ -141,10 +141,10 @@ class QuoterTest extends TestCase
 
         $this->assertEquals('"column_a" + "column_b"', $quoter->quote('column_a + column_b'));
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals('"p_table"."column" * 10', $quoter->quote('table.column * 10'));
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '("p_table"."column" + "some_column") / "p_other_table"."column_b" AS "xxx"',
             $quoter->quote('(table.column + some_column) / other_table.column_b AS xxx')
@@ -174,7 +174,7 @@ class QuoterTest extends TestCase
 
         $this->assertEquals('"table_name"."column"', $quoter->quote('table_name.column'));
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals('"p_table_name"."column"', $quoter->quote('table_name.column'));
 
         $this->assertEquals(
@@ -262,37 +262,37 @@ class QuoterTest extends TestCase
             $quoter->quote('*')
         );
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '`column`',
             $quoter->quote('column')
         );
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '`p_table`.`column`',
             $quoter->quote('table.column')
         );
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '`p_table`.*',
             $quoter->quote('table.*')
         );
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '`p_table_name`',
             $quoter->quote('table_name', true)
         );
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '`p_table`.`column` AS `column_alias`',
             $quoter->quote('table.column AS column_alias')
         );
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '`p_table_name` AS `table_name`',
             $quoter->quote('table_name AS table_name', true)
@@ -308,37 +308,37 @@ class QuoterTest extends TestCase
             $quoter->quote('*')
         );
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '"column"',
             $quoter->quote('column')
         );
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '"p_table"."column"',
             $quoter->quote('table.column')
         );
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '"p_table".*',
             $quoter->quote('table.*')
         );
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '"p_table_name"',
             $quoter->quote('table_name', true)
         );
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '"p_table"."column" AS "column_alias"',
             $quoter->quote('table.column AS column_alias')
         );
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '"p_table_name" AS "table_name"',
             $quoter->quote('table_name AS table_name', true)
@@ -354,37 +354,37 @@ class QuoterTest extends TestCase
             $quoter->quote('*')
         );
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '"column"',
             $quoter->quote('column')
         );
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '"p_table"."column"',
             $quoter->quote('table.column')
         );
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '"p_table".*',
             $quoter->quote('table.*')
         );
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '"p_table_name"',
             $quoter->quote('table_name', true)
         );
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '"p_table"."column" AS "column_alias"',
             $quoter->quote('table.column AS column_alias')
         );
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '"p_table_name" AS "table_name"',
             $quoter->quote('table_name AS table_name', true)
@@ -400,37 +400,37 @@ class QuoterTest extends TestCase
             $quoter->quote('*')
         );
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '[column]',
             $quoter->quote('column')
         );
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '[p_table].[column]',
             $quoter->quote('table.column')
         );
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '[p_table].*',
             $quoter->quote('table.*')
         );
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '[p_table_name]',
             $quoter->quote('table_name', true)
         );
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '[p_table].[column] AS [column_alias]',
             $quoter->quote('table.column AS column_alias')
         );
 
-        $quoter->reset();
+        $quoter->resetAliases();
         $this->assertEquals(
             '[p_table_name] AS [table_name]',
             $quoter->quote('table_name AS table_name', true)

@@ -9,14 +9,14 @@ namespace Spiral\Database\Schema;
 
 use Spiral\Database\Driver\Driver;
 use Spiral\Database\Exception\SchemaException;
-use Spiral\Database\ForeignInterface;
+use Spiral\Database\ForeignKeyInterface;
 use Spiral\Database\Schema\Traits\ElementTrait;
 
 /**
  * Abstract foreign schema with read (see ReferenceInterface) and write abilities. Must be
  * implemented by driver to support DBMS specific syntax and creation rules.
  */
-abstract class AbstractForeign implements ForeignInterface
+abstract class AbstractForeignKey implements ForeignKeyInterface
 {
     use ElementTrait;
 
@@ -135,10 +135,9 @@ abstract class AbstractForeign implements ForeignInterface
      * column one.
      *
      * @param string $column
-     *
      * @return self
      */
-    public function column(string $column): AbstractForeign
+    public function column(string $column): AbstractForeignKey
     {
         $this->column = $column;
 
@@ -157,11 +156,8 @@ abstract class AbstractForeign implements ForeignInterface
      *
      * @return self
      */
-    public function references(
-        string $table,
-        string $column = 'id',
-        bool $forcePrefix = true
-    ): AbstractForeign {
+    public function references(string $table, string $column = 'id', bool $forcePrefix = true): AbstractForeignKey
+    {
         $this->foreignTable = ($forcePrefix ? $this->tablePrefix : '') . $table;
         $this->foreignKey = $column;
 
@@ -172,10 +168,9 @@ abstract class AbstractForeign implements ForeignInterface
      * Set foreign key delete behaviour.
      *
      * @param string $rule Possible values: NO ACTION, CASCADE, etc (driver specific).
-     *
      * @return self
      */
-    public function onDelete(string $rule = self::NO_ACTION): AbstractForeign
+    public function onDelete(string $rule = self::NO_ACTION): AbstractForeignKey
     {
         $this->deleteRule = strtoupper($rule);
 
@@ -186,10 +181,9 @@ abstract class AbstractForeign implements ForeignInterface
      * Set foreign key update behaviour.
      *
      * @param string $rule Possible values: NO ACTION, CASCADE, etc (driver specific).
-     *
      * @return self
      */
-    public function onUpdate(string $rule = self::NO_ACTION): AbstractForeign
+    public function onUpdate(string $rule = self::NO_ACTION): AbstractForeignKey
     {
         $this->updateRule = strtoupper($rule);
 
@@ -200,7 +194,6 @@ abstract class AbstractForeign implements ForeignInterface
      * Foreign key creation syntax.
      *
      * @param Driver $driver
-     *
      * @return string
      */
     public function sqlStatement(Driver $driver): string
@@ -222,9 +215,10 @@ abstract class AbstractForeign implements ForeignInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param AbstractForeignKey $initial
+     * @return bool
      */
-    public function compare(AbstractForeign $initial): bool
+    public function compare(AbstractForeignKey $initial): bool
     {
         return $this == clone $initial;
     }

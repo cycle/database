@@ -62,10 +62,10 @@ class SQLServerHandler extends AbstractHandler
             }
         }
 
-        foreach ($table->getForeigns() as $foreign) {
+        foreach ($table->getForeignKeys() as $foreign) {
             if ($column->getName() == $foreign->getColumn()) {
                 $foreignBackup[] = $foreign;
-                $this->dropForeign($table, $foreign);
+                $this->dropForeignKey($table, $foreign);
             }
         }
 
@@ -92,7 +92,7 @@ class SQLServerHandler extends AbstractHandler
         }
 
         foreach ($foreignBackup as $foreign) {
-            $this->createForeign($table, $foreign);
+            $this->createForeignKey($table, $foreign);
         }
     }
 

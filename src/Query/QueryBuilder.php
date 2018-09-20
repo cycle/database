@@ -52,9 +52,9 @@ abstract class QueryBuilder implements ExpressionInterface, QueryInterface
     /**
      * {@inheritdoc}
      *
-     * @param Compiler $compiler Associated compiler to be used by default.
+     * @param Compiler $quoter Associated compiler to be used by default.
      */
-    abstract public function sqlStatement(Compiler $compiler = null): string;
+    abstract public function sqlStatement(Compiler $quoter = null): string;
 
     /**
      * Get ordered list of builder parameters in a form of ParameterInterface array.

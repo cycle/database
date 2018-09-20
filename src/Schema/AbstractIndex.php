@@ -9,13 +9,16 @@ namespace Spiral\Database\Schema;
 
 use Spiral\Database\Driver\Driver;
 use Spiral\Database\IndexInterface;
+use Spiral\Database\Schema\Traits\ElementTrait;
 
 /**
  * Abstract index schema with read (see IndexInterface) and write abilities. Must be implemented
  * by driver to support DBMS specific syntax and creation rules.
  */
-abstract class AbstractIndex extends AbstractElement implements IndexInterface
+abstract class AbstractIndex implements IndexInterface
 {
+    use ElementTrait;
+
     /**
      * Index types.
      */
@@ -38,6 +41,16 @@ abstract class AbstractIndex extends AbstractElement implements IndexInterface
     protected $columns = [];
 
     /**
+     * @param string $table
+     * @param string $name
+     */
+    public function __construct(string $table, string $name)
+    {
+        $this->table = $table;
+        $this->name = $name;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function isUnique(): bool
@@ -57,7 +70,6 @@ abstract class AbstractIndex extends AbstractElement implements IndexInterface
      * Declare index type and behaviour to unique/non-unique state.
      *
      * @param bool $unique
-     *
      * @return self
      */
     public function unique(bool $unique = true): AbstractIndex
@@ -76,7 +88,6 @@ abstract class AbstractIndex extends AbstractElement implements IndexInterface
      * $index->columns(['key', 'key2']);
      *
      * @param string|array $columns Columns array or comma separated list of parameters.
-     *
      * @return self
      */
     public function columns($columns): AbstractIndex
@@ -94,9 +105,7 @@ abstract class AbstractIndex extends AbstractElement implements IndexInterface
      * Index sql creation syntax.
      *
      * @param Driver $driver
-     * @param bool   $includeTable Include table ON statement (not required for inline index
-     *                             creation).
-     *
+     * @param bool   $includeTable Include table ON statement (not required for inline index creation).
      * @return string
      */
     public function sqlStatement(Driver $driver, bool $includeTable = true): string
@@ -118,9 +127,10 @@ abstract class AbstractIndex extends AbstractElement implements IndexInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param AbstractIndex $initial
+     * @return bool
      */
-    public function compare(IndexInterface $initial): bool
+    public function compare(AbstractIndex $initial): bool
     {
         return $this == clone $initial;
     }

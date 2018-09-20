@@ -7,10 +7,10 @@
 
 namespace Spiral\Database\Schema;
 
-use Spiral\Database\Driver\AbstractHandler as Behaviour;
 use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\HandlerInterface;
 use Spiral\Database\Exception\SchemaException;
-use Spiral\Database\Exception\SchemaHandlerException;
+use Spiral\Database\Exception\HandlerException;
 use Spiral\Database\TableInterface;
 
 /**
@@ -79,7 +79,7 @@ abstract class AbstractTable implements TableInterface
      * Initial table state.
      *
      * @invisible
-     * @var TableState
+     * @var State
      */
     protected $initial = null;
 
@@ -87,7 +87,7 @@ abstract class AbstractTable implements TableInterface
      * Currently defined table state.
      *
      * @invisible
-     * @var TableState
+     * @var State
      */
     protected $current = null;
 
@@ -102,8 +102,8 @@ abstract class AbstractTable implements TableInterface
         $this->prefix = $prefix;
 
         //Initializing states
-        $this->initial = new TableState($this->prefix . $name);
-        $this->current = new TableState($this->prefix . $name);
+        $this->initial = new State($this->prefix . $name);
+        $this->current = new State($this->prefix . $name);
 
         if ($this->driver->hasTable($this->getName())) {
             $this->status = self::STATUS_EXISTS;
@@ -138,11 +138,11 @@ abstract class AbstractTable implements TableInterface
     }
 
     /**
-     * @return StateComparator
+     * @return Comparator
      */
-    public function getComparator(): StateComparator
+    public function getComparator(): Comparator
     {
-        return new StateComparator($this->initial, $this->current);
+        return new Comparator($this->initial, $this->current);
     }
 
     /**
@@ -178,7 +178,6 @@ abstract class AbstractTable implements TableInterface
      * Sets table name. Use this function in combination with save to rename table.
      *
      * @param string $name
-     *
      * @return string Prefixed table name.
      */
     public function setName(string $name): string
@@ -219,9 +218,9 @@ abstract class AbstractTable implements TableInterface
         //Declaring as dropped
         $this->status = self::STATUS_DECLARED_DROPPED;
 
-        foreach ($this->current->getForeigns() as $foreign) {
+        foreach ($this->current->getForeignKeys() as $foreign) {
             //Remove all FK keys
-            $this->current->forgetForeign($foreign);
+            $this->current->forgerForeignKey($foreign);
         }
     }
 
@@ -230,7 +229,6 @@ abstract class AbstractTable implements TableInterface
      * database might support compound indexes.
      *
      * @param array $columns
-     *
      * @return self
      */
     public function setPrimaryKeys(array $columns): AbstractTable
@@ -291,19 +289,19 @@ abstract class AbstractTable implements TableInterface
     /**
      * {@inheritdoc}
      */
-    public function hasReference(string $column): bool
+    public function hasForeignKey(string $column): bool
     {
-        return $this->current->hasForeign($column);
+        return $this->current->hasForeignKey($column);
     }
 
     /**
      * {@inheritdoc}
      *
-     * @return AbstractReference[]
+     * @return AbstractForeignKey[]
      */
-    public function getReferences(): array
+    public function getForeignKeys(): array
     {
-        return $this->current->getForeigns();
+        return $this->current->getForeignKeys();
     }
 
     /**
@@ -312,8 +310,8 @@ abstract class AbstractTable implements TableInterface
     public function getDependencies(): array
     {
         $tables = [];
-        foreach ($this->current->getForeigns() as $foreign) {
-            $tables[] = $foreign->getForeignTable();
+        foreach ($this->current->getForeignKeys() as $foreignKey) {
+            $tables[] = $foreignKey->getForeignTable();
         }
 
         return $tables;
@@ -328,7 +326,6 @@ abstract class AbstractTable implements TableInterface
      * $table->column('name')->string();
      *
      * @param string $name
-     *
      * @return AbstractColumn
      */
     public function column(string $name): AbstractColumn
@@ -355,7 +352,6 @@ abstract class AbstractTable implements TableInterface
      * Shortcut for column() method.
      *
      * @param string $column
-     *
      * @return AbstractColumn
      */
     public function __get(string $column)
@@ -373,7 +369,6 @@ abstract class AbstractTable implements TableInterface
      *
      * @param string $type
      * @param array  $arguments Type specific parameters.
-     *
      * @return AbstractColumn
      */
     public function __call(string $type, array $arguments)
@@ -393,7 +388,6 @@ abstract class AbstractTable implements TableInterface
      * $table->index(['key', 'key2']);
      *
      * @param array $columns List of index columns.
-     *
      * @return AbstractIndex
      *
      * @throws SchemaException
@@ -430,24 +424,23 @@ abstract class AbstractTable implements TableInterface
      * name.
      *
      * @param string $column
-     *
-     * @return AbstractReference
+     * @return AbstractForeignKey
      *
      * @throws SchemaException
      */
-    public function foreign(string $column): AbstractReference
+    public function foreignKey(string $column): AbstractForeignKey
     {
         if (!$this->hasColumn($column)) {
             throw new SchemaException("Undefined column '{$column}' in '{$this->getName()}'");
         }
 
-        if ($this->hasReference($column)) {
-            return $this->current->findForeign($column);
+        if ($this->hasForeignKey($column)) {
+            return $this->current->findForeignKey($column);
         }
 
-        if ($this->initial->hasForeign($column)) {
+        if ($this->initial->hasForeignKey($column)) {
             //Let's ensure that FK name is always stays synced (not regenerated)
-            $name = $this->initial->findForeign($column)->getName();
+            $name = $this->initial->findForeignKey($column)->getName();
         } else {
             $name = $this->createIdentifier('foreign', [$column]);
         }
@@ -455,7 +448,7 @@ abstract class AbstractTable implements TableInterface
         $foreign = $this->createForeign($name)->column($column);
 
         //Adding to current schema
-        $this->current->registerForeign($foreign);
+        $this->current->registerForeignKey($foreign);
 
         //Let's ensure index existence to performance and compatibility reasons
         $this->index([$column]);
@@ -468,7 +461,6 @@ abstract class AbstractTable implements TableInterface
      *
      * @param string $column
      * @param string $name New column name.
-     *
      * @return self
      *
      * @throws SchemaException
@@ -490,7 +482,6 @@ abstract class AbstractTable implements TableInterface
      *
      * @param array  $columns Index forming columns.
      * @param string $name    New index name.
-     *
      * @return self
      *
      * @throws SchemaException
@@ -513,7 +504,6 @@ abstract class AbstractTable implements TableInterface
      * Drop column by it's name.
      *
      * @param string $column
-     *
      * @return self
      *
      * @throws SchemaException
@@ -534,7 +524,6 @@ abstract class AbstractTable implements TableInterface
      * Drop index by it's forming columns.
      *
      * @param array $columns
-     *
      * @return self
      *
      * @throws SchemaException
@@ -542,9 +531,7 @@ abstract class AbstractTable implements TableInterface
     public function dropIndex(array $columns): AbstractTable
     {
         if (empty($schema = $this->current->findIndex($columns))) {
-            throw new SchemaException(
-                "Undefined index ['" . join("', '", $columns) . "'] in '{$this->getName()}'"
-            );
+            throw new SchemaException("Undefined index ['" . join("', '", $columns) . "'] in '{$this->getName()}'");
         }
 
         //Dropping index from current schema
@@ -557,21 +544,18 @@ abstract class AbstractTable implements TableInterface
      * Drop foreign key by it's name.
      *
      * @param string $column
-     *
      * @return self
      *
      * @throws SchemaException
      */
-    public function dropForeign($column): AbstractTable
+    public function dropForeignKey(string $column): AbstractTable
     {
-        if (empty($schema = $this->current->findForeign($column))) {
-            throw new SchemaException(
-                "Undefined FK on '{$column}' in '{$this->getName()}'"
-            );
+        if (empty($schema = $this->current->findForeignKey($column))) {
+            throw new SchemaException("Undefined FK on '{$column}' in '{$this->getName()}'");
         }
 
         //Dropping foreign from current schema
-        $this->current->forgetForeign($schema);
+        $this->current->forgerForeignKey($schema);
 
         return $this;
     }
@@ -579,9 +563,9 @@ abstract class AbstractTable implements TableInterface
     /**
      * Get current table state (detached).
      *
-     * @return TableState
+     * @return State
      */
-    public function getState(): TableState
+    public function getState(): State
     {
         $state = clone $this->current;
         $state->remountElements();
@@ -592,13 +576,13 @@ abstract class AbstractTable implements TableInterface
     /**
      * Reset table state to new form.
      *
-     * @param TableState $state Use null to flush table schema.
+     * @param State $state Use null to flush table schema.
      *
      * @return self|$this
      */
-    public function setState(TableState $state = null): AbstractTable
+    public function setState(State $state = null): AbstractTable
     {
-        $this->current = new TableState($this->initial->getName());
+        $this->current = new State($this->initial->getName());
 
         if (!empty($state)) {
             $this->current->setName($state->getName());
@@ -625,24 +609,21 @@ abstract class AbstractTable implements TableInterface
      * does not exist it must be created. If table declared as dropped it will be removed from
      * the database.
      *
-     * @param int  $behaviour            Operation to be performed while table being saved. In some
-     *                                   cases (when multiple tables are being updated) it is
-     *                                   reasonable to drop foreing keys and indexes prior to
-     *                                   dropping related columns. See sync bus class to get more
-     *                                   details.
-     * @param bool $reset                When true schema will be marked as synced.
+     * @param int  $operation Operation to be performed while table being saved. In some cases (when multiple tables are
+     *                        being updated) it is reasonable to drop foreign keys and indexes prior to dropping related
+     *                        columns. See sync bus class to get more details.
+     * @param bool $reset     When true schema will be marked as synced.
      *
-     * @throws SchemaHandlerException
-     *
+     * @throws HandlerException
      * @throws SchemaException
      */
-    public function save(int $behaviour = Behaviour::DO_ALL, bool $reset = true)
+    public function save(int $operation = HandlerInterface::DO_ALL, bool $reset = true)
     {
         //We need an instance of Handler of dbal operations
         $handler = $this->driver->getHandler();
 
-        if ($this->status == self::STATUS_DECLARED_DROPPED && $behaviour & Behaviour::DO_DROP) {
-            //We don't need syncer for this operation
+        if ($this->status == self::STATUS_DECLARED_DROPPED && $operation & HandlerInterface::DO_DROP) {
+            //We don't need reflector for this operation
             $handler->dropTable($this);
 
             //Flushing status
@@ -652,7 +633,7 @@ abstract class AbstractTable implements TableInterface
         }
 
         //Ensure that columns references to valid indexes and et
-        $prepared = $this->normalizeSchema($behaviour & Behaviour::CREATE_FOREIGNS);
+        $prepared = $this->normalizeSchema($operation & HandlerInterface::CREATE_FOREIGN_KEYS);
 
         if ($this->status == self::STATUS_NEW) {
             //Executing table creation
@@ -660,7 +641,7 @@ abstract class AbstractTable implements TableInterface
         } else {
             //Executing table syncing
             if ($this->hasChanges()) {
-                $handler->syncTable($prepared, $behaviour);
+                $handler->syncTable($prepared, $operation);
             }
         }
 
@@ -675,11 +656,10 @@ abstract class AbstractTable implements TableInterface
      * Ensure that no wrong indexes left in table. This method will create AbstracTable
      * copy in order to prevent cross modifications.
      *
-     * @param bool $withForeigns
-     *
+     * @param bool $withForeignKeys
      * @return AbstractTable
      */
-    protected function normalizeSchema(bool $withForeigns = true)
+    protected function normalizeSchema(bool $withForeignKeys = true)
     {
         //To make sure that no pre-sync modifications will be reflected on current table
         $target = clone $this;
@@ -695,9 +675,9 @@ abstract class AbstractTable implements TableInterface
                 }
             }
 
-            foreach ($target->getReferences() as $foreign) {
+            foreach ($target->getForeignKeys() as $foreign) {
                 if ($column->getName() == $foreign->getColumn()) {
-                    $target->current->forgetForeign($foreign);
+                    $target->current->forgerForeignKey($foreign);
                 }
             }
         }
@@ -733,17 +713,17 @@ abstract class AbstractTable implements TableInterface
                 }
             }
 
-            foreach ($target->getReferences() as $foreign) {
+            foreach ($target->getForeignKeys() as $foreign) {
                 if ($initial->getName() == $foreign->getColumn()) {
                     $foreign->column($name->getName());
                 }
             }
         }
 
-        if (!$withForeigns) {
-            foreach ($this->getComparator()->addedForeigns() as $foreign) {
+        if (!$withForeignKeys) {
+            foreach ($this->getComparator()->addedForeignKeys() as $foreign) {
                 //Excluding from creation
-                $target->current->forgetForeign($foreign);
+                $target->current->forgerForeignKey($foreign);
             }
         }
 
@@ -778,16 +758,16 @@ abstract class AbstractTable implements TableInterface
             'primaryKeys' => $this->getPrimaryKeys(),
             'columns'     => array_values($this->getColumns()),
             'indexes'     => array_values($this->getIndexes()),
-            'references'  => array_values($this->getReferences()),
+            'references'  => array_values($this->getForeignKeys()),
         ];
     }
 
     /**
      * Populate table schema with values from database.
      *
-     * @param TableState $state
+     * @param State $state
      */
-    protected function initSchema(TableState $state)
+    protected function initSchema(State $state)
     {
         foreach ($this->fetchColumns() as $column) {
             $state->registerColumn($column);
@@ -798,7 +778,7 @@ abstract class AbstractTable implements TableInterface
         }
 
         foreach ($this->fetchReferences() as $foreign) {
-            $state->registerForeign($foreign);
+            $state->registerForeignKey($foreign);
         }
 
         $state->setPrimaryKeys($this->fetchPrimaryKeys());
@@ -823,7 +803,7 @@ abstract class AbstractTable implements TableInterface
     /**
      * Fetch references declaration from database.
      *
-     * @return AbstractReference[]
+     * @return AbstractForeignKey[]
      */
     abstract protected function fetchReferences(): array;
 
@@ -857,9 +837,9 @@ abstract class AbstractTable implements TableInterface
      *
      * @param string $name
      *
-     * @return AbstractReference
+     * @return AbstractForeignKey
      */
-    abstract protected function createForeign(string $name): AbstractReference;
+    abstract protected function createForeign(string $name): AbstractForeignKey;
 
     /**
      * Generate unique name for indexes and foreign keys.

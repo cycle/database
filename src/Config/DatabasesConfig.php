@@ -8,6 +8,7 @@
 
 namespace Spiral\Database\Config;
 
+use Spiral\Core\Container\Autowire;
 use Spiral\Core\InjectableConfig;
 use Spiral\Core\Traits\Config\AliasTrait;
 
@@ -118,5 +119,10 @@ class DatabasesConfig extends InjectableConfig
         unset($options['driver']);
 
         return $options;
+    }
+
+    public function getDriver(string $name): Autowire
+    {
+        return null;
     }
 }

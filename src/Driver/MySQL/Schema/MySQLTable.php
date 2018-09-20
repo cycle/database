@@ -10,9 +10,9 @@ namespace Spiral\Database\Driver\MySQL\Schema;
 use Spiral\Database\Exception\SchemaException;
 use Spiral\Database\Schema\AbstractColumn;
 use Spiral\Database\Schema\AbstractIndex;
-use Spiral\Database\Schema\AbstractReference;
+use Spiral\Database\Schema\AbstractForeignKey;
 use Spiral\Database\Schema\AbstractTable;
-use Spiral\Database\Schema\TableState;
+use Spiral\Database\Schema\State;
 
 class MySQLTable extends AbstractTable
 {
@@ -33,9 +33,9 @@ class MySQLTable extends AbstractTable
     /**
      * Populate table schema with values from database.
      *
-     * @param TableState $state
+     * @param State $state
      */
-    protected function initSchema(TableState $state)
+    protected function initSchema(State $state)
     {
         parent::initSchema($state);
 
@@ -136,7 +136,7 @@ class MySQLTable extends AbstractTable
                 [$schema['CONSTRAINT_NAME'], $this->driver->getSource(), $this->getName()]
             )->fetch();
 
-            $result[] = MySQLReference::createInstance(
+            $result[] = MySQLForeign::createInstance(
                 $this->getName(),
                 $this->getPrefix(),
                 $schema + $column
@@ -184,8 +184,8 @@ class MySQLTable extends AbstractTable
     /**
      * {@inheritdoc}
      */
-    protected function createForeign(string $name): AbstractReference
+    protected function createForeign(string $name): AbstractForeignKey
     {
-        return new MySQLReference($this->getName(), $this->getPrefix(), $name);
+        return new MySQLForeign($this->getName(), $this->getPrefix(), $name);
     }
 }
