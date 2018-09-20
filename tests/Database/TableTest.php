@@ -55,6 +55,13 @@ abstract class TableTest extends BaseTest
         $this->assertSame(0, $table->count());
     }
 
+    public function testPrimaryKeys()
+    {
+        $table = $this->database->table('table');
+
+        $this->assertSame(['id'], $table->getPrimaryKeys());
+    }
+
     public function testHasIndex()
     {
         $table = $this->database->table('table');
