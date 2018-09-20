@@ -85,7 +85,7 @@ class DBALConfig extends InjectableConfig
      */
     public function getDatabase(string $database): DatabasePartial
     {
-        if (!$this->hasDriver($database)) {
+        if (!$this->hasDatabase($database)) {
             throw new ConfigException("Undefined database `{$database}`.");
         }
 
@@ -94,8 +94,8 @@ class DBALConfig extends InjectableConfig
         return new DatabasePartial(
             $database,
             $config['tablePrefix'] ?? $config['prefix'] ?? '',
-            $config['connection'] ?? $config['driver'] ?? '',
-            $config['readConnection'] ?? $config['readDriver'] ?? ''
+            $config['connection'] ?? $config['write'] ?? $config['driver'],
+            $config['readConnection'] ?? $config['read'] ?? $config['readDriver'] ?? null
         );
     }
 

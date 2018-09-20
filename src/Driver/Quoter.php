@@ -13,7 +13,7 @@ namespace Spiral\Database\Driver;
  * Class responsible for "intelligent" table and column name quoting.
  * Attention, Quoter does not support string literals at this moment, use FragmentInterface.
  */
-final class Quoter implements QuoterInterface
+final class Quoter
 {
     // Used to detect functions and expression.
     private const STOPS = [')', '(', ' '];
@@ -28,7 +28,8 @@ final class Quoter implements QuoterInterface
     private $prefix = '';
 
     /**
-     * @param DriverInterface $driver Driver needed to correctly quote identifiers and string quotes.
+     * @param DriverInterface $driver Driver needed to correctly quote identifiers and string
+     *                                quotes.
      * @param string          $prefix
      */
     public function __construct(DriverInterface $driver, string $prefix)
@@ -67,9 +68,11 @@ final class Quoter implements QuoterInterface
     /**
      * Query query identifier, if identified stated as table - table prefix must be added.
      *
-     * @param string $identifier Identifier can include simple column operations and functions, having "." in it will
-     *                           automatically force table prefix to first value.
-     * @param bool   $isTable    Set to true to let quote method know that identifier is related to table name.
+     * @param string $identifier Identifier can include simple column operations and functions,
+     *                           having "." in it will automatically force table prefix to first
+     *                           value.
+     * @param bool   $isTable    Set to true to let quote method know that identifier is related to
+     *                           table name.
      * @return mixed|string
      */
     public function quote(string $identifier, bool $isTable = false): string
