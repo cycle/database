@@ -51,8 +51,94 @@ abstract class TableTest extends BaseTest
     {
         $table = $this->database->table('table');
 
-        $this->assertTrue($table->getSchema()->exists());
+        $this->assertTrue($table->exists());
         $this->assertSame(0, $table->count());
+    }
+
+    public function testHasIndex()
+    {
+        $table = $this->database->table('table');
+
+        $this->assertFalse($table->hasIndex(['value']));
+
+        $schema = $table->getSchema();
+        $schema->index(['value']);
+        $schema->save();
+
+        $this->assertTrue($table->hasIndex(['value']));
+    }
+
+    public function testGetIndexes()
+    {
+        $table = $this->database->table('table');
+
+        $this->assertCount(0, $table->getIndexes());
+
+        $schema = $table->getSchema();
+        $schema->index(['value']);
+        $schema->save();
+
+        $this->assertCount(1, $table->getIndexes());
+    }
+
+    public function testHasForeignKey()
+    {
+        $schema = $this->database->table('table2')->getSchema();
+        $schema->primary('id');
+        $schema->text('name');
+        $schema->integer('value');
+        $schema->save();
+
+        $table = $this->database->table('table');
+
+        $this->assertFalse($table->hasForeignKey('external_id'));
+
+        $schema = $table->getSchema();
+        $schema->integer('external_id');
+        $schema->foreignKey('external_id')->references('table2', 'id');
+        $schema->save();
+
+        $this->assertTrue($table->hasForeignKey('external_id'));
+    }
+
+    public function testGetForeignKeys()
+    {
+        $schema = $this->database->table('table2')->getSchema();
+        $schema->primary('id');
+        $schema->text('name');
+        $schema->integer('value');
+        $schema->save();
+
+        $table = $this->database->table('table');
+
+        $this->assertCount(0, $table->getForeignKeys());
+
+        $schema = $table->getSchema();
+        $schema->integer('external_id');
+        $schema->foreignKey('external_id')->references('table2', 'id');
+        $schema->save();
+
+        $this->assertCount(1, $table->getForeignKeys());
+    }
+
+    public function testDependencies()
+    {
+        $schema = $this->database->table('table2')->getSchema();
+        $schema->primary('id');
+        $schema->text('name');
+        $schema->integer('value');
+        $schema->save();
+
+        $table = $this->database->table('table');
+
+        $this->assertCount(0, $table->getDependencies());
+
+        $schema = $table->getSchema();
+        $schema->integer('external_id');
+        $schema->foreignKey('external_id')->references('table2', 'id');
+        $schema->save();
+
+        $this->assertSame(['table2'], $table->getDependencies());
     }
 
     //see old versions of postgres
