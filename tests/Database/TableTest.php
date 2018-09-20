@@ -50,6 +50,7 @@ abstract class TableTest extends BaseTest
     public function testExistsAndEmpty()
     {
         $table = $this->database->table('table');
+        $this->assertSame('table', $table->getName());
 
         $this->assertTrue($table->exists());
         $this->assertSame(0, $table->count());
