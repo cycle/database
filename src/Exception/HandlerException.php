@@ -12,16 +12,12 @@ namespace Spiral\Database\Exception;
  */
 class HandlerException extends DriverException implements QueryExceptionInterface
 {
-    /** @var string */
-    private $query;
-
     /**
      * @param QueryException $e
      */
     public function __construct(QueryException $e)
     {
         parent::__construct($e->getMessage(), $e->getCode(), $e);
-        $this->query = $e->getQuery();
     }
 
     /**
@@ -29,6 +25,6 @@ class HandlerException extends DriverException implements QueryExceptionInterfac
      */
     public function getQuery(): string
     {
-        return $this->query;
+        return $this->getPrevious()->getQuery();
     }
 }
