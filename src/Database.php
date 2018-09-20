@@ -38,17 +38,26 @@ class Database implements DatabaseInterface, InjectableInterface
     /** @var DriverInterface */
     private $driver;
 
+    /** @var DriverInterface|null */
+    private $readDriver;
+
     /**
-     * @param DriverInterface $driver Driver instance responsible for database connection.
-     * @param string          $name   Internal database name/id.
-     * @param string          $prefix Default database table prefix, will be used for all table
-     *                                identifiers.
+     * @param string               $name       Internal database name/id.
+     * @param string               $prefix     Default database table prefix, will be used for all
+     *                                         table identifiers.
+     * @param DriverInterface      $driver     Driver instance responsible for database connection.
+     * @param DriverInterface|null $readDriver Read-only driver connection.
      */
-    public function __construct(DriverInterface $driver, string $name, string $prefix = '')
-    {
-        $this->driver = $driver;
+    public function __construct(
+        string $name,
+        string $prefix = '',
+        DriverInterface $driver,
+        DriverInterface $readDriver = null
+    ) {
         $this->name = $name;
         $this->prefix = $prefix;
+        $this->driver = $driver;
+        $this->readDriver = $readDriver;
     }
 
     /**
@@ -72,6 +81,10 @@ class Database implements DatabaseInterface, InjectableInterface
      */
     public function getDriver(int $type = DatabaseInterface::WRITE): DriverInterface
     {
+        if ($type == self::READ && !empty($this->readDriver)) {
+            return $this->readDriver;
+        }
+
         return $this->driver;
     }
 

@@ -9,6 +9,8 @@
 namespace Spiral\Database\Driver\Postgres\Query;
 
 use Spiral\Database\Driver\CompilerInterface;
+use Spiral\Database\Driver\Postgres\PostgresCompiler;
+use Spiral\Database\Driver\Postgres\PostgresDriver;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Query\InsertQuery;
 
@@ -54,6 +56,7 @@ class PostgresInsertQuery extends InsertQuery
      */
     public function run()
     {
-        return (int)$this->driver->query($this->sqlStatement(), $this->getParameters())->fetchColumn();
+        return (int)$this->driver->query($this->sqlStatement(),
+            $this->getParameters())->fetchColumn();
     }
 }

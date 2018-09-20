@@ -8,13 +8,15 @@
 
 namespace Spiral\Database;
 
-use Psr\Container\ContainerInterface;
+use Psr\Container\ContainerExceptionInterface;
 use Spiral\Core\Container;
 use Spiral\Core\Container\InjectorInterface;
 use Spiral\Core\Container\SingletonInterface;
 use Spiral\Core\FactoryInterface;
-use Spiral\Database\Config\DatabasesConfig;
+use Spiral\Database\Config\DatabasePartial;
+use Spiral\Database\Config\DBALConfig;
 use Spiral\Database\Driver\AbstractDriver;
+use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Exception\DatabaseException;
 use Spiral\Database\Exception\DBALException;
 
@@ -73,7 +75,7 @@ use Spiral\Database\Exception\DBALException;
  */
 class DBAL implements SingletonInterface, InjectorInterface
 {
-    /** @var DatabasesConfig */
+    /** @var DBALConfig */
     private $config = null;
 
     /** @var Database[] */
@@ -82,79 +84,49 @@ class DBAL implements SingletonInterface, InjectorInterface
     /** @var AbstractDriver[] */
     private $drivers = [];
 
-    /**
-     * @invisible
-     *
-     * @todo: remove it
-     * @var ContainerInterface
-     */
-    protected $container = null;
+    /**  @var FactoryInterface */
+    protected $factory = null;
 
     /**
-     * @param DatabasesConfig    $config
-     * @param ContainerInterface $container Factory provider. Also used to define driver and
-     *                                      builders scope.
+     * @param DBALConfig       $config
+     * @param FactoryInterface $factory
      */
-    public function __construct(DatabasesConfig $config, ContainerInterface $container = null)
+    public function __construct(DBALConfig $config, FactoryInterface $factory = null)
     {
         $this->config = $config;
-        $this->container = $container ?? new Container();
+        $this->factory = $factory ?? new Container();
     }
 
     /**
-     * Manually set database.
-     *
-     * @param Database $database
-     *
-     * @return self
-     *
-     * @throws DBALException
+     * {@inheritdoc}
      */
-    public function addDatabase(Database $database): DBAL
+    public function createInjection(\ReflectionClass $class, string $context = null)
     {
-        if (isset($this->databases[$database->getName()])) {
-            throw new DBALException("Database '{$database->getName()}' already exists");
-        }
-
-        $this->databases[$database->getName()] = $database;
-
-        return $this;
+        //If context is empty default database will be returned
+        return $this->database($context);
     }
 
     /**
-     * Automatically create database instance based on given options and connection (in a form or
-     * instance or alias).
+     * Get all databases.
      *
-     * @param string                $name
-     * @param string                $prefix
-     * @param string|AbstractDriver $connection Connection name or instance.
+     * @return Database[]
      *
-     * @return Database
-     *
-     * @throws DBALException
+     * @throws DatabaseException
      */
-    public function createDatabase(string $name, string $prefix, $connection): Database
+    public function getDatabases(): array
     {
-        if (!$connection instanceof AbstractDriver) {
-            $connection = $this->driver($connection);
+        $result = [];
+        foreach (array_keys($this->config->getDatabases()) as $name) {
+            $result[] = $this->database($name);
         }
 
-        $instance = $this->getFactory()->make(Database::class, [
-            'name'   => $name,
-            'prefix' => $prefix,
-            'driver' => $connection
-        ]);
-
-        $this->addDatabase($instance);
-
-        return $instance;
+        return $result;
     }
 
     /**
      * Get Database associated with a given database alias or automatically created one.
      *
      * @param string|null $database
-     *
      * @return Database
      *
      * @throws DBALException
@@ -162,7 +134,7 @@ class DBAL implements SingletonInterface, InjectorInterface
     public function database(string $database = null): Database
     {
         if (empty($database)) {
-            $database = $this->config->defaultDatabase();
+            $database = $this->config->getDefaultDatabase();
         }
 
         //Spiral support ability to link multiple virtual databases together using aliases
@@ -178,8 +150,62 @@ class DBAL implements SingletonInterface, InjectorInterface
             );
         }
 
-        //No need to benchmark here, due connection will happen later
-        return $this->databases[$database] = $this->makeDatabase($database);
+        return $this->databases[$database] = $this->makeDatabase(
+            $this->config->getDatabase($database)
+        );
+    }
+
+    /**
+     * Add new database.
+     *
+     * @param Database $database
+     *
+     * @throws DBALException
+     */
+    public function addDatabase(Database $database)
+    {
+        if (isset($this->databases[$database->getName()])) {
+            throw new DBALException("Database '{$database->getName()}' already exists");
+        }
+
+        $this->databases[$database->getName()] = $database;
+    }
+
+    /**
+     * Get instance of every available driver/connection.
+     *
+     * @return AbstractDriver[]
+     *
+     * @throws DBALException
+     */
+    public function getDrivers(): array
+    {
+        $result = [];
+        foreach (array_keys($this->config->getDrivers()) as $name) {
+            $result[] = $this->driver($name);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get driver instance by it's name or automatically create one.
+     *
+     * @param string $driver
+     * @return DriverInterface
+     *
+     * @throws DBALException
+     */
+    public function driver(string $driver): DriverInterface
+    {
+        if (isset($this->drivers[$driver])) {
+            return $this->drivers[$driver];
+        }
+        try {
+            return $this->drivers[$driver] = $this->config->getDriver($driver)->resolve($this->factory);
+        } catch (ContainerExceptionInterface $e) {
+            throw new DBALException($e->getMessage(), $e->getCode(), $e);
+        }
     }
 
     /**
@@ -203,161 +229,18 @@ class DBAL implements SingletonInterface, InjectorInterface
     }
 
     /**
-     * Create and register connection under given name.
-     *
-     * @param string $name
-     * @param string $driver Driver class.
-     * @param string $dns
-     * @param string $username
-     * @param string $password
-     *
-     * @return AbstractDriver
-     */
-    public function makeDriver(
-        string $name,
-        string $driver,
-        string $dns,
-        string $username,
-        string $password = ''
-    ): AbstractDriver {
-        $instance = $this->getFactory()->make(
-            $driver,
-            [
-                'name'    => $name,
-                'options' => [
-                    'connection' => $dns,
-                    'username'   => $username,
-                    'password'   => $password
-                ]
-            ]
-        );
-
-        $this->addDriver($instance);
-
-        return $instance;
-    }
-
-    /**
-     * Get connection/driver by it's name. Every driver associated with configured connection,
-     * there is minor de-sync in naming due legacy code.
-     *
-     * @param string $connection
-     *
-     * @return AbstractDriver
+     * @param DatabasePartial $database
+     * @return Database
      *
      * @throws DBALException
      */
-    public function driver(string $connection): AbstractDriver
+    protected function makeDatabase(DatabasePartial $database): Database
     {
-        if (isset($this->drivers[$connection])) {
-            return $this->drivers[$connection];
-        }
-
-        if (!$this->config->hasDriver($connection)) {
-            throw new DBALException(
-                "Unable to create Driver, no presets for '{$connection}' found"
-            );
-        }
-
-        $instance = $this->getFactory()->make(
-            $this->config->driverClass($connection),
-            [
-                'name'    => $connection,
-                'options' => $this->config->driverOptions($connection),
-            ]
+        return new Database(
+            $database->getName(),
+            $database->getPrefix(),
+            $this->driver($database->getDriver()),
+            $database->getReadDriver() ? $this->driver($database->getReadDriver()) : null
         );
-
-        return $this->drivers[$connection] = $instance;
-    }
-
-    /**
-     * Get instance of every available database.
-     *
-     * @return Database[]
-     *
-     * @throws DatabaseException
-     */
-    public function getDatabases(): array
-    {
-        $result = [];
-
-        foreach ($this->config->databaseNames() as $name) {
-            $result[] = $this->database($name);
-        }
-
-        foreach ($this->databases as $database) {
-            if (!in_array($database, $result)) {
-                $result[] = $database;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get instance of every available driver/connection.
-     *
-     * @return AbstractDriver[]
-     *
-     * @throws DatabaseException
-     */
-    public function getDrivers(): array
-    {
-        $result = [];
-
-        foreach ($this->config->driverNames() as $name) {
-            $result[] = $this->driver($name);
-        }
-
-        foreach ($this->drivers as $driver) {
-            if (!in_array($driver, $result)) {
-                $result[] = $driver;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function createInjection(\ReflectionClass $class, string $context = null)
-    {
-        //If context is empty default database will be returned
-        return $this->database($context);
-    }
-
-    /**
-     * Get ODM specific factory.
-     *
-     * @return FactoryInterface
-     */
-    protected function getFactory(): FactoryInterface
-    {
-        if ($this->container instanceof FactoryInterface) {
-            return $this->container;
-        }
-
-        return $this->container->get(FactoryInterface::class);
-    }
-
-    /**
-     * @param string $database
-     *
-     * @return mixed|null|object
-     */
-    protected function makeDatabase(string $database): Database
-    {
-        $instance = $this->getFactory()->make(
-            Database::class,
-            [
-                'name'   => $database,
-                'prefix' => $this->config->databasePrefix($database),
-                'driver' => $this->driver($this->config->databaseDriver($database)),
-                //shard or more drivers?
-            ]
-        );
-
-        return $instance;
     }
 }

@@ -12,8 +12,8 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerTrait;
 use Psr\Log\LogLevel;
 use Spiral\Database\Database;
-use Spiral\Database\Driver\AbstractHandler;
 use Spiral\Database\Driver\AbstractDriver;
+use Spiral\Database\Driver\AbstractHandler;
 use Spiral\Database\Schema\AbstractTable;
 use Spiral\Database\Schema\Comparator;
 
@@ -41,7 +41,7 @@ abstract class BaseTest extends TestCase
             static::$driverCache[static::DRIVER] = $driver = $this->getDriver();
         }
 
-        return new Database($driver, $name, $prefix);
+        return new Database($name, $prefix, $driver);
     }
 
     /**
@@ -65,7 +65,8 @@ abstract class BaseTest extends TestCase
         }
 
         if (self::$config['debug']) {
-            $this->driver->setProfiling(true)->setLogger(new TestLogger());
+            $this->driver->setProfiling(true);
+            $this->driver->setLogger(new TestLogger());
         }
 
         return $this->driver;
