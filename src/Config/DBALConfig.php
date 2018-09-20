@@ -1,0 +1,134 @@
+<?php
+/**
+ * Spiral Framework.
+ *
+ * @license MIT
+ * @author  Anton Titov (Wolfy-J)
+ */
+
+namespace Spiral\Database\Config;
+
+use Spiral\Core\Container\Autowire;
+use Spiral\Core\InjectableConfig;
+use Spiral\Core\Traits\Config\AliasTrait;
+use Spiral\Database\Exception\ConfigException;
+
+class DBALConfig extends InjectableConfig
+{
+    use AliasTrait;
+
+    const CONFIG = 'databases';
+
+    /**
+     * @invisible
+     * @var array
+     */
+    protected $config = [
+        'default'     => 'default',
+        'aliases'     => [],
+        'databases'   => [],
+        'connections' => [],
+    ];
+
+    /**
+     * @return string
+     */
+    public function getDefaultDatabase(): string
+    {
+        return $this->config['default'];
+    }
+
+    /**
+     * Get named list of all databases.
+     *
+     * @return DatabasePartial[]
+     */
+    public function getDatabases(): array
+    {
+        $result = [];
+        foreach (array_keys($this->config['databases']) as $database) {
+            $result[$database] = $this->getDatabase($database);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get names list of all driver connections.
+     *
+     * @return Autowire[]
+     */
+    public function getDrivers(): array
+    {
+        $result = [];
+        foreach (array_keys($this->config['connections'] ?? $this->config['drivers']) as $driver) {
+            $result[$driver] = $this->getDriver($driver);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param string $database
+     * @return bool
+     */
+    public function hasDatabase(string $database): bool
+    {
+        return isset($this->config['databases'][$database]);
+    }
+
+    /**
+     * @param string $database
+     * @return DatabasePartial
+     *
+     * @throws ConfigException
+     */
+    public function getDatabase(string $database): DatabasePartial
+    {
+        if (!$this->hasDatabase($database)) {
+            throw new ConfigException("Undefined database `{$database}`.");
+        }
+
+        $config = $this->config['databases'][$database];
+
+        return new DatabasePartial(
+            $database,
+            $config['tablePrefix'] ?? $config['prefix'] ?? '',
+            $config['connection'] ?? $config['write'] ?? $config['driver'],
+            $config['readConnection'] ?? $config['read'] ?? $config['readDriver'] ?? null
+        );
+    }
+
+    /**
+     * @param string $driver
+     * @return bool
+     */
+    public function hasDriver(string $driver): bool
+    {
+        return isset($this->config['connections'][$driver]) || isset($this->config['drivers'][$driver]);
+    }
+
+    /**
+     * @param string $driver
+     * @return Autowire
+     *
+     * @throws ConfigException
+     */
+    public function getDriver(string $driver): Autowire
+    {
+        if (!$this->hasDriver($driver)) {
+            throw new ConfigException("Undefined driver `{$driver}`.");
+        }
+
+        $config = $this->config['connections'][$driver] ?? $this->config['drivers'][$driver];
+
+        if ($config instanceof Autowire) {
+            return $config;
+        }
+
+        return new Autowire(
+            $config['driver'] ?? $config['class'],
+            $config['options'] ?? $config
+        );
+    }
+}

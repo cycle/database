@@ -4,11 +4,12 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\Postgres;
 
-class TableTest extends \Spiral\Tests\Database\TableTest
+namespace Spiral\Database\Tests\Postgres;
+
+class TableTest extends \Spiral\Database\Tests\TableTest
 {
-    use DriverTrait;
+    const DRIVER = 'postgres';
 
     //Applause, PG
     public function testGetColumns()
@@ -23,7 +24,12 @@ class TableTest extends \Spiral\Tests\Database\TableTest
         ];
         arsort($expected);
 
-        $columns = $table->getColumns();
+
+        $columns = [];
+        foreach ($table->getColumns() as $column) {
+            $columns[$column->getName()] = $column->getAbstractType();
+        }
+
         arsort($columns);
 
         $this->assertSame($expected, $columns);

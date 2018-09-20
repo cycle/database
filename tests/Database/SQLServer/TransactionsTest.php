@@ -4,9 +4,10 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLServer;
 
-class TransactionsTest extends \Spiral\Tests\Database\TransactionsTest
+namespace Spiral\Database\Tests\SQLServer;
+
+class TransactionsTest extends \Spiral\Database\Tests\TransactionsTest
 {
-    use DriverTrait;
+    const DRIVER = 'sqlserver';
 }

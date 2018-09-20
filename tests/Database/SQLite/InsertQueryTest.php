@@ -4,11 +4,12 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLite;
 
-class InsertQueryTest extends \Spiral\Tests\Database\InsertQueryTest
+namespace Spiral\Database\Tests\SQLite;
+
+class InsertQueryTest extends \Spiral\Database\Tests\InsertQueryTest
 {
-    use DriverTrait;
+    const DRIVER = 'sqlite';
 
     public function testSimpleInsertMultipleRows()
     {

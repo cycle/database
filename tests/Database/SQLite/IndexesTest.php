@@ -4,9 +4,10 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLite;
 
-class IndexesTest extends \Spiral\Tests\Database\IndexesTest
+namespace Spiral\Database\Tests\SQLite;
+
+class IndexesTest extends \Spiral\Database\Tests\IndexesTest
 {
-    use DriverTrait;
+    const DRIVER = 'sqlite';
 }

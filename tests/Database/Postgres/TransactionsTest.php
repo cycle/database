@@ -4,9 +4,10 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\Postgres;
 
-class TransactionsTest extends \Spiral\Tests\Database\TransactionsTest
+namespace Spiral\Database\Tests\Postgres;
+
+class TransactionsTest extends \Spiral\Database\Tests\TransactionsTest
 {
-    use DriverTrait;
+    const DRIVER = 'postgres';
 }

@@ -4,11 +4,12 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLServer;
 
-class TableTest extends \Spiral\Tests\Database\TableTest
+namespace Spiral\Database\Tests\SQLServer;
+
+class TableTest extends \Spiral\Database\Tests\TableTest
 {
-    use DriverTrait;
+    const DRIVER = 'sqlserver';
 
     public function testAggregationAvgByPassFloat()
     {

@@ -4,11 +4,11 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database;
+namespace Spiral\Database\Tests;
 
-use Spiral\Database\Entities\AbstractHandler;
-use Spiral\Database\Schemas\Prototypes\AbstractColumn;
-use Spiral\Database\Schemas\Prototypes\AbstractTable;
+use Spiral\Database\Driver\AbstractHandler;
+use Spiral\Database\Schema\AbstractColumn;
+use Spiral\Database\Schema\AbstractTable;
 
 abstract class IndexesTest extends BaseTest
 {
@@ -19,12 +19,12 @@ abstract class IndexesTest extends BaseTest
 
     public function setUp()
     {
-        $this->database = $this->database();
+        $this->database = $this->db();
     }
 
     public function tearDown()
     {
-        $this->dropAll($this->database());
+        $this->dropDatabase($this->db());
     }
 
     public function schema(string $table): AbstractTable

@@ -4,20 +4,21 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLServer;
 
-use Spiral\Database\Drivers\SQLServer\Schemas\SQLServerTable;
+namespace Spiral\Database\Tests\SQLServer;
 
-class BuildersAccessTest extends \Spiral\Tests\Database\BuildersAccessTest
+use Spiral\Database\Driver\SQLServer\Schema\SQLServerTable;
+
+class BuildersAccessTest extends \Spiral\Database\Tests\BuildersAccessTest
 {
-    use DriverTrait;
+    const DRIVER = 'sqlserver';
 
     public function testTableSchemaAccess()
     {
         parent::testTableSchemaAccess();
         $this->assertInstanceOf(
             SQLServerTable::class,
-            $this->database()->table('sample')->getSchema()
+            $this->db()->table('sample')->getSchema()
         );
     }
 }

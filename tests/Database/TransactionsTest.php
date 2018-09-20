@@ -4,10 +4,10 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database;
+namespace Spiral\Database\Tests;
 
-use Spiral\Database\Entities\Database;
-use Spiral\Database\Schemas\Prototypes\AbstractTable;
+use Spiral\Database\Database;
+use Spiral\Database\Schema\AbstractTable;
 
 abstract class TransactionsTest extends BaseTest
 {
@@ -18,7 +18,7 @@ abstract class TransactionsTest extends BaseTest
 
     public function setUp()
     {
-        $this->database = $this->database();
+        $this->database = $this->db();
 
         $schema = $this->database->table('table')->getSchema();
         $schema->primary('id');
@@ -34,7 +34,7 @@ abstract class TransactionsTest extends BaseTest
 
     public function tearDown()
     {
-        $this->dropAll($this->database());
+        $this->dropDatabase($this->db());
     }
 
     public function testCommitTransactionInsert()

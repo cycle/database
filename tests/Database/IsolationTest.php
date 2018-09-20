@@ -4,21 +4,21 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database;
+namespace Spiral\Database\Tests;
 
-use Spiral\Database\Entities\AbstractHandler;
-use Spiral\Database\Schemas\Prototypes\AbstractTable;
+use Spiral\Database\Driver\AbstractHandler;
+use Spiral\Database\Schema\AbstractTable;
 
 abstract class IsolationTest extends BaseTest
 {
     public function tearDown()
     {
-        $this->dropAll($this->database());
+        $this->dropDatabase($this->db());
     }
 
     public function schema(string $prefix, string $table): AbstractTable
     {
-        return $this->database('default', $prefix)->table($table)->getSchema();
+        return $this->db('default', $prefix)->table($table)->getSchema();
     }
 
     public function testGetPrefix()
@@ -83,17 +83,17 @@ abstract class IsolationTest extends BaseTest
 
         $schema->primary('id');
         $schema->integer('to_a');
-        $schema->foreign('to_a')->references('a', 'id');
+        $schema->foreignKey('to_a')->references('a', 'id');
 
         $this->assertSame('prefix_b', $schema->column('id')->getTable());
-        $this->assertSame('prefix_a',   $schema->foreign('to_a')->getForeignTable());
+        $this->assertSame('prefix_a',   $schema->foreignKey('to_a')->getForeignTable());
 
         $schema->save(AbstractHandler::DO_ALL);
 
         $this->assertTrue($this->schema('prefix_', 'a')->exists());
         $this->assertTrue($this->schema('prefix_', 'b')->exists());
 
-        $foreign = $this->schema('prefix_', 'b')->foreign('to_a');
+        $foreign = $this->schema('prefix_', 'b')->foreignKey('to_a');
 
         $this->assertSame('prefix_a', $foreign->getForeignTable());
     }

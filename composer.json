@@ -10,22 +10,23 @@
     }
   ],
   "require": {
-    "php": ">=7.0",
-    "spiral/common": "^1.0",
-    "spiral/pagination": "~1.0"
+    "php": ">=7.1",
+    "spiral/core": "^1.1",
+    "spiral/logger": "^1.1",
+    "spiral/pagination": "^2.1"
   },
   "require-dev": {
-    "phpunit/phpunit": "~5.0",
-    "mockery/mockery": "^0.9.4"
+    "phpunit/phpunit": "~7.0",
+    "mockery/mockery": "^1.1"
   },
   "autoload": {
     "psr-4": {
-      "Spiral\\": "src/Spiral/"
+      "Spiral\\Database\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Spiral\\Tests\\": "tests/"
+      "Spiral\\Database\\Tests\\": "tests/Database/"
     }
   }
 }

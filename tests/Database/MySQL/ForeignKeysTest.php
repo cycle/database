@@ -4,9 +4,10 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\MySQL;
 
-class ForeignKeysTest extends \Spiral\Tests\Database\ForeignKeysTest
+namespace Spiral\Database\Tests\MySQL;
+
+class ForeignKeysTest extends \Spiral\Database\Tests\ForeignKeysTest
 {
-    use DriverTrait;
+    const DRIVER = 'mysql';
 }

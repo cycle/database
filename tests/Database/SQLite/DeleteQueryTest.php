@@ -4,9 +4,10 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLite;
 
-class DeleteQueryTest extends \Spiral\Tests\Database\DeleteQueryTest
+namespace Spiral\Database\Tests\SQLite;
+
+class DeleteQueryTest extends \Spiral\Database\Tests\DeleteQueryTest
 {
-    use DriverTrait;
+    const DRIVER = 'sqlite';
 }

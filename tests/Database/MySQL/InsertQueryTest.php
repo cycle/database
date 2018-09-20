@@ -4,9 +4,10 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\MySQL;
 
-class InsertQueryTest extends \Spiral\Tests\Database\InsertQueryTest
+namespace Spiral\Database\Tests\MySQL;
+
+class InsertQueryTest extends \Spiral\Database\Tests\InsertQueryTest
 {
-    use DriverTrait;
+    const DRIVER = 'mysql';
 }

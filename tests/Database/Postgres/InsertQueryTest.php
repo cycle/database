@@ -4,13 +4,14 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\Postgres;
 
-use Spiral\Database\Drivers\Postgres\PostgresInsertQuery;
+namespace Spiral\Database\Tests\Postgres;
 
-class InsertQueryTest extends \Spiral\Tests\Database\InsertQueryTest
+use Spiral\Database\Driver\Postgres\Query\PostgresInsertQuery;
+
+class InsertQueryTest extends \Spiral\Database\Tests\InsertQueryTest
 {
-    use DriverTrait;
+    const DRIVER = 'postgres';
 
     public function setUp()
     {
@@ -24,7 +25,7 @@ class InsertQueryTest extends \Spiral\Tests\Database\InsertQueryTest
 
     public function tearDown()
     {
-        $this->dropAll($this->database);
+        $this->dropDatabase($this->database);
     }
 
     public function testQueryInstance()

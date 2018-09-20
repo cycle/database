@@ -4,9 +4,10 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\MySQL;
 
-class IsolationTest extends \Spiral\Tests\Database\IsolationTest
+namespace Spiral\Database\Tests\MySQL;
+
+class IsolationTest extends \Spiral\Database\Tests\IsolationTest
 {
-    use DriverTrait;
+    const DRIVER = 'mysql';
 }

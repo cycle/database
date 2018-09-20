@@ -4,9 +4,10 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLServer;
 
-class IsolationTest extends \Spiral\Tests\Database\IsolationTest
+namespace Spiral\Database\Tests\SQLServer;
+
+class IsolationTest extends \Spiral\Database\Tests\IsolationTest
 {
-    use DriverTrait;
+    const DRIVER = 'sqlserver';
 }

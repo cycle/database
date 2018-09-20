@@ -4,9 +4,10 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLServer;
 
-class NestedQueriesTest extends \Spiral\Tests\Database\NestedQueriesTest
+namespace Spiral\Database\Tests\SQLServer;
+
+class NestedQueriesTest extends \Spiral\Database\Tests\NestedQueriesTest
 {
-    use DriverTrait;
+    const DRIVER = 'sqlserver';
 }

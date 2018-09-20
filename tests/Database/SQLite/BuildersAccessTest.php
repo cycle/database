@@ -4,20 +4,21 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLite;
 
-use Spiral\Database\Drivers\SQLite\Schemas\SQLiteTable;
+namespace Spiral\Database\Tests\SQLite;
 
-class BuildersAccessTest extends \Spiral\Tests\Database\BuildersAccessTest
+use Spiral\Database\Driver\SQLite\Schema\SQLiteTable;
+
+class BuildersAccessTest extends \Spiral\Database\Tests\BuildersAccessTest
 {
-    use DriverTrait;
+    const DRIVER = 'sqlite';
 
     public function testTableSchemaAccess()
     {
         parent::testTableSchemaAccess();
         $this->assertInstanceOf(
             SQLiteTable::class,
-            $this->database()->table('sample')->getSchema()
+            $this->db()->table('sample')->getSchema()
         );
     }
 }

@@ -4,9 +4,10 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLite;
 
-class NestedQueriesTest extends \Spiral\Tests\Database\NestedQueriesTest
+namespace Spiral\Database\Tests\SQLite;
+
+class NestedQueriesTest extends \Spiral\Database\Tests\NestedQueriesTest
 {
-    use DriverTrait;
+    const DRIVER = 'sqlite';
 }

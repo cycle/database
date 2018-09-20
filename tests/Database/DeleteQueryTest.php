@@ -4,11 +4,11 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database;
+namespace Spiral\Database\Tests;
 
-use Spiral\Database\Builders\DeleteQuery;
-use Spiral\Database\Entities\Database;
-use Spiral\Database\Schemas\Prototypes\AbstractTable;
+use Spiral\Database\Query\DeleteQuery;
+use Spiral\Database\Database;
+use Spiral\Database\Schema\AbstractTable;
 
 abstract class DeleteQueryTest extends BaseQueryTest
 {
@@ -19,7 +19,7 @@ abstract class DeleteQueryTest extends BaseQueryTest
 
     public function setUp()
     {
-        $this->database = $this->database();
+        $this->database = $this->db();
     }
 
     public function schema(string $table): AbstractTable

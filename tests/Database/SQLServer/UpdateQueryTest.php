@@ -4,9 +4,10 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLServer;
 
-class UpdateQueryTest extends \Spiral\Tests\Database\UpdateQueryTest
+namespace Spiral\Database\Tests\SQLServer;
+
+class UpdateQueryTest extends \Spiral\Database\Tests\UpdateQueryTest
 {
-    use DriverTrait;
+    const DRIVER = 'sqlserver';
 }

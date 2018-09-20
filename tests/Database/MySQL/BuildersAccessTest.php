@@ -4,20 +4,21 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\MySQL;
 
-use Spiral\Database\Drivers\MySQL\Schemas\MySQLTable;
+namespace Spiral\Database\Tests\MySQL;
 
-class BuildersAccessTest extends \Spiral\Tests\Database\BuildersAccessTest
+use Spiral\Database\Driver\MySQL\Schema\MySQLTable;
+
+class BuildersAccessTest extends \Spiral\Database\Tests\BuildersAccessTest
 {
-    use DriverTrait;
+    const DRIVER = 'mysql';
 
     public function testTableSchemaAccess()
     {
         parent::testTableSchemaAccess();
         $this->assertInstanceOf(
             MySQLTable::class,
-            $this->database()->table('sample')->getSchema()
+            $this->db()->table('sample')->getSchema()
         );
     }
 }

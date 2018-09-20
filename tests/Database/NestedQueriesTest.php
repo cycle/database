@@ -5,16 +5,16 @@
  * @author Wolfy-J
  */
 
-namespace Spiral\Tests\Database;
+namespace Spiral\Database\Tests;
 
-use Spiral\Database\Builders\QueryBuilder;
-use Spiral\Database\Builders\SelectQuery;
-use Spiral\Database\Entities\Database;
-use Spiral\Database\Helpers\QueryInterpolator;
-use Spiral\Database\Injections\Expression;
-use Spiral\Database\Injections\Parameter;
-use Spiral\Database\Injections\ParameterInterface;
-use Spiral\Database\Schemas\Prototypes\AbstractTable;
+use Spiral\Database\Database;
+use Spiral\Database\Query\Interpolator;
+use Spiral\Database\Injection\Expression;
+use Spiral\Database\Injection\Parameter;
+use Spiral\Database\Injection\ParameterInterface;
+use Spiral\Database\Query\AbstractQuery;
+use Spiral\Database\Query\SelectQuery;
+use Spiral\Database\Schema\AbstractTable;
 use Spiral\Pagination\PaginatorAwareInterface;
 
 abstract class NestedQueriesTest extends BaseQueryTest
@@ -26,7 +26,7 @@ abstract class NestedQueriesTest extends BaseQueryTest
 
     public function setUp()
     {
-        $this->database = $this->database();
+        $this->database = $this->db();
     }
 
     public function schema(string $table): AbstractTable
@@ -131,7 +131,7 @@ abstract class NestedQueriesTest extends BaseQueryTest
 
     public function testSubQueryPrefixed()
     {
-        $select = $this->database('prefixed', 'prefix_')->select()
+        $select = $this->db('prefixed', 'prefix_')->select()
             ->from('table')
             ->where('type', 'user')
             ->where(
@@ -155,7 +155,7 @@ abstract class NestedQueriesTest extends BaseQueryTest
 
     public function testSubQueryPrefixedWithExpression()
     {
-        $select = $this->database('prefixed', 'prefix_')->select()
+        $select = $this->db('prefixed', 'prefix_')->select()
             ->from('table AS u')
             ->where('type', 'user')
             ->where(
@@ -180,13 +180,13 @@ abstract class NestedQueriesTest extends BaseQueryTest
 
     public function testUnionWithPrefixes()
     {
-        $select = $this->database('prefixed', 'prefix_')
+        $select = $this->db('prefixed', 'prefix_')
             ->select('*')
             ->from('table AS u')
             ->where('type', 'user')->orWhere('table.id', '<', 100);
 
         $select->union(
-            $this->database('prefixed', 'prefix_2_')
+            $this->db('prefixed', 'prefix_2_')
                 ->select('*')
                 ->from('table AS u')
                 ->where('type', 'admin')->orWhere('table.id', '>', 800)
@@ -209,13 +209,13 @@ abstract class NestedQueriesTest extends BaseQueryTest
 
     public function testUnionWithPrefixes1()
     {
-        $select = $this->database('prefixed', 'prefix_')
+        $select = $this->db('prefixed', 'prefix_')
             ->select('*')
             ->from('table AS u')
             ->where('type', 'user')->orWhere('table.id', '<', 100);
 
         $select->unionAll(
-            $this->database('prefixed', 'prefix_2_')
+            $this->db('prefixed', 'prefix_2_')
                 ->select('*')
                 ->from('table AS u')
                 ->where('type', 'admin')->orWhere('table.id', '>', 800)
@@ -238,20 +238,20 @@ abstract class NestedQueriesTest extends BaseQueryTest
 
     public function testUnionWithPrefixes2()
     {
-        $select = $this->database('prefixed', 'prefix_')
+        $select = $this->db('prefixed', 'prefix_')
             ->select('*')
             ->from('table AS u')
             ->where('type', 'user')->orWhere('table.id', '<', 100);
 
         $select->union(
-            $this->database('prefixed', 'prefix_2_')
+            $this->db('prefixed', 'prefix_2_')
                 ->select('*')
                 ->from('table AS u')
                 ->where('type', 'admin')->orWhere('table.id', '>', 800)
         );
 
         $select->unionAll(
-            $this->database('prefixed', 'prefix_3_')->select('*')
+            $this->db('prefixed', 'prefix_3_')->select('*')
                 ->from('table')->where('x', 'IN', new Parameter([8, 9, 10]))
         );
 
@@ -311,10 +311,10 @@ abstract class NestedQueriesTest extends BaseQueryTest
         ], $select);
     }
 
-    protected function assertSameParameters(array $parameters, QueryBuilder $builder)
+    protected function assertSameParameters(array $parameters, AbstractQuery $builder)
     {
         $builderParameters = [];
-        foreach (QueryInterpolator::flattenParameters($builder->getParameters()) as $value) {
+        foreach (Interpolator::flattenParameters($builder->getParameters()) as $value) {
             $this->assertInstanceOf(ParameterInterface::class, $value);
             $this->assertFalse($value->isArray());
 

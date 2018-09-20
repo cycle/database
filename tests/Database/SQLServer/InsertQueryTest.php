@@ -4,9 +4,10 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLServer;
 
-class InsertQueryTest extends \Spiral\Tests\Database\InsertQueryTest
+namespace Spiral\Database\Tests\SQLServer;
+
+class InsertQueryTest extends \Spiral\Database\Tests\InsertQueryTest
 {
-    use DriverTrait;
+    const DRIVER = 'sqlserver';
 }

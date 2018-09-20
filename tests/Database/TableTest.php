@@ -4,12 +4,13 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database;
 
-use Spiral\Database\Entities\Database;
-use Spiral\Database\Entities\Table;
-use Spiral\Database\Injections\Expression;
-use Spiral\Database\Schemas\Prototypes\AbstractTable;
+namespace Spiral\Database\Tests;
+
+use Spiral\Database\Database;
+use Spiral\Database\Injection\Expression;
+use Spiral\Database\Schema\AbstractTable;
+use Spiral\Database\Table;
 
 abstract class TableTest extends BaseTest
 {
@@ -20,7 +21,7 @@ abstract class TableTest extends BaseTest
 
     public function setUp()
     {
-        $this->database = $this->database();
+        $this->database = $this->db();
 
         $schema = $this->database->table('table')->getSchema();
         $schema->primary('id');
@@ -36,7 +37,7 @@ abstract class TableTest extends BaseTest
 
     public function tearDown()
     {
-        $this->dropAll($this->database());
+        $this->dropDatabase($this->db());
     }
 
     public function testGetSchema()
@@ -49,9 +50,106 @@ abstract class TableTest extends BaseTest
     public function testExistsAndEmpty()
     {
         $table = $this->database->table('table');
+        $this->assertSame('table', $table->getName());
 
-        $this->assertTrue($table->getSchema()->exists());
+        $this->assertTrue($table->exists());
         $this->assertSame(0, $table->count());
+
+        $this->assertTrue($table->hasColumn('value'));
+        $this->assertFalse($table->hasColumn('xx'));
+    }
+
+    public function testPrimaryKeys()
+    {
+        $table = $this->database->table('table');
+
+        $this->assertSame(['id'], $table->getPrimaryKeys());
+    }
+
+    public function testHasIndex()
+    {
+        $table = $this->database->table('table');
+
+        $this->assertFalse($table->hasIndex(['value']));
+
+        $schema = $table->getSchema();
+        $schema->index(['value']);
+        $schema->save();
+
+        $this->assertTrue($table->hasIndex(['value']));
+    }
+
+    public function testGetIndexes()
+    {
+        $table = $this->database->table('table');
+
+        $this->assertCount(0, $table->getIndexes());
+
+        $schema = $table->getSchema();
+        $schema->index(['value']);
+        $schema->save();
+
+        $this->assertCount(1, $table->getIndexes());
+    }
+
+    public function testHasForeignKey()
+    {
+        $schema = $this->database->table('table2')->getSchema();
+        $schema->primary('id');
+        $schema->text('name');
+        $schema->integer('value');
+        $schema->save();
+
+        $table = $this->database->table('table');
+
+        $this->assertFalse($table->hasForeignKey('external_id'));
+
+        $schema = $table->getSchema();
+        $schema->integer('external_id');
+        $schema->foreignKey('external_id')->references('table2', 'id');
+        $schema->save();
+
+        $this->assertTrue($table->hasForeignKey('external_id'));
+    }
+
+    public function testGetForeignKeys()
+    {
+        $schema = $this->database->table('table2')->getSchema();
+        $schema->primary('id');
+        $schema->text('name');
+        $schema->integer('value');
+        $schema->save();
+
+        $table = $this->database->table('table');
+
+        $this->assertCount(0, $table->getForeignKeys());
+
+        $schema = $table->getSchema();
+        $schema->integer('external_id');
+        $schema->foreignKey('external_id')->references('table2', 'id');
+        $schema->save();
+
+        $this->assertCount(1, $table->getForeignKeys());
+    }
+
+    public function testDependencies()
+    {
+        $schema = $this->database->table('table2')->getSchema();
+        $schema->primary('id');
+        $schema->text('name');
+        $schema->integer('value');
+        $schema->save();
+
+        $table = $this->database->table('table');
+
+        $this->assertCount(0, $table->getDependencies());
+
+        $schema = $table->getSchema();
+        $schema->integer('external_id');
+        $schema->foreignKey('external_id')->references('table2', 'id');
+        $schema->save();
+
+        $this->assertSame(['table2'], $table->getDependencies());
     }
 
     //see old versions of postgres
@@ -60,11 +158,16 @@ abstract class TableTest extends BaseTest
         $table = $this->database->table('table');
         $this->assertSame(0, $table->count());
 
+        $columns = [];
+        foreach ($table->getColumns() as $column) {
+            $columns[$column->getName()] = $column->getAbstractType();
+        }
+
         $this->assertSame([
             'id'    => 'primary',
             'name'  => 'text',
             'value' => 'integer'
-        ], $table->getColumns());
+        ], $columns);
     }
 
     public function testInsertOneRow()
@@ -326,7 +429,7 @@ abstract class TableTest extends BaseTest
         );
 
         $this->assertSame(4, $table->count());
-        $table->truncateData();
+        $table->eraseData();
         $this->assertSame(0, $table->count());
     }
 

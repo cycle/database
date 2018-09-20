@@ -4,9 +4,10 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLite;
 
-class ForeignKeysTest extends \Spiral\Tests\Database\ForeignKeysTest
+namespace Spiral\Database\Tests\SQLite;
+
+class ForeignKeysTest extends \Spiral\Database\Tests\ForeignKeysTest
 {
-    use DriverTrait;
+    const DRIVER = 'sqlite';
 }

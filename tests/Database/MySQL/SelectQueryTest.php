@@ -4,11 +4,12 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\MySQL;
 
-class SelectQueryTest extends \Spiral\Tests\Database\SelectQueryTest
+namespace Spiral\Database\Tests\MySQL;
+
+class SelectQueryTest extends \Spiral\Database\Tests\SelectQueryTest
 {
-    use DriverTrait;
+    const DRIVER = 'mysql';
 
     public function testOffsetNoLimit()
     {

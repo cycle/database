@@ -4,14 +4,14 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database;
+namespace Spiral\Database\Tests;
 
-use Spiral\Database\Builders\QueryBuilder;
-use Spiral\Database\Builders\UpdateQuery;
-use Spiral\Database\Entities\Database;
-use Spiral\Database\Helpers\QueryInterpolator;
-use Spiral\Database\Injections\ParameterInterface;
-use Spiral\Database\Schemas\Prototypes\AbstractTable;
+use Spiral\Database\Query\AbstractQuery;
+use Spiral\Database\Query\UpdateQuery;
+use Spiral\Database\Database;
+use Spiral\Database\Query\Interpolator;
+use Spiral\Database\Injection\ParameterInterface;
+use Spiral\Database\Schema\AbstractTable;
 
 abstract class UpdateQueryTest extends BaseQueryTest
 {
@@ -22,7 +22,7 @@ abstract class UpdateQueryTest extends BaseQueryTest
 
     public function setUp()
     {
-        $this->database = $this->database();
+        $this->database = $this->db();
     }
 
     public function schema(string $table): AbstractTable
@@ -65,10 +65,10 @@ abstract class UpdateQueryTest extends BaseQueryTest
         ], $update);
     }
 
-    protected function assertSameParameters(array $parameters, QueryBuilder $builder)
+    protected function assertSameParameters(array $parameters, AbstractQuery $builder)
     {
         $builderParameters = [];
-        foreach (QueryInterpolator::flattenParameters($builder->getParameters()) as $value) {
+        foreach (Interpolator::flattenParameters($builder->getParameters()) as $value) {
             $this->assertInstanceOf(ParameterInterface::class, $value);
             $this->assertFalse($value->isArray());
 

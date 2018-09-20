@@ -4,10 +4,10 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database;
+namespace Spiral\Database\Tests;
 
-use Spiral\Database\Entities\Database;
-use Spiral\Database\Exceptions\QueryException;
+use Spiral\Database\Database;
+use Spiral\Database\Exception\QueryException;
 
 /**
  * Add exception versions in a future versions.
@@ -21,7 +21,7 @@ abstract class ExceptionsTest extends BaseTest
 
     public function setUp()
     {
-        $this->database = $this->database();
+        $this->database = $this->db();
     }
 
     public function testSelectionException()

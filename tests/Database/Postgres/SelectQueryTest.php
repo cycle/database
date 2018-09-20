@@ -4,9 +4,10 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\Postgres;
 
-class SelectQueryTest extends \Spiral\Tests\Database\SelectQueryTest
+namespace Spiral\Database\Tests\Postgres;
+
+class SelectQueryTest extends \Spiral\Database\Tests\SelectQueryTest
 {
-    use DriverTrait;
+    const DRIVER = 'postgres';
 }

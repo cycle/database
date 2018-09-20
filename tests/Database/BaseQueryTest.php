@@ -4,9 +4,9 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database;
+namespace Spiral\Database\Tests;
 
-use Spiral\Database\Injections\FragmentInterface;
+use Spiral\Database\Injection\FragmentInterface;
 
 abstract class BaseQueryTest extends BaseTest
 {
@@ -21,7 +21,7 @@ abstract class BaseQueryTest extends BaseTest
         //Preparing query
         $query = str_replace(
             ['{', '}'],
-            explode('.', $this->database()->getDriver()->identifier('.')),
+            explode('.', $this->db()->getDriver()->identifier('.')),
             $query
         );
 

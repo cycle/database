@@ -4,9 +4,10 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLServer;
 
-class IndexesTest extends \Spiral\Tests\Database\IndexesTest
+namespace Spiral\Database\Tests\SQLServer;
+
+class IndexesTest extends \Spiral\Database\Tests\IndexesTest
 {
-    use DriverTrait;
+    const DRIVER = 'sqlserver';
 }

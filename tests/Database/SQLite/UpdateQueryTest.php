@@ -4,9 +4,10 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLite;
 
-class UpdateQueryTest extends \Spiral\Tests\Database\UpdateQueryTest
+namespace Spiral\Database\Tests\SQLite;
+
+class UpdateQueryTest extends \Spiral\Database\Tests\UpdateQueryTest
 {
-    use DriverTrait;
+    const DRIVER = 'sqlite';
 }

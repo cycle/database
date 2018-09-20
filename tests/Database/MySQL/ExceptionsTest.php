@@ -4,9 +4,10 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\MySQL;
 
-class ExceptionsTest extends \Spiral\Tests\Database\ExceptionsTest
+namespace Spiral\Database\Tests\MySQL;
+
+class ExceptionsTest extends \Spiral\Database\Tests\ExceptionsTest
 {
-    use DriverTrait;
+    const DRIVER = 'mysql';
 }

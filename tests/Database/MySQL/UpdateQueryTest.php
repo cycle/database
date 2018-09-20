@@ -4,9 +4,10 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\MySQL;
 
-class UpdateQueryTest extends \Spiral\Tests\Database\UpdateQueryTest
+namespace Spiral\Database\Tests\MySQL;
+
+class UpdateQueryTest extends \Spiral\Database\Tests\UpdateQueryTest
 {
-    use DriverTrait;
+    const DRIVER = 'mysql';
 }

@@ -1,16 +1,26 @@
 language: php
 
+sudo: required
+
+services:
+  - docker
+
 php:
-  - 7.0
   - 7.1
+  - 7.2
 
 before_install:
-  - composer self-update
-  - mysql -e 'CREATE DATABASE spiral;'
-  - psql -c 'create database spiral;' -U postgres
+  - cd tests
+  - docker-compose up -d
+  - cd ..
 
 install:
   - composer install --no-interaction --prefer-source
+  - chmod +x ./tests/install-sqlsrv.sh
+  - ./tests/install-sqlsrv.sh
 
 script:
-  - vendor/bin/phpunit
+  - vendor/bin/phpunit --coverage-clover=coverage.xml
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash) -f coverage.xml

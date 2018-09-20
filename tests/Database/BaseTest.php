@@ -4,23 +4,28 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database;
 
-use Interop\Container\ContainerInterface;
-use Spiral\Database\Entities\AbstractHandler;
-use Spiral\Database\Entities\Database;
-use Spiral\Database\Entities\Driver;
-use Spiral\Database\Schemas\Prototypes\AbstractTable;
-use Spiral\Database\Schemas\StateComparator;
+namespace Spiral\Database\Tests;
 
-/**
- * ATTENTION, DO NOT CONNECT TO PRODUCTION DATABASE AT ANY COST.
- */
-abstract class BaseTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerTrait;
+use Psr\Log\LogLevel;
+use Spiral\Database\Database;
+use Spiral\Database\Driver\AbstractDriver;
+use Spiral\Database\Driver\AbstractHandler;
+use Spiral\Database\Schema\AbstractTable;
+use Spiral\Database\Schema\Comparator;
+
+abstract class BaseTest extends TestCase
 {
-    static private $driversCache = [];
+    public static $config;
+    public const DRIVER = null;
 
-    const PROFILING = ENABLE_PROFILING;
+    protected static $driverCache = [];
+
+    /** @var AbstractDriver */
+    protected $driver;
 
     /**
      * @param string $name
@@ -28,28 +33,46 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      *
      * @return Database|null When non empty null will be given, for safety, for science.
      */
-    protected function database(string $name = 'default', string $prefix = '')
+    protected function db(string $name = 'default', string $prefix = '')
     {
-        if (isset(self::$driversCache[$this->driverID()])) {
-            $driver = self::$driversCache[$this->driverID()];
+        if (isset(static::$driverCache[static::DRIVER])) {
+            $driver = static::$driverCache[static::DRIVER];
         } else {
-            self::$driversCache[$this->driverID()] = $driver = $this->getDriver();
+            static::$driverCache[static::DRIVER] = $driver = $this->getDriver();
         }
 
-        return new Database($driver, $name, $prefix);
+        return new Database($name, $prefix, $driver);
     }
 
     /**
-     * @return Driver
+     * @return AbstractDriver
      */
-    abstract protected function getDriver(ContainerInterface $container = null): Driver;
+    public function getDriver(): AbstractDriver
+    {
+        $config = self::$config[static::DRIVER];
+        if (!isset($this->driver)) {
+            $class = $config['driver'];
 
-    /**
-     * @return string
-     */
-    abstract protected function driverID(): string;
+            $this->driver = new $class(
+                'mysql',
+                [
+                    'connection' => $config['conn'],
+                    'username'   => $config['user'],
+                    'password'   => $config['pass'],
+                    'options'    => []
+                ]
+            );
+        }
 
-    protected function dropAll(Database $database = null)
+        if (self::$config['debug']) {
+            $this->driver->setProfiling(true);
+            $this->driver->setLogger(new TestLogger());
+        }
+
+        return $this->driver;
+    }
+
+    protected function dropDatabase(Database $database = null)
     {
         if (empty($database)) {
             return;
@@ -58,11 +81,11 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         foreach ($database->getTables() as $table) {
             $schema = $table->getSchema();
 
-            foreach ($schema->getForeigns() as $foreign) {
-                $schema->dropForeign($foreign->getColumn());
+            foreach ($schema->getForeignKeys() as $foreign) {
+                $schema->dropForeignKey($foreign->getColumn());
             }
 
-            $schema->save(AbstractHandler::DROP_FOREIGNS);
+            $schema->save(AbstractHandler::DROP_FOREIGN_KEYS);
         }
 
         foreach ($database->getTables() as $table) {
@@ -74,7 +97,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
 
     protected function assertSameAsInDB(AbstractTable $current)
     {
-        $comparator = new StateComparator(
+        $comparator = new Comparator(
             $current->getState(),
             $this->schema($current->getName())->getState()
         );
@@ -84,7 +107,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    protected function makeMessage(string $table, StateComparator $comparator)
+    protected function makeMessage(string $table, Comparator $comparator)
     {
         if ($comparator->isPrimaryChanged()) {
             return "Table '{$table}' not synced, primary indexes are different.";
@@ -110,15 +133,38 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                     $names) . "' have been changed.";
         }
 
-        if ($comparator->droppedForeigns()) {
+        if ($comparator->droppedForeignKeys()) {
             return "Table '{$table}' not synced, FKs are missing.";
         }
 
-        if ($comparator->addedForeigns()) {
+        if ($comparator->addedForeignKeys()) {
             return "Table '{$table}' not synced, new FKs found.";
         }
 
 
         return "Table '{$table}' not synced, no idea why, add more messages :P";
+    }
+}
+
+
+class TestLogger implements LoggerInterface
+{
+    use LoggerTrait;
+
+    public function log($level, $message, array $context = [])
+    {
+        if ($level == LogLevel::ERROR) {
+            echo " \n! \033[31m" . $message . "\033[0m";
+        } elseif ($level == LogLevel::ALERT) {
+            echo " \n! \033[35m" . $message . "\033[0m";
+        } elseif (strpos($message, 'SHOW') === 0) {
+            echo " \n> \033[34m" . $message . "\033[0m";
+        } else {
+            if (strpos($message, 'SELECT') === 0) {
+                echo " \n> \033[32m" . $message . "\033[0m";
+            } else {
+                echo " \n> \033[33m" . $message . "\033[0m";
+            }
+        }
     }
 }

@@ -4,11 +4,12 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\Tests\Database\SQLServer;
 
-class SelectQueryTest extends \Spiral\Tests\Database\SelectQueryTest
+namespace Spiral\Database\Tests\SQLServer;
+
+class SelectQueryTest extends \Spiral\Database\Tests\SelectQueryTest
 {
-    use DriverTrait;
+    const DRIVER = 'sqlserver';
 
     //FALLBACK!
     public function testLimitNoOffset()

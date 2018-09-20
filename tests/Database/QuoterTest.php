@@ -6,17 +6,19 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Tests\Database;
+namespace Spiral\Database\Tests;
 
 use Mockery as m;
-use Spiral\Database\Drivers\MySQL\MySQLDriver;
-use Spiral\Database\Drivers\Postgres\PostgresDriver;
-use Spiral\Database\Drivers\SQLite\SQLiteDriver;
-use Spiral\Database\Drivers\SQLServer\SQLServerDriver;
-use Spiral\Database\Entities\PDODriver;
-use Spiral\Database\Entities\Quoter;
+use PHPUnit\Framework\TestCase;
+use Spiral\Database\Driver\AbstractDriver;
+use Spiral\Database\Driver\MySQL\MySQLDriver;
+use Spiral\Database\Driver\PDODriver;
+use Spiral\Database\Driver\Postgres\PostgresDriver;
+use Spiral\Database\Driver\Quoter;
+use Spiral\Database\Driver\SQLite\SQLiteDriver;
+use Spiral\Database\Driver\SQLServer\SQLServerDriver;
 
-class QuoterTest extends \PHPUnit_Framework_TestCase
+class QuoterTest extends TestCase
 {
     public function testPrefixless()
     {
@@ -24,25 +26,25 @@ class QuoterTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('*', $quoter->quote('*'));
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals('"column"', $quoter->quote('column'));
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals('"table"."column"', $quoter->quote('table.column'));
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals('"table".*', $quoter->quote('table.*'));
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals('"table_name"', $quoter->quote('table_name', true));
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '"table"."column" AS "column_alias"',
             $quoter->quote('table.column AS column_alias')
         );
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '"table_name" AS "table_name"',
             $quoter->quote('table_name AS table_name', true)
@@ -55,13 +57,13 @@ class QuoterTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('COUNT(*)', $quoter->quote('COUNT(*)'));
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals('SUM("column")', $quoter->quote('SUM(column)'));
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals('MIN("table"."column")', $quoter->quote('MIN(table.column)'));
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             'AVG("table"."column") AS "column_alias"',
             $quoter->quote('AVG(table.column) AS column_alias')
@@ -74,10 +76,10 @@ class QuoterTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('"column_a" + "column_b"', $quoter->quote('column_a + column_b'));
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals('"table"."column" * 10', $quoter->quote('table.column * 10'));
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '("table"."column" + "some_column") / "other_table"."column_b"',
             $quoter->quote('(table.column + some_column) / other_table.column_b')
@@ -90,25 +92,25 @@ class QuoterTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('*', $quoter->quote('*'));
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals('"column"', $quoter->quote('column'));
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals('"p_table"."column"', $quoter->quote('table.column'));
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals('"p_table".*', $quoter->quote('table.*'));
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals('"p_table_name"', $quoter->quote('table_name', true));
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '"p_table"."column" AS "column_alias"',
             $quoter->quote('table.column AS column_alias')
         );
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '"p_table_name" AS "table_name"',
             $quoter->quote('table_name AS table_name', true)
@@ -121,13 +123,13 @@ class QuoterTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('COUNT(*)', $quoter->quote('COUNT(*)'));
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals('SUM("column")', $quoter->quote('SUM(column)'));
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals('MIN("p_table"."column")', $quoter->quote('MIN(table.column)'));
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             'AVG("p_table"."column") AS "column_alias"',
             $quoter->quote('AVG(table.column) AS column_alias')
@@ -140,10 +142,10 @@ class QuoterTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('"column_a" + "column_b"', $quoter->quote('column_a + column_b'));
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals('"p_table"."column" * 10', $quoter->quote('table.column * 10'));
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '("p_table"."column" + "some_column") / "p_other_table"."column_b" AS "xxx"',
             $quoter->quote('(table.column + some_column) / other_table.column_b AS xxx')
@@ -173,7 +175,7 @@ class QuoterTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('"table_name"."column"', $quoter->quote('table_name.column'));
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals('"p_table_name"."column"', $quoter->quote('table_name.column'));
 
         $this->assertEquals(
@@ -261,37 +263,37 @@ class QuoterTest extends \PHPUnit_Framework_TestCase
             $quoter->quote('*')
         );
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '`column`',
             $quoter->quote('column')
         );
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '`p_table`.`column`',
             $quoter->quote('table.column')
         );
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '`p_table`.*',
             $quoter->quote('table.*')
         );
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '`p_table_name`',
             $quoter->quote('table_name', true)
         );
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '`p_table`.`column` AS `column_alias`',
             $quoter->quote('table.column AS column_alias')
         );
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '`p_table_name` AS `table_name`',
             $quoter->quote('table_name AS table_name', true)
@@ -307,37 +309,37 @@ class QuoterTest extends \PHPUnit_Framework_TestCase
             $quoter->quote('*')
         );
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '"column"',
             $quoter->quote('column')
         );
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '"p_table"."column"',
             $quoter->quote('table.column')
         );
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '"p_table".*',
             $quoter->quote('table.*')
         );
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '"p_table_name"',
             $quoter->quote('table_name', true)
         );
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '"p_table"."column" AS "column_alias"',
             $quoter->quote('table.column AS column_alias')
         );
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '"p_table_name" AS "table_name"',
             $quoter->quote('table_name AS table_name', true)
@@ -353,37 +355,37 @@ class QuoterTest extends \PHPUnit_Framework_TestCase
             $quoter->quote('*')
         );
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '"column"',
             $quoter->quote('column')
         );
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '"p_table"."column"',
             $quoter->quote('table.column')
         );
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '"p_table".*',
             $quoter->quote('table.*')
         );
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '"p_table_name"',
             $quoter->quote('table_name', true)
         );
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '"p_table"."column" AS "column_alias"',
             $quoter->quote('table.column AS column_alias')
         );
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '"p_table_name" AS "table_name"',
             $quoter->quote('table_name AS table_name', true)
@@ -399,37 +401,37 @@ class QuoterTest extends \PHPUnit_Framework_TestCase
             $quoter->quote('*')
         );
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '[column]',
             $quoter->quote('column')
         );
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '[p_table].[column]',
             $quoter->quote('table.column')
         );
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '[p_table].*',
             $quoter->quote('table.*')
         );
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '[p_table_name]',
             $quoter->quote('table_name', true)
         );
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '[p_table].[column] AS [column_alias]',
             $quoter->quote('table.column AS column_alias')
         );
 
-        $quoter->reset();
+        $quoter = clone $quoter;
         $this->assertEquals(
             '[p_table_name] AS [table_name]',
             $quoter->quote('table_name AS table_name', true)
@@ -444,10 +446,10 @@ class QuoterTest extends \PHPUnit_Framework_TestCase
      *
      * @return Quoter
      */
-    protected function makeQuoter($prefix = '', $driver = PDODriver::class)
+    protected function makeQuoter($prefix = '', $driver = AbstractDriver::class)
     {
         /**
-         * @var PDODriver $driver
+         * @var AbstractDriver $driver
          */
         $driver = m::mock($driver)->makePartial();
 
