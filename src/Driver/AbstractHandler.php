@@ -17,7 +17,7 @@ use Spiral\Database\Schema\AbstractColumn;
 use Spiral\Database\Schema\AbstractIndex;
 use Spiral\Database\Schema\AbstractReference;
 use Spiral\Database\Schema\AbstractTable;
-use Spiral\Database\Schema\TableComparator;
+use Spiral\Database\Schema\StateComparator;
 
 /**
  * Handler class implements set of DBMS specific operations for schema manipulations. Can be used
@@ -329,12 +329,12 @@ abstract class AbstractHandler
     /**
      * @param AbstractTable   $table
      * @param int             $behaviour
-     * @param TableComparator $comparator
+     * @param StateComparator $comparator
      */
     protected function executeChanges(
         AbstractTable $table,
         int $behaviour,
-        TableComparator $comparator
+        StateComparator $comparator
     ) {
         //Remove all non needed table constraints
         $this->dropConstrains($table, $behaviour, $comparator);
@@ -394,9 +394,9 @@ abstract class AbstractHandler
 
     /**
      * @param AbstractTable   $table
-     * @param TableComparator $comparator
+     * @param StateComparator $comparator
      */
-    protected function alterForeigns(AbstractTable $table, TableComparator $comparator)
+    protected function alterForeigns(AbstractTable $table, StateComparator $comparator)
     {
         foreach ($comparator->alteredForeigns() as $pair) {
             /**
@@ -411,9 +411,9 @@ abstract class AbstractHandler
 
     /**
      * @param AbstractTable   $table
-     * @param TableComparator $comparator
+     * @param StateComparator $comparator
      */
-    protected function createForeigns(AbstractTable $table, TableComparator $comparator)
+    protected function createForeigns(AbstractTable $table, StateComparator $comparator)
     {
         foreach ($comparator->addedForeigns() as $foreign) {
             $this->createForeign($table, $foreign);
@@ -422,9 +422,9 @@ abstract class AbstractHandler
 
     /**
      * @param AbstractTable   $table
-     * @param TableComparator $comparator
+     * @param StateComparator $comparator
      */
-    protected function alterIndexes(AbstractTable $table, TableComparator $comparator)
+    protected function alterIndexes(AbstractTable $table, StateComparator $comparator)
     {
         foreach ($comparator->alteredIndexes() as $pair) {
             /**
@@ -439,9 +439,9 @@ abstract class AbstractHandler
 
     /**
      * @param AbstractTable   $table
-     * @param TableComparator $comparator
+     * @param StateComparator $comparator
      */
-    protected function createIndexes(AbstractTable $table, TableComparator $comparator)
+    protected function createIndexes(AbstractTable $table, StateComparator $comparator)
     {
         foreach ($comparator->addedIndexes() as $index) {
             $this->createIndex($table, $index);
@@ -450,9 +450,9 @@ abstract class AbstractHandler
 
     /**
      * @param AbstractTable   $table
-     * @param TableComparator $comparator
+     * @param StateComparator $comparator
      */
-    protected function alterColumns(AbstractTable $table, TableComparator $comparator)
+    protected function alterColumns(AbstractTable $table, StateComparator $comparator)
     {
         foreach ($comparator->alteredColumns() as $pair) {
             /**
@@ -468,9 +468,9 @@ abstract class AbstractHandler
 
     /**
      * @param AbstractTable   $table
-     * @param TableComparator $comparator
+     * @param StateComparator $comparator
      */
-    protected function createColumns(AbstractTable $table, TableComparator $comparator)
+    protected function createColumns(AbstractTable $table, StateComparator $comparator)
     {
         foreach ($comparator->addedColumns() as $column) {
             $this->assertValid($column);
@@ -480,9 +480,9 @@ abstract class AbstractHandler
 
     /**
      * @param AbstractTable   $table
-     * @param TableComparator $comparator
+     * @param StateComparator $comparator
      */
-    protected function dropColumns(AbstractTable $table, TableComparator $comparator)
+    protected function dropColumns(AbstractTable $table, StateComparator $comparator)
     {
         foreach ($comparator->droppedColumns() as $column) {
             $this->dropColumn($table, $column);
@@ -491,9 +491,9 @@ abstract class AbstractHandler
 
     /**
      * @param AbstractTable   $table
-     * @param TableComparator $comparator
+     * @param StateComparator $comparator
      */
-    protected function dropIndexes(AbstractTable $table, TableComparator $comparator)
+    protected function dropIndexes(AbstractTable $table, StateComparator $comparator)
     {
         foreach ($comparator->droppedIndexes() as $index) {
             $this->dropIndex($table, $index);
@@ -502,7 +502,7 @@ abstract class AbstractHandler
 
     /**
      * @param AbstractTable   $table
-     * @param TableComparator $comparator
+     * @param StateComparator $comparator
      */
     protected function dropForeigns(AbstractTable $table, $comparator)
     {
@@ -526,12 +526,12 @@ abstract class AbstractHandler
     /**
      * @param AbstractTable   $table
      * @param int             $behaviour
-     * @param TableComparator $comparator
+     * @param StateComparator $comparator
      */
     protected function dropConstrains(
         AbstractTable $table,
         int $behaviour,
-        TableComparator $comparator
+        StateComparator $comparator
     ) {
         if ($behaviour & self::DROP_FOREIGNS) {
             $this->dropForeigns($table, $comparator);
@@ -549,12 +549,12 @@ abstract class AbstractHandler
     /**
      * @param AbstractTable   $table
      * @param int             $behaviour
-     * @param TableComparator $comparator
+     * @param StateComparator $comparator
      */
     protected function setConstrains(
         AbstractTable $table,
         int $behaviour,
-        TableComparator $comparator
+        StateComparator $comparator
     ) {
         if ($behaviour & self::CREATE_INDEXES) {
             $this->createIndexes($table, $comparator);

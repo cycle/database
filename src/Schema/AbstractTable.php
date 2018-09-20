@@ -138,11 +138,11 @@ abstract class AbstractTable implements TableInterface
     }
 
     /**
-     * @return TableComparator
+     * @return StateComparator
      */
-    public function getComparator(): TableComparator
+    public function getComparator(): StateComparator
     {
-        return new TableComparator($this->initial, $this->current);
+        return new StateComparator($this->initial, $this->current);
     }
 
     /**
