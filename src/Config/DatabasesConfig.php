@@ -38,6 +38,14 @@ class DatabasesConfig extends InjectableConfig
     }
 
     /**
+     * @return array
+     */
+    public function databaseNames(): array
+    {
+        return array_keys($this->config['databases']);
+    }
+
+    /**
      * @param string $database
      *
      * @return bool
@@ -55,14 +63,6 @@ class DatabasesConfig extends InjectableConfig
     public function hasDriver(string $connection): bool
     {
         return isset($this->config['connections'][$connection]);
-    }
-
-    /**
-     * @return array
-     */
-    public function databaseNames(): array
-    {
-        return array_keys($this->config['databases']);
     }
 
     /**

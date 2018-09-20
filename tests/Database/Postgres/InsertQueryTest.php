@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Tests\Postgres;
 
-use Spiral\Database\Driver\Postgres\PostgresInsertQuery;
+use Spiral\Database\Driver\Postgres\Query\PostgresInsertQuery;
 
 class InsertQueryTest extends \Spiral\Database\Tests\InsertQueryTest
 {
