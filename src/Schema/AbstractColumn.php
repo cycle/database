@@ -8,7 +8,7 @@
 namespace Spiral\Database\Schema;
 
 use Spiral\Database\ColumnInterface;
-use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Exception\DefaultValueException;
 use Spiral\Database\Exception\SchemaException;
 use Spiral\Database\Injection\Fragment;
@@ -573,7 +573,7 @@ abstract class AbstractColumn implements ColumnInterface
     /**
      * {@inheritdoc}
      */
-    public function sqlStatement(Driver $driver): string
+    public function sqlStatement(AbstractDriver $driver): string
     {
         $statement = [$driver->identifier($this->name), $this->type];
 
@@ -686,10 +686,10 @@ abstract class AbstractColumn implements ColumnInterface
     /**
      * Get database specific enum type definition options.
      *
-     * @param Driver $driver
+     * @param AbstractDriver $driver
      * @return string
      */
-    protected function quoteEnum(Driver $driver): string
+    protected function quoteEnum(AbstractDriver $driver): string
     {
         $enumValues = [];
         foreach ($this->enumValues as $value) {
@@ -706,10 +706,10 @@ abstract class AbstractColumn implements ColumnInterface
     /**
      * Must return driver specific default value.
      *
-     * @param Driver $driver
+     * @param AbstractDriver $driver
      * @return string
      */
-    protected function quoteDefault(Driver $driver): string
+    protected function quoteDefault(AbstractDriver $driver): string
     {
         $defaultValue = $this->getDefaultValue();
         if ($defaultValue === null) {

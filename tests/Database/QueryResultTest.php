@@ -4,14 +4,14 @@
  *
  * @author Wolfy-J
  */
+
 namespace Spiral\Database\Tests;
 
 use Spiral\Database\Database;
-use Spiral\Database\QueryStatement;
-use Spiral\Database\Table;
 use Spiral\Database\Injection\Parameter;
-use Spiral\Database\Schema\AbstractColumn;
+use Spiral\Database\QueryStatement;
 use Spiral\Database\Schema\AbstractTable;
+use Spiral\Database\Table;
 use Spiral\Pagination\Paginator;
 
 abstract class QueryResultTest extends BaseQueryTest
@@ -278,8 +278,8 @@ abstract class QueryResultTest extends BaseQueryTest
     public function testSpanishInquisition()
     {
         $driver = $this->database->getDriver();
-        $this->assertInstanceOf(\PDO::class, $driver->connect());
-        $this->assertInstanceOf(\PDO::class, $driver->getPDO());
+        $driver->connect();
+        $this->assertTrue($driver->isConnected());
 
         //And now something different
         $driver->disconnect();

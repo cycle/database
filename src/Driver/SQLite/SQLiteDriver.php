@@ -9,7 +9,7 @@
 namespace Spiral\Database\Driver\SQLite;
 
 use Spiral\Database\DatabaseInterface;
-use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Driver\HandlerInterface;
 use Spiral\Database\Driver\SQLite\Schema\SQLiteTable;
 use Spiral\Database\Exception\DriverException;
@@ -17,22 +17,11 @@ use Spiral\Database\Exception\DriverException;
 /**
  * Talks to sqlite databases.
  */
-class SQLiteDriver extends Driver
+class SQLiteDriver extends AbstractDriver
 {
-    /**
-     * Driver type.
-     */
-    const TYPE = DatabaseInterface::SQLITE;
-
-    /**
-     * Driver schemas.
-     */
-    const TABLE_SCHEMA_CLASS = SQLiteTable::class;
-
-    /**
-     * Query compiler class.
-     */
-    const QUERY_COMPILER = SQLiteCompiler::class;
+    protected const TYPE               = DatabaseInterface::SQLITE;
+    protected const TABLE_SCHEMA_CLASS = SQLiteTable::class;
+    protected const QUERY_COMPILER     = SQLiteCompiler::class;
 
     /**
      * Get driver source database or file name.
@@ -60,9 +49,9 @@ class SQLiteDriver extends Driver
     /**
      * {@inheritdoc}
      */
-    public function truncateData(string $table)
+    public function eraseTable(string $table)
     {
-        $this->statement("DELETE FROM {$this->identifier($table)}");
+        $this->execute("DELETE FROM {$this->identifier($table)}");
     }
 
     /**

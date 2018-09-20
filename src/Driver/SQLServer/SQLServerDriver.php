@@ -9,34 +9,17 @@ namespace Spiral\Database\Driver\SQLServer;
 
 use PDO;
 use Spiral\Database\DatabaseInterface;
-use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Driver\HandlerInterface;
 use Spiral\Database\Driver\SQLServer\Schema\SQLServerTable;
 use Spiral\Database\Exception\DriverException;
 
-class SQLServerDriver extends Driver
+class SQLServerDriver extends AbstractDriver
 {
-    /**
-     * Driver type.
-     */
-    const TYPE = DatabaseInterface::SQL_SERVER;
-
-    /**
-     * Driver schemas.
-     */
-    const TABLE_SCHEMA_CLASS = SQLServerTable::class;
-
-    /**
-     * Query compiler class.
-     */
-    const QUERY_COMPILER = SQLServerCompiler::class;
-
-    /**
-     * DateTime format to be used to perform automatic conversion of DateTime objects.
-     *
-     * @var string
-     */
-    const DATETIME = 'Y-m-d\TH:i:s.000';
+    protected const TYPE               = DatabaseInterface::SQL_SERVER;
+    protected const TABLE_SCHEMA_CLASS = SQLServerTable::class;
+    protected const QUERY_COMPILER     = SQLServerCompiler::class;
+    protected const DATETIME           = 'Y-m-d\TH:i:s.000';
 
     /**
      * @var array
@@ -82,9 +65,9 @@ class SQLServerDriver extends Driver
     /**
      * {@inheritdoc}
      */
-    public function truncateData(string $table)
+    public function eraseTable(string $table)
     {
-        $this->statement("TRUNCATE TABLE {$this->identifier($table)}");
+        $this->execute("TRUNCATE TABLE {$this->identifier($table)}");
     }
 
     /**
@@ -124,7 +107,7 @@ class SQLServerDriver extends Driver
             $this->getLogger()->info("Transaction: new savepoint 'SVP{$name}'");
         }
 
-        $this->statement('SAVE TRANSACTION ' . $this->identifier("SVP{$name}"));
+        $this->execute('SAVE TRANSACTION ' . $this->identifier("SVP{$name}"));
     }
 
     /**
@@ -158,6 +141,6 @@ class SQLServerDriver extends Driver
             $this->getLogger()->info("Transaction: rollback savepoint 'SVP{$name}'");
         }
 
-        $this->statement('ROLLBACK TRANSACTION ' . $this->identifier("SVP{$name}"));
+        $this->execute('ROLLBACK TRANSACTION ' . $this->identifier("SVP{$name}"));
     }
 }

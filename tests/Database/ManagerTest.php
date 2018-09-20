@@ -11,7 +11,7 @@ use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Spiral\Core\FactoryInterface;
 use Spiral\Database\Config\DatabasesConfig;
-use Spiral\Database\DatabaseManager;
+use Spiral\Database\DBAL;
 use Spiral\Database\Driver\SQLite\SQLiteDriver;
 use Spiral\Database\Database;
 
@@ -32,7 +32,7 @@ class ManagerTest extends TestCase
 
         $db = m::mock(Database::class);
 
-        $manager = new DatabaseManager($config, $container);
+        $manager = new DBAL($config, $container);
 
         $config->shouldReceive('defaultDatabase')->andReturn('default');
         $config->shouldReceive('resolveAlias')->with('default')->andReturn('default');
@@ -69,7 +69,7 @@ class ManagerTest extends TestCase
 
         $db = m::mock(Database::class);
 
-        $manager = new DatabaseManager($config, $container);
+        $manager = new DBAL($config, $container);
 
         $config->shouldReceive('resolveAlias')->with('test')->andReturn('default');
         $config->shouldReceive('hasDatabase')->with('default')->andReturn(true);
@@ -107,7 +107,7 @@ class ManagerTest extends TestCase
         $container = m::mock(ContainerInterface::class);
         $db = m::mock(Database::class);
 
-        $manager = new DatabaseManager($config, $container);
+        $manager = new DBAL($config, $container);
 
         $config->shouldReceive('resolveAlias')->with('test')->andReturn('test');
         $config->shouldReceive('hasDatabase')->with('test')->andReturn(false);
@@ -123,7 +123,7 @@ class ManagerTest extends TestCase
             'databases'   => [],
             'connections' => [],
         ]);
-        $manager = new DatabaseManager($config);
+        $manager = new DBAL($config);
 
         $driver = $manager->makeDriver(
             'sqlite',
@@ -148,7 +148,7 @@ class ManagerTest extends TestCase
             'databases'   => [],
             'connections' => [],
         ]);
-        $manager = new DatabaseManager($config);
+        $manager = new DBAL($config);
 
 
         $driver = $manager->makeDriver(
@@ -174,7 +174,7 @@ class ManagerTest extends TestCase
             'databases'   => [],
             'connections' => [],
         ]);
-        $manager = new DatabaseManager($config);
+        $manager = new DBAL($config);
 
         $manager->makeDriver(
             'sqlite',
@@ -201,7 +201,7 @@ class ManagerTest extends TestCase
             'databases'   => [],
             'connections' => [],
         ]);
-        $manager = new DatabaseManager($config);
+        $manager = new DBAL($config);
 
         $manager->makeDriver(
             'sqlite',
@@ -222,7 +222,7 @@ class ManagerTest extends TestCase
             'databases'   => [],
             'connections' => [],
         ]);
-        $manager = new DatabaseManager($config);
+        $manager = new DBAL($config);
 
         $driver = $manager->makeDriver(
             'sqlite',
@@ -243,7 +243,7 @@ class ManagerTest extends TestCase
             'databases'   => [],
             'connections' => [],
         ]);
-        $manager = new DatabaseManager($config);
+        $manager = new DBAL($config);
 
         $driver = $manager->makeDriver(
             'sqlite',
@@ -271,7 +271,7 @@ class ManagerTest extends TestCase
             'databases'   => [],
             'connections' => [],
         ]);
-        $manager = new DatabaseManager($config);
+        $manager = new DBAL($config);
 
         $driver = $manager->driver('invalid');
     }

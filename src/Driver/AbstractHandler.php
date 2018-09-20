@@ -25,13 +25,13 @@ use Spiral\Database\Schema\Comparator;
  */
 abstract class AbstractHandler implements HandlerInterface
 {
-    /** @var Driver */
+    /** @var AbstractDriver */
     protected $driver;
 
     /**
-     * @param Driver $driver
+     * @param AbstractDriver $driver
      */
-    public function __construct(Driver $driver)
+    public function __construct(AbstractDriver $driver)
     {
         $this->driver = $driver;
     }
@@ -39,9 +39,9 @@ abstract class AbstractHandler implements HandlerInterface
     /**
      * Associated driver.
      *
-     * @return Driver
+     * @return AbstractDriver
      */
-    public function getDriver(): Driver
+    public function getDriver(): AbstractDriver
     {
         return $this->driver;
     }
@@ -239,14 +239,14 @@ abstract class AbstractHandler implements HandlerInterface
      *
      * @param string $statement
      * @param array  $parameters
-     * @return \PDOStatement
+     * @return int
      *
      * @throws HandlerException
      */
-    protected function run(string $statement, array $parameters = []): \PDOStatement
+    protected function run(string $statement, array $parameters = []): int
     {
         try {
-            return $this->driver->statement($statement, $parameters);
+            return $this->driver->execute($statement, $parameters);
         } catch (QueryException $e) {
             throw new HandlerException($e);
         }

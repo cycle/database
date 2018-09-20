@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Driver\SQLite\Schema;
 
-use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Schema\AbstractColumn;
 
 class SQLiteColumn extends AbstractColumn
@@ -129,7 +129,7 @@ class SQLiteColumn extends AbstractColumn
     /**
      * {@inheritdoc}
      */
-    public function sqlStatement(Driver $driver): string
+    public function sqlStatement(AbstractDriver $driver): string
     {
         $statement = parent::sqlStatement($driver);
         if ($this->abstractType() != 'enum') {
@@ -149,7 +149,7 @@ class SQLiteColumn extends AbstractColumn
     /**
      * {@inheritdoc}
      */
-    protected function quoteEnum(Driver $driver): string
+    protected function quoteEnum(AbstractDriver $driver): string
     {
         return '';
     }

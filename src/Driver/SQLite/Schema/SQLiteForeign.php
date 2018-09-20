@@ -8,7 +8,7 @@
 
 namespace Spiral\Database\Driver\SQLite\Schema;
 
-use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Schema\AbstractForeignKey;
 
 class SQLiteForeign extends AbstractForeignKey
@@ -26,7 +26,7 @@ class SQLiteForeign extends AbstractForeignKey
     /**
      * {@inheritdoc}
      */
-    public function sqlStatement(Driver $driver): string
+    public function sqlStatement(AbstractDriver $driver): string
     {
         $statement = [];
 

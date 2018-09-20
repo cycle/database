@@ -12,13 +12,11 @@ use Spiral\Database\Exception\CompilerException;
 use Spiral\Database\Injection\ExpressionInterface;
 use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Injection\ParameterInterface;
-use Spiral\Database\Query\QueryBuilder;
+use Spiral\Database\Query\QueryInterface;
 
 /**
  * Responsible for conversion of set of query parameters (where tokens, table names and etc) into
  * sql to be send into specific Driver.
- *
- * Source of Compiler must be optimized in nearest future.
  */
 class Compiler implements CompilerInterface
 {
@@ -50,6 +48,14 @@ class Compiler implements CompilerInterface
     }
 
     /**
+     * Reset aliases cache.
+     */
+    public function __clone()
+    {
+        $this->quoter = clone $this->quoter;
+    }
+
+    /**
      * Prefix associated with compiler.
      *
      * @return string
@@ -57,18 +63,6 @@ class Compiler implements CompilerInterface
     public function getPrefix(): string
     {
         return $this->quoter->getPrefix();
-    }
-
-    /**
-     * Reset table aliases cache, required if same compiler used twice.
-     *
-     * @return self
-     */
-    public function resetQuoter(): Compiler
-    {
-        $this->quoter->resetAliases();
-
-        return $this;
     }
 
     /**
@@ -603,7 +597,7 @@ class Compiler implements CompilerInterface
      */
     protected function prepareFragment(FragmentInterface $context): string
     {
-        if ($context instanceof QueryBuilder) {
+        if ($context instanceof QueryInterface) {
             //Nested queries has to be wrapped with braces
             return '(' . $context->sqlStatement($this) . ')';
         }

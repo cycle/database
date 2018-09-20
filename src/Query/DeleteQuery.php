@@ -9,7 +9,8 @@
 namespace Spiral\Database\Query;
 
 use Spiral\Database\Driver\Compiler;
-use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\CompilerInterface;
+use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Query\Traits\TokenTrait;
 use Spiral\Database\Query\Traits\WhereTrait;
 
@@ -17,7 +18,7 @@ use Spiral\Database\Query\Traits\WhereTrait;
 /**
  * Update statement builder.
  */
-class DeleteQuery extends QueryBuilder
+class DeleteQuery extends AbstractQuery
 {
     use TokenTrait, WhereTrait;
 
@@ -36,10 +37,10 @@ class DeleteQuery extends QueryBuilder
      * @param string $table Associated table name.
      * @param array  $where Initial set of where rules specified as array.
      */
-    public function __construct(Driver $driver, Compiler $compiler, string $table = '', array $where = [])
+    public function __construct(DriverInterface $driver, Compiler $compiler, string $table = null, array $where = [])
     {
         parent::__construct($driver, $compiler);
-        $this->table = $table;
+        $this->table = $table ?? '';
 
         if (!empty($where)) {
             $this->where($where);
@@ -71,24 +72,22 @@ class DeleteQuery extends QueryBuilder
     /**
      * {@inheritdoc}
      */
-    public function sqlStatement(Compiler $quoter = null): string
+    public function sqlStatement(CompilerInterface $compiler = null): string
     {
-        if (empty($quoter)) {
-            $quoter = $this->compiler->resetQuoter();
+        if (empty($compiler)) {
+            $compiler = clone $this->compiler;
         }
 
-        return $quoter->compileDelete($this->table, $this->whereTokens);
+        return $compiler->compileDelete($this->table, $this->whereTokens);
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * Affect queries will return count of affected rows.
+     * Alias for execute method();
      *
      * @return int
      */
     public function run(): int
     {
-        return $this->pdoStatement()->rowCount();
+        return $this->driver->execute($this->sqlStatement(), $this->getParameters());
     }
 }

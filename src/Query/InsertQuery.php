@@ -9,14 +9,15 @@
 namespace Spiral\Database\Query;
 
 use Spiral\Database\Driver\Compiler;
-use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\CompilerInterface;
+use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Injection\Parameter;
 
 /**
  * Insert statement query builder, support singular and batch inserts.
  */
-class InsertQuery extends QueryBuilder
+class InsertQuery extends AbstractQuery
 {
     const QUERY_TYPE = Compiler::INSERT_QUERY;
 
@@ -44,10 +45,10 @@ class InsertQuery extends QueryBuilder
      *
      * @param string $table Associated table name.
      */
-    public function __construct(Driver $driver, Compiler $compiler, string $table = '')
+    public function __construct(DriverInterface $driver, Compiler $compiler, string $table = null)
     {
         parent::__construct($driver, $compiler);
-        $this->table = $table;
+        $this->table = $table ?? '';
     }
 
     /**
@@ -149,13 +150,13 @@ class InsertQuery extends QueryBuilder
     /**
      * {@inheritdoc}
      */
-    public function sqlStatement(Compiler $quoter = null): string
+    public function sqlStatement(CompilerInterface $compiler = null): string
     {
-        if (empty($quoter)) {
-            $quoter = $this->compiler->resetQuoter();
+        if (empty($compiler)) {
+            $compiler = clone $this->compiler;
         }
 
-        return $quoter->compileInsert($this->table, $this->columns, $this->rowsets);
+        return $compiler->compileInsert($this->table, $this->columns, $this->rowsets);
     }
 
     /**
@@ -163,8 +164,7 @@ class InsertQuery extends QueryBuilder
      */
     public function run()
     {
-        //This must execute our query
-        $this->pdoStatement();
+        $this->driver->execute($this->sqlStatement(), $this->getParameters());
 
         return $this->driver->lastInsertID();
     }

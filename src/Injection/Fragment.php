@@ -16,9 +16,7 @@ namespace Spiral\Database\Injection;
  */
 class Fragment implements FragmentInterface
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $statement = null;
 
     /**

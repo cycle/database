@@ -14,7 +14,7 @@ use Spiral\Core\Container\InjectorInterface;
 use Spiral\Core\Container\SingletonInterface;
 use Spiral\Core\FactoryInterface;
 use Spiral\Database\Config\DatabasesConfig;
-use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Exception\DatabaseException;
 use Spiral\Database\Exception\DBALException;
 
@@ -71,26 +71,21 @@ use Spiral\Database\Exception\DBALException;
  *
  * echo $manager->database('runtime')->select()->from('users')->count();
  */
-class DatabaseManager implements SingletonInterface, InjectorInterface
+class DBAL implements SingletonInterface, InjectorInterface
 {
-    /**
-     * @var Database[]
-     */
+    /** @var DatabasesConfig */
+    private $config = null;
+
+    /** @var Database[] */
     private $databases = [];
 
-    /**
-     * @var Driver[]
-     */
+    /** @var AbstractDriver[] */
     private $drivers = [];
-
-    /**
-     * @var DatabasesConfig
-     */
-    protected $config = null;
 
     /**
      * @invisible
      *
+     * @todo: remove it
      * @var ContainerInterface
      */
     protected $container = null;
@@ -115,7 +110,7 @@ class DatabaseManager implements SingletonInterface, InjectorInterface
      *
      * @throws DBALException
      */
-    public function addDatabase(Database $database): DatabaseManager
+    public function addDatabase(Database $database): DBAL
     {
         if (isset($this->databases[$database->getName()])) {
             throw new DBALException("Database '{$database->getName()}' already exists");
@@ -130,9 +125,9 @@ class DatabaseManager implements SingletonInterface, InjectorInterface
      * Automatically create database instance based on given options and connection (in a form or
      * instance or alias).
      *
-     * @param string        $name
-     * @param string        $prefix
-     * @param string|Driver $connection Connection name or instance.
+     * @param string                $name
+     * @param string                $prefix
+     * @param string|AbstractDriver $connection Connection name or instance.
      *
      * @return Database
      *
@@ -140,7 +135,7 @@ class DatabaseManager implements SingletonInterface, InjectorInterface
      */
     public function createDatabase(string $name, string $prefix, $connection): Database
     {
-        if (!$connection instanceof Driver) {
+        if (!$connection instanceof AbstractDriver) {
             $connection = $this->driver($connection);
         }
 
@@ -190,13 +185,13 @@ class DatabaseManager implements SingletonInterface, InjectorInterface
     /**
      * Manually set connection instance.
      *
-     * @param Driver $driver
+     * @param AbstractDriver $driver
      *
      * @return self
      *
      * @throws DBALException
      */
-    public function addDriver(Driver $driver): DatabaseManager
+    public function addDriver(AbstractDriver $driver): DBAL
     {
         if (isset($this->drivers[$driver->getName()])) {
             throw new DBALException("Connection '{$driver->getName()}' already exists");
@@ -216,7 +211,7 @@ class DatabaseManager implements SingletonInterface, InjectorInterface
      * @param string $username
      * @param string $password
      *
-     * @return Driver
+     * @return AbstractDriver
      */
     public function makeDriver(
         string $name,
@@ -224,7 +219,7 @@ class DatabaseManager implements SingletonInterface, InjectorInterface
         string $dns,
         string $username,
         string $password = ''
-    ): Driver {
+    ): AbstractDriver {
         $instance = $this->getFactory()->make(
             $driver,
             [
@@ -248,11 +243,11 @@ class DatabaseManager implements SingletonInterface, InjectorInterface
      *
      * @param string $connection
      *
-     * @return Driver
+     * @return AbstractDriver
      *
      * @throws DBALException
      */
-    public function driver(string $connection): Driver
+    public function driver(string $connection): AbstractDriver
     {
         if (isset($this->drivers[$connection])) {
             return $this->drivers[$connection];
@@ -302,7 +297,7 @@ class DatabaseManager implements SingletonInterface, InjectorInterface
     /**
      * Get instance of every available driver/connection.
      *
-     * @return Driver[]
+     * @return AbstractDriver[]
      *
      * @throws DatabaseException
      */

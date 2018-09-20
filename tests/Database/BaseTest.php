@@ -13,7 +13,7 @@ use Psr\Log\LoggerTrait;
 use Psr\Log\LogLevel;
 use Spiral\Database\Database;
 use Spiral\Database\Driver\AbstractHandler;
-use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Schema\AbstractTable;
 use Spiral\Database\Schema\Comparator;
 
@@ -23,9 +23,8 @@ abstract class BaseTest extends TestCase
     public const DRIVER = null;
 
     protected static $driverCache = [];
-    protected static $pdoCache;
 
-    /** @var Driver */
+    /** @var AbstractDriver */
     protected $driver;
 
     /**
@@ -46,9 +45,9 @@ abstract class BaseTest extends TestCase
     }
 
     /**
-     * @return Driver
+     * @return AbstractDriver
      */
-    public function getDriver(): Driver
+    public function getDriver(): AbstractDriver
     {
         $config = self::$config[static::DRIVER];
         if (!isset($this->driver)) {
@@ -63,12 +62,6 @@ abstract class BaseTest extends TestCase
                     'options'    => []
                 ]
             );
-        }
-
-        if (empty(static::$pdoCache[static::DRIVER])) {
-            static::$pdoCache[static::DRIVER] = $this->driver->getPDO();
-        } else {
-            $this->driver[static::DRIVER] = $this->driver->withPDO(self::$pdoCache[static::DRIVER]);
         }
 
         if (self::$config['debug']) {

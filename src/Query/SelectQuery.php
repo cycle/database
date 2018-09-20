@@ -9,7 +9,8 @@
 namespace Spiral\Database\Query;
 
 use Spiral\Database\Driver\Compiler;
-use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\CompilerInterface;
+use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Exception\QueryException;
 use Spiral\Database\Injection\FragmentInterface;
@@ -26,7 +27,7 @@ use Spiral\Pagination\Traits\PaginatorTrait;
  * SelectQuery extends AbstractSelect with ability to specify selection tables and perform UNION
  * of multiple select queries.
  */
-class SelectQuery extends QueryBuilder implements
+class SelectQuery extends AbstractQuery implements
     \JsonSerializable,
     \Countable,
     \IteratorAggregate,
@@ -91,12 +92,8 @@ class SelectQuery extends QueryBuilder implements
      * @param array $from    Initial set of table names.
      * @param array $columns Initial set of columns to fetch.
      */
-    public function __construct(
-        Driver $driver,
-        Compiler $compiler,
-        array $from = [],
-        array $columns = []
-    ) {
+    public function __construct(AbstractDriver $driver, Compiler $compiler, array $from = [], array $columns = [])
+    {
         parent::__construct($driver, $compiler);
 
         $this->tables = $from;
@@ -108,7 +105,7 @@ class SelectQuery extends QueryBuilder implements
     /**
      * Mark query to return only distinct results.
      *
-     * @param bool|string $distinct You are only allowed to use string value for Postgres databases.
+     * @param bool|string|FragmentInterface $distinct You are only allowed to use string value for Postgres databases.
      *
      * @return self|$this
      */
@@ -253,14 +250,14 @@ class SelectQuery extends QueryBuilder implements
 
         //Unions always located at the end of query.
         foreach ($this->joinTokens as $join) {
-            if ($join['outer'] instanceof QueryBuilder) {
+            if ($join['outer'] instanceof AbstractQuery) {
                 $parameters = array_merge($parameters, $join['outer']->getParameters());
             }
         }
 
         //Unions always located at the end of query.
         foreach ($this->unionTokens as $union) {
-            if ($union[1] instanceof QueryBuilder) {
+            if ($union[1] instanceof AbstractQuery) {
                 $parameters = array_merge($parameters, $union[1]->getParameters());
             }
         }
@@ -420,14 +417,14 @@ class SelectQuery extends QueryBuilder implements
     /**
      * {@inheritdoc}
      */
-    public function sqlStatement(Compiler $quoter = null): string
+    public function sqlStatement(CompilerInterface $compiler = null): string
     {
-        if (empty($quoter)) {
-            $quoter = $this->compiler->resetQuoter();
+        if (empty($compiler)) {
+            $compiler = clone $this->compiler;
         }
 
         //11 parameters!
-        return $quoter->compileSelect(
+        return $compiler->compileSelect(
             $this->tables,
             $this->distinct,
             $this->columns,

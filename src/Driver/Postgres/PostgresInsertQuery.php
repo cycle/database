@@ -8,7 +8,7 @@
 
 namespace Spiral\Database\Driver\Postgres;
 
-use Spiral\Database\Driver\Compiler as AbstractCompiler;
+use Spiral\Database\Driver\CompilerInterface;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Query\InsertQuery;
 
@@ -22,26 +22,26 @@ class PostgresInsertQuery extends InsertQuery
      *
      * @throws BuilderException
      */
-    public function sqlStatement(AbstractCompiler $quoter = null): string
+    public function sqlStatement(CompilerInterface $compiler = null): string
     {
         if (
             !$this->driver instanceof PostgresDriver
-            || (!empty($quoter) && !$quoter instanceof PostgresCompiler)
+            || (!empty($compiler) && !$compiler instanceof PostgresCompiler)
         ) {
             throw new BuilderException(
                 'Postgres InsertQuery can be used only with Postgres driver and compiler'
             );
         }
 
-        if (empty($quoter)) {
-            $quoter = $this->compiler->resetQuoter();
+        if (empty($compiler)) {
+            $compiler = clone $this->compiler;
         }
 
         /**
          * @var PostgresDriver   $driver
-         * @var PostgresCompiler $quoter
+         * @var PostgresCompiler $compiler
          */
-        return $quoter->compileInsert(
+        return $compiler->compileInsert(
             $this->table,
             $this->columns,
             $this->rowsets,
@@ -54,9 +54,6 @@ class PostgresInsertQuery extends InsertQuery
      */
     public function run()
     {
-        return (int)$this->driver->statement(
-            $this->sqlStatement(),
-            $this->getParameters()
-        )->fetchColumn();
+        return (int)$this->driver->query($this->sqlStatement(), $this->getParameters())->fetchColumn();
     }
 }

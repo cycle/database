@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Driver\SQLServer\Schema;
 
-use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Schema\AbstractColumn;
 
 /**
@@ -192,7 +192,7 @@ class SQLServerColumn extends AbstractColumn
      * @param bool $withEnum When true enum constrain will be included into definition. Set to false
      *                       if you want to create constrain separately.
      */
-    public function sqlStatement(Driver $driver, bool $withEnum = true): string
+    public function sqlStatement(AbstractDriver $driver, bool $withEnum = true): string
     {
         if ($withEnum && $this->abstractType() == 'enum') {
             return "{$this->sqlStatement($driver, false)} {$this->enumStatement($driver)}";
@@ -224,7 +224,7 @@ class SQLServerColumn extends AbstractColumn
     /**
      * {@inheritdoc}
      */
-    protected function quoteDefault(Driver $driver): string
+    protected function quoteDefault(AbstractDriver $driver): string
     {
         $defaultValue = parent::quoteDefault($driver);
         if ($this->abstractType() == 'boolean') {
@@ -238,12 +238,12 @@ class SQLServerColumn extends AbstractColumn
      * Generate set of operations need to change column. We are expecting that column constrains
      * will be dropped separately.
      *
-     * @param Driver         $driver
+     * @param AbstractDriver $driver
      * @param AbstractColumn $initial
      *
      * @return array
      */
-    public function alterOperations(Driver $driver, AbstractColumn $initial): array
+    public function alterOperations(AbstractDriver $driver, AbstractColumn $initial): array
     {
         $operations = [];
 
@@ -334,11 +334,11 @@ class SQLServerColumn extends AbstractColumn
     /**
      * In SQLServer we can emulate enums similar way as in Postgres via column constrain.
      *
-     * @param Driver $driver
+     * @param AbstractDriver $driver
      *
      * @return string
      */
-    private function enumStatement(Driver $driver): string
+    private function enumStatement(AbstractDriver $driver): string
     {
         $enumValues = [];
         foreach ($this->enumValues as $value) {
@@ -380,13 +380,13 @@ class SQLServerColumn extends AbstractColumn
     }
 
     /**
-     * @param string $table  Table name.
-     * @param array  $schema
-     * @param Driver $driver SQLServer columns are bit more complex.
+     * @param string         $table  Table name.
+     * @param array          $schema
+     * @param AbstractDriver $driver SQLServer columns are bit more complex.
      *
      * @return SQLServerColumn
      */
-    public static function createInstance(string $table, array $schema, Driver $driver): self
+    public static function createInstance(string $table, array $schema, AbstractDriver $driver): self
     {
         $column = new self($table, $schema['COLUMN_NAME'], $driver->getTimezone());
 
@@ -437,11 +437,11 @@ class SQLServerColumn extends AbstractColumn
     /**
      * Resolve enum values if any.
      *
-     * @param Driver          $driver
+     * @param AbstractDriver  $driver
      * @param array           $schema
      * @param SQLServerColumn $column
      */
-    private static function resolveEnum(Driver $driver, array $schema, SQLServerColumn $column)
+    private static function resolveEnum(AbstractDriver $driver, array $schema, SQLServerColumn $column)
     {
         $query = 'SELECT object_definition([o].[object_id]) AS [definition], '
             . "OBJECT_NAME([o].[object_id]) AS [name]\nFROM [sys].[objects] AS [o]\n"

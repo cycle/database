@@ -10,8 +10,7 @@ namespace Spiral\Database\Driver\MySQL;
 
 use PDO;
 use Spiral\Database\DatabaseInterface;
-use Spiral\Database\Driver\AbstractHandler;
-use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Driver\HandlerInterface;
 use Spiral\Database\Driver\MySQL\Schema\MySQLTable;
 use Spiral\Database\Exception\ConnectionException;
@@ -20,22 +19,11 @@ use Spiral\Database\Exception\QueryException;
 /**
  * Talks to mysql databases.
  */
-class MySQLDriver extends Driver
+class MySQLDriver extends AbstractDriver
 {
-    /**
-     * Driver type.
-     */
-    const TYPE = DatabaseInterface::MYSQL;
-
-    /**
-     * Driver schemas.
-     */
-    const TABLE_SCHEMA_CLASS = MySQLTable::class;
-
-    /**
-     * Query compiler class.
-     */
-    const QUERY_COMPILER = MySQLCompiler::class;
+    protected const TYPE               = DatabaseInterface::MYSQL;
+    protected const TABLE_SCHEMA_CLASS = MySQLTable::class;
+    protected const QUERY_COMPILER     = MySQLCompiler::class;
 
     /**
      * {@inheritdoc}
@@ -68,9 +56,9 @@ class MySQLDriver extends Driver
     /**
      * {@inheritdoc}
      */
-    public function truncateData(string $table)
+    public function eraseTable(string $table)
     {
-        $this->statement("TRUNCATE TABLE {$this->identifier($table)}");
+        $this->execute("TRUNCATE TABLE {$this->identifier($table)}");
     }
 
     /**

@@ -8,7 +8,8 @@
 
 namespace Spiral\Database\Schema;
 
-use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\AbstractDriver;
+use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Driver\HandlerInterface;
 
 /**
@@ -26,7 +27,7 @@ final class Reflector
     /** @var array mixed[] */
     private $dependencies = [];
 
-    /** @var Driver[] */
+    /** @var DriverInterface[] */
     private $drivers = [];
 
     /** @var array */
@@ -183,7 +184,7 @@ final class Reflector
     protected function beginTransaction()
     {
         foreach ($this->drivers as $driver) {
-            /** @var Driver $driver */
+            /** @var DriverInterface $driver */
             $driver->beginTransaction();
         }
     }
@@ -194,7 +195,7 @@ final class Reflector
     protected function commitTransaction()
     {
         foreach ($this->drivers as $driver) {
-            /** @var Driver $driver */
+            /** @var DriverInterface $driver */
             $driver->commitTransaction();
         }
     }
@@ -205,7 +206,7 @@ final class Reflector
     protected function rollbackTransaction()
     {
         foreach (array_reverse($this->drivers) as $driver) {
-            /** @var Driver $driver */
+            /** @var DriverInterface $driver */
             $driver->rollbackTransaction();
         }
     }

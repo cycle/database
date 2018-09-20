@@ -38,6 +38,14 @@ final class Quoter implements QuoterInterface
     }
 
     /**
+     * Reset aliases cache.
+     */
+    public function __clone()
+    {
+        $this->aliases = [];
+    }
+
+    /**
      * @return string
      */
     public function getPrefix(): string
@@ -54,18 +62,6 @@ final class Quoter implements QuoterInterface
     public function registerAlias(string $alias, string $identifier)
     {
         $this->aliases[$alias] = $identifier;
-    }
-
-    /**
-     * Reset compiler aliases cache.
-     *
-     * @return self
-     */
-    public function resetAliases(): Quoter
-    {
-        $this->aliases = [];
-
-        return $this;
     }
 
     /**

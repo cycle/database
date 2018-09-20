@@ -14,7 +14,7 @@ use Spiral\Database\Injection\ExpressionInterface;
 use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
-use Spiral\Database\Query\QueryBuilder;
+use Spiral\Database\Query\AbstractQuery;
 
 /**
  * Provides ability to generate QueryCompiler JOIN tokens including ON conditions and table/column
@@ -81,11 +81,11 @@ trait JoinTrait
      * Register new JOIN with specified type with set of on conditions (linking one table to
      * another, no parametric on conditions allowed here).
      *
-     * @param string|QueryBuilder $type  Join type. Allowed values, LEFT, RIGHT, INNER and etc.
-     * @param string              $outer Joined table name (without prefix), may include AS
+     * @param string|AbstractQuery $type  Join type. Allowed values, LEFT, RIGHT, INNER and etc.
+     * @param string               $outer Joined table name (without prefix), may include AS
      *                                   statement.
-     * @param string              $alias Joined table or query alias.
-     * @param mixed               $on    Simplified on definition linking table names (no
+     * @param string               $alias Joined table or query alias.
+     * @param mixed                $on    Simplified on definition linking table names (no
      *                                   parameters allowed) or closure.
      *
      * @return $this
@@ -110,9 +110,9 @@ trait JoinTrait
      * @link http://www.w3schools.com/sql/sql_join_inner.asp
      * @see  join()
      *
-     * @param string|QueryBuilder $outer Joined table name (without prefix), may include AS
+     * @param string|AbstractQuery $outer Joined table name (without prefix), may include AS
      *                                   statement.
-     * @param string              $alias Joined table or query alias.
+     * @param string               $alias Joined table or query alias.
      *
      * @return $this
      *
@@ -137,10 +137,10 @@ trait JoinTrait
      * @link http://www.w3schools.com/sql/sql_join_right.asp
      * @see  join()
      *
-     * @param string|QueryBuilder $outer Joined table name (without prefix), may include AS
+     * @param string|AbstractQuery $outer Joined table name (without prefix), may include AS
      *                                   statement.
-     * @param string              $alias Joined table or query alias.
-     * @param mixed               $on    Simplified on definition linking table names (no
+     * @param string               $alias Joined table or query alias.
+     * @param mixed                $on    Simplified on definition linking table names (no
      *                                   parameters allowed) or closure.
      *
      * @return $this
@@ -167,9 +167,9 @@ trait JoinTrait
      * @link http://www.w3schools.com/sql/sql_join_left.asp
      * @see  join()
      *
-     * @param string|QueryBuilder $outer Joined table name (without prefix), may include AS
+     * @param string|AbstractQuery $outer Joined table name (without prefix), may include AS
      *                                   statement.
-     * @param string              $alias Joined table or query alias.
+     * @param string               $alias Joined table or query alias.
      *
      * @return $this
      *
@@ -195,9 +195,9 @@ trait JoinTrait
      * @link http://www.w3schools.com/sql/sql_join_full.asp
      * @see  join()
      *
-     * @param string|QueryBuilder $outer Joined table name (without prefix), may include AS
+     * @param string|AbstractQuery $outer Joined table name (without prefix), may include AS
      *                                   statement.
-     * @param string              $alias Joined table or query alias.
+     * @param string               $alias Joined table or query alias.
      *
      * @return $this
      *
@@ -399,7 +399,7 @@ trait JoinTrait
         return function ($parameter) {
             if ($parameter instanceof FragmentInterface) {
                 //We are only not creating bindings for plan fragments
-                if (!$parameter instanceof ParameterInterface && !$parameter instanceof QueryBuilder) {
+                if (!$parameter instanceof ParameterInterface && !$parameter instanceof AbstractQuery) {
                     return $parameter;
                 }
             }

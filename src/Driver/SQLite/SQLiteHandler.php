@@ -92,11 +92,8 @@ class SQLiteHandler extends AbstractHandler
     /**
      * {@inheritdoc}
      */
-    public function alterColumn(
-        AbstractTable $table,
-        AbstractColumn $initial,
-        AbstractColumn $column
-    ) {
+    public function alterColumn(AbstractTable $table, AbstractColumn $initial, AbstractColumn $column)
+    {
         //Not supported
     }
 
@@ -119,11 +116,8 @@ class SQLiteHandler extends AbstractHandler
     /**
      * {@inheritdoc}
      */
-    public function alterForeignKey(
-        AbstractTable $table,
-        AbstractForeignKey $initial,
-        AbstractForeignKey $foreignKey
-    ) {
+    public function alterForeignKey(AbstractTable $table, AbstractForeignKey $initial, AbstractForeignKey $foreignKey)
+    {
         //Not supported
     }
 

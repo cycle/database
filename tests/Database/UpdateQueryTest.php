@@ -6,7 +6,7 @@
  */
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\Query\QueryBuilder;
+use Spiral\Database\Query\AbstractQuery;
 use Spiral\Database\Query\UpdateQuery;
 use Spiral\Database\Database;
 use Spiral\Database\Query\Interpolator;
@@ -65,7 +65,7 @@ abstract class UpdateQueryTest extends BaseQueryTest
         ], $update);
     }
 
-    protected function assertSameParameters(array $parameters, QueryBuilder $builder)
+    protected function assertSameParameters(array $parameters, AbstractQuery $builder)
     {
         $builderParameters = [];
         foreach (Interpolator::flattenParameters($builder->getParameters()) as $value) {

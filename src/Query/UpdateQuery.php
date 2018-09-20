@@ -9,7 +9,8 @@
 namespace Spiral\Database\Query;
 
 use Spiral\Database\Driver\Compiler;
-use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\CompilerInterface;
+use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Injection\ParameterInterface;
@@ -19,7 +20,7 @@ use Spiral\Database\Query\Traits\WhereTrait;
 /**
  * Update statement builder.
  */
-class UpdateQuery extends QueryBuilder
+class UpdateQuery extends AbstractQuery
 {
     use TokenTrait, WhereTrait;
 
@@ -45,15 +46,15 @@ class UpdateQuery extends QueryBuilder
      * @param array $values Initial set of column updates.
      */
     public function __construct(
-        Driver $driver,
+        DriverInterface $driver,
         Compiler $compiler,
-        string $table = '',
+        string $table = null,
         array $where = [],
         array $values = []
     ) {
         parent::__construct($driver, $compiler);
 
-        $this->table = $table;
+        $this->table = $table ?? '';
         $this->values = $values;
 
         if (!empty($where)) {
@@ -122,7 +123,7 @@ class UpdateQuery extends QueryBuilder
     {
         $values = [];
         foreach ($this->values as $value) {
-            if ($value instanceof QueryBuilder) {
+            if ($value instanceof AbstractQuery) {
                 foreach ($value->getParameters() as $parameter) {
                     $values[] = $parameter;
                 }
@@ -145,17 +146,17 @@ class UpdateQuery extends QueryBuilder
     /**
      * {@inheritdoc}
      */
-    public function sqlStatement(Compiler $quoter = null): string
+    public function sqlStatement(CompilerInterface $compiler = null): string
     {
         if (empty($this->values)) {
             throw new BuilderException('Update values must be specified');
         }
 
-        if (empty($quoter)) {
-            $quoter = $this->compiler->resetQuoter();
+        if (empty($compiler)) {
+            $compiler = clone $this->compiler;
         }
 
-        return $quoter->compileUpdate($this->table, $this->values, $this->whereTokens);
+        return $compiler->compileUpdate($this->table, $this->values, $this->whereTokens);
     }
 
     /**
@@ -167,6 +168,6 @@ class UpdateQuery extends QueryBuilder
      */
     public function run(): int
     {
-        return $this->pdoStatement()->rowCount();
+        return $this->driver->execute($this->sqlStatement(), $this->getParameters());
     }
 }

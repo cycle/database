@@ -9,7 +9,7 @@
 namespace Spiral\Database\Driver\Postgres;
 
 use Spiral\Database\DatabaseInterface;
-use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Driver\HandlerInterface;
 use Spiral\Database\Driver\Postgres\Schema\PostgresTable;
 use Spiral\Database\Exception\DriverException;
@@ -18,22 +18,11 @@ use Spiral\Database\Query\InsertQuery;
 /**
  * Talks to postgres databases.
  */
-class PostgresDriver extends Driver
+class PostgresDriver extends AbstractDriver
 {
-    /**
-     * Driver type.
-     */
-    const TYPE = DatabaseInterface::POSTGRES;
-
-    /**
-     * Driver schemas.
-     */
-    const TABLE_SCHEMA_CLASS = PostgresTable::class;
-
-    /**
-     * Query compiler class.
-     */
-    const QUERY_COMPILER = PostgresCompiler::class;
+    protected const TYPE               = DatabaseInterface::POSTGRES;
+    protected const TABLE_SCHEMA_CLASS = PostgresTable::class;
+    protected const QUERY_COMPILER     = PostgresCompiler::class;
 
     /**
      * Cached list of primary keys associated with their table names. Used by InsertBuilder to
@@ -56,9 +45,9 @@ class PostgresDriver extends Driver
     /**
      * {@inheritdoc}
      */
-    public function truncateData(string $table)
+    public function eraseTable(string $table)
     {
-        $this->statement("TRUNCATE TABLE {$this->identifier($table)}");
+        $this->execute("TRUNCATE TABLE {$this->identifier($table)}");
     }
 
     /**
@@ -114,13 +103,9 @@ class PostgresDriver extends Driver
      *
      * Postgres uses custom insert query builder in order to return value of inserted row.
      */
-    public function insertBuilder(string $prefix, array $parameters = []): InsertQuery
+    public function insertBuilder(string $prefix, string $table = null): InsertQuery
     {
-        return new PostgresInsertQuery(
-            $this,
-            $this->queryCompiler($prefix),
-            $parameters['table'] ?? ''
-        );
+        return new PostgresInsertQuery($this, $this->queryCompiler($prefix), $table);
     }
 
     /**

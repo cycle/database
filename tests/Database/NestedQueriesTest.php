@@ -12,7 +12,7 @@ use Spiral\Database\Query\Interpolator;
 use Spiral\Database\Injection\Expression;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
-use Spiral\Database\Query\QueryBuilder;
+use Spiral\Database\Query\AbstractQuery;
 use Spiral\Database\Query\SelectQuery;
 use Spiral\Database\Schema\AbstractTable;
 use Spiral\Pagination\PaginatorAwareInterface;
@@ -311,7 +311,7 @@ abstract class NestedQueriesTest extends BaseQueryTest
         ], $select);
     }
 
-    protected function assertSameParameters(array $parameters, QueryBuilder $builder)
+    protected function assertSameParameters(array $parameters, AbstractQuery $builder)
     {
         $builderParameters = [];
         foreach (Interpolator::flattenParameters($builder->getParameters()) as $value) {

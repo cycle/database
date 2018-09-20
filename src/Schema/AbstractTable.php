@@ -7,10 +7,10 @@
 
 namespace Spiral\Database\Schema;
 
-use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Driver\HandlerInterface;
-use Spiral\Database\Exception\SchemaException;
 use Spiral\Database\Exception\HandlerException;
+use Spiral\Database\Exception\SchemaException;
 use Spiral\Database\TableInterface;
 
 /**
@@ -50,8 +50,8 @@ abstract class AbstractTable implements TableInterface
     /**
      * Table states.
      */
-    const STATUS_NEW = 0;
-    const STATUS_EXISTS = 1;
+    const STATUS_NEW              = 0;
+    const STATUS_EXISTS           = 1;
     const STATUS_DECLARED_DROPPED = 2;
 
     /**
@@ -71,7 +71,7 @@ abstract class AbstractTable implements TableInterface
     /**
      * @invisible
      *
-     * @var Driver
+     * @var DriverInterface
      */
     protected $driver = null;
 
@@ -92,11 +92,11 @@ abstract class AbstractTable implements TableInterface
     protected $current = null;
 
     /**
-     * @param Driver $driver Parent driver.
-     * @param string $name   Table name, must include table prefix.
-     * @param string $prefix Database specific table prefix.
+     * @param DriverInterface $driver Parent driver.
+     * @param string          $name   Table name, must include table prefix.
+     * @param string          $prefix Database specific table prefix.
      */
-    public function __construct(Driver $driver, string $name, string $prefix)
+    public function __construct(DriverInterface $driver, string $name, string $prefix)
     {
         $this->driver = $driver;
         $this->prefix = $prefix;
@@ -120,9 +120,9 @@ abstract class AbstractTable implements TableInterface
     /**
      * Get instance of associated driver.
      *
-     * @return Driver
+     * @return DriverInterface
      */
-    public function getDriver(): Driver
+    public function getDriver(): DriverInterface
     {
         return $this->driver;
     }

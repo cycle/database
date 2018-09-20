@@ -99,7 +99,7 @@ class Table implements \JsonSerializable, \IteratorAggregate, \Countable
      */
     public function truncateData()
     {
-        $this->database->getDriver()->truncateData($this->fullName());
+        $this->database->getDriver()->eraseTable($this->fullName());
     }
 
     /**

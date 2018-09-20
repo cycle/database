@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Schema;
 
-use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Exception\SchemaException;
 use Spiral\Database\ForeignKeyInterface;
 use Spiral\Database\Schema\Traits\ElementTrait;
@@ -193,10 +193,10 @@ abstract class AbstractForeignKey implements ForeignKeyInterface
     /**
      * Foreign key creation syntax.
      *
-     * @param Driver $driver
+     * @param AbstractDriver $driver
      * @return string
      */
-    public function sqlStatement(Driver $driver): string
+    public function sqlStatement(AbstractDriver $driver): string
     {
         $statement = [];
 

@@ -8,8 +8,7 @@
 
 namespace Spiral\Database\Injection;
 
-use Spiral\Database\Driver\Compiler;
-use Spiral\Database\Driver\QuoterInterface;
+use Spiral\Database\Driver\CompilerInterface;
 
 /**
  * Expressions require instance of QueryCompiler at moment of statementGeneration. For
@@ -19,8 +18,8 @@ use Spiral\Database\Driver\QuoterInterface;
 interface ExpressionInterface extends FragmentInterface
 {
     /**
-     * @param Compiler|null $quoter
+     * @param CompilerInterface|null $compiler
      * @return string
      */
-    public function sqlStatement(Compiler $quoter = null): string;
+    public function sqlStatement(CompilerInterface $compiler = null): string;
 }

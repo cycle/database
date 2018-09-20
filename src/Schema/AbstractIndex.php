@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Schema;
 
-use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\IndexInterface;
 use Spiral\Database\Schema\Traits\ElementTrait;
 
@@ -104,11 +104,11 @@ abstract class AbstractIndex implements IndexInterface
     /**
      * Index sql creation syntax.
      *
-     * @param Driver $driver
-     * @param bool   $includeTable Include table ON statement (not required for inline index creation).
+     * @param AbstractDriver $driver
+     * @param bool           $includeTable Include table ON statement (not required for inline index creation).
      * @return string
      */
-    public function sqlStatement(Driver $driver, bool $includeTable = true): string
+    public function sqlStatement(AbstractDriver $driver, bool $includeTable = true): string
     {
         $statement = [$this->type == self::UNIQUE ? 'UNIQUE INDEX' : 'INDEX'];
 

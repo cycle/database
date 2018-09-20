@@ -11,7 +11,7 @@ use Spiral\Database\Query\DeleteQuery;
 use Spiral\Database\Query\InsertQuery;
 use Spiral\Database\Query\SelectQuery;
 use Spiral\Database\Query\UpdateQuery;
-use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Table;
 use Spiral\Database\Schema\AbstractTable;
 
@@ -19,7 +19,7 @@ abstract class BuildersAccessTest extends BaseTest
 {
     public function testDriverAccess()
     {
-        $this->assertInstanceOf(Driver::class, $this->db()->getDriver());
+        $this->assertInstanceOf(AbstractDriver::class, $this->db()->getDriver());
     }
 
     public function testTableAccess()

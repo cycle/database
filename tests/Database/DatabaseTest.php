@@ -11,7 +11,7 @@ namespace Spiral\tests\Cases\Database;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Spiral\Database\Database;
-use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\QueryStatement;
 use Spiral\Database\Table;
 
@@ -72,10 +72,10 @@ class DatabaseTest extends TestCase
     }
 
     /**
-     * @return Driver|\PHPUnit_Framework_MockObject_MockObject
+     * @return AbstractDriver|\PHPUnit_Framework_MockObject_MockObject
      */
     private function makeDriver()
     {
-        return $this->getMockBuilder(Driver::class)->disableOriginalConstructor()->getMock();
+        return $this->getMockBuilder(AbstractDriver::class)->disableOriginalConstructor()->getMock();
     }
 }

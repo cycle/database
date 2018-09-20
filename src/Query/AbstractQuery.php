@@ -9,61 +9,37 @@
 namespace Spiral\Database\Query;
 
 use Spiral\Database\Driver\Compiler;
-use Spiral\Database\Driver\Driver;
-use Spiral\Database\Exception\BuilderException;
-use Spiral\Database\Injection\ExpressionInterface;
-use Spiral\Database\Injection\ParameterInterface;
-use Spiral\Database\QueryInterface;
+use Spiral\Database\Driver\DriverInterface;
 
 /**
  * QueryBuilder classes generate set of control tokens for query compilers, this is query level
  * abstraction.
  */
-abstract class QueryBuilder implements ExpressionInterface, QueryInterface
+abstract class AbstractQuery implements QueryInterface
 {
-    /**
-     * @var Driver
-     */
+    /** @var DriverInterface */
     protected $driver = null;
 
-    /**
-     * @var Compiler
-     */
+    /** @var Compiler */
     protected $compiler = null;
 
     /**
-     * @param Driver   $driver   Associated driver.
-     * @param Compiler $compiler Driver specific QueryCompiler instance (one per builder).
+     * @param DriverInterface $driver   Associated driver.
+     * @param Compiler        $compiler Driver specific QueryCompiler instance (one per builder).
      */
-    public function __construct(Driver $driver, Compiler $compiler)
+    public function __construct(DriverInterface $driver, Compiler $compiler)
     {
         $this->driver = $driver;
         $this->compiler = $compiler;
     }
 
     /**
-     * @return Driver
+     * @return DriverInterface
      */
-    public function getDriver(): Driver
+    public function getDriver(): DriverInterface
     {
         return $this->driver;
     }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @param Compiler $quoter Associated compiler to be used by default.
-     */
-    abstract public function sqlStatement(Compiler $quoter = null): string;
-
-    /**
-     * Get ordered list of builder parameters in a form of ParameterInterface array.
-     *
-     * @return ParameterInterface[]
-     *
-     * @throws BuilderException
-     */
-    abstract public function getParameters(): array;
 
     /**
      * Get interpolated (populated with parameters) SQL which will be run against database, please
@@ -136,7 +112,7 @@ abstract class QueryBuilder implements ExpressionInterface, QueryInterface
     {
         $result = [];
         foreach ($parameters as $parameter) {
-            if ($parameter instanceof QueryBuilder) {
+            if ($parameter instanceof AbstractQuery) {
                 $result = array_merge($result, $parameter->getParameters());
                 continue;
             }
@@ -148,12 +124,12 @@ abstract class QueryBuilder implements ExpressionInterface, QueryInterface
     }
 
     /**
-     * Generate PDO statement based on generated sql and parameters.
+     * Execute query.
      *
-     * @return \PDOStatement
+     * @return int
      */
-    protected function pdoStatement(): \PDOStatement
+    protected function execute(): int
     {
-        return $this->driver->statement($this->sqlStatement(), $this->getParameters());
+        return $this->driver->execute($this->sqlStatement(), $this->getParameters());
     }
 }
