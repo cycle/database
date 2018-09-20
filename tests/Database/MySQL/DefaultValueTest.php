@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Tests\MySQL;
 
-class DefaultValuesTest extends \Spiral\Database\Tests\DefaultValuesTest
+class DefaultValueTest extends \Spiral\Database\Tests\DefaultValueTest
 {
     const DRIVER = 'mysql';
 

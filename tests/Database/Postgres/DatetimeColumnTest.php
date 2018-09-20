@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Tests\Postgres;
 
-class SchemaCreationTest extends \Spiral\Database\Tests\SchemaCreationTest
+class DatetimeColumnTest extends \Spiral\Database\Tests\DatetimeColumnTest
 {
     const DRIVER = 'postgres';
 }

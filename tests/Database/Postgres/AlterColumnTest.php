@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Tests\Postgres;
 
-class ColumnsAlteringTest extends \Spiral\Database\Tests\ColumnsAlteringTest
+class AlterColumnTest extends \Spiral\Database\Tests\AlterColumnTest
 {
     const DRIVER = 'postgres';
 }

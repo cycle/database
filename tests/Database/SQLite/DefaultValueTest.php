@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Tests\SQLite;
 
-class SchemaCreationTest extends \Spiral\Database\Tests\SchemaCreationTest
+class DefaultValueTest extends \Spiral\Database\Tests\DefaultValueTest
 {
     const DRIVER = 'sqlite';
 }

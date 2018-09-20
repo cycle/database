@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Tests\SQLServer;
 
-class DatetimeColumnsTest extends \Spiral\Database\Tests\DatetimeColumnsTest
+class CreateTableTest extends \Spiral\Database\Tests\CreateTableTest
 {
     const DRIVER = 'sqlserver';
 }

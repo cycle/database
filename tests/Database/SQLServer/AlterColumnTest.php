@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Tests\SQLServer;
 
-class ColumnsAlteringTest extends \Spiral\Database\Tests\ColumnsAlteringTest
+class AlterColumnTest extends \Spiral\Database\Tests\AlterColumnTest
 {
     const DRIVER = 'sqlserver';
 }

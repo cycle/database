@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Tests\Postgres;
 
-class DefaultValuesTest extends \Spiral\Database\Tests\DefaultValuesTest
+class CreateTableTest extends \Spiral\Database\Tests\CreateTableTest
 {
     const DRIVER = 'postgres';
 }

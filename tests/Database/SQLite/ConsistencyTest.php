@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Tests\SQLite;
 
-class DefaultValuesTest extends \Spiral\Database\Tests\DefaultValuesTest
+class ConsistencyTest extends \Spiral\Database\Tests\ConsistencyTest
 {
     const DRIVER = 'sqlite';
 }

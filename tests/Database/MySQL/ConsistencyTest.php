@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Tests\MySQL;
 
-class SchemaCreationTest extends \Spiral\Database\Tests\SchemaCreationTest
+class ConsistencyTest extends \Spiral\Database\Tests\ConsistencyTest
 {
     const DRIVER = 'mysql';
 }

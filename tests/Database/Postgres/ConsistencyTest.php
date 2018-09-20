@@ -9,7 +9,7 @@ namespace Spiral\Database\Tests\Postgres;
 
 use Spiral\Database\Injection\FragmentInterface;
 
-class SchemaConsistencyTest extends \Spiral\Database\Tests\SchemaConsistencyTest
+class ConsistencyTest extends \Spiral\Database\Tests\ConsistencyTest
 {
     const DRIVER = 'postgres';
 

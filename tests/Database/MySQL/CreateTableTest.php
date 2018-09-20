@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Tests\MySQL;
 
-class ColumnsAlteringTest extends \Spiral\Database\Tests\ColumnsAlteringTest
+class CreateTableTest extends \Spiral\Database\Tests\CreateTableTest
 {
     const DRIVER = 'mysql';
 }

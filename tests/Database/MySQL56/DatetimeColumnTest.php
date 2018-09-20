@@ -10,7 +10,7 @@ namespace Spiral\Database\Tests\MySQL56;
 /**
  * MySQL 5.6 and higher
  */
-class DatetimeColumnsTest extends \Spiral\Database\Tests\DatetimeColumnsTest
+class DatetimeColumnTest extends \Spiral\Database\Tests\DatetimeColumnTest
 {
     const DRIVER = 'mysql56';
 

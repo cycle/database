@@ -9,7 +9,7 @@ namespace Spiral\Database\Tests;
 use Spiral\Database\Database;
 use Spiral\Database\Schema\AbstractTable;
 
-abstract class SchemaCreationTest extends BaseTest
+abstract class CreateTableTest extends BaseTest
 {
     /**
      * @var Database

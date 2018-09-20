@@ -12,7 +12,7 @@ use Spiral\Database\Schema\AbstractColumn;
 use Spiral\Database\Schema\AbstractTable;
 
 //See MySQL Driver!
-abstract class DatetimeColumnsTest extends BaseTest
+abstract class DatetimeColumnTest extends BaseTest
 {
     /**
      * @var Database

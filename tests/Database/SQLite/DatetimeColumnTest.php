@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Tests\SQLite;
 
-class ColumnsAlteringTest extends \Spiral\Database\Tests\ColumnsAlteringTest
+class DatetimeColumnTest extends \Spiral\Database\Tests\DatetimeColumnTest
 {
     const DRIVER = 'sqlite';
 }

@@ -12,7 +12,7 @@ use Spiral\Database\Database;
 use Spiral\Database\Schema\AbstractColumn;
 use Spiral\Database\Schema\AbstractTable;
 
-abstract class ColumnsAlteringTest extends BaseTest
+abstract class AlterColumnTest extends BaseTest
 {
     /**
      * @var Database

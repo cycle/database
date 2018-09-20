@@ -17,7 +17,7 @@ use Spiral\Database\Schema\AbstractTable;
  *       - decimal, invalid value
  *       - string, too long default value
  */
-abstract class DefaultValuesTest extends BaseTest
+abstract class DefaultValueTest extends BaseTest
 {
     /**
      * @var Database
