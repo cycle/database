@@ -19,7 +19,7 @@ use Spiral\Database\Schema\AbstractTable;
  *
  * @todo move to schemas
  */
-class TableSorter
+class Reflector 
 {
     const STATE_NEW    = 1;
     const STATE_PASSED = 2;

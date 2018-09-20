@@ -9,14 +9,17 @@ namespace Spiral\Database\Schema;
 
 use Spiral\Database\Driver\Driver;
 use Spiral\Database\Exception\SchemaException;
-use Spiral\Database\ReferenceInterface;
+use Spiral\Database\ForeignInterface;
+use Spiral\Database\Schema\Traits\ElementTrait;
 
 /**
  * Abstract foreign schema with read (see ReferenceInterface) and write abilities. Must be
  * implemented by driver to support DBMS specific syntax and creation rules.
  */
-abstract class AbstractReference extends AbstractElement implements ReferenceInterface
+abstract class AbstractForeign implements ForeignInterface
 {
+    use ElementTrait;
+
     /**
      * Parent table isolation prefix.
      *
@@ -66,7 +69,8 @@ abstract class AbstractReference extends AbstractElement implements ReferenceInt
      */
     public function __construct(string $table, string $tablePrefix, string $name)
     {
-        parent::__construct($table, $name);
+        $this->table = $table;
+        $this->name = $name;
         $this->tablePrefix = $tablePrefix;
     }
 
@@ -75,13 +79,15 @@ abstract class AbstractReference extends AbstractElement implements ReferenceInt
      *
      * @param string $name
      */
-    public function setName(string $name): AbstractElement
+    public function setName(string $name): self
     {
         if (!empty($this->name)) {
             throw new SchemaException('Changing reference name is not allowed');
         }
 
-        return parent::setName($name);
+        $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -132,7 +138,7 @@ abstract class AbstractReference extends AbstractElement implements ReferenceInt
      *
      * @return self
      */
-    public function column(string $column): AbstractReference
+    public function column(string $column): AbstractForeign
     {
         $this->column = $column;
 
@@ -155,7 +161,7 @@ abstract class AbstractReference extends AbstractElement implements ReferenceInt
         string $table,
         string $column = 'id',
         bool $forcePrefix = true
-    ): AbstractReference {
+    ): AbstractForeign {
         $this->foreignTable = ($forcePrefix ? $this->tablePrefix : '') . $table;
         $this->foreignKey = $column;
 
@@ -169,7 +175,7 @@ abstract class AbstractReference extends AbstractElement implements ReferenceInt
      *
      * @return self
      */
-    public function onDelete(string $rule = self::NO_ACTION): AbstractReference
+    public function onDelete(string $rule = self::NO_ACTION): AbstractForeign
     {
         $this->deleteRule = strtoupper($rule);
 
@@ -183,7 +189,7 @@ abstract class AbstractReference extends AbstractElement implements ReferenceInt
      *
      * @return self
      */
-    public function onUpdate(string $rule = self::NO_ACTION): AbstractReference
+    public function onUpdate(string $rule = self::NO_ACTION): AbstractForeign
     {
         $this->updateRule = strtoupper($rule);
 
@@ -218,7 +224,7 @@ abstract class AbstractReference extends AbstractElement implements ReferenceInt
     /**
      * {@inheritdoc}
      */
-    public function compare(ReferenceInterface $initial): bool
+    public function compare(AbstractForeign $initial): bool
     {
         return $this == clone $initial;
     }

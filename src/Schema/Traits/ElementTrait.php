@@ -1,18 +1,16 @@
 <?php
 /**
- * Spiral, Core Components
+ * Spiral Framework.
  *
- * @author Wolfy-J
+ * @license   MIT
+ * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database\Schema;
+namespace Spiral\Database\Schema\Traits;
 
 use Spiral\Database\Driver\Driver;
 
-/**
- * Aggregates common functionality for columns, indexes and foreign key schemas.
- */
-abstract class AbstractElement
+trait TableElementTrait
 {
     /**
      * Element name.
@@ -27,16 +25,6 @@ abstract class AbstractElement
      * @var string
      */
     protected $table = '';
-
-    /**
-     * @param string $table
-     * @param string $name
-     */
-    public function __construct(string $table, string $name)
-    {
-        $this->name = $name;
-        $this->table = $table;
-    }
 
     /**
      * Associated table name (full name).
@@ -55,7 +43,7 @@ abstract class AbstractElement
      *
      * @return self|$this
      */
-    public function setName(string $name): AbstractElement
+    public function setName(string $name): self
     {
         $this->name = $name;
 

@@ -9,7 +9,6 @@
 namespace Spiral\Database\Driver\SQLite\Schema;
 
 use Spiral\Database\Driver\Driver;
-use Spiral\Database\ReferenceInterface;
 use Spiral\Database\Schema\AbstractReference;
 
 class SQLiteReference extends AbstractReference
@@ -46,11 +45,10 @@ class SQLiteReference extends AbstractReference
     /**
      * Name insensitive compare.
      *
-     * @param ReferenceInterface $initial
-     *
+     * @param AbstractReference $initial
      * @return bool
      */
-    public function compare(ReferenceInterface $initial): bool
+    public function compare(AbstractReference $initial): bool
     {
         return $this->getColumn() == $initial->getColumn()
             && $this->getForeignTable() == $initial->getForeignTable()
