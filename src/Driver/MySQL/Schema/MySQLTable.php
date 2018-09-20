@@ -49,7 +49,6 @@ class MySQLTable extends AbstractTable
      * Change table engine. Such operation will be applied only at moment of table creation.
      *
      * @param string $engine
-     *
      * @return $this
      *
      * @throws SchemaException

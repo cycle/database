@@ -45,6 +45,19 @@ class MySQLDriver extends AbstractDriver
     /**
      * {@inheritdoc}
      */
+    public function tableNames(): array
+    {
+        $result = [];
+        foreach ($this->query("SHOW TABLES")->fetchAll(PDO::FETCH_NUM) as $row) {
+            $result[] = $row[0];
+        }
+
+        return $result;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function hasTable(string $name): bool
     {
         $query = "SELECT COUNT(*) FROM `information_schema`.`tables` WHERE `table_schema` = ? AND `table_name` = ?";
@@ -58,19 +71,6 @@ class MySQLDriver extends AbstractDriver
     public function eraseData(string $table)
     {
         $this->execute("TRUNCATE TABLE {$this->identifier($table)}");
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function tableNames(): array
-    {
-        $result = [];
-        foreach ($this->query("SHOW TABLES")->fetchAll(PDO::FETCH_NUM) as $row) {
-            $result[] = $row[0];
-        }
-
-        return $result;
     }
 
     /**

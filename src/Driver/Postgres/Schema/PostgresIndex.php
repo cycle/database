@@ -14,7 +14,6 @@ class PostgresIndex extends AbstractIndex
     /**
      * @param string $table Table name.
      * @param array  $schema
-     *
      * @return PostgresIndex
      */
     public static function createInstance(string $table, array $schema): self

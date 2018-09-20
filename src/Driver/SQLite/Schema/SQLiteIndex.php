@@ -17,7 +17,6 @@ class SQLiteIndex extends AbstractIndex
      * @param string $table
      * @param array  $schema
      * @param array  $columns
-     *
      * @return SQLiteIndex
      */
     public static function createInstance(string $table, array $schema, array $columns): self
@@ -37,8 +36,7 @@ class SQLiteIndex extends AbstractIndex
      *
      * @param AbstractDriver $driver
      * @param bool           $includeTable Include table ON statement (not required for inline index
-     *                             creation).
-     *
+     *                                     creation).
      * @return string
      */
     public function sqlStatement(AbstractDriver $driver, bool $includeTable = true): string

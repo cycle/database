@@ -55,6 +55,21 @@ class SQLServerDriver extends AbstractDriver
     /**
      * {@inheritdoc}
      */
+    public function tableNames(): array
+    {
+        $query = "SELECT [table_name] FROM [information_schema].[tables] WHERE [table_type] = 'BASE TABLE'";
+
+        $tables = [];
+        foreach ($this->query($query)->fetchAll(PDO::FETCH_NUM) as $name) {
+            $tables[] = $name[0];
+        }
+
+        return $tables;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function hasTable(string $name): bool
     {
         $query = "SELECT COUNT(*) FROM [information_schema].[tables] WHERE [table_type] = 'BASE TABLE' AND [table_name] = ?";
@@ -68,21 +83,6 @@ class SQLServerDriver extends AbstractDriver
     public function eraseData(string $table)
     {
         $this->execute("TRUNCATE TABLE {$this->identifier($table)}");
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function tableNames(): array
-    {
-        $query = "SELECT [table_name] FROM [information_schema].[tables] WHERE [table_type] = 'BASE TABLE'";
-
-        $tables = [];
-        foreach ($this->query($query)->fetchAll(PDO::FETCH_NUM) as $name) {
-            $tables[] = $name[0];
-        }
-
-        return $tables;
     }
 
     /**
@@ -103,10 +103,7 @@ class SQLServerDriver extends AbstractDriver
      */
     protected function savepointCreate(string $name)
     {
-        if ($this->isProfiling()) {
-            $this->getLogger()->info("Transaction: new savepoint 'SVP{$name}'");
-        }
-
+        $this->isProfiling() && $this->getLogger()->info("Transaction: new savepoint 'SVP{$name}'");
         $this->execute('SAVE TRANSACTION ' . $this->identifier("SVP{$name}"));
     }
 
@@ -120,10 +117,7 @@ class SQLServerDriver extends AbstractDriver
      */
     protected function savepointRelease(string $name)
     {
-        if ($this->isProfiling()) {
-            $this->getLogger()->info("Transaction: release savepoint 'SVP{$name}'");
-        }
-
+        $this->isProfiling() && $this->getLogger()->info("Transaction: release savepoint 'SVP{$name}'");
         //SQLServer automatically commits nested transactions with parent transaction
     }
 
@@ -137,10 +131,7 @@ class SQLServerDriver extends AbstractDriver
      */
     protected function savepointRollback(string $name)
     {
-        if ($this->isProfiling()) {
-            $this->getLogger()->info("Transaction: rollback savepoint 'SVP{$name}'");
-        }
-
+        $this->isProfiling() && $this->getLogger()->info("Transaction: rollback savepoint 'SVP{$name}'");
         $this->execute('ROLLBACK TRANSACTION ' . $this->identifier("SVP{$name}"));
     }
 }

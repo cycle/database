@@ -8,6 +8,7 @@
 namespace Spiral\Database\Driver\Postgres\Schema;
 
 use Spiral\Database\Driver\AbstractDriver;
+use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Injection\Fragment;
 use Spiral\Database\Schema\AbstractColumn;
 
@@ -226,7 +227,6 @@ class PostgresColumn extends AbstractColumn
      *
      * @param AbstractDriver $driver
      * @param AbstractColumn $initial
-     *
      * @return array
      */
     public function alterOperations(AbstractDriver $driver, AbstractColumn $initial): array
@@ -350,14 +350,16 @@ class PostgresColumn extends AbstractColumn
     }
 
     /**
-     * @param string         $table  Table name.
-     * @param array          $schema
-     * @param AbstractDriver $driver Postgres columns are bit more complex.
-     *
+     * @param string          $table  Table name.
+     * @param array           $schema
+     * @param DriverInterface $driver Postgres columns are bit more complex.
      * @return PostgresColumn
      */
-    public static function createInstance(string $table, array $schema, AbstractDriver $driver): self
-    {
+    public static function createInstance(
+        string $table,
+        array $schema,
+        DriverInterface $driver
+    ): self {
         $column = new self($table, $schema['column_name'], $driver->getTimezone());
 
         $column->type = $schema['data_type'];
@@ -408,12 +410,15 @@ class PostgresColumn extends AbstractColumn
     /**
      * Resolving enum constrain and converting it into proper enum values set.
      *
-     * @param AbstractDriver $driver
-     * @param string|int     $tableOID
-     * @param PostgresColumn $column
+     * @param DriverInterface $driver
+     * @param string|int      $tableOID
+     * @param PostgresColumn  $column
      */
-    private static function resolveConstrains(AbstractDriver $driver, $tableOID, PostgresColumn $column)
-    {
+    private static function resolveConstrains(
+        DriverInterface $driver,
+        $tableOID,
+        PostgresColumn $column
+    ) {
         $query = "SELECT conname, consrc FROM pg_constraint WHERE conrelid = ? AND contype = 'c' AND "
             . "(consrc LIKE ? OR consrc LIKE ? OR consrc LIKE ? OR consrc LIKE ?)";
 
@@ -448,10 +453,10 @@ class PostgresColumn extends AbstractColumn
     /**
      * Resolve native ENUM type if presented.
      *
-     * @param AbstractDriver $driver
-     * @param PostgresColumn $column
+     * @param DriverInterface $driver
+     * @param PostgresColumn  $column
      */
-    private static function resolveEnum(AbstractDriver $driver, PostgresColumn $column)
+    private static function resolveEnum(DriverInterface $driver, PostgresColumn $column)
     {
         $range = $driver->query('SELECT enum_range(NULL::' . $column->type . ')')->fetchColumn(0);
 

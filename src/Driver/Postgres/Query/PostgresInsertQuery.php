@@ -6,7 +6,7 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database\Driver\Postgres;
+namespace Spiral\Database\Driver\Postgres\Query;
 
 use Spiral\Database\Driver\CompilerInterface;
 use Spiral\Database\Exception\BuilderException;

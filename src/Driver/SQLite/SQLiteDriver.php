@@ -39,6 +39,21 @@ class SQLiteDriver extends AbstractDriver
     /**
      * {@inheritdoc}
      */
+    public function tableNames(): array
+    {
+        $tables = [];
+        foreach ($this->query("SELECT name FROM 'sqlite_master' WHERE type = 'table'") as $table) {
+            if ($table['name'] != 'sqlite_sequence') {
+                $tables[] = $table['name'];
+            }
+        }
+
+        return $tables;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function hasTable(string $name): bool
     {
         $query = "SELECT COUNT('sql') FROM 'sqlite_master' WHERE type = 'table' and name = ?";
@@ -52,21 +67,6 @@ class SQLiteDriver extends AbstractDriver
     public function eraseData(string $table)
     {
         $this->execute("DELETE FROM {$this->identifier($table)}");
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function tableNames(): array
-    {
-        $tables = [];
-        foreach ($this->query("SELECT name FROM 'sqlite_master' WHERE type = 'table'") as $table) {
-            if ($table['name'] != 'sqlite_sequence') {
-                $tables[] = $table['name'];
-            }
-        }
-
-        return $tables;
     }
 
     /**

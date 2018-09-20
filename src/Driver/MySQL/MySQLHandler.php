@@ -10,7 +10,6 @@ namespace Spiral\Database\Driver\MySQL;
 use Spiral\Database\Driver\AbstractHandler;
 use Spiral\Database\Driver\MySQL\Exception\MySQLException;
 use Spiral\Database\Driver\MySQL\Schema\MySQLTable;
-use Spiral\Database\Exception\Driver\MySQLDriverException;
 use Spiral\Database\Exception\SchemaException;
 use Spiral\Database\Schema\AbstractColumn;
 use Spiral\Database\Schema\AbstractForeignKey;
@@ -74,7 +73,6 @@ class MySQLHandler extends AbstractHandler
      * Get statement needed to create table.
      *
      * @param AbstractTable $table
-     *
      * @return string
      *
      * @throws SchemaException

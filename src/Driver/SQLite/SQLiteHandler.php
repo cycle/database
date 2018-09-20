@@ -92,8 +92,11 @@ class SQLiteHandler extends AbstractHandler
     /**
      * {@inheritdoc}
      */
-    public function alterColumn(AbstractTable $table, AbstractColumn $initial, AbstractColumn $column)
-    {
+    public function alterColumn(
+        AbstractTable $table,
+        AbstractColumn $initial,
+        AbstractColumn $column
+    ) {
         //Not supported
     }
 
@@ -116,8 +119,11 @@ class SQLiteHandler extends AbstractHandler
     /**
      * {@inheritdoc}
      */
-    public function alterForeignKey(AbstractTable $table, AbstractForeignKey $initial, AbstractForeignKey $foreignKey)
-    {
+    public function alterForeignKey(
+        AbstractTable $table,
+        AbstractForeignKey $initial,
+        AbstractForeignKey $foreignKey
+    ) {
         //Not supported
     }
 
@@ -125,7 +131,6 @@ class SQLiteHandler extends AbstractHandler
      * Rebuild is required when columns or foreign keys are altered.
      *
      * @param AbstractTable $table
-     *
      * @return bool
      */
     private function requiresRebuild(AbstractTable $table): bool
@@ -149,7 +154,6 @@ class SQLiteHandler extends AbstractHandler
      * Temporary table based on parent.
      *
      * @param AbstractTable $table
-     *
      * @return AbstractTable
      */
     protected function createTemporary(AbstractTable $table): AbstractTable
@@ -204,7 +208,6 @@ class SQLiteHandler extends AbstractHandler
      *
      * @param AbstractTable $source
      * @param AbstractTable $target
-     *
      * @return array
      */
     private function createMapping(AbstractTable $source, AbstractTable $target)

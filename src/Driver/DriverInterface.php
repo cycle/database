@@ -142,6 +142,13 @@ interface DriverInterface
     public function hasTable(string $name): bool;
 
     /**
+     * Get every available table name as array.
+     *
+     * @return array
+     */
+    public function tableNames(): array;
+
+    /**
      * Get schema specific to the given table.
      *
      * @param string $name
@@ -149,14 +156,7 @@ interface DriverInterface
      * @return AbstractTable
      */
     public function getSchema(string $name, string $prefix = ''): AbstractTable;
-
-    /**
-     * Get every available table name as array.
-     *
-     * @return array
-     */
-    public function tableNames(): array;
-
+    
     /**
      * Clean (truncate) specified driver table.
      *

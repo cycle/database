@@ -159,7 +159,6 @@ class MySQLColumn extends AbstractColumn
      * @param string        $table
      * @param array         $schema
      * @param \DateTimeZone $timezone
-     *
      * @return MySQLColumn
      */
     public static function createInstance(

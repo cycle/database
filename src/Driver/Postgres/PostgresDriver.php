@@ -11,6 +11,7 @@ namespace Spiral\Database\Driver\Postgres;
 use Spiral\Database\DatabaseInterface;
 use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Driver\HandlerInterface;
+use Spiral\Database\Driver\Postgres\Query\PostgresInsertQuery;
 use Spiral\Database\Driver\Postgres\Schema\PostgresTable;
 use Spiral\Database\Exception\DriverException;
 use Spiral\Database\Query\InsertQuery;
@@ -35,6 +36,21 @@ class PostgresDriver extends AbstractDriver
     /**
      * {@inheritdoc}
      */
+    public function tableNames(): array
+    {
+        $query = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE'";
+
+        $tables = [];
+        foreach ($this->query($query) as $row) {
+            $tables[] = $row['table_name'];
+        }
+
+        return $tables;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function hasTable(string $name): bool
     {
         $query = "SELECT COUNT(table_name) FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE' AND table_name = ?";
@@ -48,21 +64,6 @@ class PostgresDriver extends AbstractDriver
     public function eraseData(string $table)
     {
         $this->execute("TRUNCATE TABLE {$this->identifier($table)}");
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function tableNames(): array
-    {
-        $query = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE'";
-
-        $tables = [];
-        foreach ($this->query($query) as $row) {
-            $tables[] = $row['table_name'];
-        }
-
-        return $tables;
     }
 
     /**

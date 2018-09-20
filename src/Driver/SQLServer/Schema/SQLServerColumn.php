@@ -8,6 +8,7 @@
 namespace Spiral\Database\Driver\SQLServer\Schema;
 
 use Spiral\Database\Driver\AbstractDriver;
+use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Schema\AbstractColumn;
 
 /**
@@ -240,7 +241,6 @@ class SQLServerColumn extends AbstractColumn
      *
      * @param AbstractDriver $driver
      * @param AbstractColumn $initial
-     *
      * @return array
      */
     public function alterOperations(AbstractDriver $driver, AbstractColumn $initial): array
@@ -335,7 +335,6 @@ class SQLServerColumn extends AbstractColumn
      * In SQLServer we can emulate enums similar way as in Postgres via column constrain.
      *
      * @param AbstractDriver $driver
-     *
      * @return string
      */
     private function enumStatement(AbstractDriver $driver): string
@@ -380,14 +379,17 @@ class SQLServerColumn extends AbstractColumn
     }
 
     /**
-     * @param string         $table  Table name.
-     * @param array          $schema
-     * @param AbstractDriver $driver SQLServer columns are bit more complex.
+     * @param string          $table  Table name.
+     * @param array           $schema
+     * @param DriverInterface $driver SQLServer columns are bit more complex.
      *
      * @return SQLServerColumn
      */
-    public static function createInstance(string $table, array $schema, AbstractDriver $driver): self
-    {
+    public static function createInstance(
+        string $table,
+        array $schema,
+        DriverInterface $driver
+    ): self {
         $column = new self($table, $schema['COLUMN_NAME'], $driver->getTimezone());
 
         $column->type = $schema['DATA_TYPE'];
@@ -437,12 +439,15 @@ class SQLServerColumn extends AbstractColumn
     /**
      * Resolve enum values if any.
      *
-     * @param AbstractDriver  $driver
+     * @param DriverInterface $driver
      * @param array           $schema
      * @param SQLServerColumn $column
      */
-    private static function resolveEnum(AbstractDriver $driver, array $schema, SQLServerColumn $column)
-    {
+    private static function resolveEnum(
+        DriverInterface $driver,
+        array $schema,
+        SQLServerColumn $column
+    ) {
         $query = 'SELECT object_definition([o].[object_id]) AS [definition], '
             . "OBJECT_NAME([o].[object_id]) AS [name]\nFROM [sys].[objects] AS [o]\n"
             . "JOIN [sys].[sysconstraints] AS [c] ON [o].[object_id] = [c].[constid]\n"

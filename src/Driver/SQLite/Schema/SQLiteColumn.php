@@ -158,7 +158,6 @@ class SQLiteColumn extends AbstractColumn
      * @param string        $table
      * @param array         $schema
      * @param \DateTimeZone $timezone
-     *
      * @return SQLiteColumn
      */
     public static function createInstance(

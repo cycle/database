@@ -24,7 +24,12 @@ class TableTest extends \Spiral\Database\Tests\TableTest
         ];
         arsort($expected);
 
-        $columns = $table->getColumns();
+
+        $columns = [];
+        foreach ($table->getColumns() as $column) {
+            $columns[$column->getName()] = $column->getAbstractType();
+        }
+
         arsort($columns);
 
         $this->assertSame($expected, $columns);
