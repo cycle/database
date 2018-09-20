@@ -9,6 +9,7 @@
 namespace Spiral\Database\Driver\Traits;
 
 use Spiral\Database\Driver\Compiler;
+use Spiral\Database\Driver\CompilerInterface;
 use Spiral\Database\Query\DeleteQuery;
 use Spiral\Database\Query\InsertQuery;
 use Spiral\Database\Query\SelectQuery;
@@ -22,55 +23,59 @@ trait BuilderTrait
     /**
      * Get InsertQuery builder with driver specific query compiler.
      *
-     * @param string      $prefix Database specific table prefix, used to quote table names and build aliases.
+     * @param string      $prefix Database specific table prefix, used to quote table names and
+     *                            build aliases.
      * @param string|null $table
      * @return InsertQuery
      */
-    public function insertBuilder(string $prefix, string $table = null): InsertQuery
+    public function insertQuery(string $prefix, string $table = null): InsertQuery
     {
-        return new InsertQuery($this, $this->queryCompiler($prefix), $table);
+        return new InsertQuery($this, $this->getCompiler($prefix), $table);
     }
 
     /**
      * Get SelectQuery builder with driver specific query compiler.
      *
-     * @param string $prefix Database specific table prefix, used to quote table names and build aliases.
+     * @param string $prefix Database specific table prefix, used to quote table names and build
+     *                       aliases.
      * @param array  $from
      * @param array  $columns
      * @return SelectQuery
      */
-    public function selectBuilder(string $prefix, array $from = [], array $columns = []): SelectQuery
+    public function selectQuery(string $prefix, array $from = [], array $columns = []): SelectQuery
     {
-        return new SelectQuery($this, $this->queryCompiler($prefix), $from, $columns);
+        return new SelectQuery($this, $this->getCompiler($prefix), $from, $columns);
     }
 
     /**
      * @param string      $prefix
-     * @param string|null $from  Database specific table prefix, used to quote table names and build aliases.
+     * @param string|null $from  Database specific table prefix, used to quote table names and
+     *                           build aliases.
      * @param array       $where Initial builder parameters.
      * @return DeleteQuery
      */
-    public function deleteBuilder(string $prefix, string $from = null, array $where = []): DeleteQuery
+    public function deleteQuery(string $prefix, string $from = null, array $where = []): DeleteQuery
     {
-        return new DeleteQuery($this, $this->queryCompiler($prefix), $from, $where);
+        return new DeleteQuery($this, $this->getCompiler($prefix), $from, $where);
     }
 
     /**
      * Get UpdateQuery builder with driver specific query compiler.
      *
-     * @param string      $prefix Database specific table prefix, used to quote table names and build aliases.
+     * @param string      $prefix Database specific table prefix, used to quote table names and
+     *                            build aliases.
      * @param string|null $table
      * @param array       $where
      * @param array       $values
      * @return UpdateQuery
      */
-    public function updateBuilder(
+    public function updateQuery(
         string $prefix,
         string $table = null,
         array $where = [],
         array $values = []
     ): UpdateQuery {
-        return new UpdateQuery($this, $this->queryCompiler($prefix), $table, $where, $values);
+        return new UpdateQuery($this, $this->getCompiler($prefix), $table, $where, $values);
     }
 
     /**
@@ -81,5 +86,5 @@ trait BuilderTrait
      *
      * @return Compiler
      */
-    abstract public function queryCompiler(string $prefix = ''): Compiler;
+    abstract public function getCompiler(string $prefix = ''): CompilerInterface;
 }

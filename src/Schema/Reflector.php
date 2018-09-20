@@ -8,7 +8,6 @@
 
 namespace Spiral\Database\Schema;
 
-use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Driver\HandlerInterface;
 

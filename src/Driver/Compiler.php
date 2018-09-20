@@ -12,7 +12,7 @@ use Spiral\Database\Exception\CompilerException;
 use Spiral\Database\Injection\ExpressionInterface;
 use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Injection\ParameterInterface;
-use Spiral\Database\Query\QueryInterface;
+use Spiral\Database\Query\BuilderInterface;
 
 /**
  * Responsible for conversion of set of query parameters (where tokens, table names and etc) into
@@ -597,7 +597,7 @@ class Compiler implements CompilerInterface
      */
     protected function prepareFragment(FragmentInterface $context): string
     {
-        if ($context instanceof QueryInterface) {
+        if ($context instanceof BuilderInterface) {
             //Nested queries has to be wrapped with braces
             return '(' . $context->sqlStatement($this) . ')';
         }

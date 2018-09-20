@@ -45,7 +45,7 @@ use Spiral\Database\TableInterface;
  * @method AbstractColumn tinyBinary($column)
  * @method AbstractColumn longBinary($column)
  */
-abstract class AbstractTable implements TableInterface
+abstract class AbstractTable implements TableInterface, ElementInterface
 {
     /**
      * Table states.
@@ -531,7 +531,8 @@ abstract class AbstractTable implements TableInterface
     public function dropIndex(array $columns): AbstractTable
     {
         if (empty($schema = $this->current->findIndex($columns))) {
-            throw new SchemaException("Undefined index ['" . join("', '", $columns) . "'] in '{$this->getName()}'");
+            throw new SchemaException("Undefined index ['" . join("', '",
+                    $columns) . "'] in '{$this->getName()}'");
         }
 
         //Dropping index from current schema
@@ -609,9 +610,10 @@ abstract class AbstractTable implements TableInterface
      * does not exist it must be created. If table declared as dropped it will be removed from
      * the database.
      *
-     * @param int  $operation Operation to be performed while table being saved. In some cases (when multiple tables are
-     *                        being updated) it is reasonable to drop foreign keys and indexes prior to dropping related
-     *                        columns. See sync bus class to get more details.
+     * @param int  $operation Operation to be performed while table being saved. In some cases
+     *                        (when multiple tables are being updated) it is reasonable to drop
+     *                        foreign keys and indexes prior to dropping related columns. See sync
+     *                        bus class to get more details.
      * @param bool $reset     When true schema will be marked as synced.
      *
      * @throws HandlerException

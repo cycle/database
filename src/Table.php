@@ -14,6 +14,7 @@ use Spiral\Database\Query\InsertQuery;
 use Spiral\Database\Query\SelectQuery;
 use Spiral\Database\Query\UpdateQuery;
 use Spiral\Database\Schema\AbstractTable;
+use Spiral\Database\Traits\SchemaTrait;
 
 /**
  * Represent table level abstraction with simplified access to SelectQuery associated with such
@@ -24,46 +25,44 @@ use Spiral\Database\Schema\AbstractTable;
  * @method int max($identifier) Perform aggregation (MAX) based on column or expression value.
  * @method int sum($identifier) Perform aggregation (SUM) based on column or expression value.
  */
-class Table implements \JsonSerializable, \IteratorAggregate, \Countable
+class Table implements TableInterface, \JsonSerializable, \IteratorAggregate, \Countable
 {
-    /**
-     * @var string
-     */
+    use SchemaTrait;
+
+    /** @var string */
     private $name = '';
 
-    /**
-     * @var Database
-     */
+    /** @var DatabaseInterface */
     protected $database = null;
 
     /**
-     * @param Database $database Parent DBAL database.
-     * @param string   $name     Table name without prefix.
+     * @param DatabaseInterface $database Parent DBAL database.
+     * @param string            $name     Table name without prefix.
      */
-    public function __construct(Database $database, string $name)
+    public function __construct(DatabaseInterface $database, string $name)
     {
         $this->name = $name;
         $this->database = $database;
     }
 
     /**
-     * {@inheritdoc}
+     * Get associated database.
      *
      * @return Database
      */
-    public function getDatabase(): Database
+    public function getDatabase(): DatabaseInterface
     {
         return $this->database;
     }
 
     /**
-     * {@inheritdoc}
+     * Real table name, will include database prefix.
      *
-     * @return AbstractTable
+     * @return string
      */
-    public function getSchema(): AbstractTable
+    public function getFullName(): string
     {
-        return $this->database->getDriver()->tableSchema($this->name, $this->database->getPrefix());
+        return $this->database->getPrefix() . $this->name;
     }
 
     /**
@@ -75,49 +74,21 @@ class Table implements \JsonSerializable, \IteratorAggregate, \Countable
     }
 
     /**
-     * Real table name, will include database prefix.
+     * Get modifiable table schema.
      *
-     * @return string
+     * @return AbstractTable
      */
-    public function fullName(): string
+    public function getSchema(): AbstractTable
     {
-        return $this->database->getPrefix() . $this->name;
+        return $this->database->getDriver()->getSchema($this->name, $this->database->getPrefix());
     }
 
     /**
-     * Check if table exists.
-     *
-     * @return bool
+     * Erase all table data.
      */
-    public function exists(): bool
+    public function eraseData()
     {
-        return $this->database->hasTable($this->name);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function truncateData()
-    {
-        $this->database->getDriver()->eraseTable($this->fullName());
-    }
-
-    /**
-     * Get list of column names associated with their abstract types.
-     *
-     * Attention, this is helper function, avoid using it while working with schemas.
-     *
-     * @see getSchema()
-     * @return array
-     */
-    public function getColumns(): array
-    {
-        $columns = [];
-        foreach ($this->getSchema()->getColumns() as $column) {
-            $columns[$column->getName()] = $column->abstractType();
-        }
-
-        return $columns;
+        $this->database->getDriver()->eraseData($this->getFullName());
     }
 
     /**
@@ -127,7 +98,6 @@ class Table implements \JsonSerializable, \IteratorAggregate, \Countable
      * $table->insertOne(["name" => "Wolfy-J", "balance" => 10]);
      *
      * @param array $rowset
-     *
      * @return int
      *
      * @throws BuilderException
@@ -158,7 +128,7 @@ class Table implements \JsonSerializable, \IteratorAggregate, \Countable
      *
      * @return InsertQuery
      */
-    public function insert()
+    public function insert(): InsertQuery
     {
         return $this->database->insert($this->name);
     }

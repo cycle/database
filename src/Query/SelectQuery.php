@@ -250,14 +250,14 @@ class SelectQuery extends AbstractQuery implements
 
         //Unions always located at the end of query.
         foreach ($this->joinTokens as $join) {
-            if ($join['outer'] instanceof QueryInterface) {
+            if ($join['outer'] instanceof BuilderInterface) {
                 $parameters = array_merge($parameters, $join['outer']->getParameters());
             }
         }
 
         //Unions always located at the end of query.
         foreach ($this->unionTokens as $union) {
-            if ($union[1] instanceof QueryInterface) {
+            if ($union[1] instanceof BuilderInterface) {
                 $parameters = array_merge($parameters, $union[1]->getParameters());
             }
         }

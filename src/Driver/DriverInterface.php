@@ -15,6 +15,7 @@ use Spiral\Database\Query\InsertQuery;
 use Spiral\Database\Query\SelectQuery;
 use Spiral\Database\Query\UpdateQuery;
 use Spiral\Database\QueryStatement;
+use Spiral\Database\Schema\AbstractTable;
 
 /**
  * Wraps PDO connection and provides common abstractions over database operations.
@@ -141,6 +142,15 @@ interface DriverInterface
     public function hasTable(string $name): bool;
 
     /**
+     * Get schema specific to the given table.
+     *
+     * @param string $name
+     * @param string $prefix
+     * @return AbstractTable
+     */
+    public function getSchema(string $name, string $prefix = ''): AbstractTable;
+
+    /**
      * Get every available table name as array.
      *
      * @return array
@@ -154,7 +164,7 @@ interface DriverInterface
      *
      * @throws QueryException
      */
-    public function eraseTable(string $table);
+    public function eraseData(string $table);
 
     /**
      * Wraps PDO query method with custom representation class.
@@ -182,7 +192,8 @@ interface DriverInterface
      * Get id of last inserted row, this method must be called after insert query. Attention,
      * such functionality may not work in some DBMS property (Postgres).
      *
-     * @param string|null $sequence Name of the sequence object from which the ID should be returned.
+     * @param string|null $sequence Name of the sequence object from which the ID should be
+     *                              returned.
      * @return mixed
      */
     public function lastInsertID(string $sequence = null);
@@ -190,40 +201,48 @@ interface DriverInterface
     /**
      * Get InsertQuery builder with driver specific query compiler.
      *
-     * @param string      $prefix Database specific table prefix, used to quote table names and build aliases.
+     * @param string      $prefix Database specific table prefix, used to quote table names and
+     *                            build aliases.
      * @param string|null $table
      * @return InsertQuery
      */
-    public function insertBuilder(string $prefix, string $table = null): InsertQuery;
+    public function insertQuery(string $prefix, string $table = null): InsertQuery;
 
     /**
      * Get SelectQuery builder with driver specific query compiler.
      *
-     * @param string $prefix Database specific table prefix, used to quote table names and build aliases.
+     * @param string $prefix Database specific table prefix, used to quote table names and build
+     *                       aliases.
      * @param array  $from
      * @param array  $columns
      * @return SelectQuery
      */
-    public function selectBuilder(string $prefix, array $from = [], array $columns = []): SelectQuery;
+    public function selectQuery(string $prefix, array $from = [], array $columns = []): SelectQuery;
 
     /**
      * @param string      $prefix
-     * @param string|null $from  Database specific table prefix, used to quote table names and build aliases.
+     * @param string|null $from  Database specific table prefix, used to quote table names and
+     *                           build aliases.
      * @param array       $where Initial builder parameters.
      * @return DeleteQuery
      */
-    public function deleteBuilder(string $prefix, string $from = null, array $where = []): DeleteQuery;
+    public function deleteQuery(
+        string $prefix,
+        string $from = null,
+        array $where = []
+    ): DeleteQuery;
 
     /**
      * Get UpdateQuery builder with driver specific query compiler.
      *
-     * @param string      $prefix Database specific table prefix, used to quote table names and build aliases.
+     * @param string      $prefix Database specific table prefix, used to quote table names and
+     *                            build aliases.
      * @param string|null $table
      * @param array       $where
      * @param array       $values
      * @return UpdateQuery
      */
-    public function updateBuilder(
+    public function updateQuery(
         string $prefix,
         string $table = null,
         array $where = [],
@@ -236,6 +255,14 @@ interface DriverInterface
      * @return HandlerInterface
      */
     public function getHandler(): HandlerInterface;
+
+    /**
+     * Get query compiler with specific database prefix.
+     *
+     * @param string $prefix
+     * @return CompilerInterface
+     */
+    public function getCompiler(string $prefix = ''): CompilerInterface;
 
     /**
      * Start SQL transaction with specified isolation level (not all DBMS support it). Nested

@@ -80,13 +80,11 @@ interface DatabaseInterface
      */
     public function getTables(): array;
 
-
-
     /**
      * @param string $name
      * @return TableInterface
      */
-    //public function table(string $name): TableInterface;
+    public function table(string $name): TableInterface;
 
     /**
      * Execute statement and return number of affected rows.

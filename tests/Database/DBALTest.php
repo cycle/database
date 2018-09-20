@@ -15,7 +15,7 @@ use Spiral\Database\DBAL;
 use Spiral\Database\Driver\SQLite\SQLiteDriver;
 use Spiral\Database\Database;
 
-class ManagerTest extends TestCase
+class DBALTest extends TestCase
 {
     const DEFAULT_OPTIONS = [
         'connection' => 'sqlite:' . __DIR__ . 'Drivers/SQLite/fixture/runtime.db',

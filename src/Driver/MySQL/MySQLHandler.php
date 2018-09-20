@@ -8,12 +8,13 @@
 namespace Spiral\Database\Driver\MySQL;
 
 use Spiral\Database\Driver\AbstractHandler;
+use Spiral\Database\Driver\MySQL\Exception\MySQLException;
 use Spiral\Database\Driver\MySQL\Schema\MySQLTable;
 use Spiral\Database\Exception\Driver\MySQLDriverException;
 use Spiral\Database\Exception\SchemaException;
 use Spiral\Database\Schema\AbstractColumn;
-use Spiral\Database\Schema\AbstractIndex;
 use Spiral\Database\Schema\AbstractForeignKey;
+use Spiral\Database\Schema\AbstractIndex;
 use Spiral\Database\Schema\AbstractTable;
 
 class MySQLHandler extends AbstractHandler
@@ -90,18 +91,18 @@ class MySQLHandler extends AbstractHandler
     /**
      * @param AbstractColumn $column
      *
-     * @throws MySQLDriverException
+     * @throws MySQLException
      */
     protected function assertValid(AbstractColumn $column)
     {
         if (
             in_array(
-                $column->abstractType(),
+                $column->getAbstractType(),
                 ['text', 'tinyText', 'longText', 'blob', 'tinyBlob', 'longBlob']
             )
             && is_string($column->getDefaultValue()) && $column->getDefaultValue() !== ''
         ) {
-            throw new MySQLDriverException(
+            throw new MySQLException(
                 "Column {$column} of type text/blob can not have non empty default value"
             );
         }

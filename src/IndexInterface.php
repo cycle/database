@@ -11,8 +11,15 @@ namespace Spiral\Database;
 /**
  * Represents single table index associated with set of columns.
  */
-interface IndexInterface extends ElementInterface
+interface IndexInterface
 {
+    /**
+     * Get element name (unquoted).
+     *
+     * @return string
+     */
+    public function getName(): string;
+
     /**
      * Check if index is unique.
      *

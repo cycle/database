@@ -11,15 +11,22 @@ namespace Spiral\Database;
 /**
  * Represents table schema column abstraction.
  */
-interface ColumnInterface extends ElementInterface
+interface ColumnInterface
 {
     /**
      * PHP types for phpType() method.
      */
-    const INT = 'int';
-    const BOOL = 'bool';
+    const INT    = 'int';
+    const BOOL   = 'bool';
     const STRING = 'string';
-    const FLOAT = 'float';
+    const FLOAT  = 'float';
+
+    /**
+     * Get element name (unquoted).
+     *
+     * @return string
+     */
+    public function getName(): string;
 
     /**
      * Internal database type, can vary based on database driver.
@@ -34,7 +41,7 @@ interface ColumnInterface extends ElementInterface
      *
      * @return string
      */
-    public function abstractType(): string;
+    public function getAbstractType(): string;
 
     /**
      * Must return PHP type column value can be better mapped into: int, bool, string or float.

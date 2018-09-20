@@ -6,8 +6,7 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database;
-
+namespace Spiral\Database\Schema;
 
 interface ElementInterface
 {

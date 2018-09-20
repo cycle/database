@@ -12,9 +12,7 @@ namespace Spiral\Database\Exception;
  */
 class HandlerException extends DriverException implements QueryExceptionInterface
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $query;
 
     /**

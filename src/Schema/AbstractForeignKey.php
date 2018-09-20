@@ -16,7 +16,7 @@ use Spiral\Database\Schema\Traits\ElementTrait;
  * Abstract foreign schema with read (see ReferenceInterface) and write abilities. Must be
  * implemented by driver to support DBMS specific syntax and creation rules.
  */
-abstract class AbstractForeignKey implements ForeignKeyInterface
+abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterface
 {
     use ElementTrait;
 
@@ -156,8 +156,11 @@ abstract class AbstractForeignKey implements ForeignKeyInterface
      *
      * @return self
      */
-    public function references(string $table, string $column = 'id', bool $forcePrefix = true): AbstractForeignKey
-    {
+    public function references(
+        string $table,
+        string $column = 'id',
+        bool $forcePrefix = true
+    ): AbstractForeignKey {
         $this->foreignTable = ($forcePrefix ? $this->tablePrefix : '') . $table;
         $this->foreignKey = $column;
 

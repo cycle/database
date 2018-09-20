@@ -41,7 +41,8 @@ class Database implements DatabaseInterface, InjectableInterface
     /**
      * @param DriverInterface $driver Driver instance responsible for database connection.
      * @param string          $name   Internal database name/id.
-     * @param string          $prefix Default database table prefix, will be used for all table identifiers.
+     * @param string          $prefix Default database table prefix, will be used for all table
+     *                                identifiers.
      */
     public function __construct(DriverInterface $driver, string $name, string $prefix = '')
     {
@@ -131,7 +132,7 @@ class Database implements DatabaseInterface, InjectableInterface
      *
      * @return Table
      */
-    public function table(string $name): Table
+    public function table(string $name): TableInterface
     {
         return new Table($this, $name);
     }
@@ -168,7 +169,7 @@ class Database implements DatabaseInterface, InjectableInterface
      */
     public function insert(string $table = null): InsertQuery
     {
-        return $this->getDriver(self::WRITE)->insertBuilder($this->prefix, $table);
+        return $this->getDriver(self::WRITE)->insertQuery($this->prefix, $table);
     }
 
     /**
@@ -176,7 +177,7 @@ class Database implements DatabaseInterface, InjectableInterface
      */
     public function update(string $table = null, array $values = [], array $where = []): UpdateQuery
     {
-        return $this->getDriver(self::WRITE)->updateBuilder($this->prefix, $table, $where, $values);
+        return $this->getDriver(self::WRITE)->updateQuery($this->prefix, $table, $where, $values);
     }
 
     /**
@@ -184,7 +185,7 @@ class Database implements DatabaseInterface, InjectableInterface
      */
     public function delete(string $table = null, array $where = []): DeleteQuery
     {
-        return $this->getDriver(self::WRITE)->deleteBuilder($this->prefix, $table, $where);
+        return $this->getDriver(self::WRITE)->deleteQuery($this->prefix, $table, $where);
     }
 
     /**
@@ -198,7 +199,7 @@ class Database implements DatabaseInterface, InjectableInterface
             $columns = $columns[0];
         }
 
-        return $this->getDriver(self::READ)->selectBuilder($this->prefix, [], $columns);
+        return $this->getDriver(self::READ)->selectQuery($this->prefix, [], $columns);
     }
 
     /**

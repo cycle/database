@@ -9,8 +9,8 @@ namespace Spiral\Database\Driver\MySQL\Schema;
 
 use Spiral\Database\Exception\SchemaException;
 use Spiral\Database\Schema\AbstractColumn;
-use Spiral\Database\Schema\AbstractIndex;
 use Spiral\Database\Schema\AbstractForeignKey;
+use Spiral\Database\Schema\AbstractIndex;
 use Spiral\Database\Schema\AbstractTable;
 use Spiral\Database\Schema\State;
 
@@ -57,7 +57,6 @@ class MySQLTable extends AbstractTable
     public function setEngine($engine)
     {
         if ($this->exists()) {
-            //todo: support engine change for already exists tables
             throw new SchemaException('Table engine can be set only at moment of creation');
         }
 

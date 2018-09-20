@@ -15,7 +15,7 @@ use Spiral\Database\Driver\DriverInterface;
  * QueryBuilder classes generate set of control tokens for query compilers, this is query level
  * abstraction.
  */
-abstract class AbstractQuery implements QueryInterface
+abstract class AbstractQuery implements BuilderInterface
 {
     /** @var DriverInterface */
     protected $driver = null;
@@ -112,7 +112,7 @@ abstract class AbstractQuery implements QueryInterface
     {
         $result = [];
         foreach ($parameters as $parameter) {
-            if ($parameter instanceof QueryInterface) {
+            if ($parameter instanceof BuilderInterface) {
                 $result = array_merge($result, $parameter->getParameters());
                 continue;
             }

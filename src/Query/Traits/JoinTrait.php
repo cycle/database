@@ -15,7 +15,7 @@ use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
 use Spiral\Database\Query\AbstractQuery;
-use Spiral\Database\Query\QueryInterface;
+use Spiral\Database\Query\BuilderInterface;
 
 /**
  * Provides ability to generate QueryCompiler JOIN tokens including ON conditions and table/column
@@ -400,7 +400,7 @@ trait JoinTrait
         return function ($parameter) {
             if ($parameter instanceof FragmentInterface) {
                 //We are only not creating bindings for plan fragments
-                if (!$parameter instanceof ParameterInterface && !$parameter instanceof QueryInterface) {
+                if (!$parameter instanceof ParameterInterface && !$parameter instanceof BuilderInterface) {
                     return $parameter;
                 }
             }

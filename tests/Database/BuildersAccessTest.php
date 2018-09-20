@@ -4,16 +4,17 @@
  *
  * @author Wolfy-J
  */
+
 namespace Spiral\Database\Tests;
 
+use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Driver\Compiler;
 use Spiral\Database\Query\DeleteQuery;
 use Spiral\Database\Query\InsertQuery;
 use Spiral\Database\Query\SelectQuery;
 use Spiral\Database\Query\UpdateQuery;
-use Spiral\Database\Driver\AbstractDriver;
-use Spiral\Database\Table;
 use Spiral\Database\Schema\AbstractTable;
+use Spiral\Database\Table;
 
 abstract class BuildersAccessTest extends BaseTest
 {
@@ -50,7 +51,7 @@ abstract class BuildersAccessTest extends BaseTest
     {
         $this->assertInstanceOf(
             Compiler::class,
-            $this->db()->getDriver()->queryCompiler('')
+            $this->db()->getDriver()->getCompiler('')
         );
     }
 

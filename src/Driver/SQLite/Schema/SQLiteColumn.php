@@ -117,13 +117,13 @@ class SQLiteColumn extends AbstractColumn
      *
      * @return string
      */
-    public function abstractType(): string
+    public function getAbstractType(): string
     {
         if ($this->primaryKey) {
             return 'primary';
         }
 
-        return parent::abstractType();
+        return parent::getAbstractType();
     }
 
     /**
@@ -132,7 +132,7 @@ class SQLiteColumn extends AbstractColumn
     public function sqlStatement(AbstractDriver $driver): string
     {
         $statement = parent::sqlStatement($driver);
-        if ($this->abstractType() != 'enum') {
+        if ($this->getAbstractType() != 'enum') {
             return $statement;
         }
 

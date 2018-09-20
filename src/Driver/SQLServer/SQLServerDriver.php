@@ -65,7 +65,7 @@ class SQLServerDriver extends AbstractDriver
     /**
      * {@inheritdoc}
      */
-    public function eraseTable(string $table)
+    public function eraseData(string $table)
     {
         $this->execute("TRUNCATE TABLE {$this->identifier($table)}");
     }

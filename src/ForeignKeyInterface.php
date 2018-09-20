@@ -11,10 +11,17 @@ namespace Spiral\Database;
 /**
  * Represents single foreign key and it's options.
  */
-interface ForeignKeyInterface extends ElementInterface
+interface ForeignKeyInterface
 {
-    const CASCADE = 'CASCADE';
+    const CASCADE   = 'CASCADE';
     const NO_ACTION = 'NO ACTION';
+
+    /**
+     * Get element name (unquoted).
+     *
+     * @return string
+     */
+    public function getName(): string;
 
     /**
      * Get column name foreign key assigned to.

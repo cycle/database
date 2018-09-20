@@ -12,7 +12,7 @@ use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Injection\ExpressionInterface;
 use Spiral\Database\Injection\ParameterInterface;
 
-interface QueryInterface extends ExpressionInterface
+interface BuilderInterface extends ExpressionInterface
 {
     /**
      * Get ordered list of builder parameters in a form of ParameterInterface array.

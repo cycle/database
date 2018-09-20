@@ -49,7 +49,7 @@ class SQLiteDriver extends AbstractDriver
     /**
      * {@inheritdoc}
      */
-    public function eraseTable(string $table)
+    public function eraseData(string $table)
     {
         $this->execute("DELETE FROM {$this->identifier($table)}");
     }

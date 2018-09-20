@@ -8,7 +8,6 @@
 namespace Spiral\Database\Driver;
 
 use Spiral\Core\Exception\InvalidArgumentException;
-use Spiral\Database\ElementInterface;
 use Spiral\Database\Exception\DBALException;
 use Spiral\Database\Exception\DriverException;
 use Spiral\Database\Exception\HandlerException;
@@ -18,6 +17,7 @@ use Spiral\Database\Schema\AbstractForeignKey;
 use Spiral\Database\Schema\AbstractIndex;
 use Spiral\Database\Schema\AbstractTable;
 use Spiral\Database\Schema\Comparator;
+use Spiral\Database\Schema\ElementInterface;
 
 /**
  * Handler class implements set of DBMS specific operations for schema manipulations. Can be used
@@ -164,8 +164,11 @@ abstract class AbstractHandler implements HandlerInterface
     /**
      * @inheritdoc
      */
-    public function alterForeignKey(AbstractTable $table, AbstractForeignKey $initial, AbstractForeignKey $foreignKey)
-    {
+    public function alterForeignKey(
+        AbstractTable $table,
+        AbstractForeignKey $initial,
+        AbstractForeignKey $foreignKey
+    ) {
         $this->dropForeignKey($table, $initial);
         $this->createForeignKey($table, $foreignKey);
     }

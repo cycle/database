@@ -199,7 +199,7 @@ class MySQLColumn extends AbstractColumn
         }
 
         //Fetching enum values
-        if ($column->abstractType() == 'enum' && !empty($options)) {
+        if ($column->getAbstractType() == 'enum' && !empty($options)) {
             $column->enumValues = array_map(function ($value) {
                 return trim($value, $value[0]);
             }, $options);
@@ -214,7 +214,7 @@ class MySQLColumn extends AbstractColumn
         }
 
         if (
-            $column->abstractType() == 'timestamp'
+            $column->getAbstractType() == 'timestamp'
             && $column->defaultValue == '0000-00-00 00:00:00'
         ) {
             //Normalizing default value for timestamps

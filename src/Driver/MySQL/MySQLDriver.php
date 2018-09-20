@@ -13,7 +13,6 @@ use Spiral\Database\DatabaseInterface;
 use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Driver\HandlerInterface;
 use Spiral\Database\Driver\MySQL\Schema\MySQLTable;
-use Spiral\Database\Exception\ConnectionException;
 use Spiral\Database\Exception\QueryException;
 
 /**
@@ -56,7 +55,7 @@ class MySQLDriver extends AbstractDriver
     /**
      * {@inheritdoc}
      */
-    public function eraseTable(string $table)
+    public function eraseData(string $table)
     {
         $this->execute("TRUNCATE TABLE {$this->identifier($table)}");
     }
@@ -90,7 +89,7 @@ class MySQLDriver extends AbstractDriver
     protected function clarifyException(\PDOException $exception, string $query): QueryException
     {
         if ($exception->getCode() > 2000) {
-            return new ConnectionException($exception, $query);
+            return new QueryException\ConnectionException($exception, $query);
         }
 
         return new QueryException($exception, $query);

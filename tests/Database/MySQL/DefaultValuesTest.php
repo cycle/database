@@ -12,7 +12,7 @@ class DefaultValuesTest extends \Spiral\Database\Tests\DefaultValuesTest
     const DRIVER = 'mysql';
 
     /**
-     * @expectedException \Spiral\Database\Exception\Driver\MySQLDriverException
+     * @expectedException \Spiral\Database\Driver\MySQL\Exception\MySQLException
      * @expectedExceptionMessage Column table.target of type text/blob can not have non empty
      *                           default value
      */

@@ -13,7 +13,7 @@ use Spiral\Database\Injection\ExpressionInterface;
 use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
-use Spiral\Database\Query\QueryInterface;
+use Spiral\Database\Query\BuilderInterface;
 
 trait WhereTrait
 {
@@ -117,7 +117,7 @@ trait WhereTrait
         return function ($parameter) {
             if ($parameter instanceof FragmentInterface) {
                 //We are only not creating bindings for plan fragments
-                if (!$parameter instanceof ParameterInterface && !$parameter instanceof QueryInterface) {
+                if (!$parameter instanceof ParameterInterface && !$parameter instanceof BuilderInterface) {
                     return $parameter;
                 }
             }

@@ -142,13 +142,13 @@ class PostgresColumn extends AbstractColumn
     /**
      * {@inheritdoc}
      */
-    public function abstractType(): string
+    public function getAbstractType(): string
     {
         if (!empty($this->enumValues)) {
             return 'enum';
         }
 
-        return parent::abstractType();
+        return parent::getAbstractType();
     }
 
     /**
@@ -203,7 +203,7 @@ class PostgresColumn extends AbstractColumn
     {
         $statement = parent::sqlStatement($driver);
 
-        if ($this->abstractType() != 'enum') {
+        if ($this->getAbstractType() != 'enum') {
             //Nothing special
             return $statement;
         }
@@ -243,7 +243,7 @@ class PostgresColumn extends AbstractColumn
          * This block defines column type and all variations.
          */
         if ($currentType != $initialType) {
-            if ($this->abstractType() == 'enum') {
+            if ($this->getAbstractType() == 'enum') {
                 //Getting longest value
                 $enumSize = $this->size;
                 foreach ($this->enumValues as $value) {
@@ -267,7 +267,7 @@ class PostgresColumn extends AbstractColumn
         }
 
         //Dropping enum constrain before any operation
-        if ($initial->abstractType() == 'enum' && $this->constrained) {
+        if ($initial->getAbstractType() == 'enum' && $this->constrained) {
             $operations[] = 'DROP CONSTRAINT ' . $driver->identifier($this->enumConstraint());
         }
 
@@ -285,7 +285,7 @@ class PostgresColumn extends AbstractColumn
             $operations[] = "ALTER COLUMN {$identifier} " . (!$this->nullable ? 'SET' : 'DROP') . ' NOT NULL';
         }
 
-        if ($this->abstractType() == 'enum') {
+        if ($this->getAbstractType() == 'enum') {
             $enumValues = [];
             foreach ($this->enumValues as $value) {
                 $enumValues[] = $driver->quote($value);
@@ -477,7 +477,7 @@ class PostgresColumn extends AbstractColumn
         }
 
         if (
-            in_array($this->abstractType(), ['primary', 'bigPrimary'])
+            in_array($this->getAbstractType(), ['primary', 'bigPrimary'])
             && $initial->getDefaultValue() != $this->getDefaultValue()
         ) {
             //PG adds default values to primary keys

@@ -161,13 +161,13 @@ class SQLServerColumn extends AbstractColumn
     /**
      * {@inheritdoc}
      */
-    public function abstractType(): string
+    public function getAbstractType(): string
     {
         if (!empty($this->enumValues)) {
             return 'enum';
         }
 
-        return parent::abstractType();
+        return parent::getAbstractType();
     }
 
     /**
@@ -194,7 +194,7 @@ class SQLServerColumn extends AbstractColumn
      */
     public function sqlStatement(AbstractDriver $driver, bool $withEnum = true): string
     {
-        if ($withEnum && $this->abstractType() == 'enum') {
+        if ($withEnum && $this->getAbstractType() == 'enum') {
             return "{$this->sqlStatement($driver, false)} {$this->enumStatement($driver)}";
         }
 
@@ -227,7 +227,7 @@ class SQLServerColumn extends AbstractColumn
     protected function quoteDefault(AbstractDriver $driver): string
     {
         $defaultValue = parent::quoteDefault($driver);
-        if ($this->abstractType() == 'boolean') {
+        if ($this->getAbstractType() == 'boolean') {
             $defaultValue = (int)$this->defaultValue;
         }
 
@@ -264,7 +264,7 @@ class SQLServerColumn extends AbstractColumn
         ];
 
         if ($currentType != $initType) {
-            if ($this->abstractType() == 'enum') {
+            if ($this->getAbstractType() == 'enum') {
                 //Getting longest value
                 $enumSize = $this->size;
                 foreach ($this->enumValues as $value) {
@@ -296,7 +296,7 @@ class SQLServerColumn extends AbstractColumn
         }
 
         //Constraint should be already removed it this moment (see alterColumn in SQLServerHandler)
-        if ($this->abstractType() == 'enum') {
+        if ($this->getAbstractType() == 'enum') {
             $operations[] = "ADD {$this->enumStatement($driver)}";
         }
 

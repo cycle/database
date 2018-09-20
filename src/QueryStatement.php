@@ -16,9 +16,7 @@ use PDOStatement;
  */
 class QueryStatement extends PDOStatement
 {
-    /**
-     * Limits after which no records will be dumped in __debugInfo.
-     */
+    // Limits after which no records will be dumped in __debugInfo.
     const DUMP_LIMIT = 500;
 
     /**

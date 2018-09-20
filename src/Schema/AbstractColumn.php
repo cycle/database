@@ -41,7 +41,7 @@ use Spiral\Database\Schema\Traits\ElementTrait;
  * @method AbstractColumn|$this longBinary()
  * @method AbstractColumn|$this json()
  */
-abstract class AbstractColumn implements ColumnInterface
+abstract class AbstractColumn implements ColumnInterface, ElementInterface
 {
     use ElementTrait;
 
@@ -263,7 +263,7 @@ abstract class AbstractColumn implements ColumnInterface
      */
     public function phpType(): string
     {
-        $schemaType = $this->abstractType();
+        $schemaType = $this->getAbstractType();
         foreach ($this->phpMapping as $phpType => $candidates) {
             if (in_array($schemaType, $candidates)) {
                 return $phpType;
@@ -329,8 +329,8 @@ abstract class AbstractColumn implements ColumnInterface
             return $this->defaultValue;
         }
 
-        if (in_array($this->abstractType(), ['time', 'date', 'datetime', 'timestamp'])) {
-            return $this->normalizeDatetime($this->abstractType(), $this->defaultValue);
+        if (in_array($this->getAbstractType(), ['time', 'date', 'datetime', 'timestamp'])) {
+            return $this->normalizeDatetime($this->getAbstractType(), $this->defaultValue);
         }
 
         switch ($this->phpType()) {
@@ -375,7 +375,7 @@ abstract class AbstractColumn implements ColumnInterface
      *
      * @return string
      */
-    public function abstractType(): string
+    public function getAbstractType(): string
     {
         foreach ($this->reverseMapping as $type => $candidates) {
             foreach ($candidates as $candidate) {
@@ -577,7 +577,7 @@ abstract class AbstractColumn implements ColumnInterface
     {
         $statement = [$driver->identifier($this->name), $this->type];
 
-        if ($this->abstractType() == 'enum') {
+        if ($this->getAbstractType() == 'enum') {
             //Enum specific column options
             if (!empty($enumDefinition = $this->quoteEnum($driver))) {
                 $statement[] = $enumDefinition;
@@ -616,7 +616,7 @@ abstract class AbstractColumn implements ColumnInterface
             'name' => $this->name,
             'type' => [
                 'database' => $this->type,
-                'schema'   => $this->abstractType(),
+                'schema'   => $this->getAbstractType(),
                 'php'      => $this->phpType(),
             ],
         ];
@@ -633,11 +633,11 @@ abstract class AbstractColumn implements ColumnInterface
             $column['defaultValue'] = $this->getDefaultValue();
         }
 
-        if ($this->abstractType() == 'enum') {
+        if ($this->getAbstractType() == 'enum') {
             $column['enumValues'] = $this->enumValues;
         }
 
-        if ($this->abstractType() == 'decimal') {
+        if ($this->getAbstractType() == 'decimal') {
             $column['precision'] = $this->precision;
             $column['scale'] = $this->scale;
         }

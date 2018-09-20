@@ -10,7 +10,7 @@ namespace Spiral\Database\Query\Traits;
 
 use Spiral\Database\Driver\Compiler;
 use Spiral\Database\Exception\BuilderException;
-use Spiral\Database\Query\QueryInterface;
+use Spiral\Database\Query\BuilderInterface;
 
 trait TokenTrait
 {
@@ -64,7 +64,7 @@ trait TokenTrait
             return;
         }
 
-        if ($identifier instanceof QueryInterface) {
+        if ($identifier instanceof BuilderInterface) {
             //Will copy every parameter from QueryBuilder
             $wrapper($identifier);
         }

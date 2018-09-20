@@ -13,7 +13,6 @@ use PHPUnit\Framework\TestCase;
 use Spiral\Database\Database;
 use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\QueryStatement;
-use Spiral\Database\Table;
 
 class DatabaseTest extends TestCase
 {
@@ -52,23 +51,6 @@ class DatabaseTest extends TestCase
 
         $database = new Database($driver, 'test', 'prefix_');
         $this->assertTrue($database->hasTable('table'));
-    }
-
-    public function testTable()
-    {
-        $driver = $this->makeDriver();
-
-        $database = new Database($driver, 'test', 'prefix_');
-
-        $driver->expects($this->once())->method('hasTable')->with('prefix_table')->will(
-            $this->returnValue(true)
-        );
-
-        $this->assertInstanceOf(Table::class, $table = $database->table('table'));
-        $this->assertEquals('table', $table->getName());
-        $this->assertEquals('prefix_table', $table->fullName());
-
-        $this->assertTrue($table->exists());
     }
 
     /**

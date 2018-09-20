@@ -45,7 +45,7 @@ class PostgresDriver extends AbstractDriver
     /**
      * {@inheritdoc}
      */
-    public function eraseTable(string $table)
+    public function eraseData(string $table)
     {
         $this->execute("TRUNCATE TABLE {$this->identifier($table)}");
     }
@@ -87,7 +87,7 @@ class PostgresDriver extends AbstractDriver
             );
         }
 
-        $this->primaryKeys[$table] = $this->tableSchema($table, $prefix)->getPrimaryKeys();
+        $this->primaryKeys[$table] = $this->getSchema($table, $prefix)->getPrimaryKeys();
         if (count($this->primaryKeys[$table]) === 1) {
             //We do support only single primary key
             $this->primaryKeys[$table] = $this->primaryKeys[$table][0];
@@ -103,9 +103,9 @@ class PostgresDriver extends AbstractDriver
      *
      * Postgres uses custom insert query builder in order to return value of inserted row.
      */
-    public function insertBuilder(string $prefix, string $table = null): InsertQuery
+    public function insertQuery(string $prefix, string $table = null): InsertQuery
     {
-        return new PostgresInsertQuery($this, $this->queryCompiler($prefix), $table);
+        return new PostgresInsertQuery($this, $this->getCompiler($prefix), $table);
     }
 
     /**

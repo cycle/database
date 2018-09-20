@@ -4,12 +4,13 @@
  *
  * @author Wolfy-J
  */
+
 namespace Spiral\Database\Tests;
 
 use Spiral\Database\Database;
-use Spiral\Database\Table;
 use Spiral\Database\Injection\Expression;
 use Spiral\Database\Schema\AbstractTable;
+use Spiral\Database\Table;
 
 abstract class TableTest extends BaseTest
 {
@@ -60,11 +61,16 @@ abstract class TableTest extends BaseTest
         $table = $this->database->table('table');
         $this->assertSame(0, $table->count());
 
+        $columns = [];
+        foreach ($table->getColumns() as $column) {
+            $columns[$column->getName()] = $column->getAbstractType();
+        }
+
         $this->assertSame([
             'id'    => 'primary',
             'name'  => 'text',
             'value' => 'integer'
-        ], $table->getColumns());
+        ], $columns);
     }
 
     public function testInsertOneRow()
@@ -326,7 +332,7 @@ abstract class TableTest extends BaseTest
         );
 
         $this->assertSame(4, $table->count());
-        $table->truncateData();
+        $table->eraseData();
         $this->assertSame(0, $table->count());
     }
 

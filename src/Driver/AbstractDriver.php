@@ -152,11 +152,11 @@ abstract class AbstractDriver implements DriverInterface, LoggerAwareInterface
      * Get Driver specific AbstractTable implementation.
      *
      * @param string $table  Table name without prefix included.
-     * @param string $prefix Database specific table prefix, this parameter is not required, but if provided all foreign
-     *                       keys will be created using it.
+     * @param string $prefix Database specific table prefix, this parameter is not required, but if
+     *                       provided all foreign keys will be created using it.
      * @return AbstractTable
      */
-    public function tableSchema(string $table, string $prefix = ''): AbstractTable
+    public function getSchema(string $table, string $prefix = ''): AbstractTable
     {
         $schema = static::TABLE_SCHEMA_CLASS;
 
@@ -168,10 +168,9 @@ abstract class AbstractDriver implements DriverInterface, LoggerAwareInterface
      *
      * @param string $prefix Database specific table prefix, used to quote table names and build
      *                       aliases.
-     *
      * @return Compiler
      */
-    public function queryCompiler(string $prefix = ''): Compiler
+    public function getCompiler(string $prefix = ''): CompilerInterface
     {
         $compiler = static::QUERY_COMPILER;
 

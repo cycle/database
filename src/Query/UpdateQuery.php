@@ -123,7 +123,7 @@ class UpdateQuery extends AbstractQuery
     {
         $values = [];
         foreach ($this->values as $value) {
-            if ($value instanceof QueryInterface) {
+            if ($value instanceof BuilderInterface) {
                 foreach ($value->getParameters() as $parameter) {
                     $values[] = $parameter;
                 }

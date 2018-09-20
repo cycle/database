@@ -15,7 +15,7 @@ use Spiral\Database\Schema\Traits\ElementTrait;
  * Abstract index schema with read (see IndexInterface) and write abilities. Must be implemented
  * by driver to support DBMS specific syntax and creation rules.
  */
-abstract class AbstractIndex implements IndexInterface
+abstract class AbstractIndex implements IndexInterface, ElementInterface
 {
     use ElementTrait;
 
