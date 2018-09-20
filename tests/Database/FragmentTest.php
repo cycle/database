@@ -5,6 +5,7 @@
  * @license   MIT
  * @author    Anton Titov (Wolfy-J)
  */
+
 namespace Spiral\Database\Tests;
 
 use PHPUnit\Framework\TestCase;
@@ -29,5 +30,13 @@ class FragmentTest extends TestCase
         $this->assertSame([
             'statement' => $fragment->sqlStatement()
         ], $fragment->__debugInfo());
+    }
+
+    public function testSerialize()
+    {
+        $fragment = new Fragment('some sql');
+        $fragment2 = unserialize(serialize($fragment));
+
+        $this->assertEquals($fragment2, $fragment);
     }
 }
