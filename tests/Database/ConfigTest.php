@@ -49,8 +49,7 @@ class ConfigTest extends TestCase
                 'test2' => [],
             ]
         ]);
-
-        $config->getDatabase('test3');
+        $this->assertSame('test3', $config->getDatabase('test3'));
     }
 
     public function testDatabaseDriver()
