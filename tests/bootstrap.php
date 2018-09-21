@@ -70,10 +70,26 @@ if (!empty(getenv('DB'))) {
                 'postgres' => [
                     'driver' => \Spiral\Database\Driver\Postgres\PostgresDriver::class,
                     'check'  => function () {
-                        return !in_array('pgsql', \PDO::getAvailableDrivers());
+                        return true;
                     },
                     'conn'   => 'pgsql:host=127.0.0.1;port=5432;dbname=spiral',
                     'user'   => 'postgres',
+                    'pass'   => ''
+                ],
+            ];
+            break;
+
+        case 'mysql':
+        case 'mariadb':
+            \Spiral\Database\Tests\BaseTest::$config = [
+                'debug'    => false,
+                'postgres' => [
+                    'driver' => \Spiral\Database\Driver\MySQL\MySQLDriver::class,
+                    'check'  => function () {
+                        return true;
+                    },
+                    'conn'   => 'mysql:host=127.0.0.1:3306;dbname=spiral',
+                    'user'   => 'root',
                     'pass'   => ''
                 ],
             ];
