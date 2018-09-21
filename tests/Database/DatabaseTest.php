@@ -9,6 +9,8 @@
 namespace Spiral\Database\Tests;
 
 use Mockery as m;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerTrait;
 use Spiral\Database\Database;
 use Spiral\Database\DatabaseInterface;
 use Spiral\Database\Driver\DriverInterface;
@@ -30,6 +32,24 @@ abstract class DatabaseTest extends BaseTest
         $this->assertSame($this->getDriver()->getType(), $db->getType());
     }
 
+    public function testDriverVerbosity()
+    {
+        $driver = $this->getDriver();
+        $driver->setLogger($l = new AggLogger());
+
+        $driver->getSchema('test');
+
+        $this->assertEmpty($l->records);
+        $driver->setProfiling(true);
+
+        $driver->getSchema('test');
+        $this->assertNotEmpty($l->records);
+        $count = count($l->records);
+
+        $driver->setProfiling(false);
+        $driver->getSchema('test');
+        $this->assertSame($count, count($l->records));
+    }
 
     public function testPrefix()
     {
@@ -87,5 +107,18 @@ abstract class DatabaseTest extends BaseTest
 
         $wDriver->expects('execute')->with('test', ['param'])->andReturn(1);
         $this->assertSame(1, $db->execute("test", ['param']));
+    }
+}
+
+
+class AggLogger implements LoggerInterface
+{
+    use LoggerTrait;
+
+    public $records = [];
+
+    public function log($level, $message, array $context = [])
+    {
+        $this->records = func_get_args();
     }
 }
