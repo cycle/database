@@ -13,11 +13,11 @@ use Spiral\Core\InjectableConfig;
 use Spiral\Core\Traits\Config\AliasTrait;
 use Spiral\Database\Exception\ConfigException;
 
-class DBALConfig extends InjectableConfig
+class DatabaseConfig extends InjectableConfig
 {
-    use AliasTrait;
+    const CONFIG = 'database';
 
-    const CONFIG = 'databases';
+    use AliasTrait;
 
     /**
      * @invisible

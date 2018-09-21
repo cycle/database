@@ -241,6 +241,18 @@ abstract class AlterColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    public function testEnumOnReserved()
+    {
+        $schema = $this->schema('new_schema');
+        $this->assertFalse($schema->exists());
+
+        $schema->enum('table', ['a', 'b', 'c'])->defaultValue('a');
+        $schema->enum('column', ['a', 'b', 'c']);
+        $schema->save();
+
+        $this->assertSameAsInDB($schema);
+    }
+
     public function testChangeStringToText()
     {
         $schema = $this->sampleSchema('table');

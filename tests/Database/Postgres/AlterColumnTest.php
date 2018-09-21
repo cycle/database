@@ -7,6 +7,8 @@
 
 namespace Spiral\Database\Tests\Postgres;
 
+use Spiral\Database\Exception\QueryException;
+
 class AlterColumnTest extends \Spiral\Database\Tests\AlterColumnTest
 {
     const DRIVER = 'postgres';
@@ -14,12 +16,20 @@ class AlterColumnTest extends \Spiral\Database\Tests\AlterColumnTest
     public function testNativeEnums()
     {
         $driver = $this->getDriver();
+        try {
+            $driver->execute("CREATE TYPE mood AS ENUM ('sad', 'ok', 'happy');");
+        } catch (QueryException $e) {
 
-        $driver->execute("CREATE TYPE mood AS ENUM ('sad', 'ok', 'happy');");
-        $driver->execute("CREATE TABLE person (
+        }
+
+        try {
+            $driver->execute("CREATE TABLE person (
     name text,
     current_mood mood
 );");
+        } catch (QueryException $e) {
+
+        }
 
         $schema = $driver->getSchema("person");
         $this->assertSame('enum', $schema->column('current_mood')->getAbstractType());

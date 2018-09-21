@@ -14,7 +14,7 @@ use Spiral\Core\Container\InjectorInterface;
 use Spiral\Core\Container\SingletonInterface;
 use Spiral\Core\FactoryInterface;
 use Spiral\Database\Config\DatabasePartial;
-use Spiral\Database\Config\DBALConfig;
+use Spiral\Database\Config\DatabaseConfig;
 use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Exception\DatabaseException;
@@ -73,9 +73,9 @@ use Spiral\Database\Exception\DBALException;
  *
  * echo $manager->database('runtime')->select()->from('users')->count();
  */
-class DBAL implements SingletonInterface, InjectorInterface
+class DatabaseManager implements SingletonInterface, InjectorInterface
 {
-    /** @var DBALConfig */
+    /** @var DatabaseConfig */
     private $config = null;
 
     /** @var Database[] */
@@ -88,10 +88,10 @@ class DBAL implements SingletonInterface, InjectorInterface
     protected $factory = null;
 
     /**
-     * @param DBALConfig       $config
+     * @param DatabaseConfig   $config
      * @param FactoryInterface $factory
      */
-    public function __construct(DBALConfig $config, FactoryInterface $factory = null)
+    public function __construct(DatabaseConfig $config, FactoryInterface $factory = null)
     {
         $this->config = $config;
         $this->factory = $factory ?? new Container();
@@ -221,7 +221,7 @@ class DBAL implements SingletonInterface, InjectorInterface
      *
      * @throws DBALException
      */
-    public function addDriver(string $name, DriverInterface $driver): DBAL
+    public function addDriver(string $name, DriverInterface $driver): DatabaseManager
     {
         if (isset($this->drivers[$name])) {
             throw new DBALException("Connection '{$name}' already exists");

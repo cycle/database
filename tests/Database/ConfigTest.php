@@ -9,13 +9,13 @@ namespace Spiral\tests\Cases\Database;
 
 use PHPUnit\Framework\TestCase;
 use Spiral\Core\Container\Autowire;
-use Spiral\Database\Config\DBALConfig;
+use Spiral\Database\Config\DatabaseConfig;
 
 class ConfigTest extends TestCase
 {
     public function testDefaultDatabase()
     {
-        $config = new DBALConfig([
+        $config = new DatabaseConfig([
             'default' => 'database-1'
         ]);
 
@@ -24,7 +24,7 @@ class ConfigTest extends TestCase
 
     public function testHasDatabase()
     {
-        $config = new DBALConfig([
+        $config = new DatabaseConfig([
             'default'   => 'database-1',
             'databases' => [
                 'test'  => [],
@@ -42,7 +42,7 @@ class ConfigTest extends TestCase
      */
     public function testDatabaseException()
     {
-        $config = new DBALConfig([
+        $config = new DatabaseConfig([
             'default'   => 'database-1',
             'databases' => [
                 'test'  => [],
@@ -54,7 +54,7 @@ class ConfigTest extends TestCase
 
     public function testDatabaseDriver()
     {
-        $config = new DBALConfig([
+        $config = new DatabaseConfig([
             'default'   => 'database-1',
             'databases' => [
                 'test'  => [
@@ -72,7 +72,7 @@ class ConfigTest extends TestCase
 
     public function testDatabaseReadDriver()
     {
-        $config = new DBALConfig([
+        $config = new DatabaseConfig([
             'default'   => 'database-1',
             'databases' => [
                 'test'  => [
@@ -96,7 +96,7 @@ class ConfigTest extends TestCase
 
     public function testDatabasePrefix()
     {
-        $config = new DBALConfig([
+        $config = new DatabaseConfig([
             'default'   => 'database-1',
             'databases' => [
                 'test'  => [
@@ -121,7 +121,7 @@ class ConfigTest extends TestCase
 
     public function testDatabaseNames()
     {
-        $config = new DBALConfig([
+        $config = new DatabaseConfig([
             'default'   => 'database-1',
             'databases' => [
                 'test'  => [
@@ -138,7 +138,7 @@ class ConfigTest extends TestCase
 
     public function testAliases()
     {
-        $config = new DBALConfig([
+        $config = new DatabaseConfig([
             'default'   => 'database-1',
             'aliases'   => [
                 'test3' => 'test2',
@@ -169,7 +169,7 @@ class ConfigTest extends TestCase
 
     public function testHasDriver()
     {
-        $config = new DBALConfig([
+        $config = new DatabaseConfig([
             'connections' => [
                 'test'  => [],
                 'test2' => [],
@@ -180,7 +180,7 @@ class ConfigTest extends TestCase
         $this->assertTrue($config->hasDriver('test2'));
         $this->assertFalse($config->hasDriver('database-1'));
 
-        $config = new DBALConfig([
+        $config = new DatabaseConfig([
             'drivers' => [
                 'test'  => [],
                 'test2' => [],
@@ -198,7 +198,7 @@ class ConfigTest extends TestCase
      */
     public function testDriverException()
     {
-        $config = new DBALConfig([
+        $config = new DatabaseConfig([
             'default' => 'database-1',
         ]);
 
@@ -207,7 +207,7 @@ class ConfigTest extends TestCase
 
     public function testGetDriver()
     {
-        $config = new DBALConfig([
+        $config = new DatabaseConfig([
             'connections' => [
                 'test'  => [
                     'driver' => 'abc',
@@ -230,7 +230,7 @@ class ConfigTest extends TestCase
 
     public function testDriverNames()
     {
-        $config = new DBALConfig([
+        $config = new DatabaseConfig([
             'connections' => [
                 'test'  => [
                     'driver' => 'abc',

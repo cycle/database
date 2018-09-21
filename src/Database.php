@@ -21,7 +21,7 @@ use Spiral\Database\Query\UpdateQuery;
  */
 class Database implements DatabaseInterface, InjectableInterface
 {
-    public const INJECTOR = DBAL::class;
+    public const INJECTOR = DatabaseManager::class;
 
     // Isolation levels for transactions
     public const ISOLATION_SERIALIZABLE     = DriverInterface::ISOLATION_SERIALIZABLE;

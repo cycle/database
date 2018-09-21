@@ -419,12 +419,14 @@ class PostgresColumn extends AbstractColumn
         PostgresColumn $column
     ) {
         $query = "SELECT conname, consrc FROM pg_constraint WHERE conrelid = ? AND contype = 'c' AND "
-            . "(consrc LIKE ? OR consrc LIKE ? OR consrc LIKE ? OR consrc LIKE ?)";
+            . "(consrc LIKE ? OR consrc LIKE ? OR consrc LIKE ? OR consrc LIKE ? OR consrc LIKE ? OR consrc LIKE ?)";
 
         $constraints = $driver->query($query, [
             $tableOID,
             '(' . $column->name . '%',
             '("' . $column->name . '%',
+            '(("' . $column->name . '%',
+            '(("' . $column->name . '%',
             //Postgres magic
             $column->name . '::text%',
             '%(' . $column->name . ')::text%'
