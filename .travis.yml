@@ -96,6 +96,18 @@ jobs:
       script:
         - vendor/bin/phpunit tests/Database/Postgres
 
+   - stage: Test
+      php: 7.2
+      addons:
+         postgresql
+      env:
+        - "DB=postgres POSTGRES=10.0"
+      before_install:
+        - bash ./tests/install-pgsql-10.sh
+        - psql -c 'create database spiral;' -U postgres
+      script:
+        - vendor/bin/phpunit tests/Database/Postgres
+
     # MariaDB
     - stage: Test
       php: 7.2
