@@ -80,7 +80,8 @@ class Table implements TableInterface, \JsonSerializable, \IteratorAggregate, \C
      */
     public function getSchema(): AbstractTable
     {
-        return $this->database->getDriver()->getSchema($this->name, $this->database->getPrefix());
+        return $this->database->getDriver(DatabaseInterface::WRITE)->getSchema($this->name,
+            $this->database->getPrefix());
     }
 
     /**
@@ -88,7 +89,7 @@ class Table implements TableInterface, \JsonSerializable, \IteratorAggregate, \C
      */
     public function eraseData()
     {
-        $this->database->getDriver()->eraseData($this->getFullName());
+        $this->database->getDriver(DatabaseInterface::WRITE)->eraseData($this->getFullName());
     }
 
     /**
