@@ -28,7 +28,7 @@ after_success:
 jobs:
   include:
     # PHP Nightly builds does not support SQLServer yet
-    - stage: Nightly
+    - stage: Test
       php: nightly
       before_install:
         - cd tests
@@ -40,7 +40,7 @@ jobs:
         - vendor/bin/phpunit tests/Database/Postgres
 
     # Testing various PostgresSQL version
-    - stage: Postgres
+    - stage: Test
       php: 7.1
       addons:
          postgresql: "9.2"
