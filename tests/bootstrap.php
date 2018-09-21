@@ -82,7 +82,7 @@ if (!empty(getenv('DB'))) {
         case 'mysql':
             \Spiral\Database\Tests\BaseTest::$config = [
                 'debug'    => false,
-                'postgres' => [
+                'mysql' => [
                     'driver' => \Spiral\Database\Driver\MySQL\MySQLDriver::class,
                     'check'  => function () {
                         return true;
@@ -97,7 +97,7 @@ if (!empty(getenv('DB'))) {
         case 'mariadb':
             \Spiral\Database\Tests\BaseTest::$config = [
                 'debug'    => false,
-                'postgres' => [
+                'mysql' => [
                     'driver' => \Spiral\Database\Driver\MySQL\MySQLDriver::class,
                     'check'  => function () {
                         return true;
