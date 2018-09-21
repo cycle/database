@@ -4,6 +4,7 @@
  *
  * @author Wolfy-J
  */
+
 namespace Spiral\Database\Tests;
 
 use Spiral\Database\Driver\AbstractHandler;
@@ -150,6 +151,28 @@ abstract class IndexesTest extends BaseTest
         $schema->save(AbstractHandler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
+    }
+
+    public function testRenameIndexThoughTable()
+    {
+        $schema = $this->schema('table');
+        $this->assertFalse($schema->exists());
+
+        $schema->primary('id');
+        $schema->integer('value');
+        $schema->string('subset', 2);
+        $schema->index(['value', 'subset'])->unique(true);
+
+        $schema->save(AbstractHandler::DO_ALL);
+
+        $this->assertSameAsInDB($schema);
+
+        $schema = $this->fetchSchema($schema);
+        $schema->renameIndex(['value', 'subset'], 'new_index_name');
+        $schema->save();
+        $this->assertSameAsInDB($schema);
+
+        $this->assertSame('new_index_name', $this->fetchSchema($schema)->index(['value', 'subset'])->getName());
     }
 
     public function testCreateWithMultipleIndexesAndEnum()

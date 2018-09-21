@@ -4,10 +4,11 @@
  *
  * @author Wolfy-J
  */
+
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\Driver\AbstractHandler;
 use Spiral\Database\Database;
+use Spiral\Database\Driver\AbstractHandler;
 use Spiral\Database\Schema\AbstractColumn;
 use Spiral\Database\Schema\AbstractForeignKey;
 use Spiral\Database\Schema\AbstractTable;
@@ -66,6 +67,22 @@ abstract class ForeignKeysTest extends BaseTest
     }
 
     public function testCreateWithReferenceToExistedTable()
+    {
+        $schema = $this->schema('schema');
+        $this->assertFalse($schema->exists());
+        $this->assertTrue($this->sampleSchema('external')->exists());
+
+        $schema->primary('id');
+        $schema->integer('external_id');
+        $schema->foreignKey('external_id')->references('external', 'id');
+
+        $schema->save(AbstractHandler::DO_ALL);
+
+        $this->assertSameAsInDB($schema);
+        $this->assertTrue($this->schema('schema')->hasForeignKey('external_id'));
+    }
+
+    public function testCreateWithReferenceToExistedTableWithName()
     {
         $schema = $this->schema('schema');
         $this->assertFalse($schema->exists());

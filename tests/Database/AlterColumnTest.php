@@ -165,7 +165,7 @@ abstract class AlterColumnTest extends BaseTest
 
         $this->assertSame(255, $this->fetchSchema($schema)->column('first_name')->getSize());
 
-        $schema->string('first_name', 100);
+        $schema->first_name->string(100);
         $schema->save();
 
         $this->assertSameAsInDB($schema);

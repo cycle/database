@@ -8,7 +8,6 @@
 namespace Spiral\Database\Schema;
 
 use Spiral\Database\Driver\AbstractDriver;
-use Spiral\Database\Exception\SchemaException;
 use Spiral\Database\ForeignKeyInterface;
 use Spiral\Database\Schema\Traits\ElementTrait;
 
@@ -73,23 +72,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
         $this->name = $name;
         $this->tablePrefix = $tablePrefix;
     }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @param string $name
-     */
-    public function setName(string $name): self
-    {
-        if (!empty($this->name)) {
-            throw new SchemaException('Changing reference name is not allowed');
-        }
-
-        $this->name = $name;
-
-        return $this;
-    }
-
+    
     /**
      * {@inheritdoc}
      */

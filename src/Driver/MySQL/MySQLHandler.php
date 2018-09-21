@@ -58,7 +58,7 @@ class MySQLHandler extends AbstractHandler
      */
     public function alterIndex(AbstractTable $table, AbstractIndex $initial, AbstractIndex $index)
     {
-        $this->run("ALTER TABLE {$this->identify($table)} DROP INDEX  {$this->identify($index)}, ADD {$index->sqlStatement($this->driver, false)}");
+        $this->run("ALTER TABLE {$this->identify($table)} DROP INDEX  {$this->identify($initial)}, ADD {$index->sqlStatement($this->driver, false)}");
     }
 
     /**

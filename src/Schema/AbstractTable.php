@@ -488,7 +488,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      */
     public function renameIndex(array $columns, string $name): AbstractTable
     {
-        if ($this->hasIndex($columns)) {
+        if (!$this->hasIndex($columns)) {
             throw new SchemaException(
                 "Undefined index ['" . join("', '", $columns) . "'] in '{$this->getName()}'"
             );
