@@ -7,6 +7,7 @@
 
 namespace Spiral\Database\Tests\Postgres;
 
+use Spiral\Database\Driver\Postgres\PostgresDriver;
 use Spiral\Database\Injection\FragmentInterface;
 
 class ConsistencyTest extends \Spiral\Database\Tests\ConsistencyTest
@@ -30,6 +31,26 @@ class ConsistencyTest extends \Spiral\Database\Tests\ConsistencyTest
             FragmentInterface::class,
             $schema->column('target')->getDefaultValue()
         );
+
+        /**
+         * @var PostgresDriver $d
+         */
+        $d = $this->getDriver();
+
+        $this->assertSame('target', $d->getPrimary('', 'table'));
+    }
+
+    /**
+     * @expectedException \Spiral\Database\Exception\DriverException
+     */
+    public function testPrimaryException()
+    {
+        /**
+         * @var PostgresDriver $d
+         */
+        $d = $this->getDriver();
+
+        $this->assertSame('target', $d->getPrimary('', 'table'));
     }
 
     public function testBigPrimary()
