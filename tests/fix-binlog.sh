@@ -2,6 +2,4 @@
 set -ex
 sed -i '/\[mysqld\]/a\
 binlog_format = MIXED' /etc/mysql/my.cnf
-
-sudo cat /etc/mysql/my.cnf
 sudo service mysql restart
