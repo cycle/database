@@ -27,7 +27,8 @@ after_success:
 
 jobs:
   include:
-    - stage: PHP Nightly
+    # PHP Nightly builds does not support SQLServer yet
+    - stage: Nightly
       php: nightly
       before_install:
         - cd tests
@@ -36,4 +37,16 @@ jobs:
       script:
         - vendor/bin/phpunit tests/Database/SQLite
         - vendor/bin/phpunit tests/Database/MySQL
+        - vendor/bin/phpunit tests/Database/Postgres
+
+    # Testing various PostgresSQL version
+    - stage: Postgres
+      php: 7.1
+      addons:
+         postgresql: "9.2"
+      env:
+        - "DB=postgres"
+      before_install:
+        - psql -c 'create database spiral;' -U postgres
+      script:
         - vendor/bin/phpunit tests/Database/Postgres

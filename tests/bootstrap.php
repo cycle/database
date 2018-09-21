@@ -61,3 +61,22 @@ require dirname(__DIR__) . '/vendor/autoload.php';
         'pass'   => 'SSpaSS__1'
     ],
 ];
+
+if (!empty(getenv('DB'))) {
+    switch (getenv('DB')) {
+        case 'postgres':
+            \Spiral\Database\Tests\BaseTest::$config = [
+                'debug'    => false,
+                'postgres' => [
+                    'driver' => \Spiral\Database\Driver\Postgres\PostgresDriver::class,
+                    'check'  => function () {
+                        return !in_array('pgsql', \PDO::getAvailableDrivers());
+                    },
+                    'conn'   => 'pgsql:host=127.0.0.1;port=5432;dbname=spiral',
+                    'user'   => 'postgres',
+                    'pass'   => ''
+                ],
+            ];
+            break;
+    }
+}
