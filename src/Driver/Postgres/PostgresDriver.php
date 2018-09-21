@@ -15,6 +15,7 @@ use Spiral\Database\Driver\Postgres\Query\PostgresInsertQuery;
 use Spiral\Database\Driver\Postgres\Schema\PostgresTable;
 use Spiral\Database\Exception\DriverException;
 use Spiral\Database\Query\InsertQuery;
+use Spiral\Database\Schema\AbstractTable;
 
 /**
  * Talks to postgres databases.
@@ -67,6 +68,17 @@ class PostgresDriver extends AbstractDriver
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getSchema(string $table, string $prefix = ''): AbstractTable
+    {
+        // reset primary key cache
+        unset($this->primaryKeys[$prefix . $table]);
+
+        return parent::getSchema($table, $prefix);
+    }
+
+    /**
      * Get singular primary key associated with desired table. Used to emulate last insert id.
      *
      * @param string $prefix Database prefix if any.
@@ -78,25 +90,26 @@ class PostgresDriver extends AbstractDriver
      */
     public function getPrimary(string $prefix, string $table)
     {
-        if (!empty($this->primaryKeys) && array_key_exists($table, $this->primaryKeys)) {
-            return $this->primaryKeys[$table];
+        $name = $prefix . $table;
+        if (array_key_exists($name, $this->primaryKeys)) {
+            return $this->primaryKeys[$name];
         }
 
-        if (!$this->hasTable($prefix . $table)) {
+        if (!$this->hasTable($name)) {
             throw new DriverException(
-                "Unable to fetch table primary key, no such table '{$prefix}{$table}' exists"
+                "Unable to fetch table primary key, no such table '{$name}' exists"
             );
         }
 
-        $this->primaryKeys[$table] = $this->getSchema($table, $prefix)->getPrimaryKeys();
-        if (count($this->primaryKeys[$table]) === 1) {
+        $this->primaryKeys[$name] = $this->getSchema($table, $prefix)->getPrimaryKeys();
+        if (count($this->primaryKeys[$name]) === 1) {
             //We do support only single primary key
-            $this->primaryKeys[$table] = $this->primaryKeys[$table][0];
+            $this->primaryKeys[$name] = $this->primaryKeys[$name][0];
         } else {
-            $this->primaryKeys[$table] = null;
+            $this->primaryKeys[$name] = null;
         }
 
-        return $this->primaryKeys[$table];
+        return $this->primaryKeys[$name];
     }
 
     /**

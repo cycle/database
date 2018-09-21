@@ -16,12 +16,26 @@ class ConsistencyTest extends \Spiral\Database\Tests\ConsistencyTest
 
     public function testPrimary()
     {
+        /**
+         * @var PostgresDriver $d
+         */
+        $d = $this->getDriver();
+
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
 
-        $column = $schema->primary('target');
-
+        $schema->string('value');
         $schema->save();
+
+        $this->assertSame(null, $d->getPrimary('', 'table'));
+
+        $schema->declareDropped();
+        $schema->save();
+
+        $schema = $this->schema('table');
+        $column = $schema->primary('target');
+        $schema->save();
+
         $schema = $this->schema('table');
         $this->assertTrue($schema->exists());
 
@@ -32,10 +46,6 @@ class ConsistencyTest extends \Spiral\Database\Tests\ConsistencyTest
             $schema->column('target')->getDefaultValue()
         );
 
-        /**
-         * @var PostgresDriver $d
-         */
-        $d = $this->getDriver();
 
         $this->assertSame('target', $d->getPrimary('', 'table'));
     }
