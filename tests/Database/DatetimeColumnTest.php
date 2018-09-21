@@ -275,8 +275,6 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    //date
-
     public function testDateWithNullValue()
     {
         $schema = $this->schema('sampleSchema');

@@ -358,6 +358,25 @@ abstract class ReflectorTest extends BaseTest
         $this->assertSameAsInDB($schemaB);
     }
 
+    public function testDeleteTables()
+    {
+        $schemaA = $this->schema('a');
+        $this->assertFalse($schemaA->exists());
+
+        $schemaA->primary('id');
+        $schemaA->integer('value');
+
+        $this->saveTables([$schemaA]);
+
+        $this->saveTables([$schemaA]);
+        $this->assertSameAsInDB($schemaA);
+
+        $schemaA->declareDropped();
+        $this->saveTables([$schemaA]);
+
+        $this->assertFalse($schemaA->exists());
+        $this->assertFalse($this->fetchSchema($schemaA)->exists());
+    }
 
     protected function saveTables(array $tables)
     {

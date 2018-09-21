@@ -4,6 +4,7 @@
  *
  * @author Wolfy-J
  */
+
 namespace Spiral\Database\Tests;
 
 use Spiral\Database\Database;
@@ -108,5 +109,15 @@ abstract class CreateTableTest extends BaseTest
         $this->assertTrue($schema->exists());
 
         $this->assertTrue($schema->hasColumn('name'));
+    }
+
+    /**
+     * @expectedException \Spiral\Database\Exception\SchemaException
+     */
+    public function testDeleteNonExisted()
+    {
+        $schema = $this->schema('table');
+        $this->assertFalse($schema->exists());
+        $schema->declareDropped();
     }
 }
