@@ -114,8 +114,7 @@ jobs:
       env:
         - "DB=mariadb MARIADB=10.0"
       before_install:
-        - echo "binlog-format = MIXED" >> /etc/mysql/my.cnf
-        - service mysql restart
+        - sudo bash ./tests/fix-binlog.sh
         - mysql -e 'CREATE DATABASE spiral;'
       script:
         - vendor/bin/phpunit tests/Database/MySQL
