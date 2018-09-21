@@ -35,9 +35,9 @@ class SQLServerDriver extends AbstractDriver
      *
      * @throws DriverException
      */
-    public function __construct($name, array $options)
+    public function __construct(array $options)
     {
-        parent::__construct($name, $options);
+        parent::__construct($options);
 
         if ((int)$this->getPDO()->getAttribute(\PDO::ATTR_SERVER_VERSION) < 12) {
             throw new DriverException("SQLServer driver supports only 12+ version of SQLServer");
