@@ -330,7 +330,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         }
 
         if (in_array($this->getAbstractType(), ['time', 'date', 'datetime', 'timestamp'])) {
-            return $this->normalizeDatetime($this->getAbstractType(), $this->defaultValue);
+            return $this->formatDatetime($this->getAbstractType(), $this->defaultValue);
         }
 
         switch ($this->phpType()) {
@@ -744,7 +744,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      *
      * @throws DefaultValueException
      */
-    protected function normalizeDatetime(string $type, $value)
+    protected function formatDatetime(string $type, $value)
     {
         if ($value === static::DATETIME_NOW) {
             //Dynamic default value
