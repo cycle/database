@@ -73,7 +73,7 @@ class Database implements DatabaseInterface, InjectableInterface
      */
     public function getType(): string
     {
-        return $this->driver->getType();
+        return $this->getDriver(self::WRITE)->getType();
     }
 
     /**

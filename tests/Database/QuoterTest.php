@@ -12,7 +12,6 @@ use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Driver\MySQL\MySQLDriver;
-use Spiral\Database\Driver\PDODriver;
 use Spiral\Database\Driver\Postgres\PostgresDriver;
 use Spiral\Database\Driver\Quoter;
 use Spiral\Database\Driver\SQLite\SQLiteDriver;

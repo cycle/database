@@ -4,16 +4,8 @@
  *
  * @author Wolfy-J
  */
-namespace Spiral\tests\Cases\Database;
 
-use Psr\Container\ContainerInterface;
-use Mockery as m;
-use PHPUnit\Framework\TestCase;
-use Spiral\Core\FactoryInterface;
-use Spiral\Database\Config\DBALConfig;
-use Spiral\Database\DBAL;
-use Spiral\Database\Driver\SQLite\SQLiteDriver;
-use Spiral\Database\Database;
+namespace Spiral\Database\Tests;
 
 //class DBALTest extends TestCase
 //{

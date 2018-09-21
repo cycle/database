@@ -6,58 +6,86 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\tests\Cases\Database;
+namespace Spiral\Database\Tests;
 
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 use Spiral\Database\Database;
-use Spiral\Database\Driver\AbstractDriver;
-use Spiral\Database\Statement;
+use Spiral\Database\DatabaseInterface;
+use Spiral\Database\Driver\DriverInterface;
 
-//class DatabaseTest extends TestCase
-//{
-//    public function testDatabase()
-//    {
-//        $driver = $this->makeDriver();
-//
-//        $driver->method('getType')->will($this->returnValue('test-driver'));
-//
-//        $database = new Database($driver, 'test', 'prefix_');
-//
-//        $this->assertEquals('test', $database->getName());
-//        $this->assertEquals($driver, $database->getDriver());
-//        $this->assertEquals('prefix_', $database->getPrefix());
-//        $this->assertEquals('test-driver', $database->getType());
-//    }
-//
-//    public function testQuery()
-//    {
-//        $driver = $this->makeDriver();
-//
-//        $driver->expects($this->once())->method('query')->with('test query')
-//            ->willReturn(m::mock(QueryStatement::class));
-//
-//        $database = new Database($driver, 'test', 'prefix_');
-//        $database->query('test query');
-//    }
-//
-//    public function testHasTable()
-//    {
-//        $driver = $this->makeDriver();
-//
-//        $driver->expects($this->once())->method('hasTable')->with('prefix_table')->will(
-//            $this->returnValue(true)
-//        );
-//
-//        $database = new Database($driver, 'test', 'prefix_');
-//        $this->assertTrue($database->hasTable('table'));
-//    }
-//
-//    /**
-//     * @return AbstractDriver|\PHPUnit_Framework_MockObject_MockObject
-//     */
-//    private function makeDriver()
-//    {
-//        return $this->getMockBuilder(AbstractDriver::class)->disableOriginalConstructor()->getMock();
-//    }
-//}
+abstract class DatabaseTest extends BaseTest
+{
+    public function testGetName()
+    {
+        $db = $this->db();
+        $this->assertSame('default', $db->getName());
+
+        $db = $this->db('test');
+        $this->assertSame('test', $db->getName());
+    }
+
+    public function testGetType()
+    {
+        $db = $this->db();
+        $this->assertSame($this->getDriver()->getType(), $db->getType());
+    }
+
+
+    public function testPrefix()
+    {
+        $db = $this->db();
+        $this->assertFalse($db->hasTable('test'));
+        $this->assertFalse($db->hasTable('prefix_test'));
+
+        $schema = $db->test->getSchema();
+        $schema->primary('id');
+        $schema->save();
+
+        $schema = $db->prefix_test->getSchema();
+        $schema->primary('id');
+        $schema->save();
+
+        $this->assertTrue($db->hasTable('test'));
+        $this->assertTrue($db->hasTable('prefix_test'));
+        $this->assertCount(2, $db->getTables());
+
+        $db = $db->withPrefix('pre');
+
+        $this->assertFalse($db->hasTable('test'));
+        $this->assertTrue($db->hasTable('fix_test'));
+
+        $this->assertCount(1, $db->getTables());
+
+        $db = $db->withPrefix('fix_');
+
+        $this->assertTrue($db->hasTable('test'));
+
+        $db = $db->withPrefix('', false);
+        $this->assertTrue($db->hasTable('test'));
+        $this->assertTrue($db->hasTable('prefix_test'));
+        $this->assertCount(2, $db->getTables());
+    }
+
+    public function testReadWrite()
+    {
+        $wDriver = m::mock(DriverInterface::class);
+        $rDriver = m::mock(DriverInterface::class);
+
+        $db = new Database('default', '', $wDriver, $rDriver);
+
+        $this->assertSame($wDriver, $db->getDriver());
+        $this->assertSame($wDriver, $db->getDriver(DatabaseInterface::WRITE));
+        $this->assertSame($rDriver, $db->getDriver(DatabaseInterface::READ));
+    }
+
+    public function testExecute()
+    {
+        $wDriver = m::mock(DriverInterface::class);
+        $rDriver = m::mock(DriverInterface::class);
+
+        $db = new Database('default', '', $wDriver, $rDriver);
+
+        $wDriver->expects('execute')->with('test', ['param'])->andReturn(1);
+        $this->assertSame(1, $db->execute("test", ['param']));
+    }
+}
