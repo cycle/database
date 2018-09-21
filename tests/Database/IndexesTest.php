@@ -45,7 +45,7 @@ abstract class IndexesTest extends BaseTest
             $schema->enum('status', ['active', 'disabled'])->defaultValue('active');
             $schema->double('balance')->defaultValue(0);
             $schema->boolean('flagged')->defaultValue(true);
-
+            $schema->integer('value');
             $schema->text('bio');
 
             //Some dates
@@ -400,5 +400,43 @@ abstract class IndexesTest extends BaseTest
         $schema->save(AbstractHandler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
+    }
+
+    public function testRenameColumnWithAddedIndex()
+    {
+        $schema = $this->sampleSchema('table');
+        $this->assertTrue($schema->exists());
+
+        $schema->index(['email', 'status']);
+        $schema->save(AbstractHandler::DO_ALL);
+
+        $this->assertSameAsInDB($schema);
+
+        $schema = $this->fetchSchema($schema);
+        $schema->renameColumn('status', 'new_status');
+        $schema->save();
+
+        $schema = $this->fetchSchema($schema);
+        //  print_r($schema);
+        $this->assertTrue($schema->hasIndex(['email', 'new_status']));
+    }
+
+    public function testChangeColumnTypeWithAttachedIndex()
+    {
+        $schema = $this->sampleSchema('table');
+        $this->assertTrue($schema->exists());
+
+        $schema->index(['email', 'value']);
+        $schema->save(AbstractHandler::DO_ALL);
+
+        $this->assertSameAsInDB($schema);
+        $this->assertTrue($this->fetchSchema($schema)->hasIndex(['email', 'value']));
+
+        $schema = $this->fetchSchema($schema);
+        $schema->column('value')->bigInteger();
+        $schema->save();
+
+        $schema = $this->fetchSchema($schema);
+        $this->assertTrue($schema->hasIndex(['email', 'value']));
     }
 }
