@@ -7,260 +7,251 @@
 
 namespace Spiral\Database\Tests;
 
-//class DBALTest extends TestCase
-//{
-//    const DEFAULT_OPTIONS = [
-//        'connection' => 'sqlite:' . __DIR__ . 'Drivers/SQLite/fixture/runtime.db',
-//        'username'   => 'sqlite',
-//        'password'   => '',
-//        'options'    => []
-//    ];
-//
-//    public function testDefaultDatabase()
-//    {
-//        $config = m::mock(DBALConfig::class);
-//        $factory = m::mock(FactoryInterface::class);
-//
-//        $db = m::mock(Database::class);
-//
-//        $manager = new DBAL($config, $factory);
-//
-//        $config->shouldReceive('defaultDatabase')->andReturn('default');
-//        $config->shouldReceive('resolveAlias')->with('default')->andReturn('default');
-//        $config->shouldReceive('hasDatabase')->with('default')->andReturn(true);
-//
-//        $config->shouldReceive('databasePrefix')->with('default')->andReturn('prefix');
-//        $config->shouldReceive('databaseDriver')->with('default')->andReturn('driverName');
-//
-//        $config->shouldReceive('hasDriver')->with('driverName')->andReturn(true);
-//        $config->shouldReceive('driverClass')->with('driverName')->andReturn(SQLiteDriver::class);
-//
-//        $config->shouldReceive('driverOptions')->with('driverName')->andReturn(self::DEFAULT_OPTIONS);
-//
-//        $factory->shouldReceive('make')->with(SQLiteDriver::class, [
-//            'name'    => 'driverName',
-//            'options' => self::DEFAULT_OPTIONS
-//        ])->andReturn($driver = new SQLiteDriver('driverName', self::DEFAULT_OPTIONS));
-//
-//        $factory->shouldReceive('make')->with(Database::class, [
-//            'name'   => 'default',
-//            'prefix' => 'prefix',
-//            'driver' => $driver
-//        ])->andReturn($db);
-//
-//        $this->assertSame($db, $manager->database());
-//    }
-//
-//    public function testNamedDatabase()
-//    {
-//        $config = m::mock(DBALConfig::class);
-//        $factory = m::mock(FactoryInterface::class);
-//
-//        $db = m::mock(Database::class);
-//
-//        $manager = new DBAL($config, $factory);
-//
-//        $config->shouldReceive('resolveAlias')->with('test')->andReturn('default');
-//        $config->shouldReceive('hasDatabase')->with('default')->andReturn(true);
-//
-//        $config->shouldReceive('databasePrefix')->with('default')->andReturn('prefix');
-//        $config->shouldReceive('databaseDriver')->with('default')->andReturn('driverName');
-//
-//        $config->shouldReceive('hasDriver')->with('driverName')->andReturn(true);
-//        $config->shouldReceive('driverClass')->with('driverName')->andReturn(SQLiteDriver::class);
-//
-//        $config->shouldReceive('driverOptions')->with('driverName')->andReturn(self::DEFAULT_OPTIONS);
-//
-//        $factory->shouldReceive('make')->with(SQLiteDriver::class, [
-//            'name'    => 'driverName',
-//            'options' => self::DEFAULT_OPTIONS
-//        ])->andReturn($driver = new SQLiteDriver('driverName', self::DEFAULT_OPTIONS));
-//
-//        $factory->shouldReceive('make')->with(Database::class, [
-//            'name'   => 'default',
-//            'prefix' => 'prefix',
-//            'driver' => $driver
-//        ])->andReturn($db);
-//
-//        $this->assertSame($db, $manager->database('test'));
-//    }
-//
-//    /**
-//     * @expectedException \Spiral\Database\Exception\DBALException
-//     * @expectedExceptionMessage Unable to create Database, no presets for 'test' found
-//     */
-//    public function testNoDatabase()
-//    {
-//        $config = m::mock(DBALConfig::class);
-//        $factory = m::mock(FactoryInterface::class);
-//        $db = m::mock(Database::class);
-//
-//        $manager = new DBAL($config, $factory);
-//
-//        $config->shouldReceive('resolveAlias')->with('test')->andReturn('test');
-//        $config->shouldReceive('hasDatabase')->with('test')->andReturn(false);
-//
-//        $this->assertSame($db, $manager->database('test'));
-//    }
-//
-//    public function testCreateDriver()
-//    {
-//        $config = new DBALConfig([
-//            'default'     => 'default',
-//            'aliases'     => [],
-//            'databases'   => [],
-//            'connections' => [],
-//        ]);
-//        $manager = new DBAL($config);
-//
-//        $driver = $manager->makeDriver(
-//            'sqlite',
-//            SQLiteDriver::class,
-//            'sqlite:memory:',
-//            'sqlite'
-//        );
-//        $this->assertInstanceOf(SQLiteDriver::class, $driver);
-//
-//        $this->assertSame($driver, $manager->driver('sqlite'));
-//        $this->assertSame([$driver], $manager->getDrivers());
-//    }
-//
-//    /**
-//     * @expectedException \Spiral\Database\Exception\DBALException
-//     */
-//    public function testCreateDriverTwice()
-//    {
-//        $config = new DBALConfig([
-//            'default'     => 'default',
-//            'aliases'     => [],
-//            'databases'   => [],
-//            'connections' => [],
-//        ]);
-//        $manager = new DBAL($config);
-//
-//
-//        $driver = $manager->makeDriver(
-//            'sqlite',
-//            SQLiteDriver::class,
-//            'sqlite:memory:',
-//            'sqlite'
-//        );
-//
-//        $driver = $manager->makeDriver(
-//            'sqlite',
-//            SQLiteDriver::class,
-//            'sqlite:memory:',
-//            'sqlite'
-//        );
-//    }
-//
-//    public function testCreateDatabase()
-//    {
-//        $config = new DBALConfig([
-//            'default'     => 'default',
-//            'aliases'     => [],
-//            'databases'   => [],
-//            'connections' => [],
-//        ]);
-//        $manager = new DBAL($config);
-//
-//        $manager->makeDriver(
-//            'sqlite',
-//            SQLiteDriver::class,
-//            'sqlite:memory:',
-//            'sqlite'
-//        );
-//
-//
-//        $db = $manager->createDatabase('test', '', 'sqlite');
-//        $this->assertInstanceOf(Database::class, $db);
-//
-//        $this->assertSame([$db], $manager->getDatabases());
-//    }
-//
-//    /**
-//     * @expectedException \Spiral\Database\Exception\DBALException
-//     */
-//    public function testCreateDatabaseTwice()
-//    {
-//        $config = new DBALConfig([
-//            'default'     => 'default',
-//            'aliases'     => [],
-//            'databases'   => [],
-//            'connections' => [],
-//        ]);
-//        $manager = new DBAL($config);
-//
-//        $manager->makeDriver(
-//            'sqlite',
-//            SQLiteDriver::class,
-//            'sqlite:memory:',
-//            'sqlite'
-//        );
-//
-//        $db = $manager->createDatabase('test', '', 'sqlite');
-//        $db = $manager->createDatabase('test', '', 'sqlite');
-//    }
-//
-//    public function testCreateDatabaseExplicit()
-//    {
-//        $config = new DBALConfig([
-//            'default'     => 'default',
-//            'aliases'     => [],
-//            'databases'   => [],
-//            'connections' => [],
-//        ]);
-//        $manager = new DBAL($config);
-//
-//        $driver = $manager->makeDriver(
-//            'sqlite',
-//            SQLiteDriver::class,
-//            'sqlite:memory:',
-//            'sqlite'
-//        );
-//
-//        $db = $manager->createDatabase('test', '', $driver);
-//        $this->assertInstanceOf(Database::class, $db);
-//    }
-//
-//    public function testInjectionTest()
-//    {
-//        $config = new DBALConfig([
-//            'default'     => 'default',
-//            'aliases'     => [],
-//            'databases'   => [],
-//            'connections' => [],
-//        ]);
-//        $manager = new DBAL($config);
-//
-//        $driver = $manager->makeDriver(
-//            'sqlite',
-//            SQLiteDriver::class,
-//            'sqlite:memory:',
-//            'sqlite'
-//        );
-//
-//        $db = $manager->createDatabase('test', '', $driver);
-//
-//        $this->assertSame(
-//            $db,
-//            $manager->createInjection(new \ReflectionClass(Database::class), 'test')
-//        );
-//    }
-//
-//    /**
-//     * @expectedException \Spiral\Database\Exception\DBALException
-//     */
-//    public function testMissingDriver()
-//    {
-//        $config = new DBALConfig([
-//            'default'     => 'default',
-//            'aliases'     => [],
-//            'databases'   => [],
-//            'connections' => [],
-//        ]);
-//        $manager = new DBAL($config);
-//
-//        $driver = $manager->driver('invalid');
-//    }
-//}
+use Mockery as m;
+use PHPUnit\Framework\TestCase;
+use Spiral\Core\Container;
+use Spiral\Database\Config\DBALConfig;
+use Spiral\Database\Database;
+use Spiral\Database\DBAL;
+use Spiral\Database\Driver\DriverInterface;
+use Spiral\Database\Driver\SQLite\SQLiteDriver;
+
+class DBALTest extends TestCase
+{
+    const DEFAULT_OPTIONS = [
+        'default'     => 'default',
+        'databases'   => [
+            'default' => [
+                'prefix' => 'prefix_',
+                'read'   => 'read',
+                'write'  => 'write'
+            ]
+        ],
+        'connections' => []
+    ];
+
+    public function testAddDatabase()
+    {
+        $driver = m::mock(DriverInterface::class);
+        $db = new Database('default', '', $driver);
+
+
+        $dbal = new DBAL(new DBALConfig(self::DEFAULT_OPTIONS));
+        $dbal->addDatabase($db);
+
+        $this->assertSame($db, $dbal->database('default'));
+    }
+
+    /**
+     * @expectedException \Spiral\Database\Exception\DBALException
+     */
+    public function testAddDatabaseException()
+    {
+        $driver = m::mock(DriverInterface::class);
+        $db = new Database('default', '', $driver);
+
+
+        $dbal = new DBAL(new DBALConfig(self::DEFAULT_OPTIONS));
+        $dbal->addDatabase($db);
+        $dbal->addDatabase($db);
+    }
+
+    public function testAddDriver()
+    {
+        $driver = m::mock(DriverInterface::class);
+
+        $dbal = new DBAL(new DBALConfig(self::DEFAULT_OPTIONS));
+        $dbal->addDriver('default', $driver);
+
+        $this->assertSame($driver, $dbal->driver('default'));
+    }
+
+    /**
+     * @expectedException \Spiral\Database\Exception\DBALException
+     */
+    public function testAddDriverException()
+    {
+        $driver = m::mock(DriverInterface::class);
+
+        $dbal = new DBAL(new DBALConfig(self::DEFAULT_OPTIONS));
+        $dbal->addDriver('default', $driver);
+        $dbal->addDriver('default', $driver);
+    }
+
+    /**
+     * @expectedException \Spiral\Database\Exception\DBALException
+     */
+    public function testDatabaseException()
+    {
+        $dbal = new DBAL(new DBALConfig(self::DEFAULT_OPTIONS));
+        $dbal->database('default');
+    }
+
+    public function testDatabaseDrivers()
+    {
+        $read = m::mock(DriverInterface::class);
+        $write = m::mock(DriverInterface::class);
+
+        $dbal = new DBAL(new DBALConfig(self::DEFAULT_OPTIONS));
+        $dbal->addDriver('read', $read);
+        $dbal->addDriver('write', $write);
+
+        $db = $dbal->database('default');
+
+        $this->assertSame($read, $db->getDriver(Database::READ));
+        $this->assertSame($write, $db->getDriver(Database::WRITE));
+    }
+
+    public function testInjection()
+    {
+        $read = m::mock(DriverInterface::class);
+        $write = m::mock(DriverInterface::class);
+
+        $dbal = new DBAL(new DBALConfig(self::DEFAULT_OPTIONS));
+        $dbal->addDriver('read', $read);
+        $dbal->addDriver('write', $write);
+
+        $container = new Container();
+        $container->bind(DBAL::class, $dbal);
+
+        $db = $container->get(Database::class);
+
+        $this->assertSame($read, $db->getDriver(Database::READ));
+        $this->assertSame($write, $db->getDriver(Database::WRITE));
+    }
+
+    public function testGetDrivers()
+    {
+        $read = m::mock(DriverInterface::class);
+        $write = m::mock(DriverInterface::class);
+
+        $dbal = new DBAL(new DBALConfig(self::DEFAULT_OPTIONS));
+
+        $this->assertCount(0, $dbal->getDrivers());
+
+        $dbal->addDriver('read', $read);
+        $dbal->addDriver('write', $write);
+
+        $this->assertCount(2, $dbal->getDrivers());
+    }
+
+    public function testGetDatabases()
+    {
+        $read = m::mock(DriverInterface::class);
+        $write = m::mock(DriverInterface::class);
+
+        $dbal = new DBAL(new DBALConfig(self::DEFAULT_OPTIONS));
+
+        $dbal->addDriver('read', $read);
+        $dbal->addDriver('write', $write);
+
+        $this->assertCount(1, $dbal->getDatabases());
+    }
+
+    /**
+     * @expectedException \Spiral\Database\Exception\DBALException
+     */
+    public function testGetDatabaseException()
+    {
+        $read = m::mock(DriverInterface::class);
+        $write = m::mock(DriverInterface::class);
+
+        $dbal = new DBAL(new DBALConfig(self::DEFAULT_OPTIONS));
+        $dbal->database('other');
+    }
+
+    /**
+     * @expectedException \Spiral\Database\Exception\DBALException
+     */
+    public function testGetDriverException()
+    {
+        $read = m::mock(DriverInterface::class);
+        $write = m::mock(DriverInterface::class);
+
+        $dbal = new DBAL(new DBALConfig(self::DEFAULT_OPTIONS));
+        $dbal->driver('other');
+    }
+
+    public function testConfigured()
+    {
+        $dbal = new DBAL(new DBALConfig([
+            'default'     => 'default',
+            'databases'   => [
+                'default' => [
+                    'driver' => 'default'
+                ],
+                'test'    => [
+                    'driver' => 'default'
+                ],
+            ],
+            'connections' => [
+                'default' => [
+                    'driver'  => SQLiteDriver::class,
+                    'options' => [
+                        'connection' => 'sqlite::memory:',
+                        'username'   => 'sqlite',
+                        'password'   => ''
+                    ]
+                ]
+            ]
+        ]));
+
+        $this->assertInstanceOf(SQLiteDriver::class, $dbal->driver('default'));
+        $this->assertInstanceOf(SQLiteDriver::class, $dbal->database('default')->getDriver());
+    }
+
+    public function testCountDrivers()
+    {
+        $dbal = new DBAL(new DBALConfig([
+            'default'     => 'default',
+            'databases'   => [
+                'default' => [
+                    'driver' => 'default'
+                ],
+                'test'    => [
+                    'driver' => 'default'
+                ],
+            ],
+            'connections' => [
+                'default' => [
+                    'driver'  => SQLiteDriver::class,
+                    'options' => [
+                        'connection' => 'sqlite::memory:',
+                        'username'   => 'sqlite',
+                        'password'   => ''
+                    ]
+                ]
+            ]
+        ]));
+
+        $this->assertCount(1, $dbal->getDrivers());
+
+    }
+
+    public function testCountDatabase()
+    {
+        $dbal = new DBAL(new DBALConfig([
+            'default'     => 'default',
+            'databases'   => [
+                'default' => [
+                    'driver' => 'default'
+                ],
+                'test'    => [
+                    'driver' => 'default'
+                ],
+            ],
+            'connections' => [
+                'default' => [
+                    'driver'  => SQLiteDriver::class,
+                    'options' => [
+                        'connection' => 'sqlite::memory:',
+                        'username'   => 'sqlite',
+                        'password'   => ''
+                    ]
+                ]
+            ]
+        ]));
+
+        $this->assertCount(2, $dbal->getDatabases());
+    }
+}

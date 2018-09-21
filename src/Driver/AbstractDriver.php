@@ -38,9 +38,6 @@ abstract class AbstractDriver implements DriverInterface, LoggerAwareInterface
     // DateTime format to be used to perform automatic conversion of DateTime objects.
     protected const DATETIME = 'Y-m-d H:i:s';
 
-    /** @var string */
-    private $name = '';
-
     /**
      * Connection configuration described in DBAL config file. Any driver can be used as data source
      * for multiple databases as table prefix and quotation defined on Database instance level.
@@ -72,12 +69,10 @@ abstract class AbstractDriver implements DriverInterface, LoggerAwareInterface
     ];
 
     /**
-     * @param string $name
-     * @param array  $options
+     * @param array $options
      */
-    public function __construct(string $name, array $options)
+    public function __construct(array $options)
     {
-        $this->name = $name;
         $this->options = $options + $this->options;
 
         if (!empty($options['options'])) {
@@ -88,16 +83,6 @@ abstract class AbstractDriver implements DriverInterface, LoggerAwareInterface
         if (!empty($this->options['profiling'])) {
             $this->setProfiling(true);
         }
-    }
-
-    /**
-     * Source name, can include database name or database file.
-     *
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
     }
 
     /**

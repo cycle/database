@@ -81,7 +81,7 @@ class DBAL implements SingletonInterface, InjectorInterface
     /** @var Database[] */
     private $databases = [];
 
-    /** @var AbstractDriver[] */
+    /** @var DriverInterface[] */
     private $drivers = [];
 
     /**  @var FactoryInterface */
@@ -116,6 +116,11 @@ class DBAL implements SingletonInterface, InjectorInterface
     public function getDatabases(): array
     {
         $result = [];
+
+        foreach (array_keys($this->databases) as $name) {
+            $result[] = $this->database($name);
+        }
+
         foreach (array_keys($this->config->getDatabases()) as $name) {
             $result[] = $this->database($name);
         }
@@ -181,6 +186,10 @@ class DBAL implements SingletonInterface, InjectorInterface
     public function getDrivers(): array
     {
         $result = [];
+        foreach (array_keys($this->drivers) as $name) {
+            $result[] = $this->driver($name);
+        }
+
         foreach (array_keys($this->config->getDrivers()) as $name) {
             $result[] = $this->driver($name);
         }
@@ -211,19 +220,19 @@ class DBAL implements SingletonInterface, InjectorInterface
     /**
      * Manually set connection instance.
      *
-     * @param AbstractDriver $driver
-     *
+     * @param string          $name
+     * @param DriverInterface $driver
      * @return self
      *
      * @throws DBALException
      */
-    public function addDriver(AbstractDriver $driver): DBAL
+    public function addDriver(string $name, DriverInterface $driver): DBAL
     {
-        if (isset($this->drivers[$driver->getName()])) {
-            throw new DBALException("Connection '{$driver->getName()}' already exists");
+        if (isset($this->drivers[$name])) {
+            throw new DBALException("Connection '{$name}' already exists");
         }
 
-        $this->drivers[$driver->getName()] = $driver;
+        $this->drivers[$name] = $driver;
 
         return $this;
     }

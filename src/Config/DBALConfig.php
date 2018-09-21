@@ -128,7 +128,7 @@ class DBALConfig extends InjectableConfig
 
         return new Autowire(
             $config['driver'] ?? $config['class'],
-            $config['options'] ?? $config
+            ['options' => $config['options'] ?? $config]
         );
     }
 }
