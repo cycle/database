@@ -7,7 +7,11 @@
 
 namespace Spiral\Database\Tests\Postgres;
 
+use Mockery as m;
+use Spiral\Database\Driver\Compiler;
+use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Driver\Postgres\Query\PostgresInsertQuery;
+use Spiral\Database\Driver\Quoter;
 
 class InsertQueryTest extends \Spiral\Database\Tests\InsertQueryTest
 {
@@ -71,5 +75,15 @@ class InsertQueryTest extends \Spiral\Database\Tests\InsertQueryTest
             "INSERT INTO {target_table} ({name}, {balance}) VALUES (?, ?), (?, ?) RETURNING {target_id}",
             $insert
         );
+    }
+
+    /**
+     * @expectedException \Spiral\Database\Exception\BuilderException
+     */
+    public function testInvalidCompiler()
+    {
+        $insert = $this->database->insert()->sqlStatement(new Compiler(
+            new Quoter(m::mock(DriverInterface::class), "")
+        ));
     }
 }
