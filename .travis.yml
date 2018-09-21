@@ -28,7 +28,7 @@ after_success:
 
 jobs:
   include:
-    - stage: Test
+    - stage: PHP Nightly
       php: nightly
       before_install: ""
       script:
