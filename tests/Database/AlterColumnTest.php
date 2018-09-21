@@ -214,10 +214,15 @@ abstract class AlterColumnTest extends BaseTest
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
 
-        $schema->enum('new_column', ['a', 'b', 'c'])->nullable('a');
+        $schema->enum('new_column', ['a', 'b', 'c'])->defaultValue('a');
         $schema->save();
 
         $this->assertSameAsInDB($schema);
+
+        $this->assertSame(
+            $schema->new_column->getEnumValues(),
+            $this->fetchSchema($schema)->new_column->getEnumValues()
+        );
     }
 
     public function testChangeEnumValues()
@@ -225,12 +230,12 @@ abstract class AlterColumnTest extends BaseTest
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
 
-        $schema->enum('new_column', ['a', 'b', 'c'])->nullable('a');
+        $schema->enum('new_column', ['a', 'b', 'c'])->defaultValue('a');
         $schema->save();
 
         $this->assertSameAsInDB($schema);
 
-        $schema->enum('new_column', ['a', 'b', 'c', 'd'])->nullable('a');
+        $schema->enum('new_column', ['a', 'b', 'c', 'd'])->defaultValue('a');
         $schema->save();
 
         $this->assertSameAsInDB($schema);
