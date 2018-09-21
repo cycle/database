@@ -8,7 +8,9 @@
 namespace Spiral\Database\Driver\MySQL\Schema;
 
 use Spiral\Database\Driver\DriverInterface;
+use Spiral\Database\Exception\DefaultValueException;
 use Spiral\Database\Injection\Fragment;
+use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Schema\AbstractColumn;
 
 /**
@@ -221,5 +223,24 @@ class MySQLColumn extends AbstractColumn
         }
 
         return $column;
+    }
+
+    /**
+     * Ensure that datetime fields are correctly formatted.
+     *
+     * @param string $type
+     * @param string $value
+     * @return string|FragmentInterface|\DateTime
+     *
+     * @throws DefaultValueException
+     */
+    protected function formatDatetime(string $type, $value)
+    {
+        if ($value === 'current_timestamp()') {
+            //Dynamic default value
+            return new Fragment($value);
+        }
+
+        return parent::formatDatetime($type, $value);
     }
 }
