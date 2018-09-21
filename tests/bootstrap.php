@@ -80,6 +80,19 @@ if (!empty(getenv('DB'))) {
             break;
 
         case 'mysql':
+            \Spiral\Database\Tests\BaseTest::$config = [
+                'debug'    => false,
+                'postgres' => [
+                    'driver' => \Spiral\Database\Driver\MySQL\MySQLDriver::class,
+                    'check'  => function () {
+                        return true;
+                    },
+                    'conn'   => 'mysql:host=127.0.0.1:3306;dbname=spiral',
+                    'user'   => 'root',
+                    'pass'   => 'root'
+                ],
+            ];
+            break;
         case 'mariadb':
             \Spiral\Database\Tests\BaseTest::$config = [
                 'debug'    => false,
