@@ -106,18 +106,19 @@ jobs:
 #      script:
 #        - vendor/bin/phpunit tests/Database/Postgres
 #
-#    # MariaDB
-#    - stage: Test
-#      php: 7.2
-#      addons:
-#         mariadb: "10.0"
-#      env:
-#        - "DB=mariadb MARIADB=10.0"
-#      before_install:
-#        - mysql -e 'CREATE DATABASE spiral;'
-#      script:
-#        - vendor/bin/phpunit tests/Database/MySQL
-#
+    # MariaDB
+    - stage: Test
+      php: 7.2
+      addons:
+         mariadb: "10.0"
+      env:
+        - "DB=mariadb MARIADB=10.0"
+      before_install:
+        - mysql -e 'CREATE DATABASE spiral;'
+        - echo "binlog-format = MIXED" >> /etc/mysql/my.cnf
+      script:
+        - vendor/bin/phpunit tests/Database/MySQL
+
 #    - stage: Test
 #      php: 7.2
 #      addons:
