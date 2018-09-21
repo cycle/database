@@ -237,8 +237,7 @@ class MySQLColumn extends AbstractColumn
     protected function formatDatetime(string $type, $value)
     {
         if ($value === 'current_timestamp()') {
-            //Dynamic default value
-            return new Fragment($value);
+            $value = self::DATETIME_NOW;
         }
 
         return parent::formatDatetime($type, $value);
