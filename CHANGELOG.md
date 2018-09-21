@@ -1,7 +1,7 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
-2.0.0 (20.09.2018)
+2.0.0 (21.09.2018)
 -----
 - massive refactor
 - decoupling from Spiral\Component
@@ -12,7 +12,8 @@ CHANGELOG for 0.9.0 RC
 - interfaces have been exposed for table, column, index and foreignKeys
 - new interface for driver, database, table, compiler and handler
 - immutable quoter
-- more tests 
+- more tests
+- custom exceptions for connection and constrain exceptions 
 
 1.0.1 (15.06.2018)
 -----

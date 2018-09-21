@@ -10,16 +10,16 @@ php:
   - 7.2
 
 before_install:
-  - cd tests
-  - docker-compose up -d
-  - cd ..
-  - bash ./tests/install-sqlsrv.sh
+ / - cd tests
+#  - docker-compose up -d
+#  - cd ..
+#  - bash ./tests/install-sqlsrv.sh
 
 install:
-  - composer install --no-interaction --prefer-source
+#  - composer install --no-interaction --prefer-source
 
 script:
-  - vendor/bin/phpunit --coverage-clover=coverage.xml
+#  - vendor/bin/phpunit --coverage-clover=coverage.xml
 
 after_success:
   - bash <(curl -s https://codecov.io/bash) -f coverage.xml
@@ -27,119 +27,119 @@ after_success:
 jobs:
   include:
     # PHP Nightly builds does not support SQLServer yet
-    - stage: Test
-      php: nightly
-      before_install:
-        - cd tests
-        - docker-compose up -d
-        - cd ..
-      script:
-        - vendor/bin/phpunit tests/Database/SQLite
-        - vendor/bin/phpunit tests/Database/MySQL
-        - vendor/bin/phpunit tests/Database/Postgres
-
-    # Testing various PostgresSQL version
-    - stage: Test
-      php: 7.2
-      addons:
-         postgresql: "9.2"
-      env:
-        - "DB=postgres POSTGRES=9.2"
-      before_install:
-        - psql -c 'create database spiral;' -U postgres
-      script:
-        - vendor/bin/phpunit tests/Database/Postgres
-
-    - stage: Test
-      php: 7.2
-      addons:
-         postgresql: "9.3"
-      env:
-        - "DB=postgres POSTGRES=9.3"
-      before_install:
-        - psql -c 'create database spiral;' -U postgres
-      script:
-        - vendor/bin/phpunit tests/Database/Postgres
-
-    - stage: Test
-      php: 7.2
-      addons:
-         postgresql: "9.4"
-      env:
-        - "DB=postgres POSTGRES=9.4"
-      before_install:
-        - psql -c 'create database spiral;' -U postgres
-      script:
-        - vendor/bin/phpunit tests/Database/Postgres
-
-    - stage: Test
-      php: 7.2
-      addons:
-         postgresql: "9.5"
-      env:
-        - "DB=postgres POSTGRES=9.5"
-      before_install:
-        - psql -c 'create database spiral;' -U postgres
-      script:
-        - vendor/bin/phpunit tests/Database/Postgres
-
-    - stage: Test
-      php: 7.2
-      addons:
-         postgresql: "9.6"
-      env:
-        - "DB=postgres POSTGRES=9.6"
-      before_install:
-        - psql -c 'create database spiral;' -U postgres
-      script:
-        - vendor/bin/phpunit tests/Database/Postgres
-
-    - stage: Test
-      php: 7.2
-      addons:
-         postgresql
-      env:
-        - "DB=postgres POSTGRES=10.0"
-      before_install:
-        - bash ./tests/install-pgsql-10.sh
-        - psql -c 'create database spiral;' -U postgres
-      script:
-        - vendor/bin/phpunit tests/Database/Postgres
-
-    # MariaDB
-    - stage: Test
-      php: 7.2
-      addons:
-         mariadb: "10.0"
-      env:
-        - "DB=mariadb MARIADB=10.0"
-      before_install:
-        - mysql -e 'CREATE DATABASE spiral;'
-      script:
-        - vendor/bin/phpunit tests/Database/MySQL
-
-    - stage: Test
-      php: 7.2
-      addons:
-         mariadb: "10.1"
-      env:
-        - "DB=mariadb MARIADB=10.1"
-      before_install:
-        - mysql -e 'CREATE DATABASE spiral;'
-      script:
-        - vendor/bin/phpunit tests/Database/MySQL
-
-    - stage: Test
-      php: 7.2
-      addons:
-         mariadb: "10.2"
-      env:
-        - "DB=mariadb MARIADB=10.2"
-      before_install:
-        - mysql -e 'CREATE DATABASE spiral;'
-      script:
-        - vendor/bin/phpunit tests/Database/MySQL
-
+#    - stage: Test
+#      php: nightly
+#      before_install:
+#        - cd tests
+#        - docker-compose up -d
+#        - cd ..
+#      script:
+#        - vendor/bin/phpunit tests/Database/SQLite
+#        - vendor/bin/phpunit tests/Database/MySQL
+#        - vendor/bin/phpunit tests/Database/Postgres
+#
+#    # Testing various PostgresSQL version
+#    - stage: Test
+#      php: 7.2
+#      addons:
+#         postgresql: "9.2"
+#      env:
+#        - "DB=postgres POSTGRES=9.2"
+#      before_install:
+#        - psql -c 'create database spiral;' -U postgres
+#      script:
+#        - vendor/bin/phpunit tests/Database/Postgres
+#
+#    - stage: Test
+#      php: 7.2
+#      addons:
+#         postgresql: "9.3"
+#      env:
+#        - "DB=postgres POSTGRES=9.3"
+#      before_install:
+#        - psql -c 'create database spiral;' -U postgres
+#      script:
+#        - vendor/bin/phpunit tests/Database/Postgres
+#
+#    - stage: Test
+#      php: 7.2
+#      addons:
+#         postgresql: "9.4"
+#      env:
+#        - "DB=postgres POSTGRES=9.4"
+#      before_install:
+#        - psql -c 'create database spiral;' -U postgres
+#      script:
+#        - vendor/bin/phpunit tests/Database/Postgres
+#
+#    - stage: Test
+#      php: 7.2
+#      addons:
+#         postgresql: "9.5"
+#      env:
+#        - "DB=postgres POSTGRES=9.5"
+#      before_install:
+#        - psql -c 'create database spiral;' -U postgres
+#      script:
+#        - vendor/bin/phpunit tests/Database/Postgres
+#
+#    - stage: Test
+#      php: 7.2
+#      addons:
+#         postgresql: "9.6"
+#      env:
+#        - "DB=postgres POSTGRES=9.6"
+#      before_install:
+#        - psql -c 'create database spiral;' -U postgres
+#      script:
+#        - vendor/bin/phpunit tests/Database/Postgres
+#
+#    - stage: Test
+#      php: 7.2
+#      addons:
+#         postgresql
+#      env:
+#        - "DB=postgres POSTGRES=10.0"
+#      before_install:
+#        - bash ./tests/install-pgsql-10.sh
+#        - psql -c 'create database spiral;' -U postgres
+#      script:
+#        - vendor/bin/phpunit tests/Database/Postgres
+#
+#    # MariaDB
+#    - stage: Test
+#      php: 7.2
+#      addons:
+#         mariadb: "10.0"
+#      env:
+#        - "DB=mariadb MARIADB=10.0"
+#      before_install:
+#        - mysql -e 'CREATE DATABASE spiral;'
+#      script:
+#        - vendor/bin/phpunit tests/Database/MySQL
+#
+#    - stage: Test
+#      php: 7.2
+#      addons:
+#         mariadb: "10.1"
+#      env:
+#        - "DB=mariadb MARIADB=10.1"
+#      before_install:
+#        - mysql -e 'CREATE DATABASE spiral;'
+#      script:
+#        - vendor/bin/phpunit tests/Database/MySQL
+#
+#    - stage: Test
+#      php: 7.2
+#      addons:
+#         mariadb: "10.2"
+#      env:
+#        - "DB=mariadb MARIADB=10.2"
+#      before_install:
+#        - mysql -e 'CREATE DATABASE spiral;'
+#      script:
+#        - vendor/bin/phpunit tests/Database/MySQL
+#
     # MySQL 5.7
     - stage: Test
       php: 7.2
@@ -156,6 +156,6 @@ jobs:
         - sudo mysql -e "use mysql; update user set authentication_string=PASSWORD('root') where User='root'; update user set plugin='mysql_native_password';FLUSH PRIVILEGES;"
         - sudo mysql_upgrade -u root -proot
         - sudo service mysql restart
-        - mysql -e 'CREATE DATABASE spiral;'
+        - mysql -u root -proot -e 'CREATE DATABASE spiral;'
       script:
         - vendor/bin/phpunit tests/Database/MySQL
