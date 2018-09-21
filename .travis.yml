@@ -141,5 +141,3 @@ jobs:
         - mysql -e 'CREATE DATABASE spiral;'
       script:
         - vendor/bin/phpunit tests/Database/MySQL
-
-   # MySQL 5.7
