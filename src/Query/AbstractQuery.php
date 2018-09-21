@@ -122,14 +122,4 @@ abstract class AbstractQuery implements BuilderInterface
 
         return $result;
     }
-
-    /**
-     * Execute query.
-     *
-     * @return int
-     */
-    protected function execute(): int
-    {
-        return $this->driver->execute($this->sqlStatement(), $this->getParameters());
-    }
 }
