@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Driver\SQLServer\Schema;
 
-use Spiral\Database\Driver\AbstractHandler as Behaviour;
+use Spiral\Database\Driver\HandlerInterface;
 use Spiral\Database\Schema\AbstractColumn;
 use Spiral\Database\Schema\AbstractForeignKey;
 use Spiral\Database\Schema\AbstractIndex;
@@ -20,7 +20,7 @@ class SQLServerTable extends AbstractTable
      *
      * SQLServer will reload schemas after successful savw.
      */
-    public function save(int $operation = Behaviour::DO_ALL, bool $reset = true)
+    public function save(int $operation = HandlerInterface::DO_ALL, bool $reset = true)
     {
         parent::save($operation, $reset);
 

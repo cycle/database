@@ -15,7 +15,6 @@ use Spiral\Database\Driver\Postgres\Query\PostgresInsertQuery;
 use Spiral\Database\Driver\Postgres\Schema\PostgresTable;
 use Spiral\Database\Exception\DriverException;
 use Spiral\Database\Query\InsertQuery;
-use Spiral\Database\Schema\AbstractTable;
 
 /**
  * Talks to postgres databases.
@@ -68,17 +67,6 @@ class PostgresDriver extends AbstractDriver
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getSchema(string $table, string $prefix = ''): AbstractTable
-    {
-        // reset primary key cache
-        unset($this->primaryKeys[$prefix . $table]);
-
-        return parent::getSchema($table, $prefix);
-    }
-
-    /**
      * Get singular primary key associated with desired table. Used to emulate last insert id.
      *
      * @param string $prefix Database prefix if any.
@@ -110,6 +98,14 @@ class PostgresDriver extends AbstractDriver
         }
 
         return $this->primaryKeys[$name];
+    }
+
+    /**
+     * Reset primary keys cache.
+     */
+    public function resetPrimaryKeys()
+    {
+        $this->primaryKeys = [];
     }
 
     /**

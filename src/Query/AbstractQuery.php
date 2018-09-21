@@ -8,7 +8,7 @@
 
 namespace Spiral\Database\Query;
 
-use Spiral\Database\Driver\Compiler;
+use Spiral\Database\Driver\CompilerInterface;
 use Spiral\Database\Driver\DriverInterface;
 
 /**
@@ -20,14 +20,14 @@ abstract class AbstractQuery implements BuilderInterface
     /** @var DriverInterface */
     protected $driver = null;
 
-    /** @var Compiler */
+    /** @var CompilerInterface */
     protected $compiler = null;
 
     /**
-     * @param DriverInterface $driver   Associated driver.
-     * @param Compiler        $compiler Driver specific QueryCompiler instance (one per builder).
+     * @param DriverInterface   $driver   Associated driver.
+     * @param CompilerInterface $compiler Driver specific QueryCompiler instance (one per builder).
      */
-    public function __construct(DriverInterface $driver, Compiler $compiler)
+    public function __construct(DriverInterface $driver, CompilerInterface $compiler)
     {
         $this->driver = $driver;
         $this->compiler = $compiler;

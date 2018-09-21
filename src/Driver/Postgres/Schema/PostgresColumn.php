@@ -7,7 +7,6 @@
 
 namespace Spiral\Database\Driver\Postgres\Schema;
 
-use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Injection\Fragment;
 use Spiral\Database\Schema\AbstractColumn;
@@ -200,7 +199,7 @@ class PostgresColumn extends AbstractColumn
     /**
      * {@inheritdoc}
      */
-    public function sqlStatement(AbstractDriver $driver): string
+    public function sqlStatement(DriverInterface $driver): string
     {
         $statement = parent::sqlStatement($driver);
 
@@ -225,11 +224,11 @@ class PostgresColumn extends AbstractColumn
     /**
      * Generate set of operations need to change column.
      *
-     * @param AbstractDriver $driver
-     * @param AbstractColumn $initial
+     * @param DriverInterface $driver
+     * @param AbstractColumn  $initial
      * @return array
      */
-    public function alterOperations(AbstractDriver $driver, AbstractColumn $initial): array
+    public function alterOperations(DriverInterface $driver, AbstractColumn $initial): array
     {
         $operations = [];
 
@@ -301,7 +300,7 @@ class PostgresColumn extends AbstractColumn
     /**
      * {@inheritdoc}
      */
-    protected function quoteEnum(AbstractDriver $driver): string
+    protected function quoteEnum(DriverInterface $driver): string
     {
         //Postgres enums are just constrained strings
         return '(' . $this->size . ')';

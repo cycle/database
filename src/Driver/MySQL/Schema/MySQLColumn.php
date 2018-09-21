@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Driver\MySQL\Schema;
 
-use Spiral\Database\Driver\AbstractDriver;
+use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Injection\Fragment;
 use Spiral\Database\Schema\AbstractColumn;
 
@@ -136,7 +136,7 @@ class MySQLColumn extends AbstractColumn
     /**
      * {@inheritdoc}
      */
-    public function sqlStatement(AbstractDriver $driver): string
+    public function sqlStatement(DriverInterface $driver): string
     {
         $defaultValue = $this->defaultValue;
 

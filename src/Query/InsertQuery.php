@@ -45,7 +45,7 @@ class InsertQuery extends AbstractQuery
      *
      * @param string $table Associated table name.
      */
-    public function __construct(DriverInterface $driver, Compiler $compiler, string $table = null)
+    public function __construct(DriverInterface $driver, CompilerInterface $compiler, string $table = null)
     {
         parent::__construct($driver, $compiler);
         $this->table = $table ?? '';

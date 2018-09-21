@@ -122,11 +122,19 @@ abstract class AbstractDriver implements DriverInterface, LoggerAwareInterface
     }
 
     /**
-     * Driver specific database/table identifier quotation.
-     *
-     * @param string $identifier
-     *
-     * @return string
+     * @inheritdoc
+     */
+    public function quote($value, int $type = PDO::PARAM_STR): string
+    {
+        if ($value instanceof \DateTimeInterface) {
+            $value = $this->formatDatetime($value);
+        }
+
+        return $this->getPDO()->quote($value, $type);
+    }
+
+    /**
+     * @inheritdoc
      */
     public function identifier(string $identifier): string
     {
@@ -134,12 +142,7 @@ abstract class AbstractDriver implements DriverInterface, LoggerAwareInterface
     }
 
     /**
-     * Get Driver specific AbstractTable implementation.
-     *
-     * @param string $table  Table name without prefix included.
-     * @param string $prefix Database specific table prefix, this parameter is not required, but if
-     *                       provided all foreign keys will be created using it.
-     * @return AbstractTable
+     * @inheritdoc
      */
     public function getSchema(string $table, string $prefix = ''): AbstractTable
     {
@@ -149,11 +152,7 @@ abstract class AbstractDriver implements DriverInterface, LoggerAwareInterface
     }
 
     /**
-     * Get instance of Driver specific QueryCompiler.
-     *
-     * @param string $prefix Database specific table prefix, used to quote table names and build
-     *                       aliases.
-     * @return Compiler
+     * @inheritdoc
      */
     public function getCompiler(string $prefix = ''): CompilerInterface
     {

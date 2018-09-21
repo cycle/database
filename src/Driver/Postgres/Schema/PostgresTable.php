@@ -7,10 +7,10 @@
 
 namespace Spiral\Database\Driver\Postgres\Schema;
 
-use Spiral\Database\Driver\AbstractHandler as Behaviour;
+use Spiral\Database\Driver\HandlerInterface;
 use Spiral\Database\Schema\AbstractColumn;
-use Spiral\Database\Schema\AbstractIndex;
 use Spiral\Database\Schema\AbstractForeignKey;
+use Spiral\Database\Schema\AbstractIndex;
 use Spiral\Database\Schema\AbstractTable;
 
 class PostgresTable extends AbstractTable
@@ -46,7 +46,7 @@ class PostgresTable extends AbstractTable
      *
      * SQLServer will reload schemas after successful savw.
      */
-    public function save(int $operation = Behaviour::DO_ALL, bool $reset = true)
+    public function save(int $operation = HandlerInterface::DO_ALL, bool $reset = true)
     {
         parent::save($operation, $reset);
 

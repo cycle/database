@@ -8,7 +8,7 @@
 
 namespace Spiral\Database\Driver\SQLite\Schema;
 
-use Spiral\Database\Driver\AbstractDriver;
+use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Schema\AbstractIndex;
 
 class SQLiteIndex extends AbstractIndex
@@ -32,14 +32,9 @@ class SQLiteIndex extends AbstractIndex
     }
 
     /**
-     * Index sql creation syntax.
-     *
-     * @param AbstractDriver $driver
-     * @param bool           $includeTable Include table ON statement (not required for inline index
-     *                                     creation).
-     * @return string
+     * @inheritdoc
      */
-    public function sqlStatement(AbstractDriver $driver, bool $includeTable = true): string
+    public function sqlStatement(DriverInterface $driver, bool $includeTable = true): string
     {
         $statement = [$this->type == self::UNIQUE ? 'UNIQUE INDEX' : 'INDEX'];
 

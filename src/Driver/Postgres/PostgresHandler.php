@@ -72,4 +72,17 @@ class PostgresHandler extends AbstractHandler
 
         $this->run($statement);
     }
+
+    /**
+     * @inheritdoc
+     */
+    protected function run(string $statement, array $parameters = []): int
+    {
+        if ($this->driver instanceof PostgresDriver) {
+            // invaliding primary key cache
+            $this->driver->resetPrimaryKeys();
+        }
+
+        return parent::run($statement, $parameters);
+    }
 }

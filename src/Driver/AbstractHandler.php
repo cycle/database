@@ -25,13 +25,13 @@ use Spiral\Database\Schema\ElementInterface;
  */
 abstract class AbstractHandler implements HandlerInterface
 {
-    /** @var AbstractDriver */
+    /** @var DriverInterface */
     protected $driver;
 
     /**
-     * @param AbstractDriver $driver
+     * @param DriverInterface $driver
      */
-    public function __construct(AbstractDriver $driver)
+    public function __construct(DriverInterface $driver)
     {
         $this->driver = $driver;
     }
@@ -39,9 +39,9 @@ abstract class AbstractHandler implements HandlerInterface
     /**
      * Associated driver.
      *
-     * @return AbstractDriver
+     * @return DriverInterface
      */
-    public function getDriver(): AbstractDriver
+    public function getDriver(): DriverInterface
     {
         return $this->driver;
     }

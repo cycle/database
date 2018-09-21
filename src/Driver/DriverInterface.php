@@ -14,8 +14,8 @@ use Spiral\Database\Query\DeleteQuery;
 use Spiral\Database\Query\InsertQuery;
 use Spiral\Database\Query\SelectQuery;
 use Spiral\Database\Query\UpdateQuery;
-use Spiral\Database\Statement;
 use Spiral\Database\Schema\AbstractTable;
+use Spiral\Database\Statement;
 
 /**
  * Wraps PDO connection and provides common abstractions over database operations.
@@ -126,6 +126,15 @@ interface DriverInterface
     public function reconnect();
 
     /**
+     * Quote value.
+     *
+     * @param mixed $value
+     * @param int   $type Parameter type.
+     * @return string
+     */
+    public function quote($value, int $type = \PDO::PARAM_STR): string;
+
+    /**
      * Driver specific database/table identifier quotation.
      *
      * @param string $identifier
@@ -156,7 +165,7 @@ interface DriverInterface
      * @return AbstractTable
      */
     public function getSchema(string $name, string $prefix = ''): AbstractTable;
-    
+
     /**
      * Clean (truncate) specified driver table.
      *

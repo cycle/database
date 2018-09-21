@@ -21,7 +21,7 @@ class ConsistencyTest extends \Spiral\Database\Tests\ConsistencyTest
          */
         $d = $this->getDriver();
 
-        $schema = $this->schema('table');
+        $schema = $d->getSchema('table');
         $this->assertFalse($schema->exists());
 
         $schema->string('value');
@@ -32,11 +32,11 @@ class ConsistencyTest extends \Spiral\Database\Tests\ConsistencyTest
         $schema->declareDropped();
         $schema->save();
 
-        $schema = $this->schema('table');
+        $schema = $d->getSchema('table');
         $column = $schema->primary('target');
         $schema->save();
 
-        $schema = $this->schema('table');
+        $schema = $d->getSchema('table');
         $this->assertTrue($schema->exists());
 
         $this->assertSame($schema->column('target')->getType(), $column->getType());
@@ -45,7 +45,6 @@ class ConsistencyTest extends \Spiral\Database\Tests\ConsistencyTest
             FragmentInterface::class,
             $schema->column('target')->getDefaultValue()
         );
-
 
         $this->assertSame('target', $d->getPrimary('', 'table'));
     }

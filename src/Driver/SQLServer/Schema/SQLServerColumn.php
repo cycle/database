@@ -7,7 +7,6 @@
 
 namespace Spiral\Database\Driver\SQLServer\Schema;
 
-use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Schema\AbstractColumn;
 
@@ -193,7 +192,7 @@ class SQLServerColumn extends AbstractColumn
      * @param bool $withEnum When true enum constrain will be included into definition. Set to false
      *                       if you want to create constrain separately.
      */
-    public function sqlStatement(AbstractDriver $driver, bool $withEnum = true): string
+    public function sqlStatement(DriverInterface $driver, bool $withEnum = true): string
     {
         if ($withEnum && $this->getAbstractType() == 'enum') {
             return "{$this->sqlStatement($driver, false)} {$this->enumStatement($driver)}";
@@ -225,7 +224,7 @@ class SQLServerColumn extends AbstractColumn
     /**
      * {@inheritdoc}
      */
-    protected function quoteDefault(AbstractDriver $driver): string
+    protected function quoteDefault(DriverInterface $driver): string
     {
         $defaultValue = parent::quoteDefault($driver);
         if ($this->getAbstractType() == 'boolean') {
@@ -239,11 +238,11 @@ class SQLServerColumn extends AbstractColumn
      * Generate set of operations need to change column. We are expecting that column constrains
      * will be dropped separately.
      *
-     * @param AbstractDriver $driver
-     * @param AbstractColumn $initial
+     * @param DriverInterface $driver
+     * @param AbstractColumn  $initial
      * @return array
      */
-    public function alterOperations(AbstractDriver $driver, AbstractColumn $initial): array
+    public function alterOperations(DriverInterface $driver, AbstractColumn $initial): array
     {
         $operations = [];
 
@@ -334,10 +333,10 @@ class SQLServerColumn extends AbstractColumn
     /**
      * In SQLServer we can emulate enums similar way as in Postgres via column constrain.
      *
-     * @param AbstractDriver $driver
+     * @param DriverInterface $driver
      * @return string
      */
-    private function enumStatement(AbstractDriver $driver): string
+    private function enumStatement(DriverInterface $driver): string
     {
         $enumValues = [];
         foreach ($this->enumValues as $value) {

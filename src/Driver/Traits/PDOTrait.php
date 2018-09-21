@@ -66,22 +66,6 @@ trait PDOTrait
     }
 
     /**
-     * Quote value using PDO.
-     *
-     * @param mixed $value
-     * @param int   $type Parameter type.
-     * @return string
-     */
-    public function quote($value, int $type = PDO::PARAM_STR): string
-    {
-        if ($value instanceof \DateTimeInterface) {
-            $value = $this->formatDatetime($value);
-        }
-
-        return $this->getPDO()->quote($value, $type);
-    }
-
-    /**
      * Wraps PDO query method with custom representation class.
      *
      * @param string $statement
