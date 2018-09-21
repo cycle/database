@@ -4,9 +4,11 @@
  *
  * @author Wolfy-J
  */
+
 namespace Spiral\Database\Tests;
 
 use Spiral\Database\Database;
+use Spiral\Database\Exception\HandlerException;
 use Spiral\Database\Exception\QueryException;
 
 /**
@@ -35,6 +37,22 @@ abstract class ExceptionsTest extends BaseTest
 
             $this->assertSame(
                 $e->getQuery(),
+                $select->queryString()
+            );
+        }
+    }
+
+    public function testHandlerException()
+    {
+        $select = $this->database->select()->from('udnefinedTable');
+        try {
+            $select->run();
+        } catch (QueryException $e) {
+            $h = new HandlerException($e);
+
+            $this->assertInstanceOf(QueryException::class, $h->getPrevious());
+            $this->assertSame(
+                $h->getQuery(),
                 $select->queryString()
             );
         }
