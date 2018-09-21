@@ -15,7 +15,6 @@ use Spiral\Database\Driver\Traits\PDOTrait;
 use Spiral\Database\Driver\Traits\ProfilingTrait;
 use Spiral\Database\Driver\Traits\TransactionTrait;
 use Spiral\Database\Exception\DriverException;
-use Spiral\Database\Exception\QueryException;
 use Spiral\Database\Schema\AbstractTable;
 
 /**
@@ -204,17 +203,5 @@ abstract class AbstractDriver implements DriverInterface, LoggerAwareInterface
         $datetime->setTimestamp($value->getTimestamp());
 
         return $datetime->format(static::DATETIME);
-    }
-
-    /**
-     * Convert PDO exception into query or integrity exception.
-     *
-     * @param \PDOException $exception
-     * @param string        $query
-     * @return QueryException
-     */
-    protected function mapException(\PDOException $exception, string $query): QueryException
-    {
-        return new QueryException($exception, $query);
     }
 }
