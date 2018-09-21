@@ -378,6 +378,40 @@ abstract class ReflectorTest extends BaseTest
         $this->assertFalse($this->fetchSchema($schemaA)->exists());
     }
 
+    public function testDeleteTablesWithForeignKeys()
+    {
+        $schemaA = $this->schema('a');
+        $this->assertFalse($schemaA->exists());
+
+        $schemaB = $this->schema('b');
+        $this->assertFalse($schemaB->exists());
+
+        $schemaA->primary('id');
+        $schemaA->integer('value');
+
+        $schemaA->integer('b_id');
+        $schemaA->foreignKey('b_id')->references('b', 'id');
+
+        $schemaA->enum('status', ['active', 'disabled'])->defaultValue('active');
+        $schemaA->index(['status']);
+
+        $schemaB->primary('id');
+        $schemaB->string('value');
+        $schemaB->index(['value']);
+
+        $this->saveTables([$schemaA, $schemaB]);
+        $this->assertSameAsInDB($schemaA);
+        $this->assertSameAsInDB($schemaB);
+
+        $schemaA->declareDropped();
+
+        $this->saveTables([$schemaA]);
+        $this->assertSameAsInDB($schemaB);
+
+        $this->assertFalse($schemaA->exists());
+        $this->assertFalse($this->fetchSchema($schemaA)->exists());
+    }
+
     protected function saveTables(array $tables)
     {
         $reflector = new Reflector();

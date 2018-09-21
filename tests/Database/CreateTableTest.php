@@ -54,6 +54,8 @@ abstract class CreateTableTest extends BaseTest
         $schema = $this->schema('table');
         $this->assertTrue($schema->exists());
         $this->assertSameAsInDB($schema);
+
+        $this->assertInternalType('array', $schema->__debugInfo());
     }
 
     public function testMultipleColumns()
@@ -109,6 +111,25 @@ abstract class CreateTableTest extends BaseTest
         $this->assertTrue($schema->exists());
 
         $this->assertTrue($schema->hasColumn('name'));
+    }
+
+    public function testCreateWithPrimary()
+    {
+        $schema = $this->schema('table');
+        $this->assertFalse($schema->exists());
+
+        $schema->integer('id')->nullable(false);
+        $schema->string('name');
+
+        $schema->setPrimaryKeys(['id']);
+        $this->assertSame(['id'], $schema->getPrimaryKeys());
+        $schema->save();
+
+        $schema = $this->schema('table');
+        $this->assertTrue($schema->exists());
+
+        $this->assertSameAsInDB($schema);
+        $this->assertSame(['id'], $this->fetchSchema($schema)->getPrimaryKeys());
     }
 
     /**
