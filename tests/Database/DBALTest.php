@@ -242,12 +242,10 @@ class DBALTest extends TestCase
             ],
             'connections' => [
                 'default' => [
-                    'driver'  => SQLiteDriver::class,
-                    'options' => [
-                        'connection' => 'sqlite::memory:',
-                        'username'   => 'sqlite',
-                        'password'   => ''
-                    ]
+                    'driver'     => SQLiteDriver::class,
+                    'connection' => 'sqlite::memory:',
+                    'username'   => 'sqlite',
+                    'password'   => ''
                 ]
             ]
         ]));
