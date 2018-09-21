@@ -30,6 +30,11 @@ jobs:
   include:
     - stage: PHP Nightly
       php: nightly
-      before_install: ""
+      before_install:
+        - cd tests
+        - docker-compose up -d
+        - cd ..
       script:
         - vendor/bin/phpunit tests/Database/SQLite
+        - vendor/bin/phpunit tests/Database/MySQL
+        - vendor/bin/phpunit tests/Database/Postgres
