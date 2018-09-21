@@ -13,8 +13,7 @@ before_install:
   - cd tests
   - docker-compose up -d
   - cd ..
-  - chmod +x ./tests/install-sqlsrv.sh
-  - ./tests/install-sqlsrv.sh
+  - bash ./tests/install-sqlsrv.sh
 
 install:
   - composer install --no-interaction --prefer-source
@@ -72,7 +71,6 @@ jobs:
         - psql -c 'create database spiral;' -U postgres
       script:
         - vendor/bin/phpunit tests/Database/Postgres
-
 
     - stage: Test
       php: 7.2
