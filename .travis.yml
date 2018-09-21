@@ -41,11 +41,56 @@ jobs:
 
     # Testing various PostgresSQL version
     - stage: Test
-      php: 7.1
+      php: 7.2
       addons:
          postgresql: "9.2"
       env:
-        - "DB=postgres"
+        - "DB=postgres POSTGRES=9.2"
+      before_install:
+        - psql -c 'create database spiral;' -U postgres
+      script:
+        - vendor/bin/phpunit tests/Database/Postgres
+
+    - stage: Test
+      php: 7.2
+      addons:
+         postgresql: "9.3"
+      env:
+        - "DB=postgres POSTGRES=9.3"
+      before_install:
+        - psql -c 'create database spiral;' -U postgres
+      script:
+        - vendor/bin/phpunit tests/Database/Postgres
+
+    - stage: Test
+      php: 7.2
+      addons:
+         postgresql: "9.4"
+      env:
+        - "DB=postgres POSTGRES=9.4"
+      before_install:
+        - psql -c 'create database spiral;' -U postgres
+      script:
+        - vendor/bin/phpunit tests/Database/Postgres
+
+
+    - stage: Test
+      php: 7.2
+      addons:
+         postgresql: "9.5"
+      env:
+        - "DB=postgres POSTGRES=9.5"
+      before_install:
+        - psql -c 'create database spiral;' -U postgres
+      script:
+        - vendor/bin/phpunit tests/Database/Postgres
+
+    - stage: Test
+      php: 7.2
+      addons:
+         postgresql: "9.6"
+      env:
+        - "DB=postgres POSTGRES=9.6"
       before_install:
         - psql -c 'create database spiral;' -U postgres
       script:
