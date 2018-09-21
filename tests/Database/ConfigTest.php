@@ -112,7 +112,7 @@ class ConfigTest extends TestCase
                 ]
             ]
         ]);
-
+        $this->assertSame('test', $config->getDatabase('test')->getName());
         $this->assertSame('abc', $config->getDatabase('test')->getPrefix());
         $this->assertSame('bce', $config->getDatabase('test2')->getPrefix());
         $this->assertSame('', $config->getDatabase('test3')->getPrefix());
