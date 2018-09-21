@@ -104,6 +104,15 @@ abstract class BaseTest extends TestCase
         }
     }
 
+    /**
+     * @param AbstractTable $table
+     * @return AbstractTable
+     */
+    protected function fetchSchema(AbstractTable $table): AbstractTable
+    {
+        return $this->schema($table->getName());
+    }
+
     protected function makeMessage(string $table, Comparator $comparator)
     {
         if ($comparator->isPrimaryChanged()) {

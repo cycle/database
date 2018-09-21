@@ -7,8 +7,8 @@
 
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\Driver\AbstractHandler;
 use Spiral\Database\Database;
+use Spiral\Database\Driver\AbstractHandler;
 use Spiral\Database\Schema\AbstractColumn;
 use Spiral\Database\Schema\AbstractTable;
 
@@ -103,6 +103,8 @@ abstract class AlterColumnTest extends BaseTest
         $schema->string('new_column')->defaultValue('some_value');
         $schema->save();
 
+        $this->assertInternalType('array', $schema->string('new_column')->__debugInfo());
+
         $this->assertSameAsInDB($schema);
     }
 
@@ -115,6 +117,21 @@ abstract class AlterColumnTest extends BaseTest
         $schema->save();
 
         $this->assertSameAsInDB($schema);
+    }
+
+    public function testMakeNullable()
+    {
+        $schema = $this->sampleSchema('table');
+        $this->assertTrue($schema->exists());
+
+        $this->assertFalse($this->fetchSchema($schema)->column('first_name')->isNullable());
+
+        $schema->string('first_name')->nullable(true);
+        $schema->save();
+
+        $this->assertSameAsInDB($schema);
+
+        $this->assertTrue($this->fetchSchema($schema)->column('first_name')->isNullable());
     }
 
     public function testAddColumnNotNullable()
