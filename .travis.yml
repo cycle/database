@@ -13,14 +13,23 @@ before_install:
   - cd tests
   - docker-compose up -d
   - cd ..
+  - chmod +x ./tests/install-sqlsrv.sh
+  - ./tests/install-sqlsrv.sh
 
 install:
   - composer install --no-interaction --prefer-source
-  - chmod +x ./tests/install-sqlsrv.sh
-  - ./tests/install-sqlsrv.sh
 
 script:
   - vendor/bin/phpunit --coverage-clover=coverage.xml
 
 after_success:
   - bash <(curl -s https://codecov.io/bash) -f coverage.xml
+
+
+jobs:
+  include:
+    - stage: Test
+      php: nightly
+      before_install: ""
+      script:
+        - vendor/bin/phpunit tests/Database/SQLite
