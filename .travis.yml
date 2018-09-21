@@ -107,3 +107,25 @@ jobs:
         - mysql -e 'CREATE DATABASE spiral;'
       script:
         - vendor/bin/phpunit tests/Database/MySQL
+
+   - stage: Test
+      php: 7.2
+      addons:
+         mariadb: "10.1"
+      env:
+        - "DB=mariadb MARIADB=10.1"
+      before_install:
+        - mysql -e 'CREATE DATABASE spiral;'
+      script:
+        - vendor/bin/phpunit tests/Database/MySQL
+
+   - stage: Test
+      php: 7.2
+      addons:
+         mariadb: "10.2"
+      env:
+        - "DB=mariadb MARIADB=10.2"
+      before_install:
+        - mysql -e 'CREATE DATABASE spiral;'
+      script:
+        - vendor/bin/phpunit tests/Database/MySQL
