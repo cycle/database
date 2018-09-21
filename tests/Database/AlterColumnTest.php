@@ -134,6 +134,57 @@ abstract class AlterColumnTest extends BaseTest
         $this->assertTrue($this->fetchSchema($schema)->column('first_name')->isNullable());
     }
 
+    /**
+     * @expectedException \Spiral\Database\Exception\SchemaException
+     */
+    public function testColumnSizeException()
+    {
+        $schema = $this->sampleSchema('table');
+        $this->assertTrue($schema->exists());
+
+        $schema->string('first_name', -1);
+        $schema->save();
+    }
+
+    /**
+     * @expectedException \Spiral\Database\Exception\SchemaException
+     */
+    public function testColumnSize2Exception()
+    {
+        $schema = $this->sampleSchema('table');
+        $this->assertTrue($schema->exists());
+
+        $schema->string('first_name', 256);
+        $schema->save();
+    }
+
+    public function testChangeSize()
+    {
+        $schema = $this->sampleSchema('table');
+        $this->assertTrue($schema->exists());
+
+        $this->assertSame(255, $this->fetchSchema($schema)->column('first_name')->getSize());
+
+        $schema->string('first_name', 100);
+        $schema->save();
+
+        $this->assertSameAsInDB($schema);
+        $this->assertSame(100, $this->fetchSchema($schema)->column('first_name')->getSize());
+    }
+
+    public function testDecimalSizes()
+    {
+        $schema = $this->sampleSchema('table');
+        $this->assertTrue($schema->exists());
+
+        $schema->decimal('double_2', 10, 1);
+        $schema->save();
+
+        $this->assertSameAsInDB($schema);
+        $this->assertSame(10, $this->fetchSchema($schema)->column('double_2')->getPrecision());
+        $this->assertSame(1, $this->fetchSchema($schema)->column('double_2')->getScale());
+    }
+
     public function testAddColumnNotNullable()
     {
         $schema = $this->sampleSchema('table');

@@ -115,13 +115,10 @@ class DBAL implements SingletonInterface, InjectorInterface
      */
     public function getDatabases(): array
     {
+        $names = array_unique(array_merge(array_keys($this->databases), array_keys($this->config->getDatabases())));
+
         $result = [];
-
-        foreach (array_keys($this->databases) as $name) {
-            $result[] = $this->database($name);
-        }
-
-        foreach (array_keys($this->config->getDatabases()) as $name) {
+        foreach ($names as $name) {
             $result[] = $this->database($name);
         }
 
@@ -185,12 +182,10 @@ class DBAL implements SingletonInterface, InjectorInterface
      */
     public function getDrivers(): array
     {
-        $result = [];
-        foreach (array_keys($this->drivers) as $name) {
-            $result[] = $this->driver($name);
-        }
+        $names = array_unique(array_merge(array_keys($this->drivers), array_keys($this->config->getDrivers())));
 
-        foreach (array_keys($this->config->getDrivers()) as $name) {
+        $result = [];
+        foreach ($names as $name) {
             $result[] = $this->driver($name);
         }
 

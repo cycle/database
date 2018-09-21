@@ -251,5 +251,26 @@ class DBALTest extends TestCase
         ]));
 
         $this->assertCount(2, $dbal->getDatabases());
+
+        $driver = m::mock(DriverInterface::class);
+        $db = new Database('default2', '', $driver);
+        $dbal->addDatabase($db);
+
+        $this->assertCount(3, $dbal->getDatabases());
+    }
+
+    /**
+     * @expectedException \Spiral\Database\Exception\DBALException
+     */
+    public function testBadDriver()
+    {
+        $dbal = new DBAL(new DBALConfig([
+
+            'connections' => [
+                'default' => new Container\Autowire('unknown')
+            ]
+        ]));
+
+        $dbal->driver('default');
     }
 }
