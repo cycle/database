@@ -88,6 +88,10 @@ class MySQLDriver extends AbstractDriver
      */
     protected function mapException(\PDOException $exception, string $query): QueryException
     {
+        if ($exception->getCode() == 23000) {
+            return new QueryException\ConstrainException($exception, $query);
+        }
+
         if ($exception->getCode() > 2000) {
             return new QueryException\ConnectionException($exception, $query);
         }

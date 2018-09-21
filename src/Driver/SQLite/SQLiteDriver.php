@@ -13,6 +13,7 @@ use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Driver\HandlerInterface;
 use Spiral\Database\Driver\SQLite\Schema\SQLiteTable;
 use Spiral\Database\Exception\DriverException;
+use Spiral\Database\Exception\QueryException;
 
 /**
  * Talks to sqlite databases.
@@ -87,5 +88,17 @@ class SQLiteDriver extends AbstractDriver
     public function getHandler(): HandlerInterface
     {
         return new SQLiteHandler($this);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function mapException(\PDOException $exception, string $query): QueryException
+    {
+        if ($exception->getCode() == 23000) {
+            return new QueryException\ConstrainException($exception, $query);
+        }
+
+        return new QueryException($exception, $query);
     }
 }

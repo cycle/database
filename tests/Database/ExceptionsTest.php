@@ -57,4 +57,20 @@ abstract class ExceptionsTest extends BaseTest
             );
         }
     }
+
+    public function testInsertNotNullable()
+    {
+        $schema = $this->getDriver()->getSchema('test');
+        $schema->primary('id');
+        $schema->string('value')->nullable(false)->defaultValue(null);
+        $schema->save();
+
+        $this->getDriver()->insertQuery('', 'test')->values(['value' => 'value'])->run();
+
+        try {
+            $this->getDriver()->insertQuery('', 'test')->values(['value' => null])->run();
+        } catch (QueryException\ConstrainException $e) {
+            $this->assertInstanceOf(QueryException\ConstrainException::class, $e);
+        }
+    }
 }
