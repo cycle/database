@@ -8,8 +8,8 @@
 namespace Spiral\Database\Driver\SQLite\Schema;
 
 use Spiral\Database\Schema\AbstractColumn;
-use Spiral\Database\Schema\AbstractIndex;
 use Spiral\Database\Schema\AbstractForeignKey;
+use Spiral\Database\Schema\AbstractIndex;
 use Spiral\Database\Schema\AbstractTable;
 
 class SQLiteTable extends AbstractTable

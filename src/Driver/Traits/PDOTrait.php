@@ -259,7 +259,7 @@ trait PDOTrait
     /**
      * Bind parameters into statement.
      *
-     * @param Statement $statement
+     * @param Statement            $statement
      * @param ParameterInterface[] $parameters Named hash of ParameterInterface.
      * @return Statement
      */
