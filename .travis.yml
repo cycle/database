@@ -129,3 +129,20 @@ jobs:
         - mysql -e 'CREATE DATABASE spiral;'
       script:
         - vendor/bin/phpunit tests/Database/MySQL
+
+   # MySQL 5.7
+   - stage: Test
+      php: 7.2
+      addons:
+         apt:
+            sources:
+              - mysql-5.7-trusty
+            packages:
+              - mysql-server
+              - mysql-client
+      env:
+        - "DB=mysql MYSQL=5.7"
+      before_install:
+        - mysql -e 'CREATE DATABASE spiral;'
+      script:
+        - vendor/bin/phpunit tests/Database/MySQL
