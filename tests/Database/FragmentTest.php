@@ -35,7 +35,7 @@ class FragmentTest extends TestCase
     public function testSerialize()
     {
         $fragment = new Fragment('some sql');
-        $fragment2 = unserialize(serialize($fragment));
+        $fragment2 = Fragment::__set_state(['statement' => 'some sql']);
 
         $this->assertEquals($fragment2, $fragment);
     }
