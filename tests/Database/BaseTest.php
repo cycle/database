@@ -53,15 +53,12 @@ abstract class BaseTest extends TestCase
         if (!isset($this->driver)) {
             $class = $config['driver'];
 
-            $this->driver = new $class(
-                'mysql',
-                [
-                    'connection' => $config['conn'],
-                    'username'   => $config['user'],
-                    'password'   => $config['pass'],
-                    'options'    => []
-                ]
-            );
+            $this->driver = new $class([
+                'connection' => $config['conn'],
+                'username'   => $config['user'],
+                'password'   => $config['pass'],
+                'options'    => []
+            ]);
         }
 
         if (self::$config['debug']) {
