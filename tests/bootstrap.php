@@ -93,6 +93,7 @@ if (!empty(getenv('DB'))) {
                 ],
             ];
             break;
+
         case 'mariadb':
             \Spiral\Database\Tests\BaseTest::$config = [
                 'debug'    => false,
