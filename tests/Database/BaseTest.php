@@ -94,6 +94,118 @@ abstract class BaseTest extends TestCase
 
     protected function assertSameAsInDB(AbstractTable $current)
     {
+        $source = $current->getState();
+        $target = $this->fetchSchema($current)->getState();
+
+        // tesing changes
+        $this->assertSame(
+            $source->getName(),
+            $target->getName(),
+            'Table name changed'
+        );
+
+        $this->assertSame(
+            $source->getPrimaryKeys(),
+            $target->getPrimaryKeys(),
+            'Primary keys changed'
+        );
+
+        $this->assertSame(
+            count($source->getColumns()),
+            count($target->getColumns()),
+            'Column number has changed'
+        );
+
+        $this->assertSame(
+            count($source->getIndexes()),
+            count($target->getIndexes()),
+            'Index number has changed'
+        );
+
+        $this->assertSame(
+            count($source->getForeignKeys()),
+            count($target->getForeignKeys()),
+            'FK number has changed'
+        );
+
+        // columns
+
+        foreach ($source->getColumns() as $column) {
+            $this->assertTrue(
+                $target->hasColumn($column->getName()),
+                "Column {$column} has been removed"
+            );
+
+            $this->assertTrue(
+                $column->compare($target->findColumn($column->getName())),
+                "Column {$column} has been changed"
+            );
+        }
+
+        foreach ($target->getColumns() as $column) {
+            $this->assertTrue(
+                $source->hasColumn($column->getName()),
+                "Column {$column} has been added"
+            );
+
+            $this->assertTrue(
+                $column->compare($source->findColumn($column->getName())),
+                "Column {$column} has been changed"
+            );
+        }
+
+        // indexes
+
+        foreach ($source->getIndexes() as $index) {
+            $this->assertTrue(
+                $target->hasIndex($index->getColumns()),
+                "Index {$index->getName()} has been removed"
+            );
+
+            $this->assertTrue(
+                $index->compare($target->findIndex($index->getColumns())),
+                "Index {$index->getName()} has been changed"
+            );
+        }
+
+        foreach ($target->getIndexes() as $index) {
+            $this->assertTrue(
+                $source->hasIndex($index->getColumns()),
+                "Index {$index->getName()} has been removed"
+            );
+
+            $this->assertTrue(
+                $index->compare($source->findIndex($index->getColumns())),
+                "Index {$index->getName()} has been changed"
+            );
+        }
+
+        // FK
+        foreach ($source->getForeignKeys() as $key) {
+            $this->assertTrue(
+                $target->hasForeignKey($key->getColumn()),
+                "FK {$key->getName()} has been removed"
+            );
+
+            $this->assertTrue(
+                $key->compare($target->findForeignKey($key->getColumn())),
+                "FK {$key->getName()} has been changed"
+            );
+        }
+
+        foreach ($target->getForeignKeys() as $key) {
+            $this->assertTrue(
+                $source->hasForeignKey($key->getColumn()),
+                "FK {$key->getName()} has been removed"
+            );
+
+            $this->assertTrue(
+                $key->compare($source->findForeignKey($key->getColumn())),
+                "FK {$key->getName()} has been changed"
+            );
+        }
+
+        // everything else
         $comparator = new Comparator(
             $current->getState(),
             $this->schema($current->getName())->getState()
