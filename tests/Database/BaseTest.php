@@ -14,6 +14,9 @@ use Psr\Log\LogLevel;
 use Spiral\Database\Database;
 use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Driver\AbstractHandler;
+use Spiral\Database\Schema\AbstractColumn;
+use Spiral\Database\Schema\AbstractForeignKey;
+use Spiral\Database\Schema\AbstractIndex;
 use Spiral\Database\Schema\AbstractTable;
 use Spiral\Database\Schema\Comparator;
 
@@ -136,10 +139,7 @@ abstract class BaseTest extends TestCase
                 "Column {$column} has been removed"
             );
 
-            $this->assertTrue(
-                $column->compare($target->findColumn($column->getName())),
-                "Column {$column} has been changed"
-            );
+            $this->compareColumns($column, $target->findColumn($column->getName()));
         }
 
         foreach ($target->getColumns() as $column) {
@@ -148,10 +148,7 @@ abstract class BaseTest extends TestCase
                 "Column {$column} has been added"
             );
 
-            $this->assertTrue(
-                $column->compare($source->findColumn($column->getName())),
-                "Column {$column} has been changed"
-            );
+            $this->compareColumns($column, $source->findColumn($column->getName()));
         }
 
         // indexes
@@ -162,10 +159,7 @@ abstract class BaseTest extends TestCase
                 "Index {$index->getName()} has been removed"
             );
 
-            $this->assertTrue(
-                $index->compare($target->findIndex($index->getColumns())),
-                "Index {$index->getName()} has been changed"
-            );
+            $this->compareIndexes($index, $target->findIndex($index->getColumns()));
         }
 
         foreach ($target->getIndexes() as $index) {
@@ -174,10 +168,7 @@ abstract class BaseTest extends TestCase
                 "Index {$index->getName()} has been removed"
             );
 
-            $this->assertTrue(
-                $index->compare($source->findIndex($index->getColumns())),
-                "Index {$index->getName()} has been changed"
-            );
+            $this->compareIndexes($index, $source->findIndex($index->getColumns()));
         }
 
         // FK
@@ -187,10 +178,7 @@ abstract class BaseTest extends TestCase
                 "FK {$key->getName()} has been removed"
             );
 
-            $this->assertTrue(
-                $key->compare($target->findForeignKey($key->getColumn())),
-                "FK {$key->getName()} has been changed"
-            );
+            $this->compareFK($key, $target->findForeignKey($key->getColumn()));
         }
 
         foreach ($target->getForeignKeys() as $key) {
@@ -199,10 +187,7 @@ abstract class BaseTest extends TestCase
                 "FK {$key->getName()} has been removed"
             );
 
-            $this->assertTrue(
-                $key->compare($source->findForeignKey($key->getColumn())),
-                "FK {$key->getName()} has been changed"
-            );
+            $this->compareFK($key, $source->findForeignKey($key->getColumn()));
         }
 
         // everything else
@@ -214,6 +199,96 @@ abstract class BaseTest extends TestCase
         if ($comparator->hasChanges()) {
             $this->fail($this->makeMessage($current->getName(), $comparator));
         }
+    }
+
+    protected function compareColumns(AbstractColumn $a, AbstractColumn $b)
+    {
+        $this->assertSame(
+            $a->getType(),
+            $b->getType(),
+            "Column {$a} type has been changed"
+        );
+
+        $this->assertSame(
+            $a->getScale(),
+            $b->getScale(),
+            "Column {$a} scale has been changed"
+        );
+
+        $this->assertSame(
+            $a->getPrecision(),
+            $b->getPrecision(),
+            "Column {$a} precision has been changed"
+        );
+
+        $this->assertSame(
+            $a->getEnumValues(),
+            $b->getEnumValues(),
+            "Column {$a} enum values has been changed"
+        );
+
+        $this->assertTrue(
+            $a->compare($b),
+            "Column {$a} has been changed"
+        );
+    }
+
+    protected function compareIndexes(AbstractIndex $a, AbstractIndex $b)
+    {
+        $this->assertSame(
+            $a->getColumns(),
+            $b->getColumns(),
+            "Index {$a->getName()} columns has been changed"
+        );
+
+        $this->assertSame(
+            $a->isUnique(),
+            $b->isUnique(),
+            "Index {$a->getName()} uniquness has been changed"
+        );
+
+        $this->assertTrue(
+            $a->compare($b),
+            "Index {$a->getName()} has been changed"
+        );
+    }
+
+    protected function compareFK(AbstractForeignKey $a, AbstractForeignKey $b)
+    {
+        $this->assertSame(
+            $a->getColumn(),
+            $b->getColumn(),
+            "FK {$a->getName()} column has been changed"
+        );
+
+        $this->assertSame(
+            $a->getForeignKey(),
+            $b->getForeignKey(),
+            "FK {$a->getName()} table has been changed"
+        );
+
+        $this->assertSame(
+            $a->getForeignKey(),
+            $b->getForeignKey(),
+            "FK {$a->getName()} fk has been changed"
+        );
+
+        $this->assertSame(
+            $a->getDeleteRule(),
+            $b->getDeleteRule(),
+            "FK {$a->getName()} delete rule has been changed"
+        );
+
+        $this->assertSame(
+            $a->getUpdateRule(),
+            $b->getUpdateRule(),
+            "FK {$a->getName()} update rule has been changed"
+        );
+
+        $this->assertTrue(
+            $a->compare($b),
+            "FK {$a->getName()} has been changed"
+        );
     }
 
     /**
