@@ -78,7 +78,7 @@ class PostgresColumn extends AbstractColumn
         'longBinary'  => 'bytea',
 
         //Additional types
-        'json'        => 'text',
+        'json'        => 'json',
     ];
 
     /**
@@ -101,7 +101,7 @@ class PostgresColumn extends AbstractColumn
         'time'        => ['time', 'time with time zone', 'time without time zone'],
         'timestamp'   => ['timestamp', 'timestamp with time zone', 'timestamp without time zone'],
         'binary'      => ['bytea'],
-        'json'        => ['text'],
+        'json'        => ['json'],
     ];
 
     /**
