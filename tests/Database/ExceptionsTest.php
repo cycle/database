@@ -10,7 +10,6 @@ namespace Spiral\Database\Tests;
 use Spiral\Database\Database;
 use Spiral\Database\Exception\HandlerException;
 use Spiral\Database\Exception\StatementException;
-use Spiral\Database\Exception\StatementException;
 
 /**
  * Add exception versions in a future versions.
