@@ -13,9 +13,9 @@ namespace Spiral\Database\Exception;
 class HandlerException extends DriverException implements QueryExceptionInterface
 {
     /**
-     * @param QueryException $e
+     * @param StatementException $e
      */
-    public function __construct(QueryException $e)
+    public function __construct(StatementException $e)
     {
         parent::__construct($e->getMessage(), $e->getCode(), $e);
     }

@@ -12,7 +12,7 @@ use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Driver\Compiler;
 use Spiral\Database\Driver\CompilerInterface;
 use Spiral\Database\Exception\BuilderException;
-use Spiral\Database\Exception\QueryException;
+use Spiral\Database\Exception\StatementException;
 use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Query\Traits\HavingTrait;
 use Spiral\Database\Query\Traits\JoinTrait;
@@ -376,7 +376,7 @@ class SelectQuery extends AbstractQuery implements
      * @return int|float
      *
      * @throws BuilderException
-     * @throws QueryException
+     * @throws StatementException
      */
     public function __call($method, array $arguments)
     {

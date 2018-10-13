@@ -13,7 +13,7 @@ use Spiral\Database\DatabaseInterface;
 use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Driver\HandlerInterface;
 use Spiral\Database\Driver\MySQL\Schema\MySQLTable;
-use Spiral\Database\Exception\QueryException;
+use Spiral\Database\Exception\StatementException;
 
 /**
  * Talks to mysql databases.
@@ -86,16 +86,16 @@ class MySQLDriver extends AbstractDriver
      *
      * @see https://dev.mysql.com/doc/refman/5.6/en/error-messages-client.html#error_cr_conn_host_error
      */
-    protected function mapException(\PDOException $exception, string $query): QueryException
+    protected function mapException(\PDOException $exception, string $query): StatementException
     {
         if ($exception->getCode() == 23000) {
-            return new QueryException\ConstrainException($exception, $query);
+            return new QueryException\ConstrainException2($exception, $query);
         }
 
         if ($exception->getCode() > 2000) {
-            return new QueryException\ConnectionException($exception, $query);
+            return new QueryException\ConnectionException2($exception, $query);
         }
 
-        return new QueryException($exception, $query);
+        return new StatementException($exception, $query);
     }
 }

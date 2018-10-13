@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Tests\Postgres;
 
-use Spiral\Database\Exception\QueryException;
+use Spiral\Database\Exception\StatementException;
 
 class AlterColumnTest extends \Spiral\Database\Tests\AlterColumnTest
 {
@@ -18,7 +18,7 @@ class AlterColumnTest extends \Spiral\Database\Tests\AlterColumnTest
         $driver = $this->getDriver();
         try {
             $driver->execute("CREATE TYPE mood AS ENUM ('sad', 'ok', 'happy');");
-        } catch (QueryException $e) {
+        } catch (StatementException $e) {
 
         }
 
@@ -27,7 +27,7 @@ class AlterColumnTest extends \Spiral\Database\Tests\AlterColumnTest
     name text,
     current_mood mood
 );");
-        } catch (QueryException $e) {
+        } catch (StatementException $e) {
 
         }
 

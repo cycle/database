@@ -14,7 +14,7 @@ use Spiral\Database\Driver\HandlerInterface;
 use Spiral\Database\Driver\Postgres\Query\PostgresInsertQuery;
 use Spiral\Database\Driver\Postgres\Schema\PostgresTable;
 use Spiral\Database\Exception\DriverException;
-use Spiral\Database\Exception\QueryException;
+use Spiral\Database\Exception\StatementException;
 use Spiral\Database\Query\InsertQuery;
 
 /**
@@ -142,20 +142,20 @@ class PostgresDriver extends AbstractDriver
     /**
      * {@inheritdoc}
      */
-    protected function mapException(\PDOException $exception, string $query): QueryException
+    protected function mapException(\PDOException $exception, string $query): StatementException
     {
         if (
             strpos($exception->getMessage(), '0800') !== false
             || strpos($exception->getMessage(), '080P') !== false
         ) {
-            return new QueryException\ConnectionException($exception, $query);
+            return new QueryException\ConnectionException2($exception, $query);
         }
 
         if ($exception->getCode() >= 23000 && $exception->getCode() < 24000) {
-            return new QueryException\ConstrainException($exception, $query);
+            return new QueryException\ConstrainException2($exception, $query);
         }
 
 
-        return new QueryException($exception, $query);
+        return new StatementException($exception, $query);
     }
 }

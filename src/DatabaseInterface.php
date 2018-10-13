@@ -9,7 +9,7 @@
 namespace Spiral\Database;
 
 use Spiral\Database\Driver\DriverInterface;
-use Spiral\Database\Exception\QueryException;
+use Spiral\Database\Exception\StatementException;
 use Spiral\Database\Query\DeleteQuery;
 use Spiral\Database\Query\InsertQuery;
 use Spiral\Database\Query\SelectQuery;
@@ -93,7 +93,7 @@ interface DatabaseInterface
      * @param array  $parameters Parameters to be binded into query.
      * @return int
      *
-     * @throws QueryException
+     * @throws StatementException
      */
     public function execute(string $query, array $parameters = []): int;
 
@@ -104,7 +104,7 @@ interface DatabaseInterface
      * @param array  $parameters Parameters to be binded into query.
      * @return Statement
      *
-     * @throws QueryException
+     * @throws StatementException
      */
     public function query(string $query, array $parameters = []): Statement;
 

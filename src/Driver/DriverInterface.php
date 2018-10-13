@@ -9,7 +9,7 @@
 namespace Spiral\Database\Driver;
 
 use Spiral\Database\Exception\DriverException;
-use Spiral\Database\Exception\QueryException;
+use Spiral\Database\Exception\StatementException;
 use Spiral\Database\Query\DeleteQuery;
 use Spiral\Database\Query\InsertQuery;
 use Spiral\Database\Query\SelectQuery;
@@ -171,7 +171,7 @@ interface DriverInterface
      *
      * @param string $table Table name with prefix included.
      *
-     * @throws QueryException
+     * @throws StatementException
      */
     public function eraseData(string $table);
 
@@ -182,7 +182,7 @@ interface DriverInterface
      * @param array  $parameters
      * @return Statement
      *
-     * @throws QueryException
+     * @throws StatementException
      */
     public function query(string $statement, array $parameters = []): Statement;
 
@@ -193,7 +193,7 @@ interface DriverInterface
      * @param array  $parameters
      * @return int
      *
-     * @throws QueryException
+     * @throws StatementException
      */
     public function execute(string $query, array $parameters = []): int;
 

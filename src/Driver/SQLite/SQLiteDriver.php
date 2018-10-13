@@ -13,7 +13,7 @@ use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Driver\HandlerInterface;
 use Spiral\Database\Driver\SQLite\Schema\SQLiteTable;
 use Spiral\Database\Exception\DriverException;
-use Spiral\Database\Exception\QueryException;
+use Spiral\Database\Exception\StatementException;
 
 /**
  * Talks to sqlite databases.
@@ -93,12 +93,12 @@ class SQLiteDriver extends AbstractDriver
     /**
      * {@inheritdoc}
      */
-    protected function mapException(\PDOException $exception, string $query): QueryException
+    protected function mapException(\PDOException $exception, string $query): StatementException
     {
         if ($exception->getCode() == 23000) {
-            return new QueryException\ConstrainException($exception, $query);
+            return new QueryException\ConstrainException2($exception, $query);
         }
 
-        return new QueryException($exception, $query);
+        return new StatementException($exception, $query);
     }
 }

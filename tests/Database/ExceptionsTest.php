@@ -9,7 +9,7 @@ namespace Spiral\Database\Tests;
 
 use Spiral\Database\Database;
 use Spiral\Database\Exception\HandlerException;
-use Spiral\Database\Exception\QueryException;
+use Spiral\Database\Exception\StatementException;
 
 /**
  * Add exception versions in a future versions.
@@ -31,7 +31,7 @@ abstract class ExceptionsTest extends BaseTest
         $select = $this->database->select()->from('udnefinedTable');
         try {
             $select->run();
-        } catch (QueryException $e) {
+        } catch (StatementException $e) {
             $this->assertInstanceOf(\PDOException::class, $e->pdoException());
             $this->assertInstanceOf(\PDOException::class, $e->getPrevious());
 
@@ -47,10 +47,10 @@ abstract class ExceptionsTest extends BaseTest
         $select = $this->database->select()->from('udnefinedTable');
         try {
             $select->run();
-        } catch (QueryException $e) {
+        } catch (StatementException $e) {
             $h = new HandlerException($e);
 
-            $this->assertInstanceOf(QueryException::class, $h->getPrevious());
+            $this->assertInstanceOf(StatementException::class, $h->getPrevious());
             $this->assertSame(
                 $h->getQuery(),
                 $select->queryString()
@@ -69,8 +69,8 @@ abstract class ExceptionsTest extends BaseTest
 
         try {
             $this->getDriver()->insertQuery('', 'test')->values(['value' => null])->run();
-        } catch (QueryException\ConstrainException $e) {
-            $this->assertInstanceOf(QueryException\ConstrainException::class, $e);
+        } catch (QueryException\ConstrainException2 $e) {
+            $this->assertInstanceOf(QueryException\ConstrainException2::class, $e);
         }
     }
 }

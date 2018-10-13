@@ -11,7 +11,7 @@ use Spiral\Core\Exception\InvalidArgumentException;
 use Spiral\Database\Exception\DBALException;
 use Spiral\Database\Exception\DriverException;
 use Spiral\Database\Exception\HandlerException;
-use Spiral\Database\Exception\QueryException;
+use Spiral\Database\Exception\StatementException;
 use Spiral\Database\Schema\AbstractColumn;
 use Spiral\Database\Schema\AbstractForeignKey;
 use Spiral\Database\Schema\AbstractIndex;
@@ -250,7 +250,7 @@ abstract class AbstractHandler implements HandlerInterface
     {
         try {
             return $this->driver->execute($statement, $parameters);
-        } catch (QueryException $e) {
+        } catch (StatementException $e) {
             throw new HandlerException($e);
         }
     }

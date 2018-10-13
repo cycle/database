@@ -11,8 +11,8 @@ namespace Spiral\Database\Driver\Traits;
 use PDO;
 use Psr\Log\LoggerInterface;
 use Spiral\Database\Exception\DriverException;
-use Spiral\Database\Exception\QueryException;
-use Spiral\Database\Exception\QueryException\ConnectionException;
+use Spiral\Database\Exception\StatementException;
+use Spiral\Database\Exception\Statement\ConnectionException;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
 use Spiral\Database\Query\Interpolator;
@@ -72,7 +72,7 @@ trait PDOTrait
      * @param array  $parameters
      * @return Statement
      *
-     * @throws QueryException
+     * @throws StatementException
      */
     public function query(string $statement, array $parameters = []): Statement
     {
@@ -87,7 +87,7 @@ trait PDOTrait
      * @param array  $parameters
      * @return int
      *
-     * @throws QueryException
+     * @throws StatementException
      */
     public function execute(string $query, array $parameters = []): int
     {
@@ -121,7 +121,7 @@ trait PDOTrait
      * @param array  $parameters Parameters to be binded into query.
      * @return Statement
      *
-     * @throws QueryException
+     * @throws StatementException
      */
     protected function statement(string $query, array $parameters = []): Statement
     {
@@ -142,7 +142,7 @@ trait PDOTrait
      * @param array  $parameters Parameters to be binded into query.
      * @return Statement
      *
-     * @throws QueryException
+     * @throws StatementException
      */
     protected function runStatement(string $query, array $parameters = []): Statement
     {
@@ -309,12 +309,12 @@ trait PDOTrait
      *
      * @param \PDOException $exception
      * @param string        $query
-     * @return QueryException
+     * @return StatementException
      */
     abstract protected function mapException(
         \PDOException $exception,
         string $query
-    ): QueryException;
+    ): StatementException;
 
     /**
      * @return LoggerInterface

@@ -11,7 +11,7 @@ namespace Spiral\Database\Exception;
 /**
  * Query specific exception (bad parameters, database failure).
  */
-class QueryException extends DatabaseException implements QueryExceptionInterface
+class StatementException extends DatabaseException implements QueryExceptionInterface
 {
     /**
      * @var string
