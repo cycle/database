@@ -6,7 +6,7 @@
  * @author    Anton Titov (Wolfy-J)
  */
 
-namespace Spiral\Database\Exception\Statement;
+namespace Spiral\Database\Exception\StatementException;
 
 use Spiral\Database\Exception\StatementException;
 

@@ -12,7 +12,7 @@ use PDO;
 use Psr\Log\LoggerInterface;
 use Spiral\Database\Exception\DriverException;
 use Spiral\Database\Exception\StatementException;
-use Spiral\Database\Exception\Statement\ConnectionException;
+use Spiral\Database\Exception\StatementException\ConnectionException;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
 use Spiral\Database\Query\Interpolator;
