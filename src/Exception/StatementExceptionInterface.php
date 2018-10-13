@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Exception;
 
-interface QueryExceptionInterface
+interface StatementExceptionInterface
 {
     /**
      * Get query SQL.
