@@ -10,6 +10,7 @@ namespace Spiral\Database\Tests;
 use Spiral\Database\Database;
 use Spiral\Database\Exception\HandlerException;
 use Spiral\Database\Exception\StatementException;
+use Spiral\Database\Exception\Statement;
 
 /**
  * Add exception versions in a future versions.
@@ -69,8 +70,8 @@ abstract class ExceptionsTest extends BaseTest
 
         try {
             $this->getDriver()->insertQuery('', 'test')->values(['value' => null])->run();
-        } catch (QueryException\ConstrainException2 $e) {
-            $this->assertInstanceOf(QueryException\ConstrainException2::class, $e);
+        } catch (Statement\ConstrainException $e) {
+            $this->assertInstanceOf(Statement\ConstrainException::class, $e);
         }
     }
 }
