@@ -55,16 +55,24 @@ class SQLiteTable extends AbstractTable
      */
     protected function fetchIndexes(): array
     {
+        $primaryKeys = $this->fetchPrimaryKeys();
         $query = "PRAGMA index_list({$this->driver->quote($this->getName())})";
 
         $result = [];
         foreach ($this->driver->query($query) as $schema) {
-            //Index schema and all related columns
-            $result[] = SQLiteIndex::createInstance(
+            $index = SQLiteIndex::createInstance(
                 $this->getName(),
                 $schema,
                 $this->driver->query("PRAGMA INDEX_INFO({$this->driver->quote($schema['name'])})")->fetchAll()
             );
+
+            if ($index->getColumns() === $primaryKeys) {
+                // skip auto-generated index
+                continue;
+            }
+
+            //Index schema and all related columns
+            $result[] = $index;
         }
 
         return $result;
