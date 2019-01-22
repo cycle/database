@@ -1,8 +1,10 @@
 <?php
+declare(strict_types=1);
 /**
- * Spiral, Core Components
+ * Spiral Framework.
  *
- * @author Wolfy-J
+ * @license   MIT
+ * @author    Anton Titov (Wolfy-J)
  */
 
 namespace Spiral\Database\Schema;
@@ -635,7 +637,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         }
 
         //Ensure that columns references to valid indexes and et
-        $prepared = $this->normalizeSchema($operation & HandlerInterface::CREATE_FOREIGN_KEYS);
+        $prepared = $this->normalizeSchema(($operation & HandlerInterface::CREATE_FOREIGN_KEYS) !== 0);
 
         if ($this->status == self::STATUS_NEW) {
             //Executing table creation

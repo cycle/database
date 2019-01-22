@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Spiral Framework.
  *
@@ -27,7 +28,7 @@ abstract class AbstractDriver implements DriverInterface, LoggerAwareInterface
     use ProfilingTrait, PDOTrait, BuilderTrait, TransactionTrait;
 
     // One of DatabaseInterface types, must be set on implementation.
-    protected const TYPE = null;
+    protected const TYPE = "@undefined";
 
     // Driver specific class names.
     protected const TABLE_SCHEMA_CLASS = '';

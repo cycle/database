@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Spiral Framework.
  *
@@ -26,17 +27,12 @@ class PostgresInsertQuery extends InsertQuery
      */
     public function sqlStatement(CompilerInterface $compiler = null): string
     {
-        if (
-            !$this->driver instanceof PostgresDriver
-            || (!empty($compiler) && !$compiler instanceof PostgresCompiler)
-        ) {
-            throw new BuilderException(
-                'Postgres InsertQuery can be used only with Postgres driver and compiler'
-            );
-        }
-
         if (empty($compiler)) {
             $compiler = clone $this->compiler;
+        }
+
+        if (!$compiler instanceof PostgresCompiler) {
+            throw new BuilderException('Postgres InsertQuery can be used only with Postgres driver and compiler');
         }
 
         /**
@@ -47,7 +43,7 @@ class PostgresInsertQuery extends InsertQuery
             $this->table,
             $this->columns,
             $this->rowsets,
-            $this->driver->getPrimary($this->compiler->getPrefix(), $this->table)
+            $this->getPrimaryKey($this->compiler->getPrefix(), $this->table)
         );
     }
 
@@ -56,7 +52,27 @@ class PostgresInsertQuery extends InsertQuery
      */
     public function run()
     {
-        return (int)$this->driver->query($this->sqlStatement(),
-            $this->getParameters())->fetchColumn();
+        $result = $this->driver->query($this->sqlStatement(), $this->getParameters());
+
+        if ($this->getPrimaryKey($this->compiler->getPrefix(), $this->table) !== null) {
+            return (int)$result->fetchColumn();
+        }
+
+        return null;
+    }
+
+    /**
+     * @param string $prefix
+     * @param string $table
+     *
+     * @return string|null
+     */
+    private function getPrimaryKey(string $prefix, string $table): ?string
+    {
+        if (!$this->driver instanceof PostgresDriver) {
+            throw new BuilderException('Postgres InsertQuery can be used only with Postgres driver and compiler');
+        }
+
+        return $this->driver->getPrimary($prefix, $table);
     }
 }

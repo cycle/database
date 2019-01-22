@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Spiral Framework.
  *
@@ -107,7 +108,7 @@ final class Interpolator
                 return $parameter ? 'true' : 'false';
 
             case 'integer':
-                return $parameter + 0;
+                return strval($parameter + 0);
 
             case 'NULL':
                 return 'NULL';

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Spiral Framework.
  *
@@ -27,7 +28,7 @@ trait TokenTrait
      *
      * @throws BuilderException
      */
-    protected function createToken($joiner, array $parameters, &$tokens = [], callable $wrapper)
+    protected function createToken($joiner, array $parameters, &$tokens, callable $wrapper)
     {
         list($identifier, $valueA, $valueB, $valueC) = $parameters + array_fill(0, 5, null);
 
@@ -79,24 +80,26 @@ trait TokenTrait
                 $tokens[] = [$joiner, [$identifier, '=', $wrapper($valueA)]];
                 break;
             case 3:
-                if (in_array(strtoupper($valueA), ['BETWEEN', 'NOT BETWEEN'])) {
-                    throw new BuilderException('Between statements expects exactly 2 values');
+                if (is_string($valueA)) {
+                    $valueA = strtoupper($valueA);
+                    if (in_array($valueA, ['BETWEEN', 'NOT BETWEEN'])) {
+                        throw new BuilderException('Between statements expects exactly 2 values');
+                    }
                 }
 
                 //AND|OR [identifier] [valueA: OPERATION] [valueA]
-                $tokens[] = [$joiner, [$identifier, strtoupper($valueA), $wrapper($valueB)]];
+                $tokens[] = [$joiner, [$identifier, strval($valueA), $wrapper($valueB)]];
                 break;
             case 4:
                 //BETWEEN or NOT BETWEEN
-                $valueA = strtoupper($valueA);
-                if (!in_array($valueA, ['BETWEEN', 'NOT BETWEEN'])) {
+                if (!is_string($valueA) || !in_array(strtoupper($valueA), ['BETWEEN', 'NOT BETWEEN'])) {
                     throw new BuilderException(
-                        'Only "BETWEEN" or "NOT BETWEEN" can define second comparasions value'
+                        'Only "BETWEEN" or "NOT BETWEEN" can define second comparision value'
                     );
                 }
 
                 //AND|OR [identifier] [valueA: BETWEEN|NOT BETWEEN] [valueB] [valueC]
-                $tokens[] = [$joiner, [$identifier, $valueA, $wrapper($valueB), $wrapper($valueC)]];
+                $tokens[] = [$joiner, [$identifier, strtoupper($valueA), $wrapper($valueB), $wrapper($valueC)]];
         }
     }
 

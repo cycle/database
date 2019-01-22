@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Spiral Framework.
  *
@@ -25,7 +26,7 @@ use Spiral\Database\Traits\SchemaTrait;
  * @method int max($identifier) Perform aggregation (MAX) based on column or expression value.
  * @method int sum($identifier) Perform aggregation (SUM) based on column or expression value.
  */
-class Table implements TableInterface, \JsonSerializable, \IteratorAggregate, \Countable
+class Table implements TableInterface, \IteratorAggregate, \Countable
 {
     use SchemaTrait;
 
@@ -204,14 +205,6 @@ class Table implements TableInterface, \JsonSerializable, \IteratorAggregate, \C
     public function fetchAll(): array
     {
         return $this->select()->fetchAll();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function jsonSerialize()
-    {
-        return $this->select()->jsonSerialize();
     }
 
     /**

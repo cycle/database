@@ -1,8 +1,10 @@
 <?php
+declare(strict_types=1);
 /**
- * Spiral, Core Components
+ * Spiral Framework.
  *
- * @author Wolfy-J
+ * @license   MIT
+ * @author    Anton Titov (Wolfy-J)
  */
 
 namespace Spiral\Database\Driver\SQLite\Schema;
@@ -176,7 +178,7 @@ class SQLiteColumn extends AbstractColumn
          */
         $column->defaultValue = $schema['dflt_value'];
 
-        if (preg_match('/^[\'""].*?[\'"]$/', $column->defaultValue)) {
+        if (is_string($column->defaultValue) && preg_match('/^[\'""].*?[\'"]$/', $column->defaultValue)) {
             $column->defaultValue = substr($column->defaultValue, 1, -1);
         }
 

@@ -1,8 +1,10 @@
 <?php
+declare(strict_types=1);
 /**
- * Spiral, Core Components
+ * Spiral Framework.
  *
- * @author Wolfy-J
+ * @license   MIT
+ * @author    Anton Titov (Wolfy-J)
  */
 
 namespace Spiral\Database\Driver\SQLServer\Schema;
@@ -228,7 +230,7 @@ class SQLServerColumn extends AbstractColumn
     {
         $defaultValue = parent::quoteDefault($driver);
         if ($this->getAbstractType() == 'boolean') {
-            $defaultValue = (int)$this->defaultValue;
+            $defaultValue = strval((int)$this->defaultValue);
         }
 
         return $defaultValue;

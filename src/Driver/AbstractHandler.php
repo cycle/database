@@ -1,13 +1,14 @@
 <?php
+declare(strict_types=1);
 /**
- * Spiral, Core Components
+ * Spiral Framework.
  *
- * @author Wolfy-J
+ * @license   MIT
+ * @author    Anton Titov (Wolfy-J)
  */
 
 namespace Spiral\Database\Driver;
 
-use Spiral\Core\Exception\InvalidArgumentException;
 use Spiral\Database\Exception\DBALException;
 use Spiral\Database\Exception\DriverException;
 use Spiral\Database\Exception\HandlerException;

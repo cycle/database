@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Spiral Framework.
  *
@@ -77,7 +78,7 @@ class PostgresDriver extends AbstractDriver
      *
      * @throws DriverException
      */
-    public function getPrimary(string $prefix, string $table)
+    public function getPrimary(string $prefix, string $table): ?string
     {
         $name = $prefix . $table;
         if (array_key_exists($name, $this->primaryKeys)) {

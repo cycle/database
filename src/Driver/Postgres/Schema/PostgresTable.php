@@ -1,8 +1,10 @@
 <?php
+declare(strict_types=1);
 /**
- * Spiral, Core Components
+ * Spiral Framework.
  *
- * @author Wolfy-J
+ * @license   MIT
+ * @author    Anton Titov (Wolfy-J)
  */
 
 namespace Spiral\Database\Driver\Postgres\Schema;
@@ -79,11 +81,14 @@ class PostgresTable extends AbstractTable
 
         $result = [];
         foreach ($query->bind('column_name', $name) as $schema) {
-            if (preg_match(
-                '/^nextval\([\'"]([a-z0-9_"]+)[\'"](?:::regclass)?\)$/i',
-                $schema['column_default'],
-                $matches
-            )) {
+            if (
+                is_string($schema['column_default'])
+                && preg_match(
+                    '/^nextval\([\'"]([a-z0-9_"]+)[\'"](?:::regclass)?\)$/i',
+                    $schema['column_default'],
+                    $matches
+                )
+            ) {
                 //Column is sequential
                 $this->sequences[$name] = $matches[1];
             }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Spiral Framework.
  *
@@ -13,8 +14,8 @@ use Spiral\Core\Container;
 use Spiral\Core\Container\InjectorInterface;
 use Spiral\Core\Container\SingletonInterface;
 use Spiral\Core\FactoryInterface;
-use Spiral\Database\Config\DatabasePartial;
 use Spiral\Database\Config\DatabaseConfig;
+use Spiral\Database\Config\DatabasePartial;
 use Spiral\Database\Driver\AbstractDriver;
 use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Exception\DatabaseException;

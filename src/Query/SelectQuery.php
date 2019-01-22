@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Spiral Framework.
  *
@@ -27,11 +28,7 @@ use Spiral\Pagination\Traits\PaginatorTrait;
  * SelectQuery extends AbstractSelect with ability to specify selection tables and perform UNION
  * of multiple select queries.
  */
-class SelectQuery extends AbstractQuery implements
-    \JsonSerializable,
-    \Countable,
-    \IteratorAggregate,
-    PaginatorAwareInterface
+class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregate, PaginatorAwareInterface
 {
     use TokenTrait, WhereTrait, HavingTrait, JoinTrait, LimitsTrait, PaginatorTrait;
 
@@ -437,14 +434,6 @@ class SelectQuery extends AbstractQuery implements
             $this->getOffset(),
             $this->unionTokens
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function jsonSerialize()
-    {
-        return $this->fetchAll();
     }
 
     /**

@@ -1,8 +1,10 @@
 <?php
+declare(strict_types=1);
 /**
- * Spiral, Core Components
+ * Spiral Framework.
  *
- * @author Wolfy-J
+ * @license   MIT
+ * @author    Anton Titov (Wolfy-J)
  */
 
 namespace Spiral\Database\Schema;
@@ -339,7 +341,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
             case 'float':
                 return (float)$this->defaultValue;
             case 'bool':
-                if (strtolower($this->defaultValue) == 'false') {
+                if (is_string($this->defaultValue) && strtolower($this->defaultValue) == 'false') {
                     return false;
                 }
 
@@ -729,10 +731,10 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         }
 
         if ($this->phpType() == 'int') {
-            return $defaultValue;
+            return strval($defaultValue);
         }
 
-        return $driver->quote($defaultValue);
+        return strval($driver->quote($defaultValue));
     }
 
     /**

@@ -1,8 +1,10 @@
 <?php
+declare(strict_types=1);
 /**
- * Spiral, Core Components
+ * Spiral Framework.
  *
- * @author Wolfy-J
+ * @license   MIT
+ * @author    Anton Titov (Wolfy-J)
  */
 
 namespace Spiral\Database\Driver\Postgres\Schema;
@@ -367,6 +369,7 @@ class PostgresColumn extends AbstractColumn
 
         if (
             in_array($column->type, ['int', 'bigint', 'integer'])
+            && is_string($column->defaultValue)
             && preg_match('/nextval(.*)/', $column->defaultValue)
         ) {
             $column->type = ($column->type == 'bigint' ? 'bigserial' : 'serial');

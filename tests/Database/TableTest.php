@@ -433,34 +433,6 @@ abstract class TableTest extends BaseTest
         $this->assertSame(0, $table->count());
     }
 
-    public function testJsonSerialize()
-    {
-        $table = $this->database->table('table');
-        $this->assertSame(0, $table->count());
-
-        $table->insertMultiple(
-            ['name', 'value'],
-            [
-                ['Anton', 10],
-                ['John', 20],
-                ['Bob', 15],
-                ['Charlie', 10]
-            ]
-        );
-
-        $this->assertSame(4, $table->count());
-
-        $this->assertEquals(
-            [
-                ['id' => 1, 'name' => 'Anton', 'value' => 10],
-                ['id' => 2, 'name' => 'John', 'value' => 20],
-                ['id' => 3, 'name' => 'Bob', 'value' => 15],
-                ['id' => 4, 'name' => 'Charlie', 'value' => 10],
-            ],
-            $table->jsonSerialize()
-        );
-    }
-
     public function testCountID()
     {
         $table = $this->database->table('table');

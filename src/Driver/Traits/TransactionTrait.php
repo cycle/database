@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Spiral Framework.
  *
@@ -128,12 +129,12 @@ trait TransactionTrait
      *
      * @link http://en.wikipedia.org/wiki/Savepoint
      *
-     * @param string $name Savepoint name/id, must not contain spaces and be valid database identifier.
+     * @param int $level Savepoint name/id, must not contain spaces and be valid database identifier.
      */
-    protected function savepointCreate(string $name)
+    protected function savepointCreate(int $level)
     {
-        $this->isProfiling() && $this->getLogger()->info("Transaction: new savepoint 'SVP{$name}'");
-        $this->execute('SAVEPOINT ' . $this->identifier("SVP{$name}"));
+        $this->isProfiling() && $this->getLogger()->info("Transaction: new savepoint 'SVP{$level}'");
+        $this->execute('SAVEPOINT ' . $this->identifier("SVP{$level}"));
     }
 
     /**
@@ -141,12 +142,12 @@ trait TransactionTrait
      *
      * @link http://en.wikipedia.org/wiki/Savepoint
      *
-     * @param string $name Savepoint name/id, must not contain spaces and be valid database identifier.
+     * @param int $level Savepoint name/id, must not contain spaces and be valid database identifier.
      */
-    protected function savepointRelease(string $name)
+    protected function savepointRelease(int $level)
     {
-        $this->isProfiling() && $this->getLogger()->info("Transaction: release savepoint 'SVP{$name}'");
-        $this->execute('RELEASE SAVEPOINT ' . $this->identifier("SVP{$name}"));
+        $this->isProfiling() && $this->getLogger()->info("Transaction: release savepoint 'SVP{$level}'");
+        $this->execute('RELEASE SAVEPOINT ' . $this->identifier("SVP{$level}"));
     }
 
     /**
@@ -154,12 +155,12 @@ trait TransactionTrait
      *
      * @link http://en.wikipedia.org/wiki/Savepoint
      *
-     * @param string $name Savepoint name/id, must not contain spaces and be valid database identifier.
+     * @param int $level Savepoint name/id, must not contain spaces and be valid database identifier.
      */
-    protected function savepointRollback(string $name)
+    protected function savepointRollback(int $level)
     {
-        $this->isProfiling() && $this->getLogger()->info("Transaction: rollback savepoint 'SVP{$name}'");
-        $this->execute('ROLLBACK TO SAVEPOINT ' . $this->identifier("SVP{$name}"));
+        $this->isProfiling() && $this->getLogger()->info("Transaction: rollback savepoint 'SVP{$level}'");
+        $this->execute('ROLLBACK TO SAVEPOINT ' . $this->identifier("SVP{$level}"));
     }
 
     /**

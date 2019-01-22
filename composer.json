@@ -11,6 +11,7 @@
   ],
   "require": {
     "php": ">=7.1",
+    "ext-pdo": "*",
     "spiral/core": "^1.1",
     "spiral/logger": "^1.1",
     "spiral/pagination": "^2.1"
