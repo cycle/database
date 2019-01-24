@@ -12,9 +12,9 @@ namespace Spiral\Database\Injection;
 interface ValueInterface
 {
     /**
-     * Get mocked parameter value or values in array form.
+     * Return value to be stored in database in raw form.
      *
-     * @return mixed|array
+     * @return string
      */
-    public function rawValue();
+    public function rawValue(): string;
 }
