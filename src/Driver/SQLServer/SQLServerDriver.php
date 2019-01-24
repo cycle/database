@@ -16,6 +16,8 @@ use Spiral\Database\Driver\HandlerInterface;
 use Spiral\Database\Driver\SQLServer\Schema\SQLServerTable;
 use Spiral\Database\Exception\DriverException;
 use Spiral\Database\Exception\StatementException;
+use Spiral\Database\Injection\ParameterInterface;
+use Spiral\Database\Statement;
 
 class SQLServerDriver extends AbstractDriver
 {
@@ -30,7 +32,7 @@ class SQLServerDriver extends AbstractDriver
     protected $pdoOptions = [
         PDO::ATTR_CASE              => PDO::CASE_NATURAL,
         PDO::ATTR_ERRMODE           => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_STRINGIFY_FETCHES => false,
+        PDO::ATTR_STRINGIFY_FETCHES => false
     ];
 
     /**
@@ -97,11 +99,45 @@ class SQLServerDriver extends AbstractDriver
     }
 
     /**
+     * Bind parameters into statement. SQLServer need encoding to be specified for binary parameters.
+     *
+     * @param Statement            $statement
+     * @param ParameterInterface[] $parameters Named hash of ParameterInterface.
+     * @return Statement
+     */
+    protected function bindParameters(Statement $statement, array $parameters): Statement
+    {
+        foreach ($parameters as $index => $parameter) {
+            if (is_numeric($index)) {
+                if ($parameter->getType() == PDO::PARAM_LOB) {
+                    $value = $parameter->getValue();
+                    $statement->bindParam(
+                        $index + 1,
+                        $value,
+                        $parameter->getType(),
+                        0,
+                        PDO::SQLSRV_ENCODING_BINARY
+                    );
+                    continue;
+                }
+
+                //Numeric, @see http://php.net/manual/en/pdostatement.bindparam.php
+                $statement->bindValue($index + 1, $parameter->getValue(), $parameter->getType());
+            } else {
+                //Named
+                $statement->bindValue($index, $parameter->getValue(), $parameter->getType());
+            }
+        }
+
+        return $statement;
+    }
+
+    /**
      * Create nested transaction save point.
      *
      * @link http://en.wikipedia.org/wiki/Savepoint
      *
-     * @param int $level Savepoint name/id, must not contain spaces and be valid database
+     * @param int $level   Savepoint name/id, must not contain spaces and be valid database
      *                     identifier.
      */
     protected function savepointCreate(int $level)
@@ -115,7 +151,7 @@ class SQLServerDriver extends AbstractDriver
      *
      * @link http://en.wikipedia.org/wiki/Savepoint
      *
-     * @param int $level Savepoint name/id, must not contain spaces and be valid database
+     * @param int $level   Savepoint name/id, must not contain spaces and be valid database
      *                     identifier.
      */
     protected function savepointRelease(int $level)
@@ -129,7 +165,7 @@ class SQLServerDriver extends AbstractDriver
      *
      * @link http://en.wikipedia.org/wiki/Savepoint
      *
-     * @param int $level Savepoint name/id, must not contain spaces and be valid database
+     * @param int $level   Savepoint name/id, must not contain spaces and be valid database
      *                     identifier.
      */
     protected function savepointRollback(int $level)

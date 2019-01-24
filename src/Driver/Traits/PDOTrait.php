@@ -202,7 +202,7 @@ trait PDOTrait
      *
      * @throws DriverException
      */
-    private function flattenParameters(array $parameters): array
+    protected function flattenParameters(array $parameters): array
     {
         $flatten = [];
         foreach ($parameters as $key => $parameter) {
@@ -263,7 +263,7 @@ trait PDOTrait
      * @param ParameterInterface[] $parameters Named hash of ParameterInterface.
      * @return Statement
      */
-    private function bindParameters(Statement $statement, array $parameters): Statement
+    protected function bindParameters(Statement $statement, array $parameters): Statement
     {
         foreach ($parameters as $index => $parameter) {
             if (is_numeric($index)) {
