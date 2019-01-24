@@ -18,8 +18,15 @@ namespace Spiral\Database\Injection;
  * Database implementation must inject parameter SQL into expression, but use parameter value to be
  * sent to database.
  */
-interface ParameterInterface extends FragmentInterface, ValueInterface
+interface ParameterInterface extends FragmentInterface
 {
+    /**
+     * Get mocked parameter value or values in array form.
+     *
+     * @return mixed|array
+     */
+    public function getValue();
+
     /**
      * Change parameter value.
      *

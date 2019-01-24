@@ -52,6 +52,10 @@ class Parameter implements ParameterInterface
      */
     public function getValue()
     {
+        if ($this->value instanceof ValueInterface) {
+            return $this->value->rawValue();
+        }
+
         return $this->value;
     }
 
@@ -154,6 +158,10 @@ class Parameter implements ParameterInterface
      */
     protected function resolveType($value, int $type)
     {
+        if ($value instanceof ValueInterface) {
+            $value = $value->rawValue();
+        }
+
         if ($type === self::DETECT_TYPE) {
             if (!is_array($value)) {
                 $this->type = $this->detectType($value);

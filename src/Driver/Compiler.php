@@ -12,6 +12,7 @@ namespace Spiral\Database\Driver;
 use Spiral\Database\Exception\CompilerException;
 use Spiral\Database\Injection\ExpressionInterface;
 use Spiral\Database\Injection\FragmentInterface;
+use Spiral\Database\Injection\ParameterInterface;
 use Spiral\Database\Injection\ValueInterface;
 use Spiral\Database\Query\BuilderInterface;
 
@@ -554,7 +555,7 @@ class Compiler implements CompilerInterface
      */
     protected function prepareOperator($parameter, string $operator): string
     {
-        if (!$parameter instanceof ValueInterface) {
+        if (!$parameter instanceof ParameterInterface) {
             //Probably fragment
             return $operator;
         }
