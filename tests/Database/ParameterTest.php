@@ -117,10 +117,10 @@ class ParameterTest extends TestCase
     public function testAutoTypingArrays()
     {
         $parameter = new Parameter([1, 2, 3]);
-        $this->assertSame(\PDO::PARAM_STMT, $parameter->getType());
+        $this->assertSame(\PDO::PARAM_STR, $parameter->getType());
 
         $parameter = new Parameter(['1', '2', '3']);
-        $this->assertSame(\PDO::PARAM_STMT, $parameter->getType());
+        $this->assertSame(\PDO::PARAM_STR, $parameter->getType());
     }
 
     public function testDebugInfo()
