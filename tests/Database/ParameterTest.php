@@ -130,7 +130,7 @@ class ParameterTest extends TestCase
         $this->assertSame([
             'statement' => '(?, ?, ?)',
             'value'     => [1, 2, 3],
-            'type'      => \PDO::PARAM_STMT
+            'type'      => \PDO::PARAM_STR
         ], $parameter->__debugInfo());
     }
 }
