@@ -16,6 +16,7 @@ use Spiral\Database\Exception\StatementException;
 use Spiral\Database\Exception\StatementException\ConnectionException;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
+use Spiral\Database\Injection\ValueInterface;
 use Spiral\Database\Query\Interpolator;
 use Spiral\Database\Statement;
 
@@ -231,6 +232,13 @@ trait PDOTrait
                         );
                     }
 
+                    if ($nestedParameter->getValue() instanceof ValueInterface) {
+                        //Original parameter must not be altered
+                        $nestedParameter = $nestedParameter->withValue(
+                            $nestedParameter->getValue()->getValue()
+                        );
+                    }
+
                     unset($nestedParameter);
                 }
 
@@ -242,6 +250,13 @@ trait PDOTrait
                     //Original parameter must not be altered
                     $parameter = $parameter->withValue(
                         $this->formatDatetime($parameter->getValue())
+                    );
+                }
+
+                if ($parameter->getValue() instanceof ValueInterface) {
+                    //Original parameter must not be altered
+                    $parameter = $parameter->withValue(
+                        $parameter->getValue()->getValue()
                     );
                 }
 
