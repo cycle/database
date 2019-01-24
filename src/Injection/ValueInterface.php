@@ -23,5 +23,5 @@ interface ValueInterface
      *
      * @return int
      */
-    public function getType(): int;
+    public function rawType(): int;
 }
