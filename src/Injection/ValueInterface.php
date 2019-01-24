@@ -17,4 +17,11 @@ interface ValueInterface
      * @return string
      */
     public function rawValue(): string;
+
+    /**
+     * Return associated PDO type.
+     *
+     * @return int
+     */
+    public function getType(): int;
 }

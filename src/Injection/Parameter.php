@@ -159,7 +159,8 @@ class Parameter implements ParameterInterface
     protected function resolveType($value, int $type)
     {
         if ($value instanceof ValueInterface) {
-            $value = $value->rawValue();
+            $this->type = $value->getType();
+            return;
         }
 
         if ($type === self::DETECT_TYPE) {
