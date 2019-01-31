@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Schema\Traits;
 
-use Spiral\Database\Driver\AbstractDriver;
+use Spiral\Database\Driver\Driver;
 
 trait ElementTrait
 {
@@ -64,9 +64,9 @@ trait ElementTrait
     /**
      * Element creation/definition syntax (specific to parent driver).
      *
-     * @param AbstractDriver $driver
+     * @param Driver $driver
      *
      * @return string
      */
-    abstract public function sqlStatement(AbstractDriver $driver): string;
+    abstract public function sqlStatement(Driver $driver): string;
 }

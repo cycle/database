@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\Driver\AbstractDriver;
+use Spiral\Database\Driver\Driver;
 use Spiral\Database\Driver\Compiler;
 use Spiral\Database\Query\DeleteQuery;
 use Spiral\Database\Query\InsertQuery;
@@ -20,7 +20,7 @@ abstract class BuildersAccessTest extends BaseTest
 {
     public function testDriverAccess()
     {
-        $this->assertInstanceOf(AbstractDriver::class, $this->db()->getDriver());
+        $this->assertInstanceOf(Driver::class, $this->db()->getDriver());
     }
 
     public function testTableAccess()

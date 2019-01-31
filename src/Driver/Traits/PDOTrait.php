@@ -13,7 +13,6 @@ use PDO;
 use Psr\Log\LoggerInterface;
 use Spiral\Database\Exception\DriverException;
 use Spiral\Database\Exception\StatementException;
-use Spiral\Database\Exception\StatementException\ConnectionException;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
 use Spiral\Database\Query\Interpolator;
@@ -23,48 +22,6 @@ trait PDOTrait
 {
     /** @var PDO|null */
     protected $pdo;
-
-    /**
-     * Force driver connection.
-     *
-     * @throws DriverException
-     */
-    public function connect()
-    {
-        if (!$this->isConnected()) {
-            $this->pdo = $this->createPDO();
-            $this->pdo->setAttribute(\PDO::ATTR_STATEMENT_CLASS, [Statement::class]);
-        }
-    }
-
-    /**
-     * Disconnect driver.
-     */
-    public function disconnect()
-    {
-        $this->pdo = null;
-    }
-
-    /**
-     * Reconnect driver.
-     *
-     * @throws DriverException
-     */
-    public function reconnect()
-    {
-        $this->pdo = null;
-        $this->connect();
-    }
-
-    /**
-     * Check if driver already connected.
-     *
-     * @return bool
-     */
-    public function isConnected(): bool
-    {
-        return !empty($this->pdo);
-    }
 
     /**
      * Wraps PDO query method with custom representation class.
@@ -125,27 +82,6 @@ trait PDOTrait
      * @throws StatementException
      */
     protected function statement(string $query, array $parameters = []): Statement
-    {
-        try {
-            return $this->runStatement($query, $parameters);
-        } catch (ConnectionException $e) {
-            $this->reconnect();
-
-            return $this->runStatement($query, $parameters);
-        }
-    }
-
-    /**
-     * Create instance of PDOStatement using provided SQL query and set of parameters and execute
-     * it.
-     *
-     * @param string $query
-     * @param array  $parameters Parameters to be binded into query.
-     * @return Statement
-     *
-     * @throws StatementException
-     */
-    protected function runStatement(string $query, array $parameters = []): Statement
     {
         try {
             //Mounting all input parameters

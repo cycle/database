@@ -24,7 +24,7 @@ use Spiral\Database\Schema\ElementInterface;
  * Handler class implements set of DBMS specific operations for schema manipulations. Can be used
  * on separate basis (for example in migrations).
  */
-abstract class AbstractHandler implements HandlerInterface
+abstract class Handler implements HandlerInterface
 {
     /** @var DriverInterface */
     protected $driver;

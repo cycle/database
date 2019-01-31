@@ -10,7 +10,7 @@ namespace Spiral\Database\Tests;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Spiral\Database\Driver\AbstractDriver;
+use Spiral\Database\Driver\Driver;
 use Spiral\Database\Driver\MySQL\MySQLDriver;
 use Spiral\Database\Driver\Postgres\PostgresDriver;
 use Spiral\Database\Driver\Quoter;
@@ -445,10 +445,10 @@ class QuoterTest extends TestCase
      *
      * @return Quoter
      */
-    protected function makeQuoter($prefix = '', $driver = AbstractDriver::class)
+    protected function makeQuoter($prefix = '', $driver = Driver::class)
     {
         /**
-         * @var AbstractDriver $driver
+         * @var Driver $driver
          */
         $driver = m::mock($driver)->makePartial();
 

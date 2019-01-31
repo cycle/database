@@ -7,7 +7,7 @@
 
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\Driver\AbstractHandler;
+use Spiral\Database\Driver\Handler;
 use Spiral\Database\Schema\AbstractColumn;
 use Spiral\Database\Schema\AbstractTable;
 
@@ -54,7 +54,7 @@ abstract class IndexesTest extends BaseTest
             $schema->date('datetime')->nullable(true);
             $schema->time('datetime')->defaultValue('00:00');
 
-            $schema->save(AbstractHandler::DO_ALL);
+            $schema->save(Handler::DO_ALL);
         }
 
         return $schema;
@@ -85,7 +85,7 @@ abstract class IndexesTest extends BaseTest
             $schema->index(['email', 'status']);
             $schema->index(['balance']);
 
-            $schema->save(AbstractHandler::DO_ALL);
+            $schema->save(Handler::DO_ALL);
         }
 
         return $schema;
@@ -100,7 +100,7 @@ abstract class IndexesTest extends BaseTest
         $schema->integer('value');
         $schema->index(['value']);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
 
@@ -116,7 +116,7 @@ abstract class IndexesTest extends BaseTest
         $schema->integer('value');
         $schema->index(['value'])->unique(true);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
 
@@ -133,7 +133,7 @@ abstract class IndexesTest extends BaseTest
         $schema->string('subset', 2);
         $schema->index(['value', 'subset']);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
     }
@@ -148,7 +148,7 @@ abstract class IndexesTest extends BaseTest
         $schema->string('subset', 2);
         $schema->index(['value', 'subset'])->unique(true);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
     }
@@ -163,7 +163,7 @@ abstract class IndexesTest extends BaseTest
         $schema->string('subset', 2);
         $schema->index(['value', 'subset'])->unique(true);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
 
@@ -188,7 +188,7 @@ abstract class IndexesTest extends BaseTest
         $schema->string('subset', 2);
         $schema->index(['value', 'subset'])->unique(true);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
     }
@@ -200,7 +200,7 @@ abstract class IndexesTest extends BaseTest
 
         $schema->index(['balance']);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
     }
@@ -212,7 +212,7 @@ abstract class IndexesTest extends BaseTest
 
         $schema->index(['balance'])->setName('index_for_balance');
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
     }
@@ -224,7 +224,7 @@ abstract class IndexesTest extends BaseTest
 
         $schema->index(['email'])->unique(true);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
     }
@@ -236,7 +236,7 @@ abstract class IndexesTest extends BaseTest
 
         $schema->index(['status']);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
     }
@@ -249,7 +249,7 @@ abstract class IndexesTest extends BaseTest
         $schema->string('password');
         $schema->index(['email', 'password']);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
     }
@@ -262,7 +262,7 @@ abstract class IndexesTest extends BaseTest
         $schema->string('password');
         $schema->index(['email', 'password'])->unique(true);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
     }
@@ -274,7 +274,7 @@ abstract class IndexesTest extends BaseTest
 
         $schema->index(['datetime']);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
     }
@@ -286,7 +286,7 @@ abstract class IndexesTest extends BaseTest
 
         $schema->dropIndex(['email']);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
     }
@@ -298,7 +298,7 @@ abstract class IndexesTest extends BaseTest
 
         $schema->dropIndex(['email', 'status']);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
     }
@@ -311,7 +311,7 @@ abstract class IndexesTest extends BaseTest
         $schema->dropIndex(['email', 'status']);
         $schema->dropIndex(['balance']);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
     }
@@ -323,7 +323,7 @@ abstract class IndexesTest extends BaseTest
 
         $schema->index(['balance'])->setName('new_balance_name');
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
     }
@@ -335,7 +335,7 @@ abstract class IndexesTest extends BaseTest
 
         $schema->index(['balance'])->unique(true);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
     }
@@ -347,7 +347,7 @@ abstract class IndexesTest extends BaseTest
 
         $schema->index(['email'])->unique(false);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
     }
@@ -359,7 +359,7 @@ abstract class IndexesTest extends BaseTest
 
         $schema->index(['email'])->unique(false)->setName('non_unique_email');
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
     }
@@ -371,7 +371,7 @@ abstract class IndexesTest extends BaseTest
 
         $schema->index(['email', 'status'])->unique(true);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
     }
@@ -383,7 +383,7 @@ abstract class IndexesTest extends BaseTest
 
         $schema->index(['email', 'status'])->columns(['status']);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
     }
@@ -397,7 +397,7 @@ abstract class IndexesTest extends BaseTest
             "3d_index"
         );
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
     }
@@ -408,7 +408,7 @@ abstract class IndexesTest extends BaseTest
         $this->assertTrue($schema->exists());
 
         $schema->index(['email', 'status']);
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
 
@@ -427,7 +427,7 @@ abstract class IndexesTest extends BaseTest
         $this->assertTrue($schema->exists());
 
         $schema->index(['email', 'value']);
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
         $this->assertTrue($this->fetchSchema($schema)->hasIndex(['email', 'value']));

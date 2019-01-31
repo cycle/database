@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Driver\MySQL;
 
-use Spiral\Database\Driver\AbstractHandler;
+use Spiral\Database\Driver\Handler;
 use Spiral\Database\Driver\MySQL\Exception\MySQLException;
 use Spiral\Database\Driver\MySQL\Schema\MySQLTable;
 use Spiral\Database\Exception\SchemaException;
@@ -18,7 +18,7 @@ use Spiral\Database\Schema\AbstractForeignKey;
 use Spiral\Database\Schema\AbstractIndex;
 use Spiral\Database\Schema\AbstractTable;
 
-class MySQLHandler extends AbstractHandler
+class MySQLHandler extends Handler
 {
     /**
      * {@inheritdoc}

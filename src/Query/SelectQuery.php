@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Query;
 
-use Spiral\Database\Driver\AbstractDriver;
+use Spiral\Database\Driver\Driver;
 use Spiral\Database\Driver\Compiler;
 use Spiral\Database\Driver\CompilerInterface;
 use Spiral\Database\Exception\BuilderException;
@@ -90,7 +90,7 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
      * @param array $columns Initial set of columns to fetch.
      */
     public function __construct(
-        AbstractDriver $driver,
+        Driver $driver,
         Compiler $compiler,
         array $from = [],
         array $columns = []

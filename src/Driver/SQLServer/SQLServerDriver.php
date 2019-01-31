@@ -11,7 +11,7 @@ namespace Spiral\Database\Driver\SQLServer;
 
 use PDO;
 use Spiral\Database\DatabaseInterface;
-use Spiral\Database\Driver\AbstractDriver;
+use Spiral\Database\Driver\Driver;
 use Spiral\Database\Driver\HandlerInterface;
 use Spiral\Database\Driver\SQLServer\Schema\SQLServerTable;
 use Spiral\Database\Exception\DriverException;
@@ -19,7 +19,7 @@ use Spiral\Database\Exception\StatementException;
 use Spiral\Database\Injection\ParameterInterface;
 use Spiral\Database\Statement;
 
-class SQLServerDriver extends AbstractDriver
+class SQLServerDriver extends Driver
 {
     protected const TYPE               = DatabaseInterface::SQL_SERVER;
     protected const TABLE_SCHEMA_CLASS = SQLServerTable::class;

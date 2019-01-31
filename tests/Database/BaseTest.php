@@ -12,8 +12,8 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerTrait;
 use Psr\Log\LogLevel;
 use Spiral\Database\Database;
-use Spiral\Database\Driver\AbstractDriver;
-use Spiral\Database\Driver\AbstractHandler;
+use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\Handler;
 use Spiral\Database\Schema\AbstractColumn;
 use Spiral\Database\Schema\AbstractForeignKey;
 use Spiral\Database\Schema\AbstractIndex;
@@ -27,7 +27,7 @@ abstract class BaseTest extends TestCase
 
     protected static $driverCache = [];
 
-    /** @var AbstractDriver */
+    /** @var Driver */
     protected $driver;
 
     /**
@@ -48,9 +48,9 @@ abstract class BaseTest extends TestCase
     }
 
     /**
-     * @return AbstractDriver
+     * @return Driver
      */
-    public function getDriver(): AbstractDriver
+    public function getDriver(): Driver
     {
         $config = self::$config[static::DRIVER];
         if (!isset($this->driver)) {
@@ -85,7 +85,7 @@ abstract class BaseTest extends TestCase
                 $schema->dropForeignKey($foreign->getColumn());
             }
 
-            $schema->save(AbstractHandler::DROP_FOREIGN_KEYS);
+            $schema->save(Handler::DROP_FOREIGN_KEYS);
         }
 
         foreach ($database->getTables() as $table) {

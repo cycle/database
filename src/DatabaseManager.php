@@ -16,7 +16,7 @@ use Spiral\Core\Container\SingletonInterface;
 use Spiral\Core\FactoryInterface;
 use Spiral\Database\Config\DatabaseConfig;
 use Spiral\Database\Config\DatabasePartial;
-use Spiral\Database\Driver\AbstractDriver;
+use Spiral\Database\Driver\Driver;
 use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Exception\DatabaseException;
 use Spiral\Database\Exception\DBALException;
@@ -177,7 +177,7 @@ class DatabaseManager implements SingletonInterface, InjectorInterface
     /**
      * Get instance of every available driver/connection.
      *
-     * @return AbstractDriver[]
+     * @return Driver[]
      *
      * @throws DBALException
      */

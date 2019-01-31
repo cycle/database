@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Driver\SQLite;
 
-use Spiral\Database\Driver\AbstractHandler;
+use Spiral\Database\Driver\Handler;
 use Spiral\Database\Exception\DBALException;
 use Spiral\Database\Exception\HandlerException;
 use Spiral\Database\Schema\AbstractColumn;
@@ -20,7 +20,7 @@ use Spiral\Database\Schema\AbstractTable;
  * Handler provides ability to exectute non supported changes using temporary
  * tables and data mapping.
  */
-class SQLiteHandler extends AbstractHandler
+class SQLiteHandler extends Handler
 {
     /**
      * Drop table from database.

@@ -6,7 +6,7 @@
  */
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\Driver\AbstractHandler;
+use Spiral\Database\Driver\Handler;
 use Spiral\Database\Database;
 use Spiral\Database\Schema\AbstractColumn;
 use Spiral\Database\Schema\AbstractTable;
@@ -55,7 +55,7 @@ abstract class DatetimeColumnTest extends BaseTest
             $schema->date('datetime')->nullable(true);
             $schema->time('datetime')->defaultValue('00:00');
 
-            $schema->save(AbstractHandler::DO_ALL);
+            $schema->save(Handler::DO_ALL);
         }
 
         return $schema;

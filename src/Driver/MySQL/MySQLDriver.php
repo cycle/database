@@ -11,7 +11,7 @@ namespace Spiral\Database\Driver\MySQL;
 
 use PDO;
 use Spiral\Database\DatabaseInterface;
-use Spiral\Database\Driver\AbstractDriver;
+use Spiral\Database\Driver\Driver;
 use Spiral\Database\Driver\HandlerInterface;
 use Spiral\Database\Driver\MySQL\Schema\MySQLTable;
 use Spiral\Database\Exception\StatementException;
@@ -19,7 +19,7 @@ use Spiral\Database\Exception\StatementException;
 /**
  * Talks to mysql databases.
  */
-class MySQLDriver extends AbstractDriver
+class MySQLDriver extends Driver
 {
     protected const TYPE               = DatabaseInterface::MYSQL;
     protected const TABLE_SCHEMA_CLASS = MySQLTable::class;

@@ -8,7 +8,7 @@
 namespace Spiral\Database\Tests;
 
 use Spiral\Database\Database;
-use Spiral\Database\Driver\AbstractHandler;
+use Spiral\Database\Driver\Handler;
 use Spiral\Database\Schema\AbstractColumn;
 use Spiral\Database\Schema\AbstractForeignKey;
 use Spiral\Database\Schema\AbstractTable;
@@ -60,7 +60,7 @@ abstract class ForeignKeysTest extends BaseTest
             $schema->date('datetime')->nullable(true);
             $schema->time('datetime')->defaultValue('00:00');
 
-            $schema->save(AbstractHandler::DO_ALL);
+            $schema->save(Handler::DO_ALL);
         }
 
         return $schema;
@@ -76,7 +76,7 @@ abstract class ForeignKeysTest extends BaseTest
         $schema->integer('external_id');
         $schema->foreignKey('external_id')->references('external', 'id');
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
         $this->assertTrue($this->schema('schema')->hasForeignKey('external_id'));
@@ -92,7 +92,7 @@ abstract class ForeignKeysTest extends BaseTest
         $schema->integer('external_id');
         $schema->foreignKey('external_id')->references('external', 'id');
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
         $this->assertTrue($this->schema('schema')->hasForeignKey('external_id'));
@@ -111,7 +111,7 @@ abstract class ForeignKeysTest extends BaseTest
             ->onDelete(AbstractForeignKey::CASCADE)
             ->onUpdate(AbstractForeignKey::CASCADE);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
         $this->assertTrue($this->schema('schema')->hasForeignKey('external_id'));
@@ -130,7 +130,7 @@ abstract class ForeignKeysTest extends BaseTest
             ->onDelete(AbstractForeignKey::NO_ACTION)
             ->onUpdate(AbstractForeignKey::NO_ACTION);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
         $this->assertTrue($this->schema('schema')->hasForeignKey('external_id'));
@@ -149,11 +149,11 @@ abstract class ForeignKeysTest extends BaseTest
             ->onDelete(AbstractForeignKey::NO_ACTION)
             ->onUpdate(AbstractForeignKey::NO_ACTION);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
         $this->assertTrue($this->schema('schema')->hasForeignKey('external_id'));
 
         $schema->dropForeignKey('external_id');
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertFalse($this->schema('schema')->hasForeignKey('external_id'));
     }
@@ -171,11 +171,11 @@ abstract class ForeignKeysTest extends BaseTest
             ->onDelete(AbstractForeignKey::NO_ACTION)
             ->onUpdate(AbstractForeignKey::NO_ACTION);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
         $this->assertTrue($this->schema('schema')->hasForeignKey('external_id'));
 
         $schema->foreignKey('external_id')->references('external', 'secondary_id');
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
     }
@@ -193,13 +193,13 @@ abstract class ForeignKeysTest extends BaseTest
             ->onDelete(AbstractForeignKey::NO_ACTION)
             ->onUpdate(AbstractForeignKey::NO_ACTION);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
         $this->assertTrue($this->schema('schema')->hasForeignKey('external_id'));
 
         $this->assertTrue($this->sampleSchema('external2')->exists());
 
         $schema->foreignKey('external_id')->references('external2', 'secondary_id');
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
     }
@@ -217,11 +217,11 @@ abstract class ForeignKeysTest extends BaseTest
             ->onDelete(AbstractForeignKey::NO_ACTION)
             ->onUpdate(AbstractForeignKey::NO_ACTION);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
         $this->assertTrue($this->schema('schema')->hasForeignKey('external_id'));
 
         $schema->foreignKey('external_id')->onUpdate(AbstractForeignKey::CASCADE);
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
     }
@@ -239,11 +239,11 @@ abstract class ForeignKeysTest extends BaseTest
             ->onDelete(AbstractForeignKey::CASCADE)
             ->onUpdate(AbstractForeignKey::CASCADE);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
         $this->assertTrue($this->schema('schema')->hasForeignKey('external_id'));
 
         $schema->foreignKey('external_id')->onUpdate(AbstractForeignKey::NO_ACTION);
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
     }
@@ -261,11 +261,11 @@ abstract class ForeignKeysTest extends BaseTest
             ->onDelete(AbstractForeignKey::NO_ACTION)
             ->onUpdate(AbstractForeignKey::NO_ACTION);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
         $this->assertTrue($this->schema('schema')->hasForeignKey('external_id'));
 
         $schema->foreignKey('external_id')->onDelete(AbstractForeignKey::CASCADE);
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
     }
@@ -283,11 +283,11 @@ abstract class ForeignKeysTest extends BaseTest
             ->onDelete(AbstractForeignKey::CASCADE)
             ->onUpdate(AbstractForeignKey::CASCADE);
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
         $this->assertTrue($this->schema('schema')->hasForeignKey('external_id'));
 
         $schema->foreignKey('external_id')->onDelete(AbstractForeignKey::NO_ACTION);
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
     }

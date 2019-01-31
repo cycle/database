@@ -6,7 +6,7 @@
  */
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\Driver\AbstractHandler;
+use Spiral\Database\Driver\Handler;
 use Spiral\Database\Schema\AbstractTable;
 
 abstract class IsolationTest extends BaseTest
@@ -30,7 +30,7 @@ abstract class IsolationTest extends BaseTest
         $this->assertSame('prefix_table', $schema->getName());
 
         $schema->primary('id');
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertTrue($this->schema('prefix_', 'table')->exists());
     }
@@ -47,7 +47,7 @@ abstract class IsolationTest extends BaseTest
         $this->assertSame('prefix_new_name', $schema->getName());
 
         $schema->primary('id');
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertTrue($this->schema('prefix_new_', 'name')->exists());
         $this->assertTrue($this->schema('prefix_', 'new_name')->exists());
@@ -59,12 +59,12 @@ abstract class IsolationTest extends BaseTest
         $this->assertFalse($schema->exists());
 
         $schema->primary('id');
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertTrue($this->schema('prefix_', 'table')->exists());
 
         $schema->setName('abc');
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertFalse($this->schema('prefix_', 'table')->exists());
         $this->assertTrue($this->schema('prefix_', 'abc')->exists());
@@ -76,7 +76,7 @@ abstract class IsolationTest extends BaseTest
         $this->assertFalse($schema->exists());
 
         $schema->primary('id');
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $schema = $this->schema('prefix_', 'b');
         $this->assertFalse($schema->exists());
@@ -88,7 +88,7 @@ abstract class IsolationTest extends BaseTest
         $this->assertSame('prefix_b', $schema->column('id')->getTable());
         $this->assertSame('prefix_a',   $schema->foreignKey('to_a')->getForeignTable());
 
-        $schema->save(AbstractHandler::DO_ALL);
+        $schema->save(Handler::DO_ALL);
 
         $this->assertTrue($this->schema('prefix_', 'a')->exists());
         $this->assertTrue($this->schema('prefix_', 'b')->exists());

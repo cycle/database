@@ -9,14 +9,14 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Driver\SQLServer;
 
-use Spiral\Database\Driver\AbstractHandler;
+use Spiral\Database\Driver\Handler;
 use Spiral\Database\Driver\SQLServer\Schema\SQLServerColumn;
 use Spiral\Database\Exception\SchemaException;
 use Spiral\Database\Schema\AbstractColumn;
 use Spiral\Database\Schema\AbstractIndex;
 use Spiral\Database\Schema\AbstractTable;
 
-class SQLServerHandler extends AbstractHandler
+class SQLServerHandler extends Handler
 {
     /**
      * {@inheritdoc}

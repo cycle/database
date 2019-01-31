@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Spiral\Database\Driver\SQLite;
 
 use Spiral\Database\DatabaseInterface;
-use Spiral\Database\Driver\AbstractDriver;
+use Spiral\Database\Driver\Driver;
 use Spiral\Database\Driver\HandlerInterface;
 use Spiral\Database\Driver\SQLite\Schema\SQLiteTable;
 use Spiral\Database\Exception\DriverException;
@@ -19,7 +19,7 @@ use Spiral\Database\Exception\StatementException;
 /**
  * Talks to sqlite databases.
  */
-class SQLiteDriver extends AbstractDriver
+class SQLiteDriver extends Driver
 {
     protected const TYPE               = DatabaseInterface::SQLITE;
     protected const TABLE_SCHEMA_CLASS = SQLiteTable::class;

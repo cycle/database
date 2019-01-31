@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Spiral\Database\Driver\Postgres;
 
 use Spiral\Database\DatabaseInterface;
-use Spiral\Database\Driver\AbstractDriver;
+use Spiral\Database\Driver\Driver;
 use Spiral\Database\Driver\HandlerInterface;
 use Spiral\Database\Driver\Postgres\Query\PostgresInsertQuery;
 use Spiral\Database\Driver\Postgres\Schema\PostgresTable;
@@ -21,7 +21,7 @@ use Spiral\Database\Query\InsertQuery;
 /**
  * Talks to postgres databases.
  */
-class PostgresDriver extends AbstractDriver
+class PostgresDriver extends Driver
 {
     protected const TYPE               = DatabaseInterface::POSTGRES;
     protected const TABLE_SCHEMA_CLASS = PostgresTable::class;

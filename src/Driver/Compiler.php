@@ -13,14 +13,13 @@ use Spiral\Database\Exception\CompilerException;
 use Spiral\Database\Injection\ExpressionInterface;
 use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Injection\ParameterInterface;
-use Spiral\Database\Injection\ValueInterface;
 use Spiral\Database\Query\BuilderInterface;
 
 /**
  * Responsible for conversion of set of query parameters (where tokens, table names and etc) into
  * sql to be send into specific Driver.
  */
-class Compiler implements CompilerInterface
+abstract class Compiler implements CompilerInterface
 {
     /**
      * Tokens for nested OR and AND conditions.
