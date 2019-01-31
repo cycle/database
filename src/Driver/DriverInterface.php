@@ -120,13 +120,6 @@ interface DriverInterface
     public function disconnect();
 
     /**
-     * Attempt to reconnect driver.
-     *
-     * @throws DriverException
-     */
-    public function reconnect();
-
-    /**
      * Quote value.
      *
      * @param mixed $value
