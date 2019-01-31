@@ -202,17 +202,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     }
 
     /**
-     * Reconnect driver.
-     *
-     * @throws DriverException
-     */
-    public function reconnect()
-    {
-        $this->pdo = null;
-        $this->connect();
-    }
-
-    /**
      * Start SQL transaction with specified isolation level (not all DBMS support it). Nested
      * transactions are processed using savepoints.
      *
