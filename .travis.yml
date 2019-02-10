@@ -37,18 +37,6 @@ jobs:
         - vendor/bin/phpunit tests/Database/SQLite
         - vendor/bin/phpunit tests/Database/MySQL
         - vendor/bin/phpunit tests/Database/Postgres
-        
-    # PHP Nightly builds does not support SQLServer yet
-    - stage: Test
-      php: nightly
-      before_install:
-        - cd tests
-        - docker-compose up -d
-        - cd ..
-      script:
-        - vendor/bin/phpunit tests/Database/SQLite
-        - vendor/bin/phpunit tests/Database/MySQL
-        - vendor/bin/phpunit tests/Database/Postgres
 
     # Testing various PostgresSQL version
     - stage: Test
