@@ -157,8 +157,7 @@ abstract class StatementTest extends BaseQueryTest
         $paginator = new Paginator(2);
 
         $select = $table->select();
-
-        $select->setPaginator($paginator->withPage(1));
+        $paginator->withPage(1)->paginate($select);
 
         $i = 0;
         foreach ($select as $item) {
@@ -170,8 +169,8 @@ abstract class StatementTest extends BaseQueryTest
 
         $this->assertSame(2, $i);
 
-        $select->setPaginator($paginator->withPage(2));
-
+        $select = $table->select();
+        $paginator->withPage(2)->paginate($select);
         $i = 2;
         foreach ($select as $item) {
             $this->assertEquals(md5($i), $item['name']);
@@ -182,7 +181,8 @@ abstract class StatementTest extends BaseQueryTest
 
         $this->assertSame(4, $i);
 
-        $select->setPaginator($paginator->withPage(3));
+        $select = $table->select();
+        $paginator->withPage(3)->paginate($select);
 
         $i = 4;
         foreach ($select as $item) {
@@ -195,7 +195,9 @@ abstract class StatementTest extends BaseQueryTest
         $this->assertSame(6, $i);
 
         $paginator = $paginator->withLimit(6);
-        $select->setPaginator($paginator->withPage(4)); //Forced last page
+
+        $select = $table->select();
+        $paginator->withPage(4)->paginate($select); //Forced last page
 
         $i = 6;
         foreach ($select as $item) {

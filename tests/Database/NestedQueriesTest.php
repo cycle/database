@@ -15,7 +15,7 @@ use Spiral\Database\Injection\ParameterInterface;
 use Spiral\Database\Query\AbstractQuery;
 use Spiral\Database\Query\SelectQuery;
 use Spiral\Database\Schema\AbstractTable;
-use Spiral\Pagination\PaginatorAwareInterface;
+use Spiral\Pagination\PaginableInterface;
 
 abstract class NestedQueriesTest extends BaseQueryTest
 {
@@ -40,7 +40,7 @@ abstract class NestedQueriesTest extends BaseQueryTest
         $this->assertInstanceOf(SelectQuery::class, $this->database->table('table')->select());
         $this->assertInstanceOf(SelectQuery::class, $this->database->table->select());
         $this->assertInstanceOf(\IteratorAggregate::class, $this->database->table->select());
-        $this->assertInstanceOf(PaginatorAwareInterface::class, $this->database->table->select());
+        $this->assertInstanceOf(PaginableInterface::class, $this->database->table->select());
     }
 
     public function testSimpleSelection()
