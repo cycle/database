@@ -7,13 +7,13 @@
 
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\Query\SelectQuery;
 use Spiral\Database\Database;
 use Spiral\Database\Injection\Expression;
 use Spiral\Database\Injection\Fragment;
 use Spiral\Database\Injection\Parameter;
+use Spiral\Database\Query\SelectQuery;
 use Spiral\Database\Schema\AbstractTable;
-use Spiral\Pagination\PaginatorAwareInterface;
+use Spiral\Pagination\PaginableInterface;
 
 abstract class SelectQueryTest extends BaseQueryTest
 {
@@ -38,7 +38,7 @@ abstract class SelectQueryTest extends BaseQueryTest
         $this->assertInstanceOf(SelectQuery::class, $this->database->table('table')->select());
         $this->assertInstanceOf(SelectQuery::class, $this->database->table->select());
         $this->assertInstanceOf(\IteratorAggregate::class, $this->database->table->select());
-        $this->assertInstanceOf(PaginatorAwareInterface::class, $this->database->table->select());
+        $this->assertInstanceOf(PaginableInterface::class, $this->database->table->select());
     }
 
     //Generic behaviours
