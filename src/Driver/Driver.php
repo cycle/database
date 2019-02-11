@@ -358,6 +358,8 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      *
      * @param \DateTimeInterface $value
      * @return string
+     *
+     * @throws \Exception
      */
     protected function formatDatetime(\DateTimeInterface $value): string
     {
