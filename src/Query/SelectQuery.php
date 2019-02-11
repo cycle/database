@@ -9,9 +9,9 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Query;
 
-use Spiral\Database\Driver\Driver;
 use Spiral\Database\Driver\Compiler;
 use Spiral\Database\Driver\CompilerInterface;
+use Spiral\Database\Driver\Driver;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Exception\StatementException;
 use Spiral\Database\Injection\FragmentInterface;
@@ -20,17 +20,16 @@ use Spiral\Database\Query\Traits\JoinTrait;
 use Spiral\Database\Query\Traits\TokenTrait;
 use Spiral\Database\Query\Traits\WhereTrait;
 use Spiral\Database\Statement;
-use Spiral\Pagination\PaginatorAwareInterface;
+use Spiral\Pagination\PaginableInterface;
 use Spiral\Pagination\Traits\LimitsTrait;
-use Spiral\Pagination\Traits\PaginatorTrait;
 
 /**
  * SelectQuery extends AbstractSelect with ability to specify selection tables and perform UNION
  * of multiple select queries.
  */
-class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregate, PaginatorAwareInterface
+class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregate, PaginableInterface
 {
-    use TokenTrait, WhereTrait, HavingTrait, JoinTrait, LimitsTrait, PaginatorTrait;
+    use TokenTrait, WhereTrait, HavingTrait, JoinTrait, LimitsTrait;
 
     const QUERY_TYPE = Compiler::SELECT_QUERY;
 
@@ -268,36 +267,10 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
     /**
      * {@inheritdoc}
      *
-     * @param bool $paginate Apply pagination to result, can be disabled in honor of count method.
      * @return Statement
      */
-    public function run(bool $paginate = true)
+    public function run()
     {
-        if ($paginate && $this->hasPaginator()) {
-            /**
-             * To prevent original select builder altering
-             *
-             * @var SelectQuery $select
-             */
-            $select = clone $this;
-
-            //Selection specific paginator
-            $paginator = $this->getPaginator(true);
-
-            if (!empty($this->getLimit()) && $this->getLimit() > $paginator->getLimit()) {
-                //We have to ensure that selection works inside given pagination window
-                $select = $select->limit($this->getLimit());
-            } else {
-                $select->limit($paginator->getLimit());
-            }
-
-            //Making sure that window is shifted
-            $select = $select->offset($this->getOffset() + $paginator->getOffset());
-
-            //No inner pagination
-            return $select->run(false);
-        }
-
         return $this->driver->query($this->sqlStatement(), $this->getParameters());
     }
 
@@ -356,7 +329,7 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
         $select->ordering = [];
         $select->grouping = [];
 
-        return (int)$select->run(false)->fetchColumn();
+        return (int)$select->run()->fetchColumn();
     }
 
     /**
@@ -390,7 +363,7 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
         //To be escaped in compiler
         $select->columns = ["{$method}({$arguments[0]})"];
 
-        $result = $select->run(false)->fetchColumn();
+        $result = $select->run()->fetchColumn();
 
         //Selecting type between int and float
         if ((float)$result == $result && (int)$result != $result) {
