@@ -371,7 +371,7 @@ class SQLServerColumn extends AbstractColumn
         }
 
         if (
-            $this->phpType() != 'string'
+            $this->getType() != 'string'
             && ($this->defaultValue[0] == '(' && $this->defaultValue[strlen($this->defaultValue) - 1] == ')')
         ) {
             //Cut another braces

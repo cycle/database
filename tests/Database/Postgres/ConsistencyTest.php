@@ -39,7 +39,7 @@ class ConsistencyTest extends \Spiral\Database\Tests\ConsistencyTest
         $schema = $d->getSchema('table');
         $this->assertTrue($schema->exists());
 
-        $this->assertSame($schema->column('target')->getType(), $column->getType());
+        $this->assertSame($schema->column('target')->getInternalType(), $column->getInternalType());
 
         $this->assertInstanceOf(
             FragmentInterface::class,
@@ -73,7 +73,7 @@ class ConsistencyTest extends \Spiral\Database\Tests\ConsistencyTest
         $schema = $this->schema('table');
         $this->assertTrue($schema->exists());
 
-        $this->assertSame($schema->column('target')->getType(), $column->getType());
+        $this->assertSame($schema->column('target')->getInternalType(), $column->getInternalType());
 
         $this->assertInstanceOf(
             FragmentInterface::class,

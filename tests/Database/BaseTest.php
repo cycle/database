@@ -204,8 +204,8 @@ abstract class BaseTest extends TestCase
     protected function compareColumns(AbstractColumn $a, AbstractColumn $b)
     {
         $this->assertSame(
-            $a->getType(),
-            $b->getType(),
+            $a->getInternalType(),
+            $b->getInternalType(),
             "Column {$a} type has been changed"
         );
 

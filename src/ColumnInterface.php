@@ -34,7 +34,7 @@ interface ColumnInterface
      *
      * @return string
      */
-    public function getType(): string;
+    public function getInternalType(): string;
 
     /**
      * DBMS specific reverse mapping must map database specific type into limited set of abstract
@@ -49,7 +49,7 @@ interface ColumnInterface
      *
      * @return string
      */
-    public function phpType(): string;
+    public function getType(): string;
 
     /**
      * Column size.

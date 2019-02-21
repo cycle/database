@@ -255,7 +255,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     /**
      * {@inheritdoc}
      */
-    public function getType(): string
+    public function getInternalType(): string
     {
         return $this->type;
     }
@@ -263,7 +263,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     /**
      * {@inheritdoc}
      */
-    public function phpType(): string
+    public function getType(): string
     {
         $schemaType = $this->getAbstractType();
         foreach ($this->phpMapping as $phpType => $candidates) {
@@ -335,7 +335,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
             return $this->formatDatetime($this->getAbstractType(), $this->defaultValue);
         }
 
-        switch ($this->phpType()) {
+        switch ($this->getType()) {
             case 'int':
                 return (int)$this->defaultValue;
             case 'float':
@@ -619,7 +619,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
             'type' => [
                 'database' => $this->type,
                 'schema'   => $this->getAbstractType(),
-                'php'      => $this->phpType(),
+                'php'      => $this->getType(),
             ],
         ];
 
@@ -722,15 +722,15 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
             return $defaultValue->sqlStatement();
         }
 
-        if ($this->phpType() == 'bool') {
+        if ($this->getType() == 'bool') {
             return $defaultValue ? 'TRUE' : 'FALSE';
         }
 
-        if ($this->phpType() == 'float') {
+        if ($this->getType() == 'float') {
             return sprintf('%F', $defaultValue);
         }
 
-        if ($this->phpType() == 'int') {
+        if ($this->getType() == 'int') {
             return strval($defaultValue);
         }
 

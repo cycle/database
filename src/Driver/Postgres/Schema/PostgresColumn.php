@@ -339,7 +339,7 @@ class PostgresColumn extends AbstractColumn
                 $this->defaultValue = (strtolower($this->defaultValue) == 'true');
             }
 
-            if ($this->phpType() == self::FLOAT || $this->phpType() == self::INT) {
+            if ($this->getType() == self::FLOAT || $this->getType() == self::INT) {
                 if (preg_match('/^\(?(.*?)\)?(?!::(.+))?$/', $this->defaultValue, $matches)) {
                     //Negative numeric values
                     $this->defaultValue = $matches[1];
