@@ -18,8 +18,6 @@ use Spiral\Database\Schema\AbstractColumn;
 /**
  * Attention! You can use only one timestamp or datetime with DATETIME_NOW setting! Thought, it will
  * work on multiple fields with MySQL 5.6.6+ version.
- *
- * @todo create ON_UPDATE_NOW and automatically create a trigger for a column, for all drivers
  */
 class MySQLColumn extends AbstractColumn
 {

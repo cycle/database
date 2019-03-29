@@ -35,7 +35,7 @@ class DatabaseConfig extends InjectableConfig
      */
     public function getDefaultDatabase(): string
     {
-        return $this->config['default'];
+        return $this->config['default'] ?? 'default';
     }
 
     /**
@@ -46,7 +46,7 @@ class DatabaseConfig extends InjectableConfig
     public function getDatabases(): array
     {
         $result = [];
-        foreach (array_keys($this->config['databases']) as $database) {
+        foreach (array_keys($this->config['databases'] ?? []) as $database) {
             $result[$database] = $this->getDatabase($database);
         }
 
@@ -61,7 +61,7 @@ class DatabaseConfig extends InjectableConfig
     public function getDrivers(): array
     {
         $result = [];
-        foreach (array_keys($this->config['connections'] ?? $this->config['drivers']) as $driver) {
+        foreach (array_keys($this->config['connections'] ?? $this->config['drivers'] ?? []) as $driver) {
             $result[$driver] = $this->getDriver($driver);
         }
 
