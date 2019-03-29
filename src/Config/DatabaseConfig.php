@@ -15,7 +15,8 @@ use Spiral\Database\Exception\ConfigException;
 
 class DatabaseConfig extends InjectableConfig
 {
-    const CONFIG = 'database';
+    public const CONFIG           = 'database';
+    public const DEFAULT_DATABASE = 'default';
 
     use AliasTrait;
 
@@ -24,7 +25,7 @@ class DatabaseConfig extends InjectableConfig
      * @var array
      */
     protected $config = [
-        'default'     => 'default',
+        'default'     => self::DEFAULT_DATABASE,
         'aliases'     => [],
         'databases'   => [],
         'connections' => [],
