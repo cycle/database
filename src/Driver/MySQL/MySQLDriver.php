@@ -20,14 +20,10 @@ use Spiral\Database\Exception\StatementException;
  */
 class MySQLDriver extends Driver
 {
-    protected const TYPE               = DatabaseInterface::MYSQL;
-    protected const TABLE_SCHEMA_CLASS = MySQLTable::class;
-    protected const QUERY_COMPILER     = MySQLCompiler::class;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected $pdoOptions = [
+    protected const TYPE                = DatabaseInterface::MYSQL;
+    protected const TABLE_SCHEMA_CLASS  = MySQLTable::class;
+    protected const QUERY_COMPILER      = MySQLCompiler::class;
+    protected const DEFAULT_PDO_OPTIONS = [
         PDO::ATTR_CASE               => PDO::CASE_NATURAL,
         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
         PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES "UTF8"',

@@ -40,6 +40,13 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     // DateTime format to be used to perform automatic conversion of DateTime objects.
     protected const DATETIME = 'Y-m-d H:i:s';
 
+    // Driver specific PDO options
+    protected const DEFAULT_PDO_OPTIONS = [
+        PDO::ATTR_CASE             => PDO::CASE_NATURAL,
+        PDO::ATTR_ERRMODE          => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_EMULATE_PREPARES => false
+    ];
+
     /**
      * Connection configuration described in DBAL config file. Any driver can be used as data source
      * for multiple databases as table prefix and quotation defined on Database instance level.
@@ -64,11 +71,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         'password'   => '',
 
         // pdo options
-        'options'    => [
-            PDO::ATTR_CASE             => PDO::CASE_NATURAL,
-            PDO::ATTR_ERRMODE          => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_EMULATE_PREPARES => false
-        ],
+        'options'    => [],
     ];
 
     /** @var PDO|null */
@@ -94,7 +97,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     public function __construct(array $options)
     {
-        $options['options'] = $this->options['options'] + ($options['options'] ?? []);
+        $options['options'] = ($options['options'] ?? []) + static::DEFAULT_PDO_OPTIONS;
         $this->options = $options + $this->options;
 
         if (!empty($this->options['profiling'])) {
