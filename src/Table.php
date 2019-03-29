@@ -26,7 +26,7 @@ use Spiral\Database\Traits\SchemaTrait;
  * @method int max($identifier) Perform aggregation (MAX) based on column or expression value.
  * @method int sum($identifier) Perform aggregation (SUM) based on column or expression value.
  */
-class Table implements TableInterface, \IteratorAggregate, \Countable
+final class Table implements TableInterface, \IteratorAggregate, \Countable
 {
     use SchemaTrait;
 

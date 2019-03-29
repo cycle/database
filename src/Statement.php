@@ -15,7 +15,7 @@ use PDOStatement;
  * Adds few quick methods to PDOStatement and fully compatible with it. By default uses
  * PDO::FETCH_ASSOC mode.
  */
-class Statement extends PDOStatement
+final class Statement extends PDOStatement
 {
     /**
      * You are seeing completely valid PDO specific protected constructor.

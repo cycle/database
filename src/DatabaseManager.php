@@ -74,7 +74,7 @@ use Spiral\Database\Exception\DBALException;
  *
  * echo $manager->database('runtime')->select()->from('users')->count();
  */
-class DatabaseManager implements SingletonInterface, InjectorInterface
+final class DatabaseManager implements SingletonInterface, InjectorInterface
 {
     /** @var DatabaseConfig */
     private $config = null;

@@ -85,7 +85,7 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
     /**
      * {@inheritdoc}
      *
-     * @param array $from    Initial set of table names.
+     * @param array $from Initial set of table names.
      * @param array $columns Initial set of columns to fetch.
      */
     public function __construct(
