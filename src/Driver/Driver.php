@@ -59,9 +59,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         // allow reconnects
         'reconnect'  => false,
 
-        // when set to true Driver will cache prepared statements
-        'queryCache' => false,
-
         //All datetime objects will be converted relative to this timezone (must match with DB timezone!)
         'timezone'   => 'UTC',
 
@@ -84,13 +81,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * @var int
      */
     private $transactionLevel = 0;
-
-    /**
-     * Reusable query cache.
-     *
-     * @var Statement[]
-     */
-    private $queryCache = [];
 
     /**
      * @param array $options
@@ -191,7 +181,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     {
         $this->pdo = null;
         $this->transactionLevel = 0;
-        $this->queryCache = [];
     }
 
     /**
@@ -280,8 +269,10 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         }
 
         try {
+            $flatten = $this->flattenParameters($parameters);
+
             //Mounting all input parameters
-            $statement = $this->bindParameters($this->prepare($query), $this->flattenParameters($parameters));
+            $statement = $this->bindParameters($this->prepare($query), $flatten);
             $statement->execute();
 
             if ($this->isProfiling()) {
@@ -315,19 +306,11 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
 
     /**
      * @param string $query
-     * @return Statement
+     * @return \PDOStatement
      */
-    protected function prepare(string $query): Statement
+    protected function prepare(string $query): \PDOStatement
     {
-        if (!$this->options['queryCache']) {
-            return $this->getPDO()->prepare($query);
-        }
-
-        if (isset($this->queryCache[$query])) {
-            return $this->queryCache[$query];
-        }
-
-        return $this->queryCache[$query] = $this->getPDO()->prepare($query);
+        return $this->getPDO()->prepare($query);
     }
 
     /**

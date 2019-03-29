@@ -328,7 +328,12 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
         $select->ordering = [];
         $select->grouping = [];
 
-        return (int)$select->run()->fetchColumn();
+        $st = $select->run();
+        try {
+            return (int)$st->fetchColumn();
+        } finally {
+            $st->close();
+        }
     }
 
     /**
@@ -362,7 +367,13 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
         //To be escaped in compiler
         $select->columns = ["{$method}({$arguments[0]})"];
 
-        $result = $select->run()->fetchColumn();
+        $st = $select->run();
+
+        try {
+            $result = $st->fetchColumn();
+        } finally {
+            $st->close();
+        }
 
         //Selecting type between int and float
         if ((float)$result == $result && (int)$result != $result) {
@@ -415,6 +426,11 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
      */
     public function fetchAll(): array
     {
-        return $this->getIterator()->fetchAll(\PDO::FETCH_ASSOC);
+        $st = $this->run();
+        try {
+            return $st->fetchAll(\PDO::FETCH_ASSOC);
+        } finally {
+            $st->close();
+        }
     }
 }

@@ -118,7 +118,7 @@ class DatabaseConfig extends InjectableConfig
     public function getDriver(string $driver): Autowire
     {
         if (!$this->hasDriver($driver)) {
-            throw new ConfigException("Undefined driver `{$driver}`.");
+            throw new ConfigException("Undefined driver `{$driver}`");
         }
 
         $config = $this->config['connections'][$driver] ?? $this->config['drivers'][$driver];

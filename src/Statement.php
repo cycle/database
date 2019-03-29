@@ -13,6 +13,8 @@ use PDOStatement;
 /**
  * Adds few quick methods to PDOStatement and fully compatible with it. By default uses
  * PDO::FETCH_ASSOC mode.
+ *
+ * @internal
  */
 final class Statement extends PDOStatement
 {
