@@ -210,6 +210,8 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * Declare table as dropped, you have to sync table using "save" method in order to apply this
      * change.
+     *
+     * Attention, method will flush declared FKs to ensure that table express no dependecies.
      */
     public function declareDropped()
     {
@@ -219,10 +221,6 @@ abstract class AbstractTable implements TableInterface, ElementInterface
 
         //Declaring as dropped
         $this->status = self::STATUS_DECLARED_DROPPED;
-
-        foreach ($this->current->getForeignKeys() as $column) {
-            $this->current->forgerForeignKey($column);
-        }
     }
 
     /**
@@ -310,6 +308,10 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      */
     public function getDependencies(): array
     {
+        if ($this->status === self::STATUS_DECLARED_DROPPED) {
+            return [];
+        }
+
         $tables = [];
         foreach ($this->current->getForeignKeys() as $foreignKey) {
             $tables[] = $foreignKey->getForeignTable();
@@ -623,7 +625,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      */
     public function save(int $operation = HandlerInterface::DO_ALL, bool $reset = true)
     {
-        //We need an instance of Handler of dbal operations
+        // We need an instance of Handler of dbal operations
         $handler = $this->driver->getHandler();
 
         if ($this->status == self::STATUS_DECLARED_DROPPED && $operation & HandlerInterface::DO_DROP) {
@@ -636,7 +638,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
             return;
         }
 
-        //Ensure that columns references to valid indexes and et
+        // Ensure that columns references to valid indexes and et
         $prepared = $this->normalizeSchema(($operation & HandlerInterface::CREATE_FOREIGN_KEYS) !== 0);
 
         if ($this->status == self::STATUS_NEW) {
@@ -649,7 +651,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
             }
         }
 
-        //Syncing our schemas
+        // Syncing our schemas
         if ($reset) {
             $this->status = self::STATUS_EXISTS;
             $this->initial->syncState($prepared->current);
