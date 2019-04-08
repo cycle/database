@@ -1,5 +1,4 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types=1);
 /**
  * Spiral Framework.
  *
@@ -95,7 +94,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
 
     /**
      * @param DriverInterface $driver Parent driver.
-     * @param string          $name   Table name, must include table prefix.
+     * @param string          $name Table name, must include table prefix.
      * @param string          $prefix Database specific table prefix.
      */
     public function __construct(DriverInterface $driver, string $name, string $prefix)
@@ -210,6 +209,8 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * Declare table as dropped, you have to sync table using "save" method in order to apply this
      * change.
+     *
+     * Attention, method will flush declared FKs to ensure that table express no dependecies.
      */
     public function declareDropped()
     {
@@ -219,11 +220,6 @@ abstract class AbstractTable implements TableInterface, ElementInterface
 
         //Declaring as dropped
         $this->status = self::STATUS_DECLARED_DROPPED;
-
-        foreach ($this->current->getForeignKeys() as $foreign) {
-            //Remove all FK keys
-            $this->current->forgerForeignKey($foreign);
-        }
     }
 
     /**
@@ -311,6 +307,10 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      */
     public function getDependencies(): array
     {
+        if ($this->status === self::STATUS_DECLARED_DROPPED) {
+            return [];
+        }
+
         $tables = [];
         foreach ($this->current->getForeignKeys() as $foreignKey) {
             $tables[] = $foreignKey->getForeignTable();
@@ -483,7 +483,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * Rename index (only if index exists).
      *
      * @param array  $columns Index forming columns.
-     * @param string $name    New index name.
+     * @param string $name New index name.
      * @return self
      *
      * @throws SchemaException
@@ -533,8 +533,9 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     public function dropIndex(array $columns): AbstractTable
     {
         if (empty($schema = $this->current->findIndex($columns))) {
-            throw new SchemaException("Undefined index ['" . join("', '",
-                    $columns) . "'] in '{$this->getName()}'");
+            throw new SchemaException(
+                "Undefined index ['" . join("', '", $columns) . "'] in '{$this->getName()}'"
+            );
         }
 
         //Dropping index from current schema
@@ -616,14 +617,14 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      *                        (when multiple tables are being updated) it is reasonable to drop
      *                        foreign keys and indexes prior to dropping related columns. See sync
      *                        bus class to get more details.
-     * @param bool $reset     When true schema will be marked as synced.
+     * @param bool $reset When true schema will be marked as synced.
      *
      * @throws HandlerException
      * @throws SchemaException
      */
     public function save(int $operation = HandlerInterface::DO_ALL, bool $reset = true)
     {
-        //We need an instance of Handler of dbal operations
+        // We need an instance of Handler of dbal operations
         $handler = $this->driver->getHandler();
 
         if ($this->status == self::STATUS_DECLARED_DROPPED && $operation & HandlerInterface::DO_DROP) {
@@ -636,7 +637,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
             return;
         }
 
-        //Ensure that columns references to valid indexes and et
+        // Ensure that columns references to valid indexes and et
         $prepared = $this->normalizeSchema(($operation & HandlerInterface::CREATE_FOREIGN_KEYS) !== 0);
 
         if ($this->status == self::STATUS_NEW) {
@@ -649,7 +650,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
             }
         }
 
-        //Syncing our schemas
+        // Syncing our schemas
         if ($reset) {
             $this->status = self::STATUS_EXISTS;
             $this->initial->syncState($prepared->current);

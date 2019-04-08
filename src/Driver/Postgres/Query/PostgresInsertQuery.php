@@ -1,5 +1,4 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types=1);
 /**
  * Spiral Framework.
  *
@@ -54,11 +53,15 @@ class PostgresInsertQuery extends InsertQuery
     {
         $result = $this->driver->query($this->sqlStatement(), $this->getParameters());
 
-        if ($this->getPrimaryKey($this->compiler->getPrefix(), $this->table) !== null) {
-            return (int)$result->fetchColumn();
-        }
+        try {
+            if ($this->getPrimaryKey($this->compiler->getPrefix(), $this->table) !== null) {
+                return (int)$result->fetchColumn();
+            }
 
-        return null;
+            return null;
+        } finally {
+            $result->close();
+        }
     }
 
     /**

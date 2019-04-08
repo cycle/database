@@ -1,5 +1,4 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types=1);
 /**
  * Spiral Framework.
  *
@@ -20,7 +19,7 @@ use Spiral\Database\Query\UpdateQuery;
  * Database class is high level abstraction at top of Driver. Databases usually linked to real
  * database or logical portion of database (filtered by prefix).
  */
-class Database implements DatabaseInterface, InjectableInterface
+final class Database implements DatabaseInterface, InjectableInterface
 {
     public const INJECTOR = DatabaseManager::class;
 
@@ -43,15 +42,15 @@ class Database implements DatabaseInterface, InjectableInterface
     private $readDriver;
 
     /**
-     * @param string               $name       Internal database name/id.
-     * @param string               $prefix     Default database table prefix, will be used for all
+     * @param string               $name Internal database name/id.
+     * @param string               $prefix Default database table prefix, will be used for all
      *                                         table identifiers.
-     * @param DriverInterface      $driver     Driver instance responsible for database connection.
+     * @param DriverInterface      $driver Driver instance responsible for database connection.
      * @param DriverInterface|null $readDriver Read-only driver connection.
      */
     public function __construct(
         string $name,
-        string $prefix = '',
+        string $prefix,
         DriverInterface $driver,
         DriverInterface $readDriver = null
     ) {

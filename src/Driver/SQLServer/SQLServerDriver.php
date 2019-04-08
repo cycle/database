@@ -1,5 +1,4 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types=1);
 /**
  * Spiral Framework.
  *
@@ -21,15 +20,11 @@ use Spiral\Database\Statement;
 
 class SQLServerDriver extends Driver
 {
-    protected const TYPE               = DatabaseInterface::SQL_SERVER;
-    protected const TABLE_SCHEMA_CLASS = SQLServerTable::class;
-    protected const QUERY_COMPILER     = SQLServerCompiler::class;
-    protected const DATETIME           = 'Y-m-d\TH:i:s.000';
-
-    /**
-     * @var array
-     */
-    protected $pdoOptions = [
+    protected const TYPE                = DatabaseInterface::SQL_SERVER;
+    protected const TABLE_SCHEMA_CLASS  = SQLServerTable::class;
+    protected const QUERY_COMPILER      = SQLServerCompiler::class;
+    protected const DATETIME            = 'Y-m-d\TH:i:s.000';
+    protected const DEFAULT_PDO_OPTIONS = [
         PDO::ATTR_CASE              => PDO::CASE_NATURAL,
         PDO::ATTR_ERRMODE           => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_STRINGIFY_FETCHES => false
@@ -137,7 +132,7 @@ class SQLServerDriver extends Driver
      *
      * @link http://en.wikipedia.org/wiki/Savepoint
      *
-     * @param int $level   Savepoint name/id, must not contain spaces and be valid database
+     * @param int $level Savepoint name/id, must not contain spaces and be valid database
      *                     identifier.
      */
     protected function savepointCreate(int $level)
@@ -151,7 +146,7 @@ class SQLServerDriver extends Driver
      *
      * @link http://en.wikipedia.org/wiki/Savepoint
      *
-     * @param int $level   Savepoint name/id, must not contain spaces and be valid database
+     * @param int $level Savepoint name/id, must not contain spaces and be valid database
      *                     identifier.
      */
     protected function savepointRelease(int $level)
@@ -165,7 +160,7 @@ class SQLServerDriver extends Driver
      *
      * @link http://en.wikipedia.org/wiki/Savepoint
      *
-     * @param int $level   Savepoint name/id, must not contain spaces and be valid database
+     * @param int $level Savepoint name/id, must not contain spaces and be valid database
      *                     identifier.
      */
     protected function savepointRollback(int $level)

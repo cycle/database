@@ -1,5 +1,4 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types=1);
 /**
  * Spiral Framework.
  *
@@ -13,10 +12,6 @@ use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Injection\Fragment;
 use Spiral\Database\Schema\AbstractColumn;
 
-/**
- * @todo investigate potential issue with entity non handling enum correctly when multiple
- * @todo column changes happen in one session (who the hell will do that?)
- */
 class PostgresColumn extends AbstractColumn
 {
     /**

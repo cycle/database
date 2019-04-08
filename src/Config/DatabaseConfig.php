@@ -15,7 +15,8 @@ use Spiral\Database\Exception\ConfigException;
 
 class DatabaseConfig extends InjectableConfig
 {
-    const CONFIG = 'database';
+    public const CONFIG           = 'database';
+    public const DEFAULT_DATABASE = 'default';
 
     use AliasTrait;
 
@@ -24,7 +25,7 @@ class DatabaseConfig extends InjectableConfig
      * @var array
      */
     protected $config = [
-        'default'     => 'default',
+        'default'     => self::DEFAULT_DATABASE,
         'aliases'     => [],
         'databases'   => [],
         'connections' => [],
@@ -35,7 +36,7 @@ class DatabaseConfig extends InjectableConfig
      */
     public function getDefaultDatabase(): string
     {
-        return $this->config['default'];
+        return $this->config['default'] ?? 'default';
     }
 
     /**
@@ -46,7 +47,7 @@ class DatabaseConfig extends InjectableConfig
     public function getDatabases(): array
     {
         $result = [];
-        foreach (array_keys($this->config['databases']) as $database) {
+        foreach (array_keys($this->config['databases'] ?? []) as $database) {
             $result[$database] = $this->getDatabase($database);
         }
 
@@ -61,7 +62,7 @@ class DatabaseConfig extends InjectableConfig
     public function getDrivers(): array
     {
         $result = [];
-        foreach (array_keys($this->config['connections'] ?? $this->config['drivers']) as $driver) {
+        foreach (array_keys($this->config['connections'] ?? $this->config['drivers'] ?? []) as $driver) {
             $result[$driver] = $this->getDriver($driver);
         }
 
@@ -117,7 +118,7 @@ class DatabaseConfig extends InjectableConfig
     public function getDriver(string $driver): Autowire
     {
         if (!$this->hasDriver($driver)) {
-            throw new ConfigException("Undefined driver `{$driver}`.");
+            throw new ConfigException("Undefined driver `{$driver}`");
         }
 
         $config = $this->config['connections'][$driver] ?? $this->config['drivers'][$driver];

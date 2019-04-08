@@ -1,5 +1,4 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types=1);
 /**
  * Spiral Framework.
  *
@@ -12,10 +11,6 @@ namespace Spiral\Database\Driver\SQLServer\Schema;
 use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Schema\AbstractColumn;
 
-/**
- * @todo investigate potential issue with entity non handling enum correctly when multiple
- * @todo column changes happen in one session (who the hell will do that?)
- */
 class SQLServerColumn extends AbstractColumn
 {
     /**
