@@ -73,7 +73,7 @@ use Spiral\Database\Exception\DBALException;
  *
  * echo $manager->database('runtime')->select()->from('users')->count();
  */
-final class DatabaseManager implements SingletonInterface, InjectorInterface
+final class DatabaseManager implements DatabaseProviderInterface, SingletonInterface, InjectorInterface
 {
     /** @var DatabaseConfig */
     private $config = null;
@@ -129,11 +129,11 @@ final class DatabaseManager implements SingletonInterface, InjectorInterface
      * Get Database associated with a given database alias or automatically created one.
      *
      * @param string|null $database
-     * @return Database
+     * @return Database|DatabaseInterface
      *
      * @throws DBALException
      */
-    public function database(string $database = null): Database
+    public function database(string $database = null): DatabaseInterface
     {
         if (empty($database)) {
             $database = $this->config->getDefaultDatabase();
