@@ -43,30 +43,37 @@ use Spiral\Database\Exception\DBALException;
  *  ],
  *  'connections' => [
  *      'mysql'     => [
- *          'driver'     => Drivers\MySQL\MySQLDriver::class,
- *          'connection' => 'mysql:host=127.0.0.1;dbname=database',
- *          'username'   => 'mysql',
- *          'password'   => 'mysql',
+ *          'driver'     => Driver\MySQL\MySQLDriver::class,
+ *          'options' => [
+ *              'connection' => 'mysql:host=127.0.0.1;dbname=database',
+ *              'username'   => 'mysql',
+ *              'password'   => 'mysql',
+ *           ],
  *      ],
  *      'postgres'  => [
- *          'driver'     => Drivers\Postgres\PostgresDriver::class,
- *          'connection' => 'pgsql:host=127.0.0.1;dbname=database',
- *          'username'   => 'postgres',
- *          'password'   => 'postgres',
+ *          'driver'     => Driver\Postgres\PostgresDriver::class,
+ *          'options' => [
+ *              'connection' => 'pgsql:host=127.0.0.1;dbname=database',
+ *              'username'   => 'postgres',
+ *              'password'   => 'postgres',
+ *           ],
  *      ],
  *      'runtime'   => [
- *          'driver'     => Drivers\SQLite\SQLiteDriver::class,
- *          'connection' => 'sqlite:' . directory('runtime') . 'runtime.db',
- *          'username'   => 'sqlite',
- *          'options'    => []
+ *          'driver'     => Driver\SQLite\SQLiteDriver::class,
+ *          'options' => [
+ *              'connection' => 'sqlite:' . directory('runtime') . 'runtime.db',
+ *              'username'   => 'sqlite',
+ *           ],
  *      ],
  *      'sqlServer' => [
- *          'driver'     => Drivers\SQLServer\SQLServerDriver::class,
- *          'connection' => 'sqlsrv:Server=OWNER;Database=DATABASE',
- *          'username'   => 'sqlServer',
- *          'password'   => 'sqlServer',
+ *          'driver'     => Driver\SQLServer\SQLServerDriver::class,
+ *          'options' => [
+ *              'connection' => 'sqlsrv:Server=OWNER;Database=DATABASE',
+ *              'username'   => 'sqlServer',
+ *              'password'   => 'sqlServer',
+ *           ],
  *      ],
- *  ]
+ *   ]
  * ];
  *
  * $manager = new DatabaseManager(new DatabaseConfig($config));
