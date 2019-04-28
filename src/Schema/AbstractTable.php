@@ -307,10 +307,6 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      */
     public function getDependencies(): array
     {
-        if ($this->status === self::STATUS_DECLARED_DROPPED) {
-            return [];
-        }
-
         $tables = [];
         foreach ($this->current->getForeignKeys() as $foreignKey) {
             $tables[] = $foreignKey->getForeignTable();
