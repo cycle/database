@@ -1,10 +1,11 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * Spiral Framework.
  *
  * @license   MIT
  * @author    Anton Titov (Wolfy-J)
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Driver;
 
@@ -71,7 +72,7 @@ abstract class Compiler implements CompilerInterface
      * @param string|FragmentInterface $identifier Identifier can include simple column operations
      *                                             and functions, having "." in it will
      *                                             automatically force table prefix to first value.
-     * @param bool                     $isTable    Set to true to let quote method know that
+     * @param bool                     $isTable Set to true to let quote method know that
      *                                             identified is related to table name.
      *
      * @return string

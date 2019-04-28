@@ -1,10 +1,11 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * Spiral Framework.
  *
  * @license   MIT
  * @author    Anton Titov (Wolfy-J)
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Query\Traits;
 
@@ -39,12 +40,12 @@ trait HavingTrait
     /**
      * Simple HAVING condition with various set of arguments.
      *
-     * @see AbstractWhere
-     *
      * @param mixed ...$args [(column, value), (column, operator, value)]
      * @return self|$this
      *
      * @throws BuilderException
+     * @see AbstractWhere
+     *
      */
     public function having(...$args): self
     {
@@ -56,12 +57,12 @@ trait HavingTrait
     /**
      * Simple AND HAVING condition with various set of arguments.
      *
-     * @see AbstractWhere
-     *
      * @param mixed ...$args [(column, value), (column, operator, value)]
      * @return self|$this
      *
      * @throws BuilderException
+     * @see AbstractWhere
+     *
      */
     public function andHaving(...$args): self
     {
@@ -73,13 +74,13 @@ trait HavingTrait
     /**
      * Simple OR HAVING condition with various set of arguments.
      *
-     * @see AbstractWhere
-     *
      * @param mixed ...$args [(column, value), (column, operator, value)]
      *
      * @return self|$this
      *
      * @throws BuilderException
+     * @see AbstractWhere
+     *
      */
     public function orHaving(...$args): self
     {
@@ -91,15 +92,15 @@ trait HavingTrait
     /**
      * Convert various amount of where function arguments into valid where token.
      *
-     * @see AbstractWhere
-     *
-     * @param string   $joiner     Boolean joiner (AND | OR).
+     * @param string   $joiner Boolean joiner (AND | OR).
      * @param array    $parameters Set of parameters collected from where functions.
-     * @param array    $tokens     Array to aggregate compiled tokens. Reference.
-     * @param callable $wrapper    Callback or closure used to wrap/collect every potential
+     * @param array    $tokens Array to aggregate compiled tokens. Reference.
+     * @param callable $wrapper Callback or closure used to wrap/collect every potential
      *                             parameter.
      *
      * @throws BuilderException
+     * @see AbstractWhere
+     *
      */
     abstract protected function createToken(
         $joiner,

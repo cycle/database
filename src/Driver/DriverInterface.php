@@ -1,10 +1,11 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * Spiral Framework.
  *
  * @license   MIT
  * @author    Anton Titov (Wolfy-J)
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Driver;
 
@@ -223,7 +224,7 @@ interface DriverInterface
 
     /**
      * @param string      $prefix
-     * @param string|null $from  Database specific table prefix, used to quote table names and
+     * @param string|null $from Database specific table prefix, used to quote table names and
      *                           build aliases.
      * @param array       $where Initial builder parameters.
      * @return DeleteQuery

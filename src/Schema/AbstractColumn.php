@@ -1,10 +1,11 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * Spiral Framework.
  *
  * @license   MIT
  * @author    Anton Titov (Wolfy-J)
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Schema;
 
@@ -416,12 +417,12 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      * Attention, changing type of existed columns in some databases has a lot of restrictions like
      * cross type conversions and etc. Try do not change column type without a reason.
      *
-     * @todo Support native database types (simply bypass abstractType)!
-     *
      * @param string $abstract Abstract or virtual type declared in mapping.
      * @return self|$this
      *
      * @throws SchemaException
+     * @todo Support native database types (simply bypass abstractType)!
+     *
      */
     public function type(string $abstract): AbstractColumn
     {
@@ -562,7 +563,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     /**
      * Shortcut for AbstractColumn->type() method.
      *
-     * @param string $type      Abstract type.
+     * @param string $type Abstract type.
      * @param array  $arguments Not used.
      * @return self
      */

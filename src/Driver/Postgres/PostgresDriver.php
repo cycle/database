@@ -1,10 +1,11 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * Spiral Framework.
  *
  * @license   MIT
  * @author    Anton Titov (Wolfy-J)
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Driver\Postgres;
 
@@ -71,7 +72,7 @@ class PostgresDriver extends Driver
      * Get singular primary key associated with desired table. Used to emulate last insert id.
      *
      * @param string $prefix Database prefix if any.
-     * @param string $table  Fully specified table name, including postfix.
+     * @param string $table Fully specified table name, including postfix.
      *
      * @return string|null
      *

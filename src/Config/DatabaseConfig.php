@@ -5,6 +5,7 @@
  * @license MIT
  * @author  Anton Titov (Wolfy-J)
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Config;
 
@@ -13,7 +14,7 @@ use Spiral\Core\InjectableConfig;
 use Spiral\Core\Traits\Config\AliasTrait;
 use Spiral\Database\Exception\ConfigException;
 
-class DatabaseConfig extends InjectableConfig
+final class DatabaseConfig extends InjectableConfig
 {
     public const CONFIG           = 'database';
     public const DEFAULT_DATABASE = 'default';

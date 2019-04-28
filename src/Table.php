@@ -1,10 +1,11 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * Spiral Framework.
  *
  * @license   MIT
  * @author    Anton Titov (Wolfy-J)
  */
+declare(strict_types=1);
 
 namespace Spiral\Database;
 
@@ -37,7 +38,7 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
 
     /**
      * @param DatabaseInterface $database Parent DBAL database.
-     * @param string            $name     Table name without prefix.
+     * @param string            $name Table name without prefix.
      */
     public function __construct(DatabaseInterface $database, string $name)
     {
@@ -165,7 +166,7 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
      * can be scalar values, Parameter objects or even SQLFragments. Call ->run() to perform query.
      *
      * @param array $values Initial set of columns associated with values.
-     * @param array $where  Initial set of where rules specified as array.
+     * @param array $where Initial set of where rules specified as array.
      *
      * @return UpdateQuery
      */

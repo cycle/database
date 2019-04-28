@@ -1,10 +1,11 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * Spiral Framework.
  *
  * @license   MIT
  * @author    Anton Titov (Wolfy-J)
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Schema;
 
@@ -132,9 +133,9 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
      * Set foreign table name and key local column must reference to. Make sure local and foreign
      * column types are identical.
      *
-     * @param string $table       Foreign table name with or without database prefix (see 3rd
+     * @param string $table Foreign table name with or without database prefix (see 3rd
      *                            argument).
-     * @param string $column      Foreign key name (id by default).
+     * @param string $column Foreign key name (id by default).
      * @param bool   $forcePrefix When true foreign table will get same prefix as table being
      *                            modified.
      *

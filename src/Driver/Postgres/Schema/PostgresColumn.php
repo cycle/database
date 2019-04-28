@@ -1,10 +1,11 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * Spiral Framework.
  *
  * @license   MIT
  * @author    Anton Titov (Wolfy-J)
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Driver\Postgres\Schema;
 
@@ -346,7 +347,7 @@ class PostgresColumn extends AbstractColumn
     }
 
     /**
-     * @param string          $table  Table name.
+     * @param string          $table Table name.
      * @param array           $schema
      * @param DriverInterface $driver Postgres columns are bit more complex.
      * @return PostgresColumn

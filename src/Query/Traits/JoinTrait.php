@@ -1,10 +1,11 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * Spiral Framework.
  *
  * @license   MIT
  * @author    Anton Titov (Wolfy-J)
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Query\Traits;
 
@@ -82,11 +83,11 @@ trait JoinTrait
      * Register new JOIN with specified type with set of on conditions (linking one table to
      * another, no parametric on conditions allowed here).
      *
-     * @param string|AbstractQuery $type  Join type. Allowed values, LEFT, RIGHT, INNER and etc.
+     * @param string|AbstractQuery $type Join type. Allowed values, LEFT, RIGHT, INNER and etc.
      * @param string               $outer Joined table name (without prefix), may include AS
      *                                    statement.
      * @param string               $alias Joined table or query alias.
-     * @param mixed                $on    Simplified on definition linking table names (no
+     * @param mixed                $on Simplified on definition linking table names (no
      *                                    parameters allowed) or closure.
      *
      * @return $this
@@ -141,7 +142,7 @@ trait JoinTrait
      * @param string|AbstractQuery $outer Joined table name (without prefix), may include AS
      *                                    statement.
      * @param string               $alias Joined table or query alias.
-     * @param mixed                $on    Simplified on definition linking table names (no
+     * @param mixed                $on Simplified on definition linking table names (no
      *                                    parameters allowed) or closure.
      *
      * @return $this
@@ -286,13 +287,13 @@ trait JoinTrait
      * Simple ON WHERE condition with various set of arguments. You can use parametric values in
      * such methods.
      *
-     * @see AbstractWhere
-     *
      * @param mixed ...$args [(column, value), (column, operator, value)]
      *
      * @return $this
      *
      * @throws BuilderException
+     * @see AbstractWhere
+     *
      */
     public function onWhere(...$args)
     {
@@ -310,13 +311,13 @@ trait JoinTrait
      * Simple AND ON WHERE condition with various set of arguments. You can use parametric values in
      * such methods.
      *
-     * @see AbstractWhere
-     *
      * @param mixed ...$args [(column, value), (column, operator, value)]
      *
      * @return $this
      *
      * @throws BuilderException
+     * @see AbstractWhere
+     *
      */
     public function andOnWhere(...$args)
     {
@@ -334,13 +335,13 @@ trait JoinTrait
      * Simple OR ON WHERE condition with various set of arguments. You can use parametric values in
      * such methods.
      *
-     * @see AbstractWhere
-     *
      * @param mixed ...$args [(column, value), (column, operator, value)]
      *
      * @return $this
      *
      * @throws BuilderException
+     * @see AbstractWhere
+     *
      */
     public function orOnWhere(...$args)
     {
@@ -357,15 +358,15 @@ trait JoinTrait
     /**
      * Convert various amount of where function arguments into valid where token.
      *
-     * @see AbstractWhere
-     *
-     * @param string   $joiner     Boolean joiner (AND | OR).
+     * @param string   $joiner Boolean joiner (AND | OR).
      * @param array    $parameters Set of parameters collected from where functions.
-     * @param array    $tokens     Array to aggregate compiled tokens. Reference.
-     * @param callable $wrapper    Callback or closure used to wrap/collect every potential
+     * @param array    $tokens Array to aggregate compiled tokens. Reference.
+     * @param callable $wrapper Callback or closure used to wrap/collect every potential
      *                             parameter.
      *
      * @throws BuilderException
+     * @see AbstractWhere
+     *
      */
     abstract protected function createToken(
         $joiner,

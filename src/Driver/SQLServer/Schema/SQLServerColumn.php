@@ -1,10 +1,11 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * Spiral Framework.
  *
  * @license   MIT
  * @author    Anton Titov (Wolfy-J)
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Driver\SQLServer\Schema;
 
@@ -375,7 +376,7 @@ class SQLServerColumn extends AbstractColumn
     }
 
     /**
-     * @param string          $table  Table name.
+     * @param string          $table Table name.
      * @param array           $schema
      * @param DriverInterface $driver SQLServer columns are bit more complex.
      *

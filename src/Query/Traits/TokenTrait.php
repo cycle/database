@@ -1,10 +1,11 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * Spiral Framework.
  *
  * @license   MIT
  * @author    Anton Titov (Wolfy-J)
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Query\Traits;
 
@@ -17,15 +18,15 @@ trait TokenTrait
     /**
      * Convert various amount of where function arguments into valid where token.
      *
-     * @see AbstractWhere
-     *
-     * @param string   $joiner     Boolean joiner (AND | OR).
+     * @param string   $joiner Boolean joiner (AND | OR).
      * @param array    $parameters Set of parameters collected from where functions.
-     * @param array    $tokens     Array to aggregate compiled tokens. Reference.
-     * @param callable $wrapper    Callback or closure used to wrap/collect every potential
+     * @param array    $tokens Array to aggregate compiled tokens. Reference.
+     * @param callable $wrapper Callback or closure used to wrap/collect every potential
      *                             parameter.
      *
      * @throws BuilderException
+     * @see AbstractWhere
+     *
      */
     protected function createToken($joiner, array $parameters, &$tokens, callable $wrapper)
     {
@@ -105,15 +106,15 @@ trait TokenTrait
     /**
      * Convert simplified where definition into valid set of where tokens.
      *
-     * @see AbstractWhere
-     *
      * @param string   $grouper Grouper type (see self::TOKEN_AND, self::TOKEN_OR).
-     * @param array    $where   Simplified where definition.
-     * @param array    $tokens  Array to aggregate compiled tokens. Reference.
+     * @param array    $where Simplified where definition.
+     * @param array    $tokens Array to aggregate compiled tokens. Reference.
      * @param callable $wrapper Callback or closure used to wrap/collect every potential
      *                          parameter.
      *
      * @throws BuilderException
+     * @see AbstractWhere
+     *
      */
     private function arrayWhere(string $grouper, array $where, &$tokens, callable $wrapper)
     {
@@ -165,10 +166,10 @@ trait TokenTrait
      * Build set of conditions for specified identifier.
      *
      * @param string   $innerJoiner Inner boolean joiner.
-     * @param string   $key         Column identifier.
-     * @param array    $where       Operations associated with identifier.
-     * @param array    $tokens      Array to aggregate compiled tokens. Reference.
-     * @param callable $wrapper     Callback or closure used to wrap/collect every potential
+     * @param string   $key Column identifier.
+     * @param array    $where Operations associated with identifier.
+     * @param array    $tokens Array to aggregate compiled tokens. Reference.
+     * @param callable $wrapper Callback or closure used to wrap/collect every potential
      *                              parameter.
      *
      * @return array

@@ -1,10 +1,11 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * Spiral Framework.
  *
  * @license   MIT
  * @author    Anton Titov (Wolfy-J)
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Query;
 
@@ -24,7 +25,7 @@ abstract class AbstractQuery implements BuilderInterface
     protected $compiler = null;
 
     /**
-     * @param DriverInterface   $driver   Associated driver.
+     * @param DriverInterface   $driver Associated driver.
      * @param CompilerInterface $compiler Driver specific QueryCompiler instance (one per builder).
      */
     public function __construct(DriverInterface $driver, CompilerInterface $compiler)
