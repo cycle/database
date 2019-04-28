@@ -223,7 +223,9 @@ final class Reflector
 
         $this->states[$key] = self::STATE_NEW;
         foreach ($dependencies as $dependency) {
-            $this->sort($dependency, $this->dependencies[$dependency]);
+            if (isset($this->dependencies[$dependency])) {
+                $this->sort($dependency, $this->dependencies[$dependency]);
+            }
         }
 
         $this->stack[] = $this->tables[$key];
