@@ -154,7 +154,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      */
     protected function hasChanges(): bool
     {
-        return $this->getComparator()->hasChanges();
+        return $this->getComparator()->hasChanges() || $this->status === self::STATUS_DECLARED_DROPPED;
     }
 
     /**
@@ -163,7 +163,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     public function exists(): bool
     {
         //Derlared as dropped != actually dropped
-        return $this->status == self::STATUS_EXISTS || $this->status == self::STATUS_DECLARED_DROPPED;
+        return $this->status === self::STATUS_EXISTS || $this->status === self::STATUS_DECLARED_DROPPED;
     }
 
     /**
@@ -663,8 +663,15 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      */
     protected function normalizeSchema(bool $withForeignKeys = true)
     {
-        //To make sure that no pre-sync modifications will be reflected on current table
+        // To make sure that no pre-sync modifications will be reflected on current table
         $target = clone $this;
+
+        // declare all FKs dropped on tables scheduled for removal
+        if ($this->status === self::STATUS_DECLARED_DROPPED) {
+            foreach ($target->getForeignKeys() as $fk) {
+                $target->current->forgerForeignKey($fk);
+            }
+        }
 
         /*
          * In cases where columns are removed we have to automatically remove related indexes and
