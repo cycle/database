@@ -105,11 +105,9 @@ class Parameter implements ParameterInterface
         }
 
         $result = [];
-        $type = self::DETECT_TYPE;
         foreach ($this->value as $value) {
             if (!$value instanceof ParameterInterface) {
-                $value = $this->withValue($value, $type);
-                $type = $value->getType();
+                $value = $this->withValue($value, self::DETECT_TYPE);
             }
 
             $result = array_merge($result, $value->flatten());
