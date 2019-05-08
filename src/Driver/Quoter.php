@@ -127,9 +127,15 @@ final class Quoter
      */
     protected function aliasing(string $identifier, string $alias, bool $isTable): string
     {
-        $quoted = $this->quote($identifier, $isTable) . ' AS ' . $this->driver->identifier($alias);
+        if (strpos($identifier, '.') !== false) {
+            // non table alias
+            return $this->quote($identifier, $isTable) . ' AS ' . $this->driver->identifier($alias);
+        }
 
-        if ($isTable && strpos($identifier, '.') === false) {
+        // never create table alias to alias associations
+        $quoted = $this->driver->identifier($this->prefix . $identifier) . ' AS ' . $this->driver->identifier($alias);
+
+        if ($isTable) {
             //We have to apply operation post factum to prevent self aliasing (name AS name)
             //when db has prefix, expected: prefix_name as name)
             $this->registerAlias($alias, $identifier);
