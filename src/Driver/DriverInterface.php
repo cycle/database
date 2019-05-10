@@ -16,7 +16,7 @@ use Spiral\Database\Query\InsertQuery;
 use Spiral\Database\Query\SelectQuery;
 use Spiral\Database\Query\UpdateQuery;
 use Spiral\Database\Schema\AbstractTable;
-use Spiral\Database\Statement;
+use Spiral\Database\StatementInterface;
 
 /**
  * Wraps PDO connection and provides common abstractions over database operations.
@@ -174,11 +174,11 @@ interface DriverInterface
      *
      * @param string $statement
      * @param array  $parameters
-     * @return Statement
+     * @return StatementInterface
      *
      * @throws StatementException
      */
-    public function query(string $statement, array $parameters = []): Statement;
+    public function query(string $statement, array $parameters = []): StatementInterface;
 
     /**
      * Execute query and return number of affected rows.

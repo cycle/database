@@ -19,7 +19,7 @@ use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
 use Spiral\Database\Query\Interpolator;
 use Spiral\Database\Schema\AbstractTable;
-use Spiral\Database\Statement;
+use Spiral\Database\StatementInterface;
 
 /**
  * Driver abstraction is responsible for DBMS specific set of functions and used by Databases to
@@ -161,7 +161,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     {
         if (!$this->isConnected()) {
             $this->pdo = $this->createPDO();
-            $this->pdo->setAttribute(\PDO::ATTR_STATEMENT_CLASS, [Statement::class]);
         }
     }
 
@@ -209,11 +208,11 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      *
      * @param string $statement
      * @param array  $parameters
-     * @return Statement
+     * @return StatementInterface
      *
      * @throws StatementException
      */
-    public function query(string $statement, array $parameters = []): Statement
+    public function query(string $statement, array $parameters = []): StatementInterface
     {
         //Forcing specific return class
         return $this->statement($statement, $parameters);
@@ -259,11 +258,11 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * @param string    $query
      * @param array     $parameters Parameters to be binded into query.
      * @param bool|null $retry
-     * @return Statement
+     * @return StatementInterface
      *
      * @throws StatementException
      */
-    protected function statement(string $query, array $parameters = [], bool $retry = null): Statement
+    protected function statement(string $query, array $parameters = [], bool $retry = null): StatementInterface
     {
         if (is_null($retry)) {
             $retry = $this->options['reconnect'];
@@ -299,10 +298,11 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
                 // retrying
                 return $this->statement($query, $parameters, false);
             }
+
             throw $e;
         }
 
-        return $statement;
+        return new Statement($statement);
     }
 
     /**
@@ -382,11 +382,11 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     /**
      * Bind parameters into statement.
      *
-     * @param Statement            $statement
+     * @param \PDOStatement        $statement
      * @param ParameterInterface[] $parameters Named hash of ParameterInterface.
-     * @return Statement
+     * @return \PDOStatement
      */
-    protected function bindParameters(Statement $statement, array $parameters): Statement
+    protected function bindParameters(\PDOStatement $statement, array $parameters): \PDOStatement
     {
         foreach ($parameters as $index => $parameter) {
             if (is_numeric($index)) {

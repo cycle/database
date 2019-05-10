@@ -67,6 +67,7 @@ abstract class DatabaseTest extends BaseTest
 
         $this->assertTrue($db->hasTable('test'));
         $this->assertTrue($db->hasTable('prefix_test'));
+
         $this->assertCount(2, $db->getTables());
 
         $db = $db->withPrefix('pre');

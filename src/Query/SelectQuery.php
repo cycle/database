@@ -19,7 +19,7 @@ use Spiral\Database\Query\Traits\HavingTrait;
 use Spiral\Database\Query\Traits\JoinTrait;
 use Spiral\Database\Query\Traits\TokenTrait;
 use Spiral\Database\Query\Traits\WhereTrait;
-use Spiral\Database\Statement;
+use Spiral\Database\StatementInterface;
 use Spiral\Pagination\PaginableInterface;
 use Spiral\Pagination\Traits\LimitsTrait;
 
@@ -267,7 +267,7 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
     /**
      * {@inheritdoc}
      *
-     * @return Statement
+     * @return StatementInterface
      */
     public function run()
     {
@@ -388,7 +388,7 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
     /**
      * {@inheritdoc}
      *
-     * @return \PDOStatement|Statement
+     * @return StatementInterface
      */
     public function getIterator()
     {

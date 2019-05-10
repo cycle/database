@@ -11,6 +11,7 @@ use Spiral\Database\Database;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Schema\AbstractTable;
 use Spiral\Database\Statement;
+use Spiral\Database\StatementInterface;
 use Spiral\Database\Table;
 use Spiral\Pagination\Paginator;
 
@@ -58,8 +59,8 @@ abstract class StatementTest extends BaseQueryTest
     {
         $table = $this->database->table('sample_table');
 
-        $this->assertInstanceOf(Statement::class, $table->select()->getIterator());
-        $this->assertInstanceOf(\PDOStatement::class, $table->select()->getIterator());
+        $this->assertInstanceOf(StatementInterface::class, $table->select()->getIterator());
+        $this->assertInstanceOf(\PDOStatement::class, $table->select()->run()->getPDOStatement());
     }
 
     //We are testing only extended functionality, there is no need to test PDOStatement
@@ -69,7 +70,7 @@ abstract class StatementTest extends BaseQueryTest
         $table = $this->database->table('sample_table');
         $result = $table->select()->getIterator();
 
-        $this->assertSame(3, $result->countColumns());
+        $this->assertSame(3, $result->columnCount());
     }
 
     public function testIterateOver()
@@ -89,7 +90,7 @@ abstract class StatementTest extends BaseQueryTest
 
         $this->assertSameQuery(
             'SELECT * FROM {sample_table}',
-            $result->queryString
+            $result->getQueryString()
         );
 
         $this->assertSame(10, $i);
@@ -217,7 +218,7 @@ abstract class StatementTest extends BaseQueryTest
 
         $this->assertSameQuery(
             'SELECT * FROM {sample_table}',
-            $result->queryString
+            $result->getQueryString()
         );
     }
 
@@ -230,7 +231,7 @@ abstract class StatementTest extends BaseQueryTest
 
         $this->assertEquals([
             ['id' => 1, 'name' => md5(0), 'value' => 0]
-        ], $result->toArray());
+        ], $result->fetchAll());
     }
 
     /**
@@ -295,7 +296,7 @@ abstract class StatementTest extends BaseQueryTest
 
         $count = 0;
         $select->runChunks(1, function ($result) use (&$count) {
-            $this->assertInstanceOf(Statement::class, $result);
+            $this->assertInstanceOf(StatementInterface::class, $result);
             $this->assertEquals($count + 1, $result->fetchColumn());
 
             $count++;
@@ -313,7 +314,7 @@ abstract class StatementTest extends BaseQueryTest
 
         $count = 0;
         $select->runChunks(1, function ($result) use (&$count) {
-            $this->assertInstanceOf(Statement::class, $result);
+            $this->assertInstanceOf(StatementInterface::class, $result);
 
             $count++;
             if ($count == 5) {
@@ -381,8 +382,8 @@ abstract class StatementTest extends BaseQueryTest
         $this->fillData();
 
         $this->assertSame(10, $this->database->sample_table->select()
-            ->where('name', '!=', new \DateTime('1990-01-01'))
-            ->count());
+                                                           ->where('name', '!=', new \DateTime('1990-01-01'))
+                                                           ->count());
     }
 
     /**

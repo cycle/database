@@ -103,11 +103,11 @@ interface DatabaseInterface
      *
      * @param string $query
      * @param array  $parameters Parameters to be binded into query.
-     * @return Statement
+     * @return StatementInterface
      *
      * @throws StatementException
      */
-    public function query(string $query, array $parameters = []): Statement;
+    public function query(string $query, array $parameters = []): StatementInterface;
 
     /**
      * Get instance of InsertBuilder associated with current Database.

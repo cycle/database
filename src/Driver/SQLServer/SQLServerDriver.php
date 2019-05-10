@@ -97,11 +97,11 @@ class SQLServerDriver extends Driver
     /**
      * Bind parameters into statement. SQLServer need encoding to be specified for binary parameters.
      *
-     * @param Statement            $statement
+     * @param \PDOStatement        $statement
      * @param ParameterInterface[] $parameters Named hash of ParameterInterface.
-     * @return Statement
+     * @return \PDOStatement
      */
-    protected function bindParameters(Statement $statement, array $parameters): Statement
+    protected function bindParameters(\PDOStatement $statement, array $parameters): \PDOStatement
     {
         foreach ($parameters as $index => $parameter) {
             if (is_numeric($index)) {
