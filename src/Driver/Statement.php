@@ -100,6 +100,8 @@ final class Statement implements StatementInterface, \IteratorAggregate
         foreach ($this->pdoStatement as $row) {
             yield $row;
         }
+
+        $this->close();
     }
 
     /**
