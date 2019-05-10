@@ -10,7 +10,8 @@ declare(strict_types=1);
 namespace Spiral\Database;
 
 /**
- * Must implement Traversable as IteratorAggregate or Iterator.
+ * Must implement Traversable as IteratorAggregate or Iterator. You can access underlying PDOStatement
+ * using getPDOStatement() method of `Spiral\Database\Driver\Statement` object.
  */
 interface StatementInterface
 {
