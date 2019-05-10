@@ -19,7 +19,7 @@ class StatementTest extends \Spiral\Database\Tests\StatementTest
         $table = $this->database->table('sample_table');
         $result = $table->select()->limit(1)->getIterator();
 
-        $this->assertSame(4, $result->countColumns());
+        $this->assertSame(4, $result->columnCount());
     }
 
     public function testCountColumnsWithProperOrder()
@@ -27,7 +27,7 @@ class StatementTest extends \Spiral\Database\Tests\StatementTest
         $table = $this->database->table('sample_table');
         $result = $table->select()->limit(1)->orderBy('id')->getIterator();
 
-        $this->assertSame(3, $result->countColumns());
+        $this->assertSame(3, $result->columnCount());
     }
 
     //ROW NUMBER COLUMN! FALLBACK
@@ -40,6 +40,6 @@ class StatementTest extends \Spiral\Database\Tests\StatementTest
 
         $this->assertEquals([
             ['id' => 1, 'name' => md5(0), 'value' => 0, SQLServerCompiler::ROW_NUMBER => 1]
-        ], $result->toArray());
+        ], $result->fetchAll());
     }
 }
