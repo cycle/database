@@ -26,16 +26,6 @@ interface StatementInterface
     public function getQueryString(): string;
 
     /**
-     * Bind a column value to a PHP variable. To be saturated on each next call.
-     *
-     * @param int|string $columnID Column number (0 - first column)
-     * @param mixed      $variable
-     *
-     * @return StatementInterface
-     */
-    public function bind($columnID, &$variable): StatementInterface;
-
-    /**
      * Must return the next row of a result set.
      *
      * @param int $mode

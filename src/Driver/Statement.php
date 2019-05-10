@@ -50,21 +50,6 @@ final class Statement implements StatementInterface, \IteratorAggregate
     /**
      * @inheritDoc
      */
-    public function bind($columnID, &$variable): StatementInterface
-    {
-        if (is_numeric($columnID)) {
-            //PDO columns are 1-indexed
-            $columnID = $columnID + 1;
-        }
-
-        $this->pdoStatement->bindColumn($columnID, $variable);
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function fetch(int $mode = self::FETCH_ASSOC)
     {
         return $this->pdoStatement->fetch($mode);

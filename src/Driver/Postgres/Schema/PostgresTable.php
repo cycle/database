@@ -80,7 +80,8 @@ class PostgresTable extends AbstractTable
         );
 
         $result = [];
-        foreach ($query->bind('column_name', $name) as $schema) {
+        foreach ($query->fetchAll() as $schema) {
+            $name = $schema['column_name'];
             if (
                 is_string($schema['column_default'])
                 && preg_match(

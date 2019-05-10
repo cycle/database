@@ -325,35 +325,6 @@ abstract class StatementTest extends BaseQueryTest
         $this->assertSame(5, $count);
     }
 
-    public function testBindByName()
-    {
-        $table = $this->database->table('sample_table');
-        $this->fillData();
-
-        $result = $table->select()->getIterator();
-
-        $result->bind('name', $name);
-
-        foreach ($result as $item) {
-            $this->assertSame($name, $item['name']);
-        }
-    }
-
-    public function testBindByNumber()
-    {
-        $table = $this->database->table('sample_table');
-        $this->fillData();
-
-        $result = $table->select()->getIterator();
-
-        //Id is = 0
-        $result->bind(1, $name);
-
-        foreach ($result as $item) {
-            $this->assertSame($name, $item['name']);
-        }
-    }
-
     public function testNativeParameters()
     {
         $this->fillData();
