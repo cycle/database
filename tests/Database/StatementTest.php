@@ -10,7 +10,6 @@ namespace Spiral\Database\Tests;
 use Spiral\Database\Database;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Schema\AbstractTable;
-use Spiral\Database\Statement;
 use Spiral\Database\StatementInterface;
 use Spiral\Database\Table;
 use Spiral\Pagination\Paginator;

@@ -93,11 +93,13 @@ final class Statement implements StatementInterface, \IteratorAggregate
     }
 
     /**
-     * @return \PDOStatement
+     * @return \Generator
      */
-    public function getIterator()
+    public function getIterator(): \Generator
     {
-        return $this->pdoStatement;
+        foreach ($this->pdoStatement as $row) {
+            yield $row;
+        }
     }
 
     /**
