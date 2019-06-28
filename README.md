@@ -6,6 +6,13 @@ Spiral DBAL
 
 Secure, multiple SQL dialects (MySQL, PostgreSQL, SQLite, SQLServer), schema introspection, schema declaration, smart identifier wrappers, database partitions, query builders, nested queries.
 
+
+Requirements
+--------
+Make sure that your server is configured with following PHP version and extensions:
+* PHP 7.1+
+* PDO Extension with desired database drivers
+
 ## Installation
 To install the component:
 
@@ -61,3 +68,7 @@ foreach ($dbm->database()->select()->from('users') as $u) {
     print_r($u);
 }
 ```
+
+License:
+--------
+MIT License (MIT). Please see [`LICENSE`](./LICENSE) for more information. Maintained by [Spiral Scout](https://spiralscout.com).
