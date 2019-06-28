@@ -10,7 +10,6 @@ Documentation
 --------
 * [Overview](https://github.com/spiral/docs/blob/master/database/overview.md)
 * [Databases and Drivers](https://github.com/spiral/docs/blob/master/database/databases.md)
-* [PDO Queries](https://github.com/spiral/docs/blob/master/database/pdo.md)
 * [Query Builders](https://github.com/spiral/docs/blob/master/database/builders.md)
 * [Transactions](https://github.com/spiral/docs/blob/master/database/transactions.md)
 * [Schema Introspection](https://github.com/spiral/docs/blob/master/database/introspection.md)
