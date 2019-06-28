@@ -6,6 +6,7 @@ Spiral DBAL
 
 Secure, multiple SQL dialects (MySQL, PostgreSQL, SQLite, SQLServer), schema introspection, schema declaration, smart identifier wrappers, database partitions, query builders, nested queries.
 
+[Documentation](https://github.com/spiral/docs)
 
 Requirements
 --------
