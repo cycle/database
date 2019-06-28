@@ -48,23 +48,25 @@ $dbm = new DatabaseManager(new DatabaseConfig([
     ],
 ]));
 
+$users = $dbm->database('default')->table('users');
+
 // create or update table schema
-$users = $dbm->database('default')->table('users')->getSchema();
-$users->primary('id');
-$users->string('name');
-$users->datetime('created_at');
-$users->datetime('updated_at');
-$users->save();
+$schema = $users->getSchema();
+$schema->primary('id');
+$schema->string('name');
+$schema->datetime('created_at');
+$schema->datetime('updated_at');
+$schema->save();
 
 // insert data
-$dbm->database()->table('users')->insertOne([
+$users->insertOne([
     'name'       => 'test',
     'created_at' => new DateTimeImmutable(),
     'updated_at' => new DateTimeImmutable(),  
 ]);
 
 // select data
-foreach ($dbm->database()->select()->from('users') as $u) {
+foreach ($users->select()->where('name', 'test') as $u) {
     print_r($u);
 }
 ```
