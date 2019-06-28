@@ -39,7 +39,7 @@ $dbm = new DatabaseManager(new DatabaseConfig([
     ],
 ]));
 
-// create table schema
+// create or update table schema
 $users = $dbm->database('default')->table('users')->getSchema();
 $users->primary('id');
 $users->string('name');
