@@ -11,8 +11,8 @@ To install the component:
 $ composer require spiral/database
 ```
 
-## Configure
-To configure DBAL manager:
+## Example
+Given example demonstrates the connection to SQLite database, creation of table schema, data insertion and selection:
 
 ```php
 <?php
