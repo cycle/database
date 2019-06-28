@@ -66,7 +66,7 @@ $users->insertOne([
 ]);
 
 // select data
-foreach ($users->select()->where('name', 'test') as $u) {
+foreach ($users->select()->where(['name' => 'test']) as $u) {
     print_r($u);
 }
 ```
