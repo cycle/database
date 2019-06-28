@@ -34,11 +34,8 @@ use Spiral\Database\DatabaseManager;
 use Spiral\Database\Driver\SQLite\SQLiteDriver;
 
 $dbm = new DatabaseManager(new DatabaseConfig([
-    'default'     => 'default',
     'databases'   => [
-        'default' => [
-            'connection' => 'sqlite',
-        ],
+        'default' => ['connection' => 'sqlite'],
     ],
     'connections' => [
         'sqlite' => [
