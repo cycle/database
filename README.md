@@ -48,7 +48,7 @@ $users->datetime('updated_at');
 $users->save();
 
 // insert data
-$dbm->database()->table('users')->insert([
+$dbm->database()->table('users')->insertOne([
     'name'       => 'test',
     'created_at' => new DateTimeImmutable(),
     'updated_at' => new DateTimeImmutable(),  
