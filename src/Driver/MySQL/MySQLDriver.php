@@ -89,7 +89,10 @@ class MySQLDriver extends Driver
             return new StatementException\ConstrainException($exception, $query);
         }
 
-        if ($exception->getCode() > 2000) {
+        if (
+            $exception->getCode() > 2000
+            || strpos($exception->getMessage(), 'server has gone away') !== false
+        ) {
             return new StatementException\ConnectionException($exception, $query);
         }
 
