@@ -1,7 +1,7 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
-2.4.0 (30.07.2019)
+2.4.0 (29.07.2019)
 -----
 - added support for composite FKs
 
