@@ -102,14 +102,14 @@ abstract class TableTest extends BaseTest
 
         $table = $this->database->table('table');
 
-        $this->assertFalse($table->hasForeignKey('external_id'));
+        $this->assertFalse($table->hasForeignKey(['external_id']));
 
         $schema = $table->getSchema();
         $schema->integer('external_id');
-        $schema->foreignKey('external_id')->references('table2', 'id');
+        $schema->foreignKey(['external_id'])->references('table2', ['id']);
         $schema->save();
 
-        $this->assertTrue($table->hasForeignKey('external_id'));
+        $this->assertTrue($table->hasForeignKey(['external_id']));
     }
 
     public function testGetForeignKeys()
@@ -126,7 +126,7 @@ abstract class TableTest extends BaseTest
 
         $schema = $table->getSchema();
         $schema->integer('external_id');
-        $schema->foreignKey('external_id')->references('table2', 'id');
+        $schema->foreignKey(['external_id'])->references('table2', ['id']);
         $schema->save();
 
         $this->assertCount(1, $table->getForeignKeys());
@@ -146,7 +146,7 @@ abstract class TableTest extends BaseTest
 
         $schema = $table->getSchema();
         $schema->integer('external_id');
-        $schema->foreignKey('external_id')->references('table2', 'id');
+        $schema->foreignKey(['external_id'])->references('table2', ['id']);
         $schema->save();
 
         $this->assertSame(['table2'], $table->getDependencies());

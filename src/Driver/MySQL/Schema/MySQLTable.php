@@ -131,15 +131,23 @@ class MySQLTable extends AbstractTable
 
         $result = [];
         foreach ($references as $schema) {
-            $column = $this->driver->query(
+            $columns = $this->driver->query(
                 'SELECT * FROM `information_schema`.`key_column_usage` WHERE `constraint_name` = ? AND `table_schema` = ? AND `table_name` = ?',
                 [$schema['CONSTRAINT_NAME'], $this->driver->getSource(), $this->getName()]
-            )->fetch();
+            )->fetchAll();
+
+            $schema['COLUMN_NAME'] = [];
+            $schema['REFERENCED_COLUMN_NAME'] = [];
+
+            foreach ($columns as $column) {
+                $schema['COLUMN_NAME'][] = $column['COLUMN_NAME'];
+                $schema['REFERENCED_COLUMN_NAME'][] = $column['REFERENCED_COLUMN_NAME'];
+            }
 
             $result[] = MySQLForeign::createInstance(
                 $this->getName(),
                 $this->getPrefix(),
-                $schema + $column
+                $schema
             );
         }
 

@@ -87,8 +87,22 @@ class SQLiteTable extends AbstractTable
     {
         $query = "PRAGMA foreign_key_list({$this->driver->quote($this->getName())})";
 
-        $result = [];
+        // join keys together
+        $fks = [];
         foreach ($this->driver->query($query) as $schema) {
+            if (!isset($fks[$schema['id']])) {
+                $fks[$schema['id']] = $schema;
+                $fks[$schema['id']]['from'] = [$schema['from']];
+                $fks[$schema['id']]['to'] = [$schema['to']];
+                continue;
+            }
+
+            $fks[$schema['id']]['from'][] = $schema['from'];
+            $fks[$schema['id']]['to'][] = $schema['to'];
+        }
+
+        $result = [];
+        foreach ($fks as $schema) {
             $result[] = SQLiteForeign::createInstance(
                 $this->getName(),
                 $this->getPrefix(),

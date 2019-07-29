@@ -27,9 +27,9 @@ interface ForeignKeyInterface
     /**
      * Get column name foreign key assigned to.
      *
-     * @return string
+     * @return array
      */
-    public function getColumn(): string;
+    public function getColumns(): array;
 
     /**
      * Foreign table name.
@@ -41,9 +41,9 @@ interface ForeignKeyInterface
     /**
      * Foreign key (column name).
      *
-     * @return string
+     * @return array
      */
-    public function getForeignKey(): string;
+    public function getForeignKeys(): array;
 
     /**
      * Get delete rule, possible values: NO ACTION, CASCADE and etc.

@@ -72,6 +72,18 @@ abstract class BaseTest extends TestCase
         return $this->driver;
     }
 
+    /**
+     * @param Database $db
+     */
+    protected function enableProfiling(Database $db)
+    {
+        $db->getDriver()->setProfiling(true);
+        $db->getDriver()->setLogger(new TestLogger());
+    }
+
+    /**
+     * @param Database|null $database
+     */
     protected function dropDatabase(Database $database = null)
     {
         if (empty($database)) {
@@ -82,7 +94,7 @@ abstract class BaseTest extends TestCase
             $schema = $table->getSchema();
 
             foreach ($schema->getForeignKeys() as $foreign) {
-                $schema->dropForeignKey($foreign->getColumn());
+                $schema->dropForeignKey($foreign->getColumns());
             }
 
             $schema->save(Handler::DROP_FOREIGN_KEYS);
@@ -174,20 +186,20 @@ abstract class BaseTest extends TestCase
         // FK
         foreach ($source->getForeignKeys() as $key) {
             $this->assertTrue(
-                $target->hasForeignKey($key->getColumn()),
+                $target->hasForeignKey($key->getColumns()),
                 "FK {$key->getName()} has been removed"
             );
 
-            $this->compareFK($key, $target->findForeignKey($key->getColumn()));
+            $this->compareFK($key, $target->findForeignKey($key->getColumns()));
         }
 
         foreach ($target->getForeignKeys() as $key) {
             $this->assertTrue(
-                $source->hasForeignKey($key->getColumn()),
+                $source->hasForeignKey($key->getColumns()),
                 "FK {$key->getName()} has been removed"
             );
 
-            $this->compareFK($key, $source->findForeignKey($key->getColumn()));
+            $this->compareFK($key, $source->findForeignKey($key->getColumns()));
         }
 
         // everything else
@@ -256,20 +268,20 @@ abstract class BaseTest extends TestCase
     protected function compareFK(AbstractForeignKey $a, AbstractForeignKey $b)
     {
         $this->assertSame(
-            $a->getColumn(),
-            $b->getColumn(),
+            $a->getColumns(),
+            $b->getColumns(),
             "FK {$a->getName()} column has been changed"
         );
 
         $this->assertSame(
-            $a->getForeignKey(),
-            $b->getForeignKey(),
+            $a->getForeignKeys(),
+            $b->getForeignKeys(),
             "FK {$a->getName()} table has been changed"
         );
 
         $this->assertSame(
-            $a->getForeignKey(),
-            $b->getForeignKey(),
+            $a->getForeignKeys(),
+            $b->getForeignKeys(),
             "FK {$a->getName()} fk has been changed"
         );
 

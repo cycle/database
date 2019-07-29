@@ -269,7 +269,7 @@ abstract class Handler implements HandlerInterface
         }
 
         if (!$element instanceof ElementInterface && !$element instanceof AbstractTable) {
-            throw new InvalidArgumentException("Invalid argument type");
+            throw new \InvalidArgumentException("Invalid argument type");
         }
 
         return $this->driver->identifier($element->getName());

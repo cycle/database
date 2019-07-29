@@ -23,9 +23,9 @@ class SQlServerForeign extends AbstractForeignKey
     {
         $foreign = new self($table, $tablePrefix, $schema['FK_NAME']);
 
-        $foreign->column = $schema['FKCOLUMN_NAME'];
+        $foreign->columns = $schema['FKCOLUMN_NAME'];
         $foreign->foreignTable = $schema['PKTABLE_NAME'];
-        $foreign->foreignKey = $schema['PKCOLUMN_NAME'];
+        $foreign->foreignKeys = $schema['PKCOLUMN_NAME'];
 
         $foreign->deleteRule = $schema['DELETE_RULE'] ? self::NO_ACTION : self::CASCADE;
         $foreign->updateRule = $schema['UPDATE_RULE'] ? self::NO_ACTION : self::CASCADE;

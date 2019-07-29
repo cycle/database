@@ -63,7 +63,6 @@ class PostgresTable extends AbstractTable
         }
     }
 
-
     /**
      * {@inheritdoc}
      */
@@ -147,9 +146,21 @@ class PostgresTable extends AbstractTable
             . "   ON rc.constraint_name = tc.constraint_name\n"
             . "WHERE constraint_type = 'FOREIGN KEY' AND tc.table_name = ?";
 
-        $result = [];
-
+        $fks = [];
         foreach ($this->driver->query($query, [$this->getName()]) as $schema) {
+            if (!isset($fks[$schema['constraint_name']])) {
+                $fks[$schema['constraint_name']] = $schema;
+                $fks[$schema['constraint_name']]['column_name'] = [$schema['column_name']];
+                $fks[$schema['constraint_name']]['foreign_column_name'] = [$schema['foreign_column_name']];
+                continue;
+            }
+
+            $fks[$schema['constraint_name']]['column_name'][] = $schema['column_name'];
+            $fks[$schema['constraint_name']]['foreign_column_name'][] = $schema['foreign_column_name'];
+        }
+
+        $result = [];
+        foreach ($fks as $schema) {
             $result[] = PostgresForeign::createInstance(
                 $this->getName(),
                 $this->getPrefix(),

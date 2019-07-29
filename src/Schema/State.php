@@ -119,7 +119,7 @@ final class State
      */
     public function hasColumn(string $name): bool
     {
-        return !empty($this->findColumn($name));
+        return $this->findColumn($name) !== null;
     }
 
     /**
@@ -128,16 +128,16 @@ final class State
      */
     public function hasIndex(array $columns = []): bool
     {
-        return !empty($this->findIndex($columns));
+        return $this->findIndex($columns) !== null;
     }
 
     /**
-     * @param string $column
+     * @param array $columns
      * @return bool
      */
-    public function hasForeignKey(string $column): bool
+    public function hasForeignKey(array $columns): bool
     {
-        return !empty($this->findForeignKey($column));
+        return $this->findForeignKey($columns) !== null;
     }
 
     /**
@@ -219,7 +219,7 @@ final class State
     public function findColumn(string $name): ?AbstractColumn
     {
         foreach ($this->columns as $column) {
-            if ($column->getName() == $name) {
+            if ($column->getName() === $name) {
                 return $column;
             }
         }
@@ -236,7 +236,7 @@ final class State
     public function findIndex(array $columns): ?AbstractIndex
     {
         foreach ($this->indexes as $index) {
-            if ($index->getColumns() == $columns) {
+            if ($index->getColumns() === $columns) {
                 return $index;
             }
         }
@@ -247,14 +247,14 @@ final class State
     /**
      * Find foreign key by it's column or return null.
      *
-     * @param string $column
+     * @param array $columns
      * @return null|AbstractForeignKey
      */
-    public function findForeignKey(string $column): ?AbstractForeignKey
+    public function findForeignKey(array $columns): ?AbstractForeignKey
     {
-        foreach ($this->foreignKeys as $reference) {
-            if ($reference->getColumn() == $column) {
-                return $reference;
+        foreach ($this->foreignKeys as $fk) {
+            if ($fk->getColumns() === $columns) {
+                return $fk;
             }
         }
 
@@ -277,8 +277,8 @@ final class State
         }
 
         $foreignKeys = [];
-        foreach ($this->foreignKeys as $foreignKey) {
-            $foreignKeys[$foreignKey->getName()] = $foreignKey;
+        foreach ($this->foreignKeys as $fk) {
+            $foreignKeys[$fk->getName()] = $fk;
         }
 
         $this->columns = $columns;

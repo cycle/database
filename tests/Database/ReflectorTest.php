@@ -56,7 +56,7 @@ abstract class ReflectorTest extends BaseTest
         $schemaB->primary('id');
         $schemaB->string('value');
         $schemaB->integer('a_id');
-        $schemaB->foreignKey('a_id')->references('a', 'id');
+        $schemaB->foreignKey(['a_id'])->references('a', ['id']);
 
         $this->saveTables([$schemaA, $schemaB]);
 
@@ -75,7 +75,7 @@ abstract class ReflectorTest extends BaseTest
         $schemaA->primary('id');
         $schemaA->integer('value');
         $schemaB->integer('b_id');
-        $schemaB->foreignKey('b_id')->references('b', 'id');
+        $schemaB->foreignKey(['b_id'])->references('b', ['id']);
 
         $schemaB->primary('id');
         $schemaB->string('value');
@@ -98,13 +98,13 @@ abstract class ReflectorTest extends BaseTest
         $schemaA->integer('value');
 
         $schemaA->integer('b_id');
-        $schemaA->foreignKey('b_id')->references('b', 'id');
+        $schemaA->foreignKey(['b_id'])->references('b', ['id']);
 
         $schemaB->primary('id');
         $schemaB->string('value');
 
         $schemaB->integer('a_id');
-        $schemaB->foreignKey('a_id')->references('a', 'id');
+        $schemaB->foreignKey(['a_id'])->references('a', ['id']);
 
         $this->saveTables([$schemaA, $schemaB]);
 
@@ -132,10 +132,10 @@ abstract class ReflectorTest extends BaseTest
         $this->assertSameAsInDB($schemaB);
 
         $schemaA->integer('b_id');
-        $schemaA->foreignKey('b_id')->references('b', 'id');
+        $schemaA->foreignKey(['b_id'])->references('b', ['id']);
 
         $schemaB->integer('a_id');
-        $schemaB->foreignKey('a_id')->references('a', 'id');
+        $schemaB->foreignKey(['a_id'])->references('a', ['id']);
 
         $this->saveTables([$schemaA, $schemaB]);
 
@@ -155,7 +155,7 @@ abstract class ReflectorTest extends BaseTest
         $schemaA->integer('value');
 
         $schemaA->integer('b_id');
-        $schemaA->foreignKey('b_id')->references('b', 'id');
+        $schemaA->foreignKey(['b_id'])->references('b', ['id']);
 
         $schemaB->primary('id');
         $schemaB->string('value');
@@ -165,7 +165,7 @@ abstract class ReflectorTest extends BaseTest
         $this->assertSameAsInDB($schemaA);
         $this->assertSameAsInDB($schemaB);
 
-        $schemaA->dropForeignKey('b_id');
+        $schemaA->dropForeignKey(['b_id']);
 
         $this->saveTables([$schemaA, $schemaB]);
 
@@ -188,19 +188,19 @@ abstract class ReflectorTest extends BaseTest
         $schemaA->integer('value');
 
         $schemaA->integer('c_id');
-        $schemaA->foreignKey('c_id')->references('c', 'id');
+        $schemaA->foreignKey(['c_id'])->references('c', ['id']);
 
         $schemaB->primary('id');
         $schemaB->string('value');
 
         $schemaB->integer('a_id');
-        $schemaB->foreignKey('a_id')->references('a', 'id');
+        $schemaB->foreignKey(['a_id'])->references('a', ['id']);
 
         $schemaC->primary('id');
         $schemaC->boolean('value');
 
         $schemaC->integer('b_id');
-        $schemaC->foreignKey('b_id')->references('b', 'id');
+        $schemaC->foreignKey(['b_id'])->references('b', ['id']);
 
         $this->saveTables([$schemaA, $schemaB, $schemaC]);
 
@@ -221,7 +221,7 @@ abstract class ReflectorTest extends BaseTest
         $schemaA->integer('value');
 
         $schemaA->integer('b_id');
-        $schemaA->foreignKey('b_id')->references('b', 'id');
+        $schemaA->foreignKey(['b_id'])->references('b', ['id']);
 
         $schemaB->primary('id');
         $schemaB->string('value');
@@ -249,7 +249,7 @@ abstract class ReflectorTest extends BaseTest
         $schemaA->integer('value');
 
         $schemaA->integer('b_id');
-        $schemaA->foreignKey('b_id')->references('b', 'id');
+        $schemaA->foreignKey(['b_id'])->references('b', ['id']);
 
         $schemaB->primary('id');
         $schemaB->string('value');
@@ -278,7 +278,7 @@ abstract class ReflectorTest extends BaseTest
         $schemaA->integer('value');
 
         $schemaA->integer('b_id');
-        $schemaA->foreignKey('b_id')->references('b', 'id');
+        $schemaA->foreignKey(['b_id'])->references('b', ['id']);
 
         $schemaB->primary('id');
         $schemaB->string('value');
@@ -307,7 +307,7 @@ abstract class ReflectorTest extends BaseTest
         $schemaA->integer('value');
 
         $schemaA->integer('b_id');
-        $schemaA->foreignKey('b_id')->references('b', 'id');
+        $schemaA->foreignKey(['b_id'])->references('b', ['id']);
 
         $schemaB->primary('id');
         $schemaB->string('value');
@@ -337,7 +337,7 @@ abstract class ReflectorTest extends BaseTest
         $schemaA->integer('value');
 
         $schemaA->integer('b_id');
-        $schemaA->foreignKey('b_id')->references('b', 'id');
+        $schemaA->foreignKey(['b_id'])->references('b', ['id']);
 
         $schemaA->enum('status', ['active', 'disabled'])->defaultValue('active');
         $schemaA->index(['status']);
@@ -390,7 +390,7 @@ abstract class ReflectorTest extends BaseTest
         $schemaA->integer('value');
 
         $schemaA->integer('b_id');
-        $schemaA->foreignKey('b_id')->references('b', 'id');
+        $schemaA->foreignKey(['b_id'])->references('b', ['id']);
 
         $schemaA->enum('status', ['active', 'disabled'])->defaultValue('active');
         $schemaA->index(['status']);

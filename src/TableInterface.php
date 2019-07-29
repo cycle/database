@@ -69,10 +69,10 @@ interface TableInterface
     /**
      * Check if table has foreign key related to table column.
      *
-     * @param string $column Column name.
+     * @param array $columns Column names.
      * @return bool
      */
-    public function hasForeignKey(string $column): bool;
+    public function hasForeignKey(array $columns): bool;
 
     /**
      * Get all table foreign keys.

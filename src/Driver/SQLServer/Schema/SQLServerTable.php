@@ -94,10 +94,24 @@ class SQLServerTable extends AbstractTable
      */
     protected function fetchReferences(): array
     {
-        $references = $this->driver->query('sp_fkeys @fktable_name = ?', [$this->getName()]);
+        $query = $this->driver->query('sp_fkeys @fktable_name = ?', [$this->getName()]);
+
+        // join keys together
+        $fks = [];
+        foreach ($query as $schema) {
+            if (!isset($fks[$schema['FK_NAME']])) {
+                $fks[$schema['FK_NAME']] = $schema;
+                $fks[$schema['FK_NAME']]['PKCOLUMN_NAME'] = [$schema['PKCOLUMN_NAME']];
+                $fks[$schema['FK_NAME']]['FKCOLUMN_NAME'] = [$schema['FKCOLUMN_NAME']];
+                continue;
+            }
+
+            $fks[$schema['FK_NAME']]['PKCOLUMN_NAME'][] = $schema['PKCOLUMN_NAME'];
+            $fks[$schema['FK_NAME']]['FKCOLUMN_NAME'][] = $schema['FKCOLUMN_NAME'];
+        }
 
         $result = [];
-        foreach ($references as $schema) {
+        foreach ($fks as $schema) {
             $result[] = SQlServerForeign::createInstance(
                 $this->getName(),
                 $this->getPrefix(),
