@@ -132,12 +132,12 @@ final class State
     }
 
     /**
-     * @param string $column
+     * @param array $columns
      * @return bool
      */
-    public function hasForeignKey(string $column): bool
+    public function hasForeignKey(array $columns): bool
     {
-        return !empty($this->findForeignKey($column));
+        return !empty($this->findForeignKey($columns));
     }
 
     /**
@@ -219,7 +219,7 @@ final class State
     public function findColumn(string $name): ?AbstractColumn
     {
         foreach ($this->columns as $column) {
-            if ($column->getName() == $name) {
+            if ($column->getName() === $name) {
                 return $column;
             }
         }
@@ -236,7 +236,7 @@ final class State
     public function findIndex(array $columns): ?AbstractIndex
     {
         foreach ($this->indexes as $index) {
-            if ($index->getColumns() == $columns) {
+            if ($index->getColumns() === $columns) {
                 return $index;
             }
         }
@@ -247,13 +247,13 @@ final class State
     /**
      * Find foreign key by it's column or return null.
      *
-     * @param string $column
+     * @param array $columns
      * @return null|AbstractForeignKey
      */
-    public function findForeignKey(string $column): ?AbstractForeignKey
+    public function findForeignKey(array $columns): ?AbstractForeignKey
     {
         foreach ($this->foreignKeys as $reference) {
-            if ($reference->getColumn() == $column) {
+            if ($reference->getColumns() === $columns) {
                 return $reference;
             }
         }

@@ -193,7 +193,7 @@ final class Comparator
     {
         $difference = [];
         foreach ($this->current->getForeignKeys() as $name => $foreignKey) {
-            if (!$this->initial->hasForeignKey($foreignKey->getColumn())) {
+            if (!$this->initial->hasForeignKey($foreignKey->getColumns())) {
                 $difference[] = $foreignKey;
             }
         }
@@ -208,7 +208,7 @@ final class Comparator
     {
         $difference = [];
         foreach ($this->initial->getForeignKeys() as $name => $foreignKey) {
-            if (!$this->current->hasForeignKey($foreignKey->getColumn())) {
+            if (!$this->current->hasForeignKey($foreignKey->getColumns())) {
                 $difference[] = $foreignKey;
             }
         }
@@ -226,12 +226,12 @@ final class Comparator
         $difference = [];
 
         foreach ($this->current->getForeignKeys() as $name => $foreignKey) {
-            if (!$this->initial->hasForeignKey($foreignKey->getColumn())) {
+            if (!$this->initial->hasForeignKey($foreignKey->getColumns())) {
                 //Added into schema
                 continue;
             }
 
-            $initial = $this->initial->findForeignKey($foreignKey->getColumn());
+            $initial = $this->initial->findForeignKey($foreignKey->getColumns());
             if (!$foreignKey->compare($initial)) {
                 $difference[] = [$foreignKey, $initial];
             }

@@ -21,7 +21,7 @@ class SQLiteForeign extends AbstractForeignKey
      */
     public function getName(): string
     {
-        return $this->tablePrefix . $this->table . '_' . $this->column . '_fk';
+        return $this->tablePrefix . $this->table . '_' . join('_', $this->columns) . '_fk';
     }
 
     /**
@@ -32,10 +32,10 @@ class SQLiteForeign extends AbstractForeignKey
         $statement = [];
 
         $statement[] = 'FOREIGN KEY';
-        $statement[] = '(' . $driver->identifier($this->column) . ')';
+        $statement[] = '(' . $this->packColumns($driver, $this->columns) . ')';
 
         $statement[] = 'REFERENCES ' . $driver->identifier($this->foreignTable);
-        $statement[] = '(' . $driver->identifier($this->foreignKey) . ')';
+        $statement[] = '(' . $this->packColumns($driver, $this->foreignKeys) . ')';
 
         $statement[] = "ON DELETE {$this->deleteRule}";
         $statement[] = "ON UPDATE {$this->updateRule}";
@@ -51,9 +51,9 @@ class SQLiteForeign extends AbstractForeignKey
      */
     public function compare(AbstractForeignKey $initial): bool
     {
-        return $this->getColumn() == $initial->getColumn()
+        return $this->getColumns() == $initial->getColumns()
             && $this->getForeignTable() == $initial->getForeignTable()
-            && $this->getForeignKey() == $initial->getForeignKey()
+            && $this->getForeignKeys() == $initial->getForeignKeys()
             && $this->getUpdateRule() == $initial->getUpdateRule()
             && $this->getDeleteRule() == $initial->getDeleteRule();
     }
@@ -68,10 +68,11 @@ class SQLiteForeign extends AbstractForeignKey
     {
         $reference = new self($table, $tablePrefix, $schema['id']);
 
-        $reference->column = $schema['from'];
+        // todo: fix it
+        $reference->columns = [$schema['from']];
 
         $reference->foreignTable = $schema['table'];
-        $reference->foreignKey = $schema['to'];
+        $reference->foreignKeys = [$schema['to']];
 
         //In SQLLite we have to work with pre-defined reference names
         $reference->name = $reference->getName();

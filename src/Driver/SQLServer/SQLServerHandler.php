@@ -65,7 +65,7 @@ class SQLServerHandler extends Handler
         }
 
         foreach ($table->getForeignKeys() as $foreign) {
-            if ($column->getName() == $foreign->getColumn()) {
+            if ($column->getName() == $foreign->getColumns()) {
                 $foreignBackup[] = $foreign;
                 $this->dropForeignKey($table, $foreign);
             }

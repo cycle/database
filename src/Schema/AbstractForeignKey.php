@@ -31,9 +31,9 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
     /**
      * Local column name (key name).
      *
-     * @var string
+     * @var array
      */
-    protected $column = '';
+    protected $columns = [];
 
     /**
      * Referenced table name (including prefix).
@@ -45,9 +45,9 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
     /**
      * Linked foreign key name (foreign column).
      *
-     * @var string
+     * @var array
      */
-    protected $foreignKey = '';
+    protected $foreignKeys = [];
 
     /**
      * Action on foreign column value deletion.
@@ -78,9 +78,9 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
     /**
      * {@inheritdoc}
      */
-    public function getColumn(): string
+    public function getColumns(): array
     {
-        return $this->column;
+        return $this->columns;
     }
 
     /**
@@ -94,9 +94,9 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
     /**
      * {@inheritdoc}
      */
-    public function getForeignKey(): string
+    public function getForeignKeys(): array
     {
-        return $this->foreignKey;
+        return $this->foreignKeys;
     }
 
     /**
@@ -116,15 +116,15 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
     }
 
     /**
-     * Set local column name foreign key relates to. Make sure column type is the same as foreign
+     * Set local column names foreign key relates to. Make sure column type is the same as foreign
      * column one.
      *
-     * @param string $column
+     * @param array $columns
      * @return self
      */
-    public function column(string $column): AbstractForeignKey
+    public function columns(array $columns): AbstractForeignKey
     {
-        $this->column = $column;
+        $this->columns = $columns;
 
         return $this;
     }
@@ -133,9 +133,9 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
      * Set foreign table name and key local column must reference to. Make sure local and foreign
      * column types are identical.
      *
-     * @param string $table Foreign table name with or without database prefix (see 3rd
+     * @param string $table       Foreign table name with or without database prefix (see 3rd
      *                            argument).
-     * @param string $column Foreign key name (id by default).
+     * @param array  $columns     Foreign key names (id by default).
      * @param bool   $forcePrefix When true foreign table will get same prefix as table being
      *                            modified.
      *
@@ -143,11 +143,11 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
      */
     public function references(
         string $table,
-        string $column = 'id',
+        array $columns = ['id'],
         bool $forcePrefix = true
     ): AbstractForeignKey {
         $this->foreignTable = ($forcePrefix ? $this->tablePrefix : '') . $table;
-        $this->foreignKey = $column;
+        $this->foreignKeys = $columns;
 
         return $this;
     }
@@ -191,10 +191,10 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
         $statement[] = 'CONSTRAINT';
         $statement[] = $driver->identifier($this->name);
         $statement[] = 'FOREIGN KEY';
-        $statement[] = '(' . $driver->identifier($this->column) . ')';
+        $statement[] = '(' . $this->packColumns($driver, $this->columns) . ')';
 
         $statement[] = 'REFERENCES ' . $driver->identifier($this->foreignTable);
-        $statement[] = '(' . $driver->identifier($this->foreignKey) . ')';
+        $statement[] = '(' . $this->packColumns($driver, $this->foreignKeys) . ')';
 
         $statement[] = "ON DELETE {$this->deleteRule}";
         $statement[] = "ON UPDATE {$this->updateRule}";
@@ -209,5 +209,15 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
     public function compare(AbstractForeignKey $initial): bool
     {
         return $this == clone $initial;
+    }
+
+    /**
+     * @param DriverInterface $driver
+     * @param array           $columns
+     * @return string
+     */
+    protected function packColumns(DriverInterface $driver, array $columns)
+    {
+        return join(',', array_map([$driver, 'identifier'], $columns));
     }
 }

@@ -95,7 +95,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
 
     /**
      * @param DriverInterface $driver Parent driver.
-     * @param string          $name Table name, must include table prefix.
+     * @param string          $name   Table name, must include table prefix.
      * @param string          $prefix Database specific table prefix.
      */
     public function __construct(DriverInterface $driver, string $name, string $prefix)
@@ -288,9 +288,9 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * {@inheritdoc}
      */
-    public function hasForeignKey(string $column): bool
+    public function hasForeignKey(array $columns): bool
     {
-        return $this->current->hasForeignKey($column);
+        return $this->current->hasForeignKey($columns);
     }
 
     /**
@@ -422,35 +422,37 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * Get/create instance of AbstractReference associated with current table based on local column
      * name.
      *
-     * @param string $column
+     * @param array $columns
      * @return AbstractForeignKey
      *
      * @throws SchemaException
      */
-    public function foreignKey(string $column): AbstractForeignKey
+    public function foreignKey(array $columns): AbstractForeignKey
     {
-        if (!$this->hasColumn($column)) {
-            throw new SchemaException("Undefined column '{$column}' in '{$this->getName()}'");
+        foreach ($columns as $column) {
+            if (!$this->hasColumn($column)) {
+                throw new SchemaException("Undefined column '{$column}' in '{$this->getName()}'");
+            }
         }
 
-        if ($this->hasForeignKey($column)) {
-            return $this->current->findForeignKey($column);
+        if ($this->hasForeignKey($columns)) {
+            return $this->current->findForeignKey($columns);
         }
 
-        if ($this->initial->hasForeignKey($column)) {
+        if ($this->initial->hasForeignKey($columns)) {
             //Let's ensure that FK name is always stays synced (not regenerated)
-            $name = $this->initial->findForeignKey($column)->getName();
+            $name = $this->initial->findForeignKey($columns)->getName();
         } else {
-            $name = $this->createIdentifier('foreign', [$column]);
+            $name = $this->createIdentifier('foreign', $columns);
         }
 
-        $foreign = $this->createForeign($name)->column($column);
+        $foreign = $this->createForeign($name)->columns($columns);
 
         //Adding to current schema
         $this->current->registerForeignKey($foreign);
 
         //Let's ensure index existence to performance and compatibility reasons
-        $this->index([$column]);
+        $this->index($columns);
 
         return $foreign;
     }
@@ -480,7 +482,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * Rename index (only if index exists).
      *
      * @param array  $columns Index forming columns.
-     * @param string $name New index name.
+     * @param string $name    New index name.
      * @return self
      *
      * @throws SchemaException
@@ -544,15 +546,17 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * Drop foreign key by it's name.
      *
-     * @param string $column
+     * @param array $columns
      * @return self
      *
      * @throws SchemaException
      */
-    public function dropForeignKey(string $column): AbstractTable
+    public function dropForeignKey(array $columns): AbstractTable
     {
-        if (empty($schema = $this->current->findForeignKey($column))) {
-            throw new SchemaException("Undefined FK on '{$column}' in '{$this->getName()}'");
+        $schema = $this->current->findForeignKey($columns);
+        if ($schema === null) {
+            $names = join("','", $columns);
+            throw new SchemaException("Undefined FK on '{$names}' in '{$this->getName()}'");
         }
 
         //Dropping foreign from current schema
@@ -614,7 +618,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      *                        (when multiple tables are being updated) it is reasonable to drop
      *                        foreign keys and indexes prior to dropping related columns. See sync
      *                        bus class to get more details.
-     * @param bool $reset When true schema will be marked as synced.
+     * @param bool $reset     When true schema will be marked as synced.
      *
      * @throws HandlerException
      * @throws SchemaException
@@ -685,7 +689,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
             }
 
             foreach ($target->getForeignKeys() as $foreign) {
-                if ($column->getName() == $foreign->getColumn()) {
+                if ($column->getName() == $foreign->getColumns()) {
                     $target->current->forgerForeignKey($foreign);
                 }
             }
@@ -723,9 +727,13 @@ abstract class AbstractTable implements TableInterface, ElementInterface
             }
 
             foreach ($target->getForeignKeys() as $foreign) {
-                if ($initial->getName() == $foreign->getColumn()) {
-                    $foreign->column($name->getName());
-                }
+                $foreign->columns(array_map(function ($column) use ($initial, $name) {
+                    if ($column === $initial->getName()) {
+                        return $name->getName();
+                    }
+
+                    return $column;
+                }, $foreign->getColumns()));
             }
         }
 

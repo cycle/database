@@ -63,7 +63,6 @@ class PostgresTable extends AbstractTable
         }
     }
 
-
     /**
      * {@inheritdoc}
      */
