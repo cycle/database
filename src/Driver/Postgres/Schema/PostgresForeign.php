@@ -23,16 +23,29 @@ class PostgresForeign extends AbstractForeignKey
     {
         $foreign = new self($table, $tablePrefix, $schema['constraint_name']);
 
-        // todo: support multiple
-
-        $foreign->columns = [$schema['column_name']];
-
+        $foreign->columns = $foreign->normalizeKeys($schema['column_name']);
         $foreign->foreignTable = $schema['foreign_table_name'];
-        $foreign->foreignKeys = [$schema['foreign_column_name']];
+        $foreign->foreignKeys = $foreign->normalizeKeys($schema['foreign_column_name']);
 
         $foreign->deleteRule = $schema['delete_rule'];
         $foreign->updateRule = $schema['update_rule'];
 
         return $foreign;
+    }
+
+    /**
+     * @param array $columns
+     * @return array
+     */
+    private function normalizeKeys(array $columns): array
+    {
+        $result = [];
+        foreach ($columns as $column) {
+            if (array_search($column, $result, true) === false) {
+                $result[] = $column;
+            }
+        }
+
+        return $result;
     }
 }

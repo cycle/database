@@ -72,6 +72,18 @@ abstract class BaseTest extends TestCase
         return $this->driver;
     }
 
+    /**
+     * @param Database $db
+     */
+    protected function enableProfiling(Database $db)
+    {
+        $db->getDriver()->setProfiling(true);
+        $db->getDriver()->setLogger(new TestLogger());
+    }
+
+    /**
+     * @param Database|null $database
+     */
     protected function dropDatabase(Database $database = null)
     {
         if (empty($database)) {

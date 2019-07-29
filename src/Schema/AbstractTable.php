@@ -775,7 +775,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
             'primaryKeys' => $this->getPrimaryKeys(),
             'columns'     => array_values($this->getColumns()),
             'indexes'     => array_values($this->getIndexes()),
-            'references'  => array_values($this->getForeignKeys()),
+            'foreignKeys'  => array_values($this->getForeignKeys()),
         ];
     }
 

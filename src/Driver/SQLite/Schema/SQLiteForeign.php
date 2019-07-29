@@ -68,11 +68,9 @@ class SQLiteForeign extends AbstractForeignKey
     {
         $reference = new self($table, $tablePrefix, $schema['id']);
 
-        // todo: fix it
-        $reference->columns = [$schema['from']];
-
+        $reference->columns = $schema['from'];
         $reference->foreignTable = $schema['table'];
-        $reference->foreignKeys = [$schema['to']];
+        $reference->foreignKeys = $schema['to'];
 
         //In SQLLite we have to work with pre-defined reference names
         $reference->name = $reference->getName();

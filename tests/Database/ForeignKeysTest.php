@@ -45,6 +45,10 @@ abstract class ForeignKeysTest extends BaseTest
             $schema->integer('secondary_id');
             $schema->index(['secondary_id'])->unique(true); //Index is required
 
+            $schema->integer('secondary_id_2');
+            $schema->integer('secondary_id_3');
+            $schema->index(['secondary_id_2', 'secondary_id_3'])->unique(true); //Index is required
+
             $schema->string('first_name')->nullable(false);
             $schema->string('last_name')->nullable(false);
             $schema->string('email', 64)->nullable(false);
@@ -287,6 +291,32 @@ abstract class ForeignKeysTest extends BaseTest
         $this->assertTrue($this->schema('schema')->hasForeignKey(['external_id']));
 
         $schema->foreignKey(['external_id'])->onDelete(AbstractForeignKey::NO_ACTION);
+        $schema->save(Handler::DO_ALL);
+
+        $this->assertSameAsInDB($schema);
+    }
+
+    public function testCompositeKeys()
+    {
+        $schema = $this->schema('schema');
+        $this->assertFalse($schema->exists());
+        $this->assertTrue($this->sampleSchema('external')->exists());
+
+        $schema->primary('id');
+        $schema->integer('external_id');
+        $schema->integer('external_id_2');
+
+        $schema
+            ->foreignKey(['external_id', 'external_id_2'])
+            ->references('external', ['secondary_id_2', 'secondary_id_3'])
+            ->onDelete(AbstractForeignKey::CASCADE)
+            ->onUpdate(AbstractForeignKey::CASCADE);
+
+        $schema->save(Handler::DO_ALL);
+
+        $this->assertTrue($this->schema('schema')->hasForeignKey(['external_id', 'external_id_2']));
+
+        $schema->foreignKey(['external_id', 'external_id_2'])->onDelete(AbstractForeignKey::NO_ACTION);
         $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
