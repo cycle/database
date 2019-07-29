@@ -147,7 +147,7 @@ jobs:
       addons:
         apt:
           sources:
-            - mysql-5.7-trusty
+            - mysql-5.7-xenial
           packages:
             - mysql-server
             - mysql-client
