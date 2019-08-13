@@ -22,7 +22,7 @@ final class DatabaseConfig extends InjectableConfig
     use AliasTrait;
 
     /**
-     * @invisible
+     * @internal
      * @var array
      */
     protected $config = [

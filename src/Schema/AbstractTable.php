@@ -71,7 +71,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     private $prefix = '';
 
     /**
-     * @invisible
+     * @internal
      *
      * @var DriverInterface
      */
@@ -80,7 +80,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * Initial table state.
      *
-     * @invisible
+     * @internal
      * @var State
      */
     protected $initial = null;
@@ -88,7 +88,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * Currently defined table state.
      *
-     * @invisible
+     * @internal
      * @var State
      */
     protected $current = null;

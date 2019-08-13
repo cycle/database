@@ -81,7 +81,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      * Association list between abstract types and native PHP types. Every non listed type will be
      * converted into string.
      *
-     * @invisible
+     * @internal
      *
      * @var array
      */
@@ -101,7 +101,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      * integer => array('type' => 'int', 'size' => 1),
      * boolean => array('type' => 'tinyint', 'size' => 1)
      *
-     * @invisible
+     * @internal
      *
      * @var array
      */
@@ -156,7 +156,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      * Reverse mapping is responsible for generating abstact type based on database type and it's
      * options. Multiple database types can be mapped into one abstract type.
      *
-     * @invisible
+     * @internal
      *
      * @var array
      */
