@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace Spiral\Database\Driver\MySQL;
 
 use Spiral\Database\Driver\Compiler as AbstractCompiler;
-use Spiral\Database\Injection\ParameterInterface;
 
 /**
  * MySQL syntax specific compiler.
@@ -40,32 +39,5 @@ class MySQLCompiler extends AbstractCompiler
         }
 
         return trim($statement);
-    }
-
-    /**
-     * Resolve operator value based on value value. ;).
-     *
-     * @param mixed  $parameter
-     * @param string $operator
-     *
-     * @return string
-     */
-    protected function prepareOperator($parameter, string $operator): string
-    {
-        if (!$parameter instanceof ParameterInterface) {
-            //Probably fragment
-            return $operator;
-        }
-
-        if ($parameter->getType() == \PDO::PARAM_NULL) {
-            switch ($operator) {
-                case '=':
-                    return 'IS';
-                case '!=':
-                    return 'IS NOT';
-            }
-        }
-
-        return parent::prepareOperator($parameter, $operator);
     }
 }

@@ -85,7 +85,7 @@ abstract class SelectQueryTest extends BaseQueryTest
         $select = $this->database->select()->distinct()->from(['users'])->where('name', null);
 
         $this->assertSameQuery(
-            "SELECT DISTINCT * FROM {users} WHERE {name} = ?",
+            "SELECT DISTINCT * FROM {users} WHERE {name} IS ?",
             $select
         );
     }
@@ -95,7 +95,7 @@ abstract class SelectQueryTest extends BaseQueryTest
         $select = $this->database->select()->distinct()->from(['users'])->where('name', '!=', null);
 
         $this->assertSameQuery(
-            "SELECT DISTINCT * FROM {users} WHERE {name} != ?",
+            "SELECT DISTINCT * FROM {users} WHERE {name} IS NOT ?",
             $select
         );
     }
@@ -2017,6 +2017,28 @@ abstract class SelectQueryTest extends BaseQueryTest
                     SELECT * FROM {prefix_posts} AS {p}
                     WHERE {p}.{user_id} = {u}.{id}
                   ) AS {sub_posts} ",
+            $select
+        );
+    }
+
+    public function testDirectIsNull()
+    {
+        $select = $this->database->select()->from(['users'])
+            ->where('name', 'is', null);
+
+        $this->assertSameQuery(
+            "SELECT * FROM {users} WHERE {name} IS ?",
+            $select
+        );
+    }
+
+    public function testDirectIsNot()
+    {
+        $select = $this->database->select()->from(['users'])
+            ->where('name', 'is not', null);
+
+        $this->assertSameQuery(
+            "SELECT * FROM {users} WHERE {name} IS NOT ?",
             $select
         );
     }

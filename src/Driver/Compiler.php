@@ -72,7 +72,7 @@ abstract class Compiler implements CompilerInterface
      * @param string|FragmentInterface $identifier Identifier can include simple column operations
      *                                             and functions, having "." in it will
      *                                             automatically force table prefix to first value.
-     * @param bool                     $isTable Set to true to let quote method know that
+     * @param bool                     $isTable    Set to true to let quote method know that
      *                                             identified is related to table name.
      *
      * @return string
@@ -557,6 +557,15 @@ abstract class Compiler implements CompilerInterface
         if (!$parameter instanceof ParameterInterface) {
             //Probably fragment
             return $operator;
+        }
+
+        if ($parameter->getType() == \PDO::PARAM_NULL) {
+            switch ($operator) {
+                case '=':
+                    return 'IS';
+                case '!=':
+                    return 'IS NOT';
+            }
         }
 
         if ($operator != '=' || is_scalar($parameter->getValue())) {
