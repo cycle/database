@@ -120,7 +120,12 @@ abstract class Compiler implements CompilerInterface
         $columns = $this->prepareColumns($columns);
 
         //Simply joining every rowset
-        $rowsets = implode(",\n", $rowsets);
+        $values = [];
+        foreach ($rowsets as $rowset) {
+            $values[] = $this->prepareValue($rowset);
+        }
+
+        $rowsets = implode(",\n", $values);
 
         return "INSERT INTO {$table} ({$columns})\nVALUES {$rowsets}";
     }
@@ -584,6 +589,13 @@ abstract class Compiler implements CompilerInterface
     {
         if ($value instanceof FragmentInterface) {
             return $this->prepareFragment($value);
+        }
+
+        if (
+            $value === null
+            || ($value instanceof ParameterInterface && $value->getType() === \PDO::PARAM_NULL)
+        ) {
+            return 'NULL';
         }
 
         //Technically should never happen (but i prefer to keep this legacy code)

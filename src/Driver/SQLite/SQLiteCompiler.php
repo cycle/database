@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace Spiral\Database\Driver\SQLite;
 
 use Spiral\Database\Driver\Compiler as AbstractCompiler;
+use Spiral\Database\Exception\CompilerException;
+use Spiral\Database\Injection\ParameterInterface;
 
 /**
  * SQLite specific syntax compiler.
@@ -35,8 +37,14 @@ class SQLiteCompiler extends AbstractCompiler
         foreach ($rowsets as $rowset) {
             if (count($statement) == 1) {
                 $selectColumns = [];
-                foreach ($columns as $column) {
-                    $selectColumns[] = "? AS {$this->quote($column)}";
+
+                if (!$rowset instanceof ParameterInterface) {
+                    throw new CompilerException("Update parameter expected to be parametric array");
+                }
+
+                $values = $rowset->flatten();
+                foreach ($columns as $index => $column) {
+                    $selectColumns[] = $this->prepareValue($values[$index]) . " AS {$this->quote($column)}";
                 }
 
                 $statement[] = 'SELECT ' . implode(', ', $selectColumns);
