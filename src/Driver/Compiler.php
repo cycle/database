@@ -101,13 +101,13 @@ abstract class Compiler implements CompilerInterface
      */
     public function compileInsert(string $table, array $columns, array $rowsets): string
     {
-        if (empty($columns)) {
+        if ($columns === []) {
             throw new CompilerException(
                 'Unable to build insert statement, columns must be set'
             );
         }
 
-        if (empty($rowsets)) {
+        if ($rowsets === []) {
             throw new CompilerException(
                 'Unable to build insert statement, at least one value set must be provided'
             );
@@ -258,15 +258,7 @@ abstract class Compiler implements CompilerInterface
     protected function prepareUpdates(array $updates): string
     {
         foreach ($updates as $column => &$value) {
-            if ($value instanceof FragmentInterface) {
-                $value = $this->prepareFragment($value);
-            } else {
-                //Simple value (such condition should never be met since every value has to be
-                //wrapped using parameter interface)
-                $value = '?';
-            }
-
-            $value = "{$this->quote($column)} = {$value}";
+            $value = "{$this->quote($column)} = {$this->prepareValue($value)}";
             unset($value);
         }
 
@@ -590,10 +582,6 @@ abstract class Compiler implements CompilerInterface
      */
     protected function prepareValue($value): string
     {
-        if ($value instanceof ParameterInterface && $value->getType() == \PDO::PARAM_NULL) {
-            return 'NULL';
-        }
-
         if ($value instanceof FragmentInterface) {
             return $this->prepareFragment($value);
         }

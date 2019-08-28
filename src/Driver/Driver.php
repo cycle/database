@@ -273,6 +273,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
 
             //Mounting all input parameters
             $statement = $this->bindParameters($this->prepare($query), $flatten);
+
             $statement->execute();
 
             if ($this->isProfiling()) {
@@ -383,7 +384,8 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     protected function bindParameters(\PDOStatement $statement, array $parameters): \PDOStatement
     {
-        foreach ($parameters as $index => $parameter) {
+        $index = 0;
+        foreach ($parameters as $parameter) {
             if ($parameter->getType() === PDO::PARAM_NULL) {
                 // must be compiled on SQL level
                 continue;
@@ -391,7 +393,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
 
             if (is_numeric($index)) {
                 //Numeric, @see http://php.net/manual/en/pdostatement.bindparam.php
-                $statement->bindValue($index + 1, $parameter->getValue(), $parameter->getType());
+                $statement->bindValue(++$index, $parameter->getValue(), $parameter->getType());
             } else {
                 //Named
                 $statement->bindValue($index, $parameter->getValue(), $parameter->getType());

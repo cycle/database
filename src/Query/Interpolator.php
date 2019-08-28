@@ -38,12 +38,16 @@ final class Interpolator
 
         //Let's prepare values so they looks better
         foreach ($parameters as $index => $parameter) {
+            if ($parameter->getType() === \PDO::PARAM_NULL) {
+                continue;
+            }
+
             $value = self::resolveValue($parameter);
 
             if (is_numeric($index)) {
                 $query = self::replaceOnce('?', $value, $query);
             } else {
-                $query = str_replace($index, $value, $query);
+                $query = str_replace($name, $value, $query);
             }
         }
 

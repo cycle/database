@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace Spiral\Database\Driver\SQLite;
 
 use Spiral\Database\Driver\Compiler as AbstractCompiler;
-use Spiral\Database\Injection\ParameterInterface;
 
 /**
  * SQLite specific syntax compiler.
@@ -44,7 +43,7 @@ class SQLiteCompiler extends AbstractCompiler
             } else {
                 //It is crityially important to use UNION ALL, UNION will try to merge values together
                 //which will cause non predictable insert order
-                $statement[] = 'UNION ALL SELECT ' . trim(str_repeat('?, ', count($columns)), ', ');
+                $statement[] = 'UNION ALL SELECT ' . trim($this->prepareValue($rowset), '()');
             }
         }
 

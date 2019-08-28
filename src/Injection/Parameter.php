@@ -134,6 +134,10 @@ class Parameter implements ParameterInterface
             return sprintf("(%s)", ltrim($result, ", "));
         }
 
+        if ($this->value === null || $this->getType() === \PDO::PARAM_NULL) {
+            return 'NULL';
+        }
+
         return '?';
     }
 
