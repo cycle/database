@@ -51,7 +51,6 @@ final class Interpolator
             }
         }
 
-
         return $query;
     }
 

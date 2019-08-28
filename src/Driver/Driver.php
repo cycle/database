@@ -385,18 +385,18 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     protected function bindParameters(\PDOStatement $statement, array $parameters): \PDOStatement
     {
         $index = 0;
-        foreach ($parameters as $parameter) {
+        foreach ($parameters as $name => $parameter) {
             if ($parameter->getType() === PDO::PARAM_NULL) {
                 // must be compiled on SQL level
                 continue;
             }
 
-            if (is_numeric($index)) {
+            if (is_numeric($name)) {
                 //Numeric, @see http://php.net/manual/en/pdostatement.bindparam.php
                 $statement->bindValue(++$index, $parameter->getValue(), $parameter->getType());
             } else {
                 //Named
-                $statement->bindValue($index, $parameter->getValue(), $parameter->getType());
+                $statement->bindValue($name, $parameter->getValue(), $parameter->getType());
             }
         }
 
