@@ -1,9 +1,10 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
-2.4.4 (28.08.2019)
+2.4.5 (28.08.2019)
 -----
 - IS NULL and IS NOT NULL now part of generated SQL rather than parameter value
+- improved SQLite multi-insert query fallback
 
 2.4.2 (26.08.2019)
 -----
