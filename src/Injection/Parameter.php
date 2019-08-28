@@ -122,8 +122,16 @@ class Parameter implements ParameterInterface
     public function sqlStatement(): string
     {
         if (is_array($this->value)) {
-            //Array were mocked
-            return '(' . trim(str_repeat('?, ', count($this->value)), ', ') . ')';
+            $result = '';
+            foreach ($this->value as $value) {
+                if ($value === null || ($value instanceof ParameterInterface && $value->getType() === \PDO::PARAM_NULL)) {
+                    $result .= ', NULL';
+                } else {
+                    $result .= ', ?';
+                }
+            }
+
+            return sprintf("(%s)", ltrim($result, ", "));
         }
 
         return '?';
