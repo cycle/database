@@ -74,41 +74,4 @@ class SQLiteCompiler extends AbstractCompiler
 
         return trim($statement);
     }
-
-    /**
-     * Resolve operator value based on value value. ;).
-     *
-     * @param mixed  $parameter
-     * @param string $operator
-     *
-     * @return string
-     */
-    protected function prepareOperator($parameter, string $operator): string
-    {
-        if (!$parameter instanceof ParameterInterface) {
-            //Probably fragment
-            return $operator;
-        }
-
-        if ($parameter->getType() == \PDO::PARAM_NULL) {
-            switch ($operator) {
-                case '=':
-                    return 'IS';
-                case '!=':
-                    return 'IS NOT';
-            }
-        }
-
-        if ($operator != '=' || is_scalar($parameter->getValue())) {
-            //Doing nothing for non equal operators
-            return $operator;
-        }
-
-        if ($parameter->isArray()) {
-            //Automatically switching between equal and IN
-            return 'IN';
-        }
-
-        return $operator;
-    }
 }

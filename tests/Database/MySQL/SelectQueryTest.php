@@ -20,24 +20,4 @@ class SelectQueryTest extends \Spiral\Database\Tests\SelectQueryTest
             $select
         );
     }
-
-    public function testSelectWithSimpleWhereNull()
-    {
-        $select = $this->database->select()->distinct()->from(['users'])->where('name', null);
-
-        $this->assertSameQuery(
-            "SELECT DISTINCT * FROM {users} WHERE {name} IS ?",
-            $select
-        );
-    }
-
-    public function testSelectWithSimpleWhereNotNull()
-    {
-        $select = $this->database->select()->distinct()->from(['users'])->where('name', '!=', null);
-
-        $this->assertSameQuery(
-            "SELECT DISTINCT * FROM {users} WHERE {name} IS NOT ?",
-            $select
-        );
-    }
 }

@@ -334,6 +334,11 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
                 $parameter = new Parameter($parameter, Parameter::DETECT_TYPE);
             }
 
+            if ($parameter->getType() === PDO::PARAM_NULL) {
+                // skip all NULL parameters (must be declared on SQL level)
+                continue;
+            }
+
             if ($parameter->isArray()) {
                 if (!is_numeric($key)) {
                     throw new DriverException("Array parameters can not be named");
@@ -345,7 +350,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
                 /**
                  * @var ParameterInterface $parameter []
                  */
-                foreach ($nestedParameters as &$nestedParameter) {
+                foreach ($nestedParameters as $nestedParameter) {
                     if ($nestedParameter->getValue() instanceof \DateTimeInterface) {
                         //Original parameter must not be altered
                         $nestedParameter = $nestedParameter->withValue(
@@ -353,12 +358,10 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
                         );
                     }
 
-                    unset($nestedParameter);
+                    if ($nestedParameter->getType() !== PDO::PARAM_NULL) {
+                        $flatten[] = $nestedParameter;
+                    }
                 }
-
-                //Quick and dirty
-                $flatten = array_merge($flatten, $nestedParameters);
-
             } else {
                 if ($parameter->getValue() instanceof \DateTimeInterface) {
                     //Original parameter must not be altered

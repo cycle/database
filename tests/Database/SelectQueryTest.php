@@ -85,7 +85,7 @@ abstract class SelectQueryTest extends BaseQueryTest
         $select = $this->database->select()->distinct()->from(['users'])->where('name', null);
 
         $this->assertSameQuery(
-            "SELECT DISTINCT * FROM {users} WHERE {name} = ?",
+            "SELECT DISTINCT * FROM {users} WHERE {name} IS NULL",
             $select
         );
     }
@@ -95,7 +95,7 @@ abstract class SelectQueryTest extends BaseQueryTest
         $select = $this->database->select()->distinct()->from(['users'])->where('name', '!=', null);
 
         $this->assertSameQuery(
-            "SELECT DISTINCT * FROM {users} WHERE {name} != ?",
+            "SELECT DISTINCT * FROM {users} WHERE {name} IS NOT NULL",
             $select
         );
     }
@@ -2027,7 +2027,7 @@ abstract class SelectQueryTest extends BaseQueryTest
             ->where('name', 'is', null);
 
         $this->assertSameQuery(
-            "SELECT * FROM {users} WHERE {name} IS ?",
+            "SELECT * FROM {users} WHERE {name} IS NULL",
             $select
         );
     }
@@ -2038,7 +2038,7 @@ abstract class SelectQueryTest extends BaseQueryTest
             ->where('name', 'is not', null);
 
         $this->assertSameQuery(
-            "SELECT * FROM {users} WHERE {name} IS NOT ?",
+            "SELECT * FROM {users} WHERE {name} IS NOT NULL",
             $select
         );
     }

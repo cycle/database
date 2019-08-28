@@ -28,13 +28,6 @@ interface ParameterInterface extends FragmentInterface
     public function getValue();
 
     /**
-     * Change parameter value.
-     *
-     * @param mixed $value
-     */
-    public function setValue($value);
-
-    /**
      * Create copy of self with new value but same type.
      *
      * @param mixed $value
