@@ -559,15 +559,6 @@ abstract class Compiler implements CompilerInterface
             return $operator;
         }
 
-        if ($parameter->getType() == \PDO::PARAM_NULL) {
-            switch ($operator) {
-                case '=':
-                    return 'IS';
-                case '!=':
-                    return 'IS NOT';
-            }
-        }
-
         if ($operator != '=' || is_scalar($parameter->getValue())) {
             //Doing nothing for non equal operators
             return $operator;

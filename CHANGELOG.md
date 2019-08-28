@@ -1,6 +1,10 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
+2.4.3 (28.08.2019)
+-----
+- IS NULL and IS NOT NULL normalized across all database drivers except Postgres
+
 2.4.2 (26.08.2019)
 -----
 - IS NULL and IS NOT NULL normalized across all database drivers
