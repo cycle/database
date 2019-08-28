@@ -339,13 +339,10 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
                     throw new DriverException("Array parameters can not be named");
                 }
 
-                //Flattening arrays
-                $nestedParameters = $parameter->flatten();
-
                 /**
                  * @var ParameterInterface $parameter []
                  */
-                foreach ($nestedParameters as $nestedParameter) {
+                foreach ($parameter->flatten() as $nestedParameter) {
                     if ($nestedParameter->getValue() instanceof \DateTimeInterface) {
                         //Original parameter must not be altered
                         $nestedParameter = $nestedParameter->withValue(
@@ -353,16 +350,9 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
                         );
                     }
 
-                    if ($nestedParameter->getType() !== PDO::PARAM_NULL) {
-                        $flatten[] = $nestedParameter;
-                    }
+                    $flatten[] = $nestedParameter;
                 }
 
-                continue;
-            }
-
-            if ($parameter->getType() === PDO::PARAM_NULL) {
-                // skip all NULL parameters (must be declared on SQL level)
                 continue;
             }
 
@@ -394,6 +384,11 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     protected function bindParameters(\PDOStatement $statement, array $parameters): \PDOStatement
     {
         foreach ($parameters as $index => $parameter) {
+            if ($parameter->getType() === PDO::PARAM_NULL) {
+                // must be compiled on SQL level
+                continue;
+            }
+
             if (is_numeric($index)) {
                 //Numeric, @see http://php.net/manual/en/pdostatement.bindparam.php
                 $statement->bindValue($index + 1, $parameter->getValue(), $parameter->getType());
