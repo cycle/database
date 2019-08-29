@@ -385,7 +385,7 @@ abstract class Compiler implements CompilerInterface
      */
     protected function compileWhere(QueryBindings $bindings, array $tokens): string
     {
-        if (empty($tokens)) {
+        if ($tokens === []) {
             return '';
         }
 
@@ -464,6 +464,10 @@ abstract class Compiler implements CompilerInterface
 
         if ($activeGroup) {
             throw new CompilerException('Unable to build where statement, unclosed where group');
+        }
+
+        if (trim($statement, ' ()') === '') {
+            return '';
         }
 
         return trim($statement);
