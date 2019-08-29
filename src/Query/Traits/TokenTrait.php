@@ -38,6 +38,11 @@ trait TokenTrait
 
         //Where conditions specified in array form
         if (is_array($identifier)) {
+            if (count($identifier) === 0) {
+                // nothing to do
+                return;
+            }
+
             if (count($identifier) == 1) {
                 $this->arrayWhere(
                     $joiner == 'AND' ? Compiler::TOKEN_AND : Compiler::TOKEN_OR,
