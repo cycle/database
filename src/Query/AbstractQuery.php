@@ -62,7 +62,7 @@ abstract class AbstractQuery implements BuilderInterface
      *
      * @return string
      */
-    public function queryString(): string
+    public function sqlStatement(): string
     {
         if ($this->compiler === null) {
             throw new BuilderException("Unable to build query without associated driver");
@@ -93,7 +93,7 @@ abstract class AbstractQuery implements BuilderInterface
      */
     public function __toString()
     {
-        return $this->queryString();
+        return $this->sqlStatement();
     }
 
     /**
