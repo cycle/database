@@ -11,6 +11,7 @@ namespace Spiral\Database\Schema;
 
 use Spiral\Database\ColumnInterface;
 use Spiral\Database\Driver\DriverInterface;
+use Spiral\Database\Driver\QueryBindings;
 use Spiral\Database\Exception\DefaultValueException;
 use Spiral\Database\Exception\SchemaException;
 use Spiral\Database\Injection\Fragment;
@@ -563,7 +564,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     /**
      * Shortcut for AbstractColumn->type() method.
      *
-     * @param string $type Abstract type.
+     * @param string $type      Abstract type.
      * @param array  $arguments Not used.
      * @return self
      */
@@ -719,7 +720,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         }
 
         if ($defaultValue instanceof FragmentInterface) {
-            return $defaultValue->sqlStatement();
+            return $defaultValue->compile(new QueryBindings(), $driver->getCompiler());
         }
 
         if ($this->getType() == 'bool') {

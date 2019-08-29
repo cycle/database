@@ -9,17 +9,20 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Query;
 
-use Spiral\Database\Exception\BuilderException;
-use Spiral\Database\Injection\ExpressionInterface;
-use Spiral\Database\Injection\ParameterInterface;
+use Spiral\Database\Driver\CompilerInterface;
+use Spiral\Database\Driver\DriverInterface;
+use Spiral\Database\Injection\FragmentInterface;
 
-interface BuilderInterface extends ExpressionInterface
+
+interface BuilderInterface extends FragmentInterface
 {
     /**
-     * Get ordered list of builder parameters in a form of ParameterInterface array.
-     *
-     * @return ParameterInterface[]
-     * @throws BuilderException
+     * @return DriverInterface|null
      */
-    public function getParameters(): array;
+    public function getDriver(): ?DriverInterface;
+
+    /**
+     * @return CompilerInterface|null
+     */
+    public function getCompiler(): ?CompilerInterface;
 }

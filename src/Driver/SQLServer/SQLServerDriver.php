@@ -101,28 +101,24 @@ class SQLServerDriver extends Driver
      * @param ParameterInterface[] $parameters Named hash of ParameterInterface.
      * @return \PDOStatement
      */
-    protected function bindParameters(\PDOStatement $statement, array $parameters): \PDOStatement
+    protected function bindParameters(\PDOStatement $statement, iterable $parameters): \PDOStatement
     {
         foreach ($parameters as $index => $parameter) {
-            if (is_numeric($index)) {
-                if ($parameter->getType() == PDO::PARAM_LOB) {
-                    $value = $parameter->getValue();
-                    $statement->bindParam(
-                        $index + 1,
-                        $value,
-                        $parameter->getType(),
-                        0,
-                        PDO::SQLSRV_ENCODING_BINARY
-                    );
-                    continue;
-                }
+            if ($parameter->getType() == PDO::PARAM_LOB) {
+                $value = $parameter->getValue();
 
-                //Numeric, @see http://php.net/manual/en/pdostatement.bindparam.php
-                $statement->bindValue($index + 1, $parameter->getValue(), $parameter->getType());
-            } else {
-                //Named
-                $statement->bindValue($index, $parameter->getValue(), $parameter->getType());
+                $statement->bindParam(
+                    $index,
+                    $value,
+                    $parameter->getType(),
+                    0,
+                    PDO::SQLSRV_ENCODING_BINARY
+                );
+
+                continue;
             }
+
+            $statement->bindValue($index, $parameter->getValue(), $parameter->getType());
         }
 
         return $statement;
@@ -133,7 +129,7 @@ class SQLServerDriver extends Driver
      *
      * @link http://en.wikipedia.org/wiki/Savepoint
      *
-     * @param int $level Savepoint name/id, must not contain spaces and be valid database
+     * @param int $level   Savepoint name/id, must not contain spaces and be valid database
      *                     identifier.
      */
     protected function savepointCreate(int $level)
@@ -147,7 +143,7 @@ class SQLServerDriver extends Driver
      *
      * @link http://en.wikipedia.org/wiki/Savepoint
      *
-     * @param int $level Savepoint name/id, must not contain spaces and be valid database
+     * @param int $level   Savepoint name/id, must not contain spaces and be valid database
      *                     identifier.
      */
     protected function savepointRelease(int $level)
@@ -161,7 +157,7 @@ class SQLServerDriver extends Driver
      *
      * @link http://en.wikipedia.org/wiki/Savepoint
      *
-     * @param int $level Savepoint name/id, must not contain spaces and be valid database
+     * @param int $level   Savepoint name/id, must not contain spaces and be valid database
      *                     identifier.
      */
     protected function savepointRollback(int $level)

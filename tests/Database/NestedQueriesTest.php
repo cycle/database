@@ -8,11 +8,11 @@
 namespace Spiral\Database\Tests;
 
 use Spiral\Database\Database;
-use Spiral\Database\Query\Interpolator;
 use Spiral\Database\Injection\Expression;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
 use Spiral\Database\Query\AbstractQuery;
+use Spiral\Database\Query\Interpolator;
 use Spiral\Database\Query\SelectQuery;
 use Spiral\Database\Schema\AbstractTable;
 use Spiral\Pagination\PaginableInterface;
@@ -83,8 +83,11 @@ abstract class NestedQueriesTest extends BaseQueryTest
             ->where('id', 1)
             ->leftJoin('external')->onWhere(['name' => 'test']);
 
-        $this->assertSameQuery("SELECT * FROM {table} LEFT JOIN {external} ON {name} = ? WHERE {id} = ?",
-            $select);
+        $this->assertSameQuery(
+            "SELECT * FROM {table} LEFT JOIN {external} ON {name} = ? WHERE {id} = ?",
+            $select
+        );
+
         $this->assertSameParameters([
             'test',
             1
@@ -117,8 +120,8 @@ abstract class NestedQueriesTest extends BaseQueryTest
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE {type} = ? AND {id} IN (
-              SELECT {user_id} FROM {accounts} WHERE {open} = ?
-            ) OR {id} < ?",
+                  SELECT {user_id} FROM {accounts} WHERE {open} = ?
+                ) OR {id} < ?",
             $select
         );
 
@@ -136,7 +139,33 @@ abstract class NestedQueriesTest extends BaseQueryTest
             ->where('type', 'user')
             ->where(
                 'id',
-                'IN', $this->database->select('user_id')->from('accounts')->where('open', true)
+                'IN',
+                $this->database->select('user_id')->from('accounts')->where('open', true)
+            )->orWhere('id', '<', 100);
+
+        $this->assertSameQuery(
+            "SELECT * FROM {prefix_table} WHERE {type} = ? AND {id} IN (
+              SELECT {user_id} FROM {accounts} WHERE {open} = ?
+            ) OR {id} < ?",
+            $select
+        );
+
+        $this->assertSameParameters([
+            'user',
+            true,
+            100
+        ], $select);
+    }
+
+    public function testSubQueryPrefixedRaw()
+    {
+        $select = $this->db('prefixed', 'prefix_')->select()
+            ->from('table')
+            ->where('type', 'user')
+            ->where(
+                'id',
+                'IN',
+                (new SelectQuery())->columns('user_id')->from('accounts')->where('open', true)
             )->orWhere('id', '<', 100);
 
         $this->assertSameQuery(
@@ -160,13 +189,14 @@ abstract class NestedQueriesTest extends BaseQueryTest
             ->where('type', 'user')
             ->where(
                 'id',
-                'IN', $this->database->select('user_id')->from('accounts')->where('open', true)
-                ->andWhere('pay_id', new Expression('u.id'))
+                'IN',
+                $this->database->select('user_id')->from('accounts')->where('open', true)
+                    ->andWhere('pay_id', new Expression('u.id'))
             )->orWhere('table.id', '<', 100);
 
         $this->assertSameQuery(
             "SELECT * FROM {prefix_table} AS {u} WHERE {type} = ? AND {id} IN (
-              SELECT {user_id} FROM {prefix_accounts} WHERE {open} = ? AND {pay_id} = {u}.{id}
+              SELECT {user_id} FROM {accounts} WHERE {open} = ? AND {pay_id} = {u}.{id}
             ) OR {prefix_table}.{id} < ?",
             $select
         );
@@ -174,6 +204,35 @@ abstract class NestedQueriesTest extends BaseQueryTest
         $this->assertSameParameters([
             'user',
             true,
+            100
+        ], $select);
+    }
+
+    public function testSubQueryPrefixedWithExpressionId()
+    {
+        $select = $this->db('prefixed', 'prefix_')->select()
+            ->from('table AS u')
+            ->where('type', 'user')
+            ->where(
+                (new SelectQuery())->from('accounts')
+                    ->columns(new Expression('COUNT(user_id)'))
+                    ->where('accounts.open', true)
+                    ->andWhere('pay_id', new Expression('u.id')),
+                '>',
+                0
+            )->orWhere('table.id', '<', 100);
+
+        $this->assertSameQuery(
+            "SELECT * FROM {prefix_table} AS {u} WHERE {type} = ? AND (
+              SELECT COUNT({user_id}) FROM {prefix_accounts} WHERE {prefix_accounts}.{open} = ? AND {pay_id} = {u}.{id}
+            ) > ? OR {prefix_table}.{id} < ?",
+            $select
+        );
+
+        $this->assertSameParameters([
+            'user',
+            true,
+            0,
             100
         ], $select);
     }
@@ -194,8 +253,8 @@ abstract class NestedQueriesTest extends BaseQueryTest
 
         $this->assertSameQuery(
             "SELECT * FROM {prefix_table} AS {u} WHERE {type} = ? OR {prefix_table}.{id} < ?
-             UNION 
-             (SELECT * FROM {prefix_2_table} AS {u} WHERE {type} = ? OR {prefix_2_table}.{id} > ?)",
+                 UNION
+                 (SELECT * FROM {prefix_2_table} AS {u} WHERE {type} = ? OR {prefix_2_table}.{id} > ?)",
             $select
         );
 
@@ -209,6 +268,7 @@ abstract class NestedQueriesTest extends BaseQueryTest
 
     public function testUnionWithPrefixes1()
     {
+
         $select = $this->db('prefixed', 'prefix_')
             ->select('*')
             ->from('table AS u')
@@ -223,8 +283,8 @@ abstract class NestedQueriesTest extends BaseQueryTest
 
         $this->assertSameQuery(
             "SELECT * FROM {prefix_table} AS {u} WHERE {type} = ? OR {prefix_table}.{id} < ?
-             UNION ALL
-             (SELECT * FROM {prefix_2_table} AS {u} WHERE {type} = ? OR {prefix_2_table}.{id} > ?)",
+                 UNION ALL
+                 (SELECT * FROM {prefix_2_table} AS {u} WHERE {type} = ? OR {prefix_2_table}.{id} > ?)",
             $select
         );
 
@@ -257,10 +317,10 @@ abstract class NestedQueriesTest extends BaseQueryTest
 
         $this->assertSameQuery(
             "SELECT * FROM {prefix_table} AS {u} WHERE {type} = ? OR {prefix_table}.{id} < ?
-             UNION
-             (SELECT * FROM {prefix_2_table} AS {u} WHERE {type} = ? OR {prefix_2_table}.{id} > ?)
-             UNION ALL
-             (SELECT * FROM {prefix_3_table} WHERE {x} IN (?, ?, ?))",
+                 UNION
+                 (SELECT * FROM {prefix_2_table} AS {u} WHERE {type} = ? OR {prefix_2_table}.{id} > ?)
+                 UNION ALL
+                 (SELECT * FROM {prefix_3_table} WHERE {x} IN (?, ?, ?))",
             $select
         );
 
@@ -294,11 +354,11 @@ abstract class NestedQueriesTest extends BaseQueryTest
 
         $this->assertSameQuery(
             "UPDATE {table} SET
-             {name} = ?, 
-             {value} = (SELECT SUM({value}) FROM {transactions} WHERE {user_id} = {table}.{id} AND {case} = ?)
-             WHERE {type} = ? AND {id} IN (
-                SELECT {user_id} FROM {accounts} WHERE {open} = ?
-             ) OR {id} < ?",
+                 {name} = ?,
+                 {value} = (SELECT SUM({value}) FROM {transactions} WHERE {user_id} = {table}.{id} AND {case} = ?)
+                 WHERE {type} = ? AND {id} IN (
+                    SELECT {user_id} FROM {accounts} WHERE {open} = ?
+                 ) OR {id} < ?",
             $select
         );
 

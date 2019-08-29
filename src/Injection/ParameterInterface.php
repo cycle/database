@@ -18,7 +18,7 @@ namespace Spiral\Database\Injection;
  * Database implementation must inject parameter SQL into expression, but use parameter value to be
  * sent to database.
  */
-interface ParameterInterface extends FragmentInterface
+interface ParameterInterface
 {
     /**
      * Get mocked parameter value or values in array form.
@@ -48,13 +48,4 @@ interface ParameterInterface extends FragmentInterface
      * @return bool
      */
     public function isArray(): bool;
-
-    /**
-     * Expand itself into array of Parameters each of what represent one nested value.
-     * Attention, parameter reference LOST at this moment, make sure to alter original parmater
-     * not flattened values.
-     *
-     * @return ParameterInterface[]
-     */
-    public function flatten(): array;
 }

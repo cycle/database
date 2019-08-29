@@ -13,6 +13,7 @@ use PDO;
 use Psr\Log\LoggerAwareInterface;
 use Spiral\Database\Driver\Traits\BuilderTrait;
 use Spiral\Database\Driver\Traits\ProfilingTrait;
+use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Exception\DriverException;
 use Spiral\Database\Exception\StatementException;
 use Spiral\Database\Injection\Parameter;
@@ -269,10 +270,11 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         }
 
         try {
-            $flatten = $this->flattenParameters($parameters);
-
             //Mounting all input parameters
-            $statement = $this->bindParameters($this->prepare($query), $flatten);
+            $statement = $this->bindParameters(
+                $this->prepare($query),
+                $this->flattenParameters($parameters)
+            );
 
             $statement->execute();
 
@@ -316,63 +318,50 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     }
 
     /**
-     * Prepare set of query builder/user parameters to be send to PDO. Must convert DateTime
-     * instances into valid database timestamps and resolve values of ParameterInterface.
-     *
-     * Every value has to wrapped with parameter interface.
-     *
-     * @param array $parameters
-     * @return ParameterInterface[]
-     *
-     * @throws DriverException
+     * @param ParameterInterface[] $parameters
+     * @return \Generator
      */
-    protected function flattenParameters(array $parameters): array
+    protected function flattenParameters(array $parameters): \Generator
     {
-        $flatten = [];
-        foreach ($parameters as $key => $parameter) {
-            if (!$parameter instanceof ParameterInterface) {
-                //Let's wrap value
-                $parameter = new Parameter($parameter, Parameter::DETECT_TYPE);
+        $index = 0;
+        foreach ($parameters as $name => $parameter) {
+            if (is_string($name)) {
+                $index = $name;
+            } else {
+                $index++;
             }
 
-            if ($parameter->isArray()) {
-                if (!is_numeric($key)) {
-                    throw new DriverException("Array parameters can not be named");
-                }
-
-                /**
-                 * @var ParameterInterface $parameter []
-                 */
-                foreach ($parameter->flatten() as $nestedParameter) {
-                    if ($nestedParameter->getValue() instanceof \DateTimeInterface) {
-                        //Original parameter must not be altered
-                        $nestedParameter = $nestedParameter->withValue(
-                            $this->formatDatetime($nestedParameter->getValue())
-                        );
-                    }
-
-                    $flatten[] = $nestedParameter;
-                }
-
-                continue;
+            if (!$parameter instanceof ParameterInterface) {
+                $parameter = new Parameter($parameter);
             }
 
             if ($parameter->getValue() instanceof \DateTimeInterface) {
-                //Original parameter must not be altered
-                $parameter = $parameter->withValue(
-                    $this->formatDatetime($parameter->getValue())
-                );
+                yield $index => $parameter->withValue($this->formatDatetime($parameter->getValue()));
+                continue;
             }
 
-            if (is_numeric($key)) {
-                //Numeric keys can be shifted
-                $flatten[] = $parameter;
-            } else {
-                $flatten[$key] = $parameter;
+            if (!$parameter->isArray()) {
+                yield $index => $parameter;
+                continue;
+            }
+
+            if (!is_numeric($name)) {
+                throw new BuilderException('Array parameters can not be named');
+            }
+
+            foreach ($parameter->getValue() as $child) {
+                if (!$child instanceof ParameterInterface) {
+                    $child = new Parameter($child);
+                }
+
+                if ($child->getValue() instanceof \DateTimeInterface) {
+                    yield $index++ => $child->withValue($this->formatDatetime($child->getValue()));
+                    continue;
+                }
+
+                yield $index++ => $child;
             }
         }
-
-        return $flatten;
     }
 
     /**
@@ -382,22 +371,18 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * @param ParameterInterface[] $parameters Named hash of ParameterInterface.
      * @return \PDOStatement
      */
-    protected function bindParameters(\PDOStatement $statement, array $parameters): \PDOStatement
+    protected function bindParameters(\PDOStatement $statement, iterable $parameters): \PDOStatement
     {
-        $index = 0;
-        foreach ($parameters as $name => $parameter) {
-            if ($parameter->getType() === PDO::PARAM_NULL) {
-                // must be compiled on SQL level
-                continue;
+        foreach ($parameters as $index => $parameter) {
+            if ($parameter->getValue() instanceof \DateTimeInterface) {
+                //Original parameter must not be altered
+                $parameter = $parameter->withValue(
+                    $this->formatDatetime($parameter->getValue())
+                );
             }
 
-            if (is_numeric($name)) {
-                //Numeric, @see http://php.net/manual/en/pdostatement.bindparam.php
-                $statement->bindValue(++$index, $parameter->getValue(), $parameter->getType());
-            } else {
-                //Named
-                $statement->bindValue($name, $parameter->getValue(), $parameter->getType());
-            }
+            //Numeric, @see http://php.net/manual/en/pdostatement.bindparam.php
+            $statement->bindValue($index, $parameter->getValue(), $parameter->getType());
         }
 
         return $statement;

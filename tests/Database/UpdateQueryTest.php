@@ -4,13 +4,14 @@
  *
  * @author Wolfy-J
  */
+
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\Query\AbstractQuery;
-use Spiral\Database\Query\UpdateQuery;
 use Spiral\Database\Database;
-use Spiral\Database\Query\Interpolator;
 use Spiral\Database\Injection\ParameterInterface;
+use Spiral\Database\Query\AbstractQuery;
+use Spiral\Database\Query\Interpolator;
+use Spiral\Database\Query\UpdateQuery;
 use Spiral\Database\Schema\AbstractTable;
 
 abstract class UpdateQueryTest extends BaseQueryTest
@@ -65,10 +66,100 @@ abstract class UpdateQueryTest extends BaseQueryTest
         ], $update);
     }
 
-    protected function assertSameParameters(array $parameters, AbstractQuery $builder)
+    public function testUpdate()
+    {
+        $schema = $this->schema('demo');
+        $schema->primary('id');
+        $schema->string('value')->nullable();
+        $schema->save();
+
+        $lastID = $this->database->insert('demo')->values([
+            'value' => 'abc'
+        ])->run();
+
+        $updated = $this->database->update('demo')->values([
+            'value' => 'cde'
+        ])->where('id', $lastID)->run();
+
+        $this->assertSame(1, $updated);
+
+        $this->assertSame(
+            'cde',
+            $this->database->select('value')
+                ->from('demo')
+                ->where('id', $lastID)
+                ->run()
+                ->fetchColumn()
+        );
+    }
+
+    public function testUpdateToNotNull()
+    {
+        $schema = $this->schema('demo');
+        $schema->primary('id');
+        $schema->string('value')->nullable();
+        $schema->save();
+
+        $lastID = $this->database->insert('demo')->values([
+            'value' => null
+        ])->run();
+
+        $this->assertSame(
+            null,
+            $this->database->select('value')
+                ->from('demo')
+                ->where('id', $lastID)
+                ->run()
+                ->fetchColumn()
+        );
+
+        $updated = $this->database->update('demo')->values([
+            'value' => 'abc'
+        ])->where('id', $lastID)->run();
+
+        $this->assertSame(1, $updated);
+
+        $this->assertSame(
+            'abc',
+            $this->database->select('value')
+                ->from('demo')
+                ->where('id', $lastID)
+                ->run()
+                ->fetchColumn()
+        );
+    }
+
+    public function testUpdateToNull()
+    {
+        $schema = $this->schema('demo');
+        $schema->primary('id');
+        $schema->string('value')->nullable();
+        $schema->save();
+
+        $lastID = $this->database->insert('demo')->values([
+            'value' => 'abc'
+        ])->run();
+
+        $updated = $this->database->update('demo')->values([
+            'value' => null
+        ])->where('id', $lastID)->run();
+
+        $this->assertSame(1, $updated);
+
+        $this->assertSame(
+            null,
+            $this->database->select('value')
+                ->from('demo')
+                ->where('id', $lastID)
+                ->run()
+                ->fetchColumn()
+        );
+    }
+
+    protected function assertSameParameters(array $parameters, AbstractQuery $query)
     {
         $builderParameters = [];
-        foreach (Interpolator::flattenParameters($builder->getParameters()) as $value) {
+        foreach (Interpolator::flattenParameters($query->getParameters()) as $value) {
             $this->assertInstanceOf(ParameterInterface::class, $value);
             $this->assertFalse($value->isArray());
 

@@ -11,17 +11,16 @@ namespace Spiral\Database\Query\Traits;
 
 use Spiral\Database\Driver\Compiler;
 use Spiral\Database\Exception\BuilderException;
-use Spiral\Database\Query\BuilderInterface;
 
 trait TokenTrait
 {
     /**
      * Convert various amount of where function arguments into valid where token.
      *
-     * @param string   $joiner Boolean joiner (AND | OR).
+     * @param string   $joiner     Boolean joiner (AND | OR).
      * @param array    $parameters Set of parameters collected from where functions.
-     * @param array    $tokens Array to aggregate compiled tokens. Reference.
-     * @param callable $wrapper Callback or closure used to wrap/collect every potential
+     * @param array    $tokens     Array to aggregate compiled tokens. Reference.
+     * @param callable $wrapper    Callback or closure used to wrap/collect every potential
      *                             parameter.
      *
      * @throws BuilderException
@@ -30,9 +29,9 @@ trait TokenTrait
      */
     protected function createToken($joiner, array $parameters, &$tokens, callable $wrapper)
     {
-        list($identifier, $valueA, $valueB, $valueC) = $parameters + array_fill(0, 5, null);
+        list($identifier, $a, $b, $c) = $parameters + array_fill(0, 5, null);
 
-        if (empty($identifier)) {
+        if ($identifier === null) {
             //Nothing to do
             return;
         }
@@ -65,11 +64,6 @@ trait TokenTrait
             return;
         }
 
-        if ($identifier instanceof BuilderInterface) {
-            //Will copy every parameter from QueryBuilder
-            $wrapper($identifier);
-        }
-
         switch (count($parameters)) {
             case 1:
                 //AND|OR [identifier: sub-query]
@@ -77,29 +71,31 @@ trait TokenTrait
                 break;
             case 2:
                 //AND|OR [identifier] = [valueA]
-                $tokens[] = [$joiner, [$identifier, '=', $wrapper($valueA)]];
+                $tokens[] = [$joiner, [$identifier, '=', $wrapper($a)]];
                 break;
             case 3:
-                if (is_string($valueA)) {
-                    $valueA = strtoupper($valueA);
-                    if (in_array($valueA, ['BETWEEN', 'NOT BETWEEN'])) {
+                if (is_string($a)) {
+                    $a = strtoupper($a);
+                    if (in_array($a, ['BETWEEN', 'NOT BETWEEN'])) {
                         throw new BuilderException('Between statements expects exactly 2 values');
                     }
+                } elseif (is_scalar($a)) {
+                    $a = strval($a);
                 }
 
                 //AND|OR [identifier] [valueA: OPERATION] [valueA]
-                $tokens[] = [$joiner, [$identifier, strval($valueA), $wrapper($valueB)]];
+                $tokens[] = [$joiner, [$identifier, $a, $wrapper($b)]];
                 break;
             case 4:
                 //BETWEEN or NOT BETWEEN
-                if (!is_string($valueA) || !in_array(strtoupper($valueA), ['BETWEEN', 'NOT BETWEEN'])) {
+                if (!is_string($a) || !in_array(strtoupper($a), ['BETWEEN', 'NOT BETWEEN'])) {
                     throw new BuilderException(
                         'Only "BETWEEN" or "NOT BETWEEN" can define second comparision value'
                     );
                 }
 
-                //AND|OR [identifier] [valueA: BETWEEN|NOT BETWEEN] [valueB] [valueC]
-                $tokens[] = [$joiner, [$identifier, strtoupper($valueA), $wrapper($valueB), $wrapper($valueC)]];
+                //AND|OR [identifier] [valueA: BETWEEN|NOT BETWEEN] [b] [valueC]
+                $tokens[] = [$joiner, [$identifier, strtoupper($a), $wrapper($b), $wrapper($c)]];
         }
     }
 
@@ -107,8 +103,8 @@ trait TokenTrait
      * Convert simplified where definition into valid set of where tokens.
      *
      * @param string   $grouper Grouper type (see self::TOKEN_AND, self::TOKEN_OR).
-     * @param array    $where Simplified where definition.
-     * @param array    $tokens Array to aggregate compiled tokens. Reference.
+     * @param array    $where   Simplified where definition.
+     * @param array    $tokens  Array to aggregate compiled tokens. Reference.
      * @param callable $wrapper Callback or closure used to wrap/collect every potential
      *                          parameter.
      *
@@ -166,10 +162,10 @@ trait TokenTrait
      * Build set of conditions for specified identifier.
      *
      * @param string   $innerJoiner Inner boolean joiner.
-     * @param string   $key Column identifier.
-     * @param array    $where Operations associated with identifier.
-     * @param array    $tokens Array to aggregate compiled tokens. Reference.
-     * @param callable $wrapper Callback or closure used to wrap/collect every potential
+     * @param string   $key         Column identifier.
+     * @param array    $where       Operations associated with identifier.
+     * @param array    $tokens      Array to aggregate compiled tokens. Reference.
+     * @param callable $wrapper     Callback or closure used to wrap/collect every potential
      *                              parameter.
      *
      * @return array

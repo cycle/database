@@ -55,9 +55,10 @@ class PostgresDriver extends Driver
      */
     public function hasTable(string $name): bool
     {
-        $query = "SELECT COUNT(table_name) FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE' AND table_name = ?";
-
-        return (bool)$this->query($query, [$name])->fetchColumn();
+        return (bool)$this->query(
+            "SELECT COUNT(table_name) FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE' AND table_name = ?",
+            [$name]
+        )->fetchColumn();
     }
 
     /**
@@ -72,7 +73,7 @@ class PostgresDriver extends Driver
      * Get singular primary key associated with desired table. Used to emulate last insert id.
      *
      * @param string $prefix Database prefix if any.
-     * @param string $table Fully specified table name, including postfix.
+     * @param string $table  Fully specified table name, including postfix.
      *
      * @return string|null
      *
@@ -117,7 +118,7 @@ class PostgresDriver extends Driver
      */
     public function insertQuery(string $prefix, string $table = null): InsertQuery
     {
-        return new PostgresInsertQuery($this, $this->getCompiler($prefix), $table);
+        return (new PostgresInsertQuery($table))->withDriver($this, $this->getCompiler($prefix));
     }
 
     /**

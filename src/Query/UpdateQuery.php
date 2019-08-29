@@ -11,10 +11,8 @@ namespace Spiral\Database\Query;
 
 use Spiral\Database\Driver\Compiler;
 use Spiral\Database\Driver\CompilerInterface;
-use Spiral\Database\Driver\DriverInterface;
+use Spiral\Database\Driver\QueryBindings;
 use Spiral\Database\Exception\BuilderException;
-use Spiral\Database\Injection\FragmentInterface;
-use Spiral\Database\Injection\ParameterInterface;
 use Spiral\Database\Query\Traits\TokenTrait;
 use Spiral\Database\Query\Traits\WhereTrait;
 
@@ -42,19 +40,15 @@ class UpdateQuery extends AbstractQuery
     protected $values = [];
 
     /**
-     * {@inheritdoc}
-     *
-     * @param array $values Initial set of column updates.
+     * @param string|null $table
+     * @param array       $where
+     * @param array       $values
      */
     public function __construct(
-        DriverInterface $driver,
-        Compiler $compiler,
         string $table = null,
         array $where = [],
         array $values = []
     ) {
-        parent::__construct($driver, $compiler);
-
         $this->table = $table ?? '';
         $this->values = $values;
 
@@ -117,44 +111,13 @@ class UpdateQuery extends AbstractQuery
     /**
      * {@inheritdoc}
      */
-    public function getParameters(): array
+    public function compile(QueryBindings $bindings, CompilerInterface $compiler): string
     {
-        $values = [];
-        foreach ($this->values as $value) {
-            if ($value instanceof BuilderInterface) {
-                foreach ($value->getParameters() as $parameter) {
-                    $values[] = $parameter;
-                }
-
-                continue;
-            }
-
-            if ($value instanceof FragmentInterface && !$value instanceof ParameterInterface) {
-                //Apparently sql fragment
-                continue;
-            }
-
-            $values[] = $value;
-        }
-
-        //Join and where parameters are going after values
-        return $this->flattenParameters(array_merge($values, $this->whereParameters));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function sqlStatement(CompilerInterface $compiler = null): string
-    {
-        if (empty($this->values)) {
+        if ($this->values === []) {
             throw new BuilderException('Update values must be specified');
         }
 
-        if (empty($compiler)) {
-            $compiler = clone $this->compiler;
-        }
-
-        return $compiler->compileUpdate($this->table, $this->values, $this->whereTokens);
+        return $compiler->compileUpdate($bindings, $this->table, $this->values, $this->whereTokens);
     }
 
     /**
@@ -166,6 +129,13 @@ class UpdateQuery extends AbstractQuery
      */
     public function run(): int
     {
-        return $this->driver->execute($this->sqlStatement(), $this->getParameters());
+        if ($this->compiler === null) {
+            throw new BuilderException("Unable to run query without assigned driver");
+        }
+
+        $bindings = new QueryBindings();
+        $queryString = $this->compile($bindings, $this->compiler);
+
+        return $this->driver->execute($queryString, $bindings->getParameters());
     }
 }

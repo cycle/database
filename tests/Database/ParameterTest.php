@@ -49,16 +49,16 @@ class ParameterTest extends TestCase
     {
         $parameter = new Parameter(123, \PDO::PARAM_INT);
 
-        $this->assertSame('?', $parameter->sqlStatement());
-        $this->assertSame($parameter->sqlStatement(), (string)$parameter);
+        $this->assertSame('?', $parameter->compile());
+        $this->assertSame($parameter->compile(), (string)$parameter);
     }
 
     public function testPlaceholdersArray()
     {
         $parameter = new Parameter([1, 2, 3], \PDO::PARAM_INT);
 
-        $this->assertSame('(?, ?, ?)', $parameter->sqlStatement());
-        $this->assertSame($parameter->sqlStatement(), (string)$parameter);
+        $this->assertSame('(?, ?, ?)', $parameter->compile());
+        $this->assertSame($parameter->compile(), (string)$parameter);
     }
 
     public function testFlattenScalar()

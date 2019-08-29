@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Spiral\Database\Driver\MySQL;
 
 use Spiral\Database\Driver\Compiler as AbstractCompiler;
+use Spiral\Database\Driver\QueryBindings;
 
 /**
  * MySQL syntax specific compiler.
@@ -21,7 +22,7 @@ class MySQLCompiler extends AbstractCompiler
      *
      * @link http://dev.mysql.com/doc/refman/5.0/en/select.html#id4651990
      */
-    protected function compileLimit(int $limit, int $offset): string
+    protected function compileLimit(QueryBindings $bindings, int $limit, int $offset): string
     {
         if (empty($limit) && empty($offset)) {
             return '';

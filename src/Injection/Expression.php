@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Spiral\Database\Injection;
 
 use Spiral\Database\Driver\CompilerInterface;
+use Spiral\Database\Driver\QueryBindings;
 
 /**
  * SQLExpression provides ability to mock part of SQL code responsible for operations involving
@@ -20,8 +21,19 @@ use Spiral\Database\Driver\CompilerInterface;
  *
  * I potentially should have an interface for such class.
  */
-class Expression extends Fragment implements ExpressionInterface
+final class Expression implements FragmentInterface
 {
+    /** @var string */
+    private $expression = null;
+
+    /**
+     * @param string $statement
+     */
+    public function __construct(string $statement)
+    {
+        $this->expression = $statement;
+    }
+
     /**
      * Unescaped expression.
      *
@@ -29,19 +41,21 @@ class Expression extends Fragment implements ExpressionInterface
      */
     public function getExpression(): string
     {
-        return $this->statement;
+        return $this->expression;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function sqlStatement(CompilerInterface $compiler = null): string
-    {
+    public function compile(
+        QueryBindings $bindings,
+        CompilerInterface $compiler
+    ): string {
         if (empty($compiler)) {
             //We might need to throw an exception here in some cases
-            return $this->statement;
+            return $this->expression;
         }
 
-        return $compiler->quote(parent::sqlStatement());
+        return $compiler->quote($bindings, $this->expression);
     }
 }

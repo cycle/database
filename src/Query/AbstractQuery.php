@@ -11,6 +11,8 @@ namespace Spiral\Database\Query;
 
 use Spiral\Database\Driver\CompilerInterface;
 use Spiral\Database\Driver\DriverInterface;
+use Spiral\Database\Driver\QueryBindings;
+use Spiral\Database\Exception\BuilderException;
 
 /**
  * QueryBuilder classes generate set of control tokens for query compilers, this is query level
@@ -25,21 +27,33 @@ abstract class AbstractQuery implements BuilderInterface
     protected $compiler = null;
 
     /**
-     * @param DriverInterface   $driver Associated driver.
-     * @param CompilerInterface $compiler Driver specific QueryCompiler instance (one per builder).
+     * @return DriverInterface|null
      */
-    public function __construct(DriverInterface $driver, CompilerInterface $compiler)
+    public function getDriver(): ?DriverInterface
     {
-        $this->driver = $driver;
-        $this->compiler = $compiler;
+        return $this->driver;
     }
 
     /**
-     * @return DriverInterface
+     * @return CompilerInterface|null
      */
-    public function getDriver(): DriverInterface
+    public function getCompiler(): ?CompilerInterface
     {
-        return $this->driver;
+        return $this->compiler;
+    }
+
+    /**
+     * @param DriverInterface        $driver
+     * @param CompilerInterface|null $compiler
+     * @return static
+     */
+    public function withDriver(DriverInterface $driver, CompilerInterface $compiler = null)
+    {
+        $query = clone $this;
+        $query->driver = $driver;
+        $query->compiler = $compiler ?? $driver->getCompiler();
+
+        return $query;
     }
 
     /**
@@ -50,7 +64,28 @@ abstract class AbstractQuery implements BuilderInterface
      */
     public function queryString(): string
     {
-        return Interpolator::interpolate($this->sqlStatement(), $this->getParameters());
+        if ($this->compiler === null) {
+            throw new BuilderException("Unable to build query without associated driver");
+        }
+
+        return $this->compile(new QueryBindings(), $this->compiler);
+    }
+
+    /**
+     * Get query parameters.
+     *
+     * @return array
+     */
+    public function getParameters(): array
+    {
+        if ($this->compiler === null) {
+            throw new BuilderException("Unable to build query without associated driver");
+        }
+
+        $bindings = new QueryBindings();
+        $this->compile($bindings, $this->compiler);
+
+        return $bindings->getParameters();
     }
 
     /**
@@ -58,7 +93,7 @@ abstract class AbstractQuery implements BuilderInterface
      */
     public function __toString()
     {
-        return $this->sqlStatement();
+        return $this->queryString();
     }
 
     /**
@@ -66,16 +101,18 @@ abstract class AbstractQuery implements BuilderInterface
      */
     public function __debugInfo()
     {
+        $bindings = new QueryBindings();
+
         try {
-            $queryString = $this->queryString();
+            $queryString = $this->compile($bindings, $this->compiler);;
         } catch (\Exception $e) {
             $queryString = "[ERROR: {$e->getMessage()}]";
         }
 
         $debugInfo = [
-            'statement'  => $queryString,
-            'parameters' => $this->getParameters(),
-            'driver'     => $this->driver
+            'statement' => $queryString,
+            'bindings'  => $bindings->getParameters(),
+            'driver'    => $this->driver
         ];
 
         return $debugInfo;
@@ -100,27 +137,5 @@ abstract class AbstractQuery implements BuilderInterface
         }
 
         return $identifiers;
-    }
-
-    /**
-     * Expand all QueryBuilder parameters to create flatten list.
-     *
-     * @param array $parameters
-     *
-     * @return array
-     */
-    protected function flattenParameters(array $parameters): array
-    {
-        $result = [];
-        foreach ($parameters as $parameter) {
-            if ($parameter instanceof BuilderInterface) {
-                $result = array_merge($result, $parameter->getParameters());
-                continue;
-            }
-
-            $result[] = $parameter;
-        }
-
-        return $result;
     }
 }

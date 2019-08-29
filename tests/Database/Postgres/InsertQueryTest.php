@@ -8,10 +8,10 @@
 namespace Spiral\Database\Tests\Postgres;
 
 use Mockery as m;
-use Spiral\Database\Driver\Compiler;
 use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Driver\MySQL\MySQLCompiler;
 use Spiral\Database\Driver\Postgres\Query\PostgresInsertQuery;
+use Spiral\Database\Driver\QueryBindings;
 use Spiral\Database\Driver\Quoter;
 
 class InsertQueryTest extends \Spiral\Database\Tests\InsertQueryTest
@@ -83,8 +83,11 @@ class InsertQueryTest extends \Spiral\Database\Tests\InsertQueryTest
      */
     public function testInvalidCompiler()
     {
-        $insert = $this->database->insert()->sqlStatement(new MySQLCompiler(
-            new Quoter(m::mock(DriverInterface::class), "")
-        ));
+        $insert = $this->database->insert()->compile(
+            new QueryBindings(),
+            new MySQLCompiler(
+                new Quoter(m::mock(DriverInterface::class), "")
+            )
+        );
     }
 }

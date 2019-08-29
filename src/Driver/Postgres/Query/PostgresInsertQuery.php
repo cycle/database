@@ -12,6 +12,7 @@ namespace Spiral\Database\Driver\Postgres\Query;
 use Spiral\Database\Driver\CompilerInterface;
 use Spiral\Database\Driver\Postgres\PostgresCompiler;
 use Spiral\Database\Driver\Postgres\PostgresDriver;
+use Spiral\Database\Driver\QueryBindings;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Query\InsertQuery;
 
@@ -20,19 +21,12 @@ use Spiral\Database\Query\InsertQuery;
  */
 class PostgresInsertQuery extends InsertQuery
 {
-    /**
-     * {@inheritdoc}
-     *
-     * @throws BuilderException
-     */
-    public function sqlStatement(CompilerInterface $compiler = null): string
+    public function compile(QueryBindings $bindings, CompilerInterface $compiler): string
     {
-        if (empty($compiler)) {
-            $compiler = clone $this->compiler;
-        }
-
         if (!$compiler instanceof PostgresCompiler) {
-            throw new BuilderException('Postgres InsertQuery can be used only with Postgres driver and compiler');
+            throw new BuilderException(
+                'Postgres InsertQuery can be used only with Postgres driver and compiler'
+            );
         }
 
         /**
@@ -40,6 +34,7 @@ class PostgresInsertQuery extends InsertQuery
          * @var PostgresCompiler $compiler
          */
         return $compiler->compileInsert(
+            $bindings,
             $this->table,
             $this->columns,
             $this->rowsets,
@@ -52,7 +47,14 @@ class PostgresInsertQuery extends InsertQuery
      */
     public function run()
     {
-        $result = $this->driver->query($this->sqlStatement(), $this->getParameters());
+        if ($this->compiler === null) {
+            throw new BuilderException("Unable to run query without assigned driver");
+        }
+
+        $bindings = new QueryBindings();
+        $queryString = $this->compile($bindings, $this->compiler);
+
+        $result = $this->driver->query($queryString, $bindings->getParameters());
 
         try {
             if ($this->getPrimaryKey($this->compiler->getPrefix(), $this->table) !== null) {
@@ -74,7 +76,9 @@ class PostgresInsertQuery extends InsertQuery
     private function getPrimaryKey(string $prefix, string $table): ?string
     {
         if (!$this->driver instanceof PostgresDriver) {
-            throw new BuilderException('Postgres InsertQuery can be used only with Postgres driver and compiler');
+            throw new BuilderException(
+                'Postgres InsertQuery can be used only with Postgres driver and compiler'
+            );
         }
 
         return $this->driver->getPrimary($prefix, $table);

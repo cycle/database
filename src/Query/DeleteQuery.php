@@ -11,10 +11,10 @@ namespace Spiral\Database\Query;
 
 use Spiral\Database\Driver\Compiler;
 use Spiral\Database\Driver\CompilerInterface;
-use Spiral\Database\Driver\DriverInterface;
+use Spiral\Database\Driver\QueryBindings;
+use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Query\Traits\TokenTrait;
 use Spiral\Database\Query\Traits\WhereTrait;
-
 
 /**
  * Update statement builder.
@@ -33,17 +33,14 @@ class DeleteQuery extends AbstractQuery
     protected $table = '';
 
     /**
-     * {@inheritdoc}
-     *
      * @param string $table Associated table name.
      * @param array  $where Initial set of where rules specified as array.
      */
-    public function __construct(DriverInterface $driver, Compiler $compiler, string $table = null, array $where = [])
+    public function __construct(string $table = null, array $where = [])
     {
-        parent::__construct($driver, $compiler);
         $this->table = $table ?? '';
 
-        if (!empty($where)) {
+        if ($where !== []) {
             $this->where($where);
         }
     }
@@ -64,21 +61,9 @@ class DeleteQuery extends AbstractQuery
     /**
      * {@inheritdoc}
      */
-    public function getParameters(): array
+    public function compile(QueryBindings $bindings, CompilerInterface $compiler): string
     {
-        return $this->flattenParameters($this->whereParameters);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function sqlStatement(CompilerInterface $compiler = null): string
-    {
-        if (empty($compiler)) {
-            $compiler = clone $this->compiler;
-        }
-
-        return $compiler->compileDelete($this->table, $this->whereTokens);
+        return $compiler->compileDelete($bindings, $this->table, $this->whereTokens);
     }
 
     /**
@@ -88,6 +73,13 @@ class DeleteQuery extends AbstractQuery
      */
     public function run(): int
     {
-        return $this->driver->execute($this->sqlStatement(), $this->getParameters());
+        if ($this->compiler === null) {
+            throw new BuilderException("Unable to run query without assigned driver");
+        }
+
+        $bindings = new QueryBindings();
+        $queryString = $this->compile($bindings, $this->compiler);
+
+        return $this->driver->execute($queryString, $bindings->getParameters());
     }
 }

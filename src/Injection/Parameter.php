@@ -13,25 +13,17 @@ namespace Spiral\Database\Injection;
  * Default implementation of ParameterInterface, provides ability to mock value or array of values
  * and automatically create valid query placeholder at moment of query compilation (? vs (?, ?, ?)).
  */
-class Parameter implements ParameterInterface
+final class Parameter implements ParameterInterface
 {
     /**
      * Use in constructor to automatically detect parameter type.
      */
-    const DETECT_TYPE = 900888;
+    public const DETECT_TYPE = 900888;
 
-    /**
-     * Mocked value or array of values.
-     *
-     * @var mixed|array
-     */
+    /** @var mixed|array */
     private $value = null;
 
-    /**
-     * Parameter type.
-     *
-     * @var int
-     */
+    /** @var int */
     private $type = \PDO::PARAM_STR;
 
     /**
@@ -96,68 +88,13 @@ class Parameter implements ParameterInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function flatten(): array
-    {
-        if (!is_array($this->value)) {
-            return [clone $this];
-        }
-
-        $result = [];
-        foreach ($this->value as $value) {
-            if (!$value instanceof ParameterInterface) {
-                $value = $this->withValue($value, self::DETECT_TYPE);
-            }
-
-            $result = array_merge($result, $value->flatten());
-        }
-
-        return $result;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function sqlStatement(): string
-    {
-        if (is_array($this->value)) {
-            $result = '';
-            foreach ($this->value as $value) {
-                if ($value === null || ($value instanceof ParameterInterface && $value->getType() === \PDO::PARAM_NULL)) {
-                    $result .= ', NULL';
-                } else {
-                    $result .= ', ?';
-                }
-            }
-
-            return sprintf("(%s)", ltrim($result, ", "));
-        }
-
-        if ($this->value === null || $this->getType() === \PDO::PARAM_NULL) {
-            return 'NULL';
-        }
-
-        return '?';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function __toString(): string
-    {
-        return $this->sqlStatement();
-    }
-
-    /**
      * @return array
      */
     public function __debugInfo()
     {
         return [
-            'statement' => $this->sqlStatement(),
-            'value'     => $this->value,
-            'type'      => $this->type
+            'value' => $this->value,
+            'type'  => $this->type
         ];
     }
 
@@ -165,7 +102,7 @@ class Parameter implements ParameterInterface
      * @param mixed $value
      * @param int   $type
      */
-    protected function resolveType($value, int $type)
+    private function resolveType($value, int $type)
     {
         if ($value instanceof ValueInterface) {
             $this->type = $value->rawType();
@@ -186,7 +123,7 @@ class Parameter implements ParameterInterface
      *
      * @return int
      */
-    protected function detectType($value): int
+    private function detectType($value): int
     {
         switch (gettype($value)) {
             case 'boolean':

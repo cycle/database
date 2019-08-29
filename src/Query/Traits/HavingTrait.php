@@ -14,7 +14,6 @@ use Spiral\Database\Injection\ExpressionInterface;
 use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
-use Spiral\Database\Query\BuilderInterface;
 
 trait HavingTrait
 {
@@ -26,16 +25,6 @@ trait HavingTrait
      * @var array
      */
     protected $havingTokens = [];
-
-    /**
-     * Parameters collected while generating HAVING tokens, must be in a same order as parameters
-     * in resulted query.
-     *
-     * @see AbstractWhere
-     *
-     * @var array
-     */
-    protected $havingParameters = [];
 
     /**
      * Simple HAVING condition with various set of arguments.
@@ -92,22 +81,17 @@ trait HavingTrait
     /**
      * Convert various amount of where function arguments into valid where token.
      *
-     * @param string   $joiner Boolean joiner (AND | OR).
+     * @param string   $joiner     Boolean joiner (AND | OR).
      * @param array    $parameters Set of parameters collected from where functions.
-     * @param array    $tokens Array to aggregate compiled tokens. Reference.
-     * @param callable $wrapper Callback or closure used to wrap/collect every potential
+     * @param array    $tokens     Array to aggregate compiled tokens. Reference.
+     * @param callable $wrapper    Callback or closure used to wrap/collect every potential
      *                             parameter.
      *
      * @throws BuilderException
      * @see AbstractWhere
      *
      */
-    abstract protected function createToken(
-        $joiner,
-        array $parameters,
-        &$tokens = [],
-        callable $wrapper
-    );
+    abstract protected function createToken($joiner, array $parameters, &$tokens, callable $wrapper);
 
     /**
      * Applied to every potential parameter while having tokens generation.
@@ -118,11 +102,7 @@ trait HavingTrait
     {
         return function ($parameter) {
             if ($parameter instanceof FragmentInterface) {
-
-                //We are only not creating bindings for plan fragments
-                if (!$parameter instanceof ParameterInterface && !$parameter instanceof BuilderInterface) {
-                    return $parameter;
-                }
+                return $parameter;
             }
 
             if (is_array($parameter)) {
@@ -130,12 +110,9 @@ trait HavingTrait
             }
 
             //Wrapping all values with ParameterInterface
-            if (!$parameter instanceof ParameterInterface && !$parameter instanceof ExpressionInterface) {
+            if (!$parameter instanceof ParameterInterface) {
                 $parameter = new Parameter($parameter, Parameter::DETECT_TYPE);
             };
-
-            //Let's store to sent to driver when needed
-            $this->havingParameters[] = $parameter;
 
             return $parameter;
         };

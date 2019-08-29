@@ -47,6 +47,23 @@ final class Quoter
     }
 
     /**
+     * @param string $prefix
+     * @param bool   $preserveAliases
+     * @return Quoter
+     */
+    public function withPrefix(string $prefix, bool $preserveAliases = false): Quoter
+    {
+        $quoter = clone $this;
+        $quoter->prefix = $prefix;
+
+        if ($preserveAliases) {
+            $quoter->aliases = $this->aliases;
+        }
+
+        return $quoter;
+    }
+
+    /**
      * @return string
      */
     public function getPrefix(): string
@@ -71,7 +88,7 @@ final class Quoter
      * @param string $identifier Identifier can include simple column operations and functions,
      *                           having "." in it will automatically force table prefix to first
      *                           value.
-     * @param bool   $isTable Set to true to let quote method know that identifier is related to
+     * @param bool   $isTable    Set to true to let quote method know that identifier is related to
      *                           table name.
      * @return mixed|string
      */

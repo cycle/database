@@ -351,14 +351,16 @@ abstract class StatementTest extends BaseQueryTest
     {
         $this->fillData();
 
-        $this->assertSame(10, $this->database->sample_table->select()
-                                                           ->where('name', '!=', new \DateTime('1990-01-01'))
-                                                           ->count());
+        $this->assertSame(
+            10,
+            $this->database->sample_table->select()
+                ->where('name', '!=', new \DateTime('1990-01-01'))
+                ->count()
+        );
     }
 
     /**
-     * @expectedException \Spiral\Database\Exception\DriverException
-     * @expectedExceptionMessage Array parameters can not be named
+     * @expectedException \Spiral\Database\Exception\BuilderException
      */
     public function testNativeParametersError()
     {

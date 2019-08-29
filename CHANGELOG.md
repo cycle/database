@@ -3,8 +3,10 @@ CHANGELOG for 0.9.0 RC
 
 2.4.5 (28.08.2019)
 -----
-- IS NULL and IS NOT NULL now part of generated SQL rather than parameter value
 - improved SQLite multi-insert query fallback
+- all query builders can be used without driver as standalone objects
+- memory and performance optimizations for query builders
+- simplified parameter flattening logic, parameters are now assembled via compiler
 
 2.4.2 (26.08.2019)
 -----

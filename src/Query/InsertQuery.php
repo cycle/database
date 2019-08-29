@@ -11,7 +11,7 @@ namespace Spiral\Database\Query;
 
 use Spiral\Database\Driver\Compiler;
 use Spiral\Database\Driver\CompilerInterface;
-use Spiral\Database\Driver\DriverInterface;
+use Spiral\Database\Driver\QueryBindings;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Injection\Parameter;
 
@@ -42,13 +42,10 @@ class InsertQuery extends AbstractQuery
     protected $rowsets = [];
 
     /**
-     * {@inheritdoc}
-     *
-     * @param string $table Associated table name.
+     * @param string|null $table
      */
-    public function __construct(DriverInterface $driver, CompilerInterface $compiler, string $table = null)
+    public function __construct(string $table = null)
     {
-        parent::__construct($driver, $compiler);
         $this->table = $table ?? '';
     }
 
@@ -115,7 +112,7 @@ class InsertQuery extends AbstractQuery
             return $this->values(func_get_args());
         }
 
-        if (empty($rowsets)) {
+        if ($rowsets === []) {
             throw new BuilderException("Insert rowsets must not be empty");
         }
 
@@ -140,21 +137,9 @@ class InsertQuery extends AbstractQuery
     /**
      * {@inheritdoc}
      */
-    public function getParameters(): array
+    public function compile(QueryBindings $bindings, CompilerInterface $compiler): string
     {
-        return $this->flattenParameters($this->rowsets);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function sqlStatement(CompilerInterface $compiler = null): string
-    {
-        if (empty($compiler)) {
-            $compiler = clone $this->compiler;
-        }
-
-        return $compiler->compileInsert($this->table, $this->columns, $this->rowsets);
+        return $compiler->compileInsert($bindings, $this->table, $this->columns, $this->rowsets);
     }
 
     /**
@@ -162,7 +147,14 @@ class InsertQuery extends AbstractQuery
      */
     public function run()
     {
-        $this->driver->execute($this->sqlStatement(), $this->getParameters());
+        if ($this->compiler === null) {
+            throw new BuilderException("Unable to run query without assigned driver");
+        }
+
+        $bindings = new QueryBindings();
+        $queryString = $this->compile($bindings, $this->compiler);
+
+        $this->driver->execute($queryString, $bindings->getParameters());
 
         return $this->driver->lastInsertID();
     }

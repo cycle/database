@@ -16,7 +16,6 @@ use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
 use Spiral\Database\Query\AbstractQuery;
-use Spiral\Database\Query\BuilderInterface;
 
 /**
  * Provides ability to generate QueryCompiler JOIN tokens including ON conditions and table/column
@@ -58,7 +57,7 @@ trait JoinTrait
      *
      * @var string
      */
-    private $activeJoin = null;
+    private $lastJoin = null;
 
     /**
      * Set of join tokens with on and on where conditions associated, must be supported by
@@ -69,34 +68,21 @@ trait JoinTrait
     protected $joinTokens = [];
 
     /**
-     * Parameters collected while generating ON WHERE tokens, must be in a same order as parameters
-     * in resulted query. Parameters declared in ON methods will be converted into expressions and
-     * will not be aggregated.
-     *
-     * @see AbstractWhere
-     *
-     * @var array
-     */
-    protected $onParameters = [];
-
-    /**
      * Register new JOIN with specified type with set of on conditions (linking one table to
      * another, no parametric on conditions allowed here).
      *
-     * @param string|AbstractQuery $type Join type. Allowed values, LEFT, RIGHT, INNER and etc.
-     * @param string               $outer Joined table name (without prefix), may include AS
-     *                                    statement.
+     * @param string|AbstractQuery $type  Join type. Allowed values, LEFT, RIGHT, INNER and etc.
+     * @param string               $outer Joined table name (without prefix), may include AS statement.
      * @param string               $alias Joined table or query alias.
-     * @param mixed                $on Simplified on definition linking table names (no
+     * @param mixed                $on    Simplified on definition linking table names (no
      *                                    parameters allowed) or closure.
-     *
      * @return $this
      *
      * @throws BuilderException
      */
     public function join($type, $outer, string $alias = null, $on = null)
     {
-        $this->joinTokens[++$this->activeJoin] = [
+        $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
             'type'  => strtoupper($type),
             'on'    => []
@@ -112,17 +98,15 @@ trait JoinTrait
      * @link http://www.w3schools.com/sql/sql_join_inner.asp
      * @see  join()
      *
-     * @param string|AbstractQuery $outer Joined table name (without prefix), may include AS
-     *                                    statement.
+     * @param string|AbstractQuery $outer Joined table name (without prefix), may include AS statement.
      * @param string               $alias Joined table or query alias.
-     *
      * @return $this
      *
      * @throws BuilderException
      */
     public function innerJoin($outer, string $alias = null)
     {
-        $this->joinTokens[++$this->activeJoin] = [
+        $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
             'alias' => $alias,
             'type'  => 'INNER',
@@ -139,19 +123,17 @@ trait JoinTrait
      * @link http://www.w3schools.com/sql/sql_join_right.asp
      * @see  join()
      *
-     * @param string|AbstractQuery $outer Joined table name (without prefix), may include AS
-     *                                    statement.
+     * @param string|AbstractQuery $outer Joined table name (without prefix), may include AS statement.
      * @param string               $alias Joined table or query alias.
-     * @param mixed                $on Simplified on definition linking table names (no
+     * @param mixed                $on    Simplified on definition linking table names (no
      *                                    parameters allowed) or closure.
-     *
      * @return $this
      *
      * @throws BuilderException
      */
     public function rightJoin($outer, string $alias = null, $on = null)
     {
-        $this->joinTokens[++$this->activeJoin] = [
+        $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
             'alias' => $alias,
             'type'  => 'RIGHT',
@@ -169,17 +151,15 @@ trait JoinTrait
      * @link http://www.w3schools.com/sql/sql_join_left.asp
      * @see  join()
      *
-     * @param string|AbstractQuery $outer Joined table name (without prefix), may include AS
-     *                                    statement.
+     * @param string|AbstractQuery $outer Joined table name (without prefix), may include AS statement.
      * @param string               $alias Joined table or query alias.
-     *
      * @return $this
      *
      * @throws BuilderException
      */
     public function leftJoin($outer, string $alias = null)
     {
-        $this->joinTokens[++$this->activeJoin] = [
+        $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
             'alias' => $alias,
             'type'  => 'LEFT',
@@ -197,17 +177,15 @@ trait JoinTrait
      * @link http://www.w3schools.com/sql/sql_join_full.asp
      * @see  join()
      *
-     * @param string|AbstractQuery $outer Joined table name (without prefix), may include AS
-     *                                    statement.
+     * @param string|AbstractQuery $outer Joined table name (without prefix), may include AS statement.
      * @param string               $alias Joined table or query alias.
-     *
      * @return $this
      *
      * @throws BuilderException
      */
     public function fullJoin($outer, string $alias = null)
     {
-        $this->joinTokens[++$this->activeJoin] = [
+        $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
             'alias' => $alias,
             'type'  => 'FULL',
@@ -222,7 +200,6 @@ trait JoinTrait
      * together, no parametric values allowed.
      *
      * @param mixed ...$args [(column, outer column), (column, operator, outer column)]
-     *
      * @return $this
      *
      * @throws BuilderException
@@ -232,7 +209,7 @@ trait JoinTrait
         $this->createToken(
             'AND',
             $args,
-            $this->joinTokens[$this->activeJoin]['on'],
+            $this->joinTokens[$this->lastJoin]['on'],
             $this->onWrapper()
         );
 
@@ -244,7 +221,6 @@ trait JoinTrait
      * together, no parametric values allowed.
      *
      * @param mixed ...$args [(column, outer column), (column, operator, outer column)]
-     *
      * @return $this
      *
      * @throws BuilderException
@@ -254,7 +230,7 @@ trait JoinTrait
         $this->createToken(
             'AND',
             $args,
-            $this->joinTokens[$this->activeJoin]['on'],
+            $this->joinTokens[$this->lastJoin]['on'],
             $this->onWrapper()
         );
 
@@ -266,7 +242,6 @@ trait JoinTrait
      * together, no parametric values allowed.
      *
      * @param mixed ...$args [(column, outer column), (column, operator, outer column)]
-     *
      * @return $this
      *
      * @throws BuilderException
@@ -276,7 +251,7 @@ trait JoinTrait
         $this->createToken(
             'OR',
             $args,
-            $this->joinTokens[$this->activeJoin]['on'],
+            $this->joinTokens[$this->lastJoin]['on'],
             $this->onWrapper()
         );
 
@@ -288,7 +263,6 @@ trait JoinTrait
      * such methods.
      *
      * @param mixed ...$args [(column, value), (column, operator, value)]
-     *
      * @return $this
      *
      * @throws BuilderException
@@ -300,7 +274,7 @@ trait JoinTrait
         $this->createToken(
             'AND',
             $args,
-            $this->joinTokens[$this->activeJoin]['on'],
+            $this->joinTokens[$this->lastJoin]['on'],
             $this->onWhereWrapper()
         );
 
@@ -312,7 +286,6 @@ trait JoinTrait
      * such methods.
      *
      * @param mixed ...$args [(column, value), (column, operator, value)]
-     *
      * @return $this
      *
      * @throws BuilderException
@@ -324,7 +297,7 @@ trait JoinTrait
         $this->createToken(
             'AND',
             $args,
-            $this->joinTokens[$this->activeJoin]['on'],
+            $this->joinTokens[$this->lastJoin]['on'],
             $this->onWhereWrapper()
         );
 
@@ -336,7 +309,6 @@ trait JoinTrait
      * such methods.
      *
      * @param mixed ...$args [(column, value), (column, operator, value)]
-     *
      * @return $this
      *
      * @throws BuilderException
@@ -348,7 +320,7 @@ trait JoinTrait
         $this->createToken(
             'OR',
             $args,
-            $this->joinTokens[$this->activeJoin]['on'],
+            $this->joinTokens[$this->lastJoin]['on'],
             $this->onWhereWrapper()
         );
 
@@ -358,22 +330,17 @@ trait JoinTrait
     /**
      * Convert various amount of where function arguments into valid where token.
      *
-     * @param string   $joiner Boolean joiner (AND | OR).
+     * @param string   $joiner     Boolean joiner (AND | OR).
      * @param array    $parameters Set of parameters collected from where functions.
-     * @param array    $tokens Array to aggregate compiled tokens. Reference.
-     * @param callable $wrapper Callback or closure used to wrap/collect every potential
+     * @param array    $tokens     Array to aggregate compiled tokens. Reference.
+     * @param callable $wrapper    Callback or closure used to wrap/collect every potential
      *                             parameter.
      *
      * @throws BuilderException
      * @see AbstractWhere
      *
      */
-    abstract protected function createToken(
-        $joiner,
-        array $parameters,
-        &$tokens = [],
-        callable $wrapper
-    );
+    abstract protected function createToken($joiner, array $parameters, &$tokens, callable $wrapper);
 
     /**
      * Convert parameters used in JOIN ON statements into sql expressions.
@@ -382,8 +349,8 @@ trait JoinTrait
      */
     private function onWrapper()
     {
-        return function ($parameter) {
-            if ($parameter instanceof FragmentInterface) {
+        return static function ($parameter) {
+            if ($parameter instanceof FragmentInterface || $parameter instanceof ParameterInterface) {
                 return $parameter;
             }
 
@@ -398,12 +365,9 @@ trait JoinTrait
      */
     private function onWhereWrapper()
     {
-        return function ($parameter) {
+        return static function ($parameter) {
             if ($parameter instanceof FragmentInterface) {
-                //We are only not creating bindings for plan fragments
-                if (!$parameter instanceof ParameterInterface && !$parameter instanceof BuilderInterface) {
-                    return $parameter;
-                }
+                return $parameter;
             }
 
             if (is_array($parameter)) {
@@ -411,12 +375,9 @@ trait JoinTrait
             }
 
             //Wrapping all values with ParameterInterface
-            if (!$parameter instanceof ParameterInterface && !$parameter instanceof ExpressionInterface) {
+            if (!$parameter instanceof ParameterInterface) {
                 $parameter = new Parameter($parameter, Parameter::DETECT_TYPE);
             };
-
-            //Let's store to sent to driver when needed
-            $this->onParameters[] = $parameter;
 
             return $parameter;
         };

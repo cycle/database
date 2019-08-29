@@ -31,7 +31,7 @@ trait BuilderTrait
      */
     public function insertQuery(string $prefix, string $table = null): InsertQuery
     {
-        return new InsertQuery($this, $this->getCompiler($prefix), $table);
+        return (new InsertQuery($table))->withDriver($this, $this->getCompiler($prefix));
     }
 
     /**
@@ -45,19 +45,19 @@ trait BuilderTrait
      */
     public function selectQuery(string $prefix, array $from = [], array $columns = []): SelectQuery
     {
-        return new SelectQuery($this, $this->getCompiler($prefix), $from, $columns);
+        return (new SelectQuery($from, $columns))->withDriver($this, $this->getCompiler($prefix));
     }
 
     /**
      * @param string      $prefix
-     * @param string|null $from Database specific table prefix, used to quote table names and
+     * @param string|null $from  Database specific table prefix, used to quote table names and
      *                           build aliases.
      * @param array       $where Initial builder parameters.
      * @return DeleteQuery
      */
     public function deleteQuery(string $prefix, string $from = null, array $where = []): DeleteQuery
     {
-        return new DeleteQuery($this, $this->getCompiler($prefix), $from, $where);
+        return (new DeleteQuery($from, $where))->withDriver($this, $this->getCompiler($prefix));
     }
 
     /**
@@ -76,7 +76,7 @@ trait BuilderTrait
         array $where = [],
         array $values = []
     ): UpdateQuery {
-        return new UpdateQuery($this, $this->getCompiler($prefix), $table, $where, $values);
+        return (new UpdateQuery($table, $where, $values))->withDriver($this, $this->getCompiler($prefix));;
     }
 
     /**

@@ -11,7 +11,7 @@ namespace Spiral\Database\Query;
 
 use Spiral\Database\Driver\Compiler;
 use Spiral\Database\Driver\CompilerInterface;
-use Spiral\Database\Driver\Driver;
+use Spiral\Database\Driver\QueryBindings;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Exception\StatementException;
 use Spiral\Database\Injection\FragmentInterface;
@@ -83,19 +83,11 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
     protected $grouping = [];
 
     /**
-     * {@inheritdoc}
-     *
-     * @param array $from Initial set of table names.
+     * @param array $from    Initial set of table names.
      * @param array $columns Initial set of columns to fetch.
      */
-    public function __construct(
-        Driver $driver,
-        Compiler $compiler,
-        array $from = [],
-        array $columns = []
-    ) {
-        parent::__construct($driver, $compiler);
-
+    public function __construct(array $from = [], array $columns = [])
+    {
         $this->tables = $from;
         if (!empty($columns)) {
             $this->columns = $this->fetchIdentifiers($columns);
@@ -239,29 +231,23 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
     /**
      * {@inheritdoc}
      */
-    public function getParameters(): array
+    public function compile(QueryBindings $bindings, CompilerInterface $compiler): string
     {
-        $parameters = $this->flattenParameters(array_merge(
-            $this->onParameters,
-            $this->whereParameters,
-            $this->havingParameters
-        ));
-
-        //Unions always located at the end of query.
-        foreach ($this->joinTokens as $join) {
-            if ($join['outer'] instanceof BuilderInterface) {
-                $parameters = array_merge($parameters, $join['outer']->getParameters());
-            }
-        }
-
-        //Unions always located at the end of query.
-        foreach ($this->unionTokens as $union) {
-            if ($union[1] instanceof BuilderInterface) {
-                $parameters = array_merge($parameters, $union[1]->getParameters());
-            }
-        }
-
-        return $parameters;
+        //11 parameters!
+        return $compiler->compileSelect(
+            $bindings,
+            $this->tables,
+            $this->distinct,
+            $this->columns,
+            $this->joinTokens,
+            $this->whereTokens,
+            $this->havingTokens,
+            $this->grouping,
+            $this->ordering,
+            $this->getLimit(),
+            $this->getOffset(),
+            $this->unionTokens
+        );
     }
 
     /**
@@ -271,7 +257,14 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
      */
     public function run()
     {
-        return $this->driver->query($this->sqlStatement(), $this->getParameters());
+        if ($this->compiler === null) {
+            throw new BuilderException("Unable to run query without assigned driver");
+        }
+
+        $bindings = new QueryBindings();
+        $queryString = $this->compile($bindings, $this->compiler);
+
+        return $this->driver->query($queryString, $bindings->getParameters());
     }
 
     /**
@@ -393,31 +386,6 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
     public function getIterator()
     {
         return $this->run();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function sqlStatement(CompilerInterface $compiler = null): string
-    {
-        if (empty($compiler)) {
-            $compiler = clone $this->compiler;
-        }
-
-        //11 parameters!
-        return $compiler->compileSelect(
-            $this->tables,
-            $this->distinct,
-            $this->columns,
-            $this->joinTokens,
-            $this->whereTokens,
-            $this->havingTokens,
-            $this->grouping,
-            $this->ordering,
-            $this->getLimit(),
-            $this->getOffset(),
-            $this->unionTokens
-        );
     }
 
     /**

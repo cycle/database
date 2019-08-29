@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Spiral\Database\Driver\SQLite;
 
 use Spiral\Database\Driver\Compiler as AbstractCompiler;
+use Spiral\Database\Driver\QueryBindings;
 use Spiral\Database\Exception\CompilerException;
 use Spiral\Database\Injection\ParameterInterface;
 
@@ -23,36 +24,52 @@ class SQLiteCompiler extends AbstractCompiler
      *
      * @see http://stackoverflow.com/questions/1609637/is-it-possible-to-insert-multiple-rows-at-a-time-in-an-sqlite-database
      */
-    public function compileInsert(string $table, array $columns, array $rowsets): string
-    {
-        //@todo possibly different statement for versions higher than 3.7.11
-        if (count($rowsets) == 1) {
-            return parent::compileInsert($table, $columns, $rowsets);
+    public function compileInsert(
+        QueryBindings $bindings,
+        string $table,
+        array $columns,
+        array $values
+    ): string {
+        // @todo possibly different statement for versions higher than 3.7.11
+        if (count($values) == 1) {
+            return parent::compileInsert($bindings, $table, $columns, $values);
         }
 
         //SQLite uses alternative syntax
         $statement = [];
-        $statement[] = "INSERT INTO {$this->quote($table, true)} ({$this->prepareColumns($columns)})";
+        $statement[] = sprintf(
+            "INSERT INTO %s (%s)",
+            $this->quote($bindings, $table, true),
+            $this->compileColumns($bindings, $columns)
+        );
 
-        foreach ($rowsets as $rowset) {
-            if (count($statement) == 1) {
-                $selectColumns = [];
-
-                if (!$rowset instanceof ParameterInterface) {
-                    throw new CompilerException("Update parameter expected to be parametric array");
-                }
-
-                $values = $rowset->flatten();
-                foreach ($columns as $index => $column) {
-                    $selectColumns[] = $this->prepareValue($values[$index]) . " AS {$this->quote($column)}";
-                }
-
-                $statement[] = 'SELECT ' . implode(', ', $selectColumns);
-            } else {
-                //It is crityially important to use UNION ALL, UNION will try to merge values together
-                //which will cause non predictable insert order
-                $statement[] = 'UNION ALL SELECT ' . trim($this->prepareValue($rowset), '()');
+        foreach ($values as $rowset) {
+            if (count($statement) !== 1) {
+                // It is critically important to use UNION ALL, UNION will try to merge values together
+                // which will cause non predictable insert order
+                $statement[] = sprintf(
+                    "UNION ALL SELECT %s",
+                    trim($this->compileValue($bindings, $rowset), '()')
+                );
+                continue;
             }
+
+            $selectColumns = [];
+
+            if (!$rowset instanceof ParameterInterface || !$rowset->isArray()) {
+                throw new CompilerException("Update parameter expected to be parametric array");
+            }
+
+            $rowset = $rowset->getValue();
+            foreach ($columns as $index => $column) {
+                $selectColumns[] = sprintf(
+                    "%s AS %s",
+                    $this->compileValue($bindings, $rowset[$index]),
+                    $this->quote($bindings, $column)
+                );
+            }
+
+            $statement[] = 'SELECT ' . implode(', ', $selectColumns);
         }
 
         return implode("\n", $statement);
@@ -63,7 +80,7 @@ class SQLiteCompiler extends AbstractCompiler
      *
      * @link http://stackoverflow.com/questions/10491492/sqllite-with-skip-offset-only-not-limit
      */
-    protected function compileLimit(int $limit, int $offset): string
+    protected function compileLimit(QueryBindings $bindings, int $limit, int $offset): string
     {
         if (empty($limit) && empty($offset)) {
             return '';

@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Spiral\Database\Driver\SQLServer;
 
 use Spiral\Database\Driver\Compiler;
+use Spiral\Database\Driver\QueryBindings;
 use Spiral\Database\Injection\Fragment;
 
 /**
@@ -33,6 +34,7 @@ class SQLServerCompiler extends Compiler
      * @link http://stackoverflow.com/questions/971964/limit-10-20-in-sql-server
      */
     public function compileSelect(
+        QueryBindings $bindings,
         array $fromTables,
         $distinct,
         array $columns,
@@ -45,7 +47,6 @@ class SQLServerCompiler extends Compiler
         int $offset = 0,
         array $unionTokens = []
     ): string {
-
         if ((empty($limit) && empty($offset)) || !empty($ordering)) {
             //When no limits are specified we can use normal query syntax
             return call_user_func_array(['parent', 'compileSelect'], func_get_args());
@@ -58,27 +59,27 @@ class SQLServerCompiler extends Compiler
          * Please see set of alerts raised in SelectQuery builder.
          */
         $columns[] = new Fragment(
-            "ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS {$this->quote(self::ROW_NUMBER)}"
+            "ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS {$this->quote($bindings,self::ROW_NUMBER)}"
         );
 
-        //Let's compile MOST of our query :)
-        $selection = parent::compileSelect(
-            $fromTables,
-            $distinct,
-            $columns,
-            $joinTokens,
-            $whereTokens,
-            $havingTokens,
-            $grouping,
-            [],
-            0, //No limit or offset
-            0, //No limit or offset
-            $unionTokens
+        return sprintf(
+            "SELECT * FROM (\n%s\n) AS [ORD_FALLBACK] %s",
+            parent::compileSelect(
+                $bindings,
+                $fromTables,
+                $distinct,
+                $columns,
+                $joinTokens,
+                $whereTokens,
+                $havingTokens,
+                $grouping,
+                [],
+                0, //No limit or offset
+                0, //No limit or offset
+                $unionTokens
+            ),
+            $this->compileLimit($bindings, $limit, $offset, self::ROW_NUMBER)
         );
-
-        $limitStatement = $this->compileLimit($limit, $offset, self::ROW_NUMBER);
-
-        return "SELECT * FROM (\n{$selection}\n) AS [ORD_FALLBACK] {$limitStatement}";
     }
 
     /**
@@ -89,7 +90,7 @@ class SQLServerCompiler extends Compiler
      *
      * @link http://stackoverflow.com/questions/2135418/equivalent-of-limit-and-offset-for-sql-server
      */
-    protected function compileLimit(int $limit, int $offset, string $rowNumber = null): string
+    protected function compileLimit(QueryBindings $bindings, int $limit, int $offset, string $rowNumber = null): string
     {
         if (empty($limit) && empty($offset)) {
             return '';
@@ -106,7 +107,7 @@ class SQLServerCompiler extends Compiler
             return trim($statement);
         }
 
-        $statement = "WHERE {$this->quote($rowNumber)} ";
+        $statement = "WHERE {$this->quote($bindings, $rowNumber)} ";
 
         //0 = row_number(1)
         $offset = $offset + 1;

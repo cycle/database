@@ -2014,9 +2014,9 @@ abstract class SelectQueryTest extends BaseQueryTest
 
         $this->assertSameQuery(
             "SELECT * FROM {prefix_users} AS {u} LEFT JOIN (
-                    SELECT * FROM {prefix_posts} AS {p}
-                    WHERE {p}.{user_id} = {u}.{id}
-                  ) AS {sub_posts} ",
+                        SELECT * FROM {prefix_posts} AS {p}
+                        WHERE {p}.{user_id} = {u}.{id}
+                      ) AS {sub_posts} ",
             $select
         );
     }

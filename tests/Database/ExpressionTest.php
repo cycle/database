@@ -23,14 +23,14 @@ class ExpressionTest extends TestCase
         $this->assertInstanceOf(ExpressionInterface::class, $expression);
 
         $this->assertSame('expression', $expression->getExpression());
-        $this->assertSame($expression->getExpression(), $expression->sqlStatement());
+        $this->assertSame($expression->getExpression(), $expression->compile());
 
         //Compiler-less
-        $this->assertSame($expression->sqlStatement(), (string)$expression);
+        $this->assertSame($expression->compile(), (string)$expression);
 
         $compiler = m::mock(Compiler::class);
         $compiler->shouldReceive('quote')->with('expression')->andReturn('"expression"');
 
-        $this->assertSame('"expression"', $expression->sqlStatement($compiler));
+        $this->assertSame('"expression"', $expression->compile($compiler));
     }
 }

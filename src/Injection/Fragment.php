@@ -9,16 +9,19 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Injection;
 
+use Spiral\Database\Driver\CompilerInterface;
+use Spiral\Database\Driver\QueryBindings;
+
 /**
  * Default implementation of SQLFragmentInterface, provides ability to inject custom SQL code into
  * query builders. Usually used to mock database specific functions.
  *
  * Example: ...->where('time_created', '>', new SQLFragment("NOW()"));
  */
-class Fragment implements FragmentInterface
+final class Fragment implements FragmentInterface
 {
     /** @var string */
-    protected $statement = null;
+    private $statement = null;
 
     /**
      * @param string $statement
@@ -29,27 +32,13 @@ class Fragment implements FragmentInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param QueryBindings     $bindings
+     * @param CompilerInterface $compiler
+     * @return string
      */
-    public function sqlStatement(): string
+    public function compile(QueryBindings $bindings, CompilerInterface $compiler): string
     {
         return $this->statement;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function __toString(): string
-    {
-        return $this->sqlStatement();
-    }
-
-    /**
-     * @return array
-     */
-    public function __debugInfo()
-    {
-        return ['statement' => $this->sqlStatement()];
     }
 
     /**

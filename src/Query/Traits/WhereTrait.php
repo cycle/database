@@ -10,11 +10,9 @@ declare(strict_types=1);
 namespace Spiral\Database\Query\Traits;
 
 use Spiral\Database\Exception\BuilderException;
-use Spiral\Database\Injection\ExpressionInterface;
 use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
-use Spiral\Database\Query\BuilderInterface;
 
 trait WhereTrait
 {
@@ -26,23 +24,12 @@ trait WhereTrait
     protected $whereTokens = [];
 
     /**
-     * Parameters collected while generating WHERE tokens, must be in a same order as parameters
-     * in resulted query.
-     *
-     * @var array
-     */
-    protected $whereParameters = [];
-
-    /**
      * Simple WHERE condition with various set of arguments.
      *
      * @param mixed ...$args [(column, value), (column, operator, value)]
-     *
      * @return self|$this
      *
      * @throws BuilderException
-     * @see AbstractWhere
-     *
      */
     public function where(...$args): self
     {
@@ -55,12 +42,9 @@ trait WhereTrait
      * Simple AND WHERE condition with various set of arguments.
      *
      * @param mixed ...$args [(column, value), (column, operator, value)]
-     *
      * @return self|$this
      *
      * @throws BuilderException
-     * @see AbstractWhere
-     *
      */
     public function andWhere(...$args): self
     {
@@ -73,12 +57,9 @@ trait WhereTrait
      * Simple OR WHERE condition with various set of arguments.
      *
      * @param mixed ...$args [(column, value), (column, operator, value)]
-     *
      * @return self|$this
      *
      * @throws BuilderException
-     * @see AbstractWhere
-     *
      */
     public function orWhere(...$args): self
     {
@@ -90,22 +71,14 @@ trait WhereTrait
     /**
      * Convert various amount of where function arguments into valid where token.
      *
-     * @param string   $joiner Boolean joiner (AND | OR).
+     * @param string   $joiner     Boolean joiner (AND | OR).
      * @param array    $parameters Set of parameters collected from where functions.
-     * @param array    $tokens Array to aggregate compiled tokens. Reference.
-     * @param callable $wrapper Callback or closure used to wrap/collect every potential
+     * @param array    $tokens     Array to aggregate compiled tokens. Reference.
+     * @param callable $wrapper    Callback or closure used to wrap/collect every potential
      *                             parameter.
-     *
      * @throws BuilderException
-     * @see AbstractWhere
-     *
      */
-    abstract protected function createToken(
-        $joiner,
-        array $parameters,
-        &$tokens = [],
-        callable $wrapper
-    );
+    abstract protected function createToken($joiner, array $parameters, &$tokens, callable $wrapper);
 
     /**
      * Applied to every potential parameter while where tokens generation. Used to prepare and
@@ -115,12 +88,9 @@ trait WhereTrait
      */
     private function whereWrapper()
     {
-        return function ($parameter) {
+        return static function ($parameter) {
             if ($parameter instanceof FragmentInterface) {
-                //We are only not creating bindings for plan fragments
-                if (!$parameter instanceof ParameterInterface && !$parameter instanceof BuilderInterface) {
-                    return $parameter;
-                }
+                return $parameter;
             }
 
             if (is_array($parameter)) {
@@ -128,12 +98,9 @@ trait WhereTrait
             }
 
             //Wrapping all values with ParameterInterface
-            if (!$parameter instanceof ParameterInterface && !$parameter instanceof ExpressionInterface) {
+            if (!$parameter instanceof ParameterInterface) {
                 $parameter = new Parameter($parameter, Parameter::DETECT_TYPE);
             };
-
-            //Let's store to sent to driver when needed
-            $this->whereParameters[] = $parameter;
 
             return $parameter;
         };

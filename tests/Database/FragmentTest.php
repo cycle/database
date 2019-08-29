@@ -19,8 +19,8 @@ class FragmentTest extends TestCase
         $fragment = new Fragment('some sql');
         $this->assertInstanceOf(FragmentInterface::class, $fragment);
 
-        $this->assertSame('some sql', $fragment->sqlStatement());
-        $this->assertSame($fragment->sqlStatement(), (string)$fragment);
+        $this->assertSame('some sql', $fragment->compile());
+        $this->assertSame($fragment->compile(), (string)$fragment);
     }
 
     public function testDebugInfo()
@@ -28,7 +28,7 @@ class FragmentTest extends TestCase
         $fragment = new Fragment('some sql');
 
         $this->assertSame([
-            'statement' => $fragment->sqlStatement()
+            'statement' => $fragment->compile()
         ], $fragment->__debugInfo());
     }
 
