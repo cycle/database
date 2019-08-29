@@ -38,10 +38,6 @@ final class Interpolator
 
         //Let's prepare values so they looks better
         foreach ($parameters as $index => $parameter) {
-            if ($parameter->getType() === \PDO::PARAM_NULL) {
-                continue;
-            }
-
             $value = self::resolveValue($parameter);
 
             if (is_numeric($index)) {
@@ -61,37 +57,37 @@ final class Interpolator
      * Every value has to wrapped with parameter interface.
      *
      * @param array $parameters
-     * @return ParameterInterface[]
+     * @return \Generator
      *
      * @throws InterpolatorException
      */
-    public static function flattenParameters(array $parameters): array
+    public static function flattenParameters(array $parameters): \Generator
     {
-        $flatten = [];
-        foreach ($parameters as $key => $parameter) {
-            if (!$parameter instanceof ParameterInterface) {
-                //Let's wrap value
-                $parameter = new Parameter($parameter, Parameter::DETECT_TYPE);
+        $index = 0;
+        foreach ($parameters as $name => $parameter) {
+            if (is_string($name)) {
+                $index = $name;
+            } else {
+                $index++;
             }
 
-            if ($parameter->isArray()) {
-                if (!is_numeric($key)) {
-                    throw new InterpolatorException("Array parameters can not be named");
+            if (!$parameter instanceof ParameterInterface) {
+                $parameter = new Parameter($parameter);
+            }
+
+            if (!$parameter->isArray()) {
+                yield $index => $parameter;
+                continue;
+            }
+
+            foreach ($parameter->getValue() as $child) {
+                if (!$child instanceof ParameterInterface) {
+                    $child = new Parameter($child);
                 }
 
-                //Quick and dirty
-                $flatten = array_merge($flatten, $parameter->flatten());
-            } else {
-                if (is_numeric($key)) {
-                    //We have to shift numeric keys due arrays
-                    $flatten[] = $parameter;
-                } else {
-                    $flatten[$key] = $parameter;
-                }
+                yield $index++ => $child;
             }
         }
-
-        return $flatten;
     }
 
     /**

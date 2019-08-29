@@ -9,7 +9,6 @@
 namespace Spiral\Database\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Spiral\Database\Injection\ExpressionInterface;
 use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
@@ -19,9 +18,7 @@ class ParameterTest extends TestCase
     public function testValue()
     {
         $parameter = new Parameter('value');
-        $this->assertInstanceOf(FragmentInterface::class, $parameter);
         $this->assertInstanceOf(ParameterInterface::class, $parameter);
-        $this->assertNotInstanceOf(ExpressionInterface::class, $parameter);
 
         $this->assertSame('value', $parameter->getValue());
 
@@ -43,54 +40,6 @@ class ParameterTest extends TestCase
 
         $this->assertSame(2334, $newParameter->getValue());
         $this->assertSame(\PDO::PARAM_INT, $newParameter->getType());
-    }
-
-    public function testPlaceholders()
-    {
-        $parameter = new Parameter(123, \PDO::PARAM_INT);
-
-        $this->assertSame('?', $parameter->compile());
-        $this->assertSame($parameter->compile(), (string)$parameter);
-    }
-
-    public function testPlaceholdersArray()
-    {
-        $parameter = new Parameter([1, 2, 3], \PDO::PARAM_INT);
-
-        $this->assertSame('(?, ?, ?)', $parameter->compile());
-        $this->assertSame($parameter->compile(), (string)$parameter);
-    }
-
-    public function testFlattenScalar()
-    {
-        $parameter = new Parameter(123, \PDO::PARAM_INT);
-
-        $flattened = $parameter->flatten();
-        $this->assertCount(1, $flattened);
-
-        foreach ($flattened as $subParameter) {
-            $this->assertInstanceOf(ParameterInterface::class, $subParameter);
-        }
-
-        $this->assertSame(123, $flattened[0]->getValue());
-        $this->assertNotSame($parameter, $flattened[0]);
-    }
-
-    public function testFlattenArray()
-    {
-        $parameter = new Parameter([1, 2, 3], \PDO::PARAM_INT);
-
-        $flattened = $parameter->flatten();
-        $this->assertCount(3, $flattened);
-
-        foreach ($flattened as $subParameter) {
-            $this->assertInstanceOf(ParameterInterface::class, $subParameter);
-            $this->assertSame(\PDO::PARAM_INT, $subParameter->getType());
-        }
-
-        $this->assertSame(1, $flattened[0]->getValue());
-        $this->assertSame(2, $flattened[1]->getValue());
-        $this->assertSame(3, $flattened[2]->getValue());
     }
 
     public function testAutoTyping()
@@ -128,7 +77,6 @@ class ParameterTest extends TestCase
         $parameter = new Parameter([1, 2, 3]);
 
         $this->assertSame([
-            'statement' => '(?, ?, ?)',
             'value'     => [1, 2, 3],
             'type'      => \PDO::PARAM_STR
         ], $parameter->__debugInfo());

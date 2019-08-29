@@ -8,7 +8,12 @@
 
 namespace Spiral\Database\Tests;
 
+use Mockery as m;
 use PHPUnit\Framework\TestCase;
+use Spiral\Database\Driver\DriverInterface;
+use Spiral\Database\Driver\MySQL\MySQLCompiler;
+use Spiral\Database\Driver\QueryBindings;
+use Spiral\Database\Driver\Quoter;
 use Spiral\Database\Injection\Fragment;
 use Spiral\Database\Injection\FragmentInterface;
 
@@ -19,17 +24,12 @@ class FragmentTest extends TestCase
         $fragment = new Fragment('some sql');
         $this->assertInstanceOf(FragmentInterface::class, $fragment);
 
-        $this->assertSame('some sql', $fragment->compile());
-        $this->assertSame($fragment->compile(), (string)$fragment);
-    }
-
-    public function testDebugInfo()
-    {
-        $fragment = new Fragment('some sql');
-
-        $this->assertSame([
-            'statement' => $fragment->compile()
-        ], $fragment->__debugInfo());
+        $this->assertSame('some sql', $fragment->compile(
+            new QueryBindings(),
+            new MySQLCompiler(
+                new Quoter(m::mock(DriverInterface::class), "")
+            )
+        ));
     }
 
     public function testSerialize()
