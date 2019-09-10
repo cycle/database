@@ -85,8 +85,7 @@ class PostgresTable extends AbstractTable
         $result = [];
         foreach ($query->fetchAll() as $schema) {
             $name = $schema['column_name'];
-            if (
-                is_string($schema['column_default'])
+            if (is_string($schema['column_default'])
                 && preg_match(
                     '/^nextval\([\'"]([a-z0-9_"]+)[\'"](?:::regclass)?\)$/i',
                     $schema['column_default'],

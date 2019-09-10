@@ -102,10 +102,9 @@ class MySQLHandler extends Handler
     protected function assertValid(AbstractColumn $column)
     {
         if (in_array(
-                $column->getAbstractType(),
-                ['text', 'tinyText', 'longText', 'blob', 'tinyBlob', 'longBlob']
-            )
-            && is_string($column->getDefaultValue()) && $column->getDefaultValue() !== ''
+            $column->getAbstractType(),
+            ['text', 'tinyText', 'longText', 'blob', 'tinyBlob', 'longBlob']
+        ) && is_string($column->getDefaultValue()) && $column->getDefaultValue() !== ''
         ) {
             throw new MySQLException(
                 "Column {$column} of type text/blob can not have non empty default value"

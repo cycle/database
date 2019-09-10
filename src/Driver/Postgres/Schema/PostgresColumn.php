@@ -363,8 +363,7 @@ class PostgresColumn extends AbstractColumn
         $column->defaultValue = $schema['column_default'];
         $column->nullable = $schema['is_nullable'] == 'YES';
 
-        if (
-            in_array($column->type, ['int', 'bigint', 'integer'])
+        if (in_array($column->type, ['int', 'bigint', 'integer'])
             && is_string($column->defaultValue)
             && preg_match('/nextval(.*)/', $column->defaultValue)
         ) {
@@ -481,8 +480,7 @@ class PostgresColumn extends AbstractColumn
             return true;
         }
 
-        if (
-            in_array($this->getAbstractType(), ['primary', 'bigPrimary'])
+        if (in_array($this->getAbstractType(), ['primary', 'bigPrimary'])
             && $initial->getDefaultValue() != $this->getDefaultValue()
         ) {
             //PG adds default values to primary keys

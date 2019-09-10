@@ -125,14 +125,16 @@ class MySQLTable extends AbstractTable
     protected function fetchReferences(): array
     {
         $references = $this->driver->query(
-            'SELECT * FROM `information_schema`.`referential_constraints` WHERE `constraint_schema` = ? AND `table_name` = ?',
+            'SELECT * FROM `information_schema`.`referential_constraints`
+            WHERE `constraint_schema` = ? AND `table_name` = ?',
             [$this->driver->getSource(), $this->getName()]
         );
 
         $result = [];
         foreach ($references as $schema) {
             $columns = $this->driver->query(
-                'SELECT * FROM `information_schema`.`key_column_usage` WHERE `constraint_name` = ? AND `table_schema` = ? AND `table_name` = ?',
+                'SELECT * FROM `information_schema`.`key_column_usage`
+                WHERE `constraint_name` = ? AND `table_schema` = ? AND `table_name` = ?',
                 [$schema['CONSTRAINT_NAME'], $this->driver->getSource(), $this->getName()]
             )->fetchAll();
 
