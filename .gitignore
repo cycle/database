@@ -9,3 +9,4 @@ build/
 *.db
 clover.xml
 clover.json
+.php_cs.cache

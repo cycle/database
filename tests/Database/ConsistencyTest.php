@@ -136,7 +136,7 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testDecimal_1_0()
+    public function testDecimalOneZero()
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -149,7 +149,7 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testDecimal_5_2()
+    public function testDecimalFiveTwo()
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());

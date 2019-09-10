@@ -83,8 +83,7 @@ final class Reflector
     {
         $hasChanges = false;
         foreach ($this->tables as $table) {
-            if (
-                $table->getComparator()->hasChanges()
+            if ($table->getComparator()->hasChanges()
                 || $table->getStatus() == AbstractTable::STATUS_DECLARED_DROPPED
             ) {
                 $hasChanges = true;

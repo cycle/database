@@ -14,5 +14,4 @@ namespace Spiral\Database\Exception;
  */
 class DBALException extends \RuntimeException
 {
-
 }

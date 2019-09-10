@@ -30,7 +30,7 @@ class MySQLCompiler extends AbstractCompiler
 
         $statement = '';
         if (!empty($limit) || !empty($offset)) {
-            //When limit is not provided (or 0) but offset does we can replace 
+            //When limit is not provided (or 0) but offset does we can replace
             //limit value with PHP_INT_MAX
             $statement = 'LIMIT ' . ($limit ?: '18446744073709551615') . ' ';
         }

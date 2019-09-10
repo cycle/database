@@ -76,7 +76,8 @@ trait BuilderTrait
         array $where = [],
         array $values = []
     ): UpdateQuery {
-        return (new UpdateQuery($table, $where, $values))->withDriver($this, $this->getCompiler($prefix));;
+        return (new UpdateQuery($table, $where, $values))->withDriver($this, $this->getCompiler($prefix));
+        ;
     }
 
     /**

@@ -225,7 +225,6 @@ class DBALTest extends TestCase
         ]));
 
         $this->assertCount(1, $dbal->getDrivers());
-
     }
 
     public function testCountDatabase()

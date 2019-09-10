@@ -28,7 +28,6 @@ class MySQLHandler extends Handler
         AbstractColumn $initial,
         AbstractColumn $column
     ) {
-
         $foreignBackup = [];
         foreach ($table->getForeignKeys() as $foreign) {
             if ($column->getName() == $foreign->getColumns()) {
@@ -37,7 +36,10 @@ class MySQLHandler extends Handler
             }
         }
 
-        $this->run("ALTER TABLE {$this->identify($table)} CHANGE {$this->identify($initial)} {$column->sqlStatement($this->driver)}");
+        $this->run(
+            "ALTER TABLE {$this->identify($table)} 
+                    CHANGE {$this->identify($initial)} {$column->sqlStatement($this->driver)}"
+        );
 
         //Restoring FKs
         foreach ($foreignBackup as $foreign) {
@@ -60,7 +62,11 @@ class MySQLHandler extends Handler
      */
     public function alterIndex(AbstractTable $table, AbstractIndex $initial, AbstractIndex $index)
     {
-        $this->run("ALTER TABLE {$this->identify($table)} DROP INDEX  {$this->identify($initial)}, ADD {$index->sqlStatement($this->driver, false)}");
+        $this->run(
+            "ALTER TABLE {$this->identify($table)} 
+                    DROP INDEX  {$this->identify($initial)},
+                    ADD {$index->sqlStatement($this->driver, false)}"
+        );
     }
 
     /**
@@ -95,8 +101,7 @@ class MySQLHandler extends Handler
      */
     protected function assertValid(AbstractColumn $column)
     {
-        if (
-            in_array(
+        if (in_array(
                 $column->getAbstractType(),
                 ['text', 'tinyText', 'longText', 'blob', 'tinyBlob', 'longBlob']
             )

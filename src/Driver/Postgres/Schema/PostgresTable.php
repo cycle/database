@@ -74,7 +74,11 @@ class PostgresTable extends AbstractTable
         ])->fetchColumn();
 
         $query = $this->driver->query(
-            'SELECT * FROM information_schema.columns JOIN pg_type ON (pg_type.typname = columns.udt_name) WHERE table_name = ?',
+            'SELECT * 
+                        FROM information_schema.columns
+                        JOIN pg_type
+                        ON (pg_type.typname = columns.udt_name)
+                        WHERE table_name = ?',
             [$this->getName()]
         );
 

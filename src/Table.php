@@ -81,8 +81,10 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
      */
     public function getSchema(): AbstractTable
     {
-        return $this->database->getDriver(DatabaseInterface::WRITE)->getSchema($this->name,
-            $this->database->getPrefix());
+        return $this->database->getDriver(DatabaseInterface::WRITE)->getSchema(
+            $this->name,
+            $this->database->getPrefix()
+        );
     }
 
     /**

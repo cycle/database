@@ -293,8 +293,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
             //Converting exception into query or integrity exception
             $e = $this->mapException($e, $queryString);
 
-            if (
-                $e instanceof StatementException\ConnectionException
+            if ($e instanceof StatementException\ConnectionException
                 && $this->transactionLevel === 0
                 && $retry
             ) {
@@ -426,8 +425,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
             } catch (\PDOException $e) {
                 $e = $this->mapException($e, "BEGIN TRANSACTION");
 
-                if (
-                    $e instanceof StatementException\ConnectionException
+                if ($e instanceof StatementException\ConnectionException
                     && $this->options['reconnect']
                 ) {
                     try {

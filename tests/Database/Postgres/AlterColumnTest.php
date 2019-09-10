@@ -19,7 +19,6 @@ class AlterColumnTest extends \Spiral\Database\Tests\AlterColumnTest
         try {
             $driver->execute("CREATE TYPE mood AS ENUM ('sad', 'ok', 'happy');");
         } catch (StatementException $e) {
-
         }
 
         try {
@@ -28,7 +27,6 @@ class AlterColumnTest extends \Spiral\Database\Tests\AlterColumnTest
     current_mood mood
 );");
         } catch (StatementException $e) {
-
         }
 
         $schema = $driver->getSchema("person");

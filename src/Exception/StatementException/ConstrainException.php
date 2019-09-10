@@ -13,5 +13,4 @@ use Spiral\Database\Exception\StatementException;
 
 class ConstrainException extends StatementException
 {
-
 }
