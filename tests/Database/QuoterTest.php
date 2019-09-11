@@ -160,7 +160,8 @@ class QuoterTest extends TestCase
 
         $this->assertEquals(
             '"p_table_name" AS "bubble"',
-            $quoter->quote('table_name AS bubble', true));
+            $quoter->quote('table_name AS bubble', true)
+        );
 
         $this->assertEquals(
             '"bubble"."column" AS "column_alias"',

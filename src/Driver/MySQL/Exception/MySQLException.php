@@ -13,5 +13,4 @@ use Spiral\Database\Exception\DriverException;
 
 class MySQLException extends DriverException
 {
-
 }

@@ -73,7 +73,8 @@ class SQLServerDriver extends Driver
      */
     public function hasTable(string $name): bool
     {
-        $query = "SELECT COUNT(*) FROM [information_schema].[tables] WHERE [table_type] = 'BASE TABLE' AND [table_name] = ?";
+        $query = "SELECT COUNT(*) FROM [information_schema].[tables]
+            WHERE [table_type] = 'BASE TABLE' AND [table_name] = ?";
 
         return (bool)$this->query($query, [$name])->fetchColumn();
     }
@@ -171,8 +172,7 @@ class SQLServerDriver extends Driver
      */
     protected function mapException(\PDOException $exception, string $query): StatementException
     {
-        if (
-            strpos($exception->getMessage(), '0800') !== false
+        if (strpos($exception->getMessage(), '0800') !== false
             || strpos($exception->getMessage(), '080P') !== false
         ) {
             return new StatementException\ConnectionException($exception, $query);

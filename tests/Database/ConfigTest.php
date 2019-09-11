@@ -190,7 +190,6 @@ class ConfigTest extends TestCase
         $this->assertTrue($config->hasDriver('test'));
         $this->assertTrue($config->hasDriver('test2'));
         $this->assertFalse($config->hasDriver('database-1'));
-
     }
 
     /**

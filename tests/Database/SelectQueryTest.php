@@ -374,7 +374,6 @@ abstract class SelectQueryTest extends BaseQueryTest
                     'between' => [1]
                 ]
             ]);
-
     }
 
     public function testShortWhereMultiple()
@@ -1178,7 +1177,6 @@ abstract class SelectQueryTest extends BaseQueryTest
                     'between' => [1]
                 ]
             ]);
-
     }
 
     public function testHavingShortHavingMultiple()
@@ -1332,7 +1330,11 @@ abstract class SelectQueryTest extends BaseQueryTest
     //Attention, this is proper way!
     public function testLimitAndOffsetAndOrderBy()
     {
-        $select = $this->database->select()->from(['users'])->limit(10)->orderBy('name')->offset(20);
+        $select = $this->database->select()
+            ->from(['users'])
+            ->limit(10)
+            ->orderBy('name')
+            ->offset(20);
 
         $this->assertSame(10, $select->getLimit());
         $this->assertSame(20, $select->getOffset());
@@ -1809,7 +1811,8 @@ abstract class SelectQueryTest extends BaseQueryTest
             ->leftJoin('photos')->on('photos.user_id', 'users.id')->onWhere('photos.public', true);
 
         $this->assertSameQuery(
-            "SELECT * FROM {users} LEFT JOIN {photos} ON {photos}.{user_id} = {users}.{id} AND {photos}.{public} = ?",
+            "SELECT * FROM {users} LEFT JOIN {photos}
+                    ON {photos}.{user_id} = {users}.{id} AND {photos}.{public} = ?",
             $select
         );
     }
@@ -1823,7 +1826,8 @@ abstract class SelectQueryTest extends BaseQueryTest
             ->orOn('photos.group_id', 'users.group_id');
 
         $this->assertSameQuery(
-            "SELECT * FROM {users} LEFT JOIN {photos} ON {photos}.{user_id} = {users}.{id} OR {photos}.{group_id} = {users}.{group_id}",
+            "SELECT * FROM {users} LEFT JOIN {photos}
+                    ON {photos}.{user_id} = {users}.{id} OR {photos}.{group_id} = {users}.{group_id}",
             $select
         );
     }
@@ -1837,7 +1841,8 @@ abstract class SelectQueryTest extends BaseQueryTest
             ->andOn('photos.group_id', 'users.group_id');
 
         $this->assertSameQuery(
-            "SELECT * FROM {users} LEFT JOIN {photos} ON {photos}.{user_id} = {users}.{id} AND {photos}.{group_id} = {users}.{group_id}",
+            "SELECT * FROM {users} LEFT JOIN {photos}
+                    ON {photos}.{user_id} = {users}.{id} AND {photos}.{group_id} = {users}.{group_id}",
             $select
         );
     }
@@ -1851,7 +1856,8 @@ abstract class SelectQueryTest extends BaseQueryTest
             ->on('photos.group_id', 'users.group_id');
 
         $this->assertSameQuery(
-            "SELECT * FROM {users} LEFT JOIN {photos} ON {photos}.{user_id} = {users}.{id} AND {photos}.{group_id} = {users}.{group_id}",
+            "SELECT * FROM {users} LEFT JOIN {photos}
+                        ON {photos}.{user_id} = {users}.{id} AND {photos}.{group_id} = {users}.{group_id}",
             $select
         );
     }

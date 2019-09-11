@@ -59,7 +59,7 @@ class SQLServerCompiler extends Compiler
          * Please see set of alerts raised in SelectQuery builder.
          */
         $columns[] = new Fragment(
-            "ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS {$this->quote($bindings,self::ROW_NUMBER)}"
+            "ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS {$this->quote($bindings, self::ROW_NUMBER)}"
         );
 
         return sprintf(

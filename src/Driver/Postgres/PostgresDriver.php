@@ -40,7 +40,8 @@ class PostgresDriver extends Driver
      */
     public function tableNames(): array
     {
-        $query = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE'";
+        $query = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'
+          AND table_type = 'BASE TABLE'";
 
         $tables = [];
         foreach ($this->query($query) as $row) {
@@ -56,7 +57,8 @@ class PostgresDriver extends Driver
     public function hasTable(string $name): bool
     {
         return (bool)$this->query(
-            "SELECT COUNT(table_name) FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE' AND table_name = ?",
+            "SELECT COUNT(table_name) FROM information_schema.tables WHERE table_schema = 'public'
+          AND table_type = 'BASE TABLE' AND table_name = ?",
             [$name]
         )->fetchColumn();
     }
@@ -146,8 +148,7 @@ class PostgresDriver extends Driver
      */
     protected function mapException(\PDOException $exception, string $query): StatementException
     {
-        if (
-            strpos($exception->getMessage(), '0800') !== false
+        if (strpos($exception->getMessage(), '0800') !== false
             || strpos($exception->getMessage(), '080P') !== false
         ) {
             return new StatementException\ConnectionException($exception, $query);

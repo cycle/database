@@ -74,15 +74,18 @@ class PostgresTable extends AbstractTable
         ])->fetchColumn();
 
         $query = $this->driver->query(
-            'SELECT * FROM information_schema.columns JOIN pg_type ON (pg_type.typname = columns.udt_name) WHERE table_name = ?',
+            'SELECT * 
+                        FROM information_schema.columns
+                        JOIN pg_type
+                        ON (pg_type.typname = columns.udt_name)
+                        WHERE table_name = ?',
             [$this->getName()]
         );
 
         $result = [];
         foreach ($query->fetchAll() as $schema) {
             $name = $schema['column_name'];
-            if (
-                is_string($schema['column_default'])
+            if (is_string($schema['column_default'])
                 && preg_match(
                     '/^nextval\([\'"]([a-z0-9_"]+)[\'"](?:::regclass)?\)$/i',
                     $schema['column_default'],

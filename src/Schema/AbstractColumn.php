@@ -768,7 +768,6 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
 
         switch ($type) {
             case 'datetime':
-                //no break
             case 'timestamp':
                 //Driver should handle conversion automatically in this case
                 return $datetime;

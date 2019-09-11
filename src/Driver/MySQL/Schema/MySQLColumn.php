@@ -175,8 +175,7 @@ class MySQLColumn extends AbstractColumn
         $column->defaultValue = $schema['Default'];
         $column->autoIncrement = stripos($schema['Extra'], 'auto_increment') !== false;
 
-        if (
-        !preg_match(
+        if (!preg_match(
             '/^(?P<type>[a-z]+)(?:\((?P<options>[^\)]+)\))?/',
             $column->type,
             $matches
@@ -214,8 +213,7 @@ class MySQLColumn extends AbstractColumn
             $column->defaultValue = new Fragment($column->defaultValue);
         }
 
-        if (
-            $column->getAbstractType() == 'timestamp'
+        if ($column->getAbstractType() == 'timestamp'
             && $column->defaultValue == '0000-00-00 00:00:00'
         ) {
             //Normalizing default value for timestamps

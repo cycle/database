@@ -4,6 +4,7 @@
  *
  * @author    Anton Titov (Wolfy-J)
  */
+// phpcs:disable
 define('SPIRAL_INITIAL_TIME', microtime(true));
 
 error_reporting(E_ALL | E_STRICT);

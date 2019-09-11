@@ -13,7 +13,6 @@ use Spiral\Database\Driver\CompilerInterface;
 use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Injection\FragmentInterface;
 
-
 interface BuilderInterface extends FragmentInterface
 {
     /**

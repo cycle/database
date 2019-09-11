@@ -35,7 +35,17 @@ abstract class DatabaseTest extends BaseTest
     public function testDriverVerbosity()
     {
         $driver = $this->getDriver();
-        $driver->setLogger($l = new AggLogger());
+        $driver->setLogger($l = new class implements LoggerInterface
+        {
+            use LoggerTrait;
+
+            public $records = [];
+
+            public function log($level, $message, array $context = [])
+            {
+                $this->records = func_get_args();
+            }
+        });
 
         $driver->getSchema('test');
 
@@ -108,18 +118,5 @@ abstract class DatabaseTest extends BaseTest
 
         $wDriver->expects('execute')->with('test', ['param'])->andReturn(1);
         $this->assertSame(1, $db->execute("test", ['param']));
-    }
-}
-
-
-class AggLogger implements LoggerInterface
-{
-    use LoggerTrait;
-
-    public $records = [];
-
-    public function log($level, $message, array $context = [])
-    {
-        $this->records = func_get_args();
     }
 }

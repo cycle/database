@@ -68,8 +68,10 @@ abstract class NestedQueriesTest extends BaseQueryTest
             ->leftJoin('external')->onWhere(['name' => 'test'])
             ->where('id', 1);
 
-        $this->assertSameQuery("SELECT * FROM {table} LEFT JOIN {external} ON {name} = ? WHERE {id} = ?",
-            $select);
+        $this->assertSameQuery(
+            "SELECT * FROM {table} LEFT JOIN {external} ON {name} = ? WHERE {id} = ?",
+            $select
+        );
         $this->assertSameParameters([
             'test',
             1
@@ -115,7 +117,8 @@ abstract class NestedQueriesTest extends BaseQueryTest
             ->where('type', 'user')
             ->where(
                 'id',
-                'IN', $this->database->select('user_id')->from('accounts')->where('open', true)
+                'IN',
+                $this->database->select('user_id')->from('accounts')->where('open', true)
             )->orWhere('id', '<', 100);
 
         $this->assertSameQuery(
@@ -268,7 +271,6 @@ abstract class NestedQueriesTest extends BaseQueryTest
 
     public function testUnionWithPrefixes1()
     {
-
         $select = $this->db('prefixed', 'prefix_')
             ->select('*')
             ->from('table AS u')
@@ -340,7 +342,8 @@ abstract class NestedQueriesTest extends BaseQueryTest
         $select = $this->database->update()
             ->in('table')
             ->set('name', 'Anton')
-            ->set('value',
+            ->set(
+                'value',
                 $this->database->select(new Expression('SUM(value)'))
                     ->from('transactions')
                     ->where('user_id', new Expression('table.id'))
@@ -349,7 +352,8 @@ abstract class NestedQueriesTest extends BaseQueryTest
             ->where('type', 'user')
             ->where(
                 'id',
-                'IN', $this->database->select('user_id')->from('accounts')->where('open', true)
+                'IN',
+                $this->database->select('user_id')->from('accounts')->where('open', true)
             )->orWhere('id', '<', 100);
 
         $this->assertSameQuery(

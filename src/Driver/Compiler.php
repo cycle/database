@@ -139,7 +139,6 @@ abstract class Compiler implements CompilerInterface
         string $table,
         array $whereTokens = []
     ): string {
-
         return sprintf(
             "DELETE FROM %s%s",
             $this->quote($bindings, $table, true),
@@ -532,7 +531,6 @@ abstract class Compiler implements CompilerInterface
         }
 
         if ($value->isArray()) {
-
             $values = [];
             foreach ($value->getValue() as $child) {
                 $values[] = $this->compileValue($bindings, $child, $compileNull);

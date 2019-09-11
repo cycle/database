@@ -94,8 +94,6 @@ abstract class CreateTableTest extends BaseTest
 
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
-
-
     }
 
     public function testCreateNoPrimary()

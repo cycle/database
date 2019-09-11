@@ -8,9 +8,6 @@
 namespace Spiral\Database\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
-use Psr\Log\LoggerTrait;
-use Psr\Log\LogLevel;
 use Spiral\Database\Database;
 use Spiral\Database\Driver\Driver;
 use Spiral\Database\Driver\Handler;
@@ -19,6 +16,7 @@ use Spiral\Database\Schema\AbstractForeignKey;
 use Spiral\Database\Schema\AbstractIndex;
 use Spiral\Database\Schema\AbstractTable;
 use Spiral\Database\Schema\Comparator;
+use Spiral\Database\Tests\Fixtures\TestLogger;
 
 abstract class BaseTest extends TestCase
 {
@@ -327,15 +325,16 @@ abstract class BaseTest extends TestCase
         }
 
         if ($comparator->alteredColumns()) {
-
             $names = [];
             foreach ($comparator->alteredColumns() as $pair) {
                 $names[] = $pair[0]->getName();
                 print_r($pair);
             }
 
-            return "Table '{$table}' not synced, column(s) '" . join("', '",
-                    $names) . "' have been changed.";
+            return "Table '{$table}' not synced, column(s) '" . join(
+                "', '",
+                $names
+            ) . "' have been changed.";
         }
 
         if ($comparator->droppedForeignKeys()) {
@@ -348,28 +347,5 @@ abstract class BaseTest extends TestCase
 
 
         return "Table '{$table}' not synced, no idea why, add more messages :P";
-    }
-}
-
-
-class TestLogger implements LoggerInterface
-{
-    use LoggerTrait;
-
-    public function log($level, $message, array $context = [])
-    {
-        if ($level == LogLevel::ERROR) {
-            echo " \n! \033[31m" . $message . "\033[0m";
-        } elseif ($level == LogLevel::ALERT) {
-            echo " \n! \033[35m" . $message . "\033[0m";
-        } elseif (strpos($message, 'SHOW') === 0) {
-            echo " \n> \033[34m" . $message . "\033[0m";
-        } else {
-            if (strpos($message, 'SELECT') === 0) {
-                echo " \n> \033[32m" . $message . "\033[0m";
-            } else {
-                echo " \n> \033[33m" . $message . "\033[0m";
-            }
-        }
     }
 }

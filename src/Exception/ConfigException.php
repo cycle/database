@@ -11,5 +11,4 @@ namespace Spiral\Database\Exception;
 
 class ConfigException extends DBALException
 {
-
 }
