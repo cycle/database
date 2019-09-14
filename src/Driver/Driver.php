@@ -410,11 +410,12 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * @link http://en.wikipedia.org/wiki/Isolation_(database_systems)
      *
      * @param string $isolationLevel
+     * @param bool   $cacheStatemenets
      * @return bool
      */
-    public function beginTransaction(string $isolationLevel = null): bool
+    public function beginTransaction(string $isolationLevel = null, bool $cacheStatemenets = true): bool
     {
-        $this->tscope->open();
+        $this->tscope->open($cacheStatemenets);
 
         if ($this->tscope->getLevel() == 1) {
             if ($isolationLevel !== null) {

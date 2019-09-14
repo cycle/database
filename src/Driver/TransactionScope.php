@@ -48,7 +48,7 @@ final class TransactionScope
      */
     public function setPrepared(string $sql, \PDOStatement $statement)
     {
-        if ($this->level === 0) {
+        if ($this->level === 0 || $this->statements[$this->level] === null) {
             return;
         }
 
@@ -66,12 +66,12 @@ final class TransactionScope
     }
 
     /**
-     * Enter the transaction or savepoint.
+     * @param bool $cacheStatements
      */
-    public function open(): void
+    public function open(bool $cacheStatements): void
     {
         $this->level++;
-        $this->statements[$this->level] = [];
+        $this->statements[$this->level] = $cacheStatements ? [] : null;
     }
 
     /**
