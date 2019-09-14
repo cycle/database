@@ -1,9 +1,10 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
-2.4.6 (14.09.2019)
+2.5.0 (14.09.2019)
 -----
-- reuse prepared statements while inside the same transaction (minor speed up of insert/update statements).
+- Drivers now able to reuse prepared statements inside the transaction scope
+- minor performance improvemenet on larger transactions
 
 2.4.5 (28.08.2019)
 -----
