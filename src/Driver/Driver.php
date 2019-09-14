@@ -76,19 +76,16 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     /** @var PDO|null */
     protected $pdo;
 
-    /**
-     * Transaction level (count of nested transactions). Not all drives can support nested
-     * transactions.
-     *
-     * @var int
-     */
-    private $transactionLevel = 0;
+    /** @var TransactionScope */
+    private $tscope;
 
     /**
      * @param array $options
      */
     public function __construct(array $options)
     {
+        $this->tscope = new TransactionScope();
+
         $options['options'] = ($options['options'] ?? []) + static::DEFAULT_PDO_OPTIONS;
         $this->options = $options + $this->options;
 
@@ -172,7 +169,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     public function isConnected(): bool
     {
-        return !empty($this->pdo);
+        return $this->pdo !== null;
     }
 
     /**
@@ -181,7 +178,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     public function disconnect()
     {
         $this->pdo = null;
-        $this->transactionLevel = 0;
+        $this->tscope->reset();
     }
 
     /**
@@ -294,7 +291,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
             $e = $this->mapException($e, $queryString);
 
             if ($e instanceof StatementException\ConnectionException
-                && $this->transactionLevel === 0
+                && $this->tscope->getLevel() === 0
                 && $retry
             ) {
                 // retrying
@@ -313,7 +310,13 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     protected function prepare(string $query): \PDOStatement
     {
-        return $this->getPDO()->prepare($query);
+        $statement = $this->tscope->getPrepared($query);
+        if ($statement === null) {
+            $statement = $this->getPDO()->prepare($query);
+            $this->tscope->setPrepared($query, $statement);
+        }
+
+        return $statement;
     }
 
     /**
@@ -407,14 +410,15 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * @link http://en.wikipedia.org/wiki/Isolation_(database_systems)
      *
      * @param string $isolationLevel
+     * @param bool   $cacheStatements
      * @return bool
      */
-    public function beginTransaction(string $isolationLevel = null): bool
+    public function beginTransaction(string $isolationLevel = null, bool $cacheStatements = true): bool
     {
-        ++$this->transactionLevel;
+        $this->tscope->open($cacheStatements);
 
-        if ($this->transactionLevel == 1) {
-            if (!empty($isolationLevel)) {
+        if ($this->tscope->getLevel() == 1) {
+            if ($isolationLevel !== null) {
                 $this->isolationLevel($isolationLevel);
             }
 
@@ -437,7 +441,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
             }
         }
 
-        $this->savepointCreate($this->transactionLevel);
+        $this->savepointCreate($this->tscope->getLevel());
 
         return true;
     }
@@ -449,9 +453,9 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     public function commitTransaction(): bool
     {
-        --$this->transactionLevel;
+        $this->tscope->close();
 
-        if ($this->transactionLevel == 0) {
+        if ($this->tscope->getLevel() == 0) {
             $this->isProfiling() && $this->getLogger()->info('Commit transaction');
 
             try {
@@ -461,7 +465,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
             }
         }
 
-        $this->savepointRelease($this->transactionLevel + 1);
+        $this->savepointRelease($this->tscope->getLevel() + 1);
 
         return true;
     }
@@ -473,9 +477,9 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     public function rollbackTransaction(): bool
     {
-        --$this->transactionLevel;
+        $this->tscope->close();
 
-        if ($this->transactionLevel == 0) {
+        if ($this->tscope->getLevel() == 0) {
             $this->isProfiling() && $this->getLogger()->info('Rollback transaction');
 
             try {
@@ -485,7 +489,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
             }
         }
 
-        $this->savepointRollback($this->transactionLevel + 1);
+        $this->savepointRollback($this->tscope->getLevel() + 1);
 
         return true;
     }

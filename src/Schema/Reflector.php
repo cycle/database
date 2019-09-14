@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Schema;
 
+use Spiral\Database\Driver\Driver;
 use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Driver\HandlerInterface;
 
@@ -183,8 +184,13 @@ final class Reflector
     protected function beginTransaction()
     {
         foreach ($this->drivers as $driver) {
-            /** @var DriverInterface $driver */
-            $driver->beginTransaction();
+            if ($driver instanceof Driver) {
+                // do not cache statements for this transaction
+                $driver->beginTransaction(null, false);
+            } else {
+                /** @var DriverInterface $driver */
+                $driver->beginTransaction(null);
+            }
         }
     }
 

@@ -1,6 +1,10 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
+2.4.6 (14.09.2019)
+-----
+- reuse prepared statements while inside the same transaction (minor speed up of insert/update statements).
+
 2.4.5 (28.08.2019)
 -----
 - improved SQLite multi-insert query fallback
