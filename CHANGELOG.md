@@ -1,6 +1,11 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
+2.5.1 (14.09.2019)
+-----
+- statement cache is turned off by default
+- cacheStatement flag can be passed from Database
+
 2.5.0 (14.09.2019)
 -----
 - Drivers now able to reuse prepared statements inside the transaction scope

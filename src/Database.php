@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Spiral\Database;
 
 use Spiral\Core\Container\InjectableInterface;
+use Spiral\Database\Driver\Driver;
 use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Query\DeleteQuery;
 use Spiral\Database\Query\InsertQuery;
@@ -218,10 +219,12 @@ final class Database implements DatabaseInterface, InjectableInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param bool $cacheStatements
      */
-    public function transaction(callable $callback, string $isolationLevel = null)
+    public function transaction(callable $callback, string $isolationLevel = null, bool $cacheStatements = false)
     {
-        $this->begin($isolationLevel);
+        $this->begin($isolationLevel, $cacheStatements);
 
         try {
             $result = call_user_func($callback, $this);
@@ -237,9 +240,14 @@ final class Database implements DatabaseInterface, InjectableInterface
     /**
      * {@inheritdoc}
      */
-    public function begin(string $isolationLevel = null): bool
+    public function begin(string $isolationLevel = null, bool $cacheStatements = false): bool
     {
-        return $this->getDriver(self::WRITE)->beginTransaction($isolationLevel);
+        $driver = $this->getDriver(self::WRITE);
+        if ($driver instanceof Driver) {
+            return $driver->beginTransaction($isolationLevel, $cacheStatements);
+        }
+
+        return $driver->beginTransaction($isolationLevel);
     }
 
     /**

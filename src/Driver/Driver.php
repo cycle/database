@@ -413,7 +413,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * @param bool   $cacheStatements
      * @return bool
      */
-    public function beginTransaction(string $isolationLevel = null, bool $cacheStatements = true): bool
+    public function beginTransaction(string $isolationLevel = null, bool $cacheStatements = false): bool
     {
         $this->tscope->open($cacheStatements);
 
