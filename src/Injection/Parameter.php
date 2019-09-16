@@ -126,6 +126,10 @@ final class Parameter implements ParameterInterface
     private function detectType($value): int
     {
         switch (gettype($value)) {
+            case 'boolean':
+                return \PDO::PARAM_BOOL;
+            case 'integer':
+                return \PDO::PARAM_INT;
             case 'NULL':
                 return \PDO::PARAM_NULL;
             default:
