@@ -39,7 +39,7 @@ class ParameterTest extends TestCase
         $this->assertNotSame($parameter, $newParameter);
 
         $this->assertSame(2334, $newParameter->getValue());
-        $this->assertSame(\PDO::PARAM_INT, $newParameter->getType());
+        $this->assertSame(\PDO::PARAM_STR, $newParameter->getType());
     }
 
     public function testAutoTyping()
@@ -48,16 +48,16 @@ class ParameterTest extends TestCase
         $this->assertSame(\PDO::PARAM_STR, $parameter->getType());
 
         $parameter = new Parameter(123);
-        $this->assertSame(\PDO::PARAM_INT, $parameter->getType());
+        $this->assertSame(\PDO::PARAM_STR, $parameter->getType());
 
         $parameter = new Parameter(null);
         $this->assertSame(\PDO::PARAM_NULL, $parameter->getType());
 
         $parameter = new Parameter(false);
-        $this->assertSame(\PDO::PARAM_BOOL, $parameter->getType());
+        $this->assertSame(\PDO::PARAM_STR, $parameter->getType());
 
         $parameter = new Parameter(true);
-        $this->assertSame(\PDO::PARAM_BOOL, $parameter->getType());
+        $this->assertSame(\PDO::PARAM_STR, $parameter->getType());
     }
 
     /**
