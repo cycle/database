@@ -89,4 +89,21 @@ class InterpolatorTest extends TestCase
             $interpolated
         );
     }
+
+    public function testDateInterpolationWithDateTimeImmutable()
+    {
+        $query = 'SELECT * FROM table WHERE name = :name AND registered > :registered';
+
+        $parameters = [
+            ':name'       => new Parameter('Anton'),
+            ':registered' => new Parameter($date = new \DateTimeImmutable('now')),
+        ];
+
+        $interpolated = Interpolator::interpolate($query, $parameters);
+
+        $this->assertSame(
+            'SELECT * FROM table WHERE name = \'Anton\' AND registered > \'' . $date->format(\DateTime::ISO8601) . '\'',
+            $interpolated
+        );
+    }
 }
