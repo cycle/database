@@ -123,7 +123,7 @@ final class Interpolator
                     return "'" . addcslashes((string)$parameter, "'") . "'";
                 }
 
-                if ($parameter instanceof \DateTime) {
+                if ($parameter instanceof \DateTimeInterface) {
                     //Let's process dates different way
                     return "'" . $parameter->format(\DateTime::ISO8601) . "'";
                 }
