@@ -6,8 +6,8 @@ services:
   - docker
 
 php:
-  - 7.1
   - 7.2
+  - 7.3
 
 before_install:
   - cd tests
@@ -27,19 +27,6 @@ after_success:
 
 jobs:
   include:
-    # PHP 7.3 builds does not support SQLServer yet
-    - stage: Test
-      php: 7.3
-      before_install:
-        - cd tests
-        - docker-compose up -d
-        - cd ..
-      script:
-        - vendor/bin/phpunit tests/Database/SQLite
-        - vendor/bin/phpunit tests/Database/MySQL
-        - vendor/bin/phpunit tests/Database/Postgres
-
-    # PHP 7.3 builds does not support SQLServer yet
     - stage: Test
       php: 7.4snapshot
       before_install:
