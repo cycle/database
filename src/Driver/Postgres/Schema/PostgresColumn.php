@@ -24,7 +24,6 @@ class PostgresColumn extends AbstractColumn
      * Private state related values.
      */
     const EXCLUDE_FROM_COMPARE = [
-        'userType',
         'timezone',
         'constrained',
         'constrainName'

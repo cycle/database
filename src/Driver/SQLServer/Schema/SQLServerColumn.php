@@ -28,7 +28,6 @@ class SQLServerColumn extends AbstractColumn
      * Private state related values.
      */
     const EXCLUDE_FROM_COMPARE = [
-        'userType',
         'timezone',
         'constrainedDefault',
         'defaultConstraint',
