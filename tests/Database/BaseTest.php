@@ -80,6 +80,14 @@ abstract class BaseTest extends TestCase
     }
 
     /**
+     * @param Database $db
+     */
+    protected function disableProfiling(Database $db)
+    {
+        $db->getDriver()->setProfiling(false);
+    }
+
+    /**
      * @param Database|null $database
      */
     protected function dropDatabase(Database $database = null)

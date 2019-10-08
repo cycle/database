@@ -77,6 +77,7 @@ class PostgresColumn extends AbstractColumn
 
         //Additional types
         'json'        => 'json',
+        'jsonb'       => 'jsonb'
     ];
 
     /**
@@ -100,6 +101,7 @@ class PostgresColumn extends AbstractColumn
         'timestamp'   => ['timestamp', 'timestamp with time zone', 'timestamp without time zone'],
         'binary'      => ['bytea'],
         'json'        => ['json'],
+        'jsonb'       => ['jsonb']
     ];
 
     /**
@@ -347,7 +349,7 @@ class PostgresColumn extends AbstractColumn
     }
 
     /**
-     * @param string          $table Table name.
+     * @param string          $table  Table name.
      * @param array           $schema
      * @param DriverInterface $driver Postgres columns are bit more complex.
      * @return PostgresColumn
