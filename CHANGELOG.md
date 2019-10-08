@@ -1,6 +1,12 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
+2.6.0 (08.10.2019)
+-----
+- minimum PHP version is set as 7.2
+- added internal method to get declared column type
+- added support for `jsonb` in Postgres driver
+
 2.5.1 (14.09.2019)
 -----
 - statement cache is turned off by default

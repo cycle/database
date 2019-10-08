@@ -79,7 +79,7 @@ jobs:
       env:
         - "DB=postgres POSTGRES=10.0"
       before_install:
-        #- bash ./tests/install-pgsql-10.sh
+        - bash ./tests/install-pgsql-10.sh
         - psql -c 'create database spiral;' -U postgres
       script:
         - vendor/bin/phpunit tests/Database/Postgres
@@ -91,7 +91,7 @@ jobs:
       env:
         - "DB=postgres POSTGRES=10.0"
       before_install:
-        #- bash ./tests/install-pgsql-10.sh
+        - bash ./tests/install-pgsql-10.sh
         - psql -c 'create database spiral;' -U postgres
       script:
         - vendor/bin/phpunit tests/Database/Postgres
