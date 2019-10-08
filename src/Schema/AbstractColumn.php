@@ -385,7 +385,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      *
      * @return string|null
      */
-    public function getUserType(): ?string
+    public function getDeclaredType(): ?string
     {
         return $this->userType;
     }
