@@ -20,7 +20,7 @@ Documentation (v1.0.0 - outdated)
 Requirements
 --------
 Make sure that your server is configured with following PHP version and extensions:
-* PHP 7.1+
+* PHP 7.2+
 * PDO Extension with desired database drivers
 
 ## Installation
