@@ -56,7 +56,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     /**
      * Value to be excluded from comparision.
      */
-    const EXCLUDE_FROM_COMPARE = ['timezone'];
+    const EXCLUDE_FROM_COMPARE = ['timezone', 'userType'];
 
     /**
      * Normalization for time and dates.
@@ -185,6 +185,13 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         'longBinary'  => [],
         'json'        => [],
     ];
+
+    /**
+     * User defined type. Only until actual mapping.
+     *
+     * @var string|null
+     */
+    protected $userType = null;
 
     /**
      * DBMS specific column type.
@@ -373,6 +380,17 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     }
 
     /**
+     * Returns type defined by the user, only until schema sync. Attention, this value is only preserved during the
+     * declaration process. Value will become null after the schema fetched from database.
+     *
+     * @return string|null
+     */
+    public function getUserType(): ?string
+    {
+        return $this->userType;
+    }
+
+    /**
      * DBMS specific reverse mapping must map database specific type into limited set of abstract
      * types.
      *
@@ -434,6 +452,9 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         if (!isset($this->mapping[$abstract])) {
             throw new SchemaException("Undefined abstract/virtual type '{$abstract}'");
         }
+
+        // Originally specified type.
+        $this->userType = $abstract;
 
         // Resetting all values to default state.
         $this->size = $this->precision = $this->scale = 0;
