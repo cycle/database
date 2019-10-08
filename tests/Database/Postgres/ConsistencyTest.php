@@ -80,20 +80,4 @@ class ConsistencyTest extends \Spiral\Database\Tests\ConsistencyTest
             $schema->column('target')->getDefaultValue()
         );
     }
-
-    public function testJsonB()
-    {
-        $schema = $this->schema('table');
-        $this->assertFalse($schema->exists());
-
-        $column = $schema->jsonb('column');
-        $schema->save();
-
-        $schema = $this->schema('table');
-
-        $this->assertTrue($schema->exists());
-        $this->assertSame('jsonb', $schema->column('column')->getAbstractType());
-
-        $this->assertTrue($schema->column('column')->compare($column));
-    }
 }

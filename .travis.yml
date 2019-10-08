@@ -42,7 +42,29 @@ jobs:
     - stage: Test
       php: 7.2
       addons:
-         postgresql: "9.4"
+        postgresql: "9.2"
+      env:
+        - "DB=postgres POSTGRES=9.2"
+      before_install:
+        - psql -c 'create database spiral;' -U postgres
+      script:
+        - vendor/bin/phpunit tests/Database/Postgres
+
+    - stage: Test
+      php: 7.2
+      addons:
+        postgresql: "9.3"
+      env:
+        - "DB=postgres POSTGRES=9.3"
+      before_install:
+        - psql -c 'create database spiral;' -U postgres
+      script:
+        - vendor/bin/phpunit tests/Database/Postgres
+
+    - stage: Test
+      php: 7.2
+      addons:
+        postgresql: "9.4"
       env:
         - "DB=postgres POSTGRES=9.4"
       before_install:
@@ -53,7 +75,7 @@ jobs:
     - stage: Test
       php: 7.2
       addons:
-         postgresql: "9.5"
+        postgresql: "9.5"
       env:
         - "DB=postgres POSTGRES=9.5"
       before_install:
@@ -64,7 +86,7 @@ jobs:
     - stage: Test
       php: 7.2
       addons:
-         postgresql: "9.6"
+        postgresql: "9.6"
       env:
         - "DB=postgres POSTGRES=9.6"
       before_install:
@@ -84,23 +106,11 @@ jobs:
       script:
         - vendor/bin/phpunit tests/Database/Postgres
 
-    - stage: Test
-      php: 7.2
-      addons:
-        postgresql: "11.0"
-      env:
-        - "DB=postgres POSTGRES=10.0"
-      before_install:
-        - bash ./tests/install-pgsql-10.sh
-        - psql -c 'create database spiral;' -U postgres
-      script:
-        - vendor/bin/phpunit tests/Database/Postgres
-
     # MariaDB
     - stage: Test
       php: 7.2
       addons:
-         mariadb: "10.0"
+        mariadb: "10.0"
       env:
         - "DB=mariadb MARIADB=10.0"
       before_install:
@@ -112,7 +122,7 @@ jobs:
     - stage: Test
       php: 7.2
       addons:
-         mariadb: "10.1"
+        mariadb: "10.1"
       env:
         - "DB=mariadb MARIADB=10.1"
       before_install:
@@ -123,7 +133,7 @@ jobs:
     - stage: Test
       php: 7.2
       addons:
-         mariadb: "10.2"
+        mariadb: "10.2"
       env:
         - "DB=mariadb MARIADB=10.2"
       before_install:
