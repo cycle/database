@@ -383,6 +383,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      * Returns type defined by the user, only until schema sync. Attention, this value is only preserved during the
      * declaration process. Value will become null after the schema fetched from database.
      *
+     * @internal
      * @return string|null
      */
     public function getDeclaredType(): ?string
