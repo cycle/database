@@ -23,8 +23,9 @@ class SQLiteColumn extends AbstractColumn
      * Private state related values.
      */
     const EXCLUDE_FROM_COMPARE = [
+        'userType',
         'timezone',
-        'size'
+        'size',
     ];
 
     /**
@@ -186,13 +187,12 @@ class SQLiteColumn extends AbstractColumn
             '/^(?P<type>[a-z]+) *(?:\((?P<options>[^\)]+)\))?/',
             $schema['type'],
             $matches
-        )
-        ) {
+        )) {
             //No type definition included
             return $column;
         }
 
-        //Reformatted type value
+        // reformatted type value
         $column->type = $matches['type'];
 
         //Fetching size options

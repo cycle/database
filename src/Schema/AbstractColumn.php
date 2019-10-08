@@ -56,7 +56,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     /**
      * Value to be excluded from comparision.
      */
-    const EXCLUDE_FROM_COMPARE = ['timezone'];
+    const EXCLUDE_FROM_COMPARE = ['timezone', 'userType'];
 
     /**
      * Normalization for time and dates.
@@ -187,6 +187,13 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     ];
 
     /**
+     * User defined type. Only until actual mapping.
+     *
+     * @var string|null
+     */
+    protected $userType = null;
+
+    /**
      * DBMS specific column type.
      *
      * @var string
@@ -251,29 +258,6 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         $this->table = $table;
         $this->name = $name;
         $this->timezone = $timezone ?? new \DateTimeZone(date_default_timezone_get());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getInternalType(): string
-    {
-        return $this->type;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getType(): string
-    {
-        $schemaType = $this->getAbstractType();
-        foreach ($this->phpMapping as $phpType => $candidates) {
-            if (in_array($schemaType, $candidates)) {
-                return $phpType;
-            }
-        }
-
-        return self::STRING;
     }
 
     /**
@@ -373,6 +357,39 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getInternalType(): string
+    {
+        return $this->type;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getType(): string
+    {
+        $schemaType = $this->getAbstractType();
+        foreach ($this->phpMapping as $phpType => $candidates) {
+            if (in_array($schemaType, $candidates)) {
+                return $phpType;
+            }
+        }
+
+        return self::STRING;
+    }
+
+    /**
+     * Returns type defined by the user, only until schema sync.
+     *
+     * @return string|null
+     */
+    public function getUserType(): ?string
+    {
+        return $this->userType;
+    }
+
+    /**
      * DBMS specific reverse mapping must map database specific type into limited set of abstract
      * types.
      *
@@ -436,18 +453,21 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
             throw new SchemaException("Undefined abstract/virtual type '{$abstract}'");
         }
 
-        //Resetting all values to default state.
+        // Originally specified type.
+        $this->userType = $abstract;
+
+        // Resetting all values to default state.
         $this->size = $this->precision = $this->scale = 0;
         $this->enumValues = [];
 
-        //Abstract type points to DBMS specific type
+        // Abstract type points to DBMS specific type
         if (is_string($this->mapping[$abstract])) {
             $this->type = $this->mapping[$abstract];
 
             return $this;
         }
 
-        //Configuring column properties based on abstractType preferences
+        // Configuring column properties based on abstractType preferences
         foreach ($this->mapping[$abstract] as $property => $value) {
             $this->{$property} = $value;
         }
