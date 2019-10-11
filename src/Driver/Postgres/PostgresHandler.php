@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -26,7 +27,7 @@ class PostgresHandler extends Handler
         AbstractTable $table,
         AbstractColumn $initial,
         AbstractColumn $column
-    ) {
+    ): void {
         if (!$initial instanceof PostgresColumn || !$column instanceof PostgresColumn) {
             throw new SchemaException('Postgres handler can work only with Postgres columns');
         }
@@ -56,26 +57,6 @@ class PostgresHandler extends Handler
     }
 
     /**
-     * @param AbstractTable  $table
-     * @param AbstractColumn $initial
-     * @param AbstractColumn $column
-     */
-    private function renameColumn(
-        AbstractTable $table,
-        AbstractColumn $initial,
-        AbstractColumn $column
-    ) {
-        $statement = sprintf(
-            'ALTER TABLE %s RENAME COLUMN %s TO %s',
-            $this->identify($table),
-            $this->identify($initial),
-            $this->identify($column)
-        );
-
-        $this->run($statement);
-    }
-
-    /**
      * @inheritdoc
      */
     protected function run(string $statement, array $parameters = []): int
@@ -86,5 +67,25 @@ class PostgresHandler extends Handler
         }
 
         return parent::run($statement, $parameters);
+    }
+
+    /**
+     * @param AbstractTable  $table
+     * @param AbstractColumn $initial
+     * @param AbstractColumn $column
+     */
+    private function renameColumn(
+        AbstractTable $table,
+        AbstractColumn $initial,
+        AbstractColumn $column
+    ): void {
+        $statement = sprintf(
+            'ALTER TABLE %s RENAME COLUMN %s TO %s',
+            $this->identify($table),
+            $this->identify($initial),
+            $this->identify($column)
+        );
+
+        $this->run($statement);
     }
 }

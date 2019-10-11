@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Spiral\Database\Tests\Fixtures;
 
 use Psr\Log\LoggerInterface;
@@ -10,7 +12,7 @@ class TestLogger implements LoggerInterface
 {
     use LoggerTrait;
 
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, array $context = []): void
     {
         if ($level == LogLevel::ERROR) {
             echo " \n! \033[31m" . $message . "\033[0m";

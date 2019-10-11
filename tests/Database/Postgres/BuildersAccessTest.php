@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Tests\Postgres;
 
@@ -12,9 +14,9 @@ use Spiral\Database\Driver\Postgres\Schema\PostgresTable;
 
 class BuildersAccessTest extends \Spiral\Database\Tests\BuildersAccessTest
 {
-    const DRIVER = 'postgres';
+    public const DRIVER = 'postgres';
 
-    public function testTableSchemaAccess()
+    public function testTableSchemaAccess(): void
     {
         parent::testTableSchemaAccess();
         $this->assertInstanceOf(
@@ -23,7 +25,7 @@ class BuildersAccessTest extends \Spiral\Database\Tests\BuildersAccessTest
         );
     }
 
-    public function testInsertQueryAccess()
+    public function testInsertQueryAccess(): void
     {
         parent::testInsertQueryAccess();
         $this->assertInstanceOf(PostgresInsertQuery::class, $this->db()->insert());

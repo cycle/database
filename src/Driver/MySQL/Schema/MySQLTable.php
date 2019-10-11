@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -21,9 +22,9 @@ class MySQLTable extends AbstractTable
     /**
      * List of most common MySQL table engines.
      */
-    const ENGINE_INNODB = 'InnoDB';
-    const ENGINE_MYISAM = 'MyISAM';
-    const ENGINE_MEMORY = 'Memory';
+    public const ENGINE_INNODB = 'InnoDB';
+    public const ENGINE_MYISAM = 'MyISAM';
+    public const ENGINE_MEMORY = 'Memory';
 
     /**
      * MySQL table engine.
@@ -31,21 +32,6 @@ class MySQLTable extends AbstractTable
      * @var string
      */
     private $engine = self::ENGINE_INNODB;
-
-    /**
-     * Populate table schema with values from database.
-     *
-     * @param State $state
-     */
-    protected function initSchema(State $state)
-    {
-        parent::initSchema($state);
-
-        //Reading table schema
-        $this->engine = $this->driver->query('SHOW TABLE STATUS WHERE `Name` = ?', [
-            $state->getName()
-        ])->fetch()['Engine'];
-    }
 
     /**
      * Change table engine. Such operation will be applied only at moment of table creation.
@@ -72,6 +58,21 @@ class MySQLTable extends AbstractTable
     public function getEngine()
     {
         return $this->engine;
+    }
+
+    /**
+     * Populate table schema with values from database.
+     *
+     * @param State $state
+     */
+    protected function initSchema(State $state): void
+    {
+        parent::initSchema($state);
+
+        //Reading table schema
+        $this->engine = $this->driver->query('SHOW TABLE STATUS WHERE `Name` = ?', [
+            $state->getName()
+        ])->fetch()['Engine'];
     }
 
     /**

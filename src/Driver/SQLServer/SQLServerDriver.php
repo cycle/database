@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -41,7 +42,7 @@ class SQLServerDriver extends Driver
         parent::__construct($options);
 
         if ((int)$this->getPDO()->getAttribute(\PDO::ATTR_SERVER_VERSION) < 12) {
-            throw new DriverException("SQLServer driver supports only 12+ version of SQLServer");
+            throw new DriverException('SQLServer driver supports only 12+ version of SQLServer');
         }
     }
 
@@ -82,7 +83,7 @@ class SQLServerDriver extends Driver
     /**
      * {@inheritdoc}
      */
-    public function eraseData(string $table)
+    public function eraseData(string $table): void
     {
         $this->execute("TRUNCATE TABLE {$this->identifier($table)}");
     }
@@ -133,7 +134,7 @@ class SQLServerDriver extends Driver
      * @param int $level   Savepoint name/id, must not contain spaces and be valid database
      *                     identifier.
      */
-    protected function savepointCreate(int $level)
+    protected function savepointCreate(int $level): void
     {
         $this->isProfiling() && $this->getLogger()->info("Transaction: new savepoint 'SVP{$level}'");
         $this->execute('SAVE TRANSACTION ' . $this->identifier("SVP{$level}"));
@@ -147,7 +148,7 @@ class SQLServerDriver extends Driver
      * @param int $level   Savepoint name/id, must not contain spaces and be valid database
      *                     identifier.
      */
-    protected function savepointRelease(int $level)
+    protected function savepointRelease(int $level): void
     {
         $this->isProfiling() && $this->getLogger()->info("Transaction: release savepoint 'SVP{$level}'");
         //SQLServer automatically commits nested transactions with parent transaction
@@ -161,7 +162,7 @@ class SQLServerDriver extends Driver
      * @param int $level   Savepoint name/id, must not contain spaces and be valid database
      *                     identifier.
      */
-    protected function savepointRollback(int $level)
+    protected function savepointRollback(int $level): void
     {
         $this->isProfiling() && $this->getLogger()->info("Transaction: rollback savepoint 'SVP{$level}'");
         $this->execute('ROLLBACK TRANSACTION ' . $this->identifier("SVP{$level}"));
@@ -172,7 +173,8 @@ class SQLServerDriver extends Driver
      */
     protected function mapException(\PDOException $exception, string $query): StatementException
     {
-        if (strpos($exception->getMessage(), '0800') !== false
+        if (
+            strpos($exception->getMessage(), '0800') !== false
             || strpos($exception->getMessage(), '080P') !== false
         ) {
             return new StatementException\ConnectionException($exception, $query);

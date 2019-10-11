@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Tests;
 
@@ -21,7 +23,7 @@ abstract class StatementTest extends BaseQueryTest
      */
     protected $database;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->database = $this->db();
 
@@ -32,29 +34,29 @@ abstract class StatementTest extends BaseQueryTest
         $schema->save();
     }
 
+    public function tearDown(): void
+    {
+        $this->dropDatabase($this->database);
+    }
+
     public function schema(string $table): AbstractTable
     {
         return $this->database->table($table)->getSchema();
     }
 
-    public function fillData(Table $table = null)
+    public function fillData(Table $table = null): void
     {
         $table = $table ?? $this->database->table('sample_table');
 
         for ($i = 0; $i < 10; $i++) {
             $table->insertOne([
-                'name'  => md5($i),
+                'name'  => md5((string)$i),
                 'value' => $i * 10
             ]);
         }
     }
 
-    public function tearDown()
-    {
-        $this->dropDatabase($this->database);
-    }
-
-    public function testInstance()
+    public function testInstance(): void
     {
         $table = $this->database->table('sample_table');
 
@@ -64,7 +66,7 @@ abstract class StatementTest extends BaseQueryTest
 
     //We are testing only extended functionality, there is no need to test PDOStatement
 
-    public function testCountColumns()
+    public function testCountColumns(): void
     {
         $table = $this->database->table('sample_table');
         $result = $table->select()->getIterator();
@@ -72,7 +74,7 @@ abstract class StatementTest extends BaseQueryTest
         $this->assertSame(3, $result->columnCount());
     }
 
-    public function testIterateOver()
+    public function testIterateOver(): void
     {
         $table = $this->database->table('sample_table');
         $this->fillData();
@@ -81,7 +83,7 @@ abstract class StatementTest extends BaseQueryTest
 
         $i = 0;
         foreach ($result as $item) {
-            $this->assertEquals(md5($i), $item['name']);
+            $this->assertEquals(md5((string)$i), $item['name']);
             $this->assertEquals($i * 10, $item['value']);
 
             $i++;
@@ -95,7 +97,7 @@ abstract class StatementTest extends BaseQueryTest
         $this->assertSame(10, $i);
     }
 
-    public function testIterateOverLimit()
+    public function testIterateOverLimit(): void
     {
         $table = $this->database->table('sample_table');
         $this->fillData();
@@ -104,7 +106,7 @@ abstract class StatementTest extends BaseQueryTest
 
         $i = 0;
         foreach ($result as $item) {
-            $this->assertEquals(md5($i), $item['name']);
+            $this->assertEquals(md5((string)$i), $item['name']);
             $this->assertEquals($i * 10, $item['value']);
 
             $i++;
@@ -113,7 +115,7 @@ abstract class StatementTest extends BaseQueryTest
         $this->assertSame(5, $i);
     }
 
-    public function testIterateOverOffset()
+    public function testIterateOverOffset(): void
     {
         $table = $this->database->table('sample_table');
         $this->fillData();
@@ -122,7 +124,7 @@ abstract class StatementTest extends BaseQueryTest
 
         $i = 5;
         foreach ($result as $item) {
-            $this->assertEquals(md5($i), $item['name']);
+            $this->assertEquals(md5((string)$i), $item['name']);
             $this->assertEquals($i * 10, $item['value']);
 
             $i++;
@@ -131,7 +133,7 @@ abstract class StatementTest extends BaseQueryTest
         $this->assertSame(10, $i);
     }
 
-    public function testIterateOverOffsetAndLimit()
+    public function testIterateOverOffsetAndLimit(): void
     {
         $table = $this->database->table('sample_table');
         $this->fillData();
@@ -140,7 +142,7 @@ abstract class StatementTest extends BaseQueryTest
 
         $i = 5;
         foreach ($result as $item) {
-            $this->assertEquals(md5($i), $item['name']);
+            $this->assertEquals(md5((string)$i), $item['name']);
             $this->assertEquals($i * 10, $item['value']);
 
             $i++;
@@ -149,7 +151,7 @@ abstract class StatementTest extends BaseQueryTest
         $this->assertSame(7, $i);
     }
 
-    public function testPaginate()
+    public function testPaginate(): void
     {
         $table = $this->database->table('sample_table');
         $this->fillData();
@@ -161,7 +163,7 @@ abstract class StatementTest extends BaseQueryTest
 
         $i = 0;
         foreach ($select as $item) {
-            $this->assertEquals(md5($i), $item['name']);
+            $this->assertEquals(md5((string)$i), $item['name']);
             $this->assertEquals($i * 10, $item['value']);
 
             $i++;
@@ -173,7 +175,7 @@ abstract class StatementTest extends BaseQueryTest
         $paginator->withPage(2)->paginate($select);
         $i = 2;
         foreach ($select as $item) {
-            $this->assertEquals(md5($i), $item['name']);
+            $this->assertEquals(md5((string)$i), $item['name']);
             $this->assertEquals($i * 10, $item['value']);
 
             $i++;
@@ -186,7 +188,7 @@ abstract class StatementTest extends BaseQueryTest
 
         $i = 4;
         foreach ($select as $item) {
-            $this->assertEquals(md5($i), $item['name']);
+            $this->assertEquals(md5((string)$i), $item['name']);
             $this->assertEquals($i * 10, $item['value']);
 
             $i++;
@@ -201,7 +203,7 @@ abstract class StatementTest extends BaseQueryTest
 
         $i = 6;
         foreach ($select as $item) {
-            $this->assertEquals(md5($i), $item['name']);
+            $this->assertEquals(md5((string)$i), $item['name']);
             $this->assertEquals($i * 10, $item['value']);
 
             $i++;
@@ -210,7 +212,7 @@ abstract class StatementTest extends BaseQueryTest
         $this->assertSame(10, $i);
     }
 
-    public function testDebugString()
+    public function testDebugString(): void
     {
         $table = $this->database->table('sample_table');
         $result = $table->select()->getIterator();
@@ -221,7 +223,7 @@ abstract class StatementTest extends BaseQueryTest
         );
     }
 
-    public function testToArray()
+    public function testToArray(): void
     {
         $table = $this->database->table('sample_table');
         $this->fillData();
@@ -229,14 +231,14 @@ abstract class StatementTest extends BaseQueryTest
         $result = $table->select()->limit(1)->getIterator();
 
         $this->assertEquals([
-            ['id' => 1, 'name' => md5(0), 'value' => 0]
+            ['id' => 1, 'name' => md5('0'), 'value' => 0]
         ], $result->fetchAll());
     }
 
     /**
      * @expectedException \Spiral\Database\Exception\BuilderException
      */
-    public function testBadAggregation()
+    public function testBadAggregation(): void
     {
         $table = $this->database->table('sample_table');
         $this->fillData();
@@ -247,7 +249,7 @@ abstract class StatementTest extends BaseQueryTest
     /**
      * @expectedException \Spiral\Database\Exception\BuilderException
      */
-    public function testBadAggregation2()
+    public function testBadAggregation2(): void
     {
         $table = $this->database->table('sample_table');
         $this->fillData();
@@ -258,7 +260,7 @@ abstract class StatementTest extends BaseQueryTest
     /**
      * @expectedException \Spiral\Database\Exception\BuilderException
      */
-    public function testBadAggregation3()
+    public function testBadAggregation3(): void
     {
         $table = $this->database->table('sample_table');
         $this->fillData();
@@ -266,7 +268,7 @@ abstract class StatementTest extends BaseQueryTest
         $table->select()->avg(1, 2);
     }
 
-    public function testClose()
+    public function testClose(): void
     {
         $table = $this->database->table('sample_table');
         $this->fillData();
@@ -275,7 +277,7 @@ abstract class StatementTest extends BaseQueryTest
         $this->assertNull($result->close());
     }
 
-    public function testSpanishInquisition()
+    public function testSpanishInquisition(): void
     {
         $driver = $this->database->getDriver();
         $driver->connect();
@@ -286,7 +288,7 @@ abstract class StatementTest extends BaseQueryTest
         $this->assertFalse($driver->isConnected());
     }
 
-    public function testChunks()
+    public function testChunks(): void
     {
         $table = $this->database->table('sample_table');
         $this->fillData();
@@ -294,7 +296,7 @@ abstract class StatementTest extends BaseQueryTest
         $select = $table->select();
 
         $count = 0;
-        $select->runChunks(1, function ($result) use (&$count) {
+        $select->runChunks(1, function ($result) use (&$count): void {
             $this->assertInstanceOf(StatementInterface::class, $result);
             $this->assertEquals($count + 1, $result->fetchColumn());
 
@@ -304,7 +306,7 @@ abstract class StatementTest extends BaseQueryTest
         $this->assertSame(10, $count);
     }
 
-    public function testChunksExif()
+    public function testChunksExif(): void
     {
         $table = $this->database->table('sample_table');
         $this->fillData();
@@ -324,7 +326,7 @@ abstract class StatementTest extends BaseQueryTest
         $this->assertSame(5, $count);
     }
 
-    public function testNativeParameters()
+    public function testNativeParameters(): void
     {
         $this->fillData();
 
@@ -334,7 +336,7 @@ abstract class StatementTest extends BaseQueryTest
         )->fetch();
 
         $i = 5;
-        $this->assertEquals(md5($i), $row['name']);
+        $this->assertEquals(md5((string)$i), $row['name']);
         $this->assertEquals($i * 10, $row['value']);
 
         $row = $this->database->query(
@@ -343,11 +345,11 @@ abstract class StatementTest extends BaseQueryTest
         )->fetch();
 
         $i = 4;
-        $this->assertEquals(md5($i), $row['name']);
+        $this->assertEquals(md5((string)$i), $row['name']);
         $this->assertEquals($i * 10, $row['value']);
     }
 
-    public function testDatetimeInQuery()
+    public function testDatetimeInQuery(): void
     {
         $this->fillData();
 
@@ -362,7 +364,7 @@ abstract class StatementTest extends BaseQueryTest
     /**
      * @expectedException \Spiral\Database\Exception\BuilderException
      */
-    public function testNativeParametersError()
+    public function testNativeParametersError(): void
     {
         $this->fillData();
 
@@ -372,11 +374,11 @@ abstract class StatementTest extends BaseQueryTest
         )->fetch();
 
         $i = 4;
-        $this->assertEquals(md5($i), $row['name']);
+        $this->assertEquals(md5((string)$i), $row['name']);
         $this->assertEquals($i * 10, $row['value']);
     }
 
-    public function testUnpackArrayFromParameter()
+    public function testUnpackArrayFromParameter(): void
     {
         $this->fillData();
 
@@ -386,15 +388,15 @@ abstract class StatementTest extends BaseQueryTest
         )->fetchAll();
 
         $i = 0;
-        $this->assertEquals(md5($i), $rows[0]['name']);
+        $this->assertEquals(md5((string)$i), $rows[0]['name']);
         $this->assertEquals($i * 10, $rows[0]['value']);
 
         $i = 1;
-        $this->assertEquals(md5($i), $rows[1]['name']);
+        $this->assertEquals(md5((string)$i), $rows[1]['name']);
         $this->assertEquals($i * 10, $rows[1]['value']);
 
         $i = 2;
-        $this->assertEquals(md5($i), $rows[2]['name']);
+        $this->assertEquals(md5((string)$i), $rows[2]['name']);
         $this->assertEquals($i * 10, $rows[2]['value']);
     }
 }

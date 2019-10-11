@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -46,7 +47,7 @@ final class TransactionScope
      * @param string        $sql
      * @param \PDOStatement $statement
      */
-    public function setPrepared(string $sql, \PDOStatement $statement)
+    public function setPrepared(string $sql, \PDOStatement $statement): void
     {
         if ($this->level === 0 || $this->statements[$this->level] === null) {
             return;

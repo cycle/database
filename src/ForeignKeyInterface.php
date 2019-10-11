@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -14,8 +15,8 @@ namespace Spiral\Database;
  */
 interface ForeignKeyInterface
 {
-    const CASCADE   = 'CASCADE';
-    const NO_ACTION = 'NO ACTION';
+    public const CASCADE   = 'CASCADE';
+    public const NO_ACTION = 'NO ACTION';
 
     /**
      * Get element name (unquoted).

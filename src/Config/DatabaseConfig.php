@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -16,10 +17,10 @@ use Spiral\Database\Exception\ConfigException;
 
 final class DatabaseConfig extends InjectableConfig
 {
+    use AliasTrait;
+
     public const CONFIG           = 'database';
     public const DEFAULT_DATABASE = 'default';
-
-    use AliasTrait;
 
     /**
      * @internal

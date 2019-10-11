@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Spiral Framework.
  *
@@ -15,7 +18,7 @@ use Spiral\Database\Injection\ParameterInterface;
 
 class ParameterTest extends TestCase
 {
-    public function testValue()
+    public function testValue(): void
     {
         $parameter = new Parameter('value');
         $this->assertInstanceOf(ParameterInterface::class, $parameter);
@@ -28,7 +31,7 @@ class ParameterTest extends TestCase
         $this->assertSame('new value', $newParameter->getValue());
     }
 
-    public function testType()
+    public function testType(): void
     {
         $parameter = new Parameter(123, \PDO::PARAM_INT);
 
@@ -42,7 +45,7 @@ class ParameterTest extends TestCase
         $this->assertSame(\PDO::PARAM_INT, $newParameter->getType());
     }
 
-    public function testAutoTyping()
+    public function testAutoTyping(): void
     {
         $parameter = new Parameter('abc');
         $this->assertSame(\PDO::PARAM_STR, $parameter->getType());
@@ -63,7 +66,7 @@ class ParameterTest extends TestCase
     /**
      * At this moment arrays values are always treated as STMP parameter.
      */
-    public function testAutoTypingArrays()
+    public function testAutoTypingArrays(): void
     {
         $parameter = new Parameter([1, 2, 3]);
         $this->assertSame(\PDO::PARAM_STR, $parameter->getType());
@@ -72,7 +75,7 @@ class ParameterTest extends TestCase
         $this->assertSame(\PDO::PARAM_STR, $parameter->getType());
     }
 
-    public function testDebugInfo()
+    public function testDebugInfo(): void
     {
         $parameter = new Parameter([1, 2, 3]);
 

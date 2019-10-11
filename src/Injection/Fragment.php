@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -32,16 +33,6 @@ final class Fragment implements FragmentInterface
     }
 
     /**
-     * @param QueryBindings     $bindings
-     * @param CompilerInterface $compiler
-     * @return string
-     */
-    public function compile(QueryBindings $bindings, CompilerInterface $compiler): string
-    {
-        return $this->statement;
-    }
-
-    /**
      * @param array $an_array
      *
      * @return Fragment
@@ -49,5 +40,15 @@ final class Fragment implements FragmentInterface
     public static function __set_state(array $an_array): Fragment
     {
         return new static($an_array['statement']);
+    }
+
+    /**
+     * @param QueryBindings     $bindings
+     * @param CompilerInterface $compiler
+     * @return string
+     */
+    public function compile(QueryBindings $bindings, CompilerInterface $compiler): string
+    {
+        return $this->statement;
     }
 }

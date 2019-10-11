@@ -1,13 +1,15 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Tests\SQLServer;
 
 class DatetimeColumnTest extends \Spiral\Database\Tests\DatetimeColumnTest
 {
-    const DRIVER = 'sqlserver';
+    public const DRIVER = 'sqlserver';
 }

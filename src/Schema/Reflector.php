@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -19,8 +20,8 @@ use Spiral\Database\Driver\HandlerInterface;
  */
 final class Reflector
 {
-    const STATE_NEW    = 1;
-    const STATE_PASSED = 2;
+    public const STATE_NEW    = 1;
+    public const STATE_PASSED = 2;
 
     /** @var AbstractTable[] */
     private $tables = [];
@@ -42,7 +43,7 @@ final class Reflector
      *
      * @param AbstractTable $table
      */
-    public function addTable(AbstractTable $table)
+    public function addTable(AbstractTable $table): void
     {
         $this->tables[$table->getName()] = $table;
         $this->dependencies[$table->getName()] = $table->getDependencies();
@@ -80,11 +81,12 @@ final class Reflector
      *
      * @throws \Throwable
      */
-    public function run()
+    public function run(): void
     {
         $hasChanges = false;
         foreach ($this->tables as $table) {
-            if ($table->getComparator()->hasChanges()
+            if (
+                $table->getComparator()->hasChanges()
                 || $table->getStatus() == AbstractTable::STATUS_DECLARED_DROPPED
             ) {
                 $hasChanges = true;
@@ -121,7 +123,7 @@ final class Reflector
     /**
      * Drop all removed table references.
      */
-    protected function dropForeignKeys()
+    protected function dropForeignKeys(): void
     {
         foreach ($this->sortedTables() as $table) {
             if ($table->exists()) {
@@ -133,7 +135,7 @@ final class Reflector
     /**
      * Drop all removed table indexes.
      */
-    protected function dropIndexes()
+    protected function dropIndexes(): void
     {
         foreach ($this->sortedTables() as $table) {
             if ($table->exists()) {
@@ -167,21 +169,9 @@ final class Reflector
     }
 
     /**
-     * Collecting all involved drivers.
-     */
-    private function collectDrivers()
-    {
-        foreach ($this->tables as $table) {
-            if (!in_array($table->getDriver(), $this->drivers, true)) {
-                $this->drivers[] = $table->getDriver();
-            }
-        }
-    }
-
-    /**
      * Begin mass transaction.
      */
-    protected function beginTransaction()
+    protected function beginTransaction(): void
     {
         foreach ($this->drivers as $driver) {
             if ($driver instanceof Driver) {
@@ -197,7 +187,7 @@ final class Reflector
     /**
      * Commit mass transaction.
      */
-    protected function commitTransaction()
+    protected function commitTransaction(): void
     {
         foreach ($this->drivers as $driver) {
             /** @var DriverInterface $driver */
@@ -208,7 +198,7 @@ final class Reflector
     /**
      * Roll back mass transaction.
      */
-    protected function rollbackTransaction()
+    protected function rollbackTransaction(): void
     {
         foreach (array_reverse($this->drivers) as $driver) {
             /** @var DriverInterface $driver */
@@ -217,10 +207,22 @@ final class Reflector
     }
 
     /**
+     * Collecting all involved drivers.
+     */
+    private function collectDrivers(): void
+    {
+        foreach ($this->tables as $table) {
+            if (!in_array($table->getDriver(), $this->drivers, true)) {
+                $this->drivers[] = $table->getDriver();
+            }
+        }
+    }
+
+    /**
      * @param string $key
      * @param array  $dependencies
      */
-    private function sort(string $key, array $dependencies)
+    private function sort(string $key, array $dependencies): void
     {
         if (isset($this->states[$key])) {
             return;
@@ -235,7 +237,5 @@ final class Reflector
 
         $this->stack[] = $this->tables[$key];
         $this->states[$key] = self::STATE_PASSED;
-
-        return;
     }
 }

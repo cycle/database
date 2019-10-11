@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Spiral Framework.
  *
@@ -15,7 +18,7 @@ use Spiral\Database\Query\Interpolator;
 
 class InterpolatorTest extends TestCase
 {
-    public function testFlattening()
+    public function testFlattening(): void
     {
         $parameters = [
             ':named' => new Parameter('test'),
@@ -35,7 +38,7 @@ class InterpolatorTest extends TestCase
         $this->assertSame('value', $flattened[':value']->getValue());
     }
 
-    public function testFlatteningArray()
+    public function testFlatteningArray(): void
     {
         $parameters = [
             new Parameter('test'),
@@ -55,7 +58,7 @@ class InterpolatorTest extends TestCase
         $this->assertSame(3, $flattened[4]->getValue());
     }
 
-    public function testInterpolation()
+    public function testInterpolation(): void
     {
         $query = 'SELECT * FROM table WHERE name = ? AND id IN(?, ?, ?) AND balance > ?';
 
@@ -73,7 +76,7 @@ class InterpolatorTest extends TestCase
         );
     }
 
-    public function testDatesInterpolation()
+    public function testDatesInterpolation(): void
     {
         $query = 'SELECT * FROM table WHERE name = :name AND registered > :registered';
 
@@ -90,7 +93,7 @@ class InterpolatorTest extends TestCase
         );
     }
 
-    public function testDateInterpolationWithDateTimeImmutable()
+    public function testDateInterpolationWithDateTimeImmutable(): void
     {
         $query = 'SELECT * FROM table WHERE name = :name AND registered > :registered';
 

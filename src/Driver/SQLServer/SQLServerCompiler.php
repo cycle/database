@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -22,7 +23,7 @@ class SQLServerCompiler extends Compiler
      * Column to be used as ROW_NUMBER in fallback selection mechanism, attention! Amount of columns
      * in result set will be increaced by 1!
      */
-    const ROW_NUMBER = '_ROW_NUMBER_';
+    public const ROW_NUMBER = '_ROW_NUMBER_';
 
     /**
      * {@inheritdoc}

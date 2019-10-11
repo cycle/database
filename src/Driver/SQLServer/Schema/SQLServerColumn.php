@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -17,17 +18,17 @@ class SQLServerColumn extends AbstractColumn
     /**
      * Default datetime value.
      */
-    const DATETIME_DEFAULT = '1970-01-01T00:00:00';
+    public const DATETIME_DEFAULT = '1970-01-01T00:00:00';
 
     /**
      * Default timestamp expression (driver specific).
      */
-    const DATETIME_NOW = 'getdate()';
+    public const DATETIME_NOW = 'getdate()';
 
     /**
      * Private state related values.
      */
-    const EXCLUDE_FROM_COMPARE = [
+    public const EXCLUDE_FROM_COMPARE = [
         'userType',
         'timezone',
         'constrainedDefault',
@@ -221,19 +222,6 @@ class SQLServerColumn extends AbstractColumn
     }
 
     /**
-     * {@inheritdoc}
-     */
-    protected function quoteDefault(DriverInterface $driver): string
-    {
-        $defaultValue = parent::quoteDefault($driver);
-        if ($this->getAbstractType() == 'boolean') {
-            $defaultValue = strval((int)$this->defaultValue);
-        }
-
-        return $defaultValue;
-    }
-
-    /**
      * Generate set of operations need to change column. We are expecting that column constrains
      * will be dropped separately.
      *
@@ -302,80 +290,6 @@ class SQLServerColumn extends AbstractColumn
     }
 
     /**
-     * Get/generate name of enum constraint.
-     *
-     * @return string
-     */
-    protected function enumConstraint()
-    {
-        if (empty($this->enumConstraint)) {
-            $this->enumConstraint = $this->table . '_' . $this->getName() . '_enum_' . uniqid();
-        }
-
-        return $this->enumConstraint;
-    }
-
-    /**
-     * Get/generate name of default constrain.
-     *
-     * @return string
-     */
-    protected function defaultConstrain(): string
-    {
-        if (empty($this->defaultConstraint)) {
-            $this->defaultConstraint = $this->table . '_' . $this->getName() . '_default_' . uniqid();
-        }
-
-        return $this->defaultConstraint;
-    }
-
-    /**
-     * In SQLServer we can emulate enums similar way as in Postgres via column constrain.
-     *
-     * @param DriverInterface $driver
-     * @return string
-     */
-    private function enumStatement(DriverInterface $driver): string
-    {
-        $enumValues = [];
-        foreach ($this->enumValues as $value) {
-            $enumValues[] = $driver->quote($value);
-        }
-
-        $constrain = $driver->identifier($this->enumConstraint());
-        $column = $driver->identifier($this->getName());
-        $enumValues = implode(', ', $enumValues);
-
-        return "CONSTRAINT {$constrain} CHECK ({$column} IN ({$enumValues}))";
-    }
-
-    /**
-     * Normalize default value.
-     */
-    private function normalizeDefault()
-    {
-        if (!$this->hasDefaultValue()) {
-            return;
-        }
-
-        if ($this->defaultValue[0] == '(' && $this->defaultValue[strlen($this->defaultValue) - 1] == ')') {
-            //Cut braces
-            $this->defaultValue = substr($this->defaultValue, 1, -1);
-        }
-
-        if (preg_match('/^[\'""].*?[\'"]$/', $this->defaultValue)) {
-            $this->defaultValue = substr($this->defaultValue, 1, -1);
-        }
-
-        if ($this->getType() != 'string'
-            && ($this->defaultValue[0] == '(' && $this->defaultValue[strlen($this->defaultValue) - 1] == ')')
-        ) {
-            //Cut another braces
-            $this->defaultValue = substr($this->defaultValue, 1, -1);
-        }
-    }
-
-    /**
      * @param string $table Table name.
      * @param array $schema
      * @param DriverInterface $driver SQLServer columns are bit more complex.
@@ -436,6 +350,95 @@ class SQLServerColumn extends AbstractColumn
     }
 
     /**
+     * {@inheritdoc}
+     */
+    protected function quoteDefault(DriverInterface $driver): string
+    {
+        $defaultValue = parent::quoteDefault($driver);
+        if ($this->getAbstractType() == 'boolean') {
+            $defaultValue = strval((int)$this->defaultValue);
+        }
+
+        return $defaultValue;
+    }
+
+    /**
+     * Get/generate name of enum constraint.
+     *
+     * @return string
+     */
+    protected function enumConstraint()
+    {
+        if (empty($this->enumConstraint)) {
+            $this->enumConstraint = $this->table . '_' . $this->getName() . '_enum_' . uniqid();
+        }
+
+        return $this->enumConstraint;
+    }
+
+    /**
+     * Get/generate name of default constrain.
+     *
+     * @return string
+     */
+    protected function defaultConstrain(): string
+    {
+        if (empty($this->defaultConstraint)) {
+            $this->defaultConstraint = $this->table . '_' . $this->getName() . '_default_' . uniqid();
+        }
+
+        return $this->defaultConstraint;
+    }
+
+    /**
+     * In SQLServer we can emulate enums similar way as in Postgres via column constrain.
+     *
+     * @param DriverInterface $driver
+     * @return string
+     */
+    private function enumStatement(DriverInterface $driver): string
+    {
+        $enumValues = [];
+        foreach ($this->enumValues as $value) {
+            $enumValues[] = $driver->quote($value);
+        }
+
+        $constrain = $driver->identifier($this->enumConstraint());
+        $column = $driver->identifier($this->getName());
+        $enumValues = implode(', ', $enumValues);
+
+        return "CONSTRAINT {$constrain} CHECK ({$column} IN ({$enumValues}))";
+    }
+
+    /**
+     * Normalize default value.
+     */
+    private function normalizeDefault(): void
+    {
+        if (!$this->hasDefaultValue()) {
+            return;
+        }
+
+        if ($this->defaultValue[0] == '(' && $this->defaultValue[strlen($this->defaultValue) - 1] == ')') {
+            //Cut braces
+            $this->defaultValue = substr($this->defaultValue, 1, -1);
+        }
+
+        if (preg_match('/^[\'""].*?[\'"]$/', $this->defaultValue)) {
+            $this->defaultValue = substr($this->defaultValue, 1, -1);
+        }
+
+        if (
+            $this->getType() != 'string'
+            && ($this->defaultValue[0] == '('
+            && $this->defaultValue[strlen($this->defaultValue) - 1] == ')')
+        ) {
+            //Cut another braces
+            $this->defaultValue = substr($this->defaultValue, 1, -1);
+        }
+    }
+
+    /**
      * Resolve enum values if any.
      *
      * @param DriverInterface $driver
@@ -446,7 +449,7 @@ class SQLServerColumn extends AbstractColumn
         DriverInterface $driver,
         array $schema,
         SQLServerColumn $column
-    ) {
+    ): void {
         $query = 'SELECT object_definition([o].[object_id]) AS [definition], '
             . "OBJECT_NAME([o].[object_id]) AS [name]\nFROM [sys].[objects] AS [o]\n"
             . "JOIN [sys].[sysconstraints] AS [c] ON [o].[object_id] = [c].[constid]\n"
@@ -461,11 +464,13 @@ class SQLServerColumn extends AbstractColumn
             $name = preg_quote($driver->identifier($column->getName()));
 
             //We made some assumptions here...
-            if (preg_match_all(
-                '/' . $name . '=[\']?([^\']+)[\']?/i',
-                $constraint['definition'],
-                $matches
-            )) {
+            if (
+                preg_match_all(
+                    '/' . $name . '=[\']?([^\']+)[\']?/i',
+                    $constraint['definition'],
+                    $matches
+                )
+            ) {
                 //Fetching enum values
                 $column->enumValues = $matches[1];
                 sort($column->enumValues);

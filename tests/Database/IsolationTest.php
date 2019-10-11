@@ -1,9 +1,12 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
+
 namespace Spiral\Database\Tests;
 
 use Spiral\Database\Driver\Handler;
@@ -11,7 +14,7 @@ use Spiral\Database\Schema\AbstractTable;
 
 abstract class IsolationTest extends BaseTest
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->dropDatabase($this->db());
     }
@@ -21,7 +24,7 @@ abstract class IsolationTest extends BaseTest
         return $this->db('default', $prefix)->table($table)->getSchema();
     }
 
-    public function testGetPrefix()
+    public function testGetPrefix(): void
     {
         $schema = $this->schema('prefix_', 'table');
         $this->assertFalse($schema->exists());
@@ -35,7 +38,7 @@ abstract class IsolationTest extends BaseTest
         $this->assertTrue($this->schema('prefix_', 'table')->exists());
     }
 
-    public function testChangeNameBeforeSave()
+    public function testChangeNameBeforeSave(): void
     {
         $schema = $this->schema('prefix_', 'table');
         $this->assertFalse($schema->exists());
@@ -53,7 +56,7 @@ abstract class IsolationTest extends BaseTest
         $this->assertTrue($this->schema('prefix_', 'new_name')->exists());
     }
 
-    public function testRename()
+    public function testRename(): void
     {
         $schema = $this->schema('prefix_', 'table');
         $this->assertFalse($schema->exists());
@@ -70,7 +73,7 @@ abstract class IsolationTest extends BaseTest
         $this->assertTrue($this->schema('prefix_', 'abc')->exists());
     }
 
-    public function testCreateAndMakeReferenceInSelfScope()
+    public function testCreateAndMakeReferenceInSelfScope(): void
     {
         $schema = $this->schema('prefix_', 'a');
         $this->assertFalse($schema->exists());

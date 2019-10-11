@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -83,6 +84,9 @@ use Spiral\Database\Exception\DBALException;
  */
 final class DatabaseManager implements DatabaseProviderInterface, SingletonInterface, InjectorInterface
 {
+
+    /**  @var FactoryInterface */
+    protected $factory = null;
     /** @var DatabaseConfig */
     private $config = null;
 
@@ -91,9 +95,6 @@ final class DatabaseManager implements DatabaseProviderInterface, SingletonInter
 
     /** @var DriverInterface[] */
     private $drivers = [];
-
-    /**  @var FactoryInterface */
-    protected $factory = null;
 
     /**
      * @param DatabaseConfig   $config
@@ -110,7 +111,7 @@ final class DatabaseManager implements DatabaseProviderInterface, SingletonInter
      */
     public function createInjection(\ReflectionClass $class, string $context = null)
     {
-        //If context is empty default database will be returned
+        // if context is empty default database will be returned
         return $this->database($context);
     }
 
@@ -143,7 +144,7 @@ final class DatabaseManager implements DatabaseProviderInterface, SingletonInter
      */
     public function database(string $database = null): DatabaseInterface
     {
-        if (empty($database)) {
+        if ($database === null) {
             $database = $this->config->getDefaultDatabase();
         }
 
@@ -172,7 +173,7 @@ final class DatabaseManager implements DatabaseProviderInterface, SingletonInter
      *
      * @throws DBALException
      */
-    public function addDatabase(Database $database)
+    public function addDatabase(Database $database): void
     {
         if (isset($this->databases[$database->getName()])) {
             throw new DBALException("Database '{$database->getName()}' already exists");

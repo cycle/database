@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -17,10 +18,10 @@ interface ColumnInterface
     /**
      * PHP types for phpType() method.
      */
-    const INT    = 'int';
-    const BOOL   = 'bool';
-    const STRING = 'string';
-    const FLOAT  = 'float';
+    public const INT    = 'int';
+    public const BOOL   = 'bool';
+    public const STRING = 'string';
+    public const FLOAT  = 'float';
 
     /**
      * Get element name (unquoted).

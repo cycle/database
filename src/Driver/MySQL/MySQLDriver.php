@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -45,7 +46,7 @@ class MySQLDriver extends Driver
     public function tableNames(): array
     {
         $result = [];
-        foreach ($this->query("SHOW TABLES")->fetchAll(PDO::FETCH_NUM) as $row) {
+        foreach ($this->query('SHOW TABLES')->fetchAll(PDO::FETCH_NUM) as $row) {
             $result[] = $row[0];
         }
 
@@ -57,7 +58,7 @@ class MySQLDriver extends Driver
      */
     public function hasTable(string $name): bool
     {
-        $query = "SELECT COUNT(*) FROM `information_schema`.`tables` WHERE `table_schema` = ? AND `table_name` = ?";
+        $query = 'SELECT COUNT(*) FROM `information_schema`.`tables` WHERE `table_schema` = ? AND `table_name` = ?';
 
         return (bool)$this->query($query, [$this->getSource(), $name])->fetchColumn();
     }
@@ -65,7 +66,7 @@ class MySQLDriver extends Driver
     /**
      * {@inheritdoc}
      */
-    public function eraseData(string $table)
+    public function eraseData(string $table): void
     {
         $this->execute("TRUNCATE TABLE {$this->identifier($table)}");
     }
@@ -89,7 +90,8 @@ class MySQLDriver extends Driver
             return new StatementException\ConstrainException($exception, $query);
         }
 
-        if ($exception->getCode() > 2000
+        if (
+            $exception->getCode() > 2000
             || strpos($exception->getMessage(), 'server has gone away') !== false
         ) {
             return new StatementException\ConnectionException($exception, $query);

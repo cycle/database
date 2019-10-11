@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -27,7 +28,7 @@ class MySQLHandler extends Handler
         AbstractTable $table,
         AbstractColumn $initial,
         AbstractColumn $column
-    ) {
+    ): void {
         $foreignBackup = [];
         foreach ($table->getForeignKeys() as $foreign) {
             if ($column->getName() == $foreign->getColumns()) {
@@ -37,7 +38,7 @@ class MySQLHandler extends Handler
         }
 
         $this->run(
-            "ALTER TABLE {$this->identify($table)} 
+            "ALTER TABLE {$this->identify($table)}
                     CHANGE {$this->identify($initial)} {$column->sqlStatement($this->driver)}"
         );
 
@@ -50,20 +51,18 @@ class MySQLHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function dropIndex(AbstractTable $table, AbstractIndex $index)
+    public function dropIndex(AbstractTable $table, AbstractIndex $index): void
     {
         $this->run("DROP INDEX {$this->identify($index)} ON {$this->identify($table)}");
-
-        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function alterIndex(AbstractTable $table, AbstractIndex $initial, AbstractIndex $index)
+    public function alterIndex(AbstractTable $table, AbstractIndex $initial, AbstractIndex $index): void
     {
         $this->run(
-            "ALTER TABLE {$this->identify($table)} 
+            "ALTER TABLE {$this->identify($table)}
                     DROP INDEX  {$this->identify($initial)},
                     ADD {$index->sqlStatement($this->driver, false)}"
         );
@@ -72,7 +71,7 @@ class MySQLHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function dropForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey)
+    public function dropForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void
     {
         $this->run("ALTER TABLE {$this->identify($table)} DROP FOREIGN KEY {$this->identify($foreignKey)}");
     }
@@ -99,12 +98,15 @@ class MySQLHandler extends Handler
      *
      * @throws MySQLException
      */
-    protected function assertValid(AbstractColumn $column)
+    protected function assertValid(AbstractColumn $column): void
     {
-        if (in_array(
-            $column->getAbstractType(),
-            ['text', 'tinyText', 'longText', 'blob', 'tinyBlob', 'longBlob']
-        ) && is_string($column->getDefaultValue()) && $column->getDefaultValue() !== ''
+        if (
+            in_array(
+                $column->getAbstractType(),
+                ['text', 'tinyText', 'longText', 'blob', 'tinyBlob', 'longBlob']
+            )
+            && is_string($column->getDefaultValue())
+            && $column->getDefaultValue() !== ''
         ) {
             throw new MySQLException(
                 "Column {$column} of type text/blob can not have non empty default value"

@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Tests;
 
@@ -12,7 +14,7 @@ use Spiral\Database\Schema\Reflector;
 
 abstract class ReflectorTest extends BaseTest
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->dropDatabase($this->db());
     }
@@ -22,7 +24,7 @@ abstract class ReflectorTest extends BaseTest
         return $this->db('default', $prefix)->table($table)->getSchema();
     }
 
-    public function testCreateNotLinkedTables()
+    public function testCreateNotLinkedTables(): void
     {
         $schemaA = $this->schema('a');
         $this->assertFalse($schemaA->exists());
@@ -42,7 +44,7 @@ abstract class ReflectorTest extends BaseTest
         $this->assertSameAsInDB($schemaB);
     }
 
-    public function testCreateLinkedTablesDirectOrder()
+    public function testCreateLinkedTablesDirectOrder(): void
     {
         $schemaA = $this->schema('a');
         $this->assertFalse($schemaA->exists());
@@ -64,7 +66,7 @@ abstract class ReflectorTest extends BaseTest
         $this->assertSameAsInDB($schemaB);
     }
 
-    public function testCreateLinkedTablesReversedOrder()
+    public function testCreateLinkedTablesReversedOrder(): void
     {
         $schemaA = $this->schema('a');
         $this->assertFalse($schemaA->exists());
@@ -86,7 +88,7 @@ abstract class ReflectorTest extends BaseTest
         $this->assertSameAsInDB($schemaB);
     }
 
-    public function testCreateRecursiveLinkedTables()
+    public function testCreateRecursiveLinkedTables(): void
     {
         $schemaA = $this->schema('a');
         $this->assertFalse($schemaA->exists());
@@ -112,7 +114,7 @@ abstract class ReflectorTest extends BaseTest
         $this->assertSameAsInDB($schemaB);
     }
 
-    public function testCreateTableAndLinkItAfter()
+    public function testCreateTableAndLinkItAfter(): void
     {
         $schemaA = $this->schema('a');
         $this->assertFalse($schemaA->exists());
@@ -143,7 +145,7 @@ abstract class ReflectorTest extends BaseTest
         $this->assertSameAsInDB($schemaB);
     }
 
-    public function testCreateLinkedAndDropForeign()
+    public function testCreateLinkedAndDropForeign(): void
     {
         $schemaA = $this->schema('a');
         $this->assertFalse($schemaA->exists());
@@ -173,7 +175,7 @@ abstract class ReflectorTest extends BaseTest
         $this->assertSameAsInDB($schemaB);
     }
 
-    public function testCreate3LinkedTables()
+    public function testCreate3LinkedTables(): void
     {
         $schemaA = $this->schema('a');
         $this->assertFalse($schemaA->exists());
@@ -209,7 +211,7 @@ abstract class ReflectorTest extends BaseTest
         $this->assertSameAsInDB($schemaC);
     }
 
-    public function testAddColumnsToTables()
+    public function testAddColumnsToTables(): void
     {
         $schemaA = $this->schema('a');
         $this->assertFalse($schemaA->exists());
@@ -237,7 +239,7 @@ abstract class ReflectorTest extends BaseTest
         $this->assertSameAsInDB($schemaB);
     }
 
-    public function testDropColumnsFromTables()
+    public function testDropColumnsFromTables(): void
     {
         $schemaA = $this->schema('a');
         $this->assertFalse($schemaA->exists());
@@ -266,7 +268,7 @@ abstract class ReflectorTest extends BaseTest
         $this->assertSameAsInDB($schemaB);
     }
 
-    public function testRenameColumnsInTables()
+    public function testRenameColumnsInTables(): void
     {
         $schemaA = $this->schema('a');
         $this->assertFalse($schemaA->exists());
@@ -295,7 +297,7 @@ abstract class ReflectorTest extends BaseTest
         $this->assertSameAsInDB($schemaB);
     }
 
-    public function testAddIndexesToTables()
+    public function testAddIndexesToTables(): void
     {
         $schemaA = $this->schema('a');
         $this->assertFalse($schemaA->exists());
@@ -325,7 +327,7 @@ abstract class ReflectorTest extends BaseTest
         $this->assertSameAsInDB($schemaB);
     }
 
-    public function testDropIndexesFromTables()
+    public function testDropIndexesFromTables(): void
     {
         $schemaA = $this->schema('a');
         $this->assertFalse($schemaA->exists());
@@ -358,7 +360,7 @@ abstract class ReflectorTest extends BaseTest
         $this->assertSameAsInDB($schemaB);
     }
 
-    public function testDeleteTables()
+    public function testDeleteTables(): void
     {
         $schemaA = $this->schema('a');
         $this->assertFalse($schemaA->exists());
@@ -378,7 +380,7 @@ abstract class ReflectorTest extends BaseTest
         $this->assertFalse($this->fetchSchema($schemaA)->exists());
     }
 
-    public function testDeleteTablesWithForeignKeys()
+    public function testDeleteTablesWithForeignKeys(): void
     {
         $schemaA = $this->schema('a');
         $this->assertFalse($schemaA->exists());
@@ -412,7 +414,7 @@ abstract class ReflectorTest extends BaseTest
         $this->assertFalse($this->fetchSchema($schemaA)->exists());
     }
 
-    protected function saveTables(array $tables)
+    protected function saveTables(array $tables): void
     {
         $reflector = new Reflector();
 

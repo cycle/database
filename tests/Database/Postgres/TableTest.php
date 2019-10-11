@@ -1,18 +1,20 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Tests\Postgres;
 
 class TableTest extends \Spiral\Database\Tests\TableTest
 {
-    const DRIVER = 'postgres';
+    public const DRIVER = 'postgres';
 
     //Applause, PG
-    public function testGetColumns()
+    public function testGetColumns(): void
     {
         $table = $this->database->table('table');
         $this->assertSame(0, $table->count());

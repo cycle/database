@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -24,8 +25,8 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
     /**
      * Index types.
      */
-    const NORMAL = 'INDEX';
-    const UNIQUE = 'UNIQUE';
+    public const NORMAL = 'INDEX';
+    public const UNIQUE = 'UNIQUE';
 
     /**
      * Index type, by default NORMAL and UNIQUE indexes supported, additional types can be

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Spiral Framework.
  *
@@ -19,7 +22,7 @@ use Spiral\Database\Driver\SQLServer\SQLServerDriver;
 
 class QuoterTest extends TestCase
 {
-    public function testPrefixless()
+    public function testPrefixless(): void
     {
         $quoter = $this->makeQuoter();
 
@@ -50,7 +53,7 @@ class QuoterTest extends TestCase
         );
     }
 
-    public function testPrefixlessAggregations()
+    public function testPrefixlessAggregations(): void
     {
         $quoter = $this->makeQuoter();
 
@@ -69,7 +72,7 @@ class QuoterTest extends TestCase
         );
     }
 
-    public function testPrefixlessOperations()
+    public function testPrefixlessOperations(): void
     {
         $quoter = $this->makeQuoter();
 
@@ -85,7 +88,7 @@ class QuoterTest extends TestCase
         );
     }
 
-    public function testPrefixes()
+    public function testPrefixes(): void
     {
         $quoter = $this->makeQuoter('p_');
 
@@ -116,7 +119,7 @@ class QuoterTest extends TestCase
         );
     }
 
-    public function testPrefixesAggregations()
+    public function testPrefixesAggregations(): void
     {
         $quoter = $this->makeQuoter('p_');
 
@@ -135,7 +138,7 @@ class QuoterTest extends TestCase
         );
     }
 
-    public function testPrefixesOperations()
+    public function testPrefixesOperations(): void
     {
         $quoter = $this->makeQuoter('p_');
 
@@ -151,7 +154,7 @@ class QuoterTest extends TestCase
         );
     }
 
-    public function testAliases()
+    public function testAliases(): void
     {
         $quoter = $this->makeQuoter('p_');
 
@@ -184,7 +187,7 @@ class QuoterTest extends TestCase
         );
     }
 
-    public function testAliasesAggregations()
+    public function testAliasesAggregations(): void
     {
         $quoter = $this->makeQuoter('p_');
 
@@ -204,7 +207,7 @@ class QuoterTest extends TestCase
         );
     }
 
-    public function testAliasesOperations()
+    public function testAliasesOperations(): void
     {
         $quoter = $this->makeQuoter('p_');
         $this->assertEquals(
@@ -228,7 +231,7 @@ class QuoterTest extends TestCase
         );
     }
 
-    public function testCollisions()
+    public function testCollisions(): void
     {
         $quoter = $this->makeQuoter('p_');
 
@@ -254,7 +257,7 @@ class QuoterTest extends TestCase
         $this->assertEquals('"x_bubble"', $quoter->quote('x_bubble', true));
     }
 
-    public function testMySQLlPrefixes()
+    public function testMySQLlPrefixes(): void
     {
         $quoter = $this->makeQuoter('p_', MySQLDriver::class);
 
@@ -300,7 +303,7 @@ class QuoterTest extends TestCase
         );
     }
 
-    public function testPostgresPrefixes()
+    public function testPostgresPrefixes(): void
     {
         $quoter = $this->makeQuoter('p_', PostgresDriver::class);
 
@@ -346,9 +349,9 @@ class QuoterTest extends TestCase
         );
     }
 
-    public function testSQLitePrefixes()
+    public function testSQLitePrefixes(): void
     {
-        $quoter = $this->makeQuoter("p_", SQLiteDriver::class);
+        $quoter = $this->makeQuoter('p_', SQLiteDriver::class);
 
         $this->assertEquals(
             '*',
@@ -392,7 +395,7 @@ class QuoterTest extends TestCase
         );
     }
 
-    public function testSQLServerPrefixes()
+    public function testSQLServerPrefixes(): void
     {
         $quoter = $this->makeQuoter('p_', SQLServerDriver::class);
 

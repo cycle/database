@@ -1,17 +1,19 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Tests\SQLServer;
 
 class TableTest extends \Spiral\Database\Tests\TableTest
 {
-    const DRIVER = 'sqlserver';
+    public const DRIVER = 'sqlserver';
 
-    public function testAggregationAvgByPassFloat()
+    public function testAggregationAvgByPassFloat(): void
     {
         $table = $this->database->table('table');
         $this->assertSame(0, $table->count());
@@ -32,7 +34,7 @@ class TableTest extends \Spiral\Database\Tests\TableTest
         $this->assertSame(13, $table->avg('value'));
     }
 
-    public function testAggregationAvgByPassRealFloat()
+    public function testAggregationAvgByPassRealFloat(): void
     {
         $table = $this->database->table('table2');
 

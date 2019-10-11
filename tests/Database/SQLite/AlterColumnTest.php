@@ -1,18 +1,20 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Tests\SQLite;
 
 class AlterColumnTest extends \Spiral\Database\Tests\AlterColumnTest
 {
-    const DRIVER = 'sqlite';
+    public const DRIVER = 'sqlite';
 
     // SQLite does not support sting length
-    public function testChangeSize()
+    public function testChangeSize(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());

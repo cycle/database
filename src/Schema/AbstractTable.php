@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -52,23 +53,9 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * Table states.
      */
-    const STATUS_NEW              = 0;
-    const STATUS_EXISTS           = 1;
-    const STATUS_DECLARED_DROPPED = 2;
-
-    /**
-     * Indication that table is exists and current schema is fetched from database.
-     *
-     * @var int
-     */
-    private $status = self::STATUS_NEW;
-
-    /**
-     * Database specific tablePrefix. Required for table renames.
-     *
-     * @var string
-     */
-    private $prefix = '';
+    public const STATUS_NEW              = 0;
+    public const STATUS_EXISTS           = 1;
+    public const STATUS_DECLARED_DROPPED = 2;
 
     /**
      * @internal
@@ -92,6 +79,20 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * @var State
      */
     protected $current = null;
+
+    /**
+     * Indication that table is exists and current schema is fetched from database.
+     *
+     * @var int
+     */
+    private $status = self::STATUS_NEW;
+
+    /**
+     * Database specific tablePrefix. Required for table renames.
+     *
+     * @var string
+     */
+    private $prefix = '';
 
     /**
      * @param DriverInterface $driver Parent driver.
@@ -120,6 +121,69 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     }
 
     /**
+     * Shortcut for column() method.
+     *
+     * @param string $column
+     * @return AbstractColumn
+     */
+    public function __get(string $column)
+    {
+        return $this->column($column);
+    }
+
+    /**
+     * Column creation/altering shortcut, call chain is identical to:
+     * AbstractTable->column($name)->$type($arguments).
+     *
+     * Example:
+     * $table->string("name");
+     * $table->text("some_column");
+     *
+     * @param string $type
+     * @param array  $arguments Type specific parameters.
+     * @return AbstractColumn
+     */
+    public function __call(string $type, array $arguments)
+    {
+        return call_user_func_array(
+            [$this->column($arguments[0]), $type],
+            array_slice($arguments, 1)
+        );
+    }
+
+    /**
+     * @return AbstractColumn|string
+     */
+    public function __toString(): string
+    {
+        return $this->getName();
+    }
+
+    /**
+     * Cloning schemas as well.
+     */
+    public function __clone()
+    {
+        $this->initial = clone $this->initial;
+        $this->current = clone $this->current;
+    }
+
+    /**
+     * @return array
+     */
+    public function __debugInfo()
+    {
+        return [
+            'status'      => $this->status,
+            'name'        => $this->getName(),
+            'primaryKeys' => $this->getPrimaryKeys(),
+            'columns'     => array_values($this->getColumns()),
+            'indexes'     => array_values($this->getIndexes()),
+            'foreignKeys'  => array_values($this->getForeignKeys()),
+        ];
+    }
+
+    /**
      * Get instance of associated driver.
      *
      * @return DriverInterface
@@ -145,16 +209,6 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     public function getComparator(): Comparator
     {
         return new Comparator($this->initial, $this->current);
-    }
-
-    /**
-     * Check if table schema has been modified since synchronization.
-     *
-     * @return bool
-     */
-    protected function hasChanges(): bool
-    {
-        return $this->getComparator()->hasChanges() || $this->status === self::STATUS_DECLARED_DROPPED;
     }
 
     /**
@@ -213,10 +267,10 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      *
      * Attention, method will flush declared FKs to ensure that table express no dependecies.
      */
-    public function declareDropped()
+    public function declareDropped(): void
     {
         if ($this->status == self::STATUS_NEW) {
-            throw new SchemaException("Unable to drop non existed table");
+            throw new SchemaException('Unable to drop non existed table');
         }
 
         //Declaring as dropped
@@ -345,37 +399,6 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         $this->current->registerColumn($column);
 
         return $column;
-    }
-
-    /**
-     * Shortcut for column() method.
-     *
-     * @param string $column
-     * @return AbstractColumn
-     */
-    public function __get(string $column)
-    {
-        return $this->column($column);
-    }
-
-    /**
-     * Column creation/altering shortcut, call chain is identical to:
-     * AbstractTable->column($name)->$type($arguments).
-     *
-     * Example:
-     * $table->string("name");
-     * $table->text("some_column");
-     *
-     * @param string $type
-     * @param array  $arguments Type specific parameters.
-     * @return AbstractColumn
-     */
-    public function __call(string $type, array $arguments)
-    {
-        return call_user_func_array(
-            [$this->column($arguments[0]), $type],
-            array_slice($arguments, 1)
-        );
     }
 
     /**
@@ -623,7 +646,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * @throws HandlerException
      * @throws SchemaException
      */
-    public function save(int $operation = HandlerInterface::DO_ALL, bool $reset = true)
+    public function save(int $operation = HandlerInterface::DO_ALL, bool $reset = true): void
     {
         // We need an instance of Handler of dbal operations
         $handler = $this->driver->getHandler();
@@ -656,6 +679,16 @@ abstract class AbstractTable implements TableInterface, ElementInterface
             $this->status = self::STATUS_EXISTS;
             $this->initial->syncState($prepared->current);
         }
+    }
+
+    /**
+     * Check if table schema has been modified since synchronization.
+     *
+     * @return bool
+     */
+    protected function hasChanges(): bool
+    {
+        return $this->getComparator()->hasChanges() || $this->status === self::STATUS_DECLARED_DROPPED;
     }
 
     /**
@@ -748,43 +781,11 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     }
 
     /**
-     * @return AbstractColumn|string
-     */
-    public function __toString(): string
-    {
-        return $this->getName();
-    }
-
-    /**
-     * Cloning schemas as well.
-     */
-    public function __clone()
-    {
-        $this->initial = clone $this->initial;
-        $this->current = clone $this->current;
-    }
-
-    /**
-     * @return array
-     */
-    public function __debugInfo()
-    {
-        return [
-            'status'      => $this->status,
-            'name'        => $this->getName(),
-            'primaryKeys' => $this->getPrimaryKeys(),
-            'columns'     => array_values($this->getColumns()),
-            'indexes'     => array_values($this->getIndexes()),
-            'foreignKeys'  => array_values($this->getForeignKeys()),
-        ];
-    }
-
-    /**
      * Populate table schema with values from database.
      *
      * @param State $state
      */
-    protected function initSchema(State $state)
+    protected function initSchema(State $state): void
     {
         foreach ($this->fetchColumns() as $column) {
             $state->registerColumn($column);

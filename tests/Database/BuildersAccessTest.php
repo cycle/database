@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Tests;
 
@@ -18,12 +20,12 @@ use Spiral\Database\Table;
 
 abstract class BuildersAccessTest extends BaseTest
 {
-    public function testDriverAccess()
+    public function testDriverAccess(): void
     {
         $this->assertInstanceOf(Driver::class, $this->db()->getDriver());
     }
 
-    public function testTableAccess()
+    public function testTableAccess(): void
     {
         $this->assertInstanceOf(
             Table::class,
@@ -31,7 +33,7 @@ abstract class BuildersAccessTest extends BaseTest
         );
     }
 
-    public function testTableSchemaAccess()
+    public function testTableSchemaAccess(): void
     {
         $this->assertInstanceOf(
             AbstractTable::class,
@@ -39,7 +41,7 @@ abstract class BuildersAccessTest extends BaseTest
         );
     }
 
-    public function testTableDatabaseAccess()
+    public function testTableDatabaseAccess(): void
     {
         $this->assertEquals(
             $this->db(),
@@ -47,7 +49,7 @@ abstract class BuildersAccessTest extends BaseTest
         );
     }
 
-    public function testCompilerAccess()
+    public function testCompilerAccess(): void
     {
         $this->assertInstanceOf(
             Compiler::class,
@@ -57,44 +59,44 @@ abstract class BuildersAccessTest extends BaseTest
 
     //via db
 
-    public function testSelectQueryAccess()
+    public function testSelectQueryAccess(): void
     {
         $this->assertInstanceOf(SelectQuery::class, $this->db()->select());
     }
 
-    public function testInsertQueryAccess()
+    public function testInsertQueryAccess(): void
     {
         $this->assertInstanceOf(InsertQuery::class, $this->db()->insert());
     }
 
-    public function testUpdateQueryAccess()
+    public function testUpdateQueryAccess(): void
     {
         $this->assertInstanceOf(UpdateQuery::class, $this->db()->update());
     }
 
-    public function testDeleteQueryAccess()
+    public function testDeleteQueryAccess(): void
     {
         $this->assertInstanceOf(DeleteQuery::class, $this->db()->delete());
     }
 
     //via table
 
-    public function testSelectQueryAccessThoughtTable()
+    public function testSelectQueryAccessThoughtTable(): void
     {
         $this->assertInstanceOf(SelectQuery::class, $this->db()->table('sample')->select());
     }
 
-    public function testSelectQueryAccessThoughtTableIterator()
+    public function testSelectQueryAccessThoughtTableIterator(): void
     {
         $this->assertInstanceOf(SelectQuery::class, $this->db()->table('sample')->getIterator());
     }
 
-    public function testUpdateQueryAccessThoughtTable()
+    public function testUpdateQueryAccessThoughtTable(): void
     {
         $this->assertInstanceOf(UpdateQuery::class, $this->db()->table('sample')->update());
     }
 
-    public function testDeleteQueryAccessThoughtTable()
+    public function testDeleteQueryAccessThoughtTable(): void
     {
         $this->assertInstanceOf(DeleteQuery::class, $this->db()->table('sample')->delete());
     }

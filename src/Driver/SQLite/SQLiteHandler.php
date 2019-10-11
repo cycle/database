@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -29,7 +30,7 @@ class SQLiteHandler extends Handler
      *
      * @throws HandlerException
      */
-    public function dropTable(AbstractTable $table)
+    public function dropTable(AbstractTable $table): void
     {
         parent::dropTable($table);
     }
@@ -37,7 +38,7 @@ class SQLiteHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function syncTable(AbstractTable $table, int $operation = self::DO_ALL)
+    public function syncTable(AbstractTable $table, int $operation = self::DO_ALL): void
     {
         if (!$this->requiresRebuild($table)) {
             //Nothing special, can be handled as usually
@@ -47,7 +48,7 @@ class SQLiteHandler extends Handler
         }
 
         if ($table->getComparator()->isPrimaryChanged()) {
-            throw new DBALException("Unable to change primary keys for existed table");
+            throw new DBALException('Unable to change primary keys for existed table');
         }
 
         $initial = clone $table;
@@ -78,7 +79,7 @@ class SQLiteHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function createColumn(AbstractTable $table, AbstractColumn $column)
+    public function createColumn(AbstractTable $table, AbstractColumn $column): void
     {
         //Not supported
     }
@@ -86,7 +87,7 @@ class SQLiteHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function dropColumn(AbstractTable $table, AbstractColumn $column)
+    public function dropColumn(AbstractTable $table, AbstractColumn $column): void
     {
         //Not supported
     }
@@ -98,14 +99,14 @@ class SQLiteHandler extends Handler
         AbstractTable $table,
         AbstractColumn $initial,
         AbstractColumn $column
-    ) {
+    ): void {
         //Not supported
     }
 
     /**
      * {@inheritdoc}
      */
-    public function createForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey)
+    public function createForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void
     {
         //Not supported
     }
@@ -113,7 +114,7 @@ class SQLiteHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function dropForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey)
+    public function dropForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void
     {
         //Not supported
     }
@@ -125,8 +126,30 @@ class SQLiteHandler extends Handler
         AbstractTable $table,
         AbstractForeignKey $initial,
         AbstractForeignKey $foreignKey
-    ) {
+    ): void {
         //Not supported
+    }
+
+    /**
+     * Temporary table based on parent.
+     *
+     * @param AbstractTable $table
+     * @return AbstractTable
+     */
+    protected function createTemporary(AbstractTable $table): AbstractTable
+    {
+        //Temporary table is required to copy data over
+        $temporary = clone $table;
+        $temporary->setName('spiral_temp_' . $table->getName() . '_' . uniqid());
+
+        //We don't need any indexes in temporary table
+        foreach ($temporary->getIndexes() as $index) {
+            $temporary->dropIndex($index->getColumns());
+        }
+
+        $this->createTable($temporary);
+
+        return $temporary;
     }
 
     /**
@@ -153,28 +176,6 @@ class SQLiteHandler extends Handler
     }
 
     /**
-     * Temporary table based on parent.
-     *
-     * @param AbstractTable $table
-     * @return AbstractTable
-     */
-    protected function createTemporary(AbstractTable $table): AbstractTable
-    {
-        //Temporary table is required to copy data over
-        $temporary = clone $table;
-        $temporary->setName('spiral_temp_' . $table->getName() . '_' . uniqid());
-
-        //We don't need any indexes in temporary table
-        foreach ($temporary->getIndexes() as $index) {
-            $temporary->dropIndex($index->getColumns());
-        }
-
-        $this->createTable($temporary);
-
-        return $temporary;
-    }
-
-    /**
      * Copy table data to another location.
      *
      * @see http://stackoverflow.com/questions/4007014/alter-column-in-sqlite
@@ -185,7 +186,7 @@ class SQLiteHandler extends Handler
      *
      * @throws HandlerException
      */
-    private function copyData(string $source, string $to, array $mapping)
+    private function copyData(string $source, string $to, array $mapping): void
     {
         $sourceColumns = array_keys($mapping);
         $targetColumns = array_values($mapping);

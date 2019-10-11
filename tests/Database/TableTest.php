@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Tests;
 
@@ -19,7 +21,7 @@ abstract class TableTest extends BaseTest
      */
     protected $database;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->database = $this->db();
 
@@ -30,24 +32,24 @@ abstract class TableTest extends BaseTest
         $schema->save();
     }
 
+    public function tearDown(): void
+    {
+        $this->dropDatabase($this->db());
+    }
+
     public function schema(string $table): AbstractTable
     {
         return $this->database->table($table)->getSchema();
     }
 
-    public function tearDown()
-    {
-        $this->dropDatabase($this->db());
-    }
-
-    public function testGetSchema()
+    public function testGetSchema(): void
     {
         $this->assertInternalType('array', $this->database->getDriver()->__debugInfo());
         $this->assertInstanceOf(Table::class, $this->database->table('table'));
         $this->assertInstanceOf(AbstractTable::class, $this->database->table('table')->getSchema());
     }
 
-    public function testExistsAndEmpty()
+    public function testExistsAndEmpty(): void
     {
         $table = $this->database->table('table');
         $this->assertSame('table', $table->getName());
@@ -59,14 +61,14 @@ abstract class TableTest extends BaseTest
         $this->assertFalse($table->hasColumn('xx'));
     }
 
-    public function testPrimaryKeys()
+    public function testPrimaryKeys(): void
     {
         $table = $this->database->table('table');
 
         $this->assertSame(['id'], $table->getPrimaryKeys());
     }
 
-    public function testHasIndex()
+    public function testHasIndex(): void
     {
         $table = $this->database->table('table');
 
@@ -79,7 +81,7 @@ abstract class TableTest extends BaseTest
         $this->assertTrue($table->hasIndex(['value']));
     }
 
-    public function testGetIndexes()
+    public function testGetIndexes(): void
     {
         $table = $this->database->table('table');
 
@@ -92,7 +94,7 @@ abstract class TableTest extends BaseTest
         $this->assertCount(1, $table->getIndexes());
     }
 
-    public function testHasForeignKey()
+    public function testHasForeignKey(): void
     {
         $schema = $this->database->table('table2')->getSchema();
         $schema->primary('id');
@@ -112,7 +114,7 @@ abstract class TableTest extends BaseTest
         $this->assertTrue($table->hasForeignKey(['external_id']));
     }
 
-    public function testGetForeignKeys()
+    public function testGetForeignKeys(): void
     {
         $schema = $this->database->table('table2')->getSchema();
         $schema->primary('id');
@@ -132,7 +134,7 @@ abstract class TableTest extends BaseTest
         $this->assertCount(1, $table->getForeignKeys());
     }
 
-    public function testDependencies()
+    public function testDependencies(): void
     {
         $schema = $this->database->table('table2')->getSchema();
         $schema->primary('id');
@@ -153,7 +155,7 @@ abstract class TableTest extends BaseTest
     }
 
     //see old versions of postgres
-    public function testGetColumns()
+    public function testGetColumns(): void
     {
         $table = $this->database->table('table');
         $this->assertSame(0, $table->count());
@@ -170,7 +172,7 @@ abstract class TableTest extends BaseTest
         ], $columns);
     }
 
-    public function testInsertOneRow()
+    public function testInsertOneRow(): void
     {
         $table = $this->database->table('table');
 
@@ -194,7 +196,7 @@ abstract class TableTest extends BaseTest
         );
     }
 
-    public function testInsertOneRowAfterAnother()
+    public function testInsertOneRowAfterAnother(): void
     {
         $table = $this->database->table('table');
         $this->assertSame(0, $table->count());
@@ -226,7 +228,7 @@ abstract class TableTest extends BaseTest
         );
     }
 
-    public function testInsertMultiple()
+    public function testInsertMultiple(): void
     {
         $table = $this->database->table('table');
         $this->assertSame(0, $table->count());
@@ -254,7 +256,7 @@ abstract class TableTest extends BaseTest
         );
     }
 
-    public function testAggregationByPass()
+    public function testAggregationByPass(): void
     {
         $table = $this->database->table('table');
         $this->assertSame(0, $table->count());
@@ -273,7 +275,7 @@ abstract class TableTest extends BaseTest
         $this->assertSame(100, $table->sum('value'));
     }
 
-    public function testAggregationMinByPass()
+    public function testAggregationMinByPass(): void
     {
         $table = $this->database->table('table');
         $this->assertSame(0, $table->count());
@@ -292,7 +294,7 @@ abstract class TableTest extends BaseTest
         $this->assertSame(10, $table->min('value'));
     }
 
-    public function testAggregationMaxByPass()
+    public function testAggregationMaxByPass(): void
     {
         $table = $this->database->table('table');
         $this->assertSame(0, $table->count());
@@ -311,7 +313,7 @@ abstract class TableTest extends BaseTest
         $this->assertSame(40, $table->max('value'));
     }
 
-    public function testAggregationAvgByPass()
+    public function testAggregationAvgByPass(): void
     {
         $table = $this->database->table('table');
         $this->assertSame(0, $table->count());
@@ -330,7 +332,7 @@ abstract class TableTest extends BaseTest
         $this->assertSame(25, $table->avg('value'));
     }
 
-    public function testAggregationAvgByPassFloat()
+    public function testAggregationAvgByPassFloat(): void
     {
         $table = $this->database->table('table');
         $this->assertSame(0, $table->count());
@@ -349,7 +351,7 @@ abstract class TableTest extends BaseTest
         $this->assertSame(13.75, $table->avg('value'));
     }
 
-    public function testDeleteWithWhere()
+    public function testDeleteWithWhere(): void
     {
         $table = $this->database->table('table');
         $this->assertSame(0, $table->count());
@@ -369,7 +371,7 @@ abstract class TableTest extends BaseTest
         $this->assertSame(0, $table->select()->where(['value' => 10])->count());
     }
 
-    public function testUpdateWithWhere()
+    public function testUpdateWithWhere(): void
     {
         $table = $this->database->table('table');
         $this->assertSame(0, $table->count());
@@ -389,7 +391,7 @@ abstract class TableTest extends BaseTest
         $this->assertSame(2, $table->select()->where(['value' => 100])->count());
     }
 
-    public function testUpdateWithFragment()
+    public function testUpdateWithFragment(): void
     {
         $table = $this->database->table('table');
         $this->assertSame(0, $table->count());
@@ -413,7 +415,7 @@ abstract class TableTest extends BaseTest
         $this->assertSame(3, $table->select()->where(['value' => 20])->count());
     }
 
-    public function testTruncate()
+    public function testTruncate(): void
     {
         $table = $this->database->table('table');
         $this->assertSame(0, $table->count());
@@ -433,7 +435,7 @@ abstract class TableTest extends BaseTest
         $this->assertSame(0, $table->count());
     }
 
-    public function testCountID()
+    public function testCountID(): void
     {
         $table = $this->database->table('table');
         $this->assertSame(0, $table->count());
@@ -451,7 +453,7 @@ abstract class TableTest extends BaseTest
         $this->assertSame(4, $table->select()->count('id'));
     }
 
-    public function testCountDistinct()
+    public function testCountDistinct(): void
     {
         $table = $this->database->table('table');
         $this->assertSame(0, $table->count());

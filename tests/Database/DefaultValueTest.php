@@ -1,9 +1,12 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
+
 namespace Spiral\Database\Tests;
 
 use Spiral\Database\Database;
@@ -24,12 +27,12 @@ abstract class DefaultValueTest extends BaseTest
      */
     protected $database;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->database = $this->db();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->dropDatabase($this->db());
     }
@@ -39,7 +42,7 @@ abstract class DefaultValueTest extends BaseTest
         return $this->database->table($table)->getSchema();
     }
 
-    public function testDefaultNullValueForInteger()
+    public function testDefaultNullValueForInteger(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -53,7 +56,7 @@ abstract class DefaultValueTest extends BaseTest
         $this->assertNull($schema->column('target')->getDefaultValue());
     }
 
-    public function testDefaultPositiveValueForInteger()
+    public function testDefaultPositiveValueForInteger(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -67,7 +70,7 @@ abstract class DefaultValueTest extends BaseTest
     }
 
     //Hahahaa, Postgres 9.4 and lower
-    public function testDefaultNegativeValueForInteger()
+    public function testDefaultNegativeValueForInteger(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -81,7 +84,7 @@ abstract class DefaultValueTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testDefaultNullValueForFloat()
+    public function testDefaultNullValueForFloat(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -95,7 +98,7 @@ abstract class DefaultValueTest extends BaseTest
         $this->assertNull($schema->column('target')->getDefaultValue());
     }
 
-    public function testDefaultPositiveValueForFloat()
+    public function testDefaultPositiveValueForFloat(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -108,7 +111,7 @@ abstract class DefaultValueTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testDefaultNegativeValueForFloat()
+    public function testDefaultNegativeValueForFloat(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -121,7 +124,7 @@ abstract class DefaultValueTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testDefaultNullValueForDouble()
+    public function testDefaultNullValueForDouble(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -135,7 +138,7 @@ abstract class DefaultValueTest extends BaseTest
         $this->assertNull($schema->column('target')->getDefaultValue());
     }
 
-    public function testDefaultPositiveValueForDouble()
+    public function testDefaultPositiveValueForDouble(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -148,7 +151,7 @@ abstract class DefaultValueTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testDefaultNegativeValueForDouble()
+    public function testDefaultNegativeValueForDouble(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -161,7 +164,7 @@ abstract class DefaultValueTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testDefaultNullValueForDecimal()
+    public function testDefaultNullValueForDecimal(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -175,7 +178,7 @@ abstract class DefaultValueTest extends BaseTest
         $this->assertNull($schema->column('target')->getDefaultValue());
     }
 
-    public function testDefaultPositiveValueForDecimal()
+    public function testDefaultPositiveValueForDecimal(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -189,7 +192,7 @@ abstract class DefaultValueTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testDefaultNegativeValueForDecimal()
+    public function testDefaultNegativeValueForDecimal(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -203,7 +206,7 @@ abstract class DefaultValueTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testDefaultNullForBoolean()
+    public function testDefaultNullForBoolean(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -217,7 +220,7 @@ abstract class DefaultValueTest extends BaseTest
         $this->assertNull($schema->column('target')->getDefaultValue());
     }
 
-    public function testDefaultTrueForBoolean()
+    public function testDefaultTrueForBoolean(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -230,7 +233,7 @@ abstract class DefaultValueTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testDefaultFalseForBoolean()
+    public function testDefaultFalseForBoolean(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -243,7 +246,7 @@ abstract class DefaultValueTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testStringDefaultValueEmpty()
+    public function testStringDefaultValueEmpty(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -256,7 +259,7 @@ abstract class DefaultValueTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testStringDefaultValueNull()
+    public function testStringDefaultValueNull(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -270,7 +273,7 @@ abstract class DefaultValueTest extends BaseTest
         $this->assertNull($schema->column('target')->getDefaultValue());
     }
 
-    public function testStringDefaultValueString()
+    public function testStringDefaultValueString(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -284,7 +287,7 @@ abstract class DefaultValueTest extends BaseTest
     }
 
     //no tests for longText, tinyText due all similar
-    public function testTextDefaultValueEmpty()
+    public function testTextDefaultValueEmpty(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -297,7 +300,7 @@ abstract class DefaultValueTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testTextDefaultValueNull()
+    public function testTextDefaultValueNull(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -311,7 +314,7 @@ abstract class DefaultValueTest extends BaseTest
         $this->assertNull($schema->column('target')->getDefaultValue());
     }
 
-    public function testTextDefaultValueString()
+    public function testTextDefaultValueString(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -325,7 +328,7 @@ abstract class DefaultValueTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testEnumDefaultValueNull()
+    public function testEnumDefaultValueNull(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -339,7 +342,7 @@ abstract class DefaultValueTest extends BaseTest
         $this->assertNull($schema->column('target')->getDefaultValue());
     }
 
-    public function testEnumDefaultValueValid()
+    public function testEnumDefaultValueValid(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());

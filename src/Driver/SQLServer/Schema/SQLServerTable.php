@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -22,7 +23,7 @@ class SQLServerTable extends AbstractTable
      *
      * SQLServer will reload schemas after successful savw.
      */
-    public function save(int $operation = HandlerInterface::DO_ALL, bool $reset = true)
+    public function save(int $operation = HandlerInterface::DO_ALL, bool $reset = true): void
     {
         parent::save($operation, $reset);
 

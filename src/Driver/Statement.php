@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -107,7 +108,7 @@ final class Statement implements StatementInterface, \IteratorAggregate
     /**
      * {@inheritdoc}
      */
-    public function close()
+    public function close(): void
     {
         $this->pdoStatement->closeCursor();
     }

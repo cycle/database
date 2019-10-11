@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Tests\MySQL56;
 
@@ -12,7 +14,7 @@ namespace Spiral\Database\Tests\MySQL56;
  */
 class DatetimeColumnTest extends \Spiral\Database\Tests\DatetimeColumnTest
 {
-    const DRIVER = 'mysql56';
+    public const DRIVER = 'mysql56';
 
     /**
      * @expectedException \Spiral\Database\Exception\HandlerException
@@ -20,7 +22,7 @@ class DatetimeColumnTest extends \Spiral\Database\Tests\DatetimeColumnTest
      *                           there can be only one TIMESTAMP column with CURRENT_TIMESTAMP in
      *                           DEFAULT or ON UPDATE clause
      */
-    public function testMultipleTimestampCurrentTimestamp()
+    public function testMultipleTimestampCurrentTimestamp(): void
     {
         parent::testMultipleTimestampCurrentTimestamp();
     }
@@ -30,7 +32,7 @@ class DatetimeColumnTest extends \Spiral\Database\Tests\DatetimeColumnTest
      * @expectedExceptionMessage SQLSTATE[42000]: Syntax error or access violation: 1067 Invalid
      *                           default value for 'target'
      */
-    public function testMultipleDatetimeCurrentTimestamp()
+    public function testMultipleDatetimeCurrentTimestamp(): void
     {
         parent::testMultipleDatetimeCurrentTimestamp();
     }
@@ -40,7 +42,7 @@ class DatetimeColumnTest extends \Spiral\Database\Tests\DatetimeColumnTest
      * @expectedExceptionMessage SQLSTATE[42000]: Syntax error or access violation: 1067 Invalid
      *                           default value for 'target'
      */
-    public function testTimestampDatetimeZero()
+    public function testTimestampDatetimeZero(): void
     {
         parent::testTimestampDatetimeZero();
     }
@@ -50,7 +52,7 @@ class DatetimeColumnTest extends \Spiral\Database\Tests\DatetimeColumnTest
      * @expectedExceptionMessage SQLSTATE[42000]: Syntax error or access violation: 1067 Invalid
      *                           default value for 'target'
      */
-    public function testDatetimeCurrentTimestamp()
+    public function testDatetimeCurrentTimestamp(): void
     {
         parent::testDatetimeCurrentTimestamp();
     }
@@ -60,7 +62,7 @@ class DatetimeColumnTest extends \Spiral\Database\Tests\DatetimeColumnTest
      * @expectedExceptionMessage SQLSTATE[42000]: Syntax error or access violation: 1067 Invalid
      *                           default value for 'target'
      */
-    public function testDatetimeCurrentTimestampNotNull()
+    public function testDatetimeCurrentTimestampNotNull(): void
     {
         parent::testDatetimeCurrentTimestampNotNull();
     }

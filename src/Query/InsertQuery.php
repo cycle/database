@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -20,7 +21,7 @@ use Spiral\Database\Injection\Parameter;
  */
 class InsertQuery extends AbstractQuery
 {
-    const QUERY_TYPE = Compiler::INSERT_QUERY;
+    public const QUERY_TYPE = Compiler::INSERT_QUERY;
 
     /**
      * @var string
@@ -113,7 +114,7 @@ class InsertQuery extends AbstractQuery
         }
 
         if ($rowsets === []) {
-            throw new BuilderException("Insert rowsets must not be empty");
+            throw new BuilderException('Insert rowsets must not be empty');
         }
 
         //Checking if provided set is array of multiple
@@ -148,7 +149,7 @@ class InsertQuery extends AbstractQuery
     public function run()
     {
         if ($this->compiler === null) {
-            throw new BuilderException("Unable to run query without assigned driver");
+            throw new BuilderException('Unable to run query without assigned driver');
         }
 
         $bindings = new QueryBindings();
@@ -162,7 +163,7 @@ class InsertQuery extends AbstractQuery
     /**
      * Reset all insertion rowsets to make builder reusable (columns still set).
      */
-    public function flushValues()
+    public function flushValues(): void
     {
         $this->rowsets = [];
     }

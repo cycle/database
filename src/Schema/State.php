@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -44,11 +45,29 @@ final class State
     }
 
     /**
+     * Cloning all elements.
+     */
+    public function __clone()
+    {
+        foreach ($this->columns as $name => $column) {
+            $this->columns[$name] = clone $column;
+        }
+
+        foreach ($this->indexes as $name => $index) {
+            $this->indexes[$name] = clone $index;
+        }
+
+        foreach ($this->foreignKeys as $name => $foreignKey) {
+            $this->foreignKeys[$name] = clone $foreignKey;
+        }
+    }
+
+    /**
      * Set table name. Operation will be applied at moment of saving.
      *
      * @param string $name
      */
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -88,7 +107,7 @@ final class State
     /**
      * @param array $columns
      */
-    public function setPrimaryKeys(array $columns)
+    public function setPrimaryKeys(array $columns): void
     {
         $this->primaryKeys = $columns;
     }
@@ -143,7 +162,7 @@ final class State
     /**
      * @param AbstractColumn $column
      */
-    public function registerColumn(AbstractColumn $column)
+    public function registerColumn(AbstractColumn $column): void
     {
         $this->columns[$column->getName()] = $column;
     }
@@ -151,7 +170,7 @@ final class State
     /**
      * @param AbstractIndex $index
      */
-    public function registerIndex(AbstractIndex $index)
+    public function registerIndex(AbstractIndex $index): void
     {
         $this->indexes[$index->getName()] = $index;
     }
@@ -159,7 +178,7 @@ final class State
     /**
      * @param AbstractForeignKey $reference
      */
-    public function registerForeignKey(AbstractForeignKey $reference)
+    public function registerForeignKey(AbstractForeignKey $reference): void
     {
         $this->foreignKeys[$reference->getName()] = $reference;
     }
@@ -187,7 +206,7 @@ final class State
      *
      * @param AbstractIndex $index
      */
-    public function forgetIndex(AbstractIndex $index)
+    public function forgetIndex(AbstractIndex $index): void
     {
         foreach ($this->indexes as $name => $indexSchema) {
             if ($indexSchema == $index) {
@@ -202,7 +221,7 @@ final class State
      *
      * @param AbstractForeignKey $foreignKey
      */
-    public function forgerForeignKey(AbstractForeignKey $foreignKey)
+    public function forgerForeignKey(AbstractForeignKey $foreignKey): void
     {
         foreach ($this->foreignKeys as $name => $foreignSchema) {
             if ($foreignSchema == $foreignKey) {
@@ -264,7 +283,7 @@ final class State
     /**
      * Remount elements under their current name.
      */
-    public function remountElements()
+    public function remountElements(): void
     {
         $columns = [];
         foreach ($this->columns as $column) {
@@ -317,23 +336,5 @@ final class State
         $this->remountElements();
 
         return $this;
-    }
-
-    /**
-     * Cloning all elements.
-     */
-    public function __clone()
-    {
-        foreach ($this->columns as $name => $column) {
-            $this->columns[$name] = clone $column;
-        }
-
-        foreach ($this->indexes as $name => $index) {
-            $this->indexes[$name] = clone $index;
-        }
-
-        foreach ($this->foreignKeys as $name => $foreignKey) {
-            $this->foreignKeys[$name] = clone $foreignKey;
-        }
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -66,7 +67,7 @@ class PostgresDriver extends Driver
     /**
      * {@inheritdoc}
      */
-    public function eraseData(string $table)
+    public function eraseData(string $table): void
     {
         $this->execute("TRUNCATE TABLE {$this->identifier($table)}");
     }
@@ -108,7 +109,7 @@ class PostgresDriver extends Driver
     /**
      * Reset primary keys cache.
      */
-    public function resetPrimaryKeys()
+    public function resetPrimaryKeys(): void
     {
         $this->primaryKeys = [];
     }
@@ -126,6 +127,14 @@ class PostgresDriver extends Driver
     /**
      * {@inheritdoc}
      */
+    public function getHandler(): HandlerInterface
+    {
+        return new PostgresHandler($this);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function createPDO(): \PDO
     {
         //Spiral is purely UTF-8
@@ -138,17 +147,10 @@ class PostgresDriver extends Driver
     /**
      * {@inheritdoc}
      */
-    public function getHandler(): HandlerInterface
-    {
-        return new PostgresHandler($this);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function mapException(\PDOException $exception, string $query): StatementException
     {
-        if (strpos($exception->getMessage(), '0800') !== false
+        if (
+            strpos($exception->getMessage(), '0800') !== false
             || strpos($exception->getMessage(), '080P') !== false
         ) {
             return new StatementException\ConnectionException($exception, $query);

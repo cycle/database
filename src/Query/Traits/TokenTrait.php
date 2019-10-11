@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -27,7 +28,7 @@ trait TokenTrait
      * @see AbstractWhere
      *
      */
-    protected function createToken($joiner, array $parameters, &$tokens, callable $wrapper)
+    protected function createToken($joiner, array $parameters, &$tokens, callable $wrapper): void
     {
         list($identifier, $a, $b, $c) = $parameters + array_fill(0, 5, null);
 
@@ -117,7 +118,7 @@ trait TokenTrait
      * @see AbstractWhere
      *
      */
-    private function arrayWhere(string $grouper, array $where, &$tokens, callable $wrapper)
+    private function arrayWhere(string $grouper, array $where, &$tokens, callable $wrapper): void
     {
         $joiner = ($grouper == Compiler::TOKEN_AND ? 'AND' : 'OR');
 
@@ -159,8 +160,6 @@ trait TokenTrait
                 $this->builtConditions($joiner, $key, $value, $tokens, $wrapper);
             }
         }
-
-        return;
     }
 
     /**

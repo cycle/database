@@ -1,13 +1,15 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Tests\MySQL;
 
 class IsolationTest extends \Spiral\Database\Tests\IsolationTest
 {
-    const DRIVER = 'mysql';
+    public const DRIVER = 'mysql';
 }

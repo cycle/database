@@ -1,9 +1,12 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
+
 namespace Spiral\Database\Tests;
 
 use Spiral\Database\Query\DeleteQuery;
@@ -17,7 +20,7 @@ abstract class DeleteQueryTest extends BaseQueryTest
      */
     protected $database;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->database = $this->db();
     }
@@ -27,7 +30,7 @@ abstract class DeleteQueryTest extends BaseQueryTest
         return $this->database->table($table)->getSchema();
     }
 
-    public function testQueryInstance()
+    public function testQueryInstance(): void
     {
         $this->assertInstanceOf(DeleteQuery::class, $this->database->delete());
         $this->assertInstanceOf(DeleteQuery::class, $this->database->table('table')->delete());
@@ -36,25 +39,25 @@ abstract class DeleteQueryTest extends BaseQueryTest
 
     //Generic behaviours
 
-    public function testSimpleDeletion()
+    public function testSimpleDeletion(): void
     {
         $delete = $this->database->delete()->from('table');
 
-        $this->assertSameQuery("DELETE FROM {table}", $delete);
+        $this->assertSameQuery('DELETE FROM {table}', $delete);
     }
 
-    public function testDeletionWithWhere()
+    public function testDeletionWithWhere(): void
     {
         $delete = $this->database->delete()->from('table')->where('name', 'Anton');
 
-        $this->assertSameQuery("DELETE FROM {table} WHERE {name} = ?", $delete);
+        $this->assertSameQuery('DELETE FROM {table} WHERE {name} = ?', $delete);
     }
 
 
-    public function testDeletionWithShortWhere()
+    public function testDeletionWithShortWhere(): void
     {
         $delete = $this->database->delete()->from('table')->where(['name' => 'Anton']);
 
-        $this->assertSameQuery("DELETE FROM {table} WHERE {name} = ?", $delete);
+        $this->assertSameQuery('DELETE FROM {table} WHERE {name} = ?', $delete);
     }
 }

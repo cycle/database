@@ -1,9 +1,12 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
+
 namespace Spiral\Database\Tests;
 
 use Spiral\Database\Injection\FragmentInterface;
@@ -16,7 +19,7 @@ abstract class BaseQueryTest extends BaseTest
      * @param string                   $query
      * @param string|FragmentInterface $fragment
      */
-    protected function assertSameQuery(string $query, $fragment)
+    protected function assertSameQuery(string $query, $fragment): void
     {
         //Preparing query
         $query = str_replace(

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -25,7 +26,7 @@ final class QueryBindings
         return $this->parameters;
     }
 
-    public function push(ParameterInterface $parameter)
+    public function push(ParameterInterface $parameter): void
     {
         $this->parameters[] = $parameter;
     }

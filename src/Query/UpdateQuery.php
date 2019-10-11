@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -21,9 +22,10 @@ use Spiral\Database\Query\Traits\WhereTrait;
  */
 class UpdateQuery extends AbstractQuery
 {
-    use TokenTrait, WhereTrait;
+    use TokenTrait;
+    use WhereTrait;
 
-    const QUERY_TYPE = Compiler::UPDATE_QUERY;
+    public const QUERY_TYPE = Compiler::UPDATE_QUERY;
 
     /**
      * Every affect builder must be associated with specific table.
@@ -130,7 +132,7 @@ class UpdateQuery extends AbstractQuery
     public function run(): int
     {
         if ($this->compiler === null) {
-            throw new BuilderException("Unable to run query without assigned driver");
+            throw new BuilderException('Unable to run query without assigned driver');
         }
 
         $bindings = new QueryBindings();

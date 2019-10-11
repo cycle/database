@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Tests;
 
@@ -17,12 +19,12 @@ abstract class CreateTableTest extends BaseTest
      */
     protected $database;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->database = $this->db();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->dropDatabase($this->db());
     }
@@ -32,7 +34,7 @@ abstract class CreateTableTest extends BaseTest
         return $this->database->table($table)->getSchema();
     }
 
-    public function testEmptyTable()
+    public function testEmptyTable(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -43,7 +45,7 @@ abstract class CreateTableTest extends BaseTest
         $this->assertSame([], $schema->getForeignKeys());
     }
 
-    public function testSimpleCreation()
+    public function testSimpleCreation(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -58,7 +60,7 @@ abstract class CreateTableTest extends BaseTest
         $this->assertInternalType('array', $schema->__debugInfo());
     }
 
-    public function testMultipleColumns()
+    public function testMultipleColumns(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -77,7 +79,7 @@ abstract class CreateTableTest extends BaseTest
         $this->assertSame(['active', 'disabled'], $schema->column('status')->getEnumValues());
     }
 
-    public function testCreateAndDrop()
+    public function testCreateAndDrop(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -96,7 +98,7 @@ abstract class CreateTableTest extends BaseTest
         $this->assertFalse($schema->exists());
     }
 
-    public function testCreateNoPrimary()
+    public function testCreateNoPrimary(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -111,7 +113,7 @@ abstract class CreateTableTest extends BaseTest
         $this->assertTrue($schema->hasColumn('name'));
     }
 
-    public function testCreateWithPrimary()
+    public function testCreateWithPrimary(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -133,7 +135,7 @@ abstract class CreateTableTest extends BaseTest
     /**
      * @expectedException \Spiral\Database\Exception\SchemaException
      */
-    public function testDeleteNonExisted()
+    public function testDeleteNonExisted(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());

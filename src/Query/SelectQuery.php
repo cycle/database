@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -29,15 +30,19 @@ use Spiral\Pagination\Traits\LimitsTrait;
  */
 class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregate, PaginableInterface
 {
-    use TokenTrait, WhereTrait, HavingTrait, JoinTrait, LimitsTrait;
+    use TokenTrait;
+    use WhereTrait;
+    use HavingTrait;
+    use JoinTrait;
+    use LimitsTrait;
 
-    const QUERY_TYPE = Compiler::SELECT_QUERY;
+    public const QUERY_TYPE = Compiler::SELECT_QUERY;
 
     /**
      * Sort directions.
      */
-    const SORT_ASC  = 'ASC';
-    const SORT_DESC = 'DESC';
+    public const SORT_ASC  = 'ASC';
+    public const SORT_DESC = 'DESC';
 
     /**
      * Table names to select data from.
@@ -92,6 +97,54 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
         if (!empty($columns)) {
             $this->columns = $this->fetchIdentifiers($columns);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * Shortcut to execute one of aggregation methods (AVG, MAX, MIN, SUM) using method name as
+     * reference.
+     *
+     * Example:
+     * echo $select->sum('user.balance');
+     *
+     * @param string $method
+     * @param array  $arguments
+     * @return int|float
+     *
+     * @throws BuilderException
+     * @throws StatementException
+     */
+    public function __call($method, array $arguments)
+    {
+        if (!in_array($method = strtoupper($method), ['AVG', 'MIN', 'MAX', 'SUM'])) {
+            throw new BuilderException("Unknown method '{$method}' in '" . get_class($this) . "'");
+        }
+
+        if (!isset($arguments[0]) || count($arguments) > 1) {
+            throw new BuilderException('Aggregation methods can support exactly one column');
+        }
+
+        $select = clone $this;
+
+        //To be escaped in compiler
+        $select->columns = ["{$method}({$arguments[0]})"];
+
+        $st = $select->run();
+
+        try {
+            $result = $st->fetchColumn();
+        } finally {
+            $st->close();
+        }
+
+        //Selecting type between int and float
+        if ((float)$result == $result && (int)$result != $result) {
+            //Find more elegant check
+            return (float)$result;
+        }
+
+        return (int)$result;
     }
 
     /**
@@ -258,7 +311,7 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
     public function run()
     {
         if ($this->compiler === null) {
-            throw new BuilderException("Unable to run query without assigned driver");
+            throw new BuilderException('Unable to run query without assigned driver');
         }
 
         $bindings = new QueryBindings();
@@ -280,7 +333,7 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
      * @param int      $limit
      * @param callable $callback
      */
-    public function runChunks(int $limit, callable $callback)
+    public function runChunks(int $limit, callable $callback): void
     {
         $count = $this->count();
 
@@ -328,54 +381,6 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
         } finally {
             $st->close();
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * Shortcut to execute one of aggregation methods (AVG, MAX, MIN, SUM) using method name as
-     * reference.
-     *
-     * Example:
-     * echo $select->sum('user.balance');
-     *
-     * @param string $method
-     * @param array  $arguments
-     * @return int|float
-     *
-     * @throws BuilderException
-     * @throws StatementException
-     */
-    public function __call($method, array $arguments)
-    {
-        if (!in_array($method = strtoupper($method), ['AVG', 'MIN', 'MAX', 'SUM'])) {
-            throw new BuilderException("Unknown method '{$method}' in '" . get_class($this) . "'");
-        }
-
-        if (!isset($arguments[0]) || count($arguments) > 1) {
-            throw new BuilderException('Aggregation methods can support exactly one column');
-        }
-
-        $select = clone $this;
-
-        //To be escaped in compiler
-        $select->columns = ["{$method}({$arguments[0]})"];
-
-        $st = $select->run();
-
-        try {
-            $result = $st->fetchColumn();
-        } finally {
-            $st->close();
-        }
-
-        //Selecting type between int and float
-        if ((float)$result == $result && (int)$result != $result) {
-            //Find more elegant check
-            return (float)$result;
-        }
-
-        return (int)$result;
     }
 
     /**

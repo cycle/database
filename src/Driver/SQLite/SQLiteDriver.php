@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -66,21 +67,9 @@ class SQLiteDriver extends Driver
     /**
      * {@inheritdoc}
      */
-    public function eraseData(string $table)
+    public function eraseData(string $table): void
     {
         $this->execute("DELETE FROM {$this->identifier($table)}");
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function isolationLevel(string $level)
-    {
-        if ($this->isProfiling()) {
-            $this->getLogger()->alert(
-                "Transaction isolation level is not fully supported by SQLite ({$level})."
-            );
-        }
     }
 
     /**
@@ -89,6 +78,18 @@ class SQLiteDriver extends Driver
     public function getHandler(): HandlerInterface
     {
         return new SQLiteHandler($this);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function isolationLevel(string $level): void
+    {
+        if ($this->isProfiling()) {
+            $this->getLogger()->alert(
+                "Transaction isolation level is not fully supported by SQLite ({$level})."
+            );
+        }
     }
 
     /**

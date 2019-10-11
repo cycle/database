@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Tests;
 
@@ -20,30 +22,13 @@ use Spiral\Database\Tests\Fixtures\TestLogger;
 
 abstract class BaseTest extends TestCase
 {
-    public static $config;
     public const DRIVER = null;
+    public static $config;
 
     protected static $driverCache = [];
 
     /** @var Driver */
     protected $driver;
-
-    /**
-     * @param string $name
-     * @param string $prefix
-     *
-     * @return Database|null When non empty null will be given, for safety, for science.
-     */
-    protected function db(string $name = 'default', string $prefix = '')
-    {
-        if (isset(static::$driverCache[static::DRIVER])) {
-            $driver = static::$driverCache[static::DRIVER];
-        } else {
-            static::$driverCache[static::DRIVER] = $driver = $this->getDriver();
-        }
-
-        return new Database($name, $prefix, $driver);
-    }
 
     /**
      * @return Driver
@@ -71,9 +56,26 @@ abstract class BaseTest extends TestCase
     }
 
     /**
+     * @param string $name
+     * @param string $prefix
+     *
+     * @return Database|null When non empty null will be given, for safety, for science.
+     */
+    protected function db(string $name = 'default', string $prefix = '')
+    {
+        if (isset(static::$driverCache[static::DRIVER])) {
+            $driver = static::$driverCache[static::DRIVER];
+        } else {
+            static::$driverCache[static::DRIVER] = $driver = $this->getDriver();
+        }
+
+        return new Database($name, $prefix, $driver);
+    }
+
+    /**
      * @param Database $db
      */
-    protected function enableProfiling(Database $db)
+    protected function enableProfiling(Database $db): void
     {
         $db->getDriver()->setProfiling(true);
         $db->getDriver()->setLogger(new TestLogger());
@@ -82,7 +84,7 @@ abstract class BaseTest extends TestCase
     /**
      * @param Database $db
      */
-    protected function disableProfiling(Database $db)
+    protected function disableProfiling(Database $db): void
     {
         $db->getDriver()->setProfiling(false);
     }
@@ -90,7 +92,7 @@ abstract class BaseTest extends TestCase
     /**
      * @param Database|null $database
      */
-    protected function dropDatabase(Database $database = null)
+    protected function dropDatabase(Database $database = null): void
     {
         if (empty($database)) {
             return;
@@ -113,7 +115,7 @@ abstract class BaseTest extends TestCase
         }
     }
 
-    protected function assertSameAsInDB(AbstractTable $current)
+    protected function assertSameAsInDB(AbstractTable $current): void
     {
         $source = $current->getState();
         $target = $this->fetchSchema($current)->getState();
@@ -219,7 +221,7 @@ abstract class BaseTest extends TestCase
         }
     }
 
-    protected function compareColumns(AbstractColumn $a, AbstractColumn $b)
+    protected function compareColumns(AbstractColumn $a, AbstractColumn $b): void
     {
         $this->assertSame(
             $a->getInternalType(),
@@ -251,7 +253,7 @@ abstract class BaseTest extends TestCase
         );
     }
 
-    protected function compareIndexes(AbstractIndex $a, AbstractIndex $b)
+    protected function compareIndexes(AbstractIndex $a, AbstractIndex $b): void
     {
         $this->assertSame(
             $a->getColumns(),
@@ -271,7 +273,7 @@ abstract class BaseTest extends TestCase
         );
     }
 
-    protected function compareFK(AbstractForeignKey $a, AbstractForeignKey $b)
+    protected function compareFK(AbstractForeignKey $a, AbstractForeignKey $b): void
     {
         $this->assertSame(
             $a->getColumns(),

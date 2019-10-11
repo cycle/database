@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Spiral Framework.
  *
@@ -10,5 +13,5 @@ namespace Spiral\Database\Tests\SQLServer;
 
 class DatabaseTest extends \Spiral\Database\Tests\DatabaseTest
 {
-    const DRIVER = 'sqlserver';
+    public const DRIVER = 'sqlserver';
 }

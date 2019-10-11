@@ -1,9 +1,12 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+
+declare(strict_types=1);
 
 namespace Spiral\Database\Tests;
 
@@ -19,12 +22,12 @@ abstract class AlterColumnTest extends BaseTest
      */
     protected $database;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->database = $this->db();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->dropDatabase($this->db());
     }
@@ -64,7 +67,7 @@ abstract class AlterColumnTest extends BaseTest
     }
 
     //Verification test #1
-    public function testSelfComparePreparedSameInstance()
+    public function testSelfComparePreparedSameInstance(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -73,7 +76,7 @@ abstract class AlterColumnTest extends BaseTest
     }
 
     //Verification test #2
-    public function testSelfComparePreparedReselected()
+    public function testSelfComparePreparedReselected(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -84,7 +87,7 @@ abstract class AlterColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testAddColumn()
+    public function testAddColumn(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -95,7 +98,7 @@ abstract class AlterColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testAddColumnWithDefaultValue()
+    public function testAddColumnWithDefaultValue(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -108,7 +111,7 @@ abstract class AlterColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testAddColumnNullable()
+    public function testAddColumnNullable(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -119,7 +122,7 @@ abstract class AlterColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testMakeNullable()
+    public function testMakeNullable(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -137,7 +140,7 @@ abstract class AlterColumnTest extends BaseTest
     /**
      * @expectedException \Spiral\Database\Exception\SchemaException
      */
-    public function testColumnSizeException()
+    public function testColumnSizeException(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -149,7 +152,7 @@ abstract class AlterColumnTest extends BaseTest
     /**
      * @expectedException \Spiral\Database\Exception\SchemaException
      */
-    public function testColumnSize2Exception()
+    public function testColumnSize2Exception(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -158,7 +161,7 @@ abstract class AlterColumnTest extends BaseTest
         $schema->save();
     }
 
-    public function testChangeSize()
+    public function testChangeSize(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -172,7 +175,7 @@ abstract class AlterColumnTest extends BaseTest
         $this->assertSame(100, $this->fetchSchema($schema)->column('first_name')->getSize());
     }
 
-    public function testDecimalSizes()
+    public function testDecimalSizes(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -190,7 +193,7 @@ abstract class AlterColumnTest extends BaseTest
     /**
      * @expectedException \Spiral\Database\Exception\SchemaException
      */
-    public function testDecimalSizesException()
+    public function testDecimalSizesException(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -198,7 +201,7 @@ abstract class AlterColumnTest extends BaseTest
         $schema->decimal('double_2', 0);
     }
 
-    public function testAddColumnNotNullable()
+    public function testAddColumnNotNullable(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -209,7 +212,7 @@ abstract class AlterColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testAddColumnEnum()
+    public function testAddColumnEnum(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -225,7 +228,7 @@ abstract class AlterColumnTest extends BaseTest
         );
     }
 
-    public function testChangeEnumValues()
+    public function testChangeEnumValues(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -241,7 +244,7 @@ abstract class AlterColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testEnumOnReserved()
+    public function testEnumOnReserved(): void
     {
         $schema = $this->schema('new_schema');
         $this->assertFalse($schema->exists());
@@ -253,7 +256,7 @@ abstract class AlterColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testChangeStringToText()
+    public function testChangeStringToText(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -264,7 +267,7 @@ abstract class AlterColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testChangeColumnFromIntToFloatWithDefaultValue()
+    public function testChangeColumnFromIntToFloatWithDefaultValue(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -280,7 +283,7 @@ abstract class AlterColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testChangeFloatToDoubleWithDefaultValue()
+    public function testChangeFloatToDoubleWithDefaultValue(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -291,7 +294,7 @@ abstract class AlterColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testChangeDoubleToFloatWithDefaultValue()
+    public function testChangeDoubleToFloatWithDefaultValue(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -303,7 +306,7 @@ abstract class AlterColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testChangeColumnFromIntToStringWithDefaultValue()
+    public function testChangeColumnFromIntToStringWithDefaultValue(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -319,7 +322,7 @@ abstract class AlterColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testAddColumnEnumNullDefault()
+    public function testAddColumnEnumNullDefault(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -330,7 +333,7 @@ abstract class AlterColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testChangeColumnFromEnumToString()
+    public function testChangeColumnFromEnumToString(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -346,20 +349,20 @@ abstract class AlterColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testAddMultipleColumns()
+    public function testAddMultipleColumns(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
 
         $schema->integer('new_int')->defaultValue(0);
         $schema->integer('new_string_0_default')->defaultValue(0);
-        $schema->enum('new_column', ['a', 'b', 'c'])->nullable('a');
+        $schema->enum('new_column', ['a', 'b', 'c'])->defaultValue('a');
         $schema->save();
 
         $this->assertSameAsInDB($schema);
     }
 
-    public function testDropColumn()
+    public function testDropColumn(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -370,7 +373,7 @@ abstract class AlterColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testDropMultipleColumns()
+    public function testDropMultipleColumns(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -382,7 +385,7 @@ abstract class AlterColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testRenameColumn()
+    public function testRenameColumn(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -393,7 +396,7 @@ abstract class AlterColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testRenameThoughtTest()
+    public function testRenameThoughtTest(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -404,7 +407,7 @@ abstract class AlterColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testRenameMultipleColumns()
+    public function testRenameMultipleColumns(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -420,7 +423,7 @@ abstract class AlterColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testChangeColumnFromNullToNotNull()
+    public function testChangeColumnFromNullToNotNull(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -432,7 +435,7 @@ abstract class AlterColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testChangeColumnFromNotNullToNull()
+    public function testChangeColumnFromNotNullToNull(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -444,7 +447,7 @@ abstract class AlterColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testRenameAndDropColumn()
+    public function testRenameAndDropColumn(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -456,7 +459,7 @@ abstract class AlterColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testRenameAndChangeToNotNull()
+    public function testRenameAndChangeToNotNull(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -469,7 +472,7 @@ abstract class AlterColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testRenameAndChangeToNullAndSetNulL()
+    public function testRenameAndChangeToNullAndSetNulL(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
@@ -482,7 +485,7 @@ abstract class AlterColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testRenameAndChangeToNullAndSetNullDefaultValue()
+    public function testRenameAndChangeToNullAndSetNullDefaultValue(): void
     {
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());

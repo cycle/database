@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -52,12 +53,6 @@ use Spiral\Database\Query\AbstractQuery;
  */
 trait JoinTrait
 {
-    /**
-     * Name/id of last join, every ON and ON WHERE call will be associated with this join.
-     *
-     * @var string
-     */
-    private $lastJoin = null;
 
     /**
      * Set of join tokens with on and on where conditions associated, must be supported by
@@ -66,6 +61,12 @@ trait JoinTrait
      * @var array
      */
     protected $joinTokens = [];
+    /**
+     * Name/id of last join, every ON and ON WHERE call will be associated with this join.
+     *
+     * @var string
+     */
+    private $lastJoin = null;
 
     /**
      * Register new JOIN with specified type with set of on conditions (linking one table to

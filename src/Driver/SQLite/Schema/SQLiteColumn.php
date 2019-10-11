@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -17,12 +18,12 @@ class SQLiteColumn extends AbstractColumn
     /**
      * Default timestamp expression (driver specific).
      */
-    const DATETIME_NOW = 'CURRENT_TIMESTAMP';
+    public const DATETIME_NOW = 'CURRENT_TIMESTAMP';
 
     /**
      * Private state related values.
      */
-    const EXCLUDE_FROM_COMPARE = [
+    public const EXCLUDE_FROM_COMPARE = [
         'userType',
         'timezone',
         'size',
@@ -150,14 +151,6 @@ class SQLiteColumn extends AbstractColumn
     }
 
     /**
-     * {@inheritdoc}
-     */
-    protected function quoteEnum(DriverInterface $driver): string
-    {
-        return '';
-    }
-
-    /**
      * @param string        $table
      * @param array         $schema
      * @param \DateTimeZone $timezone
@@ -183,11 +176,13 @@ class SQLiteColumn extends AbstractColumn
             $column->defaultValue = substr($column->defaultValue, 1, -1);
         }
 
-        if (!preg_match(
-            '/^(?P<type>[a-z]+) *(?:\((?P<options>[^\)]+)\))?/',
-            $schema['type'],
-            $matches
-        )) {
+        if (
+            !preg_match(
+                '/^(?P<type>[a-z]+) *(?:\((?P<options>[^\)]+)\))?/',
+                $schema['type'],
+                $matches
+            )
+        ) {
             //No type definition included
             return $column;
         }
@@ -213,11 +208,13 @@ class SQLiteColumn extends AbstractColumn
 
             foreach ($schema['table'] as $columnSchema) {
                 //Looking for enum values in column definition code
-                if (preg_match(
-                    "/{$quoted} +enum.*?CHECK *\\({$quoted} in \\((.*?)\\)\\)/i",
-                    trim($columnSchema),
-                    $matches
-                )) {
+                if (
+                    preg_match(
+                        "/{$quoted} +enum.*?CHECK *\\({$quoted} in \\((.*?)\\)\\)/i",
+                        trim($columnSchema),
+                        $matches
+                    )
+                ) {
                     $enumValues = explode(',', $matches[1]);
                     foreach ($enumValues as &$value) {
                         //Trimming values
@@ -235,5 +232,13 @@ class SQLiteColumn extends AbstractColumn
         }
 
         return $column;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function quoteEnum(DriverInterface $driver): string
+    {
+        return '';
     }
 }

@@ -1,9 +1,12 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
+
 namespace Spiral\Database\Tests;
 
 use Spiral\Database\Database;
@@ -16,13 +19,13 @@ abstract class ConsistencyTest extends BaseTest
      */
     protected $database;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->database = $this->db();
         $this->database = $this->db();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->dropDatabase($this->db());
     }
@@ -32,7 +35,7 @@ abstract class ConsistencyTest extends BaseTest
         return $this->database->table($table)->getSchema();
     }
 
-    public function testPrimary()
+    public function testPrimary(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -45,7 +48,7 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testBigPrimary()
+    public function testBigPrimary(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -58,7 +61,7 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testInteger()
+    public function testInteger(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -71,7 +74,7 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testBigInteger()
+    public function testBigInteger(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -84,7 +87,7 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testString()
+    public function testString(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -97,7 +100,7 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testStringWithLength()
+    public function testStringWithLength(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -110,7 +113,7 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testFloat()
+    public function testFloat(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -123,7 +126,7 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testDouble()
+    public function testDouble(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -136,7 +139,7 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testDecimalOneZero()
+    public function testDecimalOneZero(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -149,7 +152,7 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testDecimalFiveTwo()
+    public function testDecimalFiveTwo(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -162,7 +165,7 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testBoolean()
+    public function testBoolean(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -175,7 +178,7 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testEnum()
+    public function testEnum(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -188,7 +191,7 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testJson()
+    public function testJson(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -201,7 +204,7 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testTinyInteger()
+    public function testTinyInteger(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -214,7 +217,7 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testText()
+    public function testText(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -227,7 +230,7 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testTinyText()
+    public function testTinyText(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -240,7 +243,7 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testTextLongText()
+    public function testTextLongText(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -253,7 +256,7 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testBinary()
+    public function testBinary(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -266,7 +269,7 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testTinyBinary()
+    public function testTinyBinary(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -279,7 +282,7 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testLongBinary()
+    public function testLongBinary(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -292,7 +295,7 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testTimestamp()
+    public function testTimestamp(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -305,7 +308,7 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testDatetime()
+    public function testDatetime(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -318,7 +321,7 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testDate()
+    public function testDate(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -331,7 +334,7 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
-    public function testTime()
+    public function testTime(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -51,46 +52,18 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     /**
      * Default timestamp expression (driver specific).
      */
-    const DATETIME_NOW = 'CURRENT_TIMESTAMP';
+    public const DATETIME_NOW = 'CURRENT_TIMESTAMP';
 
     /**
      * Value to be excluded from comparision.
      */
-    const EXCLUDE_FROM_COMPARE = ['timezone', 'userType'];
+    public const EXCLUDE_FROM_COMPARE = ['timezone', 'userType'];
 
     /**
      * Normalization for time and dates.
      */
-    const DATE_FORMAT = 'Y-m-d';
-    const TIME_FORMAT = 'H:i:s';
-
-    /**
-     * Abstract type aliases (for consistency).
-     *
-     * @var array
-     */
-    private $aliases = [
-        'int'            => 'integer',
-        'bigint'         => 'bigInteger',
-        'incremental'    => 'primary',
-        'bigIncremental' => 'bigPrimary',
-        'bool'           => 'boolean',
-        'blob'           => 'binary',
-    ];
-
-    /**
-     * Association list between abstract types and native PHP types. Every non listed type will be
-     * converted into string.
-     *
-     * @internal
-     *
-     * @var array
-     */
-    private $phpMapping = [
-        self::INT   => ['primary', 'bigPrimary', 'integer', 'tinyInteger', 'bigInteger'],
-        self::BOOL  => ['boolean'],
-        self::FLOAT => ['double', 'float', 'decimal'],
-    ];
+    public const DATE_FORMAT = 'Y-m-d';
+    public const TIME_FORMAT = 'H:i:s';
 
     /**
      * Mapping between abstract type and internal database type with it's options. Multiple abstract
@@ -249,6 +222,34 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     protected $enumValues = [];
 
     /**
+     * Abstract type aliases (for consistency).
+     *
+     * @var array
+     */
+    private $aliases = [
+        'int'            => 'integer',
+        'bigint'         => 'bigInteger',
+        'incremental'    => 'primary',
+        'bigIncremental' => 'bigPrimary',
+        'bool'           => 'boolean',
+        'blob'           => 'binary',
+    ];
+
+    /**
+     * Association list between abstract types and native PHP types. Every non listed type will be
+     * converted into string.
+     *
+     * @internal
+     *
+     * @var array
+     */
+    private $phpMapping = [
+        self::INT   => ['primary', 'bigPrimary', 'integer', 'tinyInteger', 'bigInteger'],
+        self::BOOL  => ['boolean'],
+        self::FLOAT => ['double', 'float', 'decimal'],
+    ];
+
+    /**
      * @param string        $table
      * @param string        $name
      * @param \DateTimeZone $timezone
@@ -258,6 +259,66 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         $this->table = $table;
         $this->name = $name;
         $this->timezone = $timezone ?? new \DateTimeZone(date_default_timezone_get());
+    }
+
+    /**
+     * Shortcut for AbstractColumn->type() method.
+     *
+     * @param string $type      Abstract type.
+     * @param array  $arguments Not used.
+     * @return self
+     */
+    public function __call(string $type, array $arguments = []): AbstractColumn
+    {
+        return $this->type($type);
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->table . '.' . $this->getName();
+    }
+
+    /**
+     * Simplified way to dump information.
+     *
+     * @return array
+     */
+    public function __debugInfo()
+    {
+        $column = [
+            'name' => $this->name,
+            'type' => [
+                'database' => $this->type,
+                'schema'   => $this->getAbstractType(),
+                'php'      => $this->getType(),
+            ],
+        ];
+
+        if (!empty($this->size)) {
+            $column['size'] = $this->size;
+        }
+
+        if ($this->nullable) {
+            $column['nullable'] = true;
+        }
+
+        if ($this->defaultValue !== null) {
+            $column['defaultValue'] = $this->getDefaultValue();
+        }
+
+        if ($this->getAbstractType() == 'enum') {
+            $column['enumValues'] = $this->enumValues;
+        }
+
+        if ($this->getAbstractType() == 'decimal') {
+            $column['precision'] = $this->precision;
+            $column['scale'] = $this->scale;
+        }
+
+        return $column;
     }
 
     /**
@@ -583,18 +644,6 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     }
 
     /**
-     * Shortcut for AbstractColumn->type() method.
-     *
-     * @param string $type      Abstract type.
-     * @param array  $arguments Not used.
-     * @return self
-     */
-    public function __call(string $type, array $arguments = []): AbstractColumn
-    {
-        return $this->type($type);
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function sqlStatement(DriverInterface $driver): string
@@ -619,54 +668,6 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         }
 
         return implode(' ', $statement);
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->table . '.' . $this->getName();
-    }
-
-    /**
-     * Simplified way to dump information.
-     *
-     * @return array
-     */
-    public function __debugInfo()
-    {
-        $column = [
-            'name' => $this->name,
-            'type' => [
-                'database' => $this->type,
-                'schema'   => $this->getAbstractType(),
-                'php'      => $this->getType(),
-            ],
-        ];
-
-        if (!empty($this->size)) {
-            $column['size'] = $this->size;
-        }
-
-        if ($this->nullable) {
-            $column['nullable'] = true;
-        }
-
-        if ($this->defaultValue !== null) {
-            $column['defaultValue'] = $this->getDefaultValue();
-        }
-
-        if ($this->getAbstractType() == 'enum') {
-            $column['enumValues'] = $this->enumValues;
-        }
-
-        if ($this->getAbstractType() == 'decimal') {
-            $column['precision'] = $this->precision;
-            $column['scale'] = $this->scale;
-        }
-
-        return $column;
     }
 
     /**

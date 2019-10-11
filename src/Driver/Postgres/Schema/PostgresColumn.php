@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -18,12 +19,12 @@ class PostgresColumn extends AbstractColumn
     /**
      * Default timestamp expression (driver specific).
      */
-    const DATETIME_NOW = 'now()';
+    public const DATETIME_NOW = 'now()';
 
     /**
      * Private state related values.
      */
-    const EXCLUDE_FROM_COMPARE = [
+    public const EXCLUDE_FROM_COMPARE = [
         'userType',
         'timezone',
         'constrained',
@@ -299,57 +300,6 @@ class PostgresColumn extends AbstractColumn
     }
 
     /**
-     * {@inheritdoc}
-     */
-    protected function quoteEnum(DriverInterface $driver): string
-    {
-        //Postgres enums are just constrained strings
-        return '(' . $this->size . ')';
-    }
-
-    /**
-     * Get/generate name for enum constraint.
-     *
-     * @return string
-     */
-    private function enumConstraint(): string
-    {
-        if (empty($this->constrainName)) {
-            $this->constrainName = $this->table . '_' . $this->getName() . '_enum_' . uniqid();
-        }
-
-        return $this->constrainName;
-    }
-
-    /**
-     * Normalize default value.
-     */
-    private function normalizeDefault()
-    {
-        if ($this->hasDefaultValue()) {
-            if (preg_match('/^\'?(.*?)\'?::(.+)/', $this->defaultValue, $matches)) {
-                //In database: 'value'::TYPE
-                $this->defaultValue = $matches[1];
-            } elseif ($this->type == 'bit') {
-                $this->defaultValue = bindec(
-                    substr($this->defaultValue, 2, strpos($this->defaultValue, '::') - 3)
-                );
-            } elseif ($this->type == 'boolean') {
-                $this->defaultValue = (strtolower($this->defaultValue) == 'true');
-            }
-
-            if ($this->getType() == self::FLOAT || $this->getType() == self::INT) {
-                if (preg_match('/^\(?(.*?)\)?(?!::(.+))?$/', $this->defaultValue, $matches)) {
-                    //Negative numeric values
-                    $this->defaultValue = $matches[1];
-                }
-
-                return;
-            }
-        }
-    }
-
-    /**
      * @param string          $table  Table name.
      * @param array           $schema
      * @param DriverInterface $driver Postgres columns are bit more complex.
@@ -366,7 +316,8 @@ class PostgresColumn extends AbstractColumn
         $column->defaultValue = $schema['column_default'];
         $column->nullable = $schema['is_nullable'] == 'YES';
 
-        if (in_array($column->type, ['int', 'bigint', 'integer'])
+        if (
+            in_array($column->type, ['int', 'bigint', 'integer'])
             && is_string($column->defaultValue)
             && preg_match('/nextval(.*)/', $column->defaultValue)
         ) {
@@ -408,6 +359,77 @@ class PostgresColumn extends AbstractColumn
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function compare(AbstractColumn $initial): bool
+    {
+        if (parent::compare($initial)) {
+            return true;
+        }
+
+        if (
+            in_array($this->getAbstractType(), ['primary', 'bigPrimary'])
+            && $initial->getDefaultValue() != $this->getDefaultValue()
+        ) {
+            //PG adds default values to primary keys
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function quoteEnum(DriverInterface $driver): string
+    {
+        //Postgres enums are just constrained strings
+        return '(' . $this->size . ')';
+    }
+
+    /**
+     * Get/generate name for enum constraint.
+     *
+     * @return string
+     */
+    private function enumConstraint(): string
+    {
+        if (empty($this->constrainName)) {
+            $this->constrainName = $this->table . '_' . $this->getName() . '_enum_' . uniqid();
+        }
+
+        return $this->constrainName;
+    }
+
+    /**
+     * Normalize default value.
+     */
+    private function normalizeDefault(): void
+    {
+        if ($this->hasDefaultValue()) {
+            if (preg_match('/^\'?(.*?)\'?::(.+)/', $this->defaultValue, $matches)) {
+                //In database: 'value'::TYPE
+                $this->defaultValue = $matches[1];
+            } elseif ($this->type == 'bit') {
+                $this->defaultValue = bindec(
+                    substr($this->defaultValue, 2, strpos($this->defaultValue, '::') - 3)
+                );
+            } elseif ($this->type == 'boolean') {
+                $this->defaultValue = (strtolower($this->defaultValue) == 'true');
+            }
+
+            if ($this->getType() == self::FLOAT || $this->getType() == self::INT) {
+                if (preg_match('/^\(?(.*?)\)?(?!::(.+))?$/', $this->defaultValue, $matches)) {
+                    //Negative numeric values
+                    $this->defaultValue = $matches[1];
+                }
+
+                return;
+            }
+        }
+    }
+
+    /**
      * Resolving enum constrain and converting it into proper enum values set.
      *
      * @param DriverInterface $driver
@@ -418,9 +440,9 @@ class PostgresColumn extends AbstractColumn
         DriverInterface $driver,
         $tableOID,
         PostgresColumn $column
-    ) {
+    ): void {
         $query = "SELECT conname, consrc FROM pg_constraint WHERE conrelid = ? AND contype = 'c' AND "
-            . "(consrc LIKE ? OR consrc LIKE ? OR consrc LIKE ? OR consrc LIKE ? OR consrc LIKE ? OR consrc LIKE ?)";
+            . '(consrc LIKE ? OR consrc LIKE ? OR consrc LIKE ? OR consrc LIKE ? OR consrc LIKE ? OR consrc LIKE ?)';
 
         $constraints = $driver->query($query, [
             $tableOID,
@@ -458,7 +480,7 @@ class PostgresColumn extends AbstractColumn
      * @param DriverInterface $driver
      * @param PostgresColumn  $column
      */
-    private static function resolveEnum(DriverInterface $driver, PostgresColumn $column)
+    private static function resolveEnum(DriverInterface $driver, PostgresColumn $column): void
     {
         $range = $driver->query('SELECT enum_range(NULL::' . $column->type . ')')->fetchColumn(0);
 
@@ -472,24 +494,5 @@ class PostgresColumn extends AbstractColumn
                 strpos($column->defaultValue, $column->type) - 4
             );
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function compare(AbstractColumn $initial): bool
-    {
-        if (parent::compare($initial)) {
-            return true;
-        }
-
-        if (in_array($this->getAbstractType(), ['primary', 'bigPrimary'])
-            && $initial->getDefaultValue() != $this->getDefaultValue()
-        ) {
-            //PG adds default values to primary keys
-            return true;
-        }
-
-        return false;
     }
 }

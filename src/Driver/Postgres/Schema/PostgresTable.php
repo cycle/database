@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -48,7 +49,7 @@ class PostgresTable extends AbstractTable
      *
      * SQLServer will reload schemas after successful savw.
      */
-    public function save(int $operation = HandlerInterface::DO_ALL, bool $reset = true)
+    public function save(int $operation = HandlerInterface::DO_ALL, bool $reset = true): void
     {
         parent::save($operation, $reset);
 
@@ -74,7 +75,7 @@ class PostgresTable extends AbstractTable
         ])->fetchColumn();
 
         $query = $this->driver->query(
-            'SELECT * 
+            'SELECT *
                         FROM information_schema.columns
                         JOIN pg_type
                         ON (pg_type.typname = columns.udt_name)
@@ -85,7 +86,8 @@ class PostgresTable extends AbstractTable
         $result = [];
         foreach ($query->fetchAll() as $schema) {
             $name = $schema['column_name'];
-            if (is_string($schema['column_default'])
+            if (
+                is_string($schema['column_default'])
                 && preg_match(
                     '/^nextval\([\'"]([a-z0-9_"]+)[\'"](?:::regclass)?\)$/i',
                     $schema['column_default'],

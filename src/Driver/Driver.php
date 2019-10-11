@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -29,10 +30,11 @@ use Spiral\Database\StatementInterface;
  */
 abstract class Driver implements DriverInterface, LoggerAwareInterface
 {
-    use ProfilingTrait, BuilderTrait;
+    use ProfilingTrait;
+    use BuilderTrait;
 
     // One of DatabaseInterface types, must be set on implementation.
-    protected const TYPE = "@undefined";
+    protected const TYPE = '@undefined';
 
     // Driver specific class names.
     protected const TABLE_SCHEMA_CLASS = '';
@@ -92,6 +94,28 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         if (!empty($this->options['profiling'])) {
             $this->setProfiling(true);
         }
+    }
+
+    /**
+     * Disconnect and destruct.
+     */
+    public function __destruct()
+    {
+        $this->disconnect();
+    }
+
+    /**
+     * @return array
+     */
+    public function __debugInfo()
+    {
+        return [
+            'connection' => $this->options['connection'] ?? $this->options['dsn'],
+            'connected'  => $this->isConnected(),
+            'profiling'  => $this->isProfiling(),
+            'source'     => $this->getSource(),
+            'options'    => $this->options['options'],
+        ];
     }
 
     /**
@@ -155,7 +179,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      *
      * @throws DriverException
      */
-    public function connect()
+    public function connect(): void
     {
         if (!$this->isConnected()) {
             $this->pdo = $this->createPDO();
@@ -175,7 +199,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     /**
      * Disconnect driver.
      */
-    public function disconnect()
+    public function disconnect(): void
     {
         $this->pdo = null;
         $this->tscope->reset();
@@ -250,6 +274,99 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     }
 
     /**
+     * Start SQL transaction with specified isolation level (not all DBMS support it). Nested
+     * transactions are processed using savepoints.
+     *
+     * @link http://en.wikipedia.org/wiki/Database_transaction
+     * @link http://en.wikipedia.org/wiki/Isolation_(database_systems)
+     *
+     * @param string $isolationLevel
+     * @param bool   $cacheStatements
+     * @return bool
+     */
+    public function beginTransaction(string $isolationLevel = null, bool $cacheStatements = false): bool
+    {
+        $this->tscope->open($cacheStatements);
+
+        if ($this->tscope->getLevel() == 1) {
+            if ($isolationLevel !== null) {
+                $this->isolationLevel($isolationLevel);
+            }
+
+            $this->isProfiling() && $this->getLogger()->info('Begin transaction');
+
+            try {
+                return $this->getPDO()->beginTransaction();
+            } catch (\PDOException $e) {
+                $e = $this->mapException($e, 'BEGIN TRANSACTION');
+
+                if (
+                    $e instanceof StatementException\ConnectionException
+                    && $this->options['reconnect']
+                ) {
+                    try {
+                        return $this->getPDO()->beginTransaction();
+                    } catch (\PDOException $e) {
+                        throw $this->mapException($e, 'BEGIN TRANSACTION');
+                    }
+                }
+            }
+        }
+
+        $this->savepointCreate($this->tscope->getLevel());
+
+        return true;
+    }
+
+    /**
+     * Commit the active database transaction.
+     *
+     * @return bool
+     */
+    public function commitTransaction(): bool
+    {
+        $this->tscope->close();
+
+        if ($this->tscope->getLevel() == 0) {
+            $this->isProfiling() && $this->getLogger()->info('Commit transaction');
+
+            try {
+                return $this->getPDO()->commit();
+            } catch (\PDOException $e) {
+                throw $this->mapException($e, 'COMMIT TRANSACTION');
+            }
+        }
+
+        $this->savepointRelease($this->tscope->getLevel() + 1);
+
+        return true;
+    }
+
+    /**
+     * Rollback the active database transaction.
+     *
+     * @return bool
+     */
+    public function rollbackTransaction(): bool
+    {
+        $this->tscope->close();
+
+        if ($this->tscope->getLevel() == 0) {
+            $this->isProfiling() && $this->getLogger()->info('Rollback transaction');
+
+            try {
+                return $this->getPDO()->rollBack();
+            } catch (\PDOException $e) {
+                throw $this->mapException($e, 'ROLLBACK TRANSACTION');
+            }
+        }
+
+        $this->savepointRollback($this->tscope->getLevel() + 1);
+
+        return true;
+    }
+
+    /**
      * Create instance of PDOStatement using provided SQL query and set of parameters and execute
      * it. Will attempt singular reconnect.
      *
@@ -290,7 +407,8 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
             //Converting exception into query or integrity exception
             $e = $this->mapException($e, $queryString);
 
-            if ($e instanceof StatementException\ConnectionException
+            if (
+                $e instanceof StatementException\ConnectionException
                 && $this->tscope->getLevel() === 0
                 && $retry
             ) {
@@ -403,104 +521,12 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     ): StatementException;
 
     /**
-     * Start SQL transaction with specified isolation level (not all DBMS support it). Nested
-     * transactions are processed using savepoints.
-     *
-     * @link http://en.wikipedia.org/wiki/Database_transaction
-     * @link http://en.wikipedia.org/wiki/Isolation_(database_systems)
-     *
-     * @param string $isolationLevel
-     * @param bool   $cacheStatements
-     * @return bool
-     */
-    public function beginTransaction(string $isolationLevel = null, bool $cacheStatements = false): bool
-    {
-        $this->tscope->open($cacheStatements);
-
-        if ($this->tscope->getLevel() == 1) {
-            if ($isolationLevel !== null) {
-                $this->isolationLevel($isolationLevel);
-            }
-
-            $this->isProfiling() && $this->getLogger()->info('Begin transaction');
-
-            try {
-                return $this->getPDO()->beginTransaction();
-            } catch (\PDOException $e) {
-                $e = $this->mapException($e, "BEGIN TRANSACTION");
-
-                if ($e instanceof StatementException\ConnectionException
-                    && $this->options['reconnect']
-                ) {
-                    try {
-                        return $this->getPDO()->beginTransaction();
-                    } catch (\PDOException $e) {
-                        throw $this->mapException($e, "BEGIN TRANSACTION");
-                    }
-                }
-            }
-        }
-
-        $this->savepointCreate($this->tscope->getLevel());
-
-        return true;
-    }
-
-    /**
-     * Commit the active database transaction.
-     *
-     * @return bool
-     */
-    public function commitTransaction(): bool
-    {
-        $this->tscope->close();
-
-        if ($this->tscope->getLevel() == 0) {
-            $this->isProfiling() && $this->getLogger()->info('Commit transaction');
-
-            try {
-                return $this->getPDO()->commit();
-            } catch (\PDOException $e) {
-                throw $this->mapException($e, "COMMIT TRANSACTION");
-            }
-        }
-
-        $this->savepointRelease($this->tscope->getLevel() + 1);
-
-        return true;
-    }
-
-    /**
-     * Rollback the active database transaction.
-     *
-     * @return bool
-     */
-    public function rollbackTransaction(): bool
-    {
-        $this->tscope->close();
-
-        if ($this->tscope->getLevel() == 0) {
-            $this->isProfiling() && $this->getLogger()->info('Rollback transaction');
-
-            try {
-                return $this->getPDO()->rollBack();
-            } catch (\PDOException $e) {
-                throw $this->mapException($e, "ROLLBACK TRANSACTION");
-            }
-        }
-
-        $this->savepointRollback($this->tscope->getLevel() + 1);
-
-        return true;
-    }
-
-    /**
      * Set transaction isolation level, this feature may not be supported by specific database
      * driver.
      *
      * @param string $level
      */
-    protected function isolationLevel(string $level)
+    protected function isolationLevel(string $level): void
     {
         if (!empty($level)) {
             $this->isProfiling() && $this->getLogger()->info("Set transaction isolation level to '{$level}'");
@@ -515,7 +541,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      *
      * @param int $level Savepoint name/id, must not contain spaces and be valid database identifier.
      */
-    protected function savepointCreate(int $level)
+    protected function savepointCreate(int $level): void
     {
         $this->isProfiling() && $this->getLogger()->info("Transaction: new savepoint 'SVP{$level}'");
         $this->execute('SAVEPOINT ' . $this->identifier("SVP{$level}"));
@@ -528,7 +554,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      *
      * @param int $level Savepoint name/id, must not contain spaces and be valid database identifier.
      */
-    protected function savepointRelease(int $level)
+    protected function savepointRelease(int $level): void
     {
         $this->isProfiling() && $this->getLogger()->info("Transaction: release savepoint 'SVP{$level}'");
         $this->execute('RELEASE SAVEPOINT ' . $this->identifier("SVP{$level}"));
@@ -541,32 +567,10 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      *
      * @param int $level Savepoint name/id, must not contain spaces and be valid database identifier.
      */
-    protected function savepointRollback(int $level)
+    protected function savepointRollback(int $level): void
     {
         $this->isProfiling() && $this->getLogger()->info("Transaction: rollback savepoint 'SVP{$level}'");
         $this->execute('ROLLBACK TO SAVEPOINT ' . $this->identifier("SVP{$level}"));
-    }
-
-    /**
-     * @return array
-     */
-    public function __debugInfo()
-    {
-        return [
-            'connection' => $this->options['connection'] ?? $this->options['dsn'],
-            'connected'  => $this->isConnected(),
-            'profiling'  => $this->isProfiling(),
-            'source'     => $this->getSource(),
-            'options'    => $this->options['options'],
-        ];
-    }
-
-    /**
-     * Disconnect and destruct.
-     */
-    public function __destruct()
-    {
-        $this->disconnect();
     }
 
     /**

@@ -1,13 +1,15 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Tests\Postgres;
 
 class NestedQueriesTest extends \Spiral\Database\Tests\NestedQueriesTest
 {
-    const DRIVER = 'postgres';
+    public const DRIVER = 'postgres';
 }

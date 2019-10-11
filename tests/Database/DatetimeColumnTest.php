@@ -1,9 +1,12 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
+
 namespace Spiral\Database\Tests;
 
 use Spiral\Database\Driver\Handler;
@@ -19,12 +22,12 @@ abstract class DatetimeColumnTest extends BaseTest
      */
     protected $database;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->database = $this->db();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->dropDatabase($this->db());
     }
@@ -63,7 +66,7 @@ abstract class DatetimeColumnTest extends BaseTest
 
     //timestamp
 
-    public function testTimestampWithNullDefaultAndNullable()
+    public function testTimestampWithNullDefaultAndNullable(): void
     {
         $schema = $this->schema('sampleSchema');
         $this->assertFalse($schema->exists());
@@ -74,7 +77,7 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testTimestampCurrentTimestamp()
+    public function testTimestampCurrentTimestamp(): void
     {
         $schema = $this->schema('sampleSchema');
         $this->assertFalse($schema->exists());
@@ -85,7 +88,7 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testTimestampCurrentTimestampNotNull()
+    public function testTimestampCurrentTimestampNotNull(): void
     {
         $schema = $this->schema('sampleSchema');
         $this->assertFalse($schema->exists());
@@ -96,7 +99,7 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testMultipleTimestampCurrentTimestamp()
+    public function testMultipleTimestampCurrentTimestamp(): void
     {
         $schema = $this->schema('sampleSchema');
         $this->assertFalse($schema->exists());
@@ -108,7 +111,7 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testTimestampDatetimeZero()
+    public function testTimestampDatetimeZero(): void
     {
         $schema = $this->schema('sampleSchema');
         $this->assertFalse($schema->exists());
@@ -125,7 +128,7 @@ abstract class DatetimeColumnTest extends BaseTest
 
     //datetime
 
-    public function testDatetimeWithNullDefaultAndNullable()
+    public function testDatetimeWithNullDefaultAndNullable(): void
     {
         $schema = $this->schema('sampleSchema');
         $this->assertFalse($schema->exists());
@@ -136,7 +139,7 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testDatetimeCurrentTimestamp()
+    public function testDatetimeCurrentTimestamp(): void
     {
         $schema = $this->schema('sampleSchema');
         $this->assertFalse($schema->exists());
@@ -147,7 +150,7 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testDatetimeCurrentTimestampNotNull()
+    public function testDatetimeCurrentTimestampNotNull(): void
     {
         $schema = $this->schema('sampleSchema');
         $this->assertFalse($schema->exists());
@@ -158,7 +161,7 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testMultipleDatetimeCurrentTimestamp()
+    public function testMultipleDatetimeCurrentTimestamp(): void
     {
         $schema = $this->schema('sampleSchema');
         $this->assertFalse($schema->exists());
@@ -171,7 +174,7 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testDatetimeDatetimeWithTimezone()
+    public function testDatetimeDatetimeWithTimezone(): void
     {
         $schema = $this->schema('sampleSchema');
         $this->assertFalse($schema->exists());
@@ -188,7 +191,7 @@ abstract class DatetimeColumnTest extends BaseTest
         );
     }
 
-    public function testDatetimeDatetimeString()
+    public function testDatetimeDatetimeString(): void
     {
         $schema = $this->schema('sampleSchema');
         $this->assertFalse($schema->exists());
@@ -203,7 +206,7 @@ abstract class DatetimeColumnTest extends BaseTest
         );
     }
 
-    public function testDatetimeDatetimeZero()
+    public function testDatetimeDatetimeZero(): void
     {
         $schema = $this->schema('sampleSchema');
         $this->assertFalse($schema->exists());
@@ -220,7 +223,7 @@ abstract class DatetimeColumnTest extends BaseTest
 
     //time
 
-    public function testTimeWithNullValue()
+    public function testTimeWithNullValue(): void
     {
         $schema = $this->schema('sampleSchema');
         $this->assertFalse($schema->exists());
@@ -231,7 +234,7 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testTimeWithZeroValue()
+    public function testTimeWithZeroValue(): void
     {
         $schema = $this->schema('sampleSchema');
         $this->assertFalse($schema->exists());
@@ -242,7 +245,7 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testTimeWithStringValue()
+    public function testTimeWithStringValue(): void
     {
         $schema = $this->schema('sampleSchema');
         $this->assertFalse($schema->exists());
@@ -253,7 +256,7 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testTimeWithCustomStringValue()
+    public function testTimeWithCustomStringValue(): void
     {
         $schema = $this->schema('sampleSchema');
         $this->assertFalse($schema->exists());
@@ -264,7 +267,7 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testTimeWithLongStringValue()
+    public function testTimeWithLongStringValue(): void
     {
         $schema = $this->schema('sampleSchema');
         $this->assertFalse($schema->exists());
@@ -275,7 +278,7 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testDateWithNullValue()
+    public function testDateWithNullValue(): void
     {
         $schema = $this->schema('sampleSchema');
         $this->assertFalse($schema->exists());
@@ -286,7 +289,7 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testDateWithZeroValue()
+    public function testDateWithZeroValue(): void
     {
         $schema = $this->schema('sampleSchema');
         $this->assertFalse($schema->exists());
@@ -297,7 +300,7 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testDateWithStringValue()
+    public function testDateWithStringValue(): void
     {
         $schema = $this->schema('sampleSchema');
         $this->assertFalse($schema->exists());
@@ -308,7 +311,7 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testDateWithCustomStringValue()
+    public function testDateWithCustomStringValue(): void
     {
         $schema = $this->schema('sampleSchema');
         $this->assertFalse($schema->exists());
@@ -319,7 +322,7 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testDateWithLongStringValue()
+    public function testDateWithLongStringValue(): void
     {
         $schema = $this->schema('sampleSchema');
         $this->assertFalse($schema->exists());
@@ -330,7 +333,7 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testDateWithLongStringValueOtherFormat()
+    public function testDateWithLongStringValueOtherFormat(): void
     {
         $schema = $this->schema('sampleSchema');
         $this->assertFalse($schema->exists());

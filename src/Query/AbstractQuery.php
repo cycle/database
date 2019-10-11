@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -25,6 +26,37 @@ abstract class AbstractQuery implements BuilderInterface
 
     /** @var CompilerInterface */
     protected $compiler = null;
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->sqlStatement();
+    }
+
+    /**
+     * @return array
+     */
+    public function __debugInfo()
+    {
+        $bindings = new QueryBindings();
+
+        try {
+            $queryString = $this->compile($bindings, $this->compiler);
+            ;
+        } catch (\Exception $e) {
+            $queryString = "[ERROR: {$e->getMessage()}]";
+        }
+
+        $debugInfo = [
+            'statement' => $queryString,
+            'bindings'  => $bindings->getParameters(),
+            'driver'    => $this->driver
+        ];
+
+        return $debugInfo;
+    }
 
     /**
      * @return DriverInterface|null
@@ -65,7 +97,7 @@ abstract class AbstractQuery implements BuilderInterface
     public function sqlStatement(): string
     {
         if ($this->compiler === null) {
-            throw new BuilderException("Unable to build query without associated driver");
+            throw new BuilderException('Unable to build query without associated driver');
         }
 
         return $this->compile(new QueryBindings(), $this->compiler);
@@ -79,44 +111,13 @@ abstract class AbstractQuery implements BuilderInterface
     public function getParameters(): array
     {
         if ($this->compiler === null) {
-            throw new BuilderException("Unable to build query without associated driver");
+            throw new BuilderException('Unable to build query without associated driver');
         }
 
         $bindings = new QueryBindings();
         $this->compile($bindings, $this->compiler);
 
         return $bindings->getParameters();
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->sqlStatement();
-    }
-
-    /**
-     * @return array
-     */
-    public function __debugInfo()
-    {
-        $bindings = new QueryBindings();
-
-        try {
-            $queryString = $this->compile($bindings, $this->compiler);
-            ;
-        } catch (\Exception $e) {
-            $queryString = "[ERROR: {$e->getMessage()}]";
-        }
-
-        $debugInfo = [
-            'statement' => $queryString,
-            'bindings'  => $bindings->getParameters(),
-            'driver'    => $this->driver
-        ];
-
-        return $debugInfo;
     }
 
     /**

@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Tests;
 
@@ -18,7 +20,7 @@ use Spiral\Database\Driver\SQLite\SQLiteDriver;
 
 class DBALTest extends TestCase
 {
-    const DEFAULT_OPTIONS = [
+    public const DEFAULT_OPTIONS = [
         'default'     => 'default',
         'databases'   => [
             'default' => [
@@ -30,7 +32,7 @@ class DBALTest extends TestCase
         'connections' => []
     ];
 
-    public function testAddDatabase()
+    public function testAddDatabase(): void
     {
         $driver = m::mock(DriverInterface::class);
         $db = new Database('default', '', $driver);
@@ -45,7 +47,7 @@ class DBALTest extends TestCase
     /**
      * @expectedException \Spiral\Database\Exception\DBALException
      */
-    public function testAddDatabaseException()
+    public function testAddDatabaseException(): void
     {
         $driver = m::mock(DriverInterface::class);
         $db = new Database('default', '', $driver);
@@ -56,7 +58,7 @@ class DBALTest extends TestCase
         $dbal->addDatabase($db);
     }
 
-    public function testAddDriver()
+    public function testAddDriver(): void
     {
         $driver = m::mock(DriverInterface::class);
 
@@ -69,7 +71,7 @@ class DBALTest extends TestCase
     /**
      * @expectedException \Spiral\Database\Exception\DBALException
      */
-    public function testAddDriverException()
+    public function testAddDriverException(): void
     {
         $driver = m::mock(DriverInterface::class);
 
@@ -81,13 +83,13 @@ class DBALTest extends TestCase
     /**
      * @expectedException \Spiral\Database\Exception\DBALException
      */
-    public function testDatabaseException()
+    public function testDatabaseException(): void
     {
         $dbal = new DatabaseManager(new DatabaseConfig(self::DEFAULT_OPTIONS));
         $dbal->database('default');
     }
 
-    public function testDatabaseDrivers()
+    public function testDatabaseDrivers(): void
     {
         $read = m::mock(DriverInterface::class);
         $write = m::mock(DriverInterface::class);
@@ -102,7 +104,7 @@ class DBALTest extends TestCase
         $this->assertSame($write, $db->getDriver(Database::WRITE));
     }
 
-    public function testInjection()
+    public function testInjection(): void
     {
         $read = m::mock(DriverInterface::class);
         $write = m::mock(DriverInterface::class);
@@ -120,7 +122,7 @@ class DBALTest extends TestCase
         $this->assertSame($write, $db->getDriver(Database::WRITE));
     }
 
-    public function testGetDrivers()
+    public function testGetDrivers(): void
     {
         $read = m::mock(DriverInterface::class);
         $write = m::mock(DriverInterface::class);
@@ -135,7 +137,7 @@ class DBALTest extends TestCase
         $this->assertCount(2, $dbal->getDrivers());
     }
 
-    public function testGetDatabases()
+    public function testGetDatabases(): void
     {
         $read = m::mock(DriverInterface::class);
         $write = m::mock(DriverInterface::class);
@@ -151,7 +153,7 @@ class DBALTest extends TestCase
     /**
      * @expectedException \Spiral\Database\Exception\DBALException
      */
-    public function testGetDatabaseException()
+    public function testGetDatabaseException(): void
     {
         $read = m::mock(DriverInterface::class);
         $write = m::mock(DriverInterface::class);
@@ -163,7 +165,7 @@ class DBALTest extends TestCase
     /**
      * @expectedException \Spiral\Database\Exception\DBALException
      */
-    public function testGetDriverException()
+    public function testGetDriverException(): void
     {
         $read = m::mock(DriverInterface::class);
         $write = m::mock(DriverInterface::class);
@@ -172,7 +174,7 @@ class DBALTest extends TestCase
         $dbal->driver('other');
     }
 
-    public function testConfigured()
+    public function testConfigured(): void
     {
         $dbal = new DatabaseManager(new DatabaseConfig([
             'default'     => 'default',
@@ -200,7 +202,7 @@ class DBALTest extends TestCase
         $this->assertInstanceOf(SQLiteDriver::class, $dbal->database('default')->getDriver());
     }
 
-    public function testCountDrivers()
+    public function testCountDrivers(): void
     {
         $dbal = new DatabaseManager(new DatabaseConfig([
             'default'     => 'default',
@@ -227,7 +229,7 @@ class DBALTest extends TestCase
         $this->assertCount(1, $dbal->getDrivers());
     }
 
-    public function testCountDatabase()
+    public function testCountDatabase(): void
     {
         $dbal = new DatabaseManager(new DatabaseConfig([
             'default'     => 'default',
@@ -261,7 +263,7 @@ class DBALTest extends TestCase
     /**
      * @expectedException \Spiral\Database\Exception\DBALException
      */
-    public function testBadDriver()
+    public function testBadDriver(): void
     {
         $dbal = new DatabaseManager(new DatabaseConfig([
 

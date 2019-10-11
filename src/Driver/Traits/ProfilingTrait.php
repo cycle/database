@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -23,7 +24,7 @@ trait ProfilingTrait
      *
      * @param bool $profiling Enable or disable driver profiling.
      */
-    public function setProfiling(bool $profiling = true)
+    public function setProfiling(bool $profiling = true): void
     {
         $this->profiling = $profiling;
     }

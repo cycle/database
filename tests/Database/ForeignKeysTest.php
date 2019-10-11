@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Tests;
 
@@ -20,12 +22,12 @@ abstract class ForeignKeysTest extends BaseTest
      */
     protected $database;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->database = $this->db();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->dropDatabase($this->db());
     }
@@ -70,7 +72,7 @@ abstract class ForeignKeysTest extends BaseTest
         return $schema;
     }
 
-    public function testCreateWithReferenceToExistedTable()
+    public function testCreateWithReferenceToExistedTable(): void
     {
         $schema = $this->schema('schema');
         $this->assertFalse($schema->exists());
@@ -86,7 +88,7 @@ abstract class ForeignKeysTest extends BaseTest
         $this->assertTrue($this->schema('schema')->hasForeignKey(['external_id']));
     }
 
-    public function testCreateWithReferenceToExistedTableWithName()
+    public function testCreateWithReferenceToExistedTableWithName(): void
     {
         $schema = $this->schema('schema');
         $this->assertFalse($schema->exists());
@@ -102,7 +104,7 @@ abstract class ForeignKeysTest extends BaseTest
         $this->assertTrue($this->schema('schema')->hasForeignKey(['external_id']));
     }
 
-    public function testCreateWithReferenceToExistedTableCascade()
+    public function testCreateWithReferenceToExistedTableCascade(): void
     {
         $schema = $this->schema('schema');
         $this->assertFalse($schema->exists());
@@ -121,7 +123,7 @@ abstract class ForeignKeysTest extends BaseTest
         $this->assertTrue($this->schema('schema')->hasForeignKey(['external_id']));
     }
 
-    public function testCreateWithReferenceToExistedTableNoAction()
+    public function testCreateWithReferenceToExistedTableNoAction(): void
     {
         $schema = $this->schema('schema');
         $this->assertFalse($schema->exists());
@@ -140,7 +142,7 @@ abstract class ForeignKeysTest extends BaseTest
         $this->assertTrue($this->schema('schema')->hasForeignKey(['external_id']));
     }
 
-    public function testDropExistedReference()
+    public function testDropExistedReference(): void
     {
         $schema = $this->schema('schema');
         $this->assertFalse($schema->exists());
@@ -162,7 +164,7 @@ abstract class ForeignKeysTest extends BaseTest
         $this->assertFalse($this->schema('schema')->hasForeignKey(['external_id']));
     }
 
-    public function testChangeReferenceForeignKey()
+    public function testChangeReferenceForeignKey(): void
     {
         $schema = $this->schema('schema');
         $this->assertFalse($schema->exists());
@@ -184,7 +186,7 @@ abstract class ForeignKeysTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testChangeReferenceForeignTable()
+    public function testChangeReferenceForeignTable(): void
     {
         $schema = $this->schema('schema');
         $this->assertFalse($schema->exists());
@@ -208,7 +210,7 @@ abstract class ForeignKeysTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testChangeUpdateRuleToCascade()
+    public function testChangeUpdateRuleToCascade(): void
     {
         $schema = $this->schema('schema');
         $this->assertFalse($schema->exists());
@@ -230,7 +232,7 @@ abstract class ForeignKeysTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testChangeUpdateRuleToNoAction()
+    public function testChangeUpdateRuleToNoAction(): void
     {
         $schema = $this->schema('schema');
         $this->assertFalse($schema->exists());
@@ -252,7 +254,7 @@ abstract class ForeignKeysTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testChangeDeleteRuleToCascade()
+    public function testChangeDeleteRuleToCascade(): void
     {
         $schema = $this->schema('schema');
         $this->assertFalse($schema->exists());
@@ -274,7 +276,7 @@ abstract class ForeignKeysTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testChangeDeleteRuleToNoAction()
+    public function testChangeDeleteRuleToNoAction(): void
     {
         $schema = $this->schema('schema');
         $this->assertFalse($schema->exists());
@@ -296,7 +298,7 @@ abstract class ForeignKeysTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testCompositeKeys()
+    public function testCompositeKeys(): void
     {
         $schema = $this->schema('schema');
         $this->assertFalse($schema->exists());

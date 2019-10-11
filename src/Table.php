@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -30,11 +31,11 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
 {
     use SchemaTrait;
 
-    /** @var string */
-    private $name = '';
-
     /** @var DatabaseInterface */
     protected $database = null;
+
+    /** @var string */
+    private $name = '';
 
     /**
      * @param DatabaseInterface $database Parent DBAL database.
@@ -44,6 +45,19 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
     {
         $this->name = $name;
         $this->database = $database;
+    }
+
+    /**
+     * Bypass call to SelectQuery builder.
+     *
+     * @param string $method
+     * @param array  $arguments
+     *
+     * @return SelectQuery|mixed
+     */
+    public function __call($method, array $arguments)
+    {
+        return call_user_func_array([$this->select(), $method], $arguments);
     }
 
     /**
@@ -90,7 +104,7 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
     /**
      * Erase all table data.
      */
-    public function eraseData()
+    public function eraseData(): void
     {
         $this->database->getDriver(DatabaseInterface::WRITE)->eraseData($this->getFullName());
     }
@@ -121,7 +135,7 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
      * @param array $columns Array of columns.
      * @param array $rowsets Array of rowsets.
      */
-    public function insertMultiple(array $columns = [], array $rowsets = [])
+    public function insertMultiple(array $columns = [], array $rowsets = []): void
     {
         //No return value
         $this->database->insert($this->name)->columns($columns)->values($rowsets)->run();
@@ -207,18 +221,5 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
     public function fetchAll(): array
     {
         return $this->select()->fetchAll();
-    }
-
-    /**
-     * Bypass call to SelectQuery builder.
-     *
-     * @param string $method
-     * @param array  $arguments
-     *
-     * @return SelectQuery|mixed
-     */
-    public function __call($method, array $arguments)
-    {
-        return call_user_func_array([$this->select(), $method], $arguments);
     }
 }

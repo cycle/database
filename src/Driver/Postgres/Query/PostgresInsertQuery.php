@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -48,7 +49,7 @@ class PostgresInsertQuery extends InsertQuery
     public function run()
     {
         if ($this->compiler === null) {
-            throw new BuilderException("Unable to run query without assigned driver");
+            throw new BuilderException('Unable to run query without assigned driver');
         }
 
         $bindings = new QueryBindings();

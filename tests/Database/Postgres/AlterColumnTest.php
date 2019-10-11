@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Tests\Postgres;
 
@@ -11,9 +13,9 @@ use Spiral\Database\Exception\StatementException;
 
 class AlterColumnTest extends \Spiral\Database\Tests\AlterColumnTest
 {
-    const DRIVER = 'postgres';
+    public const DRIVER = 'postgres';
 
-    public function testNativeEnums()
+    public function testNativeEnums(): void
     {
         $driver = $this->getDriver();
         try {
@@ -22,21 +24,21 @@ class AlterColumnTest extends \Spiral\Database\Tests\AlterColumnTest
         }
 
         try {
-            $driver->execute("CREATE TABLE person (
+            $driver->execute('CREATE TABLE person (
     name text,
     current_mood mood
-);");
+);');
         } catch (StatementException $e) {
         }
 
-        $schema = $driver->getSchema("person");
+        $schema = $driver->getSchema('person');
         $this->assertSame('enum', $schema->column('current_mood')->getAbstractType());
         $this->assertSame(['sad', 'ok', 'happy'], $schema->column('current_mood')->getEnumValues());
 
         // convert to internal type
         $schema->save();
 
-        $schema = $driver->getSchema("person");
+        $schema = $driver->getSchema('person');
         $schema->column('current_mood')->enum(['angry', 'happy']);
         $schema->save();
 

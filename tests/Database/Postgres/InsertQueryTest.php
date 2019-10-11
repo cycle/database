@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Tests\Postgres;
 
@@ -16,9 +18,9 @@ use Spiral\Database\Driver\Quoter;
 
 class InsertQueryTest extends \Spiral\Database\Tests\InsertQueryTest
 {
-    const DRIVER = 'postgres';
+    public const DRIVER = 'postgres';
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -28,12 +30,12 @@ class InsertQueryTest extends \Spiral\Database\Tests\InsertQueryTest
         $schema->save();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->dropDatabase($this->database);
     }
 
-    public function testQueryInstance()
+    public function testQueryInstance(): void
     {
         parent::testQueryInstance();
         $this->assertInstanceOf(PostgresInsertQuery::class, $this->database->insert());
@@ -41,31 +43,31 @@ class InsertQueryTest extends \Spiral\Database\Tests\InsertQueryTest
 
     //Generic behaviours
 
-    public function testSimpleInsert()
+    public function testSimpleInsert(): void
     {
         $insert = $this->database->insert()->into('target_table')->values([
             'name' => 'Anton'
         ]);
 
         $this->assertSameQuery(
-            "INSERT INTO {target_table} ({name}) VALUES (?) RETURNING {target_id}",
+            'INSERT INTO {target_table} ({name}) VALUES (?) RETURNING {target_id}',
             $insert
         );
     }
 
-    public function testSimpleInsertWithStatesValues()
+    public function testSimpleInsertWithStatesValues(): void
     {
         $insert = $this->database->insert()->into('target_table')
             ->columns('name', 'balance')
             ->values('Anton', 100);
 
         $this->assertSameQuery(
-            "INSERT INTO {target_table} ({name}, {balance}) VALUES (?, ?) RETURNING {target_id}",
+            'INSERT INTO {target_table} ({name}, {balance}) VALUES (?, ?) RETURNING {target_id}',
             $insert
         );
     }
 
-    public function testSimpleInsertMultipleRows()
+    public function testSimpleInsertMultipleRows(): void
     {
         $insert = $this->database->insert()->into('target_table')
             ->columns('name', 'balance')
@@ -73,7 +75,7 @@ class InsertQueryTest extends \Spiral\Database\Tests\InsertQueryTest
             ->values('John', 200);
 
         $this->assertSameQuery(
-            "INSERT INTO {target_table} ({name}, {balance}) VALUES (?, ?), (?, ?) RETURNING {target_id}",
+            'INSERT INTO {target_table} ({name}, {balance}) VALUES (?, ?), (?, ?) RETURNING {target_id}',
             $insert
         );
     }
@@ -81,12 +83,12 @@ class InsertQueryTest extends \Spiral\Database\Tests\InsertQueryTest
     /**
      * @expectedException \Spiral\Database\Exception\BuilderException
      */
-    public function testInvalidCompiler()
+    public function testInvalidCompiler(): void
     {
         $insert = $this->database->insert()->compile(
             new QueryBindings(),
             new MySQLCompiler(
-                new Quoter(m::mock(DriverInterface::class), "")
+                new Quoter(m::mock(DriverInterface::class), '')
             )
         );
     }

@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
 
 namespace Spiral\tests\Cases\Database;
 
@@ -13,7 +15,7 @@ use Spiral\Database\Config\DatabaseConfig;
 
 class ConfigTest extends TestCase
 {
-    public function testDefaultDatabase()
+    public function testDefaultDatabase(): void
     {
         $config = new DatabaseConfig([
             'default' => 'database-1'
@@ -22,7 +24,7 @@ class ConfigTest extends TestCase
         $this->assertSame('database-1', $config->getDefaultDatabase());
     }
 
-    public function testHasDatabase()
+    public function testHasDatabase(): void
     {
         $config = new DatabaseConfig([
             'default'   => 'database-1',
@@ -40,7 +42,7 @@ class ConfigTest extends TestCase
     /**
      * @expectedException \Spiral\Database\Exception\ConfigException
      */
-    public function testDatabaseException()
+    public function testDatabaseException(): void
     {
         $config = new DatabaseConfig([
             'default'   => 'database-1',
@@ -52,7 +54,7 @@ class ConfigTest extends TestCase
         $this->assertSame('test3', $config->getDatabase('test3'));
     }
 
-    public function testDatabaseDriver()
+    public function testDatabaseDriver(): void
     {
         $config = new DatabaseConfig([
             'default'   => 'database-1',
@@ -70,7 +72,7 @@ class ConfigTest extends TestCase
         $this->assertSame('bce', $config->getDatabase('test2')->getDriver());
     }
 
-    public function testDatabaseReadDriver()
+    public function testDatabaseReadDriver(): void
     {
         $config = new DatabaseConfig([
             'default'   => 'database-1',
@@ -94,7 +96,7 @@ class ConfigTest extends TestCase
         $this->assertSame('bce', $config->getDatabase('test2')->getReadDriver());
     }
 
-    public function testDatabasePrefix()
+    public function testDatabasePrefix(): void
     {
         $config = new DatabaseConfig([
             'default'   => 'database-1',
@@ -119,7 +121,7 @@ class ConfigTest extends TestCase
         $this->assertSame('', $config->getDatabase('test3')->getPrefix());
     }
 
-    public function testDatabaseNames()
+    public function testDatabaseNames(): void
     {
         $config = new DatabaseConfig([
             'default'   => 'database-1',
@@ -136,7 +138,7 @@ class ConfigTest extends TestCase
         $this->assertSame(['test', 'test2'], array_keys($config->getDatabases()));
     }
 
-    public function testAliases()
+    public function testAliases(): void
     {
         $config = new DatabaseConfig([
             'default'   => 'database-1',
@@ -167,7 +169,7 @@ class ConfigTest extends TestCase
         $this->assertSame('test', $config->resolveAlias('test4'));
     }
 
-    public function testHasDriver()
+    public function testHasDriver(): void
     {
         $config = new DatabaseConfig([
             'connections' => [
@@ -195,7 +197,7 @@ class ConfigTest extends TestCase
     /**
      * @expectedException \Spiral\Database\Exception\ConfigException
      */
-    public function testDriverException()
+    public function testDriverException(): void
     {
         $config = new DatabaseConfig([
             'default' => 'database-1',
@@ -204,7 +206,7 @@ class ConfigTest extends TestCase
         $config->getDriver('test3');
     }
 
-    public function testGetDriver()
+    public function testGetDriver(): void
     {
         $config = new DatabaseConfig([
             'connections' => [
@@ -218,7 +220,7 @@ class ConfigTest extends TestCase
                         'option'
                     ]
                 ],
-                'test3' => new Autowire("someDriver")
+                'test3' => new Autowire('someDriver')
             ]
         ]);
 
@@ -227,7 +229,7 @@ class ConfigTest extends TestCase
         $this->assertInstanceOf(Autowire::class, $config->getDriver('test3'));
     }
 
-    public function testDriverNames()
+    public function testDriverNames(): void
     {
         $config = new DatabaseConfig([
             'connections' => [
@@ -241,7 +243,7 @@ class ConfigTest extends TestCase
                         'option'
                     ]
                 ],
-                'test3' => new Autowire("someDriver")
+                'test3' => new Autowire('someDriver')
             ]
         ]);
 

@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Tests\SQLServer;
 
@@ -11,10 +13,10 @@ use Spiral\Database\Driver\SQLServer\SQLServerCompiler;
 
 class StatementTest extends \Spiral\Database\Tests\StatementTest
 {
-    const DRIVER = 'sqlserver';
+    public const DRIVER = 'sqlserver';
 
     //ROW NUMBER COLUMN! FALLBACK
-    public function testCountColumns()
+    public function testCountColumns(): void
     {
         $table = $this->database->table('sample_table');
         $result = $table->select()->limit(1)->getIterator();
@@ -22,7 +24,7 @@ class StatementTest extends \Spiral\Database\Tests\StatementTest
         $this->assertSame(4, $result->columnCount());
     }
 
-    public function testCountColumnsWithProperOrder()
+    public function testCountColumnsWithProperOrder(): void
     {
         $table = $this->database->table('sample_table');
         $result = $table->select()->limit(1)->orderBy('id')->getIterator();
@@ -31,7 +33,7 @@ class StatementTest extends \Spiral\Database\Tests\StatementTest
     }
 
     //ROW NUMBER COLUMN! FALLBACK
-    public function testToArray()
+    public function testToArray(): void
     {
         $table = $this->database->table('sample_table');
         $this->fillData();

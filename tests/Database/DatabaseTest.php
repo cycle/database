@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Spiral Framework.
  *
@@ -17,7 +20,7 @@ use Spiral\Database\Driver\DriverInterface;
 
 abstract class DatabaseTest extends BaseTest
 {
-    public function testGetName()
+    public function testGetName(): void
     {
         $db = $this->db();
         $this->assertSame('default', $db->getName());
@@ -26,22 +29,21 @@ abstract class DatabaseTest extends BaseTest
         $this->assertSame('test', $db->getName());
     }
 
-    public function testGetType()
+    public function testGetType(): void
     {
         $db = $this->db();
         $this->assertSame($this->getDriver()->getType(), $db->getType());
     }
 
-    public function testDriverVerbosity()
+    public function testDriverVerbosity(): void
     {
         $driver = $this->getDriver();
-        $driver->setLogger($l = new class implements LoggerInterface
-        {
+        $driver->setLogger($l = new class() implements LoggerInterface {
             use LoggerTrait;
 
             public $records = [];
 
-            public function log($level, $message, array $context = [])
+            public function log($level, $message, array $context = []): void
             {
                 $this->records = func_get_args();
             }
@@ -61,7 +63,7 @@ abstract class DatabaseTest extends BaseTest
         $this->assertSame($count, count($l->records));
     }
 
-    public function testPrefix()
+    public function testPrefix(): void
     {
         $db = $this->db();
         $this->assertFalse($db->hasTable('test'));
@@ -97,7 +99,7 @@ abstract class DatabaseTest extends BaseTest
         $this->assertCount(2, $db->getTables());
     }
 
-    public function testReadWrite()
+    public function testReadWrite(): void
     {
         $wDriver = m::mock(DriverInterface::class);
         $rDriver = m::mock(DriverInterface::class);
@@ -109,7 +111,7 @@ abstract class DatabaseTest extends BaseTest
         $this->assertSame($rDriver, $db->getDriver(DatabaseInterface::READ));
     }
 
-    public function testExecute()
+    public function testExecute(): void
     {
         $wDriver = m::mock(DriverInterface::class);
         $rDriver = m::mock(DriverInterface::class);
@@ -117,6 +119,6 @@ abstract class DatabaseTest extends BaseTest
         $db = new Database('default', '', $wDriver, $rDriver);
 
         $wDriver->expects('execute')->with('test', ['param'])->andReturn(1);
-        $this->assertSame(1, $db->execute("test", ['param']));
+        $this->assertSame(1, $db->execute('test', ['param']));
     }
 }

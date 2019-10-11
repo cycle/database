@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -60,6 +61,17 @@ final class Database implements DatabaseInterface, InjectableInterface
         $this->prefix = $prefix;
         $this->driver = $driver;
         $this->readDriver = $readDriver;
+    }
+
+    /**
+     * Shortcut to get table abstraction.
+     *
+     * @param string $name Table name without prefix.
+     * @return Table
+     */
+    public function __get(string $name): Table
+    {
+        return $this->table($name);
     }
 
     /**
@@ -150,17 +162,6 @@ final class Database implements DatabaseInterface, InjectableInterface
     public function table(string $name): TableInterface
     {
         return new Table($this, $name);
-    }
-
-    /**
-     * Shortcut to get table abstraction.
-     *
-     * @param string $name Table name without prefix.
-     * @return Table
-     */
-    public function __get(string $name): Table
-    {
-        return $this->table($name);
     }
 
     /**

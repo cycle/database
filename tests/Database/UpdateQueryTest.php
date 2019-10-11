@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Tests;
 
@@ -21,7 +23,7 @@ abstract class UpdateQueryTest extends BaseQueryTest
      */
     protected $database;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->database = $this->db();
     }
@@ -31,7 +33,7 @@ abstract class UpdateQueryTest extends BaseQueryTest
         return $this->database->table($table)->getSchema();
     }
 
-    public function testQueryInstance()
+    public function testQueryInstance(): void
     {
         $this->assertInstanceOf(UpdateQuery::class, $this->database->update());
         $this->assertInstanceOf(UpdateQuery::class, $this->database->table('table')->update());
@@ -40,25 +42,25 @@ abstract class UpdateQueryTest extends BaseQueryTest
 
     //Generic behaviours
 
-    public function testSimpleUpdate()
+    public function testSimpleUpdate(): void
     {
         $update = $this->database->update()->in('table')->set('name', 'Anton');
 
-        $this->assertSameQuery("UPDATE {table} SET {name} = ?", $update);
+        $this->assertSameQuery('UPDATE {table} SET {name} = ?', $update);
     }
 
-    public function testSimpleUpdateAsArray()
+    public function testSimpleUpdateAsArray(): void
     {
         $update = $this->database->update()->in('table')->values(['name' => 'Anton']);
 
-        $this->assertSameQuery("UPDATE {table} SET {name} = ?", $update);
+        $this->assertSameQuery('UPDATE {table} SET {name} = ?', $update);
     }
 
-    public function testUpdateWithWhere()
+    public function testUpdateWithWhere(): void
     {
         $update = $this->database->update()->in('table')->set('name', 'Anton')->where('id', 1);
 
-        $this->assertSameQuery("UPDATE {table} SET {name} = ? WHERE {id} = ?", $update);
+        $this->assertSameQuery('UPDATE {table} SET {name} = ? WHERE {id} = ?', $update);
 
         $this->assertSameParameters([
             'Anton',
@@ -66,7 +68,7 @@ abstract class UpdateQueryTest extends BaseQueryTest
         ], $update);
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $schema = $this->schema('demo');
         $schema->primary('id');
@@ -93,7 +95,7 @@ abstract class UpdateQueryTest extends BaseQueryTest
         );
     }
 
-    public function testUpdateToNotNull()
+    public function testUpdateToNotNull(): void
     {
         $schema = $this->schema('demo');
         $schema->primary('id');
@@ -129,7 +131,7 @@ abstract class UpdateQueryTest extends BaseQueryTest
         );
     }
 
-    public function testUpdateToNull()
+    public function testUpdateToNull(): void
     {
         $schema = $this->schema('demo');
         $schema->primary('id');
@@ -156,7 +158,7 @@ abstract class UpdateQueryTest extends BaseQueryTest
         );
     }
 
-    protected function assertSameParameters(array $parameters, AbstractQuery $query)
+    protected function assertSameParameters(array $parameters, AbstractQuery $query): void
     {
         $builderParameters = [];
         foreach (Interpolator::flattenParameters($query->getParameters()) as $value) {

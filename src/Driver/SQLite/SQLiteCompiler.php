@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -38,7 +39,7 @@ class SQLiteCompiler extends AbstractCompiler
         //SQLite uses alternative syntax
         $statement = [];
         $statement[] = sprintf(
-            "INSERT INTO %s (%s)",
+            'INSERT INTO %s (%s)',
             $this->quote($bindings, $table, true),
             $this->compileColumns($bindings, $columns)
         );
@@ -48,7 +49,7 @@ class SQLiteCompiler extends AbstractCompiler
                 // It is critically important to use UNION ALL, UNION will try to merge values together
                 // which will cause non predictable insert order
                 $statement[] = sprintf(
-                    "UNION ALL SELECT %s",
+                    'UNION ALL SELECT %s',
                     trim($this->compileValue($bindings, $rowset), '()')
                 );
                 continue;
@@ -57,13 +58,13 @@ class SQLiteCompiler extends AbstractCompiler
             $selectColumns = [];
 
             if (!$rowset instanceof ParameterInterface || !$rowset->isArray()) {
-                throw new CompilerException("Update parameter expected to be parametric array");
+                throw new CompilerException('Update parameter expected to be parametric array');
             }
 
             $rowset = $rowset->getValue();
             foreach ($columns as $index => $column) {
                 $selectColumns[] = sprintf(
-                    "%s AS %s",
+                    '%s AS %s',
                     $this->compileValue($bindings, $rowset[$index]),
                     $this->quote($bindings, $column)
                 );

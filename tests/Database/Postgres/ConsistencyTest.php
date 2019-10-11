@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Spiral, Core Components
  *
  * @author Wolfy-J
  */
+declare(strict_types=1);
 
 namespace Spiral\Database\Tests\Postgres;
 
@@ -12,9 +14,9 @@ use Spiral\Database\Injection\FragmentInterface;
 
 class ConsistencyTest extends \Spiral\Database\Tests\ConsistencyTest
 {
-    const DRIVER = 'postgres';
+    public const DRIVER = 'postgres';
 
-    public function testPrimary()
+    public function testPrimary(): void
     {
         /**
          * @var PostgresDriver $d
@@ -52,7 +54,7 @@ class ConsistencyTest extends \Spiral\Database\Tests\ConsistencyTest
     /**
      * @expectedException \Spiral\Database\Exception\DriverException
      */
-    public function testPrimaryException()
+    public function testPrimaryException(): void
     {
         /**
          * @var PostgresDriver $d
@@ -62,7 +64,7 @@ class ConsistencyTest extends \Spiral\Database\Tests\ConsistencyTest
         $this->assertSame('target', $d->getPrimary('', 'table'));
     }
 
-    public function testBigPrimary()
+    public function testBigPrimary(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -21,7 +22,7 @@ class SQLServerHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function renameTable(string $table, string $name)
+    public function renameTable(string $table, string $name): void
     {
         $this->run('sp_rename @objname = ?, @newname = ?', [$table, $name]);
     }
@@ -29,7 +30,7 @@ class SQLServerHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function createColumn(AbstractTable $table, AbstractColumn $column)
+    public function createColumn(AbstractTable $table, AbstractColumn $column): void
     {
         $this->run("ALTER TABLE {$this->identify($table)} ADD {$column->sqlStatement($this->driver)}");
     }
@@ -47,7 +48,7 @@ class SQLServerHandler extends Handler
         AbstractTable $table,
         AbstractColumn $initial,
         AbstractColumn $column
-    ) {
+    ): void {
         if (!$initial instanceof SQLServerColumn || !$column instanceof SQLServerColumn) {
             throw new SchemaException('SQlServer handler can work only with SQLServer columns');
         }
@@ -101,22 +102,22 @@ class SQLServerHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    private function renameColumn(
-        AbstractTable $table,
-        AbstractColumn $initial,
-        AbstractColumn $column
-    ) {
-        $this->run("sp_rename ?, ?, 'COLUMN'", [
-            $table->getName() . '.' . $initial->getName(),
-            $column->getName()
-        ]);
+    public function dropIndex(AbstractTable $table, AbstractIndex $index): void
+    {
+        $this->run("DROP INDEX {$this->identify($index)} ON {$this->identify($table)}");
     }
 
     /**
      * {@inheritdoc}
      */
-    public function dropIndex(AbstractTable $table, AbstractIndex $index)
-    {
-        $this->run("DROP INDEX {$this->identify($index)} ON {$this->identify($table)}");
+    private function renameColumn(
+        AbstractTable $table,
+        AbstractColumn $initial,
+        AbstractColumn $column
+    ): void {
+        $this->run("sp_rename ?, ?, 'COLUMN'", [
+            $table->getName() . '.' . $initial->getName(),
+            $column->getName()
+        ]);
     }
 }

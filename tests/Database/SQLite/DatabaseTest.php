@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Spiral Framework.
  *
@@ -10,5 +13,5 @@ namespace Spiral\Database\Tests\SQLite;
 
 class DatabaseTest extends \Spiral\Database\Tests\DatabaseTest
 {
-    const DRIVER = 'sqlite';
+    public const DRIVER = 'sqlite';
 }

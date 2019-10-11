@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Spiral Framework.
  *
@@ -19,7 +22,7 @@ use Spiral\Database\Injection\FragmentInterface;
 
 class FragmentTest extends TestCase
 {
-    public function testFragment()
+    public function testFragment(): void
     {
         $fragment = new Fragment('some sql');
         $this->assertInstanceOf(FragmentInterface::class, $fragment);
@@ -27,12 +30,12 @@ class FragmentTest extends TestCase
         $this->assertSame('some sql', $fragment->compile(
             new QueryBindings(),
             new MySQLCompiler(
-                new Quoter(m::mock(DriverInterface::class), "")
+                new Quoter(m::mock(DriverInterface::class), '')
             )
         ));
     }
 
-    public function testSerialize()
+    public function testSerialize(): void
     {
         $fragment = new Fragment('some sql');
         $fragment2 = Fragment::__set_state(['statement' => 'some sql']);

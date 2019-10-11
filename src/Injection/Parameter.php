@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -38,6 +39,17 @@ final class Parameter implements ParameterInterface
     }
 
     /**
+     * @return array
+     */
+    public function __debugInfo()
+    {
+        return [
+            'value' => $this->value,
+            'type'  => $this->type
+        ];
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getValue()
@@ -52,7 +64,7 @@ final class Parameter implements ParameterInterface
     /**
      * {@inheritdoc}
      */
-    public function setValue($value)
+    public function setValue($value): void
     {
         $this->value = $value;
     }
@@ -88,21 +100,10 @@ final class Parameter implements ParameterInterface
     }
 
     /**
-     * @return array
-     */
-    public function __debugInfo()
-    {
-        return [
-            'value' => $this->value,
-            'type'  => $this->type
-        ];
-    }
-
-    /**
      * @param mixed $value
      * @param int   $type
      */
-    private function resolveType($value, int $type)
+    private function resolveType($value, int $type): void
     {
         if ($value instanceof ValueInterface) {
             $this->type = $value->rawType();

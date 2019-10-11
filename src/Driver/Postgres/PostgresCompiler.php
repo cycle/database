@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -28,7 +29,7 @@ class PostgresCompiler extends AbstractCompiler
         string $primaryKey = null
     ): string {
         return sprintf(
-            "%s%s",
+            '%s%s',
             parent::compileInsert(
                 $bindings,
                 $table,

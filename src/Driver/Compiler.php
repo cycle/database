@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -30,10 +31,10 @@ abstract class Compiler implements CompilerInterface
     /**
      * Query types for parameter ordering.
      */
-    const SELECT_QUERY = 'select';
-    const UPDATE_QUERY = 'update';
-    const DELETE_QUERY = 'delete';
-    const INSERT_QUERY = 'insert';
+    public const SELECT_QUERY = 'select';
+    public const UPDATE_QUERY = 'update';
+    public const DELETE_QUERY = 'delete';
+    public const INSERT_QUERY = 'insert';
 
     /** @var Quoter */
     private $quoter = null;
@@ -140,7 +141,7 @@ abstract class Compiler implements CompilerInterface
         array $whereTokens = []
     ): string {
         return sprintf(
-            "DELETE FROM %s%s",
+            'DELETE FROM %s%s',
             $this->quote($bindings, $table, true),
             $this->optional("\nWHERE", $this->compileWhere($bindings, $whereTokens))
         );
@@ -268,7 +269,7 @@ abstract class Compiler implements CompilerInterface
 
             if (!empty($join['alias'])) {
                 $this->quoter->registerAlias($join['alias'], (string)$join['outer']);
-                $statement .= " AS " . $this->quote($bindings, $join['alias']);
+                $statement .= ' AS ' . $this->quote($bindings, $join['alias']);
             }
 
             $statement .= $this->optional("\n    ON", $this->compileWhere($bindings, $join['on']));
@@ -321,7 +322,7 @@ abstract class Compiler implements CompilerInterface
             $direction = strtoupper($order[1]);
 
             if (!in_array($direction, ['ASC', 'DESC'])) {
-                throw new CompilerException("Invalid sorting direction, only ASC and DESC are allowed");
+                throw new CompilerException('Invalid sorting direction, only ASC and DESC are allowed');
             }
 
             $result[] = $this->quote($bindings, $order[0]) . ' ' . $direction;

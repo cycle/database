@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -131,26 +132,6 @@ class SQLiteTable extends AbstractTable
     }
 
     /**
-     * @param array $include Include following parameters into each line.
-     *
-     * @return array
-     */
-    private function columnSchemas(array $include = []): array
-    {
-        $columns = $this->driver->query(
-            "PRAGMA TABLE_INFO(" . $this->driver->quote($this->getName()) . ")"
-        );
-
-        $result = [];
-
-        foreach ($columns as $column) {
-            $result[] = $column + $include;
-        }
-
-        return $result;
-    }
-
-    /**
      * {@inheritdoc}
      */
     protected function createColumn(string $name): AbstractColumn
@@ -172,5 +153,25 @@ class SQLiteTable extends AbstractTable
     protected function createForeign(string $name): AbstractForeignKey
     {
         return new SQLiteForeign($this->getName(), $this->getPrefix(), $name);
+    }
+
+    /**
+     * @param array $include Include following parameters into each line.
+     *
+     * @return array
+     */
+    private function columnSchemas(array $include = []): array
+    {
+        $columns = $this->driver->query(
+            'PRAGMA TABLE_INFO(' . $this->driver->quote($this->getName()) . ')'
+        );
+
+        $result = [];
+
+        foreach ($columns as $column) {
+            $result[] = $column + $include;
+        }
+
+        return $result;
     }
 }

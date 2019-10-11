@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Spiral Framework.
  *
@@ -77,7 +78,7 @@ final class Quoter
      * @param string $alias
      * @param string $identifier
      */
-    public function registerAlias(string $alias, string $identifier)
+    public function registerAlias(string $alias, string $identifier): void
     {
         $this->aliases[$alias] = $identifier;
     }

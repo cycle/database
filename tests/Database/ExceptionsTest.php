@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Spiral, Core Components
  *
@@ -21,12 +24,12 @@ abstract class ExceptionsTest extends BaseTest
      */
     protected $database;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->database = $this->db();
     }
 
-    public function testSelectionException()
+    public function testSelectionException(): void
     {
         $select = $this->database->select()->from('udnefinedTable');
         try {
@@ -42,7 +45,7 @@ abstract class ExceptionsTest extends BaseTest
         }
     }
 
-    public function testHandlerException()
+    public function testHandlerException(): void
     {
         $select = $this->database->select()->from('udnefinedTable');
         try {
@@ -58,7 +61,7 @@ abstract class ExceptionsTest extends BaseTest
         }
     }
 
-    public function testInsertNotNullable()
+    public function testInsertNotNullable(): void
     {
         $schema = $this->getDriver()->getSchema('test');
         $schema->primary('id');
