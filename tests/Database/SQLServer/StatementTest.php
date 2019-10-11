@@ -41,7 +41,7 @@ class StatementTest extends \Spiral\Database\Tests\StatementTest
         $result = $table->select()->limit(1)->getIterator();
 
         $this->assertEquals([
-            ['id' => 1, 'name' => md5(0), 'value' => 0, SQLServerCompiler::ROW_NUMBER => 1]
+            ['id' => 1, 'name' => md5('0'), 'value' => 0, SQLServerCompiler::ROW_NUMBER => 1]
         ], $result->fetchAll());
     }
 }
