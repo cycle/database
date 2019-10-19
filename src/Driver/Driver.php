@@ -106,7 +106,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     public function __debugInfo()
     {
         return [
-            'connection' => $this->options['connection'] ?? $this->options['dsn'],
+            'connection' => $this->options['connection'] ?? $this->options['dsn'] ?? $this->options['addr'],
             'connected'  => $this->isConnected(),
             'source'     => $this->getSource(),
             'options'    => $this->options['options'],
@@ -574,7 +574,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     protected function createPDO(): PDO
     {
         return new PDO(
-            $this->options['connection'] ?? $this->options['dsn'],
+            $this->options['connection'] ?? $this->options['dsn'] ?? $this->options['addr'],
             $this->options['username'],
             $this->options['password'],
             $this->options['options']
