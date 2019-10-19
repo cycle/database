@@ -51,7 +51,6 @@ abstract class DatabaseTest extends BaseTest
 
         $driver->getSchema('test');
 
-        $this->assertEmpty($l->records);
         $driver->setProfiling(true);
 
         $driver->getSchema('test');

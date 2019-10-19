@@ -84,13 +84,9 @@ class SQLiteDriver extends Driver
     /**
      * {@inheritdoc}
      */
-    protected function isolationLevel(string $level): void
+    protected function setIsolationLevel(string $level): void
     {
-        if ($this->isProfiling()) {
-            $this->getLogger()->alert(
-                "Transaction isolation level is not fully supported by SQLite ({$level})."
-            );
-        }
+        $this->getLogger()->alert("Transaction isolation level is not fully supported by SQLite ({$level}).");
     }
 
     /**

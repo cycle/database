@@ -116,9 +116,12 @@ class SQLServerHandler extends Handler
         AbstractColumn $initial,
         AbstractColumn $column
     ): void {
-        $this->run("sp_rename ?, ?, 'COLUMN'", [
-            $table->getName() . '.' . $initial->getName(),
-            $column->getName()
-        ]);
+        $this->run(
+            "sp_rename ?, ?, 'COLUMN'",
+            [
+                $table->getName() . '.' . $initial->getName(),
+                $column->getName()
+            ]
+        );
     }
 }

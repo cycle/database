@@ -13,6 +13,7 @@ namespace Spiral\Database\Driver;
 
 use PDO;
 use Psr\Log\LoggerAwareInterface;
+use Psr\Log\NullLogger;
 use Spiral\Database\Driver\Traits\BuilderTrait;
 use Spiral\Database\Driver\Traits\ProfilingTrait;
 use Spiral\Database\Exception\BuilderException;
@@ -59,8 +60,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * @var array
      */
     protected $options = [
-        'profiling'  => false,
-
         // allow reconnects
         'reconnect'  => false,
 
@@ -91,10 +90,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
 
         $options['options'] = ($options['options'] ?? []) + static::DEFAULT_PDO_OPTIONS;
         $this->options = $options + $this->options;
-
-        if (!empty($this->options['profiling'])) {
-            $this->setProfiling(true);
-        }
     }
 
     /**
@@ -113,7 +108,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         return [
             'connection' => $this->options['connection'] ?? $this->options['dsn'],
             'connected'  => $this->isConnected(),
-            'profiling'  => $this->isProfiling(),
             'source'     => $this->getSource(),
             'options'    => $this->options['options'],
         ];
@@ -259,17 +253,14 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * Get id of last inserted row, this method must be called after insert query. Attention,
      * such functionality may not work in some DBMS property (Postgres).
      *
-     * @param string|null $sequence Name of the sequence object from which the ID should be
-     *                              returned.
-     *
+     * @param string|null $sequence Name of the sequence object from which the ID should be returned.
      * @return mixed
      */
     public function lastInsertID(string $sequence = null)
     {
         $pdo = $this->getPDO();
         $result = $sequence ? (int)$pdo->lastInsertId($sequence) : (int)$pdo->lastInsertId();
-
-        $this->isProfiling() && $this->getLogger()->debug("Given insert ID: {$result}");
+        $this->getLogger()->debug("Insert ID: {$result}");
 
         return $result;
     }
@@ -291,10 +282,10 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
 
         if ($this->tscope->getLevel() == 1) {
             if ($isolationLevel !== null) {
-                $this->isolationLevel($isolationLevel);
+                $this->setIsolationLevel($isolationLevel);
             }
 
-            $this->isProfiling() && $this->getLogger()->info('Begin transaction');
+            $this->getLogger()->info('Begin transaction');
 
             try {
                 return $this->getPDO()->beginTransaction();
@@ -314,7 +305,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
             }
         }
 
-        $this->savepointCreate($this->tscope->getLevel());
+        $this->createSavepoint($this->tscope->getLevel());
 
         return true;
     }
@@ -329,7 +320,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         $this->tscope->close();
 
         if ($this->tscope->getLevel() == 0) {
-            $this->isProfiling() && $this->getLogger()->info('Commit transaction');
+            $this->getLogger()->info('Commit transaction');
 
             try {
                 return $this->getPDO()->commit();
@@ -338,7 +329,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
             }
         }
 
-        $this->savepointRelease($this->tscope->getLevel() + 1);
+        $this->releaseSavepoint($this->tscope->getLevel() + 1);
 
         return true;
     }
@@ -353,7 +344,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         $this->tscope->close();
 
         if ($this->tscope->getLevel() == 0) {
-            $this->isProfiling() && $this->getLogger()->info('Rollback transaction');
+            $this->getLogger()->info('Rollback transaction');
 
             try {
                 return $this->getPDO()->rollBack();
@@ -362,7 +353,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
             }
         }
 
-        $this->savepointRollback($this->tscope->getLevel() + 1);
+        $this->rollbackSavepoint($this->tscope->getLevel() + 1);
 
         return true;
     }
@@ -384,6 +375,8 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
             $retry = $this->options['reconnect'];
         }
 
+        $queryStart = microtime(true);
+
         try {
             //Mounting all input parameters
             $statement = $this->bindParameters(
@@ -392,21 +385,10 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
             );
 
             $statement->execute();
-
-            if ($this->isProfiling()) {
-                $this->getLogger()->info(
-                    Interpolator::interpolate($query, $parameters),
-                    compact('query', 'parameters')
-                );
-            }
+            return new Statement($statement);
         } catch (\PDOException $e) {
-            $queryString = Interpolator::interpolate($query, $parameters);
-
-            $this->getLogger()->error($queryString, compact('query', 'parameters'));
-            $this->getLogger()->alert($e->getMessage());
-
-            //Converting exception into query or integrity exception
-            $e = $this->mapException($e, $queryString);
+            // convert exception into query or integrity exception
+            $e = $this->mapException($e, Interpolator::interpolate($query, $parameters));
 
             if (
                 $e instanceof StatementException\ConnectionException
@@ -418,9 +400,23 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
             }
 
             throw $e;
-        }
+        } finally {
+            if (isset($e) || !$this->getLogger() instanceof NullLogger) {
+                $context = [
+                    'parameters' => $parameters,
+                    'elapsed'    => microtime(true) - $queryStart
+                ];
 
-        return new Statement($statement);
+                $logger = $this->getLogger();
+
+                if (isset($e)) {
+                    $logger->error($query, $context);
+                    $logger->alert($e->getMessage());
+                } else {
+                    $this->getLogger()->info($query, $context);
+                }
+            }
+        }
     }
 
     /**
@@ -430,6 +426,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     protected function prepare(string $query): \PDOStatement
     {
         $statement = $this->tscope->getPrepared($query);
+
         if ($statement === null) {
             $statement = $this->getPDO()->prepare($query);
             $this->tscope->setPrepared($query, $statement);
@@ -496,13 +493,13 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     {
         foreach ($parameters as $index => $parameter) {
             if ($parameter->getValue() instanceof \DateTimeInterface) {
-                //Original parameter must not be altered
+                // original parameter must not be altered
                 $parameter = $parameter->withValue(
                     $this->formatDatetime($parameter->getValue())
                 );
             }
 
-            //Numeric, @see http://php.net/manual/en/pdostatement.bindparam.php
+            // numeric, @see http://php.net/manual/en/pdostatement.bindparam.php
             $statement->bindValue($index, $parameter->getValue(), $parameter->getType());
         }
 
@@ -516,10 +513,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * @param string        $query
      * @return StatementException
      */
-    abstract protected function mapException(
-        \PDOException $exception,
-        string $query
-    ): StatementException;
+    abstract protected function mapException(\PDOException $exception, string $query): StatementException;
 
     /**
      * Set transaction isolation level, this feature may not be supported by specific database
@@ -527,12 +521,10 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      *
      * @param string $level
      */
-    protected function isolationLevel(string $level): void
+    protected function setIsolationLevel(string $level): void
     {
-        if (!empty($level)) {
-            $this->isProfiling() && $this->getLogger()->info("Set transaction isolation level to '{$level}'");
-            $this->execute("SET TRANSACTION ISOLATION LEVEL {$level}");
-        }
+        $this->getLogger()->info("Transaction isolation level '{$level}'");
+        $this->execute("SET TRANSACTION ISOLATION LEVEL {$level}");
     }
 
     /**
@@ -542,9 +534,9 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      *
      * @param int $level Savepoint name/id, must not contain spaces and be valid database identifier.
      */
-    protected function savepointCreate(int $level): void
+    protected function createSavepoint(int $level): void
     {
-        $this->isProfiling() && $this->getLogger()->info("Transaction: new savepoint 'SVP{$level}'");
+        $this->getLogger()->info("Transaction: new savepoint 'SVP{$level}'");
         $this->execute('SAVEPOINT ' . $this->identifier("SVP{$level}"));
     }
 
@@ -555,9 +547,9 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      *
      * @param int $level Savepoint name/id, must not contain spaces and be valid database identifier.
      */
-    protected function savepointRelease(int $level): void
+    protected function releaseSavepoint(int $level): void
     {
-        $this->isProfiling() && $this->getLogger()->info("Transaction: release savepoint 'SVP{$level}'");
+        $this->getLogger()->info("Transaction: release savepoint 'SVP{$level}'");
         $this->execute('RELEASE SAVEPOINT ' . $this->identifier("SVP{$level}"));
     }
 
@@ -568,9 +560,9 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      *
      * @param int $level Savepoint name/id, must not contain spaces and be valid database identifier.
      */
-    protected function savepointRollback(int $level): void
+    protected function rollbackSavepoint(int $level): void
     {
-        $this->isProfiling() && $this->getLogger()->info("Transaction: rollback savepoint 'SVP{$level}'");
+        $this->getLogger()->info("Transaction: rollback savepoint 'SVP{$level}'");
         $this->execute('ROLLBACK TO SAVEPOINT ' . $this->identifier("SVP{$level}"));
     }
 
