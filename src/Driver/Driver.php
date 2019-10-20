@@ -359,131 +359,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     }
 
     /**
-     * Create instance of PDOStatement using provided SQL query and set of parameters and execute
-     * it. Will attempt singular reconnect.
-     *
-     * @param string    $query
-     * @param array     $parameters Parameters to be binded into query.
-     * @param bool|null $retry
-     * @return StatementInterface
-     *
-     * @throws StatementException
-     */
-    private function statement(string $query, array $parameters = [], bool $retry = null): StatementInterface
-    {
-        if (is_null($retry)) {
-            $retry = $this->options['reconnect'];
-        }
-
-        $queryStart = microtime(true);
-        $flattened = $this->flattenParameters($parameters);
-
-        try {
-            $statement = $this->bindParameters($this->prepare($query), $flattened);
-
-            $statement->execute();
-            return new Statement($statement);
-        } catch (\PDOException $e) {
-            $queryString = Interpolator::interpolate($query, $flattened, false);
-            $e = $this->mapException($e, $queryString);
-
-            if (
-                $e instanceof StatementException\ConnectionException
-                && $this->tScope->getLevel() === 0
-                && $retry
-            ) {
-                // retrying
-                return $this->statement($query, $parameters, false);
-            }
-
-            throw $e;
-        } finally {
-            if (isset($e) || !$this->getLogger() instanceof NullLogger) {
-                $context = [
-                    'elapsed' => microtime(true) - $queryStart
-                ];
-
-                $logger = $this->getLogger();
-                $queryString = $queryString ?? Interpolator::interpolate($query, $flattened, false);
-
-                if (isset($e)) {
-                    $logger->error($queryString, $context);
-                    $logger->alert($e->getMessage());
-                } else {
-                    $this->getLogger()->info($queryString, $context);
-                }
-            }
-        }
-    }
-
-    /**
-     * @param string $query
-     * @return \PDOStatement
-     */
-    private function prepare(string $query): \PDOStatement
-    {
-        $statement = $this->tScope->getPrepared($query);
-
-        if ($statement === null) {
-            $statement = $this->getPDO()->prepare($query);
-            $this->tScope->setPrepared($query, $statement);
-        }
-
-        return $statement;
-    }
-
-    /**
-     * @param ParameterInterface[] $parameters
-     * @return array
-     */
-    private function flattenParameters(array $parameters): array
-    {
-        $result = [];
-
-        $index = 0;
-        foreach ($parameters as $name => $parameter) {
-            if (is_string($name)) {
-                $index = $name;
-            } else {
-                $index++;
-            }
-
-            if (!$parameter instanceof ParameterInterface) {
-                $parameter = new Parameter($parameter);
-            }
-
-            if ($parameter->getValue() instanceof \DateTimeInterface) {
-                $result[$index] = $parameter->withValue($this->formatDatetime($parameter->getValue()));
-                continue;
-            }
-
-            if (!$parameter->isArray()) {
-                $result[$index] = $parameter;
-                continue;
-            }
-
-            if (!is_numeric($name)) {
-                throw new BuilderException('Array parameters can not be named');
-            }
-
-            foreach ($parameter->getValue() as $child) {
-                if (!$child instanceof ParameterInterface) {
-                    $child = new Parameter($child);
-                }
-
-                if ($child->getValue() instanceof \DateTimeInterface) {
-                    $result[$index++] = $child->withValue($this->formatDatetime($child->getValue()));
-                    continue;
-                }
-
-                $result[$index++] = $child;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Bind parameters into statement.
      *
      * @param \PDOStatement        $statement
@@ -616,5 +491,130 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         }
 
         return $datetime->setTimestamp($value->getTimestamp())->format(static::DATETIME);
+    }
+
+    /**
+     * Create instance of PDOStatement using provided SQL query and set of parameters and execute
+     * it. Will attempt singular reconnect.
+     *
+     * @param string    $query
+     * @param array     $parameters Parameters to be binded into query.
+     * @param bool|null $retry
+     * @return StatementInterface
+     *
+     * @throws StatementException
+     */
+    private function statement(string $query, array $parameters = [], bool $retry = null): StatementInterface
+    {
+        if (is_null($retry)) {
+            $retry = $this->options['reconnect'];
+        }
+
+        $queryStart = microtime(true);
+        $flattened = $this->flattenParameters($parameters);
+
+        try {
+            $statement = $this->bindParameters($this->prepare($query), $flattened);
+
+            $statement->execute();
+            return new Statement($statement);
+        } catch (\PDOException $e) {
+            $queryString = Interpolator::interpolate($query, $flattened, false);
+            $e = $this->mapException($e, $queryString);
+
+            if (
+                $e instanceof StatementException\ConnectionException
+                && $this->tScope->getLevel() === 0
+                && $retry
+            ) {
+                // retrying
+                return $this->statement($query, $parameters, false);
+            }
+
+            throw $e;
+        } finally {
+            if (isset($e) || !$this->getLogger() instanceof NullLogger) {
+                $context = [
+                    'elapsed' => microtime(true) - $queryStart
+                ];
+
+                $logger = $this->getLogger();
+                $queryString = $queryString ?? Interpolator::interpolate($query, $flattened, false);
+
+                if (isset($e)) {
+                    $logger->error($queryString, $context);
+                    $logger->alert($e->getMessage());
+                } else {
+                    $this->getLogger()->info($queryString, $context);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param string $query
+     * @return \PDOStatement
+     */
+    private function prepare(string $query): \PDOStatement
+    {
+        $statement = $this->tScope->getPrepared($query);
+
+        if ($statement === null) {
+            $statement = $this->getPDO()->prepare($query);
+            $this->tScope->setPrepared($query, $statement);
+        }
+
+        return $statement;
+    }
+
+    /**
+     * @param ParameterInterface[] $parameters
+     * @return array
+     */
+    private function flattenParameters(array $parameters): array
+    {
+        $result = [];
+
+        $index = 0;
+        foreach ($parameters as $name => $parameter) {
+            if (is_string($name)) {
+                $index = $name;
+            } else {
+                $index++;
+            }
+
+            if (!$parameter instanceof ParameterInterface) {
+                $parameter = new Parameter($parameter);
+            }
+
+            if ($parameter->getValue() instanceof \DateTimeInterface) {
+                $result[$index] = $parameter->withValue($this->formatDatetime($parameter->getValue()));
+                continue;
+            }
+
+            if (!$parameter->isArray()) {
+                $result[$index] = $parameter;
+                continue;
+            }
+
+            if (!is_numeric($name)) {
+                throw new BuilderException('Array parameters can not be named');
+            }
+
+            foreach ($parameter->getValue() as $child) {
+                if (!$child instanceof ParameterInterface) {
+                    $child = new Parameter($child);
+                }
+
+                if ($child->getValue() instanceof \DateTimeInterface) {
+                    $result[$index++] = $child->withValue($this->formatDatetime($child->getValue()));
+                    continue;
+                }
+
+                $result[$index++] = $child;
+            }
+        }
+
+        return $result;
     }
 }
