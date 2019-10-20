@@ -29,14 +29,15 @@ final class Interpolator
      * @param ParameterInterface[] $parameters Parameters to be binded into query. Named list are supported.
      * @return string
      */
-    public static function interpolate(string $query, array $parameters = []): string
+    public static function interpolate(string $query, array $parameters = [], bool $flatten = true): string
     {
-        if (empty($parameters)) {
+        if ($parameters === []) {
             return $query;
         }
 
-        //Flattening
-        $parameters = self::flattenParameters($parameters);
+        if ($flatten) {
+            $parameters = self::flattenParameters($parameters);
+        }
 
         //Let's prepare values so they looks better
         foreach ($parameters as $index => $parameter) {

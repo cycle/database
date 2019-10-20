@@ -79,14 +79,14 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     protected $pdo;
 
     /** @var TransactionScope */
-    private $tscope;
+    private $tScope;
 
     /**
      * @param array $options
      */
     public function __construct(array $options)
     {
-        $this->tscope = new TransactionScope();
+        $this->tScope = new TransactionScope();
 
         $options['options'] = ($options['options'] ?? []) + static::DEFAULT_PDO_OPTIONS;
         $this->options = $options + $this->options;
@@ -197,7 +197,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     public function disconnect(): void
     {
         $this->pdo = null;
-        $this->tscope->reset();
+        $this->tScope->reset();
     }
 
     /**
@@ -278,9 +278,9 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     public function beginTransaction(string $isolationLevel = null, bool $cacheStatements = false): bool
     {
-        $this->tscope->open($cacheStatements);
+        $this->tScope->open($cacheStatements);
 
-        if ($this->tscope->getLevel() == 1) {
+        if ($this->tScope->getLevel() == 1) {
             if ($isolationLevel !== null) {
                 $this->setIsolationLevel($isolationLevel);
             }
@@ -305,7 +305,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
             }
         }
 
-        $this->createSavepoint($this->tscope->getLevel());
+        $this->createSavepoint($this->tScope->getLevel());
 
         return true;
     }
@@ -317,9 +317,9 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     public function commitTransaction(): bool
     {
-        $this->tscope->close();
+        $this->tScope->close();
 
-        if ($this->tscope->getLevel() == 0) {
+        if ($this->tScope->getLevel() == 0) {
             $this->getLogger()->info('Commit transaction');
 
             try {
@@ -329,7 +329,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
             }
         }
 
-        $this->releaseSavepoint($this->tscope->getLevel() + 1);
+        $this->releaseSavepoint($this->tScope->getLevel() + 1);
 
         return true;
     }
@@ -341,9 +341,9 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     public function rollbackTransaction(): bool
     {
-        $this->tscope->close();
+        $this->tScope->close();
 
-        if ($this->tscope->getLevel() == 0) {
+        if ($this->tScope->getLevel() == 0) {
             $this->getLogger()->info('Rollback transaction');
 
             try {
@@ -353,7 +353,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
             }
         }
 
-        $this->rollbackSavepoint($this->tscope->getLevel() + 1);
+        $this->rollbackSavepoint($this->tScope->getLevel() + 1);
 
         return true;
     }
@@ -369,30 +369,27 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      *
      * @throws StatementException
      */
-    protected function statement(string $query, array $parameters = [], bool $retry = null): StatementInterface
+    private function statement(string $query, array $parameters = [], bool $retry = null): StatementInterface
     {
         if (is_null($retry)) {
             $retry = $this->options['reconnect'];
         }
 
         $queryStart = microtime(true);
+        $flattened = $this->flattenParameters($parameters);
 
         try {
-            //Mounting all input parameters
-            $statement = $this->bindParameters(
-                $this->prepare($query),
-                $this->flattenParameters($parameters)
-            );
+            $statement = $this->bindParameters($this->prepare($query), $flattened);
 
             $statement->execute();
             return new Statement($statement);
         } catch (\PDOException $e) {
-            // convert exception into query or integrity exception
-            $e = $this->mapException($e, Interpolator::interpolate($query, $parameters));
+            $queryString = Interpolator::interpolate($query, $flattened, false);
+            $e = $this->mapException($e, $queryString);
 
             if (
                 $e instanceof StatementException\ConnectionException
-                && $this->tscope->getLevel() === 0
+                && $this->tScope->getLevel() === 0
                 && $retry
             ) {
                 // retrying
@@ -403,17 +400,17 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         } finally {
             if (isset($e) || !$this->getLogger() instanceof NullLogger) {
                 $context = [
-                    'parameters' => $parameters,
-                    'elapsed'    => microtime(true) - $queryStart
+                    'elapsed' => microtime(true) - $queryStart
                 ];
 
                 $logger = $this->getLogger();
+                $queryString = $queryString ?? Interpolator::interpolate($query, $flattened, false);
 
                 if (isset($e)) {
-                    $logger->error($query, $context);
+                    $logger->error($queryString, $context);
                     $logger->alert($e->getMessage());
                 } else {
-                    $this->getLogger()->info($query, $context);
+                    $this->getLogger()->info($queryString, $context);
                 }
             }
         }
@@ -423,13 +420,13 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * @param string $query
      * @return \PDOStatement
      */
-    protected function prepare(string $query): \PDOStatement
+    private function prepare(string $query): \PDOStatement
     {
-        $statement = $this->tscope->getPrepared($query);
+        $statement = $this->tScope->getPrepared($query);
 
         if ($statement === null) {
             $statement = $this->getPDO()->prepare($query);
-            $this->tscope->setPrepared($query, $statement);
+            $this->tScope->setPrepared($query, $statement);
         }
 
         return $statement;
@@ -437,10 +434,12 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
 
     /**
      * @param ParameterInterface[] $parameters
-     * @return \Generator
+     * @return array
      */
-    protected function flattenParameters(array $parameters): \Generator
+    private function flattenParameters(array $parameters): array
     {
+        $result = [];
+
         $index = 0;
         foreach ($parameters as $name => $parameter) {
             if (is_string($name)) {
@@ -454,12 +453,12 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
             }
 
             if ($parameter->getValue() instanceof \DateTimeInterface) {
-                yield $index => $parameter->withValue($this->formatDatetime($parameter->getValue()));
+                $result[$index] = $parameter->withValue($this->formatDatetime($parameter->getValue()));
                 continue;
             }
 
             if (!$parameter->isArray()) {
-                yield $index => $parameter;
+                $result[$index] = $parameter;
                 continue;
             }
 
@@ -473,13 +472,15 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
                 }
 
                 if ($child->getValue() instanceof \DateTimeInterface) {
-                    yield $index++ => $child->withValue($this->formatDatetime($child->getValue()));
+                    $result[$index++] = $child->withValue($this->formatDatetime($child->getValue()));
                     continue;
                 }
 
-                yield $index++ => $child;
+                $result[$index++] = $child;
             }
         }
+
+        return $result;
     }
 
     /**
