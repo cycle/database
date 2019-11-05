@@ -296,6 +296,8 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
                     $e instanceof StatementException\ConnectionException
                     && $this->options['reconnect']
                 ) {
+                    $this->disconnect();
+
                     try {
                         return $this->getPDO()->beginTransaction();
                     } catch (\PDOException $e) {
@@ -527,6 +529,8 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
                 && $this->tScope->getLevel() === 0
                 && $retry
             ) {
+                $this->disconnect();
+
                 // retrying
                 return $this->statement($query, $parameters, false);
             }
