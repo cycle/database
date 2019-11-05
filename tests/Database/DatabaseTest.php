@@ -1,13 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * Spiral Framework.
  *
  * @license   MIT
  * @author    Anton Titov (Wolfy-J)
  */
+
+declare(strict_types=1);
 
 namespace Spiral\Database\Tests;
 
@@ -51,7 +51,6 @@ abstract class DatabaseTest extends BaseTest
 
         $driver->getSchema('test');
 
-        $this->assertEmpty($l->records);
         $driver->setProfiling(true);
 
         $driver->getSchema('test');

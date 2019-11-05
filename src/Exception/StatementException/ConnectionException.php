@@ -1,12 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
 /**
- * database
+ * Spiral Framework.
  *
- * @author    Wolfy-J
+ * @license   MIT
+ * @author    Anton Titov (Wolfy-J)
  */
+
+declare(strict_types=1);
 
 namespace Spiral\Database\Exception\StatementException;
 

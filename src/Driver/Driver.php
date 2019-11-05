@@ -6,12 +6,14 @@
  * @license   MIT
  * @author    Anton Titov (Wolfy-J)
  */
+
 declare(strict_types=1);
 
 namespace Spiral\Database\Driver;
 
 use PDO;
 use Psr\Log\LoggerAwareInterface;
+use Psr\Log\NullLogger;
 use Spiral\Database\Driver\Traits\BuilderTrait;
 use Spiral\Database\Driver\Traits\ProfilingTrait;
 use Spiral\Database\Exception\BuilderException;
@@ -58,8 +60,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * @var array
      */
     protected $options = [
-        'profiling'  => false,
-
         // allow reconnects
         'reconnect'  => false,
 
@@ -79,21 +79,17 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     protected $pdo;
 
     /** @var TransactionScope */
-    private $tscope;
+    private $tScope;
 
     /**
      * @param array $options
      */
     public function __construct(array $options)
     {
-        $this->tscope = new TransactionScope();
+        $this->tScope = new TransactionScope();
 
         $options['options'] = ($options['options'] ?? []) + static::DEFAULT_PDO_OPTIONS;
         $this->options = $options + $this->options;
-
-        if (!empty($this->options['profiling'])) {
-            $this->setProfiling(true);
-        }
     }
 
     /**
@@ -110,9 +106,8 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     public function __debugInfo()
     {
         return [
-            'connection' => $this->options['connection'] ?? $this->options['dsn'],
+            'connection' => $this->options['connection'] ?? $this->options['dsn'] ?? $this->options['addr'],
             'connected'  => $this->isConnected(),
-            'profiling'  => $this->isProfiling(),
             'source'     => $this->getSource(),
             'options'    => $this->options['options'],
         ];
@@ -202,7 +197,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     public function disconnect(): void
     {
         $this->pdo = null;
-        $this->tscope->reset();
+        $this->tScope->reset();
     }
 
     /**
@@ -258,17 +253,14 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * Get id of last inserted row, this method must be called after insert query. Attention,
      * such functionality may not work in some DBMS property (Postgres).
      *
-     * @param string|null $sequence Name of the sequence object from which the ID should be
-     *                              returned.
-     *
+     * @param string|null $sequence Name of the sequence object from which the ID should be returned.
      * @return mixed
      */
     public function lastInsertID(string $sequence = null)
     {
         $pdo = $this->getPDO();
         $result = $sequence ? (int)$pdo->lastInsertId($sequence) : (int)$pdo->lastInsertId();
-
-        $this->isProfiling() && $this->getLogger()->debug("Given insert ID: {$result}");
+        $this->getLogger()->debug("Insert ID: {$result}");
 
         return $result;
     }
@@ -286,14 +278,14 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     public function beginTransaction(string $isolationLevel = null, bool $cacheStatements = false): bool
     {
-        $this->tscope->open($cacheStatements);
+        $this->tScope->open($cacheStatements);
 
-        if ($this->tscope->getLevel() == 1) {
+        if ($this->tScope->getLevel() == 1) {
             if ($isolationLevel !== null) {
-                $this->isolationLevel($isolationLevel);
+                $this->setIsolationLevel($isolationLevel);
             }
 
-            $this->isProfiling() && $this->getLogger()->info('Begin transaction');
+            $this->getLogger()->info('Begin transaction');
 
             try {
                 return $this->getPDO()->beginTransaction();
@@ -304,8 +296,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
                     $e instanceof StatementException\ConnectionException
                     && $this->options['reconnect']
                 ) {
-                    $this->disconnect();
-
                     try {
                         return $this->getPDO()->beginTransaction();
                     } catch (\PDOException $e) {
@@ -315,7 +305,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
             }
         }
 
-        $this->savepointCreate($this->tscope->getLevel());
+        $this->createSavepoint($this->tScope->getLevel());
 
         return true;
     }
@@ -327,10 +317,10 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     public function commitTransaction(): bool
     {
-        $this->tscope->close();
+        $this->tScope->close();
 
-        if ($this->tscope->getLevel() == 0) {
-            $this->isProfiling() && $this->getLogger()->info('Commit transaction');
+        if ($this->tScope->getLevel() == 0) {
+            $this->getLogger()->info('Commit transaction');
 
             try {
                 return $this->getPDO()->commit();
@@ -339,7 +329,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
             }
         }
 
-        $this->savepointRelease($this->tscope->getLevel() + 1);
+        $this->releaseSavepoint($this->tScope->getLevel() + 1);
 
         return true;
     }
@@ -351,10 +341,10 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     public function rollbackTransaction(): bool
     {
-        $this->tscope->close();
+        $this->tScope->close();
 
-        if ($this->tscope->getLevel() == 0) {
-            $this->isProfiling() && $this->getLogger()->info('Rollback transaction');
+        if ($this->tScope->getLevel() == 0) {
+            $this->getLogger()->info('Rollback transaction');
 
             try {
                 return $this->getPDO()->rollBack();
@@ -363,128 +353,9 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
             }
         }
 
-        $this->savepointRollback($this->tscope->getLevel() + 1);
+        $this->rollbackSavepoint($this->tScope->getLevel() + 1);
 
         return true;
-    }
-
-    /**
-     * Create instance of PDOStatement using provided SQL query and set of parameters and execute
-     * it. Will attempt singular reconnect.
-     *
-     * @param string    $query
-     * @param array     $parameters Parameters to be binded into query.
-     * @param bool|null $retry
-     * @return StatementInterface
-     *
-     * @throws StatementException
-     */
-    protected function statement(string $query, array $parameters = [], bool $retry = null): StatementInterface
-    {
-        if (is_null($retry)) {
-            $retry = $this->options['reconnect'];
-        }
-
-        try {
-            //Mounting all input parameters
-            $statement = $this->bindParameters(
-                $this->prepare($query),
-                $this->flattenParameters($parameters)
-            );
-
-            $statement->execute();
-
-            if ($this->isProfiling()) {
-                $this->getLogger()->info(
-                    Interpolator::interpolate($query, $parameters),
-                    compact('query', 'parameters')
-                );
-            }
-        } catch (\PDOException $e) {
-            $queryString = Interpolator::interpolate($query, $parameters);
-
-            $this->getLogger()->error($queryString, compact('query', 'parameters'));
-            $this->getLogger()->alert($e->getMessage());
-
-            //Converting exception into query or integrity exception
-            $e = $this->mapException($e, $queryString);
-
-            if (
-                $e instanceof StatementException\ConnectionException
-                && $this->tscope->getLevel() === 0
-                && $retry
-            ) {
-                $this->disconnect();
-
-                return $this->statement($query, $parameters, false);
-            }
-
-            throw $e;
-        }
-
-        return new Statement($statement);
-    }
-
-    /**
-     * @param string $query
-     * @return \PDOStatement
-     */
-    protected function prepare(string $query): \PDOStatement
-    {
-        $statement = $this->tscope->getPrepared($query);
-        if ($statement === null) {
-            $statement = $this->getPDO()->prepare($query);
-            $this->tscope->setPrepared($query, $statement);
-        }
-
-        return $statement;
-    }
-
-    /**
-     * @param ParameterInterface[] $parameters
-     * @return \Generator
-     */
-    protected function flattenParameters(array $parameters): \Generator
-    {
-        $index = 0;
-        foreach ($parameters as $name => $parameter) {
-            if (is_string($name)) {
-                $index = $name;
-            } else {
-                $index++;
-            }
-
-            if (!$parameter instanceof ParameterInterface) {
-                $parameter = new Parameter($parameter);
-            }
-
-            if ($parameter->getValue() instanceof \DateTimeInterface) {
-                yield $index => $parameter->withValue($this->formatDatetime($parameter->getValue()));
-                continue;
-            }
-
-            if (!$parameter->isArray()) {
-                yield $index => $parameter;
-                continue;
-            }
-
-            if (!is_numeric($name)) {
-                throw new BuilderException('Array parameters can not be named');
-            }
-
-            foreach ($parameter->getValue() as $child) {
-                if (!$child instanceof ParameterInterface) {
-                    $child = new Parameter($child);
-                }
-
-                if ($child->getValue() instanceof \DateTimeInterface) {
-                    yield $index++ => $child->withValue($this->formatDatetime($child->getValue()));
-                    continue;
-                }
-
-                yield $index++ => $child;
-            }
-        }
     }
 
     /**
@@ -498,13 +369,13 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     {
         foreach ($parameters as $index => $parameter) {
             if ($parameter->getValue() instanceof \DateTimeInterface) {
-                //Original parameter must not be altered
+                // original parameter must not be altered
                 $parameter = $parameter->withValue(
                     $this->formatDatetime($parameter->getValue())
                 );
             }
 
-            //Numeric, @see http://php.net/manual/en/pdostatement.bindparam.php
+            // numeric, @see http://php.net/manual/en/pdostatement.bindparam.php
             $statement->bindValue($index, $parameter->getValue(), $parameter->getType());
         }
 
@@ -518,10 +389,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * @param string        $query
      * @return StatementException
      */
-    abstract protected function mapException(
-        \PDOException $exception,
-        string $query
-    ): StatementException;
+    abstract protected function mapException(\PDOException $exception, string $query): StatementException;
 
     /**
      * Set transaction isolation level, this feature may not be supported by specific database
@@ -529,12 +397,10 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      *
      * @param string $level
      */
-    protected function isolationLevel(string $level): void
+    protected function setIsolationLevel(string $level): void
     {
-        if (!empty($level)) {
-            $this->isProfiling() && $this->getLogger()->info("Set transaction isolation level to '{$level}'");
-            $this->execute("SET TRANSACTION ISOLATION LEVEL {$level}");
-        }
+        $this->getLogger()->info("Transaction isolation level '{$level}'");
+        $this->execute("SET TRANSACTION ISOLATION LEVEL {$level}");
     }
 
     /**
@@ -544,9 +410,9 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      *
      * @param int $level Savepoint name/id, must not contain spaces and be valid database identifier.
      */
-    protected function savepointCreate(int $level): void
+    protected function createSavepoint(int $level): void
     {
-        $this->isProfiling() && $this->getLogger()->info("Transaction: new savepoint 'SVP{$level}'");
+        $this->getLogger()->info("Transaction: new savepoint 'SVP{$level}'");
         $this->execute('SAVEPOINT ' . $this->identifier("SVP{$level}"));
     }
 
@@ -557,9 +423,9 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      *
      * @param int $level Savepoint name/id, must not contain spaces and be valid database identifier.
      */
-    protected function savepointRelease(int $level): void
+    protected function releaseSavepoint(int $level): void
     {
-        $this->isProfiling() && $this->getLogger()->info("Transaction: release savepoint 'SVP{$level}'");
+        $this->getLogger()->info("Transaction: release savepoint 'SVP{$level}'");
         $this->execute('RELEASE SAVEPOINT ' . $this->identifier("SVP{$level}"));
     }
 
@@ -570,9 +436,9 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      *
      * @param int $level Savepoint name/id, must not contain spaces and be valid database identifier.
      */
-    protected function savepointRollback(int $level): void
+    protected function rollbackSavepoint(int $level): void
     {
-        $this->isProfiling() && $this->getLogger()->info("Transaction: rollback savepoint 'SVP{$level}'");
+        $this->getLogger()->info("Transaction: rollback savepoint 'SVP{$level}'");
         $this->execute('ROLLBACK TO SAVEPOINT ' . $this->identifier("SVP{$level}"));
     }
 
@@ -584,7 +450,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     protected function createPDO(): PDO
     {
         return new PDO(
-            $this->options['connection'] ?? $this->options['dsn'],
+            $this->options['connection'] ?? $this->options['dsn'] ?? $this->options['addr'],
             $this->options['username'],
             $this->options['password'],
             $this->options['options']
@@ -625,5 +491,130 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         }
 
         return $datetime->setTimestamp($value->getTimestamp())->format(static::DATETIME);
+    }
+
+    /**
+     * Create instance of PDOStatement using provided SQL query and set of parameters and execute
+     * it. Will attempt singular reconnect.
+     *
+     * @param string    $query
+     * @param array     $parameters Parameters to be binded into query.
+     * @param bool|null $retry
+     * @return StatementInterface
+     *
+     * @throws StatementException
+     */
+    private function statement(string $query, array $parameters = [], bool $retry = null): StatementInterface
+    {
+        if (is_null($retry)) {
+            $retry = $this->options['reconnect'];
+        }
+
+        $queryStart = microtime(true);
+        $flattened = $this->flattenParameters($parameters);
+
+        try {
+            $statement = $this->bindParameters($this->prepare($query), $flattened);
+
+            $statement->execute();
+            return new Statement($statement);
+        } catch (\PDOException $e) {
+            $queryString = Interpolator::interpolate($query, $flattened, false);
+            $e = $this->mapException($e, $queryString);
+
+            if (
+                $e instanceof StatementException\ConnectionException
+                && $this->tScope->getLevel() === 0
+                && $retry
+            ) {
+                // retrying
+                return $this->statement($query, $parameters, false);
+            }
+
+            throw $e;
+        } finally {
+            if (isset($e) || !$this->getLogger() instanceof NullLogger) {
+                $context = [
+                    'elapsed' => microtime(true) - $queryStart
+                ];
+
+                $logger = $this->getLogger();
+                $queryString = $queryString ?? Interpolator::interpolate($query, $flattened, false);
+
+                if (isset($e)) {
+                    $logger->error($queryString, $context);
+                    $logger->alert($e->getMessage());
+                } else {
+                    $this->getLogger()->info($queryString, $context);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param string $query
+     * @return \PDOStatement
+     */
+    private function prepare(string $query): \PDOStatement
+    {
+        $statement = $this->tScope->getPrepared($query);
+
+        if ($statement === null) {
+            $statement = $this->getPDO()->prepare($query);
+            $this->tScope->setPrepared($query, $statement);
+        }
+
+        return $statement;
+    }
+
+    /**
+     * @param ParameterInterface[] $parameters
+     * @return array
+     */
+    private function flattenParameters(array $parameters): array
+    {
+        $result = [];
+
+        $index = 0;
+        foreach ($parameters as $name => $parameter) {
+            if (is_string($name)) {
+                $index = $name;
+            } else {
+                $index++;
+            }
+
+            if (!$parameter instanceof ParameterInterface) {
+                $parameter = new Parameter($parameter);
+            }
+
+            if ($parameter->getValue() instanceof \DateTimeInterface) {
+                $result[$index] = $parameter->withValue($this->formatDatetime($parameter->getValue()));
+                continue;
+            }
+
+            if (!$parameter->isArray()) {
+                $result[$index] = $parameter;
+                continue;
+            }
+
+            if (!is_numeric($name)) {
+                throw new BuilderException('Array parameters can not be named');
+            }
+
+            foreach ($parameter->getValue() as $child) {
+                if (!$child instanceof ParameterInterface) {
+                    $child = new Parameter($child);
+                }
+
+                if ($child->getValue() instanceof \DateTimeInterface) {
+                    $result[$index++] = $child->withValue($this->formatDatetime($child->getValue()));
+                    continue;
+                }
+
+                $result[$index++] = $child;
+            }
+        }
+
+        return $result;
     }
 }

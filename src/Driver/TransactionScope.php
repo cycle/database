@@ -6,12 +6,15 @@
  * @license   MIT
  * @author    Anton Titov (Wolfy-J)
  */
+
 declare(strict_types=1);
 
 namespace Spiral\Database\Driver;
 
 /**
  * Transaction scope provides the ability to store prepared statements within the boundaries of active transaction.
+ *
+ * @internal
  */
 final class TransactionScope
 {

@@ -6,6 +6,7 @@
  * @license   MIT
  * @author    Anton Titov (Wolfy-J)
  */
+
 declare(strict_types=1);
 
 namespace Spiral\Database\Driver\SQLServer;
@@ -131,12 +132,12 @@ class SQLServerDriver extends Driver
      *
      * @link http://en.wikipedia.org/wiki/Savepoint
      *
-     * @param int $level   Savepoint name/id, must not contain spaces and be valid database
+     * @param int $level Savepoint name/id, must not contain spaces and be valid database
      *                     identifier.
      */
-    protected function savepointCreate(int $level): void
+    protected function createSavepoint(int $level): void
     {
-        $this->isProfiling() && $this->getLogger()->info("Transaction: new savepoint 'SVP{$level}'");
+        $this->getLogger()->info("Transaction: new savepoint 'SVP{$level}'");
         $this->execute('SAVE TRANSACTION ' . $this->identifier("SVP{$level}"));
     }
 
@@ -145,13 +146,12 @@ class SQLServerDriver extends Driver
      *
      * @link http://en.wikipedia.org/wiki/Savepoint
      *
-     * @param int $level   Savepoint name/id, must not contain spaces and be valid database
-     *                     identifier.
+     * @param int $level Savepoint name/id, must not contain spaces and be valid database identifier.
      */
-    protected function savepointRelease(int $level): void
+    protected function releaseSavepoint(int $level): void
     {
-        $this->isProfiling() && $this->getLogger()->info("Transaction: release savepoint 'SVP{$level}'");
-        //SQLServer automatically commits nested transactions with parent transaction
+        $this->getLogger()->info("Transaction: release savepoint 'SVP{$level}'");
+        // SQLServer automatically commits nested transactions with parent transaction
     }
 
     /**
@@ -159,12 +159,11 @@ class SQLServerDriver extends Driver
      *
      * @link http://en.wikipedia.org/wiki/Savepoint
      *
-     * @param int $level   Savepoint name/id, must not contain spaces and be valid database
-     *                     identifier.
+     * @param int $level Savepoint name/id, must not contain spaces and be valid database identifier.
      */
-    protected function savepointRollback(int $level): void
+    protected function rollbackSavepoint(int $level): void
     {
-        $this->isProfiling() && $this->getLogger()->info("Transaction: rollback savepoint 'SVP{$level}'");
+        $this->getLogger()->info("Transaction: rollback savepoint 'SVP{$level}'");
         $this->execute('ROLLBACK TRANSACTION ' . $this->identifier("SVP{$level}"));
     }
 
