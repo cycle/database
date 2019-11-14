@@ -80,7 +80,8 @@ class PostgresColumn extends AbstractColumn
 
         //Additional types
         'json'        => 'json',
-        'jsonb'       => 'jsonb'
+        'jsonb'       => 'jsonb',
+        'uuid'        => 'uuid'
     ];
 
     /**

@@ -86,6 +86,7 @@ class MySQLColumn extends AbstractColumn
 
         //Additional types
         'json'        => 'text',
+        'uuid'        => ['type' => 'varchar', 'size' => 36],
     ];
 
     /**

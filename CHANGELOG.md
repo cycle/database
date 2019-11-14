@@ -1,6 +1,14 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
+2.6.2 (14.11.2019)
+-----
+- added native support for UUID type
+
+2.6.1 (05.11.2019)
+-----
+- force the database disconned in case of connection error
+
 2.6.0 (08.10.2019)
 -----
 - minimum PHP version is set as 7.2

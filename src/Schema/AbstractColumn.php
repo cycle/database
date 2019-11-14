@@ -45,6 +45,7 @@ use Spiral\Database\Schema\Traits\ElementTrait;
  * @method AbstractColumn|$this tinyBinary()
  * @method AbstractColumn|$this longBinary()
  * @method AbstractColumn|$this json()
+ * @method AbstractColumn|$this uuid()
  */
 abstract class AbstractColumn implements ColumnInterface, ElementInterface
 {

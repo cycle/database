@@ -117,11 +117,11 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
      * $table->insertOne(["name" => "Wolfy-J", "balance" => 10]);
      *
      * @param array $rowset
-     * @return int
+     * @return int|null
      *
      * @throws BuilderException
      */
-    public function insertOne(array $rowset = []): int
+    public function insertOne(array $rowset = []): ?int
     {
         return $this->database->insert($this->name)->values($rowset)->run();
     }

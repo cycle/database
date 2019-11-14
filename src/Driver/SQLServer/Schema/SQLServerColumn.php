@@ -43,71 +43,72 @@ class SQLServerColumn extends AbstractColumn
      */
     protected $mapping = [
         //Primary sequences
-        'primary' => ['type' => 'int', 'identity' => true, 'nullable' => false],
-        'bigPrimary' => ['type' => 'bigint', 'identity' => true, 'nullable' => false],
+        'primary'     => ['type' => 'int', 'identity' => true, 'nullable' => false],
+        'bigPrimary'  => ['type' => 'bigint', 'identity' => true, 'nullable' => false],
 
         //Enum type (mapped via method)
-        'enum' => 'enum',
+        'enum'        => 'enum',
 
         //Logical types
-        'boolean' => 'bit',
+        'boolean'     => 'bit',
 
         //Integer types (size can always be changed with size method), longInteger has method alias
         //bigInteger
-        'integer' => 'int',
+        'integer'     => 'int',
         'tinyInteger' => 'tinyint',
-        'bigInteger' => 'bigint',
+        'bigInteger'  => 'bigint',
 
         //String with specified length (mapped via method)
-        'string' => 'varchar',
+        'string'      => 'varchar',
 
         //Generic types
-        'text' => ['type' => 'varchar', 'size' => 0],
-        'tinyText' => ['type' => 'varchar', 'size' => 0],
-        'longText' => ['type' => 'varchar', 'size' => 0],
+        'text'        => ['type' => 'varchar', 'size' => 0],
+        'tinyText'    => ['type' => 'varchar', 'size' => 0],
+        'longText'    => ['type' => 'varchar', 'size' => 0],
 
         //Real types
-        'double' => 'float',
-        'float' => 'real',
+        'double'      => 'float',
+        'float'       => 'real',
 
         //Decimal type (mapped via method)
-        'decimal' => 'decimal',
+        'decimal'     => 'decimal',
 
         //Date and Time types
-        'datetime' => 'datetime',
-        'date' => 'date',
-        'time' => 'time',
-        'timestamp' => 'datetime',
+        'datetime'    => 'datetime',
+        'date'        => 'date',
+        'time'        => 'time',
+        'timestamp'   => 'datetime',
 
         //Binary types
-        'binary' => ['type' => 'varbinary', 'size' => 0],
-        'tinyBinary' => ['type' => 'varbinary', 'size' => 0],
-        'longBinary' => ['type' => 'varbinary', 'size' => 0],
+        'binary'      => ['type' => 'varbinary', 'size' => 0],
+        'tinyBinary'  => ['type' => 'varbinary', 'size' => 0],
+        'longBinary'  => ['type' => 'varbinary', 'size' => 0],
 
         //Additional types
-        'json' => ['type' => 'varchar', 'size' => 0],
+        'json'        => ['type' => 'varchar', 'size' => 0],
+        'uuid'        => ['type' => 'varchar', 'size' => 36],
     ];
 
     /**
      * {@inheritdoc}
      */
     protected $reverseMapping = [
-        'primary' => [['type' => 'int', 'identity' => true]],
-        'bigPrimary' => [['type' => 'bigint', 'identity' => true]],
-        'enum' => ['enum'],
-        'boolean' => ['bit'],
-        'integer' => ['int'],
+        'primary'     => [['type' => 'int', 'identity' => true]],
+        'bigPrimary'  => [['type' => 'bigint', 'identity' => true]],
+        'enum'        => ['enum'],
+        'boolean'     => ['bit'],
+        'integer'     => ['int'],
         'tinyInteger' => ['tinyint', 'smallint'],
-        'bigInteger' => ['bigint'],
-        'text' => [['type' => 'varchar', 'size' => 0]],
-        'string' => ['varchar', 'char'],
-        'double' => ['float'],
-        'float' => ['real'],
-        'decimal' => ['decimal'],
-        'timestamp' => ['datetime'],
-        'date' => ['date'],
-        'time' => ['time'],
-        'binary' => ['varbinary'],
+        'bigInteger'  => ['bigint'],
+        'text'        => [['type' => 'varchar', 'size' => 0]],
+        'string'      => ['varchar', 'char'],
+        'double'      => ['float'],
+        'float'       => ['real'],
+        'decimal'     => ['decimal'],
+        'timestamp'   => ['datetime'],
+        'date'        => ['date'],
+        'time'        => ['time'],
+        'binary'      => ['varbinary'],
     ];
 
     /**
@@ -227,7 +228,7 @@ class SQLServerColumn extends AbstractColumn
      * will be dropped separately.
      *
      * @param DriverInterface $driver
-     * @param AbstractColumn $initial
+     * @param AbstractColumn  $initial
      * @return array
      */
     public function alterOperations(DriverInterface $driver, AbstractColumn $initial): array
@@ -291,8 +292,8 @@ class SQLServerColumn extends AbstractColumn
     }
 
     /**
-     * @param string $table Table name.
-     * @param array $schema
+     * @param string          $table  Table name.
+     * @param array           $schema
      * @param DriverInterface $driver SQLServer columns are bit more complex.
      *
      * @return SQLServerColumn
@@ -432,7 +433,7 @@ class SQLServerColumn extends AbstractColumn
         if (
             $this->getType() != 'string'
             && ($this->defaultValue[0] == '('
-            && $this->defaultValue[strlen($this->defaultValue) - 1] == ')')
+                && $this->defaultValue[strlen($this->defaultValue) - 1] == ')')
         ) {
             //Cut another braces
             $this->defaultValue = substr($this->defaultValue, 1, -1);
@@ -443,7 +444,7 @@ class SQLServerColumn extends AbstractColumn
      * Resolve enum values if any.
      *
      * @param DriverInterface $driver
-     * @param array $schema
+     * @param array           $schema
      * @param SQLServerColumn $column
      */
     private static function resolveEnum(
