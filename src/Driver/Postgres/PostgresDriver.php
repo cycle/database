@@ -153,6 +153,7 @@ class PostgresDriver extends Driver
         if (
             strpos($exception->getMessage(), '0800') !== false
             || strpos($exception->getMessage(), '080P') !== false
+            || strpos($exception->getMessage(), 'connection') !== false
         ) {
             return new StatementException\ConnectionException($exception, $query);
         }
@@ -160,7 +161,6 @@ class PostgresDriver extends Driver
         if ($exception->getCode() >= 23000 && $exception->getCode() < 24000) {
             return new StatementException\ConstrainException($exception, $query);
         }
-
 
         return new StatementException($exception, $query);
     }

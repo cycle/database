@@ -506,7 +506,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      *
      * @throws StatementException
      */
-    private function statement(string $query, array $parameters = [], bool $retry = null): StatementInterface
+    private function statement(string $query, array $parameters = [], bool $retry = true): StatementInterface
     {
         if (is_null($retry)) {
             $retry = $this->options['reconnect'];

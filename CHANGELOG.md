@@ -1,6 +1,10 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
+2.6.3 (20.11.2019)
+-----
+- improved connection exception handling for Postgres
+
 2.6.2 (14.11.2019)
 -----
 - added native support for UUID type
