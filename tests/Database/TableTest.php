@@ -30,6 +30,7 @@ abstract class TableTest extends BaseTest
         $schema->primary('id');
         $schema->text('name');
         $schema->integer('value');
+
         $schema->save();
     }
 
@@ -273,7 +274,7 @@ abstract class TableTest extends BaseTest
         );
 
         $this->assertSame(4, $table->count());
-        $this->assertSame(100, $table->sum('value'));
+        $this->assertSame(100, (int)$table->sum('value'));
     }
 
     public function testAggregationMinByPass(): void
@@ -292,7 +293,7 @@ abstract class TableTest extends BaseTest
         );
 
         $this->assertSame(4, $table->count());
-        $this->assertSame(10, $table->min('value'));
+        $this->assertSame(10, (int)$table->min('value'));
     }
 
     public function testAggregationMaxByPass(): void
@@ -311,7 +312,7 @@ abstract class TableTest extends BaseTest
         );
 
         $this->assertSame(4, $table->count());
-        $this->assertSame(40, $table->max('value'));
+        $this->assertSame(40, (int)$table->max('value'));
     }
 
     public function testAggregationAvgByPass(): void
@@ -330,7 +331,7 @@ abstract class TableTest extends BaseTest
         );
 
         $this->assertSame(4, $table->count());
-        $this->assertSame(25, $table->avg('value'));
+        $this->assertSame(25, (int)$table->avg('value'));
     }
 
     public function testAggregationAvgByPassFloat(): void
@@ -349,7 +350,7 @@ abstract class TableTest extends BaseTest
         );
 
         $this->assertSame(4, $table->count());
-        $this->assertSame(13.75, $table->avg('value'));
+        $this->assertSame(13.75, (float)$table->avg('value'));
     }
 
     public function testDeleteWithWhere(): void

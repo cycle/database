@@ -111,7 +111,7 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
      *
      * @param string $method
      * @param array  $arguments
-     * @return int|float
+     * @return string
      *
      * @throws BuilderException
      * @throws StatementException
@@ -134,18 +134,10 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
         $st = $select->run();
 
         try {
-            $result = $st->fetchColumn();
+            return $st->fetchColumn();
         } finally {
             $st->close();
         }
-
-        //Selecting type between int and float
-        if ((float)$result == $result && (int)$result != $result) {
-            //Find more elegant check
-            return (float)$result;
-        }
-
-        return (int)$result;
     }
 
     /**
