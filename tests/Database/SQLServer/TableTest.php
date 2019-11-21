@@ -32,7 +32,7 @@ class TableTest extends \Spiral\Database\Tests\TableTest
         $this->assertSame(4, $table->count());
 
         //Rounded
-        $this->assertSame(13, $table->avg('value'));
+        $this->assertSame(13, (int)$table->avg('value'));
     }
 
     public function testAggregationAvgByPassRealFloat(): void
@@ -60,6 +60,6 @@ class TableTest extends \Spiral\Database\Tests\TableTest
         $this->assertSame(4, $table->count());
 
         //Rounded
-        $this->assertSame(13.75, $table->avg('value'));
+        $this->assertSame(13.75, (float)$table->avg('value'));
     }
 }
