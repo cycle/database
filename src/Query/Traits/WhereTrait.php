@@ -88,7 +88,7 @@ trait WhereTrait
      *
      * @return \Closure
      */
-    private function whereWrapper()
+    private function whereWrapper(): \Closure
     {
         return static function ($parameter) {
             if ($parameter instanceof FragmentInterface) {

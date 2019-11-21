@@ -19,7 +19,6 @@ use Spiral\Database\Driver\SQLServer\Schema\SQLServerTable;
 use Spiral\Database\Exception\DriverException;
 use Spiral\Database\Exception\StatementException;
 use Spiral\Database\Injection\ParameterInterface;
-use Spiral\Database\Statement;
 
 class SQLServerDriver extends Driver
 {
@@ -132,7 +131,7 @@ class SQLServerDriver extends Driver
      *
      * @link http://en.wikipedia.org/wiki/Savepoint
      *
-     * @param int $level Savepoint name/id, must not contain spaces and be valid database
+     * @param int $level   Savepoint name/id, must not contain spaces and be valid database
      *                     identifier.
      */
     protected function createSavepoint(int $level): void

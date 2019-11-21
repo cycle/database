@@ -13,7 +13,6 @@ namespace Spiral\Database\Query\Traits;
 
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Injection\Expression;
-use Spiral\Database\Injection\ExpressionInterface;
 use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
@@ -82,7 +81,7 @@ trait JoinTrait
      *
      * @throws BuilderException
      */
-    public function join($type, $outer, string $alias = null, $on = null)
+    public function join($type, $outer, string $alias = null, $on = null): self
     {
         $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
@@ -106,7 +105,7 @@ trait JoinTrait
      *
      * @throws BuilderException
      */
-    public function innerJoin($outer, string $alias = null)
+    public function innerJoin($outer, string $alias = null): self
     {
         $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
@@ -133,7 +132,7 @@ trait JoinTrait
      *
      * @throws BuilderException
      */
-    public function rightJoin($outer, string $alias = null, $on = null)
+    public function rightJoin($outer, string $alias = null, $on = null): self
     {
         $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
@@ -159,7 +158,7 @@ trait JoinTrait
      *
      * @throws BuilderException
      */
-    public function leftJoin($outer, string $alias = null)
+    public function leftJoin($outer, string $alias = null): self
     {
         $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
@@ -185,7 +184,7 @@ trait JoinTrait
      *
      * @throws BuilderException
      */
-    public function fullJoin($outer, string $alias = null)
+    public function fullJoin($outer, string $alias = null): self
     {
         $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
@@ -206,7 +205,7 @@ trait JoinTrait
      *
      * @throws BuilderException
      */
-    public function on(...$args)
+    public function on(...$args): self
     {
         $this->createToken(
             'AND',
@@ -227,7 +226,7 @@ trait JoinTrait
      *
      * @throws BuilderException
      */
-    public function andOn(...$args)
+    public function andOn(...$args): self
     {
         $this->createToken(
             'AND',
@@ -248,7 +247,7 @@ trait JoinTrait
      *
      * @throws BuilderException
      */
-    public function orOn(...$args)
+    public function orOn(...$args): self
     {
         $this->createToken(
             'OR',
@@ -271,7 +270,7 @@ trait JoinTrait
      * @see AbstractWhere
      *
      */
-    public function onWhere(...$args)
+    public function onWhere(...$args): self
     {
         $this->createToken(
             'AND',
@@ -294,7 +293,7 @@ trait JoinTrait
      * @see AbstractWhere
      *
      */
-    public function andOnWhere(...$args)
+    public function andOnWhere(...$args): self
     {
         $this->createToken(
             'AND',
@@ -317,7 +316,7 @@ trait JoinTrait
      * @see AbstractWhere
      *
      */
-    public function orOnWhere(...$args)
+    public function orOnWhere(...$args): self
     {
         $this->createToken(
             'OR',
@@ -349,7 +348,7 @@ trait JoinTrait
      *
      * @return \Closure
      */
-    private function onWrapper()
+    private function onWrapper(): \Closure
     {
         return static function ($parameter) {
             if ($parameter instanceof FragmentInterface || $parameter instanceof ParameterInterface) {

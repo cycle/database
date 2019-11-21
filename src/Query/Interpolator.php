@@ -27,6 +27,7 @@ final class Interpolator
      *
      * @param string               $query
      * @param ParameterInterface[] $parameters Parameters to be binded into query. Named list are supported.
+     * @param bool                 $flatten
      * @return string
      */
     public static function interpolate(string $query, array $parameters = [], bool $flatten = true): string

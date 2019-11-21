@@ -112,7 +112,7 @@ class SQLServerCompiler extends Compiler
         $statement = "WHERE {$this->quote($bindings, $rowNumber)} ";
 
         //0 = row_number(1)
-        $offset = $offset + 1;
+        ++$offset;
 
         if (!empty($limit)) {
             $statement .= "BETWEEN {$offset} AND " . ($offset + $limit - 1);

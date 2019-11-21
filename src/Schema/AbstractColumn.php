@@ -446,8 +446,8 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      * Returns type defined by the user, only until schema sync. Attention, this value is only preserved during the
      * declaration process. Value will become null after the schema fetched from database.
      *
-     * @internal
      * @return string|null
+     * @internal
      */
     public function getDeclaredType(): ?string
     {
@@ -680,6 +680,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     {
         $normalized = clone $initial;
 
+        // soft compare
         if ($this == $normalized) {
             return true;
         }
@@ -693,7 +694,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
                 continue;
             }
 
-            if ($name == 'defaultValue') {
+            if ($name === 'defaultValue') {
                 //Default values has to compared using type-casted value
                 if ($this->getDefaultValue() != $initial->getDefaultValue()) {
                     $difference[] = $name;
@@ -780,14 +781,12 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
 
         if ($value instanceof \DateTimeInterface) {
             $datetime = clone $value;
+        } elseif (is_numeric($value)) {
+            //Presumably timestamp
+            $datetime = new \DateTime('now', $this->timezone);
+            $datetime->setTimestamp($value);
         } else {
-            if (is_numeric($value)) {
-                //Presumably timestamp
-                $datetime = new \DateTime('now', $this->timezone);
-                $datetime->setTimestamp($value);
-            } else {
-                $datetime = new \DateTime($value, $this->timezone);
-            }
+            $datetime = new \DateTime($value, $this->timezone);
         }
 
         switch ($type) {

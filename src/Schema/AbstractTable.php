@@ -180,7 +180,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
             'primaryKeys' => $this->getPrimaryKeys(),
             'columns'     => array_values($this->getColumns()),
             'indexes'     => array_values($this->getIndexes()),
-            'foreignKeys'  => array_values($this->getForeignKeys()),
+            'foreignKeys' => array_values($this->getForeignKeys()),
         ];
     }
 
@@ -652,7 +652,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         // We need an instance of Handler of dbal operations
         $handler = $this->driver->getHandler();
 
-        if ($this->status == self::STATUS_DECLARED_DROPPED && $operation & HandlerInterface::DO_DROP) {
+        if ($this->status === self::STATUS_DECLARED_DROPPED && $operation & HandlerInterface::DO_DROP) {
             //We don't need reflector for this operation
             $handler->dropTable($this);
 
@@ -665,14 +665,11 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         // Ensure that columns references to valid indexes and et
         $prepared = $this->normalizeSchema(($operation & HandlerInterface::CREATE_FOREIGN_KEYS) !== 0);
 
-        if ($this->status == self::STATUS_NEW) {
+        if ($this->status === self::STATUS_NEW) {
             //Executing table creation
             $handler->createTable($prepared);
-        } else {
-            //Executing table syncing
-            if ($this->hasChanges()) {
-                $handler->syncTable($prepared, $operation);
-            }
+        } elseif ($this->hasChanges()) {
+            $handler->syncTable($prepared, $operation);
         }
 
         // Syncing our schemas
@@ -699,7 +696,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * @param bool $withForeignKeys
      * @return AbstractTable
      */
-    protected function normalizeSchema(bool $withForeignKeys = true)
+    protected function normalizeSchema(bool $withForeignKeys = true): AbstractTable
     {
         // To make sure that no pre-sync modifications will be reflected on current table
         $target = clone $this;
@@ -717,13 +714,13 @@ abstract class AbstractTable implements TableInterface, ElementInterface
          */
         foreach ($this->getComparator()->droppedColumns() as $column) {
             foreach ($target->getIndexes() as $index) {
-                if (in_array($column->getName(), $index->getColumns())) {
+                if (in_array($column->getName(), $index->getColumns(), true)) {
                     $target->current->forgetIndex($index);
                 }
             }
 
             foreach ($target->getForeignKeys() as $foreign) {
-                if ($column->getName() == $foreign->getColumns()) {
+                if ($column->getName() === $foreign->getColumns()) {
                     $target->current->forgerForeignKey($foreign);
                 }
             }
@@ -735,15 +732,15 @@ abstract class AbstractTable implements TableInterface, ElementInterface
              * @var AbstractColumn $initial
              * @var AbstractColumn $name
              */
-            list($name, $initial) = $pair;
+            [$name, $initial] = $pair;
 
             foreach ($target->getIndexes() as $index) {
-                if (in_array($initial->getName(), $index->getColumns())) {
+                if (in_array($initial->getName(), $index->getColumns(), true)) {
                     $columns = $index->getColumns();
 
                     //Replacing column name
                     foreach ($columns as &$column) {
-                        if ($column == $initial->getName()) {
+                        if ($column === $initial->getName()) {
                             $column = $name->getName();
                         }
 

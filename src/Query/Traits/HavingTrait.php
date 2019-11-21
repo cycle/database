@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Spiral\Database\Query\Traits;
 
 use Spiral\Database\Exception\BuilderException;
-use Spiral\Database\Injection\ExpressionInterface;
 use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
@@ -100,9 +99,9 @@ trait HavingTrait
      *
      * @return \Closure
      */
-    private function havingWrapper()
+    private function havingWrapper(): \Closure
     {
-        return function ($parameter) {
+        return static function ($parameter) {
             if ($parameter instanceof FragmentInterface) {
                 return $parameter;
             }

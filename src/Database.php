@@ -34,10 +34,10 @@ final class Database implements DatabaseInterface, InjectableInterface
     public const ISOLATION_READ_UNCOMMITTED = DriverInterface::ISOLATION_READ_UNCOMMITTED;
 
     /** @var string */
-    private $name = '';
+    private $name;
 
     /** @var string */
-    private $prefix = '';
+    private $prefix;
 
     /** @var DriverInterface */
     private $driver;
@@ -46,10 +46,10 @@ final class Database implements DatabaseInterface, InjectableInterface
     private $readDriver;
 
     /**
-     * @param string               $name Internal database name/id.
-     * @param string               $prefix Default database table prefix, will be used for all
+     * @param string               $name       Internal database name/id.
+     * @param string               $prefix     Default database table prefix, will be used for all
      *                                         table identifiers.
-     * @param DriverInterface      $driver Driver instance responsible for database connection.
+     * @param DriverInterface      $driver     Driver instance responsible for database connection.
      * @param DriverInterface|null $readDriver Read-only driver connection.
      */
     public function __construct(
@@ -208,10 +208,10 @@ final class Database implements DatabaseInterface, InjectableInterface
     /**
      * {@inheritdoc}
      */
-    public function select($columns = '*'): SelectQuery
+    public function select($column = '*'): SelectQuery
     {
         $columns = func_get_args();
-        if (is_array($columns) && isset($columns[0]) && is_array($columns[0])) {
+        if (isset($columns[0]) && is_array($columns[0])) {
             //Can be required in some cases while collecting data from Table->select(), stupid bug.
             $columns = $columns[0];
         }

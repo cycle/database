@@ -165,15 +165,15 @@ abstract class Compiler implements CompilerInterface
         int $offset = 0,
         array $unionTokens = []
     ): string {
-        //This statement(s) parts should be processed first to define set of table and column aliases
-        $fromTables = $this->compileTables($bindings, $fromTables);
+        // This statement(s) parts should be processed first to define set of table and column aliases
+        $tableNames = $this->compileTables($bindings, $fromTables);
         $joinsStatement = $this->compileJoins($bindings, $joinTokens);
 
         return sprintf(
             "SELECT%s\n%s\nFROM %s%s%s%s%s%s%s%s",
             $this->optional(' ', $this->compileDistinct($bindings, $distinct)),
             $this->compileColumns($bindings, $columns),
-            $fromTables,
+            $tableNames,
             $this->optional(' ', $joinsStatement, ' '),
             $this->optional("\nWHERE", $this->compileWhere($bindings, $whereTokens)),
             $this->optional("\nGROUP BY", $this->compileGroupBy($bindings, $grouping), ' '),

@@ -4,6 +4,7 @@ CHANGELOG for 0.9.0 RC
 2.6.4 (21.11.2019)
 -----
 - disabled int typecasting for aggregate selections
+- minor inspection driven improvements
 
 2.6.3 (20.11.2019)
 -----

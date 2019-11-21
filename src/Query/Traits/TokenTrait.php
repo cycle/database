@@ -31,7 +31,7 @@ trait TokenTrait
      */
     protected function createToken($joiner, array $parameters, &$tokens, callable $wrapper): void
     {
-        list($identifier, $a, $b, $c) = $parameters + array_fill(0, 5, null);
+        [$identifier, $a, $b, $c] = $parameters + array_fill(0, 5, null);
 
         if ($identifier === null) {
             //Nothing to do
@@ -45,9 +45,9 @@ trait TokenTrait
                 return;
             }
 
-            if (count($identifier) == 1) {
+            if (count($identifier) === 1) {
                 $this->arrayWhere(
-                    $joiner == 'AND' ? Compiler::TOKEN_AND : Compiler::TOKEN_OR,
+                    $joiner === 'AND' ? Compiler::TOKEN_AND : Compiler::TOKEN_OR,
                     $identifier,
                     $tokens,
                     $wrapper
@@ -117,26 +117,25 @@ trait TokenTrait
      *
      * @throws BuilderException
      * @see AbstractWhere
-     *
      */
     private function arrayWhere(string $grouper, array $where, &$tokens, callable $wrapper): void
     {
-        $joiner = ($grouper == Compiler::TOKEN_AND ? 'AND' : 'OR');
+        $joiner = ($grouper === Compiler::TOKEN_AND ? 'AND' : 'OR');
 
         foreach ($where as $key => $value) {
             $token = strtoupper($key);
 
             //Grouping identifier (@OR, @AND), MongoDB like style
-            if ($token == Compiler::TOKEN_AND || $token == Compiler::TOKEN_OR) {
+            if ($token === Compiler::TOKEN_AND || $token === Compiler::TOKEN_OR) {
                 $tokens[] = [$joiner, '('];
 
                 foreach ($value as $nested) {
-                    if (count($nested) == 1) {
+                    if (count($nested) === 1) {
                         $this->arrayWhere($token, $nested, $tokens, $wrapper);
                         continue;
                     }
 
-                    $tokens[] = [$token == Compiler::TOKEN_AND ? 'AND' : 'OR', '('];
+                    $tokens[] = [$token === Compiler::TOKEN_AND ? 'AND' : 'OR', '('];
                     $this->arrayWhere(Compiler::TOKEN_AND, $nested, $tokens, $wrapper);
                     $tokens[] = ['', ')'];
                 }
@@ -183,7 +182,7 @@ trait TokenTrait
         $where,
         &$tokens,
         callable $wrapper
-    ) {
+    ): array {
         foreach ($where as $operation => $value) {
             if (is_numeric($operation)) {
                 throw new BuilderException('Nested conditions should have defined operator');

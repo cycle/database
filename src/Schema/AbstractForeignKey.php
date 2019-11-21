@@ -210,6 +210,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
      */
     public function compare(AbstractForeignKey $initial): bool
     {
+        // soft compare
         return $this == clone $initial;
     }
 

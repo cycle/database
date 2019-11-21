@@ -176,8 +176,8 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
             return $this;
         }
 
-        foreach ($expression as $nested => $direction) {
-            $this->ordering[] = [$nested, $direction];
+        foreach ($expression as $nested => $dir) {
+            $this->ordering[] = [$nested, $dir];
         }
 
         return $this;
@@ -336,11 +336,7 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
 
         $offset = 0;
         while ($offset + $limit <= $count) {
-            $result = call_user_func_array(
-                $callback,
-                [$select->offset($offset)->getIterator(), $offset, $count]
-            );
-
+            $result = call_user_func($callback, $select->offset($offset)->getIterator(), $offset, $count);
             if ($result === false) {
                 //Stop iteration
                 return;
@@ -381,7 +377,7 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
      *
      * @return StatementInterface
      */
-    public function getIterator()
+    public function getIterator(): StatementInterface
     {
         return $this->run();
     }
