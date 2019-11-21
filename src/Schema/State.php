@@ -193,7 +193,7 @@ final class State
     public function forgetColumn(AbstractColumn $column): State
     {
         foreach ($this->columns as $name => $columnSchema) {
-            if ($columnSchema === $column) {
+            if ($columnSchema == $column) {
                 unset($this->columns[$name]);
                 break;
             }
@@ -210,7 +210,7 @@ final class State
     public function forgetIndex(AbstractIndex $index): void
     {
         foreach ($this->indexes as $name => $indexSchema) {
-            if ($indexSchema === $index) {
+            if ($indexSchema == $index) {
                 unset($this->indexes[$name]);
                 break;
             }
@@ -225,7 +225,7 @@ final class State
     public function forgerForeignKey(AbstractForeignKey $foreignKey): void
     {
         foreach ($this->foreignKeys as $name => $foreignSchema) {
-            if ($foreignSchema === $foreignKey) {
+            if ($foreignSchema == $foreignKey) {
                 unset($this->foreignKeys[$name]);
                 break;
             }

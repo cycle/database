@@ -781,12 +781,14 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
 
         if ($value instanceof \DateTimeInterface) {
             $datetime = clone $value;
-        } elseif (is_numeric($value)) {
-            //Presumably timestamp
-            $datetime = new \DateTime('now', $this->timezone);
-            $datetime->setTimestamp($value);
         } else {
-            $datetime = new \DateTime($value, $this->timezone);
+            if (is_numeric($value)) {
+                //Presumably timestamp
+                $datetime = new \DateTime('now', $this->timezone);
+                $datetime->setTimestamp($value);
+            } else {
+                $datetime = new \DateTime($value, $this->timezone);
+            }
         }
 
         switch ($type) {

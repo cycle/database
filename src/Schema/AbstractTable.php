@@ -270,7 +270,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      */
     public function declareDropped(): void
     {
-        if ($this->status == self::STATUS_NEW) {
+        if ($this->status === self::STATUS_NEW) {
             throw new SchemaException('Unable to drop non existed table');
         }
 
@@ -668,8 +668,11 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         if ($this->status === self::STATUS_NEW) {
             //Executing table creation
             $handler->createTable($prepared);
-        } elseif ($this->hasChanges()) {
-            $handler->syncTable($prepared, $operation);
+        } else {
+            //Executing table syncing
+            if ($this->hasChanges()) {
+                $handler->syncTable($prepared, $operation);
+            }
         }
 
         // Syncing our schemas
