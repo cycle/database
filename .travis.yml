@@ -28,7 +28,7 @@ after_success:
 jobs:
   include:
     - stage: Test
-      php: 7.4snapshot
+      php: 7.4
       before_install:
         - cd tests
         - docker-compose up -d
