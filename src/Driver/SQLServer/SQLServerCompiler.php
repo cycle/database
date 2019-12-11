@@ -152,7 +152,7 @@ class SQLServerCompiler extends Compiler
             $this->optional(' ', $this->compileDistinct($bindings, $distinct)),
             $this->compileColumns($bindings, $columns),
             $tableNames,
-            $this->optional(' ', $forUpdate ? 'WITH (UPDLOCK, ROWLOCK)' : '', ' '),
+            $this->optional(' ', $forUpdate ? 'WITH (UPDLOCK,ROWLOCK)' : '', ' '),
             $this->optional(' ', $joinsStatement, ' '),
             $this->optional("\nWHERE", $this->compileWhere($bindings, $whereTokens)),
             $this->optional("\nGROUP BY", $this->compileGroupBy($bindings, $grouping), ' '),

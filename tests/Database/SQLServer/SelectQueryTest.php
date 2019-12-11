@@ -78,7 +78,7 @@ class SelectQueryTest extends \Spiral\Database\Tests\SelectQueryTest
             ->forUpdate();
 
         $this->assertSameQuery(
-            'SELECT * FROM {users} WITH(UPDLOCK) WHERE {name} = ?',
+            'SELECT * FROM {users} WITH(UPDLOCK,ROWLOCK) WHERE {name} = ?',
             $select
         );
     }
