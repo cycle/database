@@ -89,6 +89,13 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
     protected $grouping = [];
 
     /**
+     * Perform the select for later update.
+     *
+     * @var bool
+     */
+    protected $forUpdate = false;
+
+    /**
      * @param array $from    Initial set of table names.
      * @param array $columns Initial set of columns to fetch.
      */
@@ -151,6 +158,18 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
     public function distinct($distinct = true): self
     {
         $this->distinct = $distinct;
+
+        return $this;
+    }
+
+    /**
+     * Select entities for the following update.
+     *
+     * @return self|$this
+     */
+    public function forUpdate(): self
+    {
+        $this->forUpdate = true;
 
         return $this;
     }
@@ -292,7 +311,8 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
             $this->ordering,
             $this->getLimit(),
             $this->getOffset(),
-            $this->unionTokens
+            $this->unionTokens,
+            $this->forUpdate
         );
     }
 

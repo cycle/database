@@ -2051,4 +2051,17 @@ abstract class SelectQueryTest extends BaseQueryTest
             $select
         );
     }
+
+    public function testSelectForUpdate(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->where('name', 'Antony')
+            ->forUpdate();
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE {name} = ? FOR UPDATE',
+            $select
+        );
+    }
 }

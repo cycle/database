@@ -1,6 +1,10 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
+2.6.5 (11.12.2019)
+-----
+- added support for SELECT FOR UPDATE statements
+
 2.6.4 (21.11.2019)
 -----
 - disabled int typecasting for aggregate selections

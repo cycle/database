@@ -27,9 +27,9 @@ class SQLServerDriver extends Driver
     protected const QUERY_COMPILER      = SQLServerCompiler::class;
     protected const DATETIME            = 'Y-m-d\TH:i:s.000';
     protected const DEFAULT_PDO_OPTIONS = [
-        PDO::ATTR_CASE              => PDO::CASE_NATURAL,
-        PDO::ATTR_ERRMODE           => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_STRINGIFY_FETCHES => false
+        PDO::ATTR_CASE                      => PDO::CASE_NATURAL,
+        PDO::ATTR_ERRMODE                   => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_STRINGIFY_FETCHES         => false
     ];
 
     /**
@@ -51,7 +51,7 @@ class SQLServerDriver extends Driver
      */
     public function identifier(string $identifier): string
     {
-        return $identifier == '*' ? '*' : '[' . str_replace('[', '[[', $identifier) . ']';
+        return $identifier === '*' ? '*' : '[' . str_replace('[', '[[', $identifier) . ']';
     }
 
     /**

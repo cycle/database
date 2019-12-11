@@ -182,4 +182,25 @@ abstract class TransactionsTest extends BaseTest
         $this->database->commit();
         $this->assertSame(1, $this->database->table->count());
     }
+
+    public function testSelectForUpdateException(): void
+    {
+        $id = $this->database->table->insertOne(['name' => 'Anton', 'value' => 123]);
+        $this->assertSame(1, $this->database->table->count());
+
+        $this->database->begin();
+        $user = $this->database->table
+            ->select()
+            ->where('id', $id)
+            ->orderBy('id', 'DESC')
+            ->limit(1)
+            ->forUpdate()
+            ->run()
+            ->fetch();
+
+        $this->database->table->update(['value' => 234], ['id' => $user['id']])->run();
+        $this->database->commit();
+
+        $this->assertEquals(234, (int)$this->database->table->select()->run()->fetchColumn(2));
+    }
 }

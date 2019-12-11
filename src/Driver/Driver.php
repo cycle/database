@@ -61,7 +61,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     protected $options = [
         // allow reconnects
-        'reconnect'  => false,
+        'reconnect'  => true,
 
         //All datetime objects will be converted relative to this timezone (must match with DB timezone!)
         'timezone'   => 'UTC',
@@ -508,7 +508,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     private function statement(string $query, array $parameters = [], bool $retry = true): StatementInterface
     {
-        if (is_null($retry)) {
+        if ($retry === null) {
             $retry = $this->options['reconnect'];
         }
 

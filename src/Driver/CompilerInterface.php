@@ -104,6 +104,7 @@ interface CompilerInterface
      * @param int           $limit
      * @param int           $offset
      * @param array         $unionTokens
+     * @param bool          $forUpdate
      * @return string
      *
      * @throws CompilerException
@@ -120,6 +121,7 @@ interface CompilerInterface
         array $orderBy = [],
         int $limit = 0,
         int $offset = 0,
-        array $unionTokens = []
+        array $unionTokens = [],
+        bool $forUpdate = false
     ): string;
 }

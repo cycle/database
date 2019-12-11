@@ -23,4 +23,17 @@ class SelectQueryTest extends \Spiral\Database\Tests\SelectQueryTest
             $select
         );
     }
+
+    public function testSelectForUpdate(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->where('name', 'Antony')
+            ->forUpdate();
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE {name} = ?',
+            $select
+        );
+    }
 }

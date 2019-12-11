@@ -163,14 +163,15 @@ abstract class Compiler implements CompilerInterface
         array $orderBy = [],
         int $limit = 0,
         int $offset = 0,
-        array $unionTokens = []
+        array $unionTokens = [],
+        bool $forUpdate = false
     ): string {
         // This statement(s) parts should be processed first to define set of table and column aliases
         $tableNames = $this->compileTables($bindings, $fromTables);
         $joinsStatement = $this->compileJoins($bindings, $joinTokens);
 
         return sprintf(
-            "SELECT%s\n%s\nFROM %s%s%s%s%s%s%s%s",
+            "SELECT%s\n%s\nFROM %s%s%s%s%s%s%s%s%s",
             $this->optional(' ', $this->compileDistinct($bindings, $distinct)),
             $this->compileColumns($bindings, $columns),
             $tableNames,
@@ -180,7 +181,8 @@ abstract class Compiler implements CompilerInterface
             $this->optional("\nHAVING", $this->compileWhere($bindings, $havingTokens)),
             $this->optional("\n", $this->compileUnions($bindings, $unionTokens)),
             $this->optional("\nORDER BY", $this->compileOrderBy($bindings, $orderBy)),
-            $this->optional("\n", $this->compileLimit($bindings, $limit, $offset))
+            $this->optional("\n", $this->compileLimit($bindings, $limit, $offset)),
+            $this->optional(' ', $forUpdate ? 'FOR UPDATE' : '')
         );
     }
 

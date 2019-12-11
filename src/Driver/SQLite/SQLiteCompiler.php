@@ -22,6 +22,42 @@ use Spiral\Database\Injection\ParameterInterface;
 class SQLiteCompiler extends AbstractCompiler
 {
     /**
+     * @inheritDoc
+     */
+    public function compileSelect(
+        QueryBindings $bindings,
+        array $fromTables,
+        $distinct,
+        array $columns,
+        array $joinTokens = [],
+        array $whereTokens = [],
+        array $havingTokens = [],
+        array $grouping = [],
+        array $orderBy = [],
+        int $limit = 0,
+        int $offset = 0,
+        array $unionTokens = [],
+        bool $forUpdate = false
+    ): string {
+        // FOR UPDATE is not available
+        return parent::compileSelect(
+            $bindings,
+            $fromTables,
+            $distinct,
+            $columns,
+            $joinTokens,
+            $whereTokens,
+            $havingTokens,
+            $grouping,
+            $orderBy,
+            $limit,
+            $offset,
+            $unionTokens,
+            false
+        );
+    }
+
+    /**
      * {@inheritdoc}
      *
      * @see http://stackoverflow.com/questions/1609637/is-it-possible-to-insert-multiple-rows-at-a-time-in-an-sqlite-database
@@ -33,7 +69,7 @@ class SQLiteCompiler extends AbstractCompiler
         array $values
     ): string {
         // @todo possibly different statement for versions higher than 3.7.11
-        if (count($values) == 1) {
+        if (count($values) === 1) {
             return parent::compileInsert($bindings, $table, $columns, $values);
         }
 

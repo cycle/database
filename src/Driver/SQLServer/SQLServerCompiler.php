@@ -47,11 +47,12 @@ class SQLServerCompiler extends Compiler
         array $ordering = [],
         int $limit = 0,
         int $offset = 0,
-        array $unionTokens = []
+        array $unionTokens = [],
+        bool $forUpdate = false
     ): string {
-        if ((empty($limit) && empty($offset)) || !empty($ordering)) {
+        if (($limit === 0 && $offset === 0) || $ordering !== []) {
             //When no limits are specified we can use normal query syntax
-            return call_user_func_array(['parent', 'compileSelect'], func_get_args());
+            return call_user_func_array([$this, 'baseSelect'], func_get_args());
         }
 
         /**
@@ -66,7 +67,7 @@ class SQLServerCompiler extends Compiler
 
         return sprintf(
             "SELECT * FROM (\n%s\n) AS [ORD_FALLBACK] %s",
-            parent::compileSelect(
+            $this->baseSelect(
                 $bindings,
                 $fromTables,
                 $distinct,
@@ -78,7 +79,8 @@ class SQLServerCompiler extends Compiler
                 [],
                 0, //No limit or offset
                 0, //No limit or offset
-                $unionTokens
+                $unionTokens,
+                $forUpdate
             ),
             $this->compileLimit($bindings, $limit, $offset, self::ROW_NUMBER)
         );
@@ -121,5 +123,43 @@ class SQLServerCompiler extends Compiler
         }
 
         return $statement;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    private function baseSelect(
+        QueryBindings $bindings,
+        array $fromTables,
+        $distinct,
+        array $columns,
+        array $joinTokens = [],
+        array $whereTokens = [],
+        array $havingTokens = [],
+        array $grouping = [],
+        array $orderBy = [],
+        int $limit = 0,
+        int $offset = 0,
+        array $unionTokens = [],
+        bool $forUpdate = false
+    ): string {
+        // This statement(s) parts should be processed first to define set of table and column aliases
+        $tableNames = $this->compileTables($bindings, $fromTables);
+        $joinsStatement = $this->compileJoins($bindings, $joinTokens);
+
+        return sprintf(
+            "SELECT%s\n%s\nFROM %s%s%s%s%s%s%s%s%s",
+            $this->optional(' ', $this->compileDistinct($bindings, $distinct)),
+            $this->compileColumns($bindings, $columns),
+            $tableNames,
+            $this->optional(' ', $forUpdate ? 'WITH (UPDLOCK, ROWLOCK)' : '', ' '),
+            $this->optional(' ', $joinsStatement, ' '),
+            $this->optional("\nWHERE", $this->compileWhere($bindings, $whereTokens)),
+            $this->optional("\nGROUP BY", $this->compileGroupBy($bindings, $grouping), ' '),
+            $this->optional("\nHAVING", $this->compileWhere($bindings, $havingTokens)),
+            $this->optional("\n", $this->compileUnions($bindings, $unionTokens)),
+            $this->optional("\nORDER BY", $this->compileOrderBy($bindings, $orderBy)),
+            $this->optional("\n", $this->compileLimit($bindings, $limit, $offset))
+        );
     }
 }

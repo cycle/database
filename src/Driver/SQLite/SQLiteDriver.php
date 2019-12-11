@@ -37,7 +37,7 @@ class SQLiteDriver extends Driver
     public function getSource(): string
     {
         //Remove "sqlite:"
-        return substr($this->options['connection'], 7);
+        return substr($this->options['connection'] ?? $this->options['dsn'] ?? $this->options['addr'], 7);
     }
 
     /**
@@ -47,7 +47,7 @@ class SQLiteDriver extends Driver
     {
         $tables = [];
         foreach ($this->query("SELECT name FROM 'sqlite_master' WHERE type = 'table'") as $table) {
-            if ($table['name'] != 'sqlite_sequence') {
+            if ($table['name'] !== 'sqlite_sequence') {
                 $tables[] = $table['name'];
             }
         }
