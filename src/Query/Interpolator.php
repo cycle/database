@@ -47,7 +47,7 @@ final class Interpolator
             if (is_numeric($index)) {
                 $query = self::replaceOnce('?', $value, $query);
             } else {
-                $query = str_replace($index, $value, $query);
+                $query = str_replace(':' . $index, $value, $query);
             }
         }
 

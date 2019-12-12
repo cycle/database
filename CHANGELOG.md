@@ -5,6 +5,7 @@ CHANGELOG for 0.9.0 RC
 -----
 - allow drivers to handle low level error exceptions 
 - qualify "Connection reset by peer" as connection exception 
+- fixed interpolation of named parameters
 
 2.6.5 (11.12.2019)
 -----
