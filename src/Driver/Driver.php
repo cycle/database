@@ -196,7 +196,13 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     public function disconnect(): void
     {
-        $this->pdo = null;
+        try {
+            $this->pdo = null;
+        } catch (\Throwable $e) {
+            // disconnect error
+            $this->getLogger()->error($e->getMessage());
+        }
+
         $this->tScope->reset();
     }
 
@@ -217,7 +223,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     public function identifier(string $identifier): string
     {
-        return $identifier == '*' ? '*' : '"' . str_replace('"', '""', $identifier) . '"';
+        return $identifier === '*' ? '*' : '"' . str_replace('"', '""', $identifier) . '"';
     }
 
     /**
@@ -280,7 +286,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     {
         $this->tScope->open($cacheStatements);
 
-        if ($this->tScope->getLevel() == 1) {
+        if ($this->tScope->getLevel() === 1) {
             if ($isolationLevel !== null) {
                 $this->setIsolationLevel($isolationLevel);
             }
@@ -289,7 +295,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
 
             try {
                 return $this->getPDO()->beginTransaction();
-            } catch (\PDOException $e) {
+            } catch (\Throwable | \PDOException $e) {
                 $e = $this->mapException($e, 'BEGIN TRANSACTION');
 
                 if (
@@ -321,12 +327,12 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     {
         $this->tScope->close();
 
-        if ($this->tScope->getLevel() == 0) {
+        if ($this->tScope->getLevel() === 0) {
             $this->getLogger()->info('Commit transaction');
 
             try {
                 return $this->getPDO()->commit();
-            } catch (\PDOException $e) {
+            } catch (\Throwable | \PDOException $e) {
                 throw $this->mapException($e, 'COMMIT TRANSACTION');
             }
         }
@@ -345,12 +351,12 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     {
         $this->tScope->close();
 
-        if ($this->tScope->getLevel() == 0) {
+        if ($this->tScope->getLevel() === 0) {
             $this->getLogger()->info('Rollback transaction');
 
             try {
                 return $this->getPDO()->rollBack();
-            } catch (\PDOException $e) {
+            } catch (\Throwable | \PDOException $e) {
                 throw $this->mapException($e, 'ROLLBACK TRANSACTION');
             }
         }
@@ -387,11 +393,11 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     /**
      * Convert PDO exception into query or integrity exception.
      *
-     * @param \PDOException $exception
-     * @param string        $query
+     * @param \Throwable $exception
+     * @param string     $query
      * @return StatementException
      */
-    abstract protected function mapException(\PDOException $exception, string $query): StatementException;
+    abstract protected function mapException(\Throwable $exception, string $query): StatementException;
 
     /**
      * Set transaction isolation level, this feature may not be supported by specific database
@@ -517,17 +523,17 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
 
         try {
             $statement = $this->bindParameters($this->prepare($query), $flattened);
-
             $statement->execute();
+
             return new Statement($statement);
-        } catch (\PDOException $e) {
+        } catch (\Throwable | \PDOException $e) {
             $queryString = Interpolator::interpolate($query, $flattened, false);
             $e = $this->mapException($e, $queryString);
 
             if (
-                $e instanceof StatementException\ConnectionException
+                $retry
+                && $e instanceof StatementException\ConnectionException
                 && $this->tScope->getLevel() === 0
-                && $retry
             ) {
                 $this->disconnect();
 

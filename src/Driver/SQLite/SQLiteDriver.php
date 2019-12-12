@@ -92,9 +92,9 @@ class SQLiteDriver extends Driver
     /**
      * {@inheritdoc}
      */
-    protected function mapException(\PDOException $exception, string $query): StatementException
+    protected function mapException(\Throwable $exception, string $query): StatementException
     {
-        if ($exception->getCode() == 23000) {
+        if ((int)$exception->getCode() === 23000) {
             return new StatementException\ConstrainException($exception, $query);
         }
 

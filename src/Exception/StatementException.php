@@ -16,19 +16,17 @@ namespace Spiral\Database\Exception;
  */
 class StatementException extends DatabaseException implements StatementExceptionInterface
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $query;
 
     /**
      * {@inheritdoc}
      *
-     * @param \PDOException $exception
+     * @param \Throwable $previous
      */
-    public function __construct(\PDOException $exception, string $query)
+    public function __construct(\Throwable $previous, string $query)
     {
-        parent::__construct($exception->getMessage(), (int)$exception->getCode(), $exception);
+        parent::__construct($previous->getMessage(), (int)$previous->getCode(), $previous);
         $this->query = $query;
     }
 
@@ -38,18 +36,5 @@ class StatementException extends DatabaseException implements StatementException
     public function getQuery(): string
     {
         return $this->query;
-    }
-
-    /**
-     * @return \PDOException
-     */
-    public function pdoException(): \PDOException
-    {
-        /**
-         * @var \PDOException $previous
-         */
-        $previous = $this->getPrevious();
-
-        return $previous;
     }
 }

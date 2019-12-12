@@ -38,7 +38,7 @@ class MySQLDriver extends Driver
      */
     public function identifier(string $identifier): string
     {
-        return $identifier == '*' ? '*' : '`' . str_replace('`', '``', $identifier) . '`';
+        return $identifier === '*' ? '*' : '`' . str_replace('`', '``', $identifier) . '`';
     }
 
     /**
@@ -85,15 +85,18 @@ class MySQLDriver extends Driver
      *
      * @see https://dev.mysql.com/doc/refman/5.6/en/error-messages-client.html#error_cr_conn_host_error
      */
-    protected function mapException(\PDOException $exception, string $query): StatementException
+    protected function mapException(\Throwable $exception, string $query): StatementException
     {
-        if ($exception->getCode() == 23000) {
+        if ((int)$exception->getCode() === 23000) {
             return new StatementException\ConstrainException($exception, $query);
         }
 
+        $message = strtolower($exception->getMessage());
+
         if (
-            $exception->getCode() > 2000
-            || strpos($exception->getMessage(), 'server has gone away') !== false
+            (int)$exception->getCode() > 2000
+            || strpos($message, 'server has gone away') !== false
+            || strpos($message, 'connection') !== false
         ) {
             return new StatementException\ConnectionException($exception, $query);
         }

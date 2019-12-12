@@ -27,9 +27,9 @@ class SQLServerDriver extends Driver
     protected const QUERY_COMPILER      = SQLServerCompiler::class;
     protected const DATETIME            = 'Y-m-d\TH:i:s.000';
     protected const DEFAULT_PDO_OPTIONS = [
-        PDO::ATTR_CASE                      => PDO::CASE_NATURAL,
-        PDO::ATTR_ERRMODE                   => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_STRINGIFY_FETCHES         => false
+        PDO::ATTR_CASE              => PDO::CASE_NATURAL,
+        PDO::ATTR_ERRMODE           => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_STRINGIFY_FETCHES => false
     ];
 
     /**
@@ -106,7 +106,7 @@ class SQLServerDriver extends Driver
     protected function bindParameters(\PDOStatement $statement, iterable $parameters): \PDOStatement
     {
         foreach ($parameters as $index => $parameter) {
-            if ($parameter->getType() == PDO::PARAM_LOB) {
+            if ($parameter->getType() === PDO::PARAM_LOB) {
                 $value = $parameter->getValue();
 
                 $statement->bindParam(
@@ -169,16 +169,19 @@ class SQLServerDriver extends Driver
     /**
      * {@inheritdoc}
      */
-    protected function mapException(\PDOException $exception, string $query): StatementException
+    protected function mapException(\Throwable $exception, string $query): StatementException
     {
+        $message = strtolower($exception->getMessage());
+
         if (
-            strpos($exception->getMessage(), '0800') !== false
-            || strpos($exception->getMessage(), '080P') !== false
+            strpos($message, '0800') !== false
+            || strpos($message, '080P') !== false
+            || strpos($message, 'connection') !== false
         ) {
             return new StatementException\ConnectionException($exception, $query);
         }
 
-        if ($exception->getCode() == 23000) {
+        if ((int)$exception->getCode() === 23000) {
             return new StatementException\ConstrainException($exception, $query);
         }
 

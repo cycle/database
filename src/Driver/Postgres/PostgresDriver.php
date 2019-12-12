@@ -148,17 +148,19 @@ class PostgresDriver extends Driver
     /**
      * {@inheritdoc}
      */
-    protected function mapException(\PDOException $exception, string $query): StatementException
+    protected function mapException(\Throwable $exception, string $query): StatementException
     {
+        $message = strtolower($exception->getMessage());
+
         if (
-            strpos($exception->getMessage(), '0800') !== false
-            || strpos($exception->getMessage(), '080P') !== false
-            || strpos($exception->getMessage(), 'connection') !== false
+            strpos($message, '0800') !== false
+            || strpos($message, '080P') !== false
+            || strpos($message, 'connection') !== false
         ) {
             return new StatementException\ConnectionException($exception, $query);
         }
 
-        if ($exception->getCode() >= 23000 && $exception->getCode() < 24000) {
+        if ((int)$exception->getCode() >= 23000 && (int)$exception->getCode() < 24000) {
             return new StatementException\ConstrainException($exception, $query);
         }
 

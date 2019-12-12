@@ -36,7 +36,6 @@ abstract class ExceptionsTest extends BaseTest
         try {
             $select->run();
         } catch (StatementException $e) {
-            $this->assertInstanceOf(\PDOException::class, $e->pdoException());
             $this->assertInstanceOf(\PDOException::class, $e->getPrevious());
 
             $this->assertSame(
@@ -55,6 +54,7 @@ abstract class ExceptionsTest extends BaseTest
             $h = new HandlerException($e);
 
             $this->assertInstanceOf(StatementException::class, $h->getPrevious());
+
             $this->assertSame(
                 $h->getQuery(),
                 $select->sqlStatement()
