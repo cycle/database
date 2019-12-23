@@ -1,15 +1,15 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
-2.6.7 (11.12.2019)
+2.6.7 (23.12.2019)
+-----
+- [bufgix] proper exception type for syntax errors in MariaDB (previously was ConnectionException) 
+
+2.6.6 (11.12.2019)
 -----
 - allow drivers to handle low level error exceptions 
 - qualify "Connection reset by peer" as connection exception 
 - fixed interpolation of named parameters
-
-2.6.6 (23.12.2019)
------
-- [bufgix] proper exception type for syntax errors in MariaDB (previously was ConnectionException) 
 
 2.6.5 (11.12.2019)
 -----
