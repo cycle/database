@@ -94,9 +94,9 @@ class MySQLDriver extends Driver
         $message = strtolower($exception->getMessage());
 
         if (
-            (int)$exception->getCode() > 2000
-            || strpos($message, 'server has gone away') !== false
+            strpos($message, 'server has gone away') !== false
             || strpos($message, 'connection') !== false
+            || ((int)$exception->getCode() > 2000 && (int)$exception->getCode() < 2100)
         ) {
             return new StatementException\ConnectionException($exception, $query);
         }
