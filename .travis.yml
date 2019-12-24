@@ -1,5 +1,5 @@
 language: php
-dist: trusty
+dist: xenial
 sudo: required
 
 services:
@@ -108,13 +108,37 @@ jobs:
 
     - stage: Test
       php: 7.3
-      addons:
-        postgresql: "11.0"
       env:
         - "DB=postgres POSTGRES=11.0"
+      services:
+        - postgresql
       before_install:
-        - bash ./tests/install-pgsql-11.sh
+        - sudo apt-get update
+        - sudo apt-get --yes remove postgresql\*
+        - sudo apt-get install -y postgresql-11 postgresql-client-11
+        - sudo cp /etc/postgresql/{9.6,11}/main/pg_hba.conf
+        - sudo service postgresql restart 11
+        - psql --version
         - psql -c 'create database spiral;' -U postgres
+        - psql -c 'CREATE ROLE travis SUPERUSER LOGIN CREATEDB;' -U postgres
+      script:
+        - vendor/bin/phpunit tests/Database/Postgres
+
+    - stage: Test
+      php: 7.3
+      env:
+        - "DB=postgres POSTGRES=12.0"
+      services:
+        - postgresql
+      before_install:
+        - sudo apt-get update
+        - sudo apt-get --yes remove postgresql\*
+        - sudo apt-get install -y postgresql-12 postgresql-client-12
+        - sudo cp /etc/postgresql/{9.6,12}/main/pg_hba.conf
+        - sudo service postgresql restart 12
+        - psql --version
+        - psql -c 'create database spiral;' -U postgres
+        - psql -c 'CREATE ROLE travis SUPERUSER LOGIN CREATEDB;' -U postgres
       script:
         - vendor/bin/phpunit tests/Database/Postgres
 
