@@ -1,6 +1,10 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
+2.6.8 (24.12.2019)
+-----
+- [bufgix] proper abstract type detection for primary UUID columns for SQLite driver 
+
 2.6.7 (23.12.2019)
 -----
 - [bufgix] proper exception type for syntax errors in MariaDB (previously was ConnectionException) 
