@@ -31,7 +31,7 @@ services:
           MYSQL_ROOT_HOST: "%"
 
     postgres:
-        image: postgres:11
+        image: postgres:12
         restart: always
         ports:
           - "15432:5432"
