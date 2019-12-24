@@ -389,7 +389,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
             case 'float':
                 return (float)$this->defaultValue;
             case 'bool':
-                if (is_string($this->defaultValue) && strtolower($this->defaultValue) == 'false') {
+                if (is_string($this->defaultValue) && strtolower($this->defaultValue) === 'false') {
                     return false;
                 }
 
@@ -434,7 +434,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     {
         $schemaType = $this->getAbstractType();
         foreach ($this->phpMapping as $phpType => $candidates) {
-            if (in_array($schemaType, $candidates)) {
+            if (in_array($schemaType, $candidates, true)) {
                 return $phpType;
             }
         }
@@ -465,23 +465,23 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         foreach ($this->reverseMapping as $type => $candidates) {
             foreach ($candidates as $candidate) {
                 if (is_string($candidate)) {
-                    if (strtolower($candidate) == strtolower($this->type)) {
+                    if (strtolower($candidate) === strtolower($this->type)) {
                         return $type;
                     }
 
                     continue;
                 }
 
-                if (strtolower($candidate['type']) != strtolower($this->type)) {
+                if (strtolower($candidate['type']) !== strtolower($this->type)) {
                     continue;
                 }
 
                 foreach ($candidate as $option => $required) {
-                    if ($option == 'type') {
+                    if ($option === 'type') {
                         continue;
                     }
 
-                    if ($this->{$option} != $required) {
+                    if ($this->{$option} !== $required) {
                         continue 2;
                     }
                 }
@@ -652,7 +652,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     {
         $statement = [$driver->identifier($this->name), $this->type];
 
-        if ($this->getAbstractType() == 'enum') {
+        if ($this->getAbstractType() === 'enum') {
             //Enum specific column options
             if (!empty($enumDefinition = $this->quoteEnum($driver))) {
                 $statement[] = $enumDefinition;
@@ -690,7 +690,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
 
         $difference = [];
         foreach ($columnVars as $name => $value) {
-            if (in_array($name, static::EXCLUDE_FROM_COMPARE)) {
+            if (in_array($name, static::EXCLUDE_FROM_COMPARE, true)) {
                 continue;
             }
 
@@ -703,7 +703,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
                 continue;
             }
 
-            if ($value != $dbColumnVars[$name]) {
+            if ($value !== $dbColumnVars[$name]) {
                 $difference[] = $name;
             }
         }
@@ -748,15 +748,15 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
             return $defaultValue->compile(new QueryBindings(), $driver->getCompiler());
         }
 
-        if ($this->getType() == 'bool') {
+        if ($this->getType() === 'bool') {
             return $defaultValue ? 'TRUE' : 'FALSE';
         }
 
-        if ($this->getType() == 'float') {
+        if ($this->getType() === 'float') {
             return sprintf('%F', $defaultValue);
         }
 
-        if ($this->getType() == 'int') {
+        if ($this->getType() === 'int') {
             return strval($defaultValue);
         }
 

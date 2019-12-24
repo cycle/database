@@ -108,6 +108,7 @@ class SQLiteColumn extends AbstractColumn
         'time'        => ['time'],
         'timestamp'   => ['timestamp'],
         'binary'      => ['blob'],
+        'string'      => ['varchar']
     ];
 
     /**
@@ -125,7 +126,7 @@ class SQLiteColumn extends AbstractColumn
      */
     public function getAbstractType(): string
     {
-        if ($this->primaryKey) {
+        if ($this->primaryKey && $this->type === 'integer') {
             return 'primary';
         }
 
@@ -138,7 +139,7 @@ class SQLiteColumn extends AbstractColumn
     public function sqlStatement(DriverInterface $driver): string
     {
         $statement = parent::sqlStatement($driver);
-        if ($this->getAbstractType() != 'enum') {
+        if ($this->getAbstractType() !== 'enum') {
             return $statement;
         }
 
@@ -167,7 +168,10 @@ class SQLiteColumn extends AbstractColumn
 
         $column->nullable = !$schema['notnull'];
         $column->type = $schema['type'];
-        $column->primaryKey = (bool)$schema['pk'];
+
+        if ((bool)$schema['pk'] && $column->type === 'integer') {
+            $column->primaryKey = true;
+        }
 
         /*
          * Normalizing default value.
