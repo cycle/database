@@ -1,6 +1,10 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
+2.6.10 (26.12.2019)
+-----
+- [bugfix] invalid change detection for nullable and zeroed default values
+
 2.6.9 (26.12.2019)
 -----
 - added support for Postgres 12 updated constrain schemas
