@@ -698,6 +698,11 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
                 //Default values has to compared using type-casted value
                 if ($this->getDefaultValue() != $initial->getDefaultValue()) {
                     $difference[] = $name;
+                } elseif (
+                    is_scalar($this->getDefaultValue())
+                    && $this->getDefaultValue() !== $initial->getDefaultValue()
+                ) {
+                    $difference[] = $name;
                 }
 
                 continue;
