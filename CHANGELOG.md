@@ -1,6 +1,10 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
+2.6.9 (26.12.2019)
+-----
+- added support for Postgres 12 updated constrain schemas
+
 2.6.8 (24.12.2019)
 -----
 - [bufgix] proper abstract type detection for primary UUID columns for SQLite driver 
