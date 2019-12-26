@@ -179,11 +179,11 @@ class MySQLColumn extends AbstractColumn
         $column->autoIncrement = stripos($schema['Extra'], 'auto_increment') !== false;
 
         if (
-        !preg_match(
-            '/^(?P<type>[a-z]+)(?:\((?P<options>[^\)]+)\))?/',
-            $column->type,
-            $matches
-        )
+            !preg_match(
+                '/^(?P<type>[a-z]+)(?:\((?P<options>[^\)]+)\))?/',
+                $column->type,
+                $matches
+            )
         ) {
             //No extra definitions
             return $column;

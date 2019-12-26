@@ -445,7 +445,7 @@ class PostgresColumn extends AbstractColumn
         array $schema,
         PostgresColumn $column
     ): void {
-        $query = "SELECT conname, pg_get_constraintdef(oid) as consrc FROM pg_constraint 
+        $query = "SELECT conname, pg_get_constraintdef(oid) as consrc FROM pg_constraint
         WHERE conrelid = ? AND contype = 'c' AND conkey = ?";
 
         $constraints = $driver->query(

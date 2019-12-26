@@ -103,7 +103,7 @@ class MySQLHandler extends Handler
     {
         if (
             $column->getDefaultValue() !== null
-             && in_array(
+            && in_array(
                 $column->getAbstractType(),
                 ['text', 'tinyText', 'longText', 'blob', 'tinyBlob', 'longBlob']
             )
