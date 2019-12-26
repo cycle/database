@@ -32,7 +32,7 @@ class MySQLHandler extends Handler
     ): void {
         $foreignBackup = [];
         foreach ($table->getForeignKeys() as $foreign) {
-            if ($column->getName() == $foreign->getColumns()) {
+            if ($column->getName() === $foreign->getColumns()) {
                 $foreignBackup[] = $foreign;
                 $this->dropForeignKey($table, $foreign);
             }
@@ -102,12 +102,11 @@ class MySQLHandler extends Handler
     protected function assertValid(AbstractColumn $column): void
     {
         if (
-            in_array(
+            $column->getDefaultValue() !== null
+             && in_array(
                 $column->getAbstractType(),
                 ['text', 'tinyText', 'longText', 'blob', 'tinyBlob', 'longBlob']
             )
-            && is_string($column->getDefaultValue())
-            && $column->getDefaultValue() !== ''
         ) {
             throw new MySQLException(
                 "Column {$column} of type text/blob can not have non empty default value"

@@ -174,16 +174,16 @@ class MySQLColumn extends AbstractColumn
         $column = new self($table, $schema['Field'], $timezone);
 
         $column->type = $schema['Type'];
-        $column->nullable = strtolower($schema['Null']) == 'yes';
+        $column->nullable = strtolower($schema['Null']) === 'yes';
         $column->defaultValue = $schema['Default'];
         $column->autoIncrement = stripos($schema['Extra'], 'auto_increment') !== false;
 
         if (
-            !preg_match(
-                '/^(?P<type>[a-z]+)(?:\((?P<options>[^\)]+)\))?/',
-                $column->type,
-                $matches
-            )
+        !preg_match(
+            '/^(?P<type>[a-z]+)(?:\((?P<options>[^\)]+)\))?/',
+            $column->type,
+            $matches
+        )
         ) {
             //No extra definitions
             return $column;
@@ -203,23 +203,26 @@ class MySQLColumn extends AbstractColumn
         }
 
         //Fetching enum values
-        if ($column->getAbstractType() == 'enum' && !empty($options)) {
-            $column->enumValues = array_map(function ($value) {
-                return trim($value, $value[0]);
-            }, $options);
+        if ($column->getAbstractType() === 'enum' && !empty($options)) {
+            $column->enumValues = array_map(
+                static function ($value) {
+                    return trim($value, $value[0]);
+                },
+                $options
+            );
 
             return $column;
         }
 
         //Default value conversions
-        if ($column->type == 'bit' && $column->hasDefaultValue()) {
+        if ($column->type === 'bit' && $column->hasDefaultValue()) {
             //Cutting b\ and '
             $column->defaultValue = new Fragment($column->defaultValue);
         }
 
         if (
-            $column->getAbstractType() == 'timestamp'
-            && $column->defaultValue == '0000-00-00 00:00:00'
+            $column->defaultValue === '0000-00-00 00:00:00'
+            && $column->getAbstractType() === 'timestamp'
         ) {
             //Normalizing default value for timestamps
             $column->defaultValue = 0;
