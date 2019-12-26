@@ -4,6 +4,7 @@ CHANGELOG for 0.9.0 RC
 2.6.10 (26.12.2019)
 -----
 - [bugfix] invalid change detection for nullable and zeroed default values
+- do not allow default values for text and blob columns of MySQL
 
 2.6.9 (26.12.2019)
 -----
