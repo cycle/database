@@ -178,7 +178,10 @@ class SQLiteColumn extends AbstractColumn
          */
         $column->defaultValue = $schema['dflt_value'];
 
-        if (is_string($column->defaultValue) && preg_match('/^[\'""].*?[\'"]$/', $column->defaultValue)) {
+        if (
+            is_string($column->defaultValue)
+            && preg_match('/^[\'""].*?[\'"]$/', $column->defaultValue)
+        ) {
             $column->defaultValue = substr($column->defaultValue, 1, -1);
         }
 
@@ -208,7 +211,7 @@ class SQLiteColumn extends AbstractColumn
             }
         }
 
-        if ($column->type == 'enum') {
+        if ($column->type === 'enum') {
             //Quoted column name
             $quoted = $schema['identifier'];
 
@@ -231,6 +234,7 @@ class SQLiteColumn extends AbstractColumn
 
                         unset($value);
                     }
+                    unset($value);
 
                     $column->enumValues = $enumValues;
                 }

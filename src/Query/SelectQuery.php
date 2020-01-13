@@ -11,11 +11,9 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Query;
 
-use Spiral\Database\Driver\Compiler;
+use Countable;
+use IteratorAggregate;
 use Spiral\Database\Driver\CompilerInterface;
-use Spiral\Database\Driver\QueryBindings;
-use Spiral\Database\Exception\BuilderException;
-use Spiral\Database\Exception\StatementException;
 use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Query\Traits\HavingTrait;
 use Spiral\Database\Query\Traits\JoinTrait;
@@ -23,77 +21,51 @@ use Spiral\Database\Query\Traits\TokenTrait;
 use Spiral\Database\Query\Traits\WhereTrait;
 use Spiral\Database\StatementInterface;
 use Spiral\Pagination\PaginableInterface;
-use Spiral\Pagination\Traits\LimitsTrait;
+use Throwable;
 
 /**
- * SelectQuery extends AbstractSelect with ability to specify selection tables and perform UNION
- * of multiple select queries.
+ * Builds select sql statements.
  */
-class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregate, PaginableInterface
+class SelectQuery extends ActiveQuery implements
+    Countable,
+    IteratorAggregate,
+    PaginableInterface
 {
     use TokenTrait;
     use WhereTrait;
     use HavingTrait;
     use JoinTrait;
-    use LimitsTrait;
 
-    public const QUERY_TYPE = Compiler::SELECT_QUERY;
-
-    /**
-     * Sort directions.
-     */
+    // sort directions
     public const SORT_ASC  = 'ASC';
     public const SORT_DESC = 'DESC';
 
-    /**
-     * Table names to select data from.
-     *
-     * @var array
-     */
+    /** @var array */
     protected $tables = [];
 
-    /**
-     * Select queries represented by sql fragments or query builders to be united. Stored as
-     * [UNION TYPE, SELECT QUERY].
-     *
-     * @var array
-     */
+    /** @var array */
     protected $unionTokens = [];
 
-    /**
-     * Query must return only unique rows.
-     *
-     * @var bool|string
-     */
+    /** @var bool|string */
     protected $distinct = false;
 
-    /**
-     * Columns or expressions to be fetched from database, can include aliases (AS).
-     *
-     * @var array
-     */
+    /** @var array */
     protected $columns = ['*'];
 
-    /**
-     * Columns/expression associated with their sort direction (ASK|DESC).
-     *
-     * @var array
-     */
-    protected $ordering = [];
+    /** @var array */
+    protected $orderBy = [];
 
-    /**
-     * Columns/expressions to group by.
-     *
-     * @var array
-     */
-    protected $grouping = [];
+    /** @var array */
+    protected $groupBy = [];
 
-    /**
-     * Perform the select for later update.
-     *
-     * @var bool
-     */
+    /** @var bool */
     protected $forUpdate = false;
+
+    /** @var int */
+    private $limit;
+
+    /** @var int */
+    private $offset;
 
     /**
      * @param array $from    Initial set of table names.
@@ -102,48 +74,8 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
     public function __construct(array $from = [], array $columns = [])
     {
         $this->tables = $from;
-        if (!empty($columns)) {
+        if ($columns !== []) {
             $this->columns = $this->fetchIdentifiers($columns);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * Shortcut to execute one of aggregation methods (AVG, MAX, MIN, SUM) using method name as
-     * reference.
-     *
-     * Example:
-     * echo $select->sum('user.balance');
-     *
-     * @param string $method
-     * @param array  $arguments
-     * @return string
-     *
-     * @throws BuilderException
-     * @throws StatementException
-     */
-    public function __call($method, array $arguments)
-    {
-        if (!in_array($method = strtoupper($method), ['AVG', 'MIN', 'MAX', 'SUM'])) {
-            throw new BuilderException("Unknown method '{$method}' in '" . get_class($this) . "'");
-        }
-
-        if (!isset($arguments[0]) || count($arguments) > 1) {
-            throw new BuilderException('Aggregation methods can support exactly one column');
-        }
-
-        $select = clone $this;
-
-        //To be escaped in compiler
-        $select->columns = ["{$method}({$arguments[0]})"];
-
-        $st = $select->run();
-
-        try {
-            return $st->fetchColumn();
-        } finally {
-            $st->close();
         }
     }
 
@@ -152,10 +84,9 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
      *
      * @param bool|string|FragmentInterface $distinct You are only allowed to use string value for
      *                                                Postgres databases.
-     *
      * @return self|$this
      */
-    public function distinct($distinct = true): self
+    public function distinct($distinct = true): SelectQuery
     {
         $this->distinct = $distinct;
 
@@ -163,11 +94,55 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
     }
 
     /**
+     * Set table names SELECT query should be performed for. Table names can be provided with
+     * specified alias (AS construction).
+     *
+     * @param array|string|mixed $tables
+     * @return self|$this
+     */
+    public function from($tables): SelectQuery
+    {
+        $this->tables = $this->fetchIdentifiers(func_get_args());
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTables(): array
+    {
+        return $this->tables;
+    }
+
+    /**
+     * Set columns should be fetched as result of SELECT query. Columns can be provided with
+     * specified alias (AS construction).
+     *
+     * @param array|string|mixed $columns
+     * @return self|$this
+     */
+    public function columns($columns): SelectQuery
+    {
+        $this->columns = $this->fetchIdentifiers(func_get_args());
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getColumns(): array
+    {
+        return $this->columns;
+    }
+
+    /**
      * Select entities for the following update.
      *
      * @return self|$this
      */
-    public function forUpdate(): self
+    public function forUpdate(): SelectQuery
     {
         $this->forUpdate = true;
 
@@ -187,16 +162,16 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
      * @param string       $direction Sorting direction, ASC|DESC.
      * @return self|$this
      */
-    public function orderBy($expression, $direction = self::SORT_ASC): self
+    public function orderBy($expression, $direction = self::SORT_ASC): SelectQuery
     {
         if (!is_array($expression)) {
-            $this->ordering[] = [$expression, $direction];
+            $this->orderBy[] = [$expression, $direction];
 
             return $this;
         }
 
         foreach ($expression as $nested => $dir) {
-            $this->ordering[] = [$nested, $dir];
+            $this->orderBy[] = [$nested, $dir];
         }
 
         return $this;
@@ -208,68 +183,17 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
      * @param string $expression
      * @return self|$this
      */
-    public function groupBy($expression): self
+    public function groupBy($expression): SelectQuery
     {
-        $this->grouping[] = $expression;
+        $this->groupBy[] = $expression;
 
         return $this;
-    }
-
-    /**
-     * Set table names SELECT query should be performed for. Table names can be provided with
-     * specified alias (AS construction).
-     *
-     * @param array|string|mixed $tables Array of names, comma separated string or set of
-     *                                   parameters.
-     * @return self|$this
-     */
-    public function from($tables): SelectQuery
-    {
-        $this->tables = $this->fetchIdentifiers(func_get_args());
-
-        return $this;
-    }
-
-    /**
-     * Tables to be loaded.
-     *
-     * @return array
-     */
-    public function getTables(): array
-    {
-        return $this->tables;
-    }
-
-    /**
-     * Set columns should be fetched as result of SELECT query. Columns can be provided with
-     * specified alias (AS construction).
-     *
-     * @param array|string|mixed $columns Array of names, comma separated string or set of
-     *                                    parameters.
-     * @return self|$this
-     */
-    public function columns($columns): SelectQuery
-    {
-        $this->columns = $this->fetchIdentifiers(func_get_args());
-
-        return $this;
-    }
-
-    /**
-     * Set of columns to be selected.
-     *
-     * @return array
-     */
-    public function getColumns(): array
-    {
-        return $this->columns;
     }
 
     /**
      * Add select query to be united with.
      *
      * @param FragmentInterface $query
-     *
      * @return self|$this
      */
     public function union(FragmentInterface $query): SelectQuery
@@ -294,26 +218,47 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
     }
 
     /**
-     * {@inheritdoc}
+     * Set selection limit. Attention, this limit value does not affect values set in paginator but
+     * only changes pagination window. Set to 0 to disable limiting.
+     *
+     * @param int|null $limit
+     * @return self|$this
      */
-    public function compile(QueryBindings $bindings, CompilerInterface $compiler): string
+    public function limit(int $limit = null): SelectQuery
     {
-        //11 parameters!
-        return $compiler->compileSelect(
-            $bindings,
-            $this->tables,
-            $this->distinct,
-            $this->columns,
-            $this->joinTokens,
-            $this->whereTokens,
-            $this->havingTokens,
-            $this->grouping,
-            $this->ordering,
-            $this->getLimit(),
-            $this->getOffset(),
-            $this->unionTokens,
-            $this->forUpdate
-        );
+        $this->limit = $limit;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getLimit(): ?int
+    {
+        return $this->limit;
+    }
+
+    /**
+     * Set selection offset. Attention, this value does not affect associated paginator but only
+     * changes pagination window.
+     *
+     * @param int|null $offset
+     * @return self|$this
+     */
+    public function offset(int $offset = null): SelectQuery
+    {
+        $this->offset = $offset;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getOffset(): ?int
+    {
+        return $this->offset;
     }
 
     /**
@@ -321,16 +266,12 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
      *
      * @return StatementInterface
      */
-    public function run()
+    public function run(): StatementInterface
     {
-        if ($this->compiler === null) {
-            throw new BuilderException('Unable to run query without assigned driver');
-        }
+        $params = new QueryParameters();
+        $queryString = $this->sqlStatement($params);
 
-        $bindings = new QueryBindings();
-        $queryString = $this->compile($bindings, $this->compiler);
-
-        return $this->driver->query($queryString, $bindings->getParameters());
+        return $this->driver->query($queryString, $params->getParameters());
     }
 
     /**
@@ -345,20 +286,27 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
      *
      * @param int      $limit
      * @param callable $callback
+     *
+     * @throws Throwable
      */
     public function runChunks(int $limit, callable $callback): void
     {
         $count = $this->count();
 
-        //To keep original query untouched
+        // to keep original query untouched
         $select = clone $this;
         $select->limit($limit);
 
         $offset = 0;
         while ($offset + $limit <= $count) {
-            $result = call_user_func($callback, $select->offset($offset)->getIterator(), $offset, $count);
+            $result = $callback(
+                $select->offset($offset)->getIterator(),
+                $offset,
+                $count
+            );
+
+            // stop iteration
             if ($result === false) {
-                //Stop iteration
                 return;
             }
 
@@ -367,10 +315,7 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * Count number of rows in query. Limit, offset, order by, group by values will be ignored. Do
-     * not count united queries, or queries in complex joins.
+     * Count number of rows in query. Limit, offset, order by, group by values will be ignored.
      *
      * @param string $column Column to count by (every column by default).
      * @return int
@@ -381,8 +326,8 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
 
         //To be escaped in compiler
         $select->columns = ["COUNT({$column})"];
-        $select->ordering = [];
-        $select->grouping = [];
+        $select->orderBy = [];
+        $select->groupBy = [];
 
         $st = $select->run();
         try {
@@ -390,6 +335,42 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
         } finally {
             $st->close();
         }
+    }
+
+    /**
+     * @param string $column
+     * @return mixed
+     */
+    public function avg(string $column)
+    {
+        return $this->runAggregate('AVG', $column);
+    }
+
+    /**
+     * @param string $column
+     * @return mixed
+     */
+    public function max(string $column)
+    {
+        return $this->runAggregate('MAX', $column);
+    }
+
+    /**
+     * @param string $column
+     * @return mixed
+     */
+    public function min(string $column)
+    {
+        return $this->runAggregate('MIN', $column);
+    }
+
+    /**
+     * @param string $column
+     * @return mixed
+     */
+    public function sum(string $column)
+    {
+        return $this->runAggregate('SUM', $column);
     }
 
     /**
@@ -411,7 +392,56 @@ class SelectQuery extends AbstractQuery implements \Countable, \IteratorAggregat
     {
         $st = $this->run();
         try {
-            return $st->fetchAll(\PDO::FETCH_ASSOC);
+            return $st->fetchAll();
+        } finally {
+            $st->close();
+        }
+    }
+
+    /**
+     * @return int
+     */
+    public function getType(): int
+    {
+        return CompilerInterface::SELECT_QUERY;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTokens(): array
+    {
+        return [
+            'forUpdate' => $this->forUpdate,
+            'from'      => $this->tables,
+            'join'      => $this->joinTokens,
+            'columns'   => $this->columns,
+            'distinct'  => $this->distinct,
+            'where'     => $this->whereTokens,
+            'having'    => $this->havingTokens,
+            'groupBy'   => $this->groupBy,
+            'orderBy'   => $this->orderBy,
+            'limit'     => $this->limit,
+            'offset'    => $this->offset,
+            'union'     => $this->unionTokens,
+        ];
+    }
+
+    /**
+     * @param string $method
+     * @param string $column
+     * @return mixed
+     */
+    private function runAggregate(string $method, string $column)
+    {
+        $select = clone $this;
+
+        //To be escaped in compiler
+        $select->columns = ["{$method}({$column})"];
+
+        $st = $select->run();
+        try {
+            return $st->fetchColumn();
         } finally {
             $st->close();
         }

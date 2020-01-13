@@ -39,7 +39,7 @@ class SQLiteIndex extends AbstractIndex
      */
     public function sqlStatement(DriverInterface $driver, bool $includeTable = true): string
     {
-        $statement = [$this->type == self::UNIQUE ? 'UNIQUE INDEX' : 'INDEX'];
+        $statement = [$this->isUnique() ? 'UNIQUE INDEX' : 'INDEX'];
 
         //SQLite love to add indexes without being asked for that
         $statement[] = 'IF NOT EXISTS';

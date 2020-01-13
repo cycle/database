@@ -11,33 +11,41 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Driver;
 
+use Spiral\Database\Exception\CompilerException;
+
 /**
- * Class responsible for "intelligent" table and column name quoting.
- * Attention, Quoter does not support string literals at this moment, use FragmentInterface.
+ * Responsible for table names quoting and name aliasing.
  */
 final class Quoter
 {
     // Used to detect functions and expression.
     private const STOPS = [')', '(', ' '];
 
+    /** @var string */
+    private $prefix;
+
+    /** @var string */
+    private $left;
+
+    /** @var string */
+    private $right;
+
     /** @var array */
     private $aliases = [];
 
-    /** @var DriverInterface */
-    private $driver = null;
-
-    /** @var string */
-    private $prefix = '';
-
     /**
-     * @param DriverInterface $driver Driver needed to correctly quote identifiers and string
-     *                                quotes.
-     * @param string          $prefix
+     * @param string $prefix
+     * @param string $quotes
      */
-    public function __construct(DriverInterface $driver, string $prefix)
+    public function __construct(string $prefix, string $quotes)
     {
-        $this->driver = $driver;
+        if (strlen($quotes) !== 2) {
+            throw new CompilerException('Invalid quoter quotes, expected 2 characters string');
+        }
+
         $this->prefix = $prefix;
+        $this->left = $quotes[0];
+        $this->right = $quotes[1];
     }
 
     /**
@@ -66,14 +74,6 @@ final class Quoter
     }
 
     /**
-     * @return string
-     */
-    public function getPrefix(): string
-    {
-        return $this->prefix;
-    }
-
-    /**
      * Register new quotation alias.
      *
      * @param string $alias
@@ -82,6 +82,30 @@ final class Quoter
     public function registerAlias(string $alias, string $identifier): void
     {
         $this->aliases[$alias] = $identifier;
+    }
+
+    /**
+     * Quote identifier without registering an alias.
+     *
+     * @param string $identifier
+     * @return string
+     */
+    public function identifier(string $identifier): string
+    {
+        if ($identifier === '*') {
+            return '*';
+        }
+
+        return sprintf(
+            '%s%s%s',
+            $this->left,
+            str_replace(
+                [$this->left, $this->right],
+                [$this->left . $this->left, $this->right . $this->right],
+                $identifier
+            ),
+            $this->right
+        );
     }
 
     /**
@@ -97,22 +121,22 @@ final class Quoter
     public function quote(string $identifier, bool $isTable = false): string
     {
         if (preg_match('/ AS /i', $identifier, $matches)) {
-            list($identifier, $alias) = explode($matches[0], $identifier);
+            [$identifier, $alias] = explode($matches[0], $identifier);
 
             return $this->aliasing($identifier, $alias, $isTable);
         }
 
         if ($this->hasExpressions($identifier)) {
-            //Processing complex expression
+            // processing complex expression
             return $this->expression($identifier);
         }
 
         if (strpos($identifier, '.') === false) {
-            //No table/column pair found
+            // no table/column pair found
             return $this->unpaired($identifier, $isTable);
         }
 
-        //Contain table.column statement (technically we can go deeper, but we should't)
+        // contain table.column statement (technically we can go deeper, but we should't)
         return $this->paired($identifier);
     }
 
@@ -122,18 +146,22 @@ final class Quoter
      * @param string $identifier
      * @return string
      */
-    protected function expression(string $identifier): string
+    private function expression(string $identifier): string
     {
-        return preg_replace_callback('/([a-z][0-9_a-z\.]*\(?)/i', function ($match) {
-            $identifier = $match[1];
+        return preg_replace_callback(
+            '/([a-z][0-9_a-z\.]*\(?)/i',
+            function ($match) {
+                $identifier = $match[1];
 
-            //Function name
-            if ($this->hasExpressions($identifier)) {
-                return $identifier;
-            }
+                //Function name
+                if ($this->hasExpressions($identifier)) {
+                    return $identifier;
+                }
 
-            return $this->quote($identifier);
-        }, $identifier);
+                return $this->quote($identifier);
+            },
+            $identifier
+        );
     }
 
     /**
@@ -144,15 +172,23 @@ final class Quoter
      * @param bool   $isTable
      * @return string
      */
-    protected function aliasing(string $identifier, string $alias, bool $isTable): string
+    private function aliasing(string $identifier, string $alias, bool $isTable): string
     {
         if (strpos($identifier, '.') !== false) {
             // non table alias
-            return $this->quote($identifier, $isTable) . ' AS ' . $this->driver->identifier($alias);
+            return sprintf(
+                '%s AS %s',
+                $this->quote($identifier, $isTable),
+                $this->identifier($alias)
+            );
         }
 
         // never create table alias to alias associations
-        $quoted = $this->driver->identifier($this->prefix . $identifier) . ' AS ' . $this->driver->identifier($alias);
+        $quoted = sprintf(
+            '%s AS %s',
+            $this->identifier($this->prefix . $identifier),
+            $this->identifier($alias)
+        );
 
         if ($isTable) {
             //We have to apply operation post factum to prevent self aliasing (name AS name)
@@ -169,12 +205,16 @@ final class Quoter
      * @param string $identifier
      * @return string
      */
-    protected function paired(string $identifier): string
+    private function paired(string $identifier): string
     {
         //We expecting only table and column, no database name can be included (due database isolation)
-        list($table, $column) = explode('.', $identifier);
+        [$table, $column] = explode('.', $identifier);
 
-        return "{$this->quote($table, true)}.{$this->driver->identifier($column)}";
+        return sprintf(
+            '%s.%s',
+            $this->quote($table, true),
+            $this->identifier($column)
+        );
     }
 
     /**
@@ -184,18 +224,19 @@ final class Quoter
      * @param bool   $isTable
      * @return string
      */
-    protected function unpaired(string $identifier, bool $isTable): string
+    private function unpaired(string $identifier, bool $isTable): string
     {
         if ($isTable && !isset($this->aliases[$identifier])) {
-            if (!isset($this->aliases[$this->prefix . $identifier])) {
+            $name = $this->prefix . $identifier;
+            if (!isset($this->aliases[$name])) {
                 //Generating our alias
-                $this->registerAlias($this->prefix . $identifier, $identifier);
+                $this->registerAlias($name, $identifier);
             }
 
-            $identifier = $this->prefix . $identifier;
+            $identifier = $name;
         }
 
-        return $this->driver->identifier($identifier);
+        return $this->identifier($identifier);
     }
 
     /**
@@ -204,7 +245,7 @@ final class Quoter
      * @param string $string
      * @return bool
      */
-    protected function hasExpressions(string $string): bool
+    private function hasExpressions(string $string): bool
     {
         foreach (self::STOPS as $symbol) {
             if (strpos($string, $symbol) !== false) {

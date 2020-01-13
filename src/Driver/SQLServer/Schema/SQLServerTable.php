@@ -115,7 +115,7 @@ class SQLServerTable extends AbstractTable
 
         $result = [];
         foreach ($fks as $schema) {
-            $result[] = SQlServerForeign::createInstance(
+            $result[] = SQlServerForeignKey::createInstance(
                 $this->getName(),
                 $this->getPrefix(),
                 $schema
@@ -170,6 +170,6 @@ class SQLServerTable extends AbstractTable
      */
     protected function createForeign(string $name): AbstractForeignKey
     {
-        return new SQlServerForeign($this->getName(), $this->getPrefix(), $name);
+        return new SQlServerForeignKey($this->getName(), $this->getPrefix(), $name);
     }
 }

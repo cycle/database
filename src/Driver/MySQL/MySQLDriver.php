@@ -12,20 +12,15 @@ declare(strict_types=1);
 namespace Spiral\Database\Driver\MySQL;
 
 use PDO;
-use Spiral\Database\DatabaseInterface;
 use Spiral\Database\Driver\Driver;
-use Spiral\Database\Driver\HandlerInterface;
-use Spiral\Database\Driver\MySQL\Schema\MySQLTable;
 use Spiral\Database\Exception\StatementException;
+use Spiral\Database\Query\QueryBuilder;
 
 /**
  * Talks to mysql databases.
  */
 class MySQLDriver extends Driver
 {
-    protected const TYPE                = DatabaseInterface::MYSQL;
-    protected const TABLE_SCHEMA_CLASS  = MySQLTable::class;
-    protected const QUERY_COMPILER      = MySQLCompiler::class;
     protected const DEFAULT_PDO_OPTIONS = [
         PDO::ATTR_CASE               => PDO::CASE_NATURAL,
         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
@@ -34,50 +29,25 @@ class MySQLDriver extends Driver
     ];
 
     /**
-     * {@inheritdoc}
+     * @param array $options
      */
-    public function identifier(string $identifier): string
+    public function __construct(array $options)
     {
-        return $identifier === '*' ? '*' : '`' . str_replace('`', '``', $identifier) . '`';
+        // default query builder
+        parent::__construct(
+            $options,
+            new MySQLHandler(),
+            new MySQLCompiler('``'),
+            QueryBuilder::defaultBuilder()
+        );
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function tableNames(): array
+    public function getType(): string
     {
-        $result = [];
-        foreach ($this->query('SHOW TABLES')->fetchAll(PDO::FETCH_NUM) as $row) {
-            $result[] = $row[0];
-        }
-
-        return $result;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasTable(string $name): bool
-    {
-        $query = 'SELECT COUNT(*) FROM `information_schema`.`tables` WHERE `table_schema` = ? AND `table_name` = ?';
-
-        return (bool)$this->query($query, [$this->getSource(), $name])->fetchColumn();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function eraseData(string $table): void
-    {
-        $this->execute("TRUNCATE TABLE {$this->identifier($table)}");
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getHandler(): HandlerInterface
-    {
-        return new MySQLHandler($this);
+        return 'MySQL';
     }
 
     /**

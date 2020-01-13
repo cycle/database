@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Query\Traits;
 
+use Closure;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Injection\Parameter;
@@ -18,11 +19,7 @@ use Spiral\Database\Injection\ParameterInterface;
 
 trait WhereTrait
 {
-    /**
-     * Set of generated where tokens, format must be supported by QueryCompilers.
-     *
-     * @var array
-     */
+    /** @var array */
     protected $whereTokens = [];
 
     /**
@@ -35,7 +32,12 @@ trait WhereTrait
      */
     public function where(...$args): self
     {
-        $this->createToken('AND', $args, $this->whereTokens, $this->whereWrapper());
+        $this->registerToken(
+            'AND',
+            $args,
+            $this->whereTokens,
+            $this->whereWrapper()
+        );
 
         return $this;
     }
@@ -50,7 +52,12 @@ trait WhereTrait
      */
     public function andWhere(...$args): self
     {
-        $this->createToken('AND', $args, $this->whereTokens, $this->whereWrapper());
+        $this->registerToken(
+            'AND',
+            $args,
+            $this->whereTokens,
+            $this->whereWrapper()
+        );
 
         return $this;
     }
@@ -65,7 +72,12 @@ trait WhereTrait
      */
     public function orWhere(...$args): self
     {
-        $this->createToken('OR', $args, $this->whereTokens, $this->whereWrapper());
+        $this->registerToken(
+            'OR',
+            $args,
+            $this->whereTokens,
+            $this->whereWrapper()
+        );
 
         return $this;
     }
@@ -73,36 +85,38 @@ trait WhereTrait
     /**
      * Convert various amount of where function arguments into valid where token.
      *
-     * @param string   $joiner     Boolean joiner (AND | OR).
-     * @param array    $parameters Set of parameters collected from where functions.
+     * @param string   $boolean    Boolean joiner (AND | OR).
+     * @param array    $params     Set of parameters collected from where functions.
      * @param array    $tokens     Array to aggregate compiled tokens. Reference.
      * @param callable $wrapper    Callback or closure used to wrap/collect every potential
      *                             parameter.
      * @throws BuilderException
      */
-    abstract protected function createToken($joiner, array $parameters, &$tokens, callable $wrapper);
+    abstract protected function registerToken(
+        $boolean,
+        array $params,
+        &$tokens,
+        callable $wrapper
+    );
 
     /**
      * Applied to every potential parameter while where tokens generation. Used to prepare and
      * collect where parameters.
      *
-     * @return \Closure
+     * @return Closure
      */
-    private function whereWrapper(): \Closure
+    private function whereWrapper(): Closure
     {
         return static function ($parameter) {
-            if ($parameter instanceof FragmentInterface) {
-                return $parameter;
-            }
-
             if (is_array($parameter)) {
-                throw new BuilderException('Arrays must be wrapped with Parameter instance');
+                throw new BuilderException(
+                    'Arrays must be wrapped with Parameter instance'
+                );
             }
 
-            //Wrapping all values with ParameterInterface
-            if (!$parameter instanceof ParameterInterface) {
-                $parameter = new Parameter($parameter, Parameter::DETECT_TYPE);
-            };
+            if (!$parameter instanceof ParameterInterface && !$parameter instanceof FragmentInterface) {
+                return new Parameter($parameter);
+            }
 
             return $parameter;
         };

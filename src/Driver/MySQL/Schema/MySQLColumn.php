@@ -145,7 +145,7 @@ class MySQLColumn extends AbstractColumn
     {
         $defaultValue = $this->defaultValue;
 
-        if (in_array($this->type, $this->forbiddenDefaults)) {
+        if (in_array($this->type, $this->forbiddenDefaults, true)) {
             //Flushing default value for forbidden types
             $this->defaultValue = null;
         }
@@ -191,6 +191,7 @@ class MySQLColumn extends AbstractColumn
 
         $column->type = $matches['type'];
 
+        $options = [];
         if (!empty($matches['options'])) {
             $options = explode(',', $matches['options']);
 
@@ -203,7 +204,7 @@ class MySQLColumn extends AbstractColumn
         }
 
         //Fetching enum values
-        if ($column->getAbstractType() === 'enum' && !empty($options)) {
+        if ($options !== [] && $column->getAbstractType() === 'enum') {
             $column->enumValues = array_map(
                 static function ($value) {
                     return trim($value, $value[0]);

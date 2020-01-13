@@ -270,7 +270,7 @@ class PostgresColumn extends AbstractColumn
         }
 
         //Dropping enum constrain before any operation
-        if ($initial->getAbstractType() === 'enum' && $this->constrained) {
+        if ($this->constrained && $initial->getAbstractType() === 'enum') {
             $operations[] = 'DROP CONSTRAINT ' . $driver->identifier($this->enumConstraint());
         }
 
@@ -420,10 +420,11 @@ class PostgresColumn extends AbstractColumn
                 substr($this->defaultValue, 2, strpos($this->defaultValue, '::') - 3)
             );
         } elseif ($this->type === 'boolean') {
-            $this->defaultValue = (strtolower($this->defaultValue) == 'true');
+            $this->defaultValue = (strtolower($this->defaultValue) === 'true');
         }
 
-        if ($this->getType() === self::FLOAT || $this->getType() === self::INT) {
+        $type = $this->getType();
+        if ($type === self::FLOAT || $type === self::INT) {
             if (preg_match('/^\(?(.*?)\)?(?!::(.+))?$/', $this->defaultValue, $matches)) {
                 //Negative numeric values
                 $this->defaultValue = $matches[1];

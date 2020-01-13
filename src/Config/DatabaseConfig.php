@@ -125,7 +125,6 @@ final class DatabaseConfig extends InjectableConfig
         }
 
         $config = $this->config['connections'][$driver] ?? $this->config['drivers'][$driver];
-
         if ($config instanceof Autowire) {
             return $config;
         }

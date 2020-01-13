@@ -10,8 +10,8 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\Driver\Handler;
 use Spiral\Database\Database;
+use Spiral\Database\Driver\Handler;
 use Spiral\Database\Schema\AbstractColumn;
 use Spiral\Database\Schema\AbstractTable;
 

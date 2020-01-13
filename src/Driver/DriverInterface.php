@@ -11,13 +11,11 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Driver;
 
+use DateTimeZone;
+use PDO;
 use Spiral\Database\Exception\DriverException;
 use Spiral\Database\Exception\StatementException;
-use Spiral\Database\Query\DeleteQuery;
-use Spiral\Database\Query\InsertQuery;
-use Spiral\Database\Query\SelectQuery;
-use Spiral\Database\Query\UpdateQuery;
-use Spiral\Database\Schema\AbstractTable;
+use Spiral\Database\Query\BuilderInterface;
 use Spiral\Database\StatementInterface;
 
 /**
@@ -98,16 +96,28 @@ interface DriverInterface
     /**
      * Connection specific timezone, at this moment locked to UTC.
      *
-     * @return \DateTimeZone
+     * @return DateTimeZone
      */
-    public function getTimezone(): \DateTimeZone;
+    public function getTimezone(): DateTimeZone;
 
     /**
-     * Check if driver already connected.
-     *
-     * @return bool
+     * @return HandlerInterface
      */
-    public function isConnected(): bool;
+    public function getSchemaHandler(): HandlerInterface;
+
+    /**
+     * Returns query compiler associated with the driver.
+     *
+     * @return CompilerInterface
+     */
+    public function getQueryCompiler(): CompilerInterface;
+
+    /**
+     * Provides the ability to initiate active queries.
+     *
+     * @return BuilderInterface
+     */
+    public function getQueryBuilder(): BuilderInterface;
 
     /**
      * Force driver connection.
@@ -115,6 +125,13 @@ interface DriverInterface
      * @throws DriverException
      */
     public function connect();
+
+    /**
+     * Check if driver already connected.
+     *
+     * @return bool
+     */
+    public function isConnected(): bool;
 
     /**
      * Disconnect driver.
@@ -128,48 +145,10 @@ interface DriverInterface
      * @param int   $type Parameter type.
      * @return string
      */
-    public function quote($value, int $type = \PDO::PARAM_STR): string;
-
-    /**
-     * Driver specific database/table identifier quotation.
-     *
-     * @param string $identifier
-     * @return string
-     */
-    public function identifier(string $identifier): string;
-
-    /**
-     * Check if table exists.
-     *
-     * @param string $name
-     * @return bool
-     */
-    public function hasTable(string $name): bool;
-
-    /**
-     * Get every available table name as array.
-     *
-     * @return array
-     */
-    public function tableNames(): array;
-
-    /**
-     * Get schema specific to the given table.
-     *
-     * @param string $name
-     * @param string $prefix
-     * @return AbstractTable
-     */
-    public function getSchema(string $name, string $prefix = ''): AbstractTable;
-
-    /**
-     * Clean (truncate) specified driver table.
-     *
-     * @param string $table Table name with prefix included.
-     *
-     * @throws StatementException
-     */
-    public function eraseData(string $table);
+    public function quote(
+        $value,
+        int $type = PDO::PARAM_STR
+    ): string;
 
     /**
      * Wraps PDO query method with custom representation class.
@@ -202,72 +181,6 @@ interface DriverInterface
      * @return mixed
      */
     public function lastInsertID(string $sequence = null);
-
-    /**
-     * Get InsertQuery builder with driver specific query compiler.
-     *
-     * @param string      $prefix Database specific table prefix, used to quote table names and
-     *                            build aliases.
-     * @param string|null $table
-     * @return InsertQuery
-     */
-    public function insertQuery(string $prefix, string $table = null): InsertQuery;
-
-    /**
-     * Get SelectQuery builder with driver specific query compiler.
-     *
-     * @param string $prefix Database specific table prefix, used to quote table names and build
-     *                       aliases.
-     * @param array  $from
-     * @param array  $columns
-     * @return SelectQuery
-     */
-    public function selectQuery(string $prefix, array $from = [], array $columns = []): SelectQuery;
-
-    /**
-     * @param string      $prefix
-     * @param string|null $from Database specific table prefix, used to quote table names and
-     *                           build aliases.
-     * @param array       $where Initial builder parameters.
-     * @return DeleteQuery
-     */
-    public function deleteQuery(
-        string $prefix,
-        string $from = null,
-        array $where = []
-    ): DeleteQuery;
-
-    /**
-     * Get UpdateQuery builder with driver specific query compiler.
-     *
-     * @param string      $prefix Database specific table prefix, used to quote table names and
-     *                            build aliases.
-     * @param string|null $table
-     * @param array       $where
-     * @param array       $values
-     * @return UpdateQuery
-     */
-    public function updateQuery(
-        string $prefix,
-        string $table = null,
-        array $where = [],
-        array $values = []
-    ): UpdateQuery;
-
-    /**
-     * Handler responsible for schema related operations.
-     *
-     * @return HandlerInterface
-     */
-    public function getHandler(): HandlerInterface;
-
-    /**
-     * Get query compiler with specific database prefix.
-     *
-     * @param string $prefix
-     * @return CompilerInterface
-     */
-    public function getCompiler(string $prefix = ''): CompilerInterface;
 
     /**
      * Start SQL transaction with specified isolation level (not all DBMS support it). Nested

@@ -30,14 +30,6 @@ interface ParameterInterface
     public function getValue();
 
     /**
-     * Create copy of self with new value but same type.
-     *
-     * @param mixed $value
-     * @return self|$this
-     */
-    public function withValue($value): ParameterInterface;
-
-    /**
      * Parameter type.
      *
      * @return int|mixed
@@ -50,4 +42,11 @@ interface ParameterInterface
      * @return bool
      */
     public function isArray(): bool;
+
+    /**
+     * Indication that parameter represent NULL value.
+     *
+     * @return bool
+     */
+    public function isNull(): bool;
 }

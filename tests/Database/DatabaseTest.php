@@ -12,14 +12,18 @@ declare(strict_types=1);
 namespace Spiral\Database\Tests;
 
 use Mockery as m;
-use Psr\Log\LoggerInterface;
-use Psr\Log\LoggerTrait;
 use Spiral\Database\Database;
 use Spiral\Database\DatabaseInterface;
 use Spiral\Database\Driver\DriverInterface;
 
 abstract class DatabaseTest extends BaseTest
 {
+    public function testConnect(): void
+    {
+        $this->database->getDriver()->connect();
+        $this->assertTrue($this->database->getDriver()->isConnected());
+    }
+
     public function testGetName(): void
     {
         $db = $this->db();
@@ -32,35 +36,37 @@ abstract class DatabaseTest extends BaseTest
     public function testGetType(): void
     {
         $db = $this->db();
-        $this->assertSame($this->getDriver()->getType(), $db->getType());
+        $this->assertSame(
+            $this->getDriver()->getType(),
+            $db->getType()
+        );
+
+        $this->assertSame(strtolower(static::DRIVER), strtolower($db->getType()));
     }
 
-    public function testDriverVerbosity(): void
+    public function testReadWrite(): void
     {
-        $driver = $this->getDriver();
-        $driver->setLogger($l = new class() implements LoggerInterface {
-            use LoggerTrait;
+        $wDriver = m::mock(DriverInterface::class);
+        $rDriver = m::mock(DriverInterface::class);
 
-            public $records = [];
+        $db = new Database('default', '', $wDriver, $rDriver);
 
-            public function log($level, $message, array $context = []): void
-            {
-                $this->records = func_get_args();
-            }
-        });
-
-        $driver->getSchema('test');
-
-        $driver->setProfiling(true);
-
-        $driver->getSchema('test');
-        $this->assertNotEmpty($l->records);
-        $count = count($l->records);
-
-        $driver->setProfiling(false);
-        $driver->getSchema('test');
-        $this->assertSame($count, count($l->records));
+        $this->assertSame($wDriver, $db->getDriver());
+        $this->assertSame($wDriver, $db->getDriver(DatabaseInterface::WRITE));
+        $this->assertSame($rDriver, $db->getDriver(DatabaseInterface::READ));
     }
+
+    public function testExecute(): void
+    {
+        $wDriver = m::mock(DriverInterface::class);
+        $rDriver = m::mock(DriverInterface::class);
+
+        $db = new Database('default', '', $wDriver, $rDriver);
+
+        $wDriver->expects('execute')->with('test', ['param'])->andReturn(1);
+        $this->assertSame(1, $db->execute('test', ['param']));
+    }
+
 
     public function testPrefix(): void
     {
@@ -96,28 +102,5 @@ abstract class DatabaseTest extends BaseTest
         $this->assertTrue($db->hasTable('test'));
         $this->assertTrue($db->hasTable('prefix_test'));
         $this->assertCount(2, $db->getTables());
-    }
-
-    public function testReadWrite(): void
-    {
-        $wDriver = m::mock(DriverInterface::class);
-        $rDriver = m::mock(DriverInterface::class);
-
-        $db = new Database('default', '', $wDriver, $rDriver);
-
-        $this->assertSame($wDriver, $db->getDriver());
-        $this->assertSame($wDriver, $db->getDriver(DatabaseInterface::WRITE));
-        $this->assertSame($rDriver, $db->getDriver(DatabaseInterface::READ));
-    }
-
-    public function testExecute(): void
-    {
-        $wDriver = m::mock(DriverInterface::class);
-        $rDriver = m::mock(DriverInterface::class);
-
-        $db = new Database('default', '', $wDriver, $rDriver);
-
-        $wDriver->expects('execute')->with('test', ['param'])->andReturn(1);
-        $this->assertSame(1, $db->execute('test', ['param']));
     }
 }

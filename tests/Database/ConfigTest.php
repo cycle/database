@@ -18,22 +18,26 @@ class ConfigTest extends TestCase
 {
     public function testDefaultDatabase(): void
     {
-        $config = new DatabaseConfig([
-            'default' => 'database-1'
-        ]);
+        $config = new DatabaseConfig(
+            [
+                'default' => 'database-1'
+            ]
+        );
 
         $this->assertSame('database-1', $config->getDefaultDatabase());
     }
 
     public function testHasDatabase(): void
     {
-        $config = new DatabaseConfig([
-            'default'   => 'database-1',
-            'databases' => [
-                'test'  => [],
-                'test2' => [],
+        $config = new DatabaseConfig(
+            [
+                'default'   => 'database-1',
+                'databases' => [
+                    'test'  => [],
+                    'test2' => [],
+                ]
             ]
-        ]);
+        );
 
         $this->assertTrue($config->hasDatabase('test'));
         $this->assertTrue($config->hasDatabase('test2'));
@@ -45,29 +49,33 @@ class ConfigTest extends TestCase
      */
     public function testDatabaseException(): void
     {
-        $config = new DatabaseConfig([
-            'default'   => 'database-1',
-            'databases' => [
-                'test'  => [],
-                'test2' => [],
+        $config = new DatabaseConfig(
+            [
+                'default'   => 'database-1',
+                'databases' => [
+                    'test'  => [],
+                    'test2' => [],
+                ]
             ]
-        ]);
+        );
         $this->assertSame('test3', $config->getDatabase('test3'));
     }
 
     public function testDatabaseDriver(): void
     {
-        $config = new DatabaseConfig([
-            'default'   => 'database-1',
-            'databases' => [
-                'test'  => [
-                    'connection' => 'abc'
-                ],
-                'test2' => [
-                    'write' => 'bce'
-                ],
+        $config = new DatabaseConfig(
+            [
+                'default'   => 'database-1',
+                'databases' => [
+                    'test'  => [
+                        'connection' => 'abc'
+                    ],
+                    'test2' => [
+                        'write' => 'bce'
+                    ],
+                ]
             ]
-        ]);
+        );
 
         $this->assertSame('abc', $config->getDatabase('test')->getDriver());
         $this->assertSame('bce', $config->getDatabase('test2')->getDriver());
@@ -75,22 +83,24 @@ class ConfigTest extends TestCase
 
     public function testDatabaseReadDriver(): void
     {
-        $config = new DatabaseConfig([
-            'default'   => 'database-1',
-            'databases' => [
-                'test'  => [
-                    'connection'     => 'dce',
-                    'readConnection' => 'abc'
-                ],
-                'test1' => [
-                    'connection' => 'abc'
-                ],
-                'test2' => [
-                    'write' => 'dce',
-                    'read'  => 'bce'
-                ],
+        $config = new DatabaseConfig(
+            [
+                'default'   => 'database-1',
+                'databases' => [
+                    'test'  => [
+                        'connection'     => 'dce',
+                        'readConnection' => 'abc'
+                    ],
+                    'test1' => [
+                        'connection' => 'abc'
+                    ],
+                    'test2' => [
+                        'write' => 'dce',
+                        'read'  => 'bce'
+                    ],
+                ]
             ]
-        ]);
+        );
 
         $this->assertSame('abc', $config->getDatabase('test')->getReadDriver());
         $this->assertSame(null, $config->getDatabase('test1')->getReadDriver());
@@ -99,22 +109,24 @@ class ConfigTest extends TestCase
 
     public function testDatabasePrefix(): void
     {
-        $config = new DatabaseConfig([
-            'default'   => 'database-1',
-            'databases' => [
-                'test'  => [
-                    'tablePrefix' => 'abc',
-                    'driver'      => 'test'
-                ],
-                'test2' => [
-                    'tablePrefix' => 'bce',
-                    'driver'      => 'test'
-                ],
-                'test3' => [
-                    'driver' => 'test'
+        $config = new DatabaseConfig(
+            [
+                'default'   => 'database-1',
+                'databases' => [
+                    'test'  => [
+                        'tablePrefix' => 'abc',
+                        'driver'      => 'test'
+                    ],
+                    'test2' => [
+                        'tablePrefix' => 'bce',
+                        'driver'      => 'test'
+                    ],
+                    'test3' => [
+                        'driver' => 'test'
+                    ]
                 ]
             ]
-        ]);
+        );
 
         $this->assertSame('test', $config->getDatabase('test')->getName());
         $this->assertSame('abc', $config->getDatabase('test')->getPrefix());
@@ -124,38 +136,42 @@ class ConfigTest extends TestCase
 
     public function testDatabaseNames(): void
     {
-        $config = new DatabaseConfig([
-            'default'   => 'database-1',
-            'databases' => [
-                'test'  => [
-                    'driver' => 'test'
-                ],
-                'test2' => [
-                    'driver' => 'test'
-                ],
+        $config = new DatabaseConfig(
+            [
+                'default'   => 'database-1',
+                'databases' => [
+                    'test'  => [
+                        'driver' => 'test'
+                    ],
+                    'test2' => [
+                        'driver' => 'test'
+                    ],
+                ]
             ]
-        ]);
+        );
 
         $this->assertSame(['test', 'test2'], array_keys($config->getDatabases()));
     }
 
     public function testAliases(): void
     {
-        $config = new DatabaseConfig([
-            'default'   => 'database-1',
-            'aliases'   => [
-                'test3' => 'test2',
+        $config = new DatabaseConfig(
+            [
+                'default'   => 'database-1',
+                'aliases'   => [
+                    'test3' => 'test2',
 
-                //Recursive
-                'test6' => 'test5',
-                'test5' => 'test4',
-                'test4' => 'test'
-            ],
-            'databases' => [
-                'test'  => [],
-                'test2' => [],
+                    //Recursive
+                    'test6' => 'test5',
+                    'test5' => 'test4',
+                    'test4' => 'test'
+                ],
+                'databases' => [
+                    'test'  => [],
+                    'test2' => [],
+                ]
             ]
-        ]);
+        );
 
         $this->assertTrue($config->hasDatabase('test'));
         $this->assertTrue($config->hasDatabase('test2'));
@@ -172,23 +188,27 @@ class ConfigTest extends TestCase
 
     public function testHasDriver(): void
     {
-        $config = new DatabaseConfig([
-            'connections' => [
-                'test'  => [],
-                'test2' => [],
+        $config = new DatabaseConfig(
+            [
+                'connections' => [
+                    'test'  => [],
+                    'test2' => [],
+                ]
             ]
-        ]);
+        );
 
         $this->assertTrue($config->hasDriver('test'));
         $this->assertTrue($config->hasDriver('test2'));
         $this->assertFalse($config->hasDriver('database-1'));
 
-        $config = new DatabaseConfig([
-            'drivers' => [
-                'test'  => [],
-                'test2' => [],
+        $config = new DatabaseConfig(
+            [
+                'drivers' => [
+                    'test'  => [],
+                    'test2' => [],
+                ]
             ]
-        ]);
+        );
 
         $this->assertTrue($config->hasDriver('test'));
         $this->assertTrue($config->hasDriver('test2'));
@@ -200,30 +220,34 @@ class ConfigTest extends TestCase
      */
     public function testDriverException(): void
     {
-        $config = new DatabaseConfig([
-            'default' => 'database-1',
-        ]);
+        $config = new DatabaseConfig(
+            [
+                'default' => 'database-1',
+            ]
+        );
 
         $config->getDriver('test3');
     }
 
     public function testGetDriver(): void
     {
-        $config = new DatabaseConfig([
-            'connections' => [
-                'test'  => [
-                    'driver' => 'abc',
-                    'option' => 'option'
-                ],
-                'test2' => [
-                    'driver'  => 'bce',
-                    'options' => [
-                        'option'
-                    ]
-                ],
-                'test3' => new Autowire('someDriver')
+        $config = new DatabaseConfig(
+            [
+                'connections' => [
+                    'test'  => [
+                        'driver' => 'abc',
+                        'option' => 'option'
+                    ],
+                    'test2' => [
+                        'driver'  => 'bce',
+                        'options' => [
+                            'option'
+                        ]
+                    ],
+                    'test3' => new Autowire('someDriver')
+                ]
             ]
-        ]);
+        );
 
         $this->assertInstanceOf(Autowire::class, $config->getDriver('test'));
         $this->assertInstanceOf(Autowire::class, $config->getDriver('test2'));
@@ -232,21 +256,23 @@ class ConfigTest extends TestCase
 
     public function testDriverNames(): void
     {
-        $config = new DatabaseConfig([
-            'connections' => [
-                'test'  => [
-                    'driver' => 'abc',
-                    'option' => 'option'
-                ],
-                'test2' => [
-                    'driver'  => 'bce',
-                    'options' => [
-                        'option'
-                    ]
-                ],
-                'test3' => new Autowire('someDriver')
+        $config = new DatabaseConfig(
+            [
+                'connections' => [
+                    'test'  => [
+                        'driver' => 'abc',
+                        'option' => 'option'
+                    ],
+                    'test2' => [
+                        'driver'  => 'bce',
+                        'options' => [
+                            'option'
+                        ]
+                    ],
+                    'test3' => new Autowire('someDriver')
+                ]
             ]
-        ]);
+        );
 
         $this->assertSame(['test', 'test2', 'test3'], array_keys($config->getDrivers()));
     }

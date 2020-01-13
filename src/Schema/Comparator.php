@@ -14,13 +14,13 @@ namespace Spiral\Database\Schema;
 /**
  * Compares two table states.
  */
-final class Comparator
+final class Comparator implements ComparatorInterface
 {
     /** @var State */
-    private $initial = null;
+    private $initial;
 
     /** @var State */
-    private $current = null;
+    private $current;
 
     /**
      * @param State $initial
@@ -57,7 +57,7 @@ final class Comparator
             count($this->alteredForeignKeys()),
         ];
 
-        return array_sum($difference) != 0;
+        return array_sum($difference) !== 0;
     }
 
     /**
@@ -65,7 +65,7 @@ final class Comparator
      */
     public function isRenamed(): bool
     {
-        return $this->current->getName() != $this->initial->getName();
+        return $this->current->getName() !== $this->initial->getName();
     }
 
     /**
@@ -73,7 +73,7 @@ final class Comparator
      */
     public function isPrimaryChanged(): bool
     {
-        return $this->current->getPrimaryKeys() != $this->initial->getPrimaryKeys();
+        return $this->current->getPrimaryKeys() !== $this->initial->getPrimaryKeys();
     }
 
     /**

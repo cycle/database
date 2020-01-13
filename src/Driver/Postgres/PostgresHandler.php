@@ -13,12 +13,59 @@ namespace Spiral\Database\Driver\Postgres;
 
 use Spiral\Database\Driver\Handler;
 use Spiral\Database\Driver\Postgres\Schema\PostgresColumn;
+use Spiral\Database\Driver\Postgres\Schema\PostgresTable;
 use Spiral\Database\Exception\SchemaException;
 use Spiral\Database\Schema\AbstractColumn;
 use Spiral\Database\Schema\AbstractTable;
 
 class PostgresHandler extends Handler
 {
+    /**
+     * @inheritDoc
+     */
+    public function getSchema(string $table, string $prefix = null): AbstractTable
+    {
+        return new PostgresTable($this->driver, $table, $prefix ?? '');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTableNames(): array
+    {
+        $query = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'
+          AND table_type = 'BASE TABLE'";
+
+        $tables = [];
+        foreach ($this->driver->query($query) as $row) {
+            $tables[] = $row['table_name'];
+        }
+
+        return $tables;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasTable(string $name): bool
+    {
+        return (bool)$this->driver->query(
+            "SELECT COUNT(table_name) FROM information_schema.tables WHERE table_schema = 'public'
+          AND table_type = 'BASE TABLE' AND table_name = ?",
+            [$name]
+        )->fetchColumn();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function eraseTable(AbstractTable $table): void
+    {
+        $this->driver->execute(
+            "TRUNCATE TABLE {$this->driver->identifier($table->getName())}"
+        );
+    }
+
     /**
      * {@inheritdoc}
      *
@@ -34,7 +81,7 @@ class PostgresHandler extends Handler
         }
 
         //Rename is separate operation
-        if ($column->getName() != $initial->getName()) {
+        if ($column->getName() !== $initial->getName()) {
             $this->renameColumn($table, $initial, $column);
 
             //This call is required to correctly built set of alter operations

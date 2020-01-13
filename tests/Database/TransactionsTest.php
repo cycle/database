@@ -57,10 +57,12 @@ abstract class TransactionsTest extends BaseTest
     {
         $db = $this->database;
 
-        $this->database->transaction(function () use ($db): void {
-            $db->table->insertOne(['name' => 'Anton', 'value' => 123]);
-            $this->assertSame(1, $this->database->table->count());
-        });
+        $this->database->transaction(
+            function () use ($db): void {
+                $db->table->insertOne(['name' => 'Anton', 'value' => 123]);
+                $this->assertSame(1, $this->database->table->count());
+            }
+        );
 
         $this->assertSame(1, $this->database->table->count());
     }
@@ -69,10 +71,13 @@ abstract class TransactionsTest extends BaseTest
     {
         $db = $this->database;
 
-        $this->database->transaction(function () use ($db): void {
-            $db->table->insertOne(['name' => 'Anton', 'value' => 123]);
-            $this->assertSame(1, $this->database->table->count());
-        }, Database::ISOLATION_READ_COMMITTED);
+        $this->database->transaction(
+            function () use ($db): void {
+                $db->table->insertOne(['name' => 'Anton', 'value' => 123]);
+                $this->assertSame(1, $this->database->table->count());
+            },
+            Database::ISOLATION_READ_COMMITTED
+        );
 
         $this->assertSame(1, $this->database->table->count());
     }
@@ -81,10 +86,13 @@ abstract class TransactionsTest extends BaseTest
     {
         $db = $this->database;
 
-        $this->database->transaction(function () use ($db): void {
-            $db->table->insertOne(['name' => 'Anton', 'value' => 123]);
-            $this->assertSame(1, $this->database->table->count());
-        }, Database::ISOLATION_READ_UNCOMMITTED);
+        $this->database->transaction(
+            function () use ($db): void {
+                $db->table->insertOne(['name' => 'Anton', 'value' => 123]);
+                $this->assertSame(1, $this->database->table->count());
+            },
+            Database::ISOLATION_READ_UNCOMMITTED
+        );
 
         $this->assertSame(1, $this->database->table->count());
     }
@@ -93,10 +101,13 @@ abstract class TransactionsTest extends BaseTest
     {
         $db = $this->database;
 
-        $this->database->transaction(function () use ($db): void {
-            $db->table->insertOne(['name' => 'Anton', 'value' => 123]);
-            $this->assertSame(1, $this->database->table->count());
-        }, Database::ISOLATION_REPEATABLE_READ);
+        $this->database->transaction(
+            function () use ($db): void {
+                $db->table->insertOne(['name' => 'Anton', 'value' => 123]);
+                $this->assertSame(1, $this->database->table->count());
+            },
+            Database::ISOLATION_REPEATABLE_READ
+        );
 
         $this->assertSame(1, $this->database->table->count());
     }
@@ -105,10 +116,13 @@ abstract class TransactionsTest extends BaseTest
     {
         $db = $this->database;
 
-        $this->database->transaction(function () use ($db): void {
-            $db->table->insertOne(['name' => 'Anton', 'value' => 123]);
-            $this->assertSame(1, $this->database->table->count());
-        }, Database::ISOLATION_SERIALIZABLE);
+        $this->database->transaction(
+            function () use ($db): void {
+                $db->table->insertOne(['name' => 'Anton', 'value' => 123]);
+                $this->assertSame(1, $this->database->table->count());
+            },
+            Database::ISOLATION_SERIALIZABLE
+        );
 
         $this->assertSame(1, $this->database->table->count());
     }
@@ -130,12 +144,14 @@ abstract class TransactionsTest extends BaseTest
         $db = $this->database;
 
         try {
-            $this->database->transaction(function () use ($db): void {
-                $db->table->insertOne(['name' => 'Anton', 'value' => 123]);
-                $this->assertSame(1, $this->database->table->count());
+            $this->database->transaction(
+                function () use ($db): void {
+                    $db->table->insertOne(['name' => 'Anton', 'value' => 123]);
+                    $this->assertSame(1, $this->database->table->count());
 
-                throw new \Error('Something happen');
-            });
+                    throw new \Error('Something happen');
+                }
+            );
         } catch (\Error $e) {
             $this->assertSame('Something happen', $e->getMessage());
         }

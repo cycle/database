@@ -57,7 +57,7 @@ class PostgresTable extends AbstractTable
         if ($reset) {
             foreach ($this->fetchColumns() as $column) {
                 $currentColumn = $this->current->findColumn($column->getName());
-                if (!empty($currentColumn) && $column->compare($currentColumn)) {
+                if ($currentColumn !== null && $column->compare($currentColumn)) {
                     //Ensure constrained columns
                     $this->current->registerColumn($column);
                 }
@@ -71,9 +71,12 @@ class PostgresTable extends AbstractTable
     protected function fetchColumns(): array
     {
         //Required for constraints fetch
-        $tableOID = $this->driver->query('SELECT oid FROM pg_class WHERE relname = ?', [
-            $this->getName(),
-        ])->fetchColumn();
+        $tableOID = $this->driver->query(
+            'SELECT oid FROM pg_class WHERE relname = ?',
+            [
+                $this->getName(),
+            ]
+        )->fetchColumn();
 
         $query = $this->driver->query(
             'SELECT *
@@ -123,7 +126,7 @@ class PostgresTable extends AbstractTable
                 [$schema['indexname']]
             )->fetchColumn();
 
-            if ($conType == 'p') {
+            if ($conType === 'p') {
                 //Skipping primary keys
                 continue;
             }
@@ -167,7 +170,7 @@ class PostgresTable extends AbstractTable
 
         $result = [];
         foreach ($fks as $schema) {
-            $result[] = PostgresForeign::createInstance(
+            $result[] = PostgresForeignKey::createInstance(
                 $this->getName(),
                 $this->getPrefix(),
                 $schema
@@ -190,7 +193,7 @@ class PostgresTable extends AbstractTable
                 [$schema['indexname']]
             )->fetchColumn();
 
-            if ($conType != 'p') {
+            if ($conType !== 'p') {
                 //Skipping primary keys
                 continue;
             }
@@ -234,6 +237,6 @@ class PostgresTable extends AbstractTable
      */
     protected function createForeign(string $name): AbstractForeignKey
     {
-        return new PostgresForeign($this->getName(), $this->getPrefix(), $name);
+        return new PostgresForeignKey($this->getName(), $this->getPrefix(), $name);
     }
 }

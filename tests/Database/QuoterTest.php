@@ -11,14 +11,8 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Tests;
 
-use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Spiral\Database\Driver\Driver;
-use Spiral\Database\Driver\MySQL\MySQLDriver;
-use Spiral\Database\Driver\Postgres\PostgresDriver;
 use Spiral\Database\Driver\Quoter;
-use Spiral\Database\Driver\SQLite\SQLiteDriver;
-use Spiral\Database\Driver\SQLServer\SQLServerDriver;
 
 class QuoterTest extends TestCase
 {
@@ -259,7 +253,7 @@ class QuoterTest extends TestCase
 
     public function testMySQLlPrefixes(): void
     {
-        $quoter = $this->makeQuoter('p_', MySQLDriver::class);
+        $quoter = $this->makeQuoter('p_', '``');
 
         $this->assertEquals(
             '*',
@@ -303,101 +297,9 @@ class QuoterTest extends TestCase
         );
     }
 
-    public function testPostgresPrefixes(): void
-    {
-        $quoter = $this->makeQuoter('p_', PostgresDriver::class);
-
-        $this->assertEquals(
-            '*',
-            $quoter->quote('*')
-        );
-
-        $quoter = clone $quoter;
-        $this->assertEquals(
-            '"column"',
-            $quoter->quote('column')
-        );
-
-        $quoter = clone $quoter;
-        $this->assertEquals(
-            '"p_table"."column"',
-            $quoter->quote('table.column')
-        );
-
-        $quoter = clone $quoter;
-        $this->assertEquals(
-            '"p_table".*',
-            $quoter->quote('table.*')
-        );
-
-        $quoter = clone $quoter;
-        $this->assertEquals(
-            '"p_table_name"',
-            $quoter->quote('table_name', true)
-        );
-
-        $quoter = clone $quoter;
-        $this->assertEquals(
-            '"p_table"."column" AS "column_alias"',
-            $quoter->quote('table.column AS column_alias')
-        );
-
-        $quoter = clone $quoter;
-        $this->assertEquals(
-            '"p_table_name" AS "table_name"',
-            $quoter->quote('table_name AS table_name', true)
-        );
-    }
-
-    public function testSQLitePrefixes(): void
-    {
-        $quoter = $this->makeQuoter('p_', SQLiteDriver::class);
-
-        $this->assertEquals(
-            '*',
-            $quoter->quote('*')
-        );
-
-        $quoter = clone $quoter;
-        $this->assertEquals(
-            '"column"',
-            $quoter->quote('column')
-        );
-
-        $quoter = clone $quoter;
-        $this->assertEquals(
-            '"p_table"."column"',
-            $quoter->quote('table.column')
-        );
-
-        $quoter = clone $quoter;
-        $this->assertEquals(
-            '"p_table".*',
-            $quoter->quote('table.*')
-        );
-
-        $quoter = clone $quoter;
-        $this->assertEquals(
-            '"p_table_name"',
-            $quoter->quote('table_name', true)
-        );
-
-        $quoter = clone $quoter;
-        $this->assertEquals(
-            '"p_table"."column" AS "column_alias"',
-            $quoter->quote('table.column AS column_alias')
-        );
-
-        $quoter = clone $quoter;
-        $this->assertEquals(
-            '"p_table_name" AS "table_name"',
-            $quoter->quote('table_name AS table_name', true)
-        );
-    }
-
     public function testSQLServerPrefixes(): void
     {
-        $quoter = $this->makeQuoter('p_', SQLServerDriver::class);
+        $quoter = $this->makeQuoter('p_', '[]');
 
         $this->assertEquals(
             '*',
@@ -442,20 +344,12 @@ class QuoterTest extends TestCase
     }
 
     /**
-     * Get instance of quoter.
-     *
      * @param string $prefix
-     * @param string $driver Driver class.
-     *
+     * @param string $quote
      * @return Quoter
      */
-    protected function makeQuoter($prefix = '', $driver = Driver::class)
+    protected function makeQuoter($prefix = '', string $quote = '""')
     {
-        /**
-         * @var Driver $driver
-         */
-        $driver = m::mock($driver)->makePartial();
-
-        return new Quoter($driver, $prefix);
+        return new Quoter($prefix, $quote);
     }
 }

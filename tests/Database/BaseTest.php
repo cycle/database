@@ -1,9 +1,10 @@
 <?php
 
 /**
- * Spiral, Core Components
+ * Spiral Framework.
  *
- * @author Wolfy-J
+ * @license   MIT
+ * @author    Anton Titov (Wolfy-J)
  */
 
 declare(strict_types=1);
@@ -14,22 +15,40 @@ use PHPUnit\Framework\TestCase;
 use Spiral\Database\Database;
 use Spiral\Database\Driver\Driver;
 use Spiral\Database\Driver\Handler;
+use Spiral\Database\Injection\FragmentInterface;
+use Spiral\Database\Injection\ParameterInterface;
+use Spiral\Database\Query\ActiveQuery;
+use Spiral\Database\Query\QueryParameters;
 use Spiral\Database\Schema\AbstractColumn;
 use Spiral\Database\Schema\AbstractForeignKey;
 use Spiral\Database\Schema\AbstractIndex;
 use Spiral\Database\Schema\AbstractTable;
 use Spiral\Database\Schema\Comparator;
-use Spiral\Database\Tests\Fixtures\TestLogger;
+use Spiral\Database\Tests\Utils\TestLogger;
 
 abstract class BaseTest extends TestCase
 {
     public const DRIVER = null;
+
+    /** @var array */
     public static $config;
 
-    protected static $driverCache = [];
+    /** @var array */
+    public static $driverCache = [];
+
+    /** @var TestLogger */
+    public static $logger;
 
     /** @var Driver */
     protected $driver;
+
+    /** @var Database */
+    protected $database;
+
+    public function setUp(): void
+    {
+        $this->database = $this->db();
+    }
 
     /**
      * @return Driver
@@ -40,17 +59,22 @@ abstract class BaseTest extends TestCase
         if (!isset($this->driver)) {
             $class = $config['driver'];
 
-            $this->driver = new $class([
-                'connection' => $config['conn'],
-                'username'   => $config['user'],
-                'password'   => $config['pass'],
-                'options'    => []
-            ]);
+            $this->driver = new $class(
+                [
+                    'connection' => $config['conn'],
+                    'username'   => $config['user'],
+                    'password'   => $config['pass'],
+                    'options'    => [],
+                    'queryCache' => true
+                ]
+            );
         }
 
+        static::$logger = static::$logger ?? new TestLogger();
+        $this->driver->setLogger(static::$logger);
+
         if (self::$config['debug']) {
-            $this->driver->setProfiling(true);
-            $this->driver->setLogger(new TestLogger());
+            $this->enableProfiling();
         }
 
         return $this->driver;
@@ -73,21 +97,39 @@ abstract class BaseTest extends TestCase
         return new Database($name, $prefix, $driver);
     }
 
-    /**
-     * @param Database $db
-     */
-    protected function enableProfiling(Database $db): void
+    protected function enableProfiling(): void
     {
-        $db->getDriver()->setProfiling(true);
-        $db->getDriver()->setLogger(new TestLogger());
+        static::$logger->enable();
+    }
+
+    protected function disableProfiling(): void
+    {
+        static::$logger->disable();
     }
 
     /**
-     * @param Database $db
+     * Send sample query in a form where all quotation symbols replaced with { and }.
+     *
+     * @param string                   $query
+     * @param string|FragmentInterface $fragment
      */
-    protected function disableProfiling(Database $db): void
+    protected function assertSameQuery(string $query, $fragment): void
     {
-        $db->getDriver()->setProfiling(false);
+        if ($fragment instanceof ActiveQuery) {
+            $fragment = $fragment->sqlStatement();
+        }
+
+        //Preparing query
+        $query = str_replace(
+            ['{', '}'],
+            explode('.', $this->db()->getDriver()->identifier('.')),
+            $query
+        );
+
+        $this->assertSame(
+            preg_replace('/\s+/', '', $query),
+            preg_replace('/\s+/', '', (string)$fragment)
+        );
     }
 
     /**
@@ -95,7 +137,7 @@ abstract class BaseTest extends TestCase
      */
     protected function dropDatabase(Database $database = null): void
     {
-        if (empty($database)) {
+        if ($database == null) {
             return;
         }
 
@@ -358,5 +400,22 @@ abstract class BaseTest extends TestCase
 
 
         return "Table '{$table}' not synced, no idea why, add more messages :P";
+    }
+
+    protected function assertSameParameters(array $parameters, ActiveQuery $query): void
+    {
+        $queryParams = new QueryParameters();
+        $query->sqlStatement($queryParams);
+
+        $builderParameters = [];
+        foreach ($queryParams->getParameters() as $param) {
+            if ($param instanceof ParameterInterface) {
+                $param = $param->getValue();
+            }
+
+            $builderParameters[] = $param;
+        }
+
+        $this->assertEquals($parameters, $builderParameters);
     }
 }

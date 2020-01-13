@@ -11,87 +11,47 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Query;
 
-use Spiral\Database\Exception\InterpolatorException;
-use Spiral\Database\Injection\Parameter;
+use DateTimeInterface;
 use Spiral\Database\Injection\ParameterInterface;
 
 /**
  * Simple helper class used to interpolate query with given values. To be used for profiling and
- * debug purposes only, unsafe SQL are generated!
+ * debug purposes only.
  */
 final class Interpolator
 {
     /**
-     * Helper method used to interpolate SQL query with set of parameters, must be used only for
-     * development purposes and never for real query!
+     * Injects parameters into statement. For debug purposes only.
      *
-     * @param string               $query
-     * @param ParameterInterface[] $parameters Parameters to be binded into query. Named list are supported.
-     * @param bool                 $flatten
+     * @param string   $query
+     * @param iterable $parameters
      * @return string
      */
-    public static function interpolate(string $query, array $parameters = [], bool $flatten = true): string
+    public static function interpolate(string $query, iterable $parameters = []): string
     {
         if ($parameters === []) {
             return $query;
         }
 
-        if ($flatten) {
-            $parameters = self::flattenParameters($parameters);
-        }
-
         //Let's prepare values so they looks better
         foreach ($parameters as $index => $parameter) {
-            $value = self::resolveValue($parameter);
-
-            if (is_numeric($index)) {
-                $query = self::replaceOnce('?', $value, $query);
-            } else {
-                $query = str_replace([':' . $index, $index], $value, $query);
-            }
-        }
-
-        return $query;
-    }
-
-    /**
-     * Prepare set of query builder/user parameters to be send to PDO. Must convert DateTime
-     * instances into valid database timestamps and resolve values of ParameterInterface.
-     *
-     * Every value has to wrapped with parameter interface.
-     *
-     * @param array $parameters
-     * @return \Generator
-     *
-     * @throws InterpolatorException
-     */
-    public static function flattenParameters(array $parameters): \Generator
-    {
-        $index = 0;
-        foreach ($parameters as $name => $parameter) {
-            if (is_string($name)) {
-                $index = $name;
-            } else {
-                $index++;
-            }
-
-            if (!$parameter instanceof ParameterInterface) {
-                $parameter = new Parameter($parameter);
-            }
-
-            if (!$parameter->isArray()) {
-                yield $index => $parameter;
+            if (!is_numeric($index)) {
+                $query = str_replace(
+                    [':' . $index, $index],
+                    self::resolveValue($parameter),
+                    $query
+                );
                 continue;
             }
 
-            foreach ($parameter->getValue() as $child) {
-                if (!$child instanceof ParameterInterface) {
-                    $child = new Parameter($child);
-                }
-
-                yield $index++ => $child;
-            }
+            $query = self::replaceOnce(
+                '?',
+                self::resolveValue($parameter),
+                $query
+            );
         }
+
+        return $query;
     }
 
     /**
@@ -108,10 +68,10 @@ final class Interpolator
 
         switch (gettype($parameter)) {
             case 'boolean':
-                return $parameter ? 'true' : 'false';
+                return $parameter ? 'TRUE' : 'FALSE';
 
             case 'integer':
-                return strval($parameter + 0);
+                return (string)($parameter + 0);
 
             case 'NULL':
                 return 'NULL';
@@ -127,9 +87,8 @@ final class Interpolator
                     return "'" . addcslashes((string)$parameter, "'") . "'";
                 }
 
-                if ($parameter instanceof \DateTimeInterface) {
-                    //Let's process dates different way
-                    return "'" . $parameter->format(\DateTime::ISO8601) . "'";
+                if ($parameter instanceof DateTimeInterface) {
+                    return "'" . $parameter->format(DateTimeInterface::ATOM) . "'";
                 }
         }
 
@@ -146,8 +105,11 @@ final class Interpolator
      * @param string $subject
      * @return string
      */
-    private static function replaceOnce(string $search, string $replace, string $subject): string
-    {
+    private static function replaceOnce(
+        string $search,
+        string $replace,
+        string $subject
+    ): string {
         $position = strpos($subject, $search);
         if ($position !== false) {
             return substr_replace($subject, $replace, $position, strlen($search));

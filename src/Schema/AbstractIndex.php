@@ -59,7 +59,7 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
      */
     public function isUnique(): bool
     {
-        return $this->type == self::UNIQUE;
+        return $this->type === self::UNIQUE;
     }
 
     /**
@@ -114,7 +114,7 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
      */
     public function sqlStatement(DriverInterface $driver, bool $includeTable = true): string
     {
-        $statement = [$this->type == self::UNIQUE ? 'UNIQUE INDEX' : 'INDEX'];
+        $statement = [$this->isUnique() ? 'UNIQUE INDEX' : 'INDEX'];
 
         $statement[] = $driver->identifier($this->name);
 

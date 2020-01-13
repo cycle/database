@@ -11,29 +11,20 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Query;
 
-use Spiral\Database\Driver\Compiler;
 use Spiral\Database\Driver\CompilerInterface;
-use Spiral\Database\Driver\QueryBindings;
-use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Query\Traits\TokenTrait;
 use Spiral\Database\Query\Traits\WhereTrait;
 
 /**
  * Update statement builder.
  */
-class DeleteQuery extends AbstractQuery
+class DeleteQuery extends ActiveQuery
 {
     use TokenTrait;
     use WhereTrait;
 
-    public const QUERY_TYPE = Compiler::DELETE_QUERY;
-
-    /**
-     * Every affect builder must be associated with specific table.
-     *
-     * @var string
-     */
-    protected $table = '';
+    /** @var string */
+    protected $table;
 
     /**
      * @param string $table Associated table name.
@@ -62,27 +53,34 @@ class DeleteQuery extends AbstractQuery
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function compile(QueryBindings $bindings, CompilerInterface $compiler): string
-    {
-        return $compiler->compileDelete($bindings, $this->table, $this->whereTokens);
-    }
-
-    /**
      * Alias for execute method();
      *
      * @return int
      */
     public function run(): int
     {
-        if ($this->compiler === null) {
-            throw new BuilderException('Unable to run query without assigned driver');
-        }
+        $params = new QueryParameters();
+        $queryString = $this->sqlStatement($params);
 
-        $bindings = new QueryBindings();
-        $queryString = $this->compile($bindings, $this->compiler);
+        return $this->driver->execute($queryString, $params->getParameters());
+    }
 
-        return $this->driver->execute($queryString, $bindings->getParameters());
+    /**
+     * @return int
+     */
+    public function getType(): int
+    {
+        return CompilerInterface::DELETE_QUERY;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTokens(): array
+    {
+        return [
+            'table' => $this->table,
+            'where' => $this->whereTokens
+        ];
     }
 }

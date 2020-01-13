@@ -11,13 +11,12 @@ declare(strict_types=1);
 namespace Spiral\Database\Tests;
 
 use Spiral\Database\Database;
-use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Schema\AbstractTable;
 use Spiral\Database\StatementInterface;
 use Spiral\Database\Table;
 use Spiral\Pagination\Paginator;
 
-abstract class StatementTest extends BaseQueryTest
+abstract class StatementTest extends BaseTest
 {
     /**
      * @var Database
@@ -50,10 +49,12 @@ abstract class StatementTest extends BaseQueryTest
         $table = $table ?? $this->database->table('sample_table');
 
         for ($i = 0; $i < 10; $i++) {
-            $table->insertOne([
-                'name'  => md5((string)$i),
-                'value' => $i * 10
-            ]);
+            $table->insertOne(
+                [
+                    'name'  => md5((string)$i),
+                    'value' => $i * 10
+                ]
+            );
         }
     }
 
@@ -61,8 +62,15 @@ abstract class StatementTest extends BaseQueryTest
     {
         $table = $this->database->table('sample_table');
 
-        $this->assertInstanceOf(StatementInterface::class, $table->select()->getIterator());
-        $this->assertInstanceOf(\PDOStatement::class, $table->select()->run()->getPDOStatement());
+        $this->assertInstanceOf(
+            StatementInterface::class,
+            $table->select()->getIterator()
+        );
+
+        $this->assertInstanceOf(
+            \PDOStatement::class,
+            $table->select()->run()->getPDOStatement()
+        );
     }
 
     //We are testing only extended functionality, there is no need to test PDOStatement
@@ -231,42 +239,12 @@ abstract class StatementTest extends BaseQueryTest
 
         $result = $table->select()->limit(1)->getIterator();
 
-        $this->assertEquals([
-            ['id' => 1, 'name' => md5('0'), 'value' => 0]
-        ], $result->fetchAll());
-    }
-
-    /**
-     * @expectedException \Spiral\Database\Exception\BuilderException
-     */
-    public function testBadAggregation(): void
-    {
-        $table = $this->database->table('sample_table');
-        $this->fillData();
-
-        $table->select()->ha();
-    }
-
-    /**
-     * @expectedException \Spiral\Database\Exception\BuilderException
-     */
-    public function testBadAggregation2(): void
-    {
-        $table = $this->database->table('sample_table');
-        $this->fillData();
-
-        $table->select()->avg();
-    }
-
-    /**
-     * @expectedException \Spiral\Database\Exception\BuilderException
-     */
-    public function testBadAggregation3(): void
-    {
-        $table = $this->database->table('sample_table');
-        $this->fillData();
-
-        $table->select()->avg(1, 2);
+        $this->assertEquals(
+            [
+                ['id' => 1, 'name' => md5('0'), 'value' => 0]
+            ],
+            $result->fetchAll()
+        );
     }
 
     public function testClose(): void
@@ -297,12 +275,15 @@ abstract class StatementTest extends BaseQueryTest
         $select = $table->select();
 
         $count = 0;
-        $select->runChunks(1, function ($result) use (&$count): void {
-            $this->assertInstanceOf(StatementInterface::class, $result);
-            $this->assertEquals($count + 1, $result->fetchColumn());
+        $select->runChunks(
+            1,
+            function ($result) use (&$count): void {
+                $this->assertInstanceOf(StatementInterface::class, $result);
+                $this->assertEquals($count + 1, $result->fetchColumn());
 
-            $count++;
-        });
+                $count++;
+            }
+        );
 
         $this->assertSame(10, $count);
     }
@@ -315,14 +296,17 @@ abstract class StatementTest extends BaseQueryTest
         $select = $table->select();
 
         $count = 0;
-        $select->runChunks(1, function ($result) use (&$count) {
-            $this->assertInstanceOf(StatementInterface::class, $result);
+        $select->runChunks(
+            1,
+            function ($result) use (&$count) {
+                $this->assertInstanceOf(StatementInterface::class, $result);
 
-            $count++;
-            if ($count == 5) {
-                return false;
+                $count++;
+                if ($count == 5) {
+                    return false;
+                }
             }
-        });
+        );
 
         $this->assertSame(5, $count);
     }
@@ -363,7 +347,7 @@ abstract class StatementTest extends BaseQueryTest
     }
 
     /**
-     * @expectedException \Spiral\Database\Exception\BuilderException
+     * @expectedException \Spiral\Database\Exception\StatementException
      */
     public function testNativeParametersError(): void
     {
@@ -385,7 +369,7 @@ abstract class StatementTest extends BaseQueryTest
 
         $rows = $this->database->query(
             'SELECT * FROM sample_table WHERE id IN (?, ?, ?) ORDER BY id ASC',
-            [new Parameter([1, 2, 3])]
+            [1, 2, 3]
         )->fetchAll();
 
         $i = 0;

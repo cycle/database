@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Spiral\Database\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
 
@@ -25,10 +24,9 @@ class ParameterTest extends TestCase
 
         $this->assertSame('value', $parameter->getValue());
 
-        $newParameter = $parameter->withValue('new value');
-        $this->assertNotSame($parameter, $newParameter);
+        $parameter->setValue('new value');
 
-        $this->assertSame('new value', $newParameter->getValue());
+        $this->assertSame('new value', $parameter->getValue());
     }
 
     public function testType(): void
@@ -38,11 +36,10 @@ class ParameterTest extends TestCase
         $this->assertSame(123, $parameter->getValue());
         $this->assertSame(\PDO::PARAM_INT, $parameter->getType());
 
-        $newParameter = $parameter->withValue(2334);
-        $this->assertNotSame($parameter, $newParameter);
+        $parameter->setValue(2334);
 
-        $this->assertSame(2334, $newParameter->getValue());
-        $this->assertSame(\PDO::PARAM_INT, $newParameter->getType());
+        $this->assertSame(2334, $parameter->getValue());
+        $this->assertSame(\PDO::PARAM_INT, $parameter->getType());
     }
 
     public function testAutoTyping(): void
@@ -79,9 +76,12 @@ class ParameterTest extends TestCase
     {
         $parameter = new Parameter([1, 2, 3]);
 
-        $this->assertSame([
-            'value'     => [1, 2, 3],
-            'type'      => \PDO::PARAM_STR
-        ], $parameter->__debugInfo());
+        $this->assertSame(
+            [
+                'value' => [1, 2, 3],
+                'type'  => \PDO::PARAM_STR
+            ],
+            $parameter->__debugInfo()
+        );
     }
 }

@@ -11,37 +11,23 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Query;
 
-use Spiral\Database\Driver\Compiler;
 use Spiral\Database\Driver\CompilerInterface;
-use Spiral\Database\Driver\QueryBindings;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Injection\Parameter;
 
 /**
  * Insert statement query builder, support singular and batch inserts.
  */
-class InsertQuery extends AbstractQuery
+class InsertQuery extends ActiveQuery
 {
-    public const QUERY_TYPE = Compiler::INSERT_QUERY;
+    /** @var string */
+    protected $table;
 
-    /**
-     * @var string
-     */
-    protected $table = '';
-
-    /**
-     * Column names associated with insert.
-     *
-     * @var array
-     */
+    /** @var array */
     protected $columns = [];
 
-    /**
-     * Rowsets to be inserted.
-     *
-     * @var array
-     */
-    protected $rowsets = [];
+    /** @var array */
+    protected $values = [];
 
     /**
      * @param string|null $table
@@ -122,14 +108,14 @@ class InsertQuery extends AbstractQuery
         reset($rowsets);
 
         if (!is_array($rowsets[key($rowsets)])) {
-            if (empty($this->columns)) {
+            if ($this->columns === []) {
                 $this->columns = array_keys($rowsets);
             }
 
-            $this->rowsets[] = new Parameter(array_values($rowsets));
+            $this->values[] = new Parameter(array_values($rowsets));
         } else {
-            foreach ($rowsets as $rowset) {
-                $this->rowsets[] = new Parameter(array_values($rowset));
+            foreach ($rowsets as $values) {
+                $this->values[] = new Parameter(array_values($values));
             }
         }
 
@@ -137,35 +123,58 @@ class InsertQuery extends AbstractQuery
     }
 
     /**
-     * {@inheritdoc}
+     * @param QueryParameters|null $parameters
+     * @return string
      */
-    public function compile(QueryBindings $bindings, CompilerInterface $compiler): string
+    public function sqlStatement(QueryParameters $parameters = null): string
     {
-        return $compiler->compileInsert($bindings, $this->table, $this->columns, $this->rowsets);
+        if ($this->values === []) {
+            throw new BuilderException('Insert rowsets must not be empty');
+        }
+
+        return parent::sqlStatement($parameters);
     }
 
     /**
-     * {@inheritdoc}
+     * Run the query and return last insert id.
+     *
+     * @return int|string|null
      */
     public function run()
     {
-        if ($this->compiler === null) {
-            throw new BuilderException('Unable to run query without assigned driver');
+        $params = new QueryParameters();
+        $queryString = $this->sqlStatement($params);
+
+        $this->driver->execute(
+            $queryString,
+            $params->getParameters()
+        );
+
+        $lastID = $this->driver->lastInsertID();
+        if (is_numeric($lastID)) {
+            return (int)$lastID;
         }
 
-        $bindings = new QueryBindings();
-        $queryString = $this->compile($bindings, $this->compiler);
-
-        $this->driver->execute($queryString, $bindings->getParameters());
-
-        return $this->driver->lastInsertID();
+        return $lastID;
     }
 
     /**
-     * Reset all insertion rowsets to make builder reusable (columns still set).
+     * @return int
      */
-    public function flushValues(): void
+    public function getType(): int
     {
-        $this->rowsets = [];
+        return CompilerInterface::INSERT_QUERY;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTokens(): array
+    {
+        return [
+            'table'   => $this->table,
+            'columns' => $this->columns,
+            'values'  => $this->values
+        ];
     }
 }

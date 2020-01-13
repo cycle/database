@@ -196,7 +196,7 @@ class SQLServerColumn extends AbstractColumn
      */
     public function sqlStatement(DriverInterface $driver, bool $withEnum = true): string
     {
-        if ($withEnum && $this->getAbstractType() == 'enum') {
+        if ($withEnum && $this->getAbstractType() === 'enum') {
             return "{$this->sqlStatement($driver, false)} {$this->enumStatement($driver)}";
         }
 
@@ -206,7 +206,7 @@ class SQLServerColumn extends AbstractColumn
             $statement[] = "({$this->precision}, {$this->scale})";
         } elseif (!empty($this->size)) {
             $statement[] = "({$this->size})";
-        } elseif ($this->type == 'varchar' || $this->type == 'varbinary') {
+        } elseif ($this->type === 'varchar' || $this->type === 'varbinary') {
             $statement[] = '(max)';
         }
 
@@ -251,8 +251,8 @@ class SQLServerColumn extends AbstractColumn
             $initial->nullable,
         ];
 
-        if ($currentType != $initType) {
-            if ($this->getAbstractType() == 'enum') {
+        if ($currentType !== $initType) {
+            if ($this->getAbstractType() === 'enum') {
                 //Getting longest value
                 $enumSize = $this->size;
                 foreach ($this->enumValues as $value) {
@@ -266,7 +266,7 @@ class SQLServerColumn extends AbstractColumn
 
                 if (!empty($this->size)) {
                     $type .= "($this->size)";
-                } elseif ($this->type == 'varchar' || $this->type == 'varbinary') {
+                } elseif ($this->type === 'varchar' || $this->type === 'varbinary') {
                     $type .= '(max)';
                 } elseif (!empty($this->precision)) {
                     $type .= "($this->precision, $this->scale)";
@@ -284,7 +284,7 @@ class SQLServerColumn extends AbstractColumn
         }
 
         //Constraint should be already removed it this moment (see alterColumn in SQLServerHandler)
-        if ($this->getAbstractType() == 'enum') {
+        if ($this->getAbstractType() === 'enum') {
             $operations[] = "ADD {$this->enumStatement($driver)}";
         }
 
@@ -306,17 +306,17 @@ class SQLServerColumn extends AbstractColumn
         $column = new self($table, $schema['COLUMN_NAME'], $driver->getTimezone());
 
         $column->type = $schema['DATA_TYPE'];
-        $column->nullable = strtoupper($schema['IS_NULLABLE']) == 'YES';
+        $column->nullable = strtoupper($schema['IS_NULLABLE']) === 'YES';
         $column->defaultValue = $schema['COLUMN_DEFAULT'];
 
         $column->identity = (bool)$schema['is_identity'];
 
         $column->size = (int)$schema['CHARACTER_MAXIMUM_LENGTH'];
-        if ($column->size == -1) {
+        if ($column->size === -1) {
             $column->size = 0;
         }
 
-        if ($column->type == 'decimal') {
+        if ($column->type === 'decimal') {
             $column->precision = (int)$schema['NUMERIC_PRECISION'];
             $column->scale = (int)$schema['NUMERIC_SCALE'];
         }
@@ -344,7 +344,7 @@ class SQLServerColumn extends AbstractColumn
         }
 
         //Potential enum
-        if ($column->type == 'varchar' && !empty($column->size)) {
+        if ($column->type === 'varchar' && !empty($column->size)) {
             self::resolveEnum($driver, $schema, $column);
         }
 
@@ -357,7 +357,7 @@ class SQLServerColumn extends AbstractColumn
     protected function quoteDefault(DriverInterface $driver): string
     {
         $defaultValue = parent::quoteDefault($driver);
-        if ($this->getAbstractType() == 'boolean') {
+        if ($this->getAbstractType() === 'boolean') {
             $defaultValue = strval((int)$this->defaultValue);
         }
 
@@ -369,7 +369,7 @@ class SQLServerColumn extends AbstractColumn
      *
      * @return string
      */
-    protected function enumConstraint()
+    protected function enumConstraint(): string
     {
         if (empty($this->enumConstraint)) {
             $this->enumConstraint = $this->table . '_' . $this->getName() . '_enum_' . uniqid();
@@ -421,19 +421,21 @@ class SQLServerColumn extends AbstractColumn
             return;
         }
 
-        if ($this->defaultValue[0] == '(' && $this->defaultValue[strlen($this->defaultValue) - 1] == ')') {
+        if ($this->defaultValue[0] === '(' && $this->defaultValue[strlen($this->defaultValue) - 1] === ')') {
             //Cut braces
             $this->defaultValue = substr($this->defaultValue, 1, -1);
         }
 
-        if (preg_match('/^[\'""].*?[\'"]$/', $this->defaultValue)) {
+        if (preg_match('/^[\'"].*?[\'"]$/', $this->defaultValue)) {
             $this->defaultValue = substr($this->defaultValue, 1, -1);
         }
 
         if (
-            $this->getType() != 'string'
-            && ($this->defaultValue[0] == '('
-                && $this->defaultValue[strlen($this->defaultValue) - 1] == ')')
+            $this->getType() !== 'string'
+            && (
+                $this->defaultValue[0] === '('
+                && $this->defaultValue[strlen($this->defaultValue) - 1] === ')'
+            )
         ) {
             //Cut another braces
             $this->defaultValue = substr($this->defaultValue, 1, -1);
@@ -465,7 +467,7 @@ class SQLServerColumn extends AbstractColumn
 
             $name = preg_quote($driver->identifier($column->getName()));
 
-            //We made some assumptions here...
+            // we made some assumptions here...
             if (
                 preg_match_all(
                     '/' . $name . '=[\']?([^\']+)[\']?/i',

@@ -10,8 +10,8 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Tests;
 
+use Spiral\Database\Driver\CompilerInterface;
 use Spiral\Database\Driver\Driver;
-use Spiral\Database\Driver\Compiler;
 use Spiral\Database\Query\DeleteQuery;
 use Spiral\Database\Query\InsertQuery;
 use Spiral\Database\Query\SelectQuery;
@@ -53,8 +53,8 @@ abstract class BuildersAccessTest extends BaseTest
     public function testCompilerAccess(): void
     {
         $this->assertInstanceOf(
-            Compiler::class,
-            $this->db()->getDriver()->getCompiler('')
+            CompilerInterface::class,
+            $this->db()->getDriver()->getQueryCompiler('')
         );
     }
 

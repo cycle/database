@@ -12,28 +12,63 @@ declare(strict_types=1);
 namespace Spiral\Database\Driver\SQLite;
 
 use Spiral\Database\Driver\Handler;
+use Spiral\Database\Driver\SQLite\Schema\SQLiteTable;
 use Spiral\Database\Exception\DBALException;
 use Spiral\Database\Exception\HandlerException;
 use Spiral\Database\Schema\AbstractColumn;
 use Spiral\Database\Schema\AbstractForeignKey;
 use Spiral\Database\Schema\AbstractTable;
 
-/**
- * Handler provides ability to exectute non supported changes using temporary
- * tables and data mapping.
- */
 class SQLiteHandler extends Handler
 {
     /**
-     * Drop table from database.
-     *
-     * @param AbstractTable $table
-     *
-     * @throws HandlerException
+     * @return array
      */
-    public function dropTable(AbstractTable $table): void
+    public function getTableNames(): array
     {
-        parent::dropTable($table);
+        $query = $this->driver->query(
+            "SELECT name FROM 'sqlite_master' WHERE type = 'table'"
+        );
+
+        $tables = [];
+        foreach ($query as $table) {
+            if ($table['name'] !== 'sqlite_sequence') {
+                $tables[] = $table['name'];
+            }
+        }
+
+        return $tables;
+    }
+
+    /**
+     * @param string $table
+     * @return bool
+     */
+    public function hasTable(string $table): bool
+    {
+        $query = "SELECT COUNT('sql') FROM 'sqlite_master' WHERE type = 'table' and name = ?";
+
+        return (bool)$this->driver->query($query, [$table])->fetchColumn();
+    }
+
+    /**
+     * @param string      $table
+     * @param string|null $prefix
+     * @return AbstractTable
+     */
+    public function getSchema(string $table, string $prefix = null): AbstractTable
+    {
+        return new SQLiteTable($this->driver, $table, $prefix ?? '');
+    }
+
+    /**
+     * @param AbstractTable $table
+     */
+    public function eraseTable(AbstractTable $table): void
+    {
+        $this->driver->execute(
+            "DELETE FROM {$this->driver->identifier($table->getName())}"
+        );
     }
 
     /**
@@ -141,7 +176,9 @@ class SQLiteHandler extends Handler
     {
         //Temporary table is required to copy data over
         $temporary = clone $table;
-        $temporary->setName('spiral_temp_' . $table->getName() . '_' . uniqid());
+        $temporary->setName(
+            'spiral_temp_' . $table->getName() . '_' . uniqid()
+        );
 
         //We don't need any indexes in temporary table
         foreach ($temporary->getIndexes() as $index) {
@@ -173,7 +210,7 @@ class SQLiteHandler extends Handler
             count($comparator->alteredForeignKeys()),
         ];
 
-        return array_sum($difference) != 0;
+        return array_sum($difference) !== 0;
     }
 
     /**
@@ -214,7 +251,7 @@ class SQLiteHandler extends Handler
      * @param AbstractTable $target
      * @return array
      */
-    private function createMapping(AbstractTable $source, AbstractTable $target)
+    private function createMapping(AbstractTable $source, AbstractTable $target): array
     {
         $mapping = [];
         foreach ($target->getColumns() as $name => $column) {

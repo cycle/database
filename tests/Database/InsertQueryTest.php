@@ -1,9 +1,10 @@
 <?php
 
 /**
- * Spiral, Core Components
+ * Spiral Framework.
  *
- * @author Wolfy-J
+ * @license   MIT
+ * @author    Anton Titov (Wolfy-J)
  */
 
 declare(strict_types=1);
@@ -11,45 +12,44 @@ declare(strict_types=1);
 namespace Spiral\Database\Tests;
 
 use Spiral\Database\Query\InsertQuery;
-use Spiral\Database\Database;
-use Spiral\Database\Schema\AbstractTable;
 
-abstract class InsertQueryTest extends BaseQueryTest
+abstract class InsertQueryTest extends BaseTest
 {
-    /**
-     * @var Database
-     */
-    protected $database;
-
-    public function setUp(): void
-    {
-        $this->database = $this->db();
-    }
-
-    public function schema(string $table): AbstractTable
-    {
-        return $this->database->table($table)->getSchema();
-    }
-
     public function testQueryInstance(): void
     {
-        $this->assertInstanceOf(InsertQuery::class, $this->database->insert());
+        $this->assertInstanceOf(
+            InsertQuery::class,
+            $this->database->insert()
+        );
+
+        $this->assertInstanceOf(
+            InsertQuery::class,
+            $this->database->table->insert()
+        );
     }
 
-    public function testQueryInstanceViaTable(): void
+    public function testCompileQuery(): void
     {
-        $this->assertInstanceOf(InsertQuery::class, $this->database->table->insert());
-    }
+        $insert = $this->db()->insert('table')->values(['name' => 'Antony']);
 
-    //Generic behaviours
+        $this->assertSameQuery(
+            "INSERT INTO {table} ({name}) VALUES ('Antony')",
+            (string)$insert
+        );
+    }
 
     public function testSimpleInsert(): void
     {
-        $insert = $this->database->insert()->into('table')->values([
-            'name' => 'Anton'
-        ]);
+        $insert = $this->database->insert()->into('table')->values(
+            [
+                'name' => 'Anton'
+            ]
+        );
 
-        $this->assertSameQuery('INSERT INTO {table} ({name}) VALUES (?)', $insert);
+        $this->assertSameQuery(
+            'INSERT INTO {table} ({name}) VALUES (?)',
+            $insert
+        );
     }
 
     public function testSimpleInsertWithStatesValues(): void
@@ -58,7 +58,10 @@ abstract class InsertQueryTest extends BaseQueryTest
             ->columns('name', 'balance')
             ->values('Anton', 100);
 
-        $this->assertSameQuery('INSERT INTO {table} ({name}, {balance}) VALUES (?, ?)', $insert);
+        $this->assertSameQuery(
+            'INSERT INTO {table} ({name}, {balance}) VALUES (?, ?)',
+            $insert
+        );
     }
 
     public function testSimpleInsertMultipleRows(): void
@@ -68,6 +71,9 @@ abstract class InsertQueryTest extends BaseQueryTest
             ->values('Anton', 100)
             ->values('John', 200);
 
-        $this->assertSameQuery('INSERT INTO {table} ({name}, {balance}) VALUES (?, ?), (?, ?)', $insert);
+        $this->assertSameQuery(
+            'INSERT INTO {table} ({name}, {balance}) VALUES (?, ?), (?, ?)',
+            $insert
+        );
     }
 }

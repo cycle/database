@@ -64,7 +64,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      *
      * @var DriverInterface
      */
-    protected $driver = null;
+    protected $driver;
 
     /**
      * Initial table state.
@@ -72,7 +72,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * @internal
      * @var State
      */
-    protected $initial = null;
+    protected $initial;
 
     /**
      * Currently defined table state.
@@ -80,7 +80,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * @internal
      * @var State
      */
-    protected $current = null;
+    protected $current;
 
     /**
      * Indication that table is exists and current schema is fetched from database.
@@ -94,7 +94,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      *
      * @var string
      */
-    private $prefix = '';
+    private $prefix;
 
     /**
      * @param DriverInterface $driver Parent driver.
@@ -110,7 +110,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         $this->initial = new State($this->prefix . $name);
         $this->current = new State($this->prefix . $name);
 
-        if ($this->driver->hasTable($this->getName())) {
+        if ($this->driver->getSchemaHandler()->hasTable($this->getName())) {
             $this->status = self::STATUS_EXISTS;
         }
 
@@ -206,9 +206,9 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     }
 
     /**
-     * @return Comparator
+     * @return ComparatorInterface
      */
-    public function getComparator(): Comparator
+    public function getComparator(): ComparatorInterface
     {
         return new Comparator($this->initial, $this->current);
     }
@@ -218,7 +218,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      */
     public function exists(): bool
     {
-        //Derlared as dropped != actually dropped
+        // Declared as dropped != actually dropped
         return $this->status === self::STATUS_EXISTS || $this->status === self::STATUS_DECLARED_DROPPED;
     }
 
@@ -420,7 +420,9 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     {
         foreach ($columns as $column) {
             if (!$this->hasColumn($column)) {
-                throw new SchemaException("Undefined column '{$column}' in '{$this->getName()}'");
+                throw new SchemaException(
+                    "Undefined column '{$column}' in '{$this->getName()}'"
+                );
             }
         }
 
@@ -494,7 +496,9 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     public function renameColumn(string $column, string $name): AbstractTable
     {
         if (!$this->hasColumn($column)) {
-            throw new SchemaException("Undefined column '{$column}' in '{$this->getName()}'");
+            throw new SchemaException(
+                "Undefined column '{$column}' in '{$this->getName()}'"
+            );
         }
 
         //Rename operation is simple about declaring new name
@@ -516,7 +520,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     {
         if (!$this->hasIndex($columns)) {
             throw new SchemaException(
-                "Undefined index ['" . join("', '", $columns) . "'] in '{$this->getName()}'"
+                "Undefined index ['" . implode("', '", $columns) . "'] in '{$this->getName()}'"
             );
         }
 
@@ -536,8 +540,11 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      */
     public function dropColumn(string $column): AbstractTable
     {
-        if (empty($schema = $this->current->findColumn($column))) {
-            throw new SchemaException("Undefined column '{$column}' in '{$this->getName()}'");
+        $schema = $this->current->findColumn($column);
+        if ($schema === null) {
+            throw new SchemaException(
+                "Undefined column '{$column}' in '{$this->getName()}'"
+            );
         }
 
         //Dropping column from current schema
@@ -556,9 +563,10 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      */
     public function dropIndex(array $columns): AbstractTable
     {
-        if (empty($schema = $this->current->findIndex($columns))) {
+        $schema = $this->current->findIndex($columns);
+        if ($schema === null) {
             throw new SchemaException(
-                "Undefined index ['" . join("', '", $columns) . "'] in '{$this->getName()}'"
+                "Undefined index ['" . implode("', '", $columns) . "'] in '{$this->getName()}'"
             );
         }
 
@@ -580,7 +588,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     {
         $schema = $this->current->findForeignKey($columns);
         if ($schema === null) {
-            $names = join("','", $columns);
+            $names = implode("','", $columns);
             throw new SchemaException("Undefined FK on '{$names}' in '{$this->getName()}'");
         }
 
@@ -614,7 +622,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     {
         $this->current = new State($this->initial->getName());
 
-        if (!empty($state)) {
+        if ($state !== null) {
             $this->current->setName($state->getName());
             $this->current->syncState($state);
         }
@@ -651,7 +659,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     public function save(int $operation = HandlerInterface::DO_ALL, bool $reset = true): void
     {
         // We need an instance of Handler of dbal operations
-        $handler = $this->driver->getHandler();
+        $handler = $this->driver->getSchemaHandler();
 
         if ($this->status === self::STATUS_DECLARED_DROPPED && $operation & HandlerInterface::DO_DROP) {
             //We don't need reflector for this operation
@@ -664,7 +672,9 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         }
 
         // Ensure that columns references to valid indexes and et
-        $prepared = $this->normalizeSchema(($operation & HandlerInterface::CREATE_FOREIGN_KEYS) !== 0);
+        $prepared = $this->normalizeSchema(
+            ($operation & HandlerInterface::CREATE_FOREIGN_KEYS) !== 0
+        );
 
         if ($this->status === self::STATUS_NEW) {
             //Executing table creation
@@ -750,9 +760,10 @@ abstract class AbstractTable implements TableInterface, ElementInterface
 
                         unset($column);
                     }
+                    unset($column);
 
                     $targetIndex = $target->initial->findIndex($index->getColumns());
-                    if (!empty($targetIndex)) {
+                    if ($targetIndex !== null) {
                         //Target index got renamed or removed.
                         $targetIndex->columns($columns);
                     }
@@ -762,13 +773,18 @@ abstract class AbstractTable implements TableInterface, ElementInterface
             }
 
             foreach ($target->getForeignKeys() as $foreign) {
-                $foreign->columns(array_map(function ($column) use ($initial, $name) {
-                    if ($column === $initial->getName()) {
-                        return $name->getName();
-                    }
+                $foreign->columns(
+                    array_map(
+                        static function ($column) use ($initial, $name) {
+                            if ($column === $initial->getName()) {
+                                return $name->getName();
+                            }
 
-                    return $column;
-                }, $foreign->getColumns()));
+                            return $column;
+                        },
+                        $foreign->getColumns()
+                    )
+                );
             }
         }
 
@@ -802,7 +818,6 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         }
 
         $state->setPrimaryKeys($this->fetchPrimaryKeys());
-
         //DBMS specific initialization can be placed here
     }
 
@@ -871,7 +886,10 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      */
     protected function createIdentifier(string $type, array $columns): string
     {
-        $name = $this->getName() . '_' . $type . '_' . join('_', $columns) . '_' . uniqid();
+        $name = $this->getName()
+            . '_' . $type
+            . '_' . implode('_', $columns)
+            . '_' . uniqid();
 
         if (strlen($name) > 64) {
             //Many DBMS has limitations on identifier length

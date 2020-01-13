@@ -17,7 +17,6 @@ use Spiral\Database\Query\InsertQuery;
 use Spiral\Database\Query\SelectQuery;
 use Spiral\Database\Query\UpdateQuery;
 use Spiral\Database\Schema\AbstractTable;
-use Spiral\Database\Traits\SchemaTrait;
 
 /**
  * Represent table level abstraction with simplified access to SelectQuery associated with such
@@ -30,17 +29,15 @@ use Spiral\Database\Traits\SchemaTrait;
  */
 final class Table implements TableInterface, \IteratorAggregate, \Countable
 {
-    use SchemaTrait;
-
     /** @var DatabaseInterface */
-    protected $database = null;
+    protected $database;
 
     /** @var string */
-    private $name = '';
+    private $name;
 
     /**
      * @param DatabaseInterface $database Parent DBAL database.
-     * @param string            $name Table name without prefix.
+     * @param string            $name     Table name without prefix.
      */
     public function __construct(DatabaseInterface $database, string $name)
     {
@@ -96,10 +93,13 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
      */
     public function getSchema(): AbstractTable
     {
-        return $this->database->getDriver(DatabaseInterface::WRITE)->getSchema(
-            $this->name,
-            $this->database->getPrefix()
-        );
+        return $this->database
+            ->getDriver(DatabaseInterface::WRITE)
+            ->getSchemaHandler()
+            ->getSchema(
+                $this->name,
+                $this->database->getPrefix()
+            );
     }
 
     /**
@@ -107,7 +107,10 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
      */
     public function eraseData(): void
     {
-        $this->database->getDriver(DatabaseInterface::WRITE)->eraseData($this->getFullName());
+        $this->database
+            ->getDriver(DatabaseInterface::WRITE)
+            ->getSchemaHandler()
+            ->eraseTable($this->getSchema());
     }
 
     /**
@@ -117,13 +120,16 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
      * $table->insertOne(["name" => "Wolfy-J", "balance" => 10]);
      *
      * @param array $rowset
-     * @return int|null
+     * @return int|string|null
      *
      * @throws BuilderException
      */
-    public function insertOne(array $rowset = []): ?int
+    public function insertOne(array $rowset = [])
     {
-        return $this->database->insert($this->name)->values($rowset)->run();
+        return $this->database
+            ->insert($this->name)
+            ->values($rowset)
+            ->run();
     }
 
     /**
@@ -139,7 +145,11 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
     public function insertMultiple(array $columns = [], array $rowsets = []): void
     {
         //No return value
-        $this->database->insert($this->name)->columns($columns)->values($rowsets)->run();
+        $this->database
+            ->insert($this->name)
+            ->columns($columns)
+            ->values($rowsets)
+            ->run();
     }
 
     /**
@@ -149,7 +159,8 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
      */
     public function insert(): InsertQuery
     {
-        return $this->database->insert($this->name);
+        return $this->database
+            ->insert($this->name);
     }
 
     /**
@@ -161,7 +172,9 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
      */
     public function select($columns = '*'): SelectQuery
     {
-        return $this->database->select(func_num_args() ? func_get_args() : '*')->from($this->name);
+        return $this->database
+            ->select(func_num_args() ? func_get_args() : '*')
+            ->from($this->name);
     }
 
     /**
@@ -175,7 +188,8 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
      */
     public function delete(array $where = []): DeleteQuery
     {
-        return $this->database->delete($this->name, $where);
+        return $this->database
+            ->delete($this->name, $where);
     }
 
     /**
@@ -183,13 +197,14 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
      * can be scalar values, Parameter objects or even SQLFragments. Call ->run() to perform query.
      *
      * @param array $values Initial set of columns associated with values.
-     * @param array $where Initial set of where rules specified as array.
+     * @param array $where  Initial set of where rules specified as array.
      *
      * @return UpdateQuery
      */
     public function update(array $values = [], array $where = []): UpdateQuery
     {
-        return $this->database->update($this->name, $values, $where);
+        return $this->database
+            ->update($this->name, $values, $where);
     }
 
     /**
@@ -222,5 +237,98 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
     public function fetchAll(): array
     {
         return $this->select()->fetchAll();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function exists(): bool
+    {
+        return $this->getSchema()->exists();
+    }
+
+    /**
+     * Array of columns dedicated to primary index. Attention, this methods will ALWAYS return
+     * array, even if there is only one primary key.
+     *
+     * @return array
+     */
+    public function getPrimaryKeys(): array
+    {
+        return $this->getSchema()->getPrimaryKeys();
+    }
+
+    /**
+     * Check if table have specified column.
+     *
+     * @param string $name Column name.
+     * @return bool
+     */
+    public function hasColumn(string $name): bool
+    {
+        return $this->getSchema()->hasColumn($name);
+    }
+
+    /**
+     * Get all declared columns.
+     *
+     * @return ColumnInterface[]
+     */
+    public function getColumns(): array
+    {
+        return $this->getSchema()->getColumns();
+    }
+
+    /**
+     * Check if table has index related to set of provided columns. Columns order does matter!
+     *
+     * @param array $columns
+     * @return bool
+     */
+    public function hasIndex(array $columns = []): bool
+    {
+        return $this->getSchema()->hasIndex($columns);
+    }
+
+    /**
+     * Get all table indexes.
+     *
+     * @return IndexInterface[]
+     */
+    public function getIndexes(): array
+    {
+        return $this->getSchema()->getIndexes();
+    }
+
+    /**
+     * Check if table has foreign key related to table column.
+     *
+     * @param array $columns Column names.
+     * @return bool
+     */
+    public function hasForeignKey(array $columns): bool
+    {
+        return $this->getSchema()->hasForeignKey($columns);
+    }
+
+    /**
+     * Get all table foreign keys.
+     *
+     * @return ForeignKeyInterface[]
+     */
+    public function getForeignKeys(): array
+    {
+        return $this->getSchema()->getForeignKeys();
+    }
+
+    /**
+     * Get list of table names current schema depends on, must include every table linked using
+     * foreign key or other constraint. Table names MUST include prefixes.
+     *
+     * @return array
+     */
+    public function getDependencies(): array
+    {
+        return $this->getSchema()->getDependencies();
     }
 }

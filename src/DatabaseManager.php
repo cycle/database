@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace Spiral\Database;
 
 use Psr\Container\ContainerExceptionInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\NullLogger;
 use Spiral\Core\Container;
-use Spiral\Core\Container\InjectorInterface;
-use Spiral\Core\Container\SingletonInterface;
 use Spiral\Core\FactoryInterface;
 use Spiral\Database\Config\DatabaseConfig;
 use Spiral\Database\Config\DatabasePartial;
@@ -22,6 +22,7 @@ use Spiral\Database\Driver\Driver;
 use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Exception\DatabaseException;
 use Spiral\Database\Exception\DBALException;
+use Spiral\Logger\Traits\LoggerTrait;
 
 /**
  * Automatic factory and configurator for Drivers and Databases.
@@ -83,13 +84,18 @@ use Spiral\Database\Exception\DBALException;
  *
  * echo $manager->database('runtime')->select()->from('users')->count();
  */
-final class DatabaseManager implements DatabaseProviderInterface, SingletonInterface, InjectorInterface
+final class DatabaseManager implements
+    DatabaseProviderInterface,
+    Container\SingletonInterface,
+    Container\InjectorInterface
 {
+    use LoggerTrait;
+
+    /** @var DatabaseConfig */
+    private $config;
 
     /**  @var FactoryInterface */
-    protected $factory = null;
-    /** @var DatabaseConfig */
-    private $config = null;
+    private $factory;
 
     /** @var Database[] */
     private $databases = [];
@@ -125,7 +131,12 @@ final class DatabaseManager implements DatabaseProviderInterface, SingletonInter
      */
     public function getDatabases(): array
     {
-        $names = array_unique(array_merge(array_keys($this->databases), array_keys($this->config->getDatabases())));
+        $names = array_unique(
+            array_merge(
+                array_keys($this->databases),
+                array_keys($this->config->getDatabases())
+            )
+        );
 
         $result = [];
         foreach ($names as $name) {
@@ -192,7 +203,12 @@ final class DatabaseManager implements DatabaseProviderInterface, SingletonInter
      */
     public function getDrivers(): array
     {
-        $names = array_unique(array_merge(array_keys($this->drivers), array_keys($this->config->getDrivers())));
+        $names = array_unique(
+            array_merge(
+                array_keys($this->drivers),
+                array_keys($this->config->getDrivers())
+            )
+        );
 
         $result = [];
         foreach ($names as $name) {
@@ -215,8 +231,19 @@ final class DatabaseManager implements DatabaseProviderInterface, SingletonInter
         if (isset($this->drivers[$driver])) {
             return $this->drivers[$driver];
         }
+
         try {
-            return $this->drivers[$driver] = $this->config->getDriver($driver)->resolve($this->factory);
+            $driverObject = $this->config->getDriver($driver)->resolve($this->factory);
+            $this->drivers[$driver] = $driverObject;
+
+            if ($driverObject instanceof LoggerAwareInterface) {
+                $logger = $this->getLogger(get_class($driverObject));
+                if (!$logger instanceof NullLogger) {
+                    $driverObject->setLogger($logger);
+                }
+            }
+
+            return $this->drivers[$driver];
         } catch (ContainerExceptionInterface $e) {
             throw new DBALException($e->getMessage(), $e->getCode(), $e);
         }

@@ -167,11 +167,14 @@ abstract class TableTest extends BaseTest
             $columns[$column->getName()] = $column->getAbstractType();
         }
 
-        $this->assertSame([
-            'id'    => 'primary',
-            'name'  => 'text',
-            'value' => 'integer'
-        ], $columns);
+        $this->assertSame(
+            [
+                'id'    => 'primary',
+                'name'  => 'text',
+                'value' => 'integer'
+            ],
+            $columns
+        );
     }
 
     public function testInsertOneRow(): void
@@ -180,10 +183,12 @@ abstract class TableTest extends BaseTest
 
         $this->assertSame(0, $table->count());
 
-        $id = $table->insertOne([
-            'name'  => 'Anton',
-            'value' => 10
-        ]);
+        $id = $table->insertOne(
+            [
+                'name'  => 'Anton',
+                'value' => 10
+            ]
+        );
 
         $this->assertNotNull($id);
         $this->assertSame(1, $id);
@@ -203,18 +208,22 @@ abstract class TableTest extends BaseTest
         $table = $this->database->table('table');
         $this->assertSame(0, $table->count());
 
-        $id = $table->insertOne([
-            'name'  => 'Anton',
-            'value' => 10
-        ]);
+        $id = $table->insertOne(
+            [
+                'name'  => 'Anton',
+                'value' => 10
+            ]
+        );
 
         $this->assertNotNull($id);
         $this->assertSame(1, $id);
 
-        $id = $table->insertOne([
-            'name'  => 'John',
-            'value' => 20
-        ]);
+        $id = $table->insertOne(
+            [
+                'name'  => 'John',
+                'value' => 20
+            ]
+        );
 
         $this->assertNotNull($id);
         $this->assertSame(2, $id);
@@ -257,6 +266,7 @@ abstract class TableTest extends BaseTest
             $table->fetchAll()
         );
     }
+
 
     public function testAggregationByPass(): void
     {
