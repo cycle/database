@@ -18,6 +18,7 @@ use Spiral\Database\Query\DeleteQuery;
 use Spiral\Database\Query\InsertQuery;
 use Spiral\Database\Query\SelectQuery;
 use Spiral\Database\Query\UpdateQuery;
+use Throwable;
 
 /**
  * Database class is high level abstraction at top of Driver. Databases usually linked to real
@@ -96,7 +97,7 @@ final class Database implements DatabaseInterface, InjectableInterface
      */
     public function getDriver(int $type = DatabaseInterface::WRITE): DriverInterface
     {
-        if ($type == self::READ && !empty($this->readDriver)) {
+        if ($type === self::READ && $this->readDriver !== null) {
             return $this->readDriver;
         }
 
@@ -132,7 +133,7 @@ final class Database implements DatabaseInterface, InjectableInterface
      */
     public function hasTable(string $name): bool
     {
-        return $this->getDriver()->hasTable($this->prefix . $name);
+        return $this->getDriver()->getSchemaHandler()->hasTable($this->prefix . $name);
     }
 
     /**
@@ -142,14 +143,16 @@ final class Database implements DatabaseInterface, InjectableInterface
      */
     public function getTables(): array
     {
+        $schemaHandler = $this->getDriver(self::READ)->getSchemaHandler();
+
         $result = [];
-        foreach ($this->getDriver(self::READ)->tableNames() as $table) {
+        foreach ($schemaHandler->getTableNames() as $table) {
             if ($this->prefix && strpos($table, $this->prefix) !== 0) {
-                //Logical partitioning
+                // logical partitioning
                 continue;
             }
 
-            $result[] = $this->table(substr($table, strlen($this->prefix)));
+            $result[] = new Table($this, substr($table, strlen($this->prefix)));
         }
 
         return $result;
@@ -170,7 +173,8 @@ final class Database implements DatabaseInterface, InjectableInterface
      */
     public function execute(string $query, array $parameters = []): int
     {
-        return $this->getDriver(self::WRITE)->execute($query, $parameters);
+        return $this->getDriver(self::WRITE)
+            ->execute($query, $parameters);
     }
 
     /**
@@ -178,7 +182,8 @@ final class Database implements DatabaseInterface, InjectableInterface
      */
     public function query(string $query, array $parameters = []): StatementInterface
     {
-        return $this->getDriver(self::READ)->query($query, $parameters);
+        return $this->getDriver(self::READ)
+            ->query($query, $parameters);
     }
 
     /**
@@ -186,7 +191,9 @@ final class Database implements DatabaseInterface, InjectableInterface
      */
     public function insert(string $table = null): InsertQuery
     {
-        return $this->getDriver(self::WRITE)->insertQuery($this->prefix, $table);
+        return $this->getDriver(self::WRITE)
+            ->getQueryBuilder()
+            ->insertQuery($this->prefix, $table);
     }
 
     /**
@@ -194,7 +201,9 @@ final class Database implements DatabaseInterface, InjectableInterface
      */
     public function update(string $table = null, array $values = [], array $where = []): UpdateQuery
     {
-        return $this->getDriver(self::WRITE)->updateQuery($this->prefix, $table, $where, $values);
+        return $this->getDriver(self::WRITE)
+            ->getQueryBuilder()
+            ->updateQuery($this->prefix, $table, $where, $values);
     }
 
     /**
@@ -202,7 +211,9 @@ final class Database implements DatabaseInterface, InjectableInterface
      */
     public function delete(string $table = null, array $where = []): DeleteQuery
     {
-        return $this->getDriver(self::WRITE)->deleteQuery($this->prefix, $table, $where);
+        return $this->getDriver(self::WRITE)
+            ->getQueryBuilder()
+            ->deleteQuery($this->prefix, $table, $where);
     }
 
     /**
@@ -216,7 +227,9 @@ final class Database implements DatabaseInterface, InjectableInterface
             $columns = $columns[0];
         }
 
-        return $this->getDriver(self::READ)->selectQuery($this->prefix, [], $columns);
+        return $this->getDriver(self::READ)
+            ->getQueryBuilder()
+            ->selectQuery($this->prefix, [], $columns);
     }
 
     /**
@@ -224,16 +237,18 @@ final class Database implements DatabaseInterface, InjectableInterface
      *
      * @param bool $cacheStatements
      */
-    public function transaction(callable $callback, string $isolationLevel = null, bool $cacheStatements = false)
-    {
-        $this->begin($isolationLevel, $cacheStatements);
+    public function transaction(
+        callable $callback,
+        string $isolationLevel = null
+    ) {
+        $this->begin($isolationLevel);
 
         try {
-            $result = call_user_func($callback, $this);
+            $result = $callback($this);
             $this->commit();
 
             return $result;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->rollBack();
             throw $e;
         }
@@ -242,11 +257,11 @@ final class Database implements DatabaseInterface, InjectableInterface
     /**
      * {@inheritdoc}
      */
-    public function begin(string $isolationLevel = null, bool $cacheStatements = false): bool
+    public function begin(string $isolationLevel = null): bool
     {
         $driver = $this->getDriver(self::WRITE);
         if ($driver instanceof Driver) {
-            return $driver->beginTransaction($isolationLevel, $cacheStatements);
+            return $driver->beginTransaction($isolationLevel);
         }
 
         return $driver->beginTransaction($isolationLevel);

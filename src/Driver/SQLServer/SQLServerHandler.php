@@ -11,8 +11,10 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Driver\SQLServer;
 
+use PDO;
 use Spiral\Database\Driver\Handler;
 use Spiral\Database\Driver\SQLServer\Schema\SQLServerColumn;
+use Spiral\Database\Driver\SQLServer\Schema\SQLServerTable;
 use Spiral\Database\Exception\SchemaException;
 use Spiral\Database\Schema\AbstractColumn;
 use Spiral\Database\Schema\AbstractIndex;
@@ -21,11 +23,58 @@ use Spiral\Database\Schema\AbstractTable;
 class SQLServerHandler extends Handler
 {
     /**
+     * @inheritDoc
+     */
+    public function getSchema(string $table, string $prefix = null): AbstractTable
+    {
+        return new SQLServerTable($this->driver, $table, $prefix ?? '');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTableNames(): array
+    {
+        $query = "SELECT [table_name] FROM [information_schema].[tables] WHERE [table_type] = 'BASE TABLE'";
+
+        $tables = [];
+        foreach ($this->driver->query($query)->fetchAll(PDO::FETCH_NUM) as $name) {
+            $tables[] = $name[0];
+        }
+
+        return $tables;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasTable(string $name): bool
+    {
+        $query = "SELECT COUNT(*) FROM [information_schema].[tables]
+            WHERE [table_type] = 'BASE TABLE' AND [table_name] = ?";
+
+        return (bool)$this->driver->query($query, [$name])->fetchColumn();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function eraseTable(AbstractTable $table): void
+    {
+        $this->driver->execute(
+            "TRUNCATE TABLE {$this->driver->identifier($table->getName())}"
+        );
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function renameTable(string $table, string $name): void
     {
-        $this->run('sp_rename @objname = ?, @newname = ?', [$table, $name]);
+        $this->run(
+            'sp_rename @objname = ?, @newname = ?',
+            [$table, $name]
+        );
     }
 
     /**
@@ -33,7 +82,9 @@ class SQLServerHandler extends Handler
      */
     public function createColumn(AbstractTable $table, AbstractColumn $column): void
     {
-        $this->run("ALTER TABLE {$this->identify($table)} ADD {$column->sqlStatement($this->driver)}");
+        $this->run(
+            "ALTER TABLE {$this->identify($table)} ADD {$column->sqlStatement($this->driver)}"
+        );
     }
 
     /**
@@ -60,14 +111,14 @@ class SQLServerHandler extends Handler
         $indexesBackup = [];
         $foreignBackup = [];
         foreach ($table->getIndexes() as $index) {
-            if (in_array($column->getName(), $index->getColumns())) {
+            if (in_array($column->getName(), $index->getColumns(), true)) {
                 $indexesBackup[] = $index;
                 $this->dropIndex($table, $index);
             }
         }
 
         foreach ($table->getForeignKeys() as $foreign) {
-            if ($column->getName() == $foreign->getColumns()) {
+            if ($column->getName() === $foreign->getColumns()) {
                 $foreignBackup[] = $foreign;
                 $this->dropForeignKey($table, $foreign);
             }
@@ -79,7 +130,7 @@ class SQLServerHandler extends Handler
         }
 
         //Rename is separate operation
-        if ($column->getName() != $initial->getName()) {
+        if ($column->getName() !== $initial->getName()) {
             $this->renameColumn($table, $initial, $column);
 
             //This call is required to correctly built set of alter operations

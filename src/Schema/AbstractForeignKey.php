@@ -219,7 +219,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
      * @param array           $columns
      * @return string
      */
-    protected function packColumns(DriverInterface $driver, array $columns)
+    protected function packColumns(DriverInterface $driver, array $columns): string
     {
         return join(', ', array_map([$driver, 'identifier'], $columns));
     }

@@ -11,20 +11,17 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Driver\SQLServer;
 
+use DateTimeInterface;
 use PDO;
-use Spiral\Database\DatabaseInterface;
+use PDOStatement;
 use Spiral\Database\Driver\Driver;
-use Spiral\Database\Driver\HandlerInterface;
-use Spiral\Database\Driver\SQLServer\Schema\SQLServerTable;
 use Spiral\Database\Exception\DriverException;
 use Spiral\Database\Exception\StatementException;
 use Spiral\Database\Injection\ParameterInterface;
+use Spiral\Database\Query\QueryBuilder;
 
 class SQLServerDriver extends Driver
 {
-    protected const TYPE                = DatabaseInterface::SQL_SERVER;
-    protected const TABLE_SCHEMA_CLASS  = SQLServerTable::class;
-    protected const QUERY_COMPILER      = SQLServerCompiler::class;
     protected const DATETIME            = 'Y-m-d\TH:i:s.000';
     protected const DEFAULT_PDO_OPTIONS = [
         PDO::ATTR_CASE              => PDO::CASE_NATURAL,
@@ -39,7 +36,12 @@ class SQLServerDriver extends Driver
      */
     public function __construct(array $options)
     {
-        parent::__construct($options);
+        parent::__construct(
+            $options,
+            new SQLServerHandler(),
+            new SQLServerCompiler('[]'),
+            QueryBuilder::defaultBuilder()
+        );
 
         if ((int)$this->getPDO()->getAttribute(\PDO::ATTR_SERVER_VERSION) < 12) {
             throw new DriverException('SQLServer driver supports only 12+ version of SQLServer');
@@ -47,80 +49,59 @@ class SQLServerDriver extends Driver
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
-    public function identifier(string $identifier): string
+    public function getType(): string
     {
-        return $identifier === '*' ? '*' : '[' . str_replace('[', '[[', $identifier) . ']';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function tableNames(): array
-    {
-        $query = "SELECT [table_name] FROM [information_schema].[tables] WHERE [table_type] = 'BASE TABLE'";
-
-        $tables = [];
-        foreach ($this->query($query)->fetchAll(PDO::FETCH_NUM) as $name) {
-            $tables[] = $name[0];
-        }
-
-        return $tables;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasTable(string $name): bool
-    {
-        $query = "SELECT COUNT(*) FROM [information_schema].[tables]
-            WHERE [table_type] = 'BASE TABLE' AND [table_name] = ?";
-
-        return (bool)$this->query($query, [$name])->fetchColumn();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function eraseData(string $table): void
-    {
-        $this->execute("TRUNCATE TABLE {$this->identifier($table)}");
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getHandler(): HandlerInterface
-    {
-        return new SQLServerHandler($this);
+        return 'SQLServer';
     }
 
     /**
      * Bind parameters into statement. SQLServer need encoding to be specified for binary parameters.
      *
-     * @param \PDOStatement        $statement
-     * @param ParameterInterface[] $parameters Named hash of ParameterInterface.
-     * @return \PDOStatement
+     * @param PDOStatement $statement
+     * @param array        $parameters
+     * @return PDOStatement
      */
-    protected function bindParameters(\PDOStatement $statement, iterable $parameters): \PDOStatement
-    {
-        foreach ($parameters as $index => $parameter) {
-            if ($parameter->getType() === PDO::PARAM_LOB) {
-                $value = $parameter->getValue();
+    protected function bindParameters(
+        PDOStatement $statement,
+        iterable $parameters
+    ): PDOStatement {
+        $index = 0;
+        foreach ($parameters as $name => $parameter) {
+            if (is_string($name)) {
+                $index = $name;
+            } else {
+                $index++;
+            }
 
+            $type = PDO::PARAM_STR;
+
+            if ($parameter instanceof ParameterInterface) {
+                $type = $parameter->getType();
+                $parameter = $parameter->getValue();
+            }
+
+            if ($parameter instanceof DateTimeInterface) {
+                $parameter = $this->formatDatetime($parameter);
+            }
+
+            if ($type === PDO::PARAM_LOB) {
                 $statement->bindParam(
                     $index,
-                    $value,
-                    $parameter->getType(),
+                    $parameter,
+                    $type,
                     0,
                     PDO::SQLSRV_ENCODING_BINARY
                 );
 
+                unset($parameter);
                 continue;
             }
 
-            $statement->bindValue($index, $parameter->getValue(), $parameter->getType());
+            // numeric, @see http://php.net/manual/en/pdostatement.bindparam.php
+            $statement->bindValue($index, $parameter, $type);
+            unset($parameter);
         }
 
         return $statement;
@@ -136,7 +117,10 @@ class SQLServerDriver extends Driver
      */
     protected function createSavepoint(int $level): void
     {
-        $this->getLogger()->info("Transaction: new savepoint 'SVP{$level}'");
+        if ($this->logger !== null) {
+            $this->logger->info("Transaction: new savepoint 'SVP{$level}'");
+        }
+
         $this->execute('SAVE TRANSACTION ' . $this->identifier("SVP{$level}"));
     }
 
@@ -149,7 +133,9 @@ class SQLServerDriver extends Driver
      */
     protected function releaseSavepoint(int $level): void
     {
-        $this->getLogger()->info("Transaction: release savepoint 'SVP{$level}'");
+        if ($this->logger !== null) {
+            $this->logger->info("Transaction: release savepoint 'SVP{$level}'");
+        }
         // SQLServer automatically commits nested transactions with parent transaction
     }
 
@@ -162,7 +148,10 @@ class SQLServerDriver extends Driver
      */
     protected function rollbackSavepoint(int $level): void
     {
-        $this->getLogger()->info("Transaction: rollback savepoint 'SVP{$level}'");
+        if ($this->logger !== null) {
+            $this->logger->info("Transaction: rollback savepoint 'SVP{$level}'");
+        }
+
         $this->execute('ROLLBACK TRANSACTION ' . $this->identifier("SVP{$level}"));
     }
 

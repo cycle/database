@@ -11,24 +11,21 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Driver\Postgres;
 
-use Spiral\Database\DatabaseInterface;
 use Spiral\Database\Driver\Driver;
-use Spiral\Database\Driver\HandlerInterface;
 use Spiral\Database\Driver\Postgres\Query\PostgresInsertQuery;
-use Spiral\Database\Driver\Postgres\Schema\PostgresTable;
 use Spiral\Database\Exception\DriverException;
 use Spiral\Database\Exception\StatementException;
-use Spiral\Database\Query\InsertQuery;
+use Spiral\Database\Query\DeleteQuery;
+use Spiral\Database\Query\QueryBuilder;
+use Spiral\Database\Query\SelectQuery;
+use Spiral\Database\Query\UpdateQuery;
+use Throwable;
 
 /**
  * Talks to postgres databases.
  */
 class PostgresDriver extends Driver
 {
-    protected const TYPE               = DatabaseInterface::POSTGRES;
-    protected const TABLE_SCHEMA_CLASS = PostgresTable::class;
-    protected const QUERY_COMPILER     = PostgresCompiler::class;
-
     /**
      * Cached list of primary keys associated with their table names. Used by InsertBuilder to
      * emulate last insert id.
@@ -38,39 +35,30 @@ class PostgresDriver extends Driver
     private $primaryKeys = [];
 
     /**
-     * {@inheritdoc}
+     * @param array $options
      */
-    public function tableNames(): array
+    public function __construct(array $options)
     {
-        $query = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'
-          AND table_type = 'BASE TABLE'";
-
-        $tables = [];
-        foreach ($this->query($query) as $row) {
-            $tables[] = $row['table_name'];
-        }
-
-        return $tables;
+        // default query builder
+        parent::__construct(
+            $options,
+            new PostgresHandler(),
+            new PostgresCompiler('""'),
+            new QueryBuilder(
+                new SelectQuery(),
+                new PostgresInsertQuery(),
+                new UpdateQuery(),
+                new DeleteQuery()
+            )
+        );
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
-    public function hasTable(string $name): bool
+    public function getType(): string
     {
-        return (bool)$this->query(
-            "SELECT COUNT(table_name) FROM information_schema.tables WHERE table_schema = 'public'
-          AND table_type = 'BASE TABLE' AND table_name = ?",
-            [$name]
-        )->fetchColumn();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function eraseData(string $table): void
-    {
-        $this->execute("TRUNCATE TABLE {$this->identifier($table)}");
+        return 'Postgres';
     }
 
     /**
@@ -83,20 +71,23 @@ class PostgresDriver extends Driver
      *
      * @throws DriverException
      */
-    public function getPrimary(string $prefix, string $table): ?string
+    public function getPrimaryKey(string $prefix, string $table): ?string
     {
         $name = $prefix . $table;
-        if (array_key_exists($name, $this->primaryKeys)) {
+        if (isset($this->primaryKeys[$name])) {
             return $this->primaryKeys[$name];
         }
 
-        if (!$this->hasTable($name)) {
+        if (!$this->getSchemaHandler()->hasTable($name)) {
             throw new DriverException(
                 "Unable to fetch table primary key, no such table '{$name}' exists"
             );
         }
 
-        $this->primaryKeys[$name] = $this->getSchema($table, $prefix)->getPrimaryKeys();
+        $this->primaryKeys[$name] = $this->getSchemaHandler()
+            ->getSchema($table, $prefix)
+            ->getPrimaryKeys();
+
         if (count($this->primaryKeys[$name]) === 1) {
             //We do support only single primary key
             $this->primaryKeys[$name] = $this->primaryKeys[$name][0];
@@ -117,28 +108,10 @@ class PostgresDriver extends Driver
 
     /**
      * {@inheritdoc}
-     *
-     * Postgres uses custom insert query builder in order to return value of inserted row.
-     */
-    public function insertQuery(string $prefix, string $table = null): InsertQuery
-    {
-        return (new PostgresInsertQuery($table))->withDriver($this, $this->getCompiler($prefix));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getHandler(): HandlerInterface
-    {
-        return new PostgresHandler($this);
-    }
-
-    /**
-     * {@inheritdoc}
      */
     protected function createPDO(): \PDO
     {
-        //Spiral is purely UTF-8
+        // spiral is purely UTF-8
         $pdo = parent::createPDO();
         $pdo->exec("SET NAMES 'UTF-8'");
 
@@ -148,7 +121,7 @@ class PostgresDriver extends Driver
     /**
      * {@inheritdoc}
      */
-    protected function mapException(\Throwable $exception, string $query): StatementException
+    protected function mapException(Throwable $exception, string $query): StatementException
     {
         $message = strtolower($exception->getMessage());
 

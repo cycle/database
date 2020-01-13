@@ -11,12 +11,13 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Query\Traits;
 
+use Closure;
 use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Injection\Expression;
 use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
-use Spiral\Database\Query\AbstractQuery;
+use Spiral\Database\Query\ActiveQuery;
 
 /**
  * Provides ability to generate QueryCompiler JOIN tokens including ON conditions and table/column
@@ -72,10 +73,10 @@ trait JoinTrait
      * Register new JOIN with specified type with set of on conditions (linking one table to
      * another, no parametric on conditions allowed here).
      *
-     * @param string|AbstractQuery $type  Join type. Allowed values, LEFT, RIGHT, INNER and etc.
-     * @param string               $outer Joined table name (without prefix), may include AS statement.
-     * @param string               $alias Joined table or query alias.
-     * @param mixed                $on    Simplified on definition linking table names (no
+     * @param string|ActiveQuery $type    Join type. Allowed values, LEFT, RIGHT, INNER and etc.
+     * @param string             $outer   Joined table name (without prefix), may include AS statement.
+     * @param string             $alias   Joined table or query alias.
+     * @param mixed              $on      Simplified on definition linking table names (no
      *                                    parameters allowed) or closure.
      * @return $this
      *
@@ -85,6 +86,7 @@ trait JoinTrait
     {
         $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
+            'alias' => $alias,
             'type'  => strtoupper($type),
             'on'    => []
         ];
@@ -99,8 +101,8 @@ trait JoinTrait
      * @link http://www.w3schools.com/sql/sql_join_inner.asp
      * @see  join()
      *
-     * @param string|AbstractQuery $outer Joined table name (without prefix), may include AS statement.
-     * @param string               $alias Joined table or query alias.
+     * @param string|ActiveQuery $outer Joined table name (without prefix), may include AS statement.
+     * @param string             $alias Joined table or query alias.
      * @return $this
      *
      * @throws BuilderException
@@ -124,9 +126,9 @@ trait JoinTrait
      * @link http://www.w3schools.com/sql/sql_join_right.asp
      * @see  join()
      *
-     * @param string|AbstractQuery $outer Joined table name (without prefix), may include AS statement.
-     * @param string               $alias Joined table or query alias.
-     * @param mixed                $on    Simplified on definition linking table names (no
+     * @param string|ActiveQuery $outer   Joined table name (without prefix), may include AS statement.
+     * @param string             $alias   Joined table or query alias.
+     * @param mixed              $on      Simplified on definition linking table names (no
      *                                    parameters allowed) or closure.
      * @return $this
      *
@@ -152,8 +154,8 @@ trait JoinTrait
      * @link http://www.w3schools.com/sql/sql_join_left.asp
      * @see  join()
      *
-     * @param string|AbstractQuery $outer Joined table name (without prefix), may include AS statement.
-     * @param string               $alias Joined table or query alias.
+     * @param string|ActiveQuery $outer Joined table name (without prefix), may include AS statement.
+     * @param string             $alias Joined table or query alias.
      * @return $this
      *
      * @throws BuilderException
@@ -178,8 +180,8 @@ trait JoinTrait
      * @link http://www.w3schools.com/sql/sql_join_full.asp
      * @see  join()
      *
-     * @param string|AbstractQuery $outer Joined table name (without prefix), may include AS statement.
-     * @param string               $alias Joined table or query alias.
+     * @param string|ActiveQuery $outer Joined table name (without prefix), may include AS statement.
+     * @param string             $alias Joined table or query alias.
      * @return $this
      *
      * @throws BuilderException
@@ -207,7 +209,7 @@ trait JoinTrait
      */
     public function on(...$args): self
     {
-        $this->createToken(
+        $this->registerToken(
             'AND',
             $args,
             $this->joinTokens[$this->lastJoin]['on'],
@@ -228,7 +230,7 @@ trait JoinTrait
      */
     public function andOn(...$args): self
     {
-        $this->createToken(
+        $this->registerToken(
             'AND',
             $args,
             $this->joinTokens[$this->lastJoin]['on'],
@@ -249,7 +251,7 @@ trait JoinTrait
      */
     public function orOn(...$args): self
     {
-        $this->createToken(
+        $this->registerToken(
             'OR',
             $args,
             $this->joinTokens[$this->lastJoin]['on'],
@@ -272,7 +274,7 @@ trait JoinTrait
      */
     public function onWhere(...$args): self
     {
-        $this->createToken(
+        $this->registerToken(
             'AND',
             $args,
             $this->joinTokens[$this->lastJoin]['on'],
@@ -295,7 +297,7 @@ trait JoinTrait
      */
     public function andOnWhere(...$args): self
     {
-        $this->createToken(
+        $this->registerToken(
             'AND',
             $args,
             $this->joinTokens[$this->lastJoin]['on'],
@@ -318,7 +320,7 @@ trait JoinTrait
      */
     public function orOnWhere(...$args): self
     {
-        $this->createToken(
+        $this->registerToken(
             'OR',
             $args,
             $this->joinTokens[$this->lastJoin]['on'],
@@ -331,24 +333,27 @@ trait JoinTrait
     /**
      * Convert various amount of where function arguments into valid where token.
      *
-     * @param string   $joiner     Boolean joiner (AND | OR).
-     * @param array    $parameters Set of parameters collected from where functions.
+     * @param string   $boolean    Boolean joiner (AND | OR).
+     * @param array    $params     Set of parameters collected from where functions.
      * @param array    $tokens     Array to aggregate compiled tokens. Reference.
      * @param callable $wrapper    Callback or closure used to wrap/collect every potential
      *                             parameter.
      *
      * @throws BuilderException
-     * @see AbstractWhere
-     *
      */
-    abstract protected function createToken($joiner, array $parameters, &$tokens, callable $wrapper);
+    abstract protected function registerToken(
+        $boolean,
+        array $params,
+        &$tokens,
+        callable $wrapper
+    );
 
     /**
      * Convert parameters used in JOIN ON statements into sql expressions.
      *
-     * @return \Closure
+     * @return Closure
      */
-    private function onWrapper(): \Closure
+    private function onWrapper(): Closure
     {
         return static function ($parameter) {
             if ($parameter instanceof FragmentInterface || $parameter instanceof ParameterInterface) {
@@ -362,23 +367,21 @@ trait JoinTrait
     /**
      * Applied to every potential parameter while ON WHERE tokens generation.
      *
-     * @return \Closure
+     * @return Closure
      */
-    private function onWhereWrapper()
+    private function onWhereWrapper(): Closure
     {
         return static function ($parameter) {
-            if ($parameter instanceof FragmentInterface) {
-                return $parameter;
-            }
-
             if (is_array($parameter)) {
-                throw new BuilderException('Arrays must be wrapped with Parameter instance');
+                throw new BuilderException(
+                    'Arrays must be wrapped with Parameter instance'
+                );
             }
 
             //Wrapping all values with ParameterInterface
-            if (!$parameter instanceof ParameterInterface) {
-                $parameter = new Parameter($parameter, Parameter::DETECT_TYPE);
-            };
+            if (!$parameter instanceof ParameterInterface && !$parameter instanceof FragmentInterface) {
+                $parameter = new Parameter($parameter);
+            }
 
             return $parameter;
         };

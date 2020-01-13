@@ -19,7 +19,7 @@ namespace Spiral\Database\Schema;
 final class State
 {
     /** @var string */
-    private $name = '';
+    private $name;
 
     /** @var AbstractColumn[] */
     private $columns = [];
@@ -31,7 +31,8 @@ final class State
     private $foreignKeys = [];
 
     /**
-     * Primary key columns are stored separately from other indexes and can only be modified during table creation.
+     * Primary key columns are stored separately from other indexes and
+     * can only be modified during table creation.
      *
      * @var array
      */
@@ -122,8 +123,9 @@ final class State
     {
         $primaryColumns = [];
         foreach ($this->getColumns() as $column) {
-            if ($column->getAbstractType() == 'primary' || $column->getAbstractType() == 'bigPrimary') {
-                if (!in_array($column->getName(), $this->primaryKeys)) {
+            $type = $column->getAbstractType();
+            if ($type === 'primary' || $type === 'bigPrimary') {
+                if (!in_array($column->getName(), $this->primaryKeys, true)) {
                     //Only columns not listed as primary keys already
                     $primaryColumns[] = $column->getName();
                 }
@@ -193,6 +195,7 @@ final class State
     public function forgetColumn(AbstractColumn $column): State
     {
         foreach ($this->columns as $name => $columnSchema) {
+            // todo: need better compare
             if ($columnSchema == $column) {
                 unset($this->columns[$name]);
                 break;
@@ -210,6 +213,7 @@ final class State
     public function forgetIndex(AbstractIndex $index): void
     {
         foreach ($this->indexes as $name => $indexSchema) {
+            // todo: need better compare
             if ($indexSchema == $index) {
                 unset($this->indexes[$name]);
                 break;
@@ -225,6 +229,7 @@ final class State
     public function forgerForeignKey(AbstractForeignKey $foreignKey): void
     {
         foreach ($this->foreignKeys as $name => $foreignSchema) {
+            // todo: need better compare
             if ($foreignSchema == $foreignKey) {
                 unset($this->foreignKeys[$name]);
                 break;

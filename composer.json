@@ -13,14 +13,15 @@
     "php": "^7.2",
     "ext-pdo": "*",
     "spiral/core": "^1.1",
-    "spiral/logger": "^1.1",
+    "spiral/logger": "^1.0",
     "spiral/pagination": "^2.2"
   },
   "require-dev": {
-    "spiral/debug": "^1.3",
     "phpunit/phpunit": "~7.0",
     "mockery/mockery": "^1.1",
-    "spiral/code-style": "^1.0"
+    "spiral/dumper": "^1.0",
+    "spiral/code-style": "^1.0",
+    "spiral/tokenizer": "^2.1"
   },
   "autoload": {
     "psr-4": {

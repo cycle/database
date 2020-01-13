@@ -11,35 +11,22 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Query;
 
-use Spiral\Database\Driver\Compiler;
 use Spiral\Database\Driver\CompilerInterface;
-use Spiral\Database\Driver\QueryBindings;
-use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Query\Traits\TokenTrait;
 use Spiral\Database\Query\Traits\WhereTrait;
 
 /**
  * Update statement builder.
  */
-class UpdateQuery extends AbstractQuery
+class UpdateQuery extends ActiveQuery
 {
     use TokenTrait;
     use WhereTrait;
 
-    public const QUERY_TYPE = Compiler::UPDATE_QUERY;
-
-    /**
-     * Every affect builder must be associated with specific table.
-     *
-     * @var string
-     */
+    /** @var string */
     protected $table = '';
 
-    /**
-     * Column names associated with their values.
-     *
-     * @var array
-     */
+    /** @var array */
     protected $values = [];
 
     /**
@@ -55,7 +42,7 @@ class UpdateQuery extends AbstractQuery
         $this->table = $table ?? '';
         $this->values = $values;
 
-        if (!empty($where)) {
+        if ($where !== []) {
             $this->where($where);
         }
     }
@@ -88,16 +75,6 @@ class UpdateQuery extends AbstractQuery
     }
 
     /**
-     * Get list of columns associated with their values.
-     *
-     * @return array
-     */
-    public function getValues(): array
-    {
-        return $this->values;
-    }
-
-    /**
      * Set update value.
      *
      * @param string $column
@@ -113,18 +90,6 @@ class UpdateQuery extends AbstractQuery
 
     /**
      * {@inheritdoc}
-     */
-    public function compile(QueryBindings $bindings, CompilerInterface $compiler): string
-    {
-        if ($this->values === []) {
-            throw new BuilderException('Update values must be specified');
-        }
-
-        return $compiler->compileUpdate($bindings, $this->table, $this->values, $this->whereTokens);
-    }
-
-    /**
-     * {@inheritdoc}
      *
      * Affect queries will return count of affected rows.
      *
@@ -132,13 +97,29 @@ class UpdateQuery extends AbstractQuery
      */
     public function run(): int
     {
-        if ($this->compiler === null) {
-            throw new BuilderException('Unable to run query without assigned driver');
-        }
+        $params = new QueryParameters();
+        $queryString = $this->sqlStatement($params);
 
-        $bindings = new QueryBindings();
-        $queryString = $this->compile($bindings, $this->compiler);
+        return $this->driver->execute($queryString, $params->getParameters());
+    }
 
-        return $this->driver->execute($queryString, $bindings->getParameters());
+    /**
+     * @return int
+     */
+    public function getType(): int
+    {
+        return CompilerInterface::UPDATE_QUERY;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTokens(): array
+    {
+        return [
+            'table'  => $this->table,
+            'values' => $this->values,
+            'where'  => $this->whereTokens
+        ];
     }
 }

@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Driver;
 
+use Generator;
+use PDOStatement;
 use Spiral\Database\StatementInterface;
 
 /**
@@ -21,13 +23,13 @@ use Spiral\Database\StatementInterface;
  */
 final class Statement implements StatementInterface, \IteratorAggregate
 {
-    /** @var \PDOStatement */
+    /** @var PDOStatement */
     private $pdoStatement;
 
     /**
-     * @param \PDOStatement $pdoStatement
+     * @param PDOStatement $pdoStatement
      */
-    public function __construct(\PDOStatement $pdoStatement)
+    public function __construct(PDOStatement $pdoStatement)
     {
         $this->pdoStatement = $pdoStatement;
         $this->pdoStatement->setFetchMode(self::FETCH_ASSOC);
@@ -42,9 +44,9 @@ final class Statement implements StatementInterface, \IteratorAggregate
     }
 
     /**
-     * @return \PDOStatement
+     * @return PDOStatement
      */
-    public function getPDOStatement(): \PDOStatement
+    public function getPDOStatement(): PDOStatement
     {
         return $this->pdoStatement;
     }
@@ -95,9 +97,9 @@ final class Statement implements StatementInterface, \IteratorAggregate
     }
 
     /**
-     * @return \Generator
+     * @return Generator
      */
-    public function getIterator(): \Generator
+    public function getIterator(): Generator
     {
         foreach ($this->pdoStatement as $row) {
             yield $row;

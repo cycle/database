@@ -19,8 +19,8 @@ install:
   - composer install --no-interaction --prefer-source
 
 script:
-  - vendor/bin/phpunit --coverage-clover=coverage.xml
   - vendor/bin/spiral-cs check src tests
+  - vendor/bin/phpunit --coverage-clover=coverage.xml
 
 after_success:
   - bash <(curl -s https://codecov.io/bash) -f coverage.xml
@@ -34,9 +34,9 @@ jobs:
         - docker-compose up -d
         - cd ..
       script:
-        - vendor/bin/phpunit tests/Database/SQLite
-        - vendor/bin/phpunit tests/Database/MySQL
-        - vendor/bin/phpunit tests/Database/Postgres
+        - vendor/bin/phpunit tests/Database/Driver/SQLite
+        - vendor/bin/phpunit tests/Database/Driver//MySQL
+        - vendor/bin/phpunit tests/Database/Driver/Postgres
 
     # Testing various PostgresSQL versions
     - stage: Test
@@ -48,7 +48,7 @@ jobs:
       before_install:
         - psql -c 'create database spiral;' -U postgres
       script:
-        - vendor/bin/phpunit tests/Database/Postgres
+        - vendor/bin/phpunit tests/Database/Driver/Postgres
 
     - stage: Test
       php: 7.2
@@ -59,7 +59,7 @@ jobs:
       before_install:
         - psql -c 'create database spiral;' -U postgres
       script:
-        - vendor/bin/phpunit tests/Database/Postgres
+        - vendor/bin/phpunit tests/Database/Driver/Postgres
 
     - stage: Test
       php: 7.2
@@ -70,7 +70,7 @@ jobs:
       before_install:
         - psql -c 'create database spiral;' -U postgres
       script:
-        - vendor/bin/phpunit tests/Database/Postgres
+        - vendor/bin/phpunit tests/Database/Driver/Postgres
 
     - stage: Test
       php: 7.3
@@ -87,7 +87,7 @@ jobs:
         - psql --version
         - psql -c 'create database spiral;' -U postgres
       script:
-        - vendor/bin/phpunit tests/Database/Postgres
+        - vendor/bin/phpunit tests/Database/Driver/Postgres
 
     - stage: Test
       php: 7.3
@@ -105,7 +105,7 @@ jobs:
         - psql -c 'create database spiral;' -U postgres
         - psql -c 'CREATE ROLE travis SUPERUSER LOGIN CREATEDB;' -U postgres
       script:
-        - vendor/bin/phpunit tests/Database/Postgres
+        - vendor/bin/phpunit tests/Database/Driver/Postgres
 
     - stage: Test
       php: 7.3
@@ -123,7 +123,7 @@ jobs:
         - psql -c 'create database spiral;' -U postgres
         - psql -c 'CREATE ROLE travis SUPERUSER LOGIN CREATEDB;' -U postgres
       script:
-        - vendor/bin/phpunit tests/Database/Postgres
+        - vendor/bin/phpunit tests/Database/Driver/Postgres
 
     # MariaDB
     - stage: Test
@@ -135,4 +135,4 @@ jobs:
       before_install:
         - mysql -e 'CREATE DATABASE spiral;'
       script:
-        - vendor/bin/phpunit tests/Database/MySQL
+        - vendor/bin/phpunit tests/Database/Driver/MySQL

@@ -14,6 +14,7 @@ namespace Spiral\Database\Schema;
 use Spiral\Database\Driver\Driver;
 use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Driver\HandlerInterface;
+use Throwable;
 
 /**
  * Saves multiple linked tables at once but treating their cross dependency.
@@ -55,7 +56,7 @@ final class Reflector
     /**
      * @return AbstractTable[]
      */
-    public function getTables()
+    public function getTables(): array
     {
         return array_values($this->tables);
     }
@@ -80,15 +81,15 @@ final class Reflector
     /**
      * Synchronize tables.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function run(): void
     {
         $hasChanges = false;
         foreach ($this->tables as $table) {
             if (
-                $table->getComparator()->hasChanges()
-                || $table->getStatus() == AbstractTable::STATUS_DECLARED_DROPPED
+                $table->getStatus() === AbstractTable::STATUS_DECLARED_DROPPED
+                || $table->getComparator()->hasChanges()
             ) {
                 $hasChanges = true;
                 break;
@@ -113,7 +114,7 @@ final class Reflector
             foreach ($this->commitChanges() as $table) {
                 $table->save(HandlerInterface::CREATE_FOREIGN_KEYS, true);
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->rollbackTransaction();
             throw $e;
         }
@@ -152,7 +153,7 @@ final class Reflector
     {
         $updated = [];
         foreach ($this->sortedTables() as $table) {
-            if ($table->getStatus() == AbstractTable::STATUS_DECLARED_DROPPED) {
+            if ($table->getStatus() === AbstractTable::STATUS_DECLARED_DROPPED) {
                 $table->save(HandlerInterface::DO_DROP);
                 continue;
             }

@@ -11,13 +11,14 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Schema;
 
+use DateTimeImmutable;
 use Spiral\Database\ColumnInterface;
 use Spiral\Database\Driver\DriverInterface;
-use Spiral\Database\Driver\QueryBindings;
 use Spiral\Database\Exception\DefaultValueException;
 use Spiral\Database\Exception\SchemaException;
 use Spiral\Database\Injection\Fragment;
 use Spiral\Database\Injection\FragmentInterface;
+use Spiral\Database\Query\QueryParameters;
 use Spiral\Database\Schema\Traits\ElementTrait;
 
 /**
@@ -311,11 +312,11 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
             $column['defaultValue'] = $this->getDefaultValue();
         }
 
-        if ($this->getAbstractType() == 'enum') {
+        if ($this->getAbstractType() === 'enum') {
             $column['enumValues'] = $this->enumValues;
         }
 
-        if ($this->getAbstractType() == 'decimal') {
+        if ($this->getAbstractType() === 'decimal') {
             $column['precision'] = $this->precision;
             $column['scale'] = $this->scale;
         }
@@ -360,7 +361,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      */
     public function hasDefaultValue(): bool
     {
-        return !is_null($this->defaultValue);
+        return $this->defaultValue !== null;
     }
 
     /**
@@ -585,7 +586,10 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     public function enum($values): AbstractColumn
     {
         $this->type('enum');
-        $this->enumValues = array_map('strval', is_array($values) ? $values : func_get_args());
+        $this->enumValues = array_map(
+            'strval',
+            is_array($values) ? $values : func_get_args()
+        );
 
         return $this;
     }
@@ -610,11 +614,15 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         $this->type('string');
 
         if ($size > 255) {
-            throw new SchemaException("String size can't exceed 255 characters. Use text instead");
+            throw new SchemaException(
+                'String size can\'t exceed 255 characters. Use text instead'
+            );
         }
 
         if ($size < 0) {
-            throw new SchemaException('Invalid string length value');
+            throw new SchemaException(
+                'Invalid string length value'
+            );
         }
 
         $this->size = (int)$size;
@@ -680,7 +688,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     {
         $normalized = clone $initial;
 
-        // soft compare
+        // soft compare, todo: improve
         if ($this == $normalized) {
             return true;
         }
@@ -750,7 +758,11 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         }
 
         if ($defaultValue instanceof FragmentInterface) {
-            return $defaultValue->compile(new QueryBindings(), $driver->getCompiler());
+            return $driver->getQueryCompiler()->compile(
+                new QueryParameters(),
+                '',
+                $defaultValue
+            );
         }
 
         if ($this->getType() === 'bool') {
@@ -762,10 +774,10 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         }
 
         if ($this->getType() === 'int') {
-            return strval($defaultValue);
+            return (string)$defaultValue;
         }
 
-        return strval($driver->quote($defaultValue));
+        return $driver->quote($defaultValue);
     }
 
     /**
@@ -789,10 +801,10 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         } else {
             if (is_numeric($value)) {
                 //Presumably timestamp
-                $datetime = new \DateTime('now', $this->timezone);
-                $datetime->setTimestamp($value);
+                $datetime = new DateTimeImmutable('now', $this->timezone);
+                $datetime = $datetime->setTimestamp($value);
             } else {
-                $datetime = new \DateTime($value, $this->timezone);
+                $datetime = new DateTimeImmutable($value, $this->timezone);
             }
         }
 

@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Injection;
 
+use PDO;
+
 /**
  * Default implementation of ParameterInterface, provides ability to mock value or array of values
  * and automatically create valid query placeholder at moment of query compilation (? vs (?, ?, ?)).
@@ -23,10 +25,10 @@ final class Parameter implements ParameterInterface
     public const DETECT_TYPE = 900888;
 
     /** @var mixed|array */
-    private $value = null;
+    private $value;
 
     /** @var int */
-    private $type = \PDO::PARAM_STR;
+    private $type = PDO::PARAM_STR;
 
     /**
      * @param mixed $value
@@ -34,9 +36,7 @@ final class Parameter implements ParameterInterface
      */
     public function __construct($value, int $type = self::DETECT_TYPE)
     {
-        $this->value = $value;
-
-        $this->resolveType($value, $type);
+        $this->setValue($value, $type);
     }
 
     /**
@@ -48,6 +48,36 @@ final class Parameter implements ParameterInterface
             'value' => $this->value,
             'type'  => $this->type
         ];
+    }
+
+    /**
+     * Parameter type.
+     *
+     * @return int
+     */
+    public function getType(): int
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param mixed $value
+     * @param int   $type
+     */
+    public function setValue($value, int $type = self::DETECT_TYPE): void
+    {
+        $this->value = $value;
+
+        if ($value instanceof ValueInterface) {
+            $this->type = $value->rawType();
+            return;
+        }
+
+        if ($type !== self::DETECT_TYPE) {
+            $this->type = $type;
+        } elseif (!is_array($value)) {
+            $this->type = $this->detectType($value);
+        }
     }
 
     /**
@@ -63,37 +93,7 @@ final class Parameter implements ParameterInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function setValue($value): void
-    {
-        $this->value = $value;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withValue($value, int $type = self::DETECT_TYPE): ParameterInterface
-    {
-        $parameter = clone $this;
-        $parameter->value = $value;
-        $parameter->resolveType($value, $type);
-
-        return $parameter;
-    }
-
-    /**
-     * Parameter type.
-     *
-     * @return int
-     */
-    public function getType(): int
-    {
-        return $this->type;
-    }
-
-    /**
-     * {@inheritdoc}
+     * @return bool
      */
     public function isArray(): bool
     {
@@ -101,23 +101,11 @@ final class Parameter implements ParameterInterface
     }
 
     /**
-     * @param mixed $value
-     * @param int   $type
+     * @return bool
      */
-    private function resolveType($value, int $type): void
+    public function isNull(): bool
     {
-        if ($value instanceof ValueInterface) {
-            $this->type = $value->rawType();
-            return;
-        }
-
-        if ($type === self::DETECT_TYPE) {
-            if (!is_array($value)) {
-                $this->type = $this->detectType($value);
-            }
-        } else {
-            $this->type = $type;
-        }
+        return $this->value === null;
     }
 
     /**
@@ -129,13 +117,13 @@ final class Parameter implements ParameterInterface
     {
         switch (gettype($value)) {
             case 'boolean':
-                return \PDO::PARAM_BOOL;
+                return PDO::PARAM_BOOL;
             case 'integer':
-                return \PDO::PARAM_INT;
+                return PDO::PARAM_INT;
             case 'NULL':
-                return \PDO::PARAM_NULL;
+                return PDO::PARAM_NULL;
             default:
-                return \PDO::PARAM_STR;
+                return PDO::PARAM_STR;
         }
     }
 }

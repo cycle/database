@@ -1,40 +1,24 @@
 <?php
 
 /**
- * Spiral, Core Components
+ * Spiral Framework.
  *
- * @author Wolfy-J
+ * @license   MIT
+ * @author    Anton Titov (Wolfy-J)
  */
 
 declare(strict_types=1);
 
 namespace Spiral\Database\Tests;
 
-use Spiral\Database\Database;
 use Spiral\Database\Injection\Expression;
 use Spiral\Database\Injection\Fragment;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Query\SelectQuery;
-use Spiral\Database\Schema\AbstractTable;
 use Spiral\Pagination\PaginableInterface;
 
-abstract class SelectQueryTest extends BaseQueryTest
+abstract class SelectQueryTest extends BaseTest
 {
-    /**
-     * @var Database
-     */
-    protected $database;
-
-    public function setUp(): void
-    {
-        $this->database = $this->db();
-    }
-
-    public function schema(string $table): AbstractTable
-    {
-        return $this->database->table($table)->getSchema();
-    }
-
     public function testQueryInstance(): void
     {
         $this->assertInstanceOf(SelectQuery::class, $this->database->select());
@@ -44,7 +28,158 @@ abstract class SelectQueryTest extends BaseQueryTest
         $this->assertInstanceOf(PaginableInterface::class, $this->database->table->select());
     }
 
-    //Generic behaviours
+    public function testCompileQuery(): void
+    {
+        $select = $this->db()
+            ->select('*')
+            ->from('table', 'table2')
+            ->where(['name' => 'Antony']);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {table}, {table2} WHERE {name} = \'Antony\'',
+            (string)$select
+        );
+
+        $this->assertIsArray($select->__debugInfo());
+    }
+
+    public function testCompileQueryExtraParam(): void
+    {
+        $select = $this->db()
+            ->select('*')
+            ->from('table')
+            ->where(new Parameter('string'), 'string');
+
+        $this->assertSameQuery(
+            'SELECT * FROM {table} WHERE \'string\' = \'string\'',
+            (string)$select
+        );
+
+        $this->assertSameParameters(['string', 'string'], $select);
+    }
+
+    public function testSimpleWhere(): void
+    {
+        $select = $this->database->select()->from('table')->where('id', 1);
+
+        $this->assertSameQuery('SELECT * FROM {table} WHERE {id} = ?', $select);
+        $this->assertSameParameters(
+            [
+                1
+            ],
+            $select
+        );
+    }
+
+    public function testWhereAndJoin(): void
+    {
+        $select = $this->database->select()
+            ->from('table')
+            ->leftJoin('external')->onWhere(['name' => 'test'])
+            ->where('id', 1);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {table} LEFT JOIN {external} ON {name} = ? WHERE {id} = ?',
+            $select
+        );
+        $this->assertSameParameters(
+            [
+                'test',
+                1
+            ],
+            $select
+        );
+    }
+
+    public function testWhereAndJoinReverted(): void
+    {
+        $select = $this->database->select()
+            ->from('table')
+            ->where('id', 1)
+            ->leftJoin('external')->onWhere(['name' => 'test']);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {table} LEFT JOIN {external} ON {name} = ? WHERE {id} = ?',
+            $select
+        );
+
+        $this->assertSameParameters(
+            [
+                'test',
+                1
+            ],
+            $select
+        );
+    }
+
+    public function testArrayWhere(): void
+    {
+        $select = $this->database->select()
+            ->from('table')
+            ->where('id', 'IN', new Parameter([1, 2, 3, 4]));
+
+        $this->assertSameQuery('SELECT * FROM {table} WHERE {id} IN (?, ?, ?, ?)', $select);
+        $this->assertSameParameters(
+            [
+                1,
+                2,
+                3,
+                4
+            ],
+            $select
+        );
+    }
+
+    public function testCompileNestedQuery(): void
+    {
+        $select = $this->db()
+            ->select('*')
+            ->from('table', 'table2')
+            ->where(['name' => 'Antony'])
+            ->where(
+                'id',
+                'in',
+                (new SelectQuery())
+                    ->from('other')->columns('id')
+                    ->where('x', 123)
+            );
+
+        $this->assertSameQuery(
+            'SELECT * FROM {table}, {table2}
+WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
+            (string)$select
+        );
+
+        $this->assertSameParameters(
+            [
+                'Antony',
+                123
+            ],
+            $select
+        );
+    }
+
+    public function testSelectFromSelect(): void
+    {
+        $select = $this->db()
+            ->select('id')
+            ->from((new SelectQuery())->from('users')->where('id', '>', 100))
+            ->where(['name' => 'Antony']);
+
+        $this->assertSameQuery(
+            'SELECT {id} FROM (SELECT * FROM {users} WHERE {id} > 100) WHERE {name} = \'Antony\'',
+            (string)$select
+        );
+
+        $this->assertSameParameters(
+            [
+                100,
+                'Antony',
+
+            ],
+            $select
+        );
+    }
 
     public function testSimpleSelection(): void
     {
@@ -52,25 +187,32 @@ abstract class SelectQueryTest extends BaseQueryTest
         $this->assertSame($this->database->getDriver(), $select->getDriver());
 
         $this->assertSame(['table'], $select->getTables());
+        $this->assertSame(['*'], $select->getColumns());
 
-        //Test __debugInfo
-        $this->assertInternalType('array', $select->__debugInfo());
-
-        $this->assertSameQuery('SELECT * FROM {table}', $select);
+        $this->assertSameQuery(
+            'SELECT * FROM {table}',
+            $select
+        );
     }
 
     public function testMultipleTablesSelection(): void
     {
         $select = $this->database->select()->from(['tableA', 'tableB']);
 
-        $this->assertSameQuery('SELECT * FROM {tableA}, {tableB}', $select);
+        $this->assertSameQuery(
+            'SELECT * FROM {tableA}, {tableB}',
+            $select
+        );
     }
 
     public function testSelectDistinct(): void
     {
         $select = $this->database->select()->distinct()->from(['table']);
 
-        $this->assertSameQuery('SELECT DISTINCT * FROM {table}', $select);
+        $this->assertSameQuery(
+            'SELECT DISTINCT * FROM {table}',
+            $select
+        );
     }
 
     public function testSelectWithSimpleWhere(): void
@@ -92,6 +234,22 @@ abstract class SelectQueryTest extends BaseQueryTest
             $select
         );
     }
+
+    public function testDeadWhere(): void
+    {
+        $select = $this->database->select()->distinct()
+            ->from(['users'])
+            ->where(
+                static function (): void {
+                }
+            );
+
+        $this->assertSameQuery(
+            'SELECT DISTINCT * FROM {users}',
+            $select
+        );
+    }
+
 
     public function testSelectWithSimpleWhereNotNull(): void
     {
@@ -164,7 +322,10 @@ abstract class SelectQueryTest extends BaseQueryTest
 
     public function testPrefixedSelectWithFullySpecificColumnNameInWhere(): void
     {
-        $select = $this->db('prefixed', 'prefix_')->select()->distinct()->from(['users'])
+        $select = $this->db('prefixed', 'prefix_')
+            ->select()
+            ->distinct()
+            ->from(['users'])
             ->where('users.balance', 12);
 
         $this->assertSameQuery(
@@ -225,6 +386,22 @@ abstract class SelectQueryTest extends BaseQueryTest
         );
     }
 
+    /**
+     * @expectedException \Spiral\Database\Exception\BuilderException
+     */
+    public function testSelectInvalidArrayArgument(): void
+    {
+        $select = $this->database->select()->distinct()
+            ->from(['users'])
+            ->where('name', 'Anton')
+            ->orWhere('id', 'in', [1, 2, 3]);
+
+        $this->assertSameQuery(
+            'SELECT DISTINCT * FROM {users} WHERE {name} = ? OR {balance} > ?',
+            $select
+        );
+    }
+
     public function testSelectWithWhereOrWhereAndWhere(): void
     {
         $select = $this->database->select()->distinct()
@@ -239,19 +416,31 @@ abstract class SelectQueryTest extends BaseQueryTest
         );
     }
 
-    //Combinations thought closures
+    // Combinations thought closures
 
     public function testWhereOfOrWhere(): void
     {
         $select = $this->database->select()
             ->from(['users'])
             ->where('name', 'Anton')
-            ->andWhere(function (SelectQuery $select): void {
-                $select->orWhere('value', '>', 10)->orWhere('value', '<', 1000);
-            });
+            ->andWhere(
+                static function (SelectQuery $select): void {
+                    $select->orWhere('value', '>', 10)
+                        ->orWhere('value', '<', 1000);
+                }
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {name} = ? AND ({value} > ? OR {value} < ?)',
+            $select
+        );
+
+        $this->assertSameParameters(
+            [
+                'Anton',
+                10,
+                1000
+            ],
             $select
         );
     }
@@ -261,9 +450,12 @@ abstract class SelectQueryTest extends BaseQueryTest
         $select = $this->database->select()
             ->from(['users'])
             ->where('name', 'Anton')
-            ->andWhere(function (SelectQuery $select): void {
-                $select->where('value', '>', 10)->andWhere('value', '<', 1000);
-            });
+            ->andWhere(
+                static function (SelectQuery $select): void {
+                    $select->where('value', '>', 10)
+                        ->andWhere('value', '<', 1000);
+                }
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {name} = ? AND ({value} > ? AND {value} < ?)',
@@ -276,9 +468,12 @@ abstract class SelectQueryTest extends BaseQueryTest
         $select = $this->database->select()
             ->from(['users'])
             ->where('name', 'Anton')
-            ->orWhere(function (SelectQuery $select): void {
-                $select->orWhere('value', '>', 10)->orWhere('value', '<', 1000);
-            });
+            ->orWhere(
+                static function (SelectQuery $select): void {
+                    $select->orWhere('value', '>', 10)
+                        ->orWhere('value', '<', 1000);
+                }
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {name} = ? OR ({value} > ? OR {value} < ?)',
@@ -291,9 +486,12 @@ abstract class SelectQueryTest extends BaseQueryTest
         $select = $this->database->select()
             ->from(['users'])
             ->where('name', 'Anton')
-            ->orWhere(function (SelectQuery $select): void {
-                $select->where('value', '>', 10)->andWhere('value', '<', 1000);
-            });
+            ->orWhere(
+                function (SelectQuery $select): void {
+                    $select->where('value', '>', 10)
+                        ->andWhere('value', '<', 1000);
+                }
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {name} = ? OR ({value} > ? AND {value} < ?)',
@@ -319,12 +517,14 @@ abstract class SelectQueryTest extends BaseQueryTest
     {
         $select = $this->database->select()
             ->from(['users'])
-            ->where([
-                'name' => [
-                    'like' => 'Anton',
-                    '!='   => 'Antony'
+            ->where(
+                [
+                    'name' => [
+                        'like' => 'Anton',
+                        '!='   => 'Antony'
+                    ]
                 ]
-            ]);
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE ({name} LIKE ? AND {name} != ?)',
@@ -336,11 +536,13 @@ abstract class SelectQueryTest extends BaseQueryTest
     {
         $select = $this->database->select()
             ->from(['users'])
-            ->where([
-                'value' => [
-                    'between' => [1, 2]
+            ->where(
+                [
+                    'value' => [
+                        'between' => [1, 2]
+                    ]
                 ]
-            ]);
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {value} BETWEEN ? AND ?',
@@ -352,11 +554,13 @@ abstract class SelectQueryTest extends BaseQueryTest
     {
         $select = $this->database->select()
             ->from(['users'])
-            ->where([
-                'value' => [
-                    'not between' => [1, 2]
+            ->where(
+                [
+                    'value' => [
+                        'not between' => [1, 2]
+                    ]
                 ]
-            ]);
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {value} NOT BETWEEN ? AND ?',
@@ -372,21 +576,26 @@ abstract class SelectQueryTest extends BaseQueryTest
     {
         $select = $this->database->select()
             ->from(['users'])
-            ->where([
-                'value' => [
-                    'between' => [1]
+            ->where(
+                [
+                    'value' => [
+                        'between' => [1]
+                    ]
                 ]
-            ]);
+            );
     }
+
 
     public function testShortWhereMultiple(): void
     {
         $select = $this->database->select()
             ->from(['users'])
-            ->where([
-                'name'  => 'Anton',
-                'value' => 1
-            ]);
+            ->where(
+                [
+                    'name'  => 'Anton',
+                    'value' => 1
+                ]
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE ({name} = ? AND {value} = ?)',
@@ -420,17 +629,20 @@ abstract class SelectQueryTest extends BaseQueryTest
         );
     }
 
+
     public function testAndShortWhereOR(): void
     {
         $select = $this->database->select()
             ->from(['users'])
             ->where(['name' => 'Anton'])
-            ->andWhere([
-                '@or' => [
-                    ['value' => 1],
-                    ['value' => ['>' => 12]]
+            ->andWhere(
+                [
+                    '@or' => [
+                        ['value' => 1],
+                        ['value' => ['>' => 12]]
+                    ]
                 ]
-            ]);
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {name} = ? AND ({value} = ? OR {value} > ?)',
@@ -443,12 +655,14 @@ abstract class SelectQueryTest extends BaseQueryTest
         $select = $this->database->select()
             ->from(['users'])
             ->where(['name' => 'Anton'])
-            ->orWhere([
-                '@or' => [
-                    ['value' => 1],
-                    ['value' => ['>' => 12]]
+            ->orWhere(
+                [
+                    '@or' => [
+                        ['value' => 1],
+                        ['value' => ['>' => 12]]
+                    ]
                 ]
-            ]);
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {name} = ? OR ({value} = ? OR {value} > ?)',
@@ -461,12 +675,14 @@ abstract class SelectQueryTest extends BaseQueryTest
         $select = $this->database->select()
             ->from(['users'])
             ->where(['name' => 'Anton'])
-            ->andWhere([
-                '@and' => [
-                    ['value' => 1],
-                    ['value' => ['>' => 12]]
+            ->andWhere(
+                [
+                    '@and' => [
+                        ['value' => 1],
+                        ['value' => ['>' => 12]]
+                    ]
                 ]
-            ]);
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {name} = ? AND ({value} = ? AND {value} > ?)',
@@ -474,17 +690,20 @@ abstract class SelectQueryTest extends BaseQueryTest
         );
     }
 
+
     public function testOrShortWhereAND(): void
     {
         $select = $this->database->select()
             ->from(['users'])
             ->where(['name' => 'Anton'])
-            ->orWhere([
-                '@and' => [
-                    ['value' => 1],
-                    ['value' => ['>' => 12]]
+            ->orWhere(
+                [
+                    '@and' => [
+                        ['value' => 1],
+                        ['value' => ['>' => 12]]
+                    ]
                 ]
-            ]);
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {name} = ? OR ({value} = ? AND {value} > ?)',
@@ -500,9 +719,11 @@ abstract class SelectQueryTest extends BaseQueryTest
     {
         $select = $this->database->select()
             ->from(['users'])
-            ->where([
-                'status' => ['active', 'blocked']
-            ]);
+            ->where(
+                [
+                    'status' => ['active', 'blocked']
+                ]
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {balance} = ?',
@@ -596,10 +817,12 @@ abstract class SelectQueryTest extends BaseQueryTest
         $select = $this->database->select()
             ->from(['users'])
             ->where(['name' => 'Anton'])
-            ->orderBy([
-                'value' => SelectQuery::SORT_ASC,
-                'name'  => SelectQuery::SORT_DESC
-            ]);
+            ->orderBy(
+                [
+                    'value' => SelectQuery::SORT_ASC,
+                    'name'  => SelectQuery::SORT_DESC
+                ]
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {name} = ? ORDER BY {value} ASC, {name} DESC',
@@ -725,6 +948,7 @@ abstract class SelectQueryTest extends BaseQueryTest
             $select
         );
     }
+
 
     public function testAllColumns2(): void
     {
@@ -1049,9 +1273,11 @@ abstract class SelectQueryTest extends BaseQueryTest
         $select = $this->database->select()
             ->from(['users'])
             ->having('name', 'Anton')
-            ->andHaving(function (SelectQuery $select): void {
-                $select->orHaving('value', '>', 10)->orHaving('value', '<', 1000);
-            });
+            ->andHaving(
+                function (SelectQuery $select): void {
+                    $select->orHaving('value', '>', 10)->orHaving('value', '<', 1000);
+                }
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} HAVING {name} = ? AND ({value} > ? OR {value} < ?)',
@@ -1064,9 +1290,11 @@ abstract class SelectQueryTest extends BaseQueryTest
         $select = $this->database->select()
             ->from(['users'])
             ->having('name', 'Anton')
-            ->andHaving(function (SelectQuery $select): void {
-                $select->having('value', '>', 10)->andHaving('value', '<', 1000);
-            });
+            ->andHaving(
+                function (SelectQuery $select): void {
+                    $select->having('value', '>', 10)->andHaving('value', '<', 1000);
+                }
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} HAVING {name} = ? AND ({value} > ? AND {value} < ?)',
@@ -1079,9 +1307,11 @@ abstract class SelectQueryTest extends BaseQueryTest
         $select = $this->database->select()
             ->from(['users'])
             ->having('name', 'Anton')
-            ->orHaving(function (SelectQuery $select): void {
-                $select->orHaving('value', '>', 10)->orHaving('value', '<', 1000);
-            });
+            ->orHaving(
+                function (SelectQuery $select): void {
+                    $select->orHaving('value', '>', 10)->orHaving('value', '<', 1000);
+                }
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} HAVING {name} = ? OR ({value} > ? OR {value} < ?)',
@@ -1094,9 +1324,11 @@ abstract class SelectQueryTest extends BaseQueryTest
         $select = $this->database->select()
             ->from(['users'])
             ->having('name', 'Anton')
-            ->orHaving(function (SelectQuery $select): void {
-                $select->having('value', '>', 10)->andHaving('value', '<', 1000);
-            });
+            ->orHaving(
+                function (SelectQuery $select): void {
+                    $select->having('value', '>', 10)->andHaving('value', '<', 1000);
+                }
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} HAVING {name} = ? OR ({value} > ? AND {value} < ?)',
@@ -1122,12 +1354,14 @@ abstract class SelectQueryTest extends BaseQueryTest
     {
         $select = $this->database->select()
             ->from(['users'])
-            ->having([
-                'name' => [
-                    'like' => 'Anton',
-                    '!='   => 'Antony'
+            ->having(
+                [
+                    'name' => [
+                        'like' => 'Anton',
+                        '!='   => 'Antony'
+                    ]
                 ]
-            ]);
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} HAVING ({name} LIKE ? AND {name} != ?)',
@@ -1139,11 +1373,13 @@ abstract class SelectQueryTest extends BaseQueryTest
     {
         $select = $this->database->select()
             ->from(['users'])
-            ->having([
-                'value' => [
-                    'between' => [1, 2]
+            ->having(
+                [
+                    'value' => [
+                        'between' => [1, 2]
+                    ]
                 ]
-            ]);
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} HAVING {value} BETWEEN ? AND ?',
@@ -1155,11 +1391,13 @@ abstract class SelectQueryTest extends BaseQueryTest
     {
         $select = $this->database->select()
             ->from(['users'])
-            ->having([
-                'value' => [
-                    'not between' => [1, 2]
+            ->having(
+                [
+                    'value' => [
+                        'not between' => [1, 2]
+                    ]
                 ]
-            ]);
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} HAVING {value} NOT BETWEEN ? AND ?',
@@ -1175,21 +1413,26 @@ abstract class SelectQueryTest extends BaseQueryTest
     {
         $select = $this->database->select()
             ->from(['users'])
-            ->having([
-                'value' => [
-                    'between' => [1]
+            ->having(
+                [
+                    'value' => [
+                        'between' => [1]
+                    ]
                 ]
-            ]);
+            );
     }
+
 
     public function testHavingShortHavingMultiple(): void
     {
         $select = $this->database->select()
             ->from(['users'])
-            ->having([
-                'name'  => 'Anton',
-                'value' => 1
-            ]);
+            ->having(
+                [
+                    'name'  => 'Anton',
+                    'value' => 1
+                ]
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} HAVING ({name} = ? AND {value} = ?)',
@@ -1228,12 +1471,14 @@ abstract class SelectQueryTest extends BaseQueryTest
         $select = $this->database->select()
             ->from(['users'])
             ->having(['name' => 'Anton'])
-            ->andHaving([
-                '@or' => [
-                    ['value' => 1],
-                    ['value' => ['>' => 12]]
+            ->andHaving(
+                [
+                    '@or' => [
+                        ['value' => 1],
+                        ['value' => ['>' => 12]]
+                    ]
                 ]
-            ]);
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} HAVING {name} = ? AND ({value} = ? OR {value} > ?)',
@@ -1246,12 +1491,14 @@ abstract class SelectQueryTest extends BaseQueryTest
         $select = $this->database->select()
             ->from(['users'])
             ->having(['name' => 'Anton'])
-            ->orHaving([
-                '@or' => [
-                    ['value' => 1],
-                    ['value' => ['>' => 12]]
+            ->orHaving(
+                [
+                    '@or' => [
+                        ['value' => 1],
+                        ['value' => ['>' => 12]]
+                    ]
                 ]
-            ]);
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} HAVING {name} = ? OR ({value} = ? OR {value} > ?)',
@@ -1264,12 +1511,14 @@ abstract class SelectQueryTest extends BaseQueryTest
         $select = $this->database->select()
             ->from(['users'])
             ->having(['name' => 'Anton'])
-            ->andHaving([
-                '@and' => [
-                    ['value' => 1],
-                    ['value' => ['>' => 12]]
+            ->andHaving(
+                [
+                    '@and' => [
+                        ['value' => 1],
+                        ['value' => ['>' => 12]]
+                    ]
                 ]
-            ]);
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} HAVING {name} = ? AND ({value} = ? AND {value} > ?)',
@@ -1282,12 +1531,14 @@ abstract class SelectQueryTest extends BaseQueryTest
         $select = $this->database->select()
             ->from(['users'])
             ->having(['name' => 'Anton'])
-            ->orHaving([
-                '@and' => [
-                    ['value' => 1],
-                    ['value' => ['>' => 12]]
+            ->orHaving(
+                [
+                    '@and' => [
+                        ['value' => 1],
+                        ['value' => ['>' => 12]]
+                    ]
                 ]
-            ]);
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} HAVING {name} = ? OR ({value} = ? AND {value} > ?)',
@@ -1302,7 +1553,14 @@ abstract class SelectQueryTest extends BaseQueryTest
         $select = $this->database->select()->from(['users'])->limit(10);
 
         $this->assertSameQuery(
-            'SELECT * FROM {users} LIMIT 10',
+            'SELECT * FROM {users} LIMIT ?',
+            $select
+        );
+
+        $this->assertSameParameters(
+            [
+                10
+            ],
             $select
         );
     }
@@ -1311,21 +1569,35 @@ abstract class SelectQueryTest extends BaseQueryTest
     {
         $select = $this->database->select()->from(['users'])->limit(10)->offset(20);
 
-        $this->assertSame(10, $select->getLimit());
-        $this->assertSame(20, $select->getOffset());
-
         $this->assertSameQuery(
-            'SELECT * FROM {users} LIMIT 10 OFFSET 20',
+            'SELECT * FROM {users} LIMIT ? OFFSET ?',
+            $select
+        );
+
+
+        $this->assertSameParameters(
+            [
+                10,
+                20
+            ],
             $select
         );
     }
+
 
     public function testOffsetNoLimit(): void
     {
         $select = $this->database->select()->from(['users'])->offset(20);
 
         $this->assertSameQuery(
-            'SELECT * FROM {users} OFFSET 20',
+            'SELECT * FROM {users} OFFSET ?',
+            $select
+        );
+
+        $this->assertSameParameters(
+            [
+                20
+            ],
             $select
         );
     }
@@ -1339,11 +1611,16 @@ abstract class SelectQueryTest extends BaseQueryTest
             ->orderBy('name')
             ->offset(20);
 
-        $this->assertSame(10, $select->getLimit());
-        $this->assertSame(20, $select->getOffset());
-
         $this->assertSameQuery(
-            'SELECT * FROM {users} ORDER BY {name} ASC LIMIT 10 OFFSET 20',
+            'SELECT * FROM {users} ORDER BY {name} ASC LIMIT ? OFFSET ?',
+            $select
+        );
+
+        $this->assertSameParameters(
+            [
+                10,
+                20
+            ],
             $select
         );
     }
@@ -1419,7 +1696,6 @@ abstract class SelectQueryTest extends BaseQueryTest
             'SELECT * FROM {users} GROUP BY RESOLVE_USER(users.id)',
             $select
         );
-
         //Note: see Expressions
     }
 
@@ -1516,9 +1792,11 @@ abstract class SelectQueryTest extends BaseQueryTest
     public function testShortWhereValueAsExpressionPrefixed(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()->from(['users'])
-            ->where([
-                'balance' => ['>' => new Expression('users.origin_balance')]
-            ]);
+            ->where(
+                [
+                    'balance' => ['>' => new Expression('users.origin_balance')]
+                ]
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {prefix_users} WHERE {balance} > {prefix_users}.{origin_balance}',
@@ -1548,6 +1826,7 @@ abstract class SelectQueryTest extends BaseQueryTest
             $select
         );
     }
+
 
     public function testGroupByExpressionWithPrefix(): void
     {
@@ -1610,9 +1889,11 @@ abstract class SelectQueryTest extends BaseQueryTest
     {
         $this->database->select()
             ->from(['users'])
-            ->where([
-                'status' => ['IN' => ['active', 'blocked']]
-            ]);
+            ->where(
+                [
+                    'status' => ['IN' => ['active', 'blocked']]
+                ]
+            );
     }
 
     public function testGoodArrayParameter(): void
@@ -1642,9 +1923,11 @@ abstract class SelectQueryTest extends BaseQueryTest
 
         $select = $this->database->select()
             ->from(['users'])
-            ->where([
-                'status' => ['IN' => $p]
-            ]);
+            ->where(
+                [
+                    'status' => ['IN' => $p]
+                ]
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {status} IN (?, ?)',
@@ -1920,10 +2203,12 @@ abstract class SelectQueryTest extends BaseQueryTest
         $select = $this->database->select()
             ->from(['users'])
             ->leftJoin('photos as p')
-            ->on([
-                'p.user_id' => 'users.id',
-                'p.public'  => new Parameter(true)
-            ]);
+            ->on(
+                [
+                    'p.user_id' => 'users.id',
+                    'p.public'  => new Parameter(true)
+                ]
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos} AS {p} '
@@ -1937,10 +2222,12 @@ abstract class SelectQueryTest extends BaseQueryTest
         $select = $this->db('prefixed', 'prefix_')->select()
             ->from(['users'])
             ->leftJoin('photos as p')
-            ->on([
-                'p.user_id' => 'users.id',
-                'p.public'  => new Parameter(true)
-            ]);
+            ->on(
+                [
+                    'p.user_id' => 'users.id',
+                    'p.public'  => new Parameter(true)
+                ]
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {prefix_users} LEFT JOIN {prefix_photos} AS {p} '
@@ -1954,10 +2241,12 @@ abstract class SelectQueryTest extends BaseQueryTest
         $select = $this->db('prefixed', 'prefix_')->select()
             ->from(['users'])
             ->leftJoin('photos', 'p')
-            ->on([
-                'p.user_id' => 'users.id',
-                'p.public'  => new Parameter(true)
-            ]);
+            ->on(
+                [
+                    'p.user_id' => 'users.id',
+                    'p.public'  => new Parameter(true)
+                ]
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {prefix_users} LEFT JOIN {prefix_photos} AS {p} '
@@ -1971,10 +2260,12 @@ abstract class SelectQueryTest extends BaseQueryTest
         $select = $this->db('prefixed', 'prefix_')->select()
             ->from(['users as u'])
             ->leftJoin('photos as p')
-            ->on([
-                'p.user_id' => 'u.id',
-                'p.public'  => new Parameter(true)
-            ]);
+            ->on(
+                [
+                    'p.user_id' => 'u.id',
+                    'p.public'  => new Parameter(true)
+                ]
+            );
 
         $this->assertSameQuery(
             'SELECT * FROM {prefix_users} AS {u} LEFT JOIN {prefix_photos} AS {p} '
@@ -1993,7 +2284,8 @@ abstract class SelectQueryTest extends BaseQueryTest
             ->select('COUNT(*)', 'groups.id', 'u.id', 'SUM(t.amount)')
             ->from(['users as u'])
             ->leftJoin('transactions as t')->on(['t.user_id' => 'u.id'])
-            ->rightJoin('groups')->on(['groups.id' => 'u.group_id'])->onWhere('groups.public', true)
+            ->rightJoin('groups')->on(['groups.id' => 'u.group_id'])
+            ->onWhere('groups.public', true)
             ->where('u.status', 'IN', $statuses)
             ->orderBy('u.name', 'DESC')
             ->groupBy('u.id');

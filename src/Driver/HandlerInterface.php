@@ -18,7 +18,7 @@ use Spiral\Database\Schema\AbstractIndex;
 use Spiral\Database\Schema\AbstractTable;
 
 /**
- * Perform low level operations on schemas.
+ * Manages database schema.
  */
 interface HandlerInterface
 {
@@ -54,12 +54,52 @@ interface HandlerInterface
     public const DO_ALL = self::DO_FOREIGN_KEYS | self::DO_INDEXES | self::DO_COLUMNS | self::DO_DROP | self::DO_RENAME;
 
     /**
+     * @param DriverInterface $driver
+     * @return HandlerInterface
+     */
+    public function withDriver(DriverInterface $driver): HandlerInterface;
+
+    /**
+     * Get all available table names.
+     *
+     * @return array
+     */
+    public function getTableNames(): array;
+
+    /**
+     * Check if given table exists in database.
+     *
+     * @param string $table
+     * @return bool
+     */
+    public function hasTable(string $table): bool;
+
+    /**
+     * Get or create table schema.
+     *
+     * @param string      $table
+     * @param string|null $prefix
+     * @return AbstractTable
+     *
+     * @throws HandlerException
+     */
+    public function getSchema(string $table, string $prefix = null): AbstractTable;
+
+    /**
      * Create table based on a given schema.
      *
      * @param AbstractTable $table
      * @throws HandlerException
      */
-    public function createTable(AbstractTable $table);
+    public function createTable(AbstractTable $table): void;
+
+    /**
+     * Truncate table.
+     *
+     * @param AbstractTable $table
+     * @throws HandlerException
+     */
+    public function eraseTable(AbstractTable $table): void;
 
     /**
      * Drop table from database.
@@ -67,7 +107,7 @@ interface HandlerInterface
      * @param AbstractTable $table
      * @throws HandlerException
      */
-    public function dropTable(AbstractTable $table);
+    public function dropTable(AbstractTable $table): void;
 
     /**
      * Sync given table schema.
@@ -75,7 +115,7 @@ interface HandlerInterface
      * @param AbstractTable $table
      * @param int           $operation See behaviour constants.
      */
-    public function syncTable(AbstractTable $table, int $operation = self::DO_ALL);
+    public function syncTable(AbstractTable $table, int $operation = self::DO_ALL): void;
 
     /**
      * Rename table from one name to another.
@@ -85,7 +125,7 @@ interface HandlerInterface
      *
      * @throws HandlerException
      */
-    public function renameTable(string $table, string $name);
+    public function renameTable(string $table, string $name): void;
 
     /**
      * Driver specific column add command.
@@ -95,7 +135,7 @@ interface HandlerInterface
      *
      * @throws HandlerException
      */
-    public function createColumn(AbstractTable $table, AbstractColumn $column);
+    public function createColumn(AbstractTable $table, AbstractColumn $column): void;
 
     /**
      * Driver specific column remove (drop) command.
@@ -103,7 +143,7 @@ interface HandlerInterface
      * @param AbstractTable  $table
      * @param AbstractColumn $column
      */
-    public function dropColumn(AbstractTable $table, AbstractColumn $column);
+    public function dropColumn(AbstractTable $table, AbstractColumn $column): void;
 
     /**
      * Driver specific column alter command.
@@ -114,7 +154,11 @@ interface HandlerInterface
      *
      * @throws HandlerException
      */
-    public function alterColumn(AbstractTable $table, AbstractColumn $initial, AbstractColumn $column);
+    public function alterColumn(
+        AbstractTable $table,
+        AbstractColumn $initial,
+        AbstractColumn $column
+    ): void;
 
     /**
      * Driver specific index adding command.
@@ -124,7 +168,7 @@ interface HandlerInterface
      *
      * @throws HandlerException
      */
-    public function createIndex(AbstractTable $table, AbstractIndex $index);
+    public function createIndex(AbstractTable $table, AbstractIndex $index): void;
 
     /**
      * Driver specific index remove (drop) command.
@@ -134,7 +178,7 @@ interface HandlerInterface
      *
      * @throws HandlerException
      */
-    public function dropIndex(AbstractTable $table, AbstractIndex $index);
+    public function dropIndex(AbstractTable $table, AbstractIndex $index): void;
 
     /**
      * Driver specific index alter command, by default it will remove and add index.
@@ -145,7 +189,11 @@ interface HandlerInterface
      *
      * @throws HandlerException
      */
-    public function alterIndex(AbstractTable $table, AbstractIndex $initial, AbstractIndex $index);
+    public function alterIndex(
+        AbstractTable $table,
+        AbstractIndex $initial,
+        AbstractIndex $index
+    ): void;
 
     /**
      * Driver specific foreign key adding command.
@@ -155,7 +203,7 @@ interface HandlerInterface
      *
      * @throws HandlerException
      */
-    public function createForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey);
+    public function createForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void;
 
     /**
      * Driver specific foreign key remove (drop) command.
@@ -165,7 +213,7 @@ interface HandlerInterface
      *
      * @throws HandlerException
      */
-    public function dropForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey);
+    public function dropForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void;
 
     /**
      * Driver specific foreign key alter command, by default it will remove and add foreign key.
@@ -176,7 +224,11 @@ interface HandlerInterface
      *
      * @throws HandlerException
      */
-    public function alterForeignKey(AbstractTable $table, AbstractForeignKey $initial, AbstractForeignKey $foreignKey);
+    public function alterForeignKey(
+        AbstractTable $table,
+        AbstractForeignKey $initial,
+        AbstractForeignKey $foreignKey
+    ): void;
 
     /**
      * Drop column constraint using it's name.
@@ -186,5 +238,5 @@ interface HandlerInterface
      *
      * @throws HandlerException
      */
-    public function dropConstrain(AbstractTable $table, $constraint);
+    public function dropConstrain(AbstractTable $table, string $constraint): void;
 }

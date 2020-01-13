@@ -29,12 +29,6 @@ interface DatabaseInterface
     public const WRITE = 0;
     public const READ  = 1;
 
-    // Known database types. More to be added?
-    public const MYSQL      = 'MySQL';
-    public const POSTGRES   = 'Postgres';
-    public const SQLITE     = 'SQLite';
-    public const SQL_SERVER = 'SQLServer';
-
     /**
      * @return string
      */
@@ -122,9 +116,9 @@ interface DatabaseInterface
     /**
      * Get instance of UpdateBuilder associated with current Database.
      *
-     * @param string $table Table where rows should be updated in.
+     * @param string $table  Table where rows should be updated in.
      * @param array  $values Initial set of columns to update associated with their values.
-     * @param array  $where Initial set of where rules specified as array.
+     * @param array  $where  Initial set of where rules specified as array.
      * @return UpdateQuery
      */
     public function update(string $table = '', array $values = [], array $where = []): UpdateQuery;

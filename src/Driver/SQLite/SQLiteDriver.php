@@ -11,74 +11,53 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Driver\SQLite;
 
-use Spiral\Database\DatabaseInterface;
 use Spiral\Database\Driver\Driver;
-use Spiral\Database\Driver\HandlerInterface;
-use Spiral\Database\Driver\SQLite\Schema\SQLiteTable;
-use Spiral\Database\Exception\DriverException;
 use Spiral\Database\Exception\StatementException;
+use Spiral\Database\Query\QueryBuilder;
+use Throwable;
 
-/**
- * Talks to sqlite databases.
- */
 class SQLiteDriver extends Driver
 {
-    protected const TYPE               = DatabaseInterface::SQLITE;
-    protected const TABLE_SCHEMA_CLASS = SQLiteTable::class;
-    protected const QUERY_COMPILER     = SQLiteCompiler::class;
+    /**
+     * @param array $options
+     */
+    public function __construct(array $options)
+    {
+        parent::__construct(
+            $options,
+            new SQLiteHandler(),
+            new SQLiteCompiler('""'),
+            QueryBuilder::defaultBuilder()
+        );
+    }
 
     /**
-     * Get driver source database or file name.
-     *
-     * @return string
-     *
-     * @throws DriverException
+     * @inheritDoc
+     */
+    public function getType(): string
+    {
+        return 'SQLite';
+    }
+
+    /**
+     * @inheritDoc
      */
     public function getSource(): string
     {
-        //Remove "sqlite:"
-        return substr($this->options['connection'] ?? $this->options['dsn'] ?? $this->options['addr'], 7);
+        // remove "sqlite:"
+        return substr($this->getDSN(), 7);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function tableNames(): array
+    protected function mapException(Throwable $exception, string $query): StatementException
     {
-        $tables = [];
-        foreach ($this->query("SELECT name FROM 'sqlite_master' WHERE type = 'table'") as $table) {
-            if ($table['name'] !== 'sqlite_sequence') {
-                $tables[] = $table['name'];
-            }
+        if ((int)$exception->getCode() === 23000) {
+            return new StatementException\ConstrainException($exception, $query);
         }
 
-        return $tables;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasTable(string $name): bool
-    {
-        $query = "SELECT COUNT('sql') FROM 'sqlite_master' WHERE type = 'table' and name = ?";
-
-        return (bool)$this->query($query, [$name])->fetchColumn();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function eraseData(string $table): void
-    {
-        $this->execute("DELETE FROM {$this->identifier($table)}");
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getHandler(): HandlerInterface
-    {
-        return new SQLiteHandler($this);
+        return new StatementException($exception, $query);
     }
 
     /**
@@ -86,18 +65,10 @@ class SQLiteDriver extends Driver
      */
     protected function setIsolationLevel(string $level): void
     {
-        $this->getLogger()->alert("Transaction isolation level is not fully supported by SQLite ({$level}).");
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function mapException(\Throwable $exception, string $query): StatementException
-    {
-        if ((int)$exception->getCode() === 23000) {
-            return new StatementException\ConstrainException($exception, $query);
+        if ($this->logger !== null) {
+            $this->logger->alert(
+                "Transaction isolation level is not fully supported by SQLite ({$level})"
+            );
         }
-
-        return new StatementException($exception, $query);
     }
 }

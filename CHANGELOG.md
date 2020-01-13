@@ -1,6 +1,15 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
+2.7.0 (13.01.2020)
+-----
+- added sql compiler caching, up to 5x times faster query generation
+- added prepared statement caching
+- refactor of SchemaHandler
+- refactor of Query builders
+- added ComparatorInterface
+- deprecated MySQL 5.5 support
+
 2.6.10 (26.12.2019)
 -----
 - [bugfix] invalid change detection for nullable and zeroed default values

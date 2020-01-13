@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Spiral\Database\Injection;
 
 use Spiral\Database\Driver\CompilerInterface;
-use Spiral\Database\Driver\QueryBindings;
 
 /**
  * Default implementation of SQLFragmentInterface, provides ability to inject custom SQL code into
@@ -23,33 +22,39 @@ use Spiral\Database\Driver\QueryBindings;
 final class Fragment implements FragmentInterface
 {
     /** @var string */
-    private $statement = null;
+    private $fragment;
 
     /**
-     * @param string $statement
+     * @param string $fragment
      */
-    public function __construct(string $statement)
+    public function __construct(string $fragment)
     {
-        $this->statement = $statement;
+        $this->fragment = $fragment;
     }
 
     /**
-     * @param array $an_array
-     *
-     * @return Fragment
-     */
-    public static function __set_state(array $an_array): Fragment
-    {
-        return new static($an_array['statement']);
-    }
-
-    /**
-     * @param QueryBindings     $bindings
-     * @param CompilerInterface $compiler
      * @return string
      */
-    public function compile(QueryBindings $bindings, CompilerInterface $compiler): string
+    public function __toString(): string
     {
-        return $this->statement;
+        return $this->fragment;
+    }
+
+    /**
+     * @return int
+     */
+    public function getType(): int
+    {
+        return CompilerInterface::FRAGMENT;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTokens(): array
+    {
+        return [
+            'fragment' => $this->fragment
+        ];
     }
 }

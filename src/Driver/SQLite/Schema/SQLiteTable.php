@@ -67,7 +67,9 @@ class SQLiteTable extends AbstractTable
             $index = SQLiteIndex::createInstance(
                 $this->getName(),
                 $schema,
-                $this->driver->query("PRAGMA INDEX_INFO({$this->driver->quote($schema['name'])})")->fetchAll()
+                $this->driver->query(
+                    "PRAGMA INDEX_INFO({$this->driver->quote($schema['name'])})"
+                )->fetchAll()
             );
 
             if ($index->getColumns() === $primaryKeys) {
@@ -105,7 +107,7 @@ class SQLiteTable extends AbstractTable
 
         $result = [];
         foreach ($fks as $schema) {
-            $result[] = SQLiteForeign::createInstance(
+            $result[] = SQLiteForeignKey::createInstance(
                 $this->getName(),
                 $this->getPrefix(),
                 $schema
@@ -153,7 +155,7 @@ class SQLiteTable extends AbstractTable
      */
     protected function createForeign(string $name): AbstractForeignKey
     {
-        return new SQLiteForeign($this->getName(), $this->getPrefix(), $name);
+        return new SQLiteForeignKey($this->getName(), $this->getPrefix(), $name);
     }
 
     /**
