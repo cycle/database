@@ -329,7 +329,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      */
     public function getSize(): int
     {
-        return $this->size;
+        return (int)$this->size;
     }
 
     /**
@@ -337,7 +337,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      */
     public function getPrecision(): int
     {
-        return $this->precision;
+        return (int)$this->precision;
     }
 
     /**
@@ -345,7 +345,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      */
     public function getScale(): int
     {
-        return $this->scale;
+        return (int)$this->scale;
     }
 
     /**
