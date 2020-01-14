@@ -44,6 +44,15 @@ final class Expression implements FragmentInterface
     }
 
     /**
+     * @param array $an_array
+     * @return Expression
+     */
+    public static function __set_state(array $an_array): Expression
+    {
+        return new self($an_array['expression'] ?? $an_array['statement']);
+    }
+
+    /**
      * @return int
      */
     public function getType(): int

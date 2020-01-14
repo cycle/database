@@ -41,6 +41,15 @@ final class Fragment implements FragmentInterface
     }
 
     /**
+     * @param array $an_array
+     * @return Fragment
+     */
+    public static function __set_state(array $an_array): Fragment
+    {
+        return new self($an_array['fragment'] ?? $an_array['statement']);
+    }
+
+    /**
      * @return int
      */
     public function getType(): int

@@ -45,4 +45,27 @@ class FragmentTest extends TestCase
             $q->compile(new QueryParameters(), '', $fragment)
         );
     }
+
+    public function testSetState(): void
+    {
+        $expression = new Expression('some sql');
+
+        $exp = eval('return ' . var_export($expression, true) . ';');
+        $this->assertSame(
+            [
+                'expression' => 'some sql'
+            ],
+            $exp->getTokens()
+        );
+
+        $fragment = new Fragment('some sql');
+
+        $f = eval('return ' . var_export($fragment, true) . ';');
+        $this->assertSame(
+            [
+                'fragment' => 'some sql'
+            ],
+            $f->getTokens()
+        );
+    }
 }

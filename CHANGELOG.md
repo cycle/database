@@ -1,6 +1,10 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
+2.7.1 (14.01.2020)
+-----
+- added the ability to serialize and de-serialize fragments and expressions
+
 2.7.0 (13.01.2020)
 -----
 - added sql compiler caching, up to 5x times faster query generation
