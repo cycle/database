@@ -51,22 +51,25 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     protected $options = [
         // allow reconnects
-        'reconnect'  => true,
+        'reconnect'      => true,
 
         // all datetime objects will be converted relative to
         // this timezone (must match with DB timezone!)
-        'timezone'   => 'UTC',
+        'timezone'       => 'UTC',
 
         // DSN
-        'connection' => '',
-        'username'   => '',
-        'password'   => '',
+        'connection'     => '',
+        'username'       => '',
+        'password'       => '',
 
         // pdo options
-        'options'    => [],
+        'options'        => [],
 
         // enables query caching
-        'queryCache' => true
+        'queryCache'     => true,
+
+        // disable schema modifications
+        'readonlySchema' => false
     ];
 
     /** @var PDO|null */
@@ -116,6 +119,10 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
 
         if ($this->options['queryCache'] && $queryCompiler instanceof CachingCompilerInterface) {
             $this->queryCompiler = new CompilerCache($queryCompiler);
+        }
+
+        if ($this->options['readonlySchema']) {
+            $this->schemaHandler = new ReadonlyHandler($this->schemaHandler);
         }
     }
 
