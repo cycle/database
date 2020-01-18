@@ -203,6 +203,22 @@ class MySQLColumn extends AbstractColumn
             }
         }
 
+        // since 8.0 database does not provide size for some of the columns
+        if ($column->size === 0) {
+            switch ($column->type) {
+                case 'int':
+                    $column->size = 11;
+                    break;
+                case 'bigint':
+                    $column->size = 20;
+                    break;
+                case 'tinyint':
+                    if ($column->size !== 1) {
+                        $column->size = 4;
+                    }
+            }
+        }
+
         //Fetching enum values
         if ($options !== [] && $column->getAbstractType() === 'enum') {
             $column->enumValues = array_map(

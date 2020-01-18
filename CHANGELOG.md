@@ -1,6 +1,10 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
+v2.7.2 (18.01.2020)
+-----
+- [bugfix] invalid size detection for int, bigint, tinyint columns under latest MySQL 8.0+
+
 2.7.1 (14.01.2020)
 -----
 - added AbstractColumn::getSize() typecasting

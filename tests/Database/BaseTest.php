@@ -290,6 +290,7 @@ abstract class BaseTest extends TestCase
             "Column {$a} enum values has been changed"
         );
 
+
         $this->assertTrue(
             $a->compare($b),
             "Column {$a} has been changed"

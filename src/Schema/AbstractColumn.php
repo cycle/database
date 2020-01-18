@@ -267,7 +267,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     /**
      * Shortcut for AbstractColumn->type() method.
      *
-     * @param string $type      Abstract type.
+     * @param string $type Abstract type.
      * @param array  $arguments Not used.
      * @return self
      */
