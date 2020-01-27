@@ -30,7 +30,13 @@ class PostgresIndex extends AbstractIndex
 
             foreach ($columns as $column) {
                 //Postgres adds quotes to all columns with uppercase letters
-                $index->columns[] = trim($column, ' "\'');
+                $column = trim($column, ' "\'');
+                [$column, $order] = AbstractIndex::parseColumn($column);
+
+                $index->columns[] = $column;
+                if ($order) {
+                    $index->sort[$column] = $order;
+                }
             }
         }
 

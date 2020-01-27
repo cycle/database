@@ -261,7 +261,7 @@ final class State
     public function findIndex(array $columns): ?AbstractIndex
     {
         foreach ($this->indexes as $index) {
-            if ($index->getColumns() === $columns) {
+            if ($index->getColumnsWithSort() === $columns) {
                 return $index;
             }
         }

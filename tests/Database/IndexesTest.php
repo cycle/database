@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Tests;
 
+use Spiral\Database\Database;
 use Spiral\Database\Driver\Handler;
 use Spiral\Database\Schema\AbstractColumn;
 use Spiral\Database\Schema\AbstractTable;
@@ -77,6 +78,21 @@ abstract class IndexesTest extends BaseTest
         $schema->integer('value');
         $schema->string('subset', 2);
         $schema->index(['value', 'subset']);
+
+        $schema->save(Handler::DO_ALL);
+
+        $this->assertSameAsInDB($schema);
+    }
+
+    public function testCreateWithComplexExpressionIndex(): void
+    {
+        $schema = $this->schema('table');
+        $this->assertFalse($schema->exists());
+
+        $schema->primary('id');
+        $schema->integer('value');
+        $schema->string('subset', 2);
+        $schema->index(['subset', 'value DESC']);
 
         $schema->save(Handler::DO_ALL);
 

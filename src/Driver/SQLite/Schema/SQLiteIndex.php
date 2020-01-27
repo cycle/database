@@ -28,7 +28,13 @@ class SQLiteIndex extends AbstractIndex
         $index->type = $schema['unique'] ? self::UNIQUE : self::NORMAL;
 
         foreach ($columns as $column) {
-            $index->columns[] = $column['name'];
+            // We only need key columns
+            if (intval($column['key']) === 1) {
+                $index->columns[] = $column['name'];
+                if (intval($column['desc']) === 1) {
+                    $index->sort[$column['name']] = 'DESC';
+                }
+            }
         }
 
         return $index;
@@ -50,7 +56,16 @@ class SQLiteIndex extends AbstractIndex
         }
 
         //Wrapping column names
-        $columns = implode(', ', array_map([$driver, 'identifier'], $this->columns));
+        $columns = [];
+        foreach ($this->columns as $column) {
+            $quoted = $driver->identifier($column);
+            if ($order = $this->sort[$column] ?? null) {
+                $quoted = "$quoted $order";
+            }
+
+            $columns[] = $quoted;
+        }
+        $columns = implode(', ', $columns);
 
         $statement[] = "({$columns})";
 

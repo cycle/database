@@ -68,7 +68,7 @@ class SQLiteTable extends AbstractTable
                 $this->getName(),
                 $schema,
                 $this->driver->query(
-                    "PRAGMA INDEX_INFO({$this->driver->quote($schema['name'])})"
+                    "PRAGMA INDEX_XINFO({$this->driver->quote($schema['name'])})"
                 )->fetchAll()
             );
 

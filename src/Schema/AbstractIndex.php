@@ -45,6 +45,13 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
     protected $columns = [];
 
     /**
+     * Columns mapping to sorting order
+     *
+     * @var array
+     */
+    protected $sort = [];
+
+    /**
      * @param string $table
      * @param string $name
      */
@@ -68,6 +75,28 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
     public function getColumns(): array
     {
         return $this->columns;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSort(): array
+    {
+        return $this->sort;
+    }
+
+    /**
+     * Will return columns list with their corresponding order expressions
+     */
+    public function getColumnsWithSort(): array
+    {
+        return array_map(function ($column) {
+            if ($order = $this->sort[$column] ?? null) {
+                return "$column $order";
+            }
+
+            return $column;
+        }, $this->columns);
     }
 
     /**
@@ -106,6 +135,22 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
     }
 
     /**
+     * Change a columns order mapping if needed.
+     *
+     * Example:
+     * $index->sort(['key2' => 'DESC']);
+     *
+     * @param array $sort Associative array of columns to sort order.
+     * @return self
+     */
+    public function sort(array $sort): AbstractIndex
+    {
+        $this->sort = $sort;
+
+        return $this;
+    }
+
+    /**
      * Index sql creation syntax.
      *
      * @param DriverInterface $driver
@@ -123,7 +168,16 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
         }
 
         //Wrapping column names
-        $columns = implode(', ', array_map([$driver, 'identifier'], $this->columns));
+        $columns = [];
+        foreach ($this->columns as $column) {
+            $quoted = $driver->identifier($column);
+            if ($order = $this->sort[$column] ?? null) {
+                $quoted = "$quoted $order";
+            }
+
+            $columns[] = $quoted;
+        }
+        $columns = implode(', ', $columns);
 
         $statement[] = "({$columns})";
 
@@ -137,5 +191,38 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
     public function compare(AbstractIndex $initial): bool
     {
         return $this == clone $initial;
+    }
+
+
+    /**
+     * Parse column name and order from column expression
+     *
+     * @param mixed $column
+     *
+     * @return array
+     */
+    public static function parseColumn($column)
+    {
+        if (is_array($column)) {
+            return $column;
+        }
+
+        // Contains ASC
+        if (substr($column, -4) === ' ASC') {
+            return [
+                substr($column, 0, strlen($column) - 4),
+                'ASC'
+            ];
+        } elseif (substr($column, -5) === ' DESC') {
+            return [
+                substr($column, 0, strlen($column) - 5),
+                'DESC'
+            ];
+        }
+
+        return [
+            $column,
+            null
+        ];
     }
 }

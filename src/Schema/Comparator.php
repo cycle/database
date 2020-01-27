@@ -141,7 +141,7 @@ final class Comparator implements ComparatorInterface
     {
         $difference = [];
         foreach ($this->current->getIndexes() as $name => $index) {
-            if (!$this->initial->hasIndex($index->getColumns())) {
+            if (!$this->initial->hasIndex($index->getColumnsWithSort())) {
                 $difference[] = $index;
             }
         }
@@ -156,7 +156,7 @@ final class Comparator implements ComparatorInterface
     {
         $difference = [];
         foreach ($this->initial->getIndexes() as $name => $index) {
-            if (!$this->current->hasIndex($index->getColumns())) {
+            if (!$this->current->hasIndex($index->getColumnsWithSort())) {
                 $difference[] = $index;
             }
         }
@@ -174,12 +174,12 @@ final class Comparator implements ComparatorInterface
         $difference = [];
 
         foreach ($this->current->getIndexes() as $name => $index) {
-            if (!$this->initial->hasIndex($index->getColumns())) {
+            if (!$this->initial->hasIndex($index->getColumnsWithSort())) {
                 //Added into schema
                 continue;
             }
 
-            $initial = $this->initial->findIndex($index->getColumns());
+            $initial = $this->initial->findIndex($index->getColumnsWithSort());
             if (!$index->compare($initial)) {
                 $difference[] = [$index, $initial];
             }

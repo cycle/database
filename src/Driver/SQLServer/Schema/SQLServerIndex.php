@@ -28,6 +28,9 @@ class SQLServerIndex extends AbstractIndex
 
         foreach ($schema as $indexColumn) {
             $index->columns[] = $indexColumn['columnName'];
+            if (intval($indexColumn['isDescendingKey']) === 1) {
+                $index->sort[$indexColumn['columnName']] = 'DESC';
+            }
         }
 
         return $index;

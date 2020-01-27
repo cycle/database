@@ -28,6 +28,9 @@ class MySQLIndex extends AbstractIndex
         foreach ($schema as $definition) {
             $index->type = $definition['Non_unique'] ? self::NORMAL : self::UNIQUE;
             $index->columns[] = $definition['Column_name'];
+            if ($definition['Collation'] === 'D') {
+                $index->sort[$definition['Column_name']] = 'DESC';
+            }
         }
 
         return $index;
