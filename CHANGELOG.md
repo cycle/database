@@ -1,6 +1,10 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
+v2.7.3 (29.01.2020)
+-----
+- added the ability to specify index direction by @rauanmayemir
+
 v2.7.2 (18.01.2020)
 -----
 - [bugfix] invalid size detection for int, bigint, tinyint columns under latest MySQL 8.0+
