@@ -218,20 +218,20 @@ abstract class BaseTest extends TestCase
 
         foreach ($source->getIndexes() as $index) {
             $this->assertTrue(
-                $target->hasIndex($index->getColumns()),
+                $target->hasIndex($index->getColumnsWithSort()),
                 "Index {$index->getName()} has been removed"
             );
 
-            $this->compareIndexes($index, $target->findIndex($index->getColumns()));
+            $this->compareIndexes($index, $target->findIndex($index->getColumnsWithSort()));
         }
 
         foreach ($target->getIndexes() as $index) {
             $this->assertTrue(
-                $source->hasIndex($index->getColumns()),
+                $source->hasIndex($index->getColumnsWithSort()),
                 "Index {$index->getName()} has been removed"
             );
 
-            $this->compareIndexes($index, $source->findIndex($index->getColumns()));
+            $this->compareIndexes($index, $source->findIndex($index->getColumnsWithSort()));
         }
 
         // FK

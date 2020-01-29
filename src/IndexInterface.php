@@ -36,4 +36,11 @@ interface IndexInterface
      * @return array
      */
     public function getColumns(): array;
+
+    /**
+     * Columns mapping to sorting order
+     *
+     * @return array
+     */
+    public function getSort(): array;
 }

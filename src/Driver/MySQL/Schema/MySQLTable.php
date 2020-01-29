@@ -35,6 +35,13 @@ class MySQLTable extends AbstractTable
     private $engine = self::ENGINE_INNODB;
 
     /**
+     * MySQL version.
+     *
+     * @var string
+     */
+    private $version;
+
+    /**
      * Change table engine. Such operation will be applied only at moment of table creation.
      *
      * @param string $engine
@@ -77,6 +84,17 @@ class MySQLTable extends AbstractTable
                 $state->getName()
             ]
         )->fetch()['Engine'];
+    }
+
+    protected function isIndexColumnSortingSupported(): bool
+    {
+        if (!$this->version) {
+            $this->version = $this->driver->query('SELECT VERSION() AS version')
+                ->fetch()['version'];
+        }
+
+        $isMariaDB = strpos($this->version, 'MariaDB') !== false;
+        return !$isMariaDB;
     }
 
     /**
