@@ -84,7 +84,7 @@ abstract class IndexesTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
-    public function testCreateWithComplexExpressionIndex(): void
+    public function testCreateOrderedIndex(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
@@ -258,6 +258,21 @@ abstract class IndexesTest extends BaseTest
         $this->assertTrue($schema->exists());
 
         $schema->dropIndex(['email', 'status']);
+
+        $schema->save(Handler::DO_ALL);
+
+        $this->assertSameAsInDB($schema);
+    }
+
+    public function testDropOrderedIndex(): void
+    {
+        $schema = $this->sampleSchemaWithIndexes('table');
+
+        $schema->index(['id', 'balance DESC']);
+        $schema->save(Handler::DO_ALL);
+        $this->assertTrue($schema->exists());
+
+        $schema->dropIndex(['id', 'balance DESC']);
 
         $schema->save(Handler::DO_ALL);
 

@@ -182,7 +182,7 @@ class SQLiteHandler extends Handler
 
         //We don't need any indexes in temporary table
         foreach ($temporary->getIndexes() as $index) {
-            $temporary->dropIndex($index->getColumns());
+            $temporary->dropIndex($index->getColumnsWithSort());
         }
 
         $this->createTable($temporary);

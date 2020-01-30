@@ -15,12 +15,21 @@ class IndexesTest extends \Spiral\Database\Tests\IndexesTest
 {
     public const DRIVER = 'mysql';
 
-    public function testCreateWithComplexExpressionIndex(): void
+    public function testCreateOrderedIndex(): void
     {
         if (getenv('DB') === 'mariadb') {
             $this->expectExceptionMessageRegExp('/column sorting is not supported$/');
         }
 
-        parent::testCreateWithComplexExpressionIndex();
+        parent::testCreateOrderedIndex();
+    }
+
+    public function testDropOrderedIndex(): void
+    {
+        if (getenv('DB') === 'mariadb') {
+            $this->expectExceptionMessageRegExp('/column sorting is not supported$/');
+        }
+
+        parent::testDropOrderedIndex();
     }
 }
