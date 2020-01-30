@@ -1,6 +1,10 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
+v2.7.4 (30.01.2020)
+-----
+- [bugfix] fixed `syncTable` behavious for SQLite tavbles with sorted indexes @rauanmayemir
+
 v2.7.3 (29.01.2020)
 -----
 - added the ability to specify index direction by @rauanmayemir
