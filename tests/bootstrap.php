@@ -76,22 +76,7 @@ if (!empty(getenv('DB'))) {
                     },
                     'conn'   => 'pgsql:host=127.0.0.1;port=5432;dbname=spiral',
                     'user'   => 'postgres',
-                    'pass'   => ''
-                ],
-            ];
-            break;
-
-        case 'mysql':
-            Database\Tests\BaseTest::$config = [
-                'debug' => false,
-                'mysql' => [
-                    'driver' => Database\Driver\MySQL\MySQLDriver::class,
-                    'check'  => static function () {
-                        return true;
-                    },
-                    'conn'   => 'mysql:host=127.0.0.1:3306;dbname=spiral',
-                    'user'   => 'root',
-                    'pass'   => 'root'
+                    'pass'   => 'postgres'
                 ],
             ];
             break;
@@ -104,9 +89,9 @@ if (!empty(getenv('DB'))) {
                     'check'  => static function () {
                         return true;
                     },
-                    'conn'   => 'mysql:host=127.0.0.1:3306;dbname=spiral',
+                    'conn'   => 'mysql:host=127.0.0.1:23306;dbname=spiral',
                     'user'   => 'root',
-                    'pass'   => ''
+                    'pass'   => 'root'
                 ],
             ];
             break;
