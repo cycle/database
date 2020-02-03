@@ -719,6 +719,18 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     }
 
     /**
+     * Sanitize column expression for index name
+     *
+     * @param mixed $column
+     *
+     * @return string
+     */
+    public static function sanitizeColumnExpression($column)
+    {
+        return preg_replace(['/\(/', '/\)/', '/ /'], '__', strtolower($column));
+    }
+
+    /**
      * Check if table schema has been modified since synchronization.
      *
      * @return bool
@@ -933,17 +945,5 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         }
 
         return $name;
-    }
-
-    /**
-     * Sanitize column expression for index name
-     *
-     * @param mixed $column
-     *
-     * @return string
-     */
-    public static function sanitizeColumnExpression($column)
-    {
-        return preg_replace(['/\(/', '/\)/', '/ /'], '__', strtolower($column));
     }
 }
