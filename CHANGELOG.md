@@ -1,6 +1,10 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
+v2.7.5 (03.02.2020)
+-----
+- [bugfix] fixed invalid index introspection on legacy SQLite drivers
+
 v2.7.4 (30.01.2020)
 -----
 - [bugfix] fixed `syncTable` behavious for SQLite tables with sorted indexes @rauanmayemir
