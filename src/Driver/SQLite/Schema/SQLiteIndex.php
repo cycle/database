@@ -20,20 +20,35 @@ class SQLiteIndex extends AbstractIndex
      * @param string $table
      * @param array  $schema
      * @param array  $columns
+     * @param array  $fallbackColumns
      * @return SQLiteIndex
      */
-    public static function createInstance(string $table, array $schema, array $columns): self
-    {
+    public static function createInstance(
+        string $table,
+        array $schema,
+        array $columns,
+        array $fallbackColumns
+    ): self {
         $index = new self($table, $schema['name']);
         $index->type = $schema['unique'] ? self::UNIQUE : self::NORMAL;
 
-        foreach ($columns as $column) {
-            // We only need key columns
-            if (intval($column['key']) === 1) {
-                $index->columns[] = $column['name'];
-                if (intval($column['desc']) === 1) {
-                    $index->sort[$column['name']] = 'DESC';
+        if ($columns !== []) {
+            foreach ($columns as $column) {
+                // We only need key columns
+                if (intval($column['cid']) > -1) {
+                    $index->columns[] = $column['name'];
+                    if (intval($column['desc']) === 1) {
+                        $index->sort[$column['name']] = 'DESC';
+                    }
                 }
+            }
+        } else {
+            // use legacy format
+            foreach ($fallbackColumns as $column) {
+                $index->columns[] = $column['name'];
+
+                // sorting is not available
+                $index->sort[$column['name']] = null;
             }
         }
 

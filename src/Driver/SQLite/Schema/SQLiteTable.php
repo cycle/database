@@ -67,8 +67,13 @@ class SQLiteTable extends AbstractTable
             $index = SQLiteIndex::createInstance(
                 $this->getName(),
                 $schema,
+                // 3+ format
                 $this->driver->query(
                     "PRAGMA INDEX_XINFO({$this->driver->quote($schema['name'])})"
+                )->fetchAll(),
+                // legacy format
+                $this->driver->query(
+                    "PRAGMA INDEX_INFO({$this->driver->quote($schema['name'])})"
                 )->fetchAll()
             );
 
