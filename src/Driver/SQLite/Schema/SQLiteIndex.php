@@ -46,9 +46,6 @@ class SQLiteIndex extends AbstractIndex
             // use legacy format
             foreach ($fallbackColumns as $column) {
                 $index->columns[] = $column['name'];
-
-                // sorting is not available
-                $index->sort[$column['name']] = null;
             }
         }
 
