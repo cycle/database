@@ -17,7 +17,7 @@
     "spiral/pagination": "^2.2"
   },
   "require-dev": {
-    "phpunit/phpunit": "~7.0",
+    "phpunit/phpunit": "~8.0",
     "mockery/mockery": "^1.1",
     "spiral/dumper": "^1.0",
     "spiral/code-style": "^1.0",
