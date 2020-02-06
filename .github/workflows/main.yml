@@ -64,11 +64,11 @@ jobs:
       - name: Execute Tests
         run: |
           vendor/bin/phpunit --coverage-clover=coverage.xml
-#      - name: Upload coverage to Codecov
-#        uses: codecov/codecov-action@v1
-#        with:
-#          token: ${{ secrets.CODECOV_TOKEN }}
-#          file: ./coverage.xml
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
   test_postgres:
     needs: lint
     name: Test PostgreSQL ${{ matrix.configs.postgres-version }}
