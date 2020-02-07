@@ -77,4 +77,17 @@ class InsertQueryTest extends \Spiral\Database\Tests\InsertQueryTest
             $insert
         );
     }
+
+    public function testCustomReturning(): void
+    {
+        $insert = $this->database->insert()->into('table')
+            ->columns('name', 'balance')
+            ->values('Anton', 100)
+            ->returning('name');
+
+        $this->assertSameQuery(
+            'INSERT INTO {table} ({name}, {balance}) VALUES (?, ?) RETURNING {name}',
+            $insert
+        );
+    }
 }
