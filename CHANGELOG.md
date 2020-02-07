@@ -1,6 +1,10 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
+v2.7.6 (07.02.2020)
+-----
+- added the support to force the returning key in Postgres insert queries
+
 v2.7.5 (03.02.2020)
 -----
 - [bugfix] fixed invalid index introspection on legacy SQLite drivers

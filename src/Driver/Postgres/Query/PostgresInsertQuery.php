@@ -27,6 +27,9 @@ class PostgresInsertQuery extends InsertQuery
     /** @var PostgresDriver */
     protected $driver;
 
+    /** @var string|null */
+    protected $returning;
+
     /**
      * @param DriverInterface $driver
      * @param string|null     $prefix
@@ -41,6 +44,18 @@ class PostgresInsertQuery extends InsertQuery
         }
 
         return parent::withDriver($driver, $prefix);
+    }
+
+    /**
+     * Set returning column. If not set, the driver will detect PK automatically.
+     *
+     * @param string $column
+     * @return $this
+     */
+    public function returning(string $column): self
+    {
+        $this->returning = $column;
+        return $this;
     }
 
     /**
@@ -69,8 +84,8 @@ class PostgresInsertQuery extends InsertQuery
      */
     public function getTokens(): array
     {
-        $primaryKey = null;
-        if ($this->driver !== null && $this->table !== null) {
+        $primaryKey = $this->returning;
+        if ($primaryKey === null && $this->driver !== null && $this->table !== null) {
             try {
                 $primaryKey = $this->driver->getPrimaryKey($this->prefix, $this->table);
             } catch (Throwable $e) {
