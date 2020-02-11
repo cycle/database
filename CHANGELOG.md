@@ -1,6 +1,10 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
+v2.7.7 (11.02.2020)
+-----
+- minor refactor in PostgresInsertQuery
+
 v2.7.6 (07.02.2020)
 -----
 - added the support to force the returning key in Postgres insert queries
