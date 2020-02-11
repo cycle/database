@@ -55,6 +55,7 @@ class PostgresInsertQuery extends InsertQuery
     public function returning(string $column): self
     {
         $this->returning = $column;
+
         return $this;
     }
 
@@ -69,7 +70,7 @@ class PostgresInsertQuery extends InsertQuery
         $result = $this->driver->query($queryString, $params->getParameters());
 
         try {
-            if ($this->driver->getPrimaryKey($this->prefix, $this->table) !== null) {
+            if ($this->getPrimaryKey() !== null) {
                 return $result->fetchColumn();
             }
 
@@ -84,19 +85,28 @@ class PostgresInsertQuery extends InsertQuery
      */
     public function getTokens(): array
     {
+        return [
+            'table'   => $this->table,
+            'return'  => $this->getPrimaryKey(),
+            'columns' => $this->columns,
+            'values'  => $this->values
+        ];
+    }
+
+    /**
+     * @return string
+     */
+    private function getPrimaryKey(): ?string
+    {
         $primaryKey = $this->returning;
         if ($primaryKey === null && $this->driver !== null && $this->table !== null) {
             try {
                 $primaryKey = $this->driver->getPrimaryKey($this->prefix, $this->table);
             } catch (Throwable $e) {
+                return null;
             }
         }
 
-        return [
-            'table'   => $this->table,
-            'return'  => $primaryKey,
-            'columns' => $this->columns,
-            'values'  => $this->values
-        ];
+        return $primaryKey;
     }
 }
