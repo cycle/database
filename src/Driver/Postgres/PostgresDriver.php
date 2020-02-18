@@ -126,7 +126,8 @@ class PostgresDriver extends Driver
         $message = strtolower($exception->getMessage());
 
         if (
-            strpos($message, '0800') !== false
+            strpos($message, 'eof detected') !== false
+            || strpos($message, '0800') !== false
             || strpos($message, '080P') !== false
             || strpos($message, 'connection') !== false
         ) {
