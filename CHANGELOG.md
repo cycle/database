@@ -1,6 +1,10 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
+v2.7.10 (18.02.2020)
+-----
+- catch postgres EOF exceptions on amazon as connection exception
+
 v2.7.9 (18.02.2020)
 -----
 - added the ability to pass parameters into Expression in operators and values
