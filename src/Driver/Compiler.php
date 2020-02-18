@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Spiral\Database\Driver;
 
 use Spiral\Database\Exception\CompilerException;
+use Spiral\Database\Injection\Expression;
 use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;

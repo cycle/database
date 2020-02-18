@@ -237,10 +237,22 @@ final class CompilerCache implements CompilerInterface
             } elseif ($context[0] instanceof ParameterInterface) {
                 $hash .= $this->hashParam($params, $context[0]);
             } else {
+                if ($context[0] instanceof Expression) {
+                    foreach ($context[0]->getTokens()['parameters'] as $param) {
+                        $params->push($param);
+                    }
+                }
+
                 $hash .= $context[0];
             }
 
             // operator
+            if ($context[1] instanceof Expression) {
+                foreach ($context[1]->getTokens()['parameters'] as $param) {
+                    $params->push($param);
+                }
+            }
+
             $hash .= $context[1];
 
             if ($context[2] instanceof QueryInterface) {
@@ -249,6 +261,12 @@ final class CompilerCache implements CompilerInterface
             } elseif ($context[2] instanceof ParameterInterface) {
                 $hash .= $this->hashParam($params, $context[2]);
             } else {
+                if ($context[2] instanceof Expression) {
+                    foreach ($context[2]->getTokens()['parameters'] as $param) {
+                        $params->push($param);
+                    }
+                }
+
                 $hash .= $context[2];
             }
 
@@ -259,6 +277,12 @@ final class CompilerCache implements CompilerInterface
                 } elseif ($context[3] instanceof ParameterInterface) {
                     $hash .= $this->hashParam($params, $context[3]);
                 } else {
+                    if ($context[3] instanceof Expression) {
+                        foreach ($context[3]->getTokens()['parameters'] as $param) {
+                            $params->push($param);
+                        }
+                    }
+
                     $hash .= $context[3];
                 }
             }

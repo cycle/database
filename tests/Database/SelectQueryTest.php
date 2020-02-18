@@ -2377,4 +2377,57 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             $select
         );
     }
+
+    public function testSelectWithParametricExpression2(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->where(
+                new Expression('RANGE(?, ?)', 101, 102),
+                '&&',
+                new Expression('RANGE(?, ?)', 103, 104)
+            );
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE RANGE(?, ?) && RANGE(?, ?)',
+            $select
+        );
+
+        $this->assertSameParameters(
+            [
+                101,
+                102,
+                103,
+                104
+            ],
+            $select
+        );
+    }
+
+    public function testSelectWithParametricExpression3(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->where(
+                new Expression('RANGE(?, ?)', 101, 102),
+                new Expression('RANGE(name, ?)', 600),
+                new Expression('RANGE(?, ?)', 103, 104)
+            );
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE RANGE(?, ?) RANGE({name}, ?) RANGE(?, ?)',
+            $select
+        );
+
+        $this->assertSameParameters(
+            [
+                101,
+                102,
+                600,
+                103,
+                104
+            ],
+            $select
+        );
+    }
 }
