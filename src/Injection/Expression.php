@@ -22,17 +22,29 @@ use Spiral\Database\Driver\CompilerInterface;
  *
  * I potentially should have an interface for such class.
  */
-final class Expression implements FragmentInterface
+class Expression implements FragmentInterface
 {
     /** @var string */
     private $expression;
 
+    /** @var ParameterInterface[] */
+    private $parameters = [];
+
     /**
      * @param string $statement
+     * @param mixed  ...$parameters
      */
-    public function __construct(string $statement)
+    public function __construct(string $statement, ...$parameters)
     {
         $this->expression = $statement;
+
+        foreach ($parameters as $parameter) {
+            if ($parameter instanceof ParameterInterface) {
+                $this->parameters[] = $parameter;
+            } else {
+                $this->parameters[] = new Parameter($parameter);
+            }
+        }
     }
 
     /**
@@ -49,7 +61,10 @@ final class Expression implements FragmentInterface
      */
     public static function __set_state(array $an_array): Expression
     {
-        return new self($an_array['expression'] ?? $an_array['statement']);
+        return new self(
+            $an_array['expression'] ?? $an_array['statement'],
+            ...($an_array['parameters'] ?? [])
+        );
     }
 
     /**
@@ -66,7 +81,8 @@ final class Expression implements FragmentInterface
     public function getTokens(): array
     {
         return [
-            'expression' => $this->expression
+            'expression' => $this->expression,
+            'parameters' => $this->parameters
         ];
     }
 }

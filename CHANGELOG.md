@@ -1,6 +1,10 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
+v2.7.8 (18.02.2020)
+-----
+- added the ability to pass parameters into Expression
+
 v2.7.7 (11.02.2020)
 -----
 - minor refactor in PostgresInsertQuery

@@ -17,7 +17,7 @@ use PDO;
  * Default implementation of ParameterInterface, provides ability to mock value or array of values
  * and automatically create valid query placeholder at moment of query compilation (? vs (?, ?, ?)).
  */
-final class Parameter implements ParameterInterface
+class Parameter implements ParameterInterface
 {
     /**
      * Use in constructor to automatically detect parameter type.

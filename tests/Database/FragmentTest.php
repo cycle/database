@@ -46,6 +46,20 @@ class FragmentTest extends TestCase
         );
     }
 
+    public function testExpressionWithParameters(): void
+    {
+        $fragment = new Expression('name = ?', 123);
+
+        $q = new SQLiteCompiler();
+
+        $this->assertSame(
+            '"name" = ?',
+            $q->compile($p = new QueryParameters(), '', $fragment)
+        );
+
+        $this->assertSame(123, $p->getParameters()[0]->getValue());
+    }
+
     public function testSetState(): void
     {
         $expression = new Expression('some sql');
@@ -53,7 +67,8 @@ class FragmentTest extends TestCase
         $exp = eval('return ' . var_export($expression, true) . ';');
         $this->assertSame(
             [
-                'expression' => 'some sql'
+                'expression' => 'some sql',
+                'parameters' => []
             ],
             $exp->getTokens()
         );

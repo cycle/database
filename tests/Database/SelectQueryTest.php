@@ -2356,4 +2356,25 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             $select
         );
     }
+
+    public function testSelectWithParametricExpression(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->where('name', 'Antony')
+            ->orWhere(new Expression('RANGE(balance, price) = ?', 10));
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE {name} = ? OR RANGE({balance}, {price}) = ?',
+            $select
+        );
+
+        $this->assertSameParameters(
+            [
+                'Antony',
+                10
+            ],
+            $select
+        );
+    }
 }

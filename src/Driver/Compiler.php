@@ -96,6 +96,10 @@ abstract class Compiler implements CompilerInterface
                 return $tokens['fragment'];
 
             case self::EXPRESSION:
+                foreach ($tokens['parameters'] as $param) {
+                    $params->push($param);
+                }
+
                 return $q->quote($tokens['expression']);
 
             case self::INSERT_QUERY:
@@ -474,6 +478,11 @@ abstract class Compiler implements CompilerInterface
                 }
 
                 $statement .= $context;
+                continue;
+            }
+
+            if ($context instanceof FragmentInterface) {
+                $statement .= $this->fragment($params, $q, $context);
                 continue;
             }
 

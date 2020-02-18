@@ -14,6 +14,7 @@ namespace Spiral\Database\Query\Traits;
 use Closure;
 use Spiral\Database\Driver\CompilerInterface;
 use Spiral\Database\Exception\BuilderException;
+use Spiral\Database\Injection\FragmentInterface;
 
 trait TokenTrait
 {
@@ -77,6 +78,11 @@ trait TokenTrait
                 $tokens[] = [$boolean, '('];
                 $complex($this, $boolean, $wrapper);
                 $tokens[] = ['', ')'];
+                return;
+            }
+
+            if ($complex instanceof FragmentInterface) {
+                $tokens[] = [$boolean, $complex];
                 return;
             }
 

@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Driver;
 
+use Spiral\Database\Injection\Expression;
 use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
@@ -102,6 +103,12 @@ final class CompilerCache implements CompilerInterface
         $hash = 'i_' . $tokens['table'] . implode('_', $tokens['columns']) . '_r' . ($tokens['return'] ?? '');
         foreach ($tokens['values'] as $value) {
             if ($value instanceof FragmentInterface) {
+                if ($value instanceof Expression) {
+                    foreach ($tokens['parameters'] as $param) {
+                        $params->push($param);
+                    }
+                }
+
                 $hash .= $value;
                 continue;
             }
@@ -209,6 +216,17 @@ final class CompilerCache implements CompilerInterface
 
             $hash .= $boolean;
             if (is_string($context)) {
+                $hash .= $context;
+                continue;
+            }
+
+            if ($context instanceof FragmentInterface) {
+                if ($context instanceof Expression) {
+                    foreach ($context->getTokens()['parameters'] as $param) {
+                        $params->push($param);
+                    }
+                }
+
                 $hash .= $context;
                 continue;
             }
