@@ -1,6 +1,10 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
+v2.7.11 (12.03.2020)
+-----
+- Add PostgreSQL `timestamptz` mapping for `timestamp with time zone` by @rauanmayemir
+
 v2.7.10 (18.02.2020)
 -----
 - catch postgres EOF exceptions on amazon as connection exception
