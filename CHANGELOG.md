@@ -1,6 +1,10 @@
 CHANGELOG for 0.9.0 RC
 ======================
 
+v2.7.12 (31.03.2020)
+-----
+- default `json` type for Postgres fallbacks to text to unify with other drivers
+
 v2.7.11 (12.03.2020)
 -----
 - Add PostgreSQL `timestamptz` mapping for `timestamp with time zone` by @rauanmayemir
