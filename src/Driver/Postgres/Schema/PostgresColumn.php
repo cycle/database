@@ -80,7 +80,7 @@ class PostgresColumn extends AbstractColumn
         'longBinary'  => 'bytea',
 
         //Additional types
-        'json'        => 'json',
+        'json'        => 'text',
         'jsonb'       => 'jsonb',
         'uuid'        => 'uuid'
     ];
