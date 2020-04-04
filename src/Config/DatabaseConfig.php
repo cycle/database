@@ -90,7 +90,7 @@ final class DatabaseConfig extends InjectableConfig
     public function getDatabase(string $database): DatabasePartial
     {
         if (!$this->hasDatabase($database)) {
-            throw new ConfigException("Undefined database `{$database}`.");
+            throw new ConfigException("Undefined database `{$database}`");
         }
 
         $config = $this->config['databases'][$database];
@@ -129,9 +129,11 @@ final class DatabaseConfig extends InjectableConfig
             return $config;
         }
 
-        return new Autowire(
-            $config['driver'] ?? $config['class'],
-            ['options' => $config['options'] ?? $config]
-        );
+        $options = $config;
+        if (isset($config['options']) && $config['options'] !== []) {
+            $options = $config['options'] + $config;
+        }
+
+        return new Autowire($config['driver'] ?? $config['class'], $options);
     }
 }
