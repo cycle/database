@@ -1,5 +1,9 @@
-CHANGELOG for 0.9.0 RC
+CHANGELOG
 ======================
+
+v2.7.13 (04.04.2020)
+-----
+- improved legacy config resolution (invalid `options` parsing)
 
 v2.7.12 (31.03.2020)
 -----
