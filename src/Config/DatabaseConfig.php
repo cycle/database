@@ -134,6 +134,6 @@ final class DatabaseConfig extends InjectableConfig
             $options = $config['options'] + $config;
         }
 
-        return new Autowire($config['driver'] ?? $config['class'], $options);
+        return new Autowire($config['driver'] ?? $config['class'], ['options' => $options]);
     }
 }
