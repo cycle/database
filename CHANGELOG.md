@@ -1,6 +1,10 @@
 CHANGELOG
 ======================
 
+v2.7.14 (23.04.2020)
+-----
+- fixed bug with invalid compilation of multi-group-by statements by @yiiliveext
+
 v2.7.13 (04.04.2020)
 -----
 - improved legacy config resolution (invalid `options` parsing)
