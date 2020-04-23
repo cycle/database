@@ -299,10 +299,10 @@ abstract class Compiler implements CompilerInterface
     {
         $statement = '';
         foreach ($groupBy as $identifier) {
-            $statement .= $this->name($params, $q, $identifier);
+            $statement .= $this->name($params, $q, $identifier) . ', ';
         }
 
-        return $statement;
+        return rtrim($statement, ', ');
     }
 
     /**

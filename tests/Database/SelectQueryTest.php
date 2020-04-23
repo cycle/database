@@ -884,6 +884,20 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    public function testMultipleGroupBy(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->where(['name' => 'Anton'])
+            ->groupBy('name')
+            ->groupBy('value');
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE {name} = ? GROUP BY {name}, {value}',
+            $select
+        );
+    }
+
     public function testMultipleGroupByFullySpecified(): void
     {
         $select = $this->database->select()
