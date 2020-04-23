@@ -297,12 +297,12 @@ abstract class Compiler implements CompilerInterface
      */
     protected function groupBy(QueryParameters $params, Quoter $q, array $groupBy): string
     {
-        $statement = '';
+        $result = [];
         foreach ($groupBy as $identifier) {
-            $statement .= $this->name($params, $q, $identifier) . ', ';
+            $result[] =  $this->name($params, $q, $identifier);
         }
 
-        return rtrim($statement, ', ');
+        return implode(', ', $result);
     }
 
     /**
