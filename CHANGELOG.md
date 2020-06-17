@@ -1,7 +1,7 @@
 CHANGELOG
 ======================
 
-v2.7.14 (17.06.2020)
+v2.7.15 (17.06.2020)
 -----
 - handle Docker specific connection exceptions (broken pipe)
 
