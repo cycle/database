@@ -65,6 +65,7 @@ class MySQLDriver extends Driver
 
         if (
             strpos($message, 'server has gone away') !== false
+            || strpos($message, 'broken pipe') !== false
             || strpos($message, 'connection') !== false
             || ((int)$exception->getCode() > 2000 && (int)$exception->getCode() < 2100)
         ) {

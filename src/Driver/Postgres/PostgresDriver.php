@@ -127,6 +127,7 @@ class PostgresDriver extends Driver
 
         if (
             strpos($message, 'eof detected') !== false
+            || strpos($message, 'broken pipe') !== false
             || strpos($message, '0800') !== false
             || strpos($message, '080P') !== false
             || strpos($message, 'connection') !== false
