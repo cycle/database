@@ -1,6 +1,10 @@
 CHANGELOG
 ======================
 
+v2.7.14 (17.06.2020)
+-----
+- handle Docker specific connection exceptions (broken pipe)
+
 v2.7.14 (23.04.2020)
 -----
 - fixed bug with invalid compilation of multi-group-by statements by @yiiliveext
