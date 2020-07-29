@@ -259,12 +259,7 @@ final class Database implements DatabaseInterface, InjectableInterface
      */
     public function begin(string $isolationLevel = null): bool
     {
-        $driver = $this->getDriver(self::WRITE);
-        if ($driver instanceof Driver) {
-            return $driver->beginTransaction($isolationLevel);
-        }
-
-        return $driver->beginTransaction($isolationLevel);
+        return $this->getDriver(self::WRITE)->beginTransaction($isolationLevel);
     }
 
     /**
