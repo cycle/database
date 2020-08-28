@@ -73,22 +73,22 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     ];
 
     /** @var PDO|null */
-    private $pdo;
+    protected $pdo;
 
     /** @var int */
-    private $transactionLevel;
+    protected $transactionLevel;
 
     /** @var HandlerInterface */
-    private $schemaHandler;
+    protected $schemaHandler;
 
     /** @var CompilerInterface */
-    private $queryCompiler;
+    protected $queryCompiler;
 
     /** @var BuilderInterface */
-    private $queryBuilder;
+    protected $queryBuilder;
 
     /** @var PDOStatement[] */
-    private $queryCache = [];
+    protected $queryCache = [];
 
     /**
      * @param array             $options
@@ -379,6 +379,9 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
                     } catch (Throwable $e) {
                         throw $this->mapException($e, 'BEGIN TRANSACTION');
                     }
+                } else {
+                    $this->transactionLevel--;
+                    throw $e;
                 }
             }
         }

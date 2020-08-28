@@ -1,6 +1,11 @@
 CHANGELOG
 ======================
 
+v2.7.16 (28.08.2020)
+-----
+- fixes bug with invalid transaction level when transaction can't be started
+- set isolation level after beginning the transaction for Postgres
+
 v2.7.15 (17.06.2020)
 -----
 - handle Docker specific connection exceptions (broken pipe)
@@ -82,16 +87,16 @@ v2.7.2 (18.01.2020)
 
 2.6.8 (24.12.2019)
 -----
-- [bufgix] proper abstract type detection for primary UUID columns for SQLite driver 
+- [bufgix] proper abstract type detection for primary UUID columns for SQLite driver
 
 2.6.7 (23.12.2019)
 -----
-- [bufgix] proper exception type for syntax errors in MariaDB (previously was ConnectionException) 
+- [bufgix] proper exception type for syntax errors in MariaDB (previously was ConnectionException)
 
 2.6.6 (11.12.2019)
 -----
-- allow drivers to handle low level error exceptions 
-- qualify "Connection reset by peer" as connection exception 
+- allow drivers to handle low level error exceptions
+- qualify "Connection reset by peer" as connection exception
 - fixed interpolation of named parameters
 
 2.6.5 (11.12.2019)
@@ -203,7 +208,7 @@ v2.7.2 (18.01.2020)
 - new interface for driver, database, table, compiler and handler
 - immutable quoter
 - more tests
-- custom exceptions for connection and constrain exceptions 
+- custom exceptions for connection and constrain exceptions
 
 1.0.1 (15.06.2018)
 -----
