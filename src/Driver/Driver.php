@@ -491,7 +491,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         } finally {
             if ($this->logger !== null) {
                 $queryString = Interpolator::interpolate($query, $parameters);
-                $context = $this->createLoggerContext($queryStart, $statement ?? null);
+                $context = $this->defineLoggerContext($queryStart, $statement ?? null);
 
                 if (isset($e)) {
                     $this->logger->error($queryString, $context);
@@ -700,12 +700,12 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      *
      * @return array
      */
-    protected function createLoggerContext(float $queryStart, ?PDOStatement $statement): array
+    protected function defineLoggerContext(float $queryStart, ?PDOStatement $statement): array
     {
         $context = [
             'elapsed' => microtime(true) - $queryStart,
         ];
-        if ($statement) {
+        if ($statement !== null) {
             $context['rowCount'] = $statement->rowCount();
         }
 
