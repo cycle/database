@@ -491,9 +491,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         } finally {
             if ($this->logger !== null) {
                 $queryString = Interpolator::interpolate($query, $parameters);
-                $context = [
-                    'elapsed' => microtime(true) - $queryStart
-                ];
+                $context = $this->defineLoggerContext($queryStart, $statement ?? null);
 
                 if (isset($e)) {
                     $this->logger->error($queryString, $context);
@@ -692,5 +690,25 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     protected function getDSN(): string
     {
         return $this->options['connection'] ?? $this->options['dsn'] ?? $this->options['addr'];
+    }
+
+    /**
+     * Creating a context for logging
+     *
+     * @param float             $queryStart Query start time
+     * @param PDOStatement|null $statement  Statement
+     *
+     * @return array
+     */
+    protected function defineLoggerContext(float $queryStart, ?PDOStatement $statement): array
+    {
+        $context = [
+            'elapsed' => microtime(true) - $queryStart,
+        ];
+        if ($statement !== null) {
+            $context['rowCount'] = $statement->rowCount();
+        }
+
+        return $context;
     }
 }
