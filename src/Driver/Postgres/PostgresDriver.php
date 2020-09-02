@@ -13,6 +13,7 @@ namespace Spiral\Database\Driver\Postgres;
 
 use Spiral\Database\Driver\Driver;
 use Spiral\Database\Driver\Postgres\Query\PostgresInsertQuery;
+use Spiral\Database\Driver\Postgres\Query\PostgresSelectQuery;
 use Spiral\Database\Exception\DriverException;
 use Spiral\Database\Exception\StatementException;
 use Spiral\Database\Query\DeleteQuery;
@@ -45,7 +46,7 @@ class PostgresDriver extends Driver
             new PostgresHandler(),
             new PostgresCompiler('""'),
             new QueryBuilder(
-                new SelectQuery(),
+                new PostgresSelectQuery(),
                 new PostgresInsertQuery(),
                 new UpdateQuery(),
                 new DeleteQuery()

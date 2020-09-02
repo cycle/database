@@ -37,4 +37,42 @@ class TableTest extends \Spiral\Database\Tests\TableTest
 
         $this->assertSame($expected, $columns);
     }
+
+    public function testSelectDistinct(): void
+    {
+        $table = $this->database->table('table');
+        $this->assertSame(0, $table->count());
+
+        $table->insertMultiple(
+            ['name', 'value'],
+            [
+                ['Anton', 10],
+                ['Anton', 20],
+                ['Bob', 15],
+                ['Charlie', 10]
+            ]
+        );
+
+        $data = $table->select('name', 'value')->distinct('name')->fetchAll();
+        $this->assertCount(4, $data);
+    }
+
+    public function testSelectDistinctOn(): void
+    {
+        $table = $this->database->table('table');
+        $this->assertSame(0, $table->count());
+
+        $table->insertMultiple(
+            ['name', 'value'],
+            [
+                ['Anton', 10],
+                ['Anton', 20],
+                ['Bob', 15],
+                ['Charlie', 10]
+            ]
+        );
+
+        $data = $table->select('name', 'value')->distinctOn('name')->fetchAll();
+        $this->assertCount(3, $data);
+    }
 }

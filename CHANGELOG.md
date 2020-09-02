@@ -1,6 +1,11 @@
 CHANGELOG
 ======================
 
+v2.7.17 (02.09.2020)
+-----
+- added the ability to modify the database logger context by @Alexsisukin
+- added distinctOn method to Postgres Select Query
+
 v2.7.16 (28.08.2020)
 -----
 - fixes bug with invalid transaction level when transaction can't be started

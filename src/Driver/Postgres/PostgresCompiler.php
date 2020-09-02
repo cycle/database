@@ -52,6 +52,10 @@ class PostgresCompiler extends Compiler implements CachingCompilerInterface
             return '';
         }
 
+        if (is_array($distinct) && isset($distinct['on'])) {
+            return sprintf('DISTINCT ON (%s)', $this->name($params, $q, $distinct['on']));
+        }
+
         if (is_string($distinct)) {
             return sprintf('DISTINCT (%s)', $this->name($params, $q, $distinct));
         }
