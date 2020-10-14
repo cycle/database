@@ -247,6 +247,21 @@ abstract class StatementTest extends BaseTest
         );
     }
 
+    public function testToObj(): void
+    {
+        $table = $this->database->table('sample_table');
+        $this->fillData();
+
+        $result = $table->limit(1)->fetchAll(\PDO::FETCH_OBJ);
+
+        $this->assertEquals(
+            [ 
+                (object) ['id' => 1, 'name' => md5('0'), 'value' => 0] 
+            ],
+            $result
+        );
+    }
+
     public function testClose(): void
     {
         $table = $this->database->table('sample_table');

@@ -388,11 +388,11 @@ class SelectQuery extends ActiveQuery implements
      *
      * @return array
      */
-    public function fetchAll(): array
+    public function fetchAll(int $mode = StatementInterface::FETCH_ASSOC): array
     {
         $st = $this->run();
         try {
-            return $st->fetchAll();
+            return $st->fetchAll($mode);
         } finally {
             $st->close();
         }
