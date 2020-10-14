@@ -1,6 +1,10 @@
 CHANGELOG
 ======================
 
+v2.7.18 (14.10.2020)
+-----
+- added the ability to fetch data as StdClass by @guilhermeaiolfi
+
 v2.7.17 (02.09.2020)
 -----
 - added the ability to modify the database logger context by @Alexsisukin
