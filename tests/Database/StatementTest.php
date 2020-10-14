@@ -255,8 +255,8 @@ abstract class StatementTest extends BaseTest
         $result = $table->limit(1)->fetchAll(\PDO::FETCH_OBJ);
 
         $this->assertEquals(
-            [ 
-                (object) ['id' => 1, 'name' => md5('0'), 'value' => 0] 
+            [
+                (object) ['id' => 1, 'name' => md5('0'), 'value' => 0]
             ],
             $result
         );
