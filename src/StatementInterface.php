@@ -23,6 +23,9 @@ interface StatementInterface
     // Fetch rows as array where each key is column number.
     public const FETCH_NUM = 3;
 
+    // Fetch rows as object where each property is the column name.
+    public const FETCH_OBJ = 5;
+
     /**
      * @return string
      */

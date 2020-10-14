@@ -252,7 +252,7 @@ abstract class StatementTest extends BaseTest
         $table = $this->database->table('sample_table');
         $this->fillData();
 
-        $result = $table->limit(1)->fetchAll(\PDO::FETCH_OBJ);
+        $result = $table->limit(1)->fetchAll(StatementInterface::FETCH_OBJ);
 
         $this->assertTrue(is_object($result[0]));
     }
