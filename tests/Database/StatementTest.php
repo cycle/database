@@ -247,6 +247,16 @@ abstract class StatementTest extends BaseTest
         );
     }
 
+    public function testToObj(): void
+    {
+        $table = $this->database->table('sample_table');
+        $this->fillData();
+
+        $result = $table->limit(1)->fetchAll(StatementInterface::FETCH_OBJ);
+
+        $this->assertTrue(is_object($result[0]));
+    }
+
     public function testClose(): void
     {
         $table = $this->database->table('sample_table');
