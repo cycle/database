@@ -31,13 +31,13 @@ abstract class SelectQueryTest extends BaseTest
     public function testCompileQuery(): void
     {
         $select = $this->db()
-            ->select('*')
-            ->from('table', 'table2')
-            ->where(['name' => 'Antony']);
+                       ->select('*')
+                       ->from('table', 'table2')
+                       ->where(['name' => 'Antony']);
 
         $this->assertSameQuery(
             'SELECT * FROM {table}, {table2} WHERE {name} = \'Antony\'',
-            (string)$select
+            (string) $select
         );
 
         $this->assertIsArray($select->__debugInfo());
@@ -46,13 +46,13 @@ abstract class SelectQueryTest extends BaseTest
     public function testCompileQueryExtraParam(): void
     {
         $select = $this->db()
-            ->select('*')
-            ->from('table')
-            ->where(new Parameter('string'), 'string');
+                       ->select('*')
+                       ->from('table')
+                       ->where(new Parameter('string'), 'string');
 
         $this->assertSameQuery(
             'SELECT * FROM {table} WHERE \'string\' = \'string\'',
-            (string)$select
+            (string) $select
         );
 
         $this->assertSameParameters(['string', 'string'], $select);
@@ -74,9 +74,9 @@ abstract class SelectQueryTest extends BaseTest
     public function testWhereAndJoin(): void
     {
         $select = $this->database->select()
-            ->from('table')
-            ->leftJoin('external')->onWhere(['name' => 'test'])
-            ->where('id', 1);
+                                 ->from('table')
+                                 ->leftJoin('external')->onWhere(['name' => 'test'])
+                                 ->where('id', 1);
 
         $this->assertSameQuery(
             'SELECT * FROM {table} LEFT JOIN {external} ON {name} = ? WHERE {id} = ?',
@@ -94,9 +94,9 @@ abstract class SelectQueryTest extends BaseTest
     public function testWhereAndJoinReverted(): void
     {
         $select = $this->database->select()
-            ->from('table')
-            ->where('id', 1)
-            ->leftJoin('external')->onWhere(['name' => 'test']);
+                                 ->from('table')
+                                 ->where('id', 1)
+                                 ->leftJoin('external')->onWhere(['name' => 'test']);
 
         $this->assertSameQuery(
             'SELECT * FROM {table} LEFT JOIN {external} ON {name} = ? WHERE {id} = ?',
@@ -115,8 +115,8 @@ abstract class SelectQueryTest extends BaseTest
     public function testArrayWhere(): void
     {
         $select = $this->database->select()
-            ->from('table')
-            ->where('id', 'IN', new Parameter([1, 2, 3, 4]));
+                                 ->from('table')
+                                 ->where('id', 'IN', new Parameter([1, 2, 3, 4]));
 
         $this->assertSameQuery('SELECT * FROM {table} WHERE {id} IN (?, ?, ?, ?)', $select);
         $this->assertSameParameters(
@@ -133,21 +133,21 @@ abstract class SelectQueryTest extends BaseTest
     public function testCompileNestedQuery(): void
     {
         $select = $this->db()
-            ->select('*')
-            ->from('table', 'table2')
-            ->where(['name' => 'Antony'])
-            ->where(
-                'id',
-                'in',
-                (new SelectQuery())
-                    ->from('other')->columns('id')
-                    ->where('x', 123)
-            );
+                       ->select('*')
+                       ->from('table', 'table2')
+                       ->where(['name' => 'Antony'])
+                       ->where(
+                           'id',
+                           'in',
+                           (new SelectQuery())
+                               ->from('other')->columns('id')
+                               ->where('x', 123)
+                       );
 
         $this->assertSameQuery(
             'SELECT * FROM {table}, {table2}
 WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
-            (string)$select
+            (string) $select
         );
 
         $this->assertSameParameters(
@@ -162,13 +162,13 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testSelectFromSelect(): void
     {
         $select = $this->db()
-            ->select('id')
-            ->from((new SelectQuery())->from('users')->where('id', '>', 100))
-            ->where(['name' => 'Antony']);
+                       ->select('id')
+                       ->from((new SelectQuery())->from('users')->where('id', '>', 100))
+                       ->where(['name' => 'Antony']);
 
         $this->assertSameQuery(
             'SELECT {id} FROM (SELECT * FROM {users} WHERE {id} > 100) WHERE {name} = \'Antony\'',
-            (string)$select
+            (string) $select
         );
 
         $this->assertSameParameters(
@@ -238,11 +238,11 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testDeadWhere(): void
     {
         $select = $this->database->select()->distinct()
-            ->from(['users'])
-            ->where(
-                static function (): void {
-                }
-            );
+                                 ->from(['users'])
+                                 ->where(
+                                     static function (): void {
+                                     }
+                                 );
 
         $this->assertSameQuery(
             'SELECT DISTINCT * FROM {users}',
@@ -264,7 +264,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testSelectWithWhereWithOperator(): void
     {
         $select = $this->database->select()->distinct()->from(['users'])
-            ->where('name', 'LIKE', 'Anton%');
+                                 ->where('name', 'LIKE', 'Anton%');
 
         $this->assertSameQuery(
             'SELECT DISTINCT * FROM {users} WHERE {name} LIKE ?',
@@ -275,7 +275,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testSelectWithWhereWithBetween(): void
     {
         $select = $this->database->select()->distinct()->from(['users'])
-            ->where('balance', 'BETWEEN', 0, 1000);
+                                 ->where('balance', 'BETWEEN', 0, 1000);
 
         $this->assertSameQuery(
             'SELECT DISTINCT * FROM {users} WHERE {balance} BETWEEN ? AND ?',
@@ -286,7 +286,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testSelectWithWhereWithNotBetween(): void
     {
         $select = $this->database->select()->distinct()->from(['users'])
-            ->where('balance', 'NOT BETWEEN', 0, 1000);
+                                 ->where('balance', 'NOT BETWEEN', 0, 1000);
 
         $this->assertSameQuery(
             'SELECT DISTINCT * FROM {users} WHERE {balance} NOT BETWEEN ? AND ?',
@@ -301,7 +301,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testSelectWithWhereBetweenBadValue(): void
     {
         $select = $this->database->select()->distinct()->from(['users'])
-            ->where('balance', 'BETWEEN', 0);
+                                 ->where('balance', 'BETWEEN', 0);
 
         $this->assertSameQuery(
             'SELECT DISTINCT * FROM {users} WHERE {balance} NOT BETWEEN ? AND ?',
@@ -312,7 +312,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testSelectWithFullySpecificColumnNameInWhere(): void
     {
         $select = $this->database->select()->distinct()->from(['users'])
-            ->where('users.balance', 12);
+                                 ->where('users.balance', 12);
 
         $this->assertSameQuery(
             'SELECT DISTINCT * FROM {users} WHERE {users}.{balance} = ?',
@@ -323,10 +323,10 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testPrefixedSelectWithFullySpecificColumnNameInWhere(): void
     {
         $select = $this->db('prefixed', 'prefix_')
-            ->select()
-            ->distinct()
-            ->from(['users'])
-            ->where('users.balance', 12);
+                       ->select()
+                       ->distinct()
+                       ->from(['users'])
+                       ->where('users.balance', 12);
 
         $this->assertSameQuery(
             'SELECT DISTINCT * FROM {prefix_users} WHERE {prefix_users}.{balance} = ?',
@@ -337,7 +337,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testPrefixedSelectWithFullySpecificColumnNameInWhereButAliased(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()->distinct()->from(['users as u'])
-            ->where('u.balance', 12);
+                       ->where('u.balance', 12);
 
         $this->assertSameQuery(
             'SELECT DISTINCT * FROM {prefix_users} AS {u} WHERE {u}.{balance} = ?',
@@ -350,9 +350,9 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testSelectWithWhereAndWhere(): void
     {
         $select = $this->database->select()->distinct()
-            ->from(['users'])
-            ->where('name', 'Anton')
-            ->andWhere('balance', '>', 1);
+                                 ->from(['users'])
+                                 ->where('name', 'Anton')
+                                 ->andWhere('balance', '>', 1);
 
         $this->assertSameQuery(
             'SELECT DISTINCT * FROM {users} WHERE {name} = ? AND {balance} > ?',
@@ -363,9 +363,9 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testSelectWithWhereAndFallbackWhere(): void
     {
         $select = $this->database->select()->distinct()
-            ->from(['users'])
-            ->where('name', 'Anton')
-            ->where('balance', '>', 1);
+                                 ->from(['users'])
+                                 ->where('name', 'Anton')
+                                 ->where('balance', '>', 1);
 
         $this->assertSameQuery(
             'SELECT DISTINCT * FROM {users} WHERE {name} = ? AND {balance} > ?',
@@ -376,9 +376,9 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testSelectWithWhereOrWhere(): void
     {
         $select = $this->database->select()->distinct()
-            ->from(['users'])
-            ->where('name', 'Anton')
-            ->orWhere('balance', '>', 1);
+                                 ->from(['users'])
+                                 ->where('name', 'Anton')
+                                 ->orWhere('balance', '>', 1);
 
         $this->assertSameQuery(
             'SELECT DISTINCT * FROM {users} WHERE {name} = ? OR {balance} > ?',
@@ -392,9 +392,9 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testSelectInvalidArrayArgument(): void
     {
         $select = $this->database->select()->distinct()
-            ->from(['users'])
-            ->where('name', 'Anton')
-            ->orWhere('id', 'in', [1, 2, 3]);
+                                 ->from(['users'])
+                                 ->where('name', 'Anton')
+                                 ->orWhere('id', 'in', [1, 2, 3]);
 
         $this->assertSameQuery(
             'SELECT DISTINCT * FROM {users} WHERE {name} = ? OR {balance} > ?',
@@ -405,10 +405,10 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testSelectWithWhereOrWhereAndWhere(): void
     {
         $select = $this->database->select()->distinct()
-            ->from(['users'])
-            ->where('name', 'Anton')
-            ->orWhere('balance', '>', 1)
-            ->andWhere('value', 'IN', new Parameter([10, 12]));
+                                 ->from(['users'])
+                                 ->where('name', 'Anton')
+                                 ->orWhere('balance', '>', 1)
+                                 ->andWhere('value', 'IN', new Parameter([10, 12]));
 
         $this->assertSameQuery(
             'SELECT DISTINCT * FROM {users} WHERE {name} = ? OR {balance} > ? AND {value} IN (?, ?)',
@@ -421,14 +421,14 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testWhereOfOrWhere(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->where('name', 'Anton')
-            ->andWhere(
-                static function (SelectQuery $select): void {
-                    $select->orWhere('value', '>', 10)
-                        ->orWhere('value', '<', 1000);
-                }
-            );
+                                 ->from(['users'])
+                                 ->where('name', 'Anton')
+                                 ->andWhere(
+                                     static function (SelectQuery $select): void {
+                                         $select->orWhere('value', '>', 10)
+                                                ->orWhere('value', '<', 1000);
+                                     }
+                                 );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {name} = ? AND ({value} > ? OR {value} < ?)',
@@ -448,14 +448,14 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testWhereOfAndWhere(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->where('name', 'Anton')
-            ->andWhere(
-                static function (SelectQuery $select): void {
-                    $select->where('value', '>', 10)
-                        ->andWhere('value', '<', 1000);
-                }
-            );
+                                 ->from(['users'])
+                                 ->where('name', 'Anton')
+                                 ->andWhere(
+                                     static function (SelectQuery $select): void {
+                                         $select->where('value', '>', 10)
+                                                ->andWhere('value', '<', 1000);
+                                     }
+                                 );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {name} = ? AND ({value} > ? AND {value} < ?)',
@@ -466,14 +466,14 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testOrWhereOfOrWhere(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->where('name', 'Anton')
-            ->orWhere(
-                static function (SelectQuery $select): void {
-                    $select->orWhere('value', '>', 10)
-                        ->orWhere('value', '<', 1000);
-                }
-            );
+                                 ->from(['users'])
+                                 ->where('name', 'Anton')
+                                 ->orWhere(
+                                     static function (SelectQuery $select): void {
+                                         $select->orWhere('value', '>', 10)
+                                                ->orWhere('value', '<', 1000);
+                                     }
+                                 );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {name} = ? OR ({value} > ? OR {value} < ?)',
@@ -483,13 +483,14 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testOrWhereOfAndWhere(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->where('name', 'Anton')
             ->orWhere(
                 function (SelectQuery $select): void {
                     $select->where('value', '>', 10)
-                        ->andWhere('value', '<', 1000);
+                           ->andWhere('value', '<', 1000);
                 }
             );
 
@@ -504,8 +505,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testShortWhere(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->where(['name' => 'Anton']);
+                                 ->from(['users'])
+                                 ->where(['name' => 'Anton']);
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {name} = ?',
@@ -515,7 +516,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testShortWhereWithCondition(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->where(
                 [
@@ -534,7 +536,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testShortWhereWithBetweenCondition(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->where(
                 [
@@ -552,7 +555,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testShortWhereWithNotBetweenCondition(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->where(
                 [
@@ -574,7 +578,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
      */
     public function testShortWhereWithBetweenConditionBadArguments(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->where(
                 [
@@ -588,7 +593,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testShortWhereMultiple(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->where(
                 [
@@ -605,7 +611,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testShortWhereMultipleButNotInAGroup(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->where(['name' => 'Anton'])
             ->where(['value' => 1]);
@@ -618,7 +625,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testShortWhereOrWhere(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->where(['name' => 'Anton'])
             ->orWhere(['value' => 1]);
@@ -629,10 +637,10 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
-
     public function testAndShortWhereOR(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->where(['name' => 'Anton'])
             ->andWhere(
@@ -652,7 +660,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testOrShortWhereOR(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->where(['name' => 'Anton'])
             ->orWhere(
@@ -672,7 +681,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testAndShortWhereAND(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->where(['name' => 'Anton'])
             ->andWhere(
@@ -693,7 +703,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testOrShortWhereAND(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->where(['name' => 'Anton'])
             ->orWhere(
@@ -717,7 +728,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
      */
     public function testBadShortExpression(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->where(
                 [
@@ -735,7 +747,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testOrderByAsc(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->where(['name' => 'Anton'])
             ->orderBy('name');
@@ -748,7 +761,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testOrderByAsc2(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->where(['name' => 'Anton'])
             ->orderBy('name', SelectQuery::SORT_ASC);
@@ -761,7 +775,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testOrderByAsc3(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->where(['name' => 'Anton'])
             ->orderBy('name', 'ASC');
@@ -774,7 +789,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testOrderByDesc(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->where(['name' => 'Anton'])
             ->orderBy('name', SelectQuery::SORT_DESC);
@@ -787,7 +803,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testOrderByDesc3(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->where(['name' => 'Anton'])
             ->orderBy('name', 'DESC');
@@ -800,7 +817,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testMultipleOrderBy(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->where(['name' => 'Anton'])
             ->orderBy('value', SelectQuery::SORT_ASC)
@@ -814,7 +832,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testMultipleOrderByViaArray(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->where(['name' => 'Anton'])
             ->orderBy(
@@ -832,7 +851,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testMultipleOrderByFullySpecified(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->where(['name' => 'Anton'])
             ->orderBy('users.value', SelectQuery::SORT_ASC);
@@ -846,9 +866,9 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testMultipleOrderByFullySpecifiedPrefixed(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
-            ->from(['users'])
-            ->where(['name' => 'Anton'])
-            ->orderBy('users.value', SelectQuery::SORT_ASC);
+                       ->from(['users'])
+                       ->where(['name' => 'Anton'])
+                       ->orderBy('users.value', SelectQuery::SORT_ASC);
 
         $this->assertSameQuery(
             'SELECT * FROM {prefix_users} WHERE {name} = ? ORDER BY {prefix_users}.{value} ASC',
@@ -859,9 +879,9 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testMultipleOrderByFullySpecifiedAliasedAndPrefixed(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
-            ->from(['users as u'])
-            ->where(['name' => 'Anton'])
-            ->orderBy('u.value', SelectQuery::SORT_ASC);
+                       ->from(['users as u'])
+                       ->where(['name' => 'Anton'])
+                       ->orderBy('u.value', SelectQuery::SORT_ASC);
 
         $this->assertSameQuery(
             'SELECT * FROM {prefix_users} AS {u} WHERE {name} = ? ORDER BY {u}.{value} ASC',
@@ -873,7 +893,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testGroupBy(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->where(['name' => 'Anton'])
             ->groupBy('name');
@@ -886,7 +907,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testMultipleGroupBy(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->where(['name' => 'Anton'])
             ->groupBy('name')
@@ -900,7 +922,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testMultipleGroupByFullySpecified(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->where(['name' => 'Anton'])
             ->groupBy('users.value');
@@ -914,9 +937,9 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testMultipleGroupByFullySpecifiedPrefixed(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
-            ->from(['users'])
-            ->where(['name' => 'Anton'])
-            ->groupBy('users.value');
+                       ->from(['users'])
+                       ->where(['name' => 'Anton'])
+                       ->groupBy('users.value');
 
         $this->assertSameQuery(
             'SELECT * FROM {prefix_users} WHERE {name} = ? GROUP BY {prefix_users}.{value}',
@@ -927,9 +950,9 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testMultipleGroupByFullySpecifiedAliasedAndPrefixed(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
-            ->from(['users as u'])
-            ->where(['name' => 'Anton'])
-            ->groupBy('u.value');
+                       ->from(['users as u'])
+                       ->where(['name' => 'Anton'])
+                       ->groupBy('u.value');
 
         $this->assertSameQuery(
             'SELECT * FROM {prefix_users} AS {u} WHERE {name} = ? GROUP BY {u}.{value}',
@@ -941,7 +964,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testAllColumns(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->where(['name' => 'Anton']);
 
@@ -953,7 +977,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testAllColumns1(): void
     {
-        $select = $this->database->select('*')
+        $select = $this->database
+            ->select('*')
             ->from(['users'])
             ->where(['name' => 'Anton']);
 
@@ -966,7 +991,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testAllColumns2(): void
     {
-        $select = $this->database->select(['*'])
+        $select = $this->database
+            ->select(['*'])
             ->from(['users'])
             ->where(['name' => 'Anton']);
 
@@ -978,7 +1004,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testAllColumns3(): void
     {
-        $select = $this->database->select([])
+        $select = $this->database
+            ->select([])
             ->from(['users'])
             ->where(['name' => 'Anton']);
 
@@ -990,7 +1017,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testAllColumns4(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->columns('*')
             ->from(['users'])
             ->where(['name' => 'Anton']);
@@ -1003,7 +1031,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testAllColumns5(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->columns('users.*')
             ->from(['users'])
             ->where(['name' => 'Anton']);
@@ -1017,9 +1046,9 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testAllColumnsWithPrefix(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
-            ->columns('users.*')
-            ->from(['users'])
-            ->where(['name' => 'Anton']);
+                       ->columns('users.*')
+                       ->from(['users'])
+                       ->where(['name' => 'Anton']);
 
         $this->assertSameQuery(
             'SELECT {prefix_users}.* FROM {prefix_users} WHERE {name} = ?',
@@ -1030,9 +1059,9 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testAllColumnsWithPrefixAliased(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
-            ->columns('u.*')
-            ->from(['users as u'])
-            ->where(['name' => 'Anton']);
+                       ->columns('u.*')
+                       ->from(['users as u'])
+                       ->where(['name' => 'Anton']);
 
         $this->assertSameQuery(
             'SELECT {u}.* FROM {prefix_users} AS {u} WHERE {name} = ?',
@@ -1043,9 +1072,9 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testOneColumn(): void
     {
         $select = $this->database->select()
-            ->columns('name')
-            ->from(['users'])
-            ->where(['name' => 'Anton']);
+                                 ->columns('name')
+                                 ->from(['users'])
+                                 ->where(['name' => 'Anton']);
 
         $this->assertSameQuery(
             'SELECT {name} FROM {users} WHERE {name} = ?',
@@ -1056,9 +1085,9 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testOneFullySpecifiedColumn(): void
     {
         $select = $this->database->select()
-            ->columns('users.name')
-            ->from(['users'])
-            ->where(['name' => 'Anton']);
+                                 ->columns('users.name')
+                                 ->from(['users'])
+                                 ->where(['name' => 'Anton']);
 
         $this->assertSameQuery(
             'SELECT {users}.{name} FROM {users} WHERE {name} = ?',
@@ -1069,9 +1098,9 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testOneFullySpecifiedColumnWithPrefix(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
-            ->columns('users.name')
-            ->from(['users'])
-            ->where(['name' => 'Anton']);
+                       ->columns('users.name')
+                       ->from(['users'])
+                       ->where(['name' => 'Anton']);
 
         $this->assertSameQuery(
             'SELECT {prefix_users}.{name} FROM {prefix_users} WHERE {name} = ?',
@@ -1082,9 +1111,9 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testOneFullySpecifiedColumnWithPrefixButAliased(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
-            ->columns('u.name')
-            ->from(['users as u'])
-            ->where(['name' => 'Anton']);
+                       ->columns('u.name')
+                       ->from(['users as u'])
+                       ->where(['name' => 'Anton']);
 
         $this->assertSameQuery(
             'SELECT {u}.{name} FROM {prefix_users} AS {u} WHERE {name} = ?',
@@ -1095,9 +1124,9 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testColumnWithAlias(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
-            ->columns('u.name as u_name')
-            ->from(['users as u'])
-            ->where(['u_name' => 'Anton']);
+                       ->columns('u.name as u_name')
+                       ->from(['users as u'])
+                       ->where(['u_name' => 'Anton']);
 
         $this->assertSameQuery(
             'SELECT {u}.{name} AS {u_name} FROM {prefix_users} AS {u} WHERE {u_name} = ?',
@@ -1108,9 +1137,9 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testMultipleColumns(): void
     {
         $select = $this->database->select()
-            ->columns(['name', 'value'])
-            ->from(['users as u'])
-            ->where(['name' => 'Anton']);
+                                 ->columns(['name', 'value'])
+                                 ->from(['users as u'])
+                                 ->where(['name' => 'Anton']);
 
         $this->assertSameQuery(
             'SELECT {name}, {value} FROM {users} AS {u} WHERE {name} = ?',
@@ -1121,10 +1150,10 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testColumnsWithFunctions(): void
     {
         $select = $this->database->select()
-            ->columns(['SUM(u.balance)', 'COUNT(*)'])
-            ->from(['users as u'])
-            ->where(['name' => 'Anton'])
-            ->groupBy('balance');
+                                 ->columns(['SUM(u.balance)', 'COUNT(*)'])
+                                 ->from(['users as u'])
+                                 ->where(['name' => 'Anton'])
+                                 ->groupBy('balance');
 
         $this->assertSameQuery(
             'SELECT SUM({u}.{balance}), COUNT(*) FROM {users} AS {u} WHERE {name} = ? GROUP BY {balance}',
@@ -1147,7 +1176,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testHavingSelectWithHavingWithOperator(): void
     {
         $select = $this->database->select()->distinct()->from(['users'])
-            ->having('name', 'LIKE', 'Anton%');
+                                 ->having('name', 'LIKE', 'Anton%');
 
         $this->assertSameQuery(
             'SELECT DISTINCT * FROM {users} HAVING {name} LIKE ?',
@@ -1158,7 +1187,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testHavingSelectWithHavingWithBetween(): void
     {
         $select = $this->database->select()->distinct()->from(['users'])
-            ->having('balance', 'BETWEEN', 0, 1000);
+                                 ->having('balance', 'BETWEEN', 0, 1000);
 
         $this->assertSameQuery(
             'SELECT DISTINCT * FROM {users} HAVING {balance} BETWEEN ? AND ?',
@@ -1169,7 +1198,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testHavingSelectWithHavingWithNotBetween(): void
     {
         $select = $this->database->select()->distinct()->from(['users'])
-            ->having('balance', 'NOT BETWEEN', 0, 1000);
+                                 ->having('balance', 'NOT BETWEEN', 0, 1000);
 
         $this->assertSameQuery(
             'SELECT DISTINCT * FROM {users} HAVING {balance} NOT BETWEEN ? AND ?',
@@ -1184,7 +1213,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testHavingSelectWithHavingBetweenBadValue(): void
     {
         $select = $this->database->select()->distinct()->from(['users'])
-            ->having('balance', 'BETWEEN', 0);
+                                 ->having('balance', 'BETWEEN', 0);
 
         $this->assertSameQuery(
             'SELECT DISTINCT * FROM {users} HAVING {balance} NOT BETWEEN ? AND ?',
@@ -1195,7 +1224,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testHavingSelectWithFullySpecificColumnNameInHaving(): void
     {
         $select = $this->database->select()->distinct()->from(['users'])
-            ->having('users.balance', 12);
+                                 ->having('users.balance', 12);
 
         $this->assertSameQuery(
             'SELECT DISTINCT * FROM {users} HAVING {users}.{balance} = ?',
@@ -1206,7 +1235,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testHavingPrefixedSelectWithFullySpecificColumnNameInHaving(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()->distinct()->from(['users'])
-            ->having('users.balance', 12);
+                       ->having('users.balance', 12);
 
         $this->assertSameQuery(
             'SELECT DISTINCT * FROM {prefix_users} HAVING {prefix_users}.{balance} = ?',
@@ -1217,7 +1246,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testHavingPrefixedSelectWithFullySpecificColumnNameInHavingButAliased(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()->distinct()->from(['users as u'])
-            ->having('u.balance', 12);
+                       ->having('u.balance', 12);
 
         $this->assertSameQuery(
             'SELECT DISTINCT * FROM {prefix_users} AS {u} HAVING {u}.{balance} = ?',
@@ -1230,9 +1259,9 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testHavingSelectWithHavingAndHaving(): void
     {
         $select = $this->database->select()->distinct()
-            ->from(['users'])
-            ->having('name', 'Anton')
-            ->andHaving('balance', '>', 1);
+                                 ->from(['users'])
+                                 ->having('name', 'Anton')
+                                 ->andHaving('balance', '>', 1);
 
         $this->assertSameQuery(
             'SELECT DISTINCT * FROM {users} HAVING {name} = ? AND {balance} > ?',
@@ -1243,9 +1272,9 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testHavingSelectWithHavingAndFallbackHaving(): void
     {
         $select = $this->database->select()->distinct()
-            ->from(['users'])
-            ->having('name', 'Anton')
-            ->having('balance', '>', 1);
+                                 ->from(['users'])
+                                 ->having('name', 'Anton')
+                                 ->having('balance', '>', 1);
 
         $this->assertSameQuery(
             'SELECT DISTINCT * FROM {users} HAVING {name} = ? AND {balance} > ?',
@@ -1256,9 +1285,9 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testHavingSelectWithHavingOrHaving(): void
     {
         $select = $this->database->select()->distinct()
-            ->from(['users'])
-            ->having('name', 'Anton')
-            ->orHaving('balance', '>', 1);
+                                 ->from(['users'])
+                                 ->having('name', 'Anton')
+                                 ->orHaving('balance', '>', 1);
 
         $this->assertSameQuery(
             'SELECT DISTINCT * FROM {users} HAVING {name} = ? OR {balance} > ?',
@@ -1269,10 +1298,10 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testHavingSelectWithHavingOrHavingAndHaving(): void
     {
         $select = $this->database->select()->distinct()
-            ->from(['users'])
-            ->having('name', 'Anton')
-            ->orHaving('balance', '>', 1)
-            ->andHaving('value', 'IN', new Parameter([10, 12]));
+                                 ->from(['users'])
+                                 ->having('name', 'Anton')
+                                 ->orHaving('balance', '>', 1)
+                                 ->andHaving('value', 'IN', new Parameter([10, 12]));
 
         $this->assertSameQuery(
             'SELECT DISTINCT * FROM {users} HAVING {name} = ? OR {balance} > ? AND {value} IN (?, ?)',
@@ -1284,7 +1313,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testHavingHavingOfOrHaving(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->having('name', 'Anton')
             ->andHaving(
@@ -1301,7 +1331,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testHavingHavingOfAndHaving(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->having('name', 'Anton')
             ->andHaving(
@@ -1318,7 +1349,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testHavingOrHavingOfOrHaving(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->having('name', 'Anton')
             ->orHaving(
@@ -1335,12 +1367,14 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testHavingOrHavingOfAndHaving(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->having('name', 'Anton')
             ->orHaving(
                 function (SelectQuery $select): void {
-                    $select->having('value', '>', 10)->andHaving('value', '<', 1000);
+                    $select->having('value', '>', 10)
+                           ->andHaving('value', '<', 1000);
                 }
             );
 
@@ -1355,8 +1389,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testHavingShortHaving(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->having(['name' => 'Anton']);
+                                 ->from(['users'])
+                                 ->having(['name' => 'Anton']);
 
         $this->assertSameQuery(
             'SELECT * FROM {users} HAVING {name} = ?',
@@ -1366,7 +1400,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testHavingShortHavingWithCondition(): void
     {
-        $select = $this->database->select()
+        $select = $this->database
+            ->select()
             ->from(['users'])
             ->having(
                 [
@@ -1386,14 +1421,14 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testHavingShortHavingWithBetweenCondition(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->having(
-                [
-                    'value' => [
-                        'between' => [1, 2]
-                    ]
-                ]
-            );
+                                 ->from(['users'])
+                                 ->having(
+                                     [
+                                         'value' => [
+                                             'between' => [1, 2]
+                                         ]
+                                     ]
+                                 );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} HAVING {value} BETWEEN ? AND ?',
@@ -1404,14 +1439,14 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testHavingShortHavingWithNotBetweenCondition(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->having(
-                [
-                    'value' => [
-                        'not between' => [1, 2]
-                    ]
-                ]
-            );
+                                 ->from(['users'])
+                                 ->having(
+                                     [
+                                         'value' => [
+                                             'not between' => [1, 2]
+                                         ]
+                                     ]
+                                 );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} HAVING {value} NOT BETWEEN ? AND ?',
@@ -1426,27 +1461,27 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testHavingShortHavingWithBetweenConditionBadArguments(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->having(
-                [
-                    'value' => [
-                        'between' => [1]
-                    ]
-                ]
-            );
+                                 ->from(['users'])
+                                 ->having(
+                                     [
+                                         'value' => [
+                                             'between' => [1]
+                                         ]
+                                     ]
+                                 );
     }
 
 
     public function testHavingShortHavingMultiple(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->having(
-                [
-                    'name'  => 'Anton',
-                    'value' => 1
-                ]
-            );
+                                 ->from(['users'])
+                                 ->having(
+                                     [
+                                         'name'  => 'Anton',
+                                         'value' => 1
+                                     ]
+                                 );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} HAVING ({name} = ? AND {value} = ?)',
@@ -1457,9 +1492,9 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testHavingShortHavingMultipleButNotInAGroup(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->having(['name' => 'Anton'])
-            ->having(['value' => 1]);
+                                 ->from(['users'])
+                                 ->having(['name' => 'Anton'])
+                                 ->having(['value' => 1]);
 
         $this->assertSameQuery(
             'SELECT * FROM {users} HAVING {name} = ? AND {value} = ?',
@@ -1470,9 +1505,9 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testHavingShortHavingOrHaving(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->having(['name' => 'Anton'])
-            ->orHaving(['value' => 1]);
+                                 ->from(['users'])
+                                 ->having(['name' => 'Anton'])
+                                 ->orHaving(['value' => 1]);
 
         $this->assertSameQuery(
             'SELECT * FROM {users} HAVING {name} = ? OR {value} = ?',
@@ -1483,16 +1518,16 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testHavingAndShortHavingOR(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->having(['name' => 'Anton'])
-            ->andHaving(
-                [
-                    '@or' => [
-                        ['value' => 1],
-                        ['value' => ['>' => 12]]
-                    ]
-                ]
-            );
+                                 ->from(['users'])
+                                 ->having(['name' => 'Anton'])
+                                 ->andHaving(
+                                     [
+                                         '@or' => [
+                                             ['value' => 1],
+                                             ['value' => ['>' => 12]]
+                                         ]
+                                     ]
+                                 );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} HAVING {name} = ? AND ({value} = ? OR {value} > ?)',
@@ -1503,16 +1538,16 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testHavingOrShortHavingOR(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->having(['name' => 'Anton'])
-            ->orHaving(
-                [
-                    '@or' => [
-                        ['value' => 1],
-                        ['value' => ['>' => 12]]
-                    ]
-                ]
-            );
+                                 ->from(['users'])
+                                 ->having(['name' => 'Anton'])
+                                 ->orHaving(
+                                     [
+                                         '@or' => [
+                                             ['value' => 1],
+                                             ['value' => ['>' => 12]]
+                                         ]
+                                     ]
+                                 );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} HAVING {name} = ? OR ({value} = ? OR {value} > ?)',
@@ -1523,16 +1558,16 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testHavingAndShortHavingAND(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->having(['name' => 'Anton'])
-            ->andHaving(
-                [
-                    '@and' => [
-                        ['value' => 1],
-                        ['value' => ['>' => 12]]
-                    ]
-                ]
-            );
+                                 ->from(['users'])
+                                 ->having(['name' => 'Anton'])
+                                 ->andHaving(
+                                     [
+                                         '@and' => [
+                                             ['value' => 1],
+                                             ['value' => ['>' => 12]]
+                                         ]
+                                     ]
+                                 );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} HAVING {name} = ? AND ({value} = ? AND {value} > ?)',
@@ -1543,16 +1578,16 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testHavingOrShortHavingAND(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->having(['name' => 'Anton'])
-            ->orHaving(
-                [
-                    '@and' => [
-                        ['value' => 1],
-                        ['value' => ['>' => 12]]
-                    ]
-                ]
-            );
+                                 ->from(['users'])
+                                 ->having(['name' => 'Anton'])
+                                 ->orHaving(
+                                     [
+                                         '@and' => [
+                                             ['value' => 1],
+                                             ['value' => ['>' => 12]]
+                                         ]
+                                     ]
+                                 );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} HAVING {name} = ? OR ({value} = ? AND {value} > ?)',
@@ -1620,10 +1655,10 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testLimitAndOffsetAndOrderBy(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->limit(10)
-            ->orderBy('name')
-            ->offset(20);
+                                 ->from(['users'])
+                                 ->limit(10)
+                                 ->orderBy('name')
+                                 ->offset(20);
 
         $this->assertSameQuery(
             'SELECT * FROM {users} ORDER BY {name} ASC LIMIT ? OFFSET ?',
@@ -1654,8 +1689,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testWhereValueAsFragment(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->where('balance', '=', new Fragment('(1 + 2) / 3'));
+                                 ->from(['users'])
+                                 ->where('balance', '=', new Fragment('(1 + 2) / 3'));
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {balance} = (1 + 2) / 3',
@@ -1666,8 +1701,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testShortWhereValueAsFragment(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->where(['balance' => new Fragment('(1 + 2) / 3')]);
+                                 ->from(['users'])
+                                 ->where(['balance' => new Fragment('(1 + 2) / 3')]);
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {balance} = (1 + 2) / 3',
@@ -1678,8 +1713,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testWhereOperatorAsFragment(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->where('name', new Fragment('SUPERLIKE'), 'Anton');
+                                 ->from(['users'])
+                                 ->where('name', new Fragment('SUPERLIKE'), 'Anton');
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {name} SUPERLIKE ?',
@@ -1690,8 +1725,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testOrderByFragment(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->orderBy(new Fragment('RAND()'));
+                                 ->from(['users'])
+                                 ->orderBy(new Fragment('RAND()'));
 
         $this->assertSameQuery(
             'SELECT * FROM {users} ORDER BY RAND() ASC',
@@ -1703,8 +1738,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testGroupByFragment(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->groupBy(new Fragment('RESOLVE_USER(users.id)'));
+                                 ->from(['users'])
+                                 ->groupBy(new Fragment('RESOLVE_USER(users.id)'));
 
         $this->assertSameQuery(
             'SELECT * FROM {users} GROUP BY RESOLVE_USER(users.id)',
@@ -1738,8 +1773,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testColumnNameAndTableAsExpressionPrefixed(): void
     {
         $select = $this->db('prefixed', 'prefix_')
-            ->select(new Expression('users.name'))
-            ->from(['users']);
+                       ->select(new Expression('users.name'))
+                       ->from(['users']);
 
         $this->assertSameQuery(
             'SELECT {prefix_users}.{name} FROM {prefix_users}',
@@ -1750,8 +1785,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testColumnNameAndTableAsExpressionPrefixedAliased(): void
     {
         $select = $this->db('prefixed', 'prefix_')
-            ->select(new Expression('u.name'))
-            ->from(['users as u']);
+                       ->select(new Expression('u.name'))
+                       ->from(['users as u']);
 
         $this->assertSameQuery(
             'SELECT {u}.{name} FROM {prefix_users} AS {u}',
@@ -1762,7 +1797,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testWhereValueAsExpression(): void
     {
         $select = $this->database->select()->from(['users'])
-            ->where('balance', '>', new Expression('origin_balance'));
+                                 ->where('balance', '>', new Expression('origin_balance'));
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {balance} > {origin_balance}',
@@ -1773,7 +1808,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testWhereValueAndTableAsExpression(): void
     {
         $select = $this->database->select()->from(['users'])
-            ->where('balance', '>', new Expression('users.origin_balance'));
+                                 ->where('balance', '>', new Expression('users.origin_balance'));
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {balance} > {users}.{origin_balance}',
@@ -1784,7 +1819,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testWhereValueAndTableAsExpressionPrefixed(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()->from(['users'])
-            ->where('balance', '>', new Expression('users.origin_balance'));
+                       ->where('balance', '>', new Expression('users.origin_balance'));
 
         $this->assertSameQuery(
             'SELECT * FROM {prefix_users} WHERE {balance} > {prefix_users}.{origin_balance}',
@@ -1795,7 +1830,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testWhereValueAndTableAsExpressionPrefixedAliased(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()->from(['users as u'])
-            ->where('balance', '>', new Expression('u.origin_balance'));
+                       ->where('balance', '>', new Expression('u.origin_balance'));
 
         $this->assertSameQuery(
             'SELECT * FROM {prefix_users} AS {u} WHERE {balance} > {u}.{origin_balance}',
@@ -1806,11 +1841,11 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testShortWhereValueAsExpressionPrefixed(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()->from(['users'])
-            ->where(
-                [
-                    'balance' => ['>' => new Expression('users.origin_balance')]
-                ]
-            );
+                       ->where(
+                           [
+                               'balance' => ['>' => new Expression('users.origin_balance')]
+                           ]
+                       );
 
         $this->assertSameQuery(
             'SELECT * FROM {prefix_users} WHERE {balance} > {prefix_users}.{origin_balance}',
@@ -1821,7 +1856,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testOrderByExpression(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()->from(['users'])
-            ->orderBy(new Expression('users.balance'));
+                       ->orderBy(new Expression('users.balance'));
 
         $this->assertSameQuery(
             'SELECT * FROM {prefix_users} ORDER BY {prefix_users}.{balance} ASC',
@@ -1832,8 +1867,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testGroupByExpression(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->groupBy(new Expression('RESOLVE_USER(users.id)'));
+                                 ->from(['users'])
+                                 ->groupBy(new Expression('RESOLVE_USER(users.id)'));
 
         $this->assertSameQuery(
             'SELECT * FROM {users} GROUP BY RESOLVE_USER({users}.{id})',
@@ -1845,8 +1880,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testGroupByExpressionWithPrefix(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
-            ->from(['users'])
-            ->groupBy(new Expression('RESOLVE_USER(users.id)'));
+                       ->from(['users'])
+                       ->groupBy(new Expression('RESOLVE_USER(users.id)'));
 
         $this->assertSameQuery(
             'SELECT * FROM {prefix_users} GROUP BY RESOLVE_USER({prefix_users}.{id})',
@@ -1861,8 +1896,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $p = new Parameter(12);
 
         $select = $this->database->select()
-            ->from(['users'])
-            ->where('balance', $p);
+                                 ->from(['users'])
+                                 ->where('balance', $p);
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {balance} = ?',
@@ -1875,8 +1910,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $p = new Parameter(12);
 
         $select = $this->database->select()
-            ->from(['users'])
-            ->where(['balance' => $p]);
+                                 ->from(['users'])
+                                 ->where(['balance' => $p]);
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {balance} = ?',
@@ -1891,8 +1926,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testBadArrayParameter(): void
     {
         $this->database->select()
-            ->from(['users'])
-            ->where('status', 'IN', ['active', 'blocked']);
+                       ->from(['users'])
+                       ->where('status', 'IN', ['active', 'blocked']);
     }
 
     /**
@@ -1902,12 +1937,12 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testBadArrayParameterInShortWhere(): void
     {
         $this->database->select()
-            ->from(['users'])
-            ->where(
-                [
-                    'status' => ['IN' => ['active', 'blocked']]
-                ]
-            );
+                       ->from(['users'])
+                       ->where(
+                           [
+                               'status' => ['IN' => ['active', 'blocked']]
+                           ]
+                       );
     }
 
     public function testGoodArrayParameter(): void
@@ -1915,8 +1950,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $p = new Parameter(['active', 'blocked']);
 
         $select = $this->database->select()
-            ->from(['users'])
-            ->where('status', 'IN', $p);
+                                 ->from(['users'])
+                                 ->where('status', 'IN', $p);
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {status} IN (?, ?)',
@@ -1936,12 +1971,12 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $p = new Parameter(['active', 'blocked']);
 
         $select = $this->database->select()
-            ->from(['users'])
-            ->where(
-                [
-                    'status' => ['IN' => $p]
-                ]
-            );
+                                 ->from(['users'])
+                                 ->where(
+                                     [
+                                         'status' => ['IN' => $p]
+                                     ]
+                                 );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {status} IN (?, ?)',
@@ -1961,8 +1996,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testLeftJoin0(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->join('LEFT', 'photos')->on(['photos.user_id' => 'users.id']);
+                                 ->from(['users'])
+                                 ->join('LEFT', 'photos')->on(['photos.user_id' => 'users.id']);
 
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
@@ -1973,8 +2008,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testLeftJoin1(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->join('LEFT', 'photos')->on('photos.user_id', 'users.id');
+                                 ->from(['users'])
+                                 ->join('LEFT', 'photos')->on('photos.user_id', 'users.id');
 
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
@@ -1985,8 +2020,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testLeftJoin2(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->leftJoin('photos')->on('photos.user_id', 'users.id');
+                                 ->from(['users'])
+                                 ->leftJoin('photos')->on('photos.user_id', 'users.id');
 
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
@@ -1997,8 +2032,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testLeftJoin3(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->leftJoin('photos')->on(['photos.user_id' => 'users.id']);
+                                 ->from(['users'])
+                                 ->leftJoin('photos')->on(['photos.user_id' => 'users.id']);
 
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
@@ -2009,8 +2044,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testRightJoin0(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->join('RIGHT', 'photos')->on(['photos.user_id' => 'users.id']);
+                                 ->from(['users'])
+                                 ->join('RIGHT', 'photos')->on(['photos.user_id' => 'users.id']);
 
         $this->assertSameQuery(
             'SELECT * FROM {users} RIGHT JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
@@ -2021,8 +2056,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testRightJoin1(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->join('RIGHT', 'photos')->on('photos.user_id', 'users.id');
+                                 ->from(['users'])
+                                 ->join('RIGHT', 'photos')->on('photos.user_id', 'users.id');
 
         $this->assertSameQuery(
             'SELECT * FROM {users} RIGHT JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
@@ -2033,8 +2068,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testRightJoin2(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->rightJoin('photos')->on('photos.user_id', 'users.id');
+                                 ->from(['users'])
+                                 ->rightJoin('photos')->on('photos.user_id', 'users.id');
 
         $this->assertSameQuery(
             'SELECT * FROM {users} RIGHT JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
@@ -2045,8 +2080,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testRightJoin3(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->rightJoin('photos')->on(['photos.user_id' => 'users.id']);
+                                 ->from(['users'])
+                                 ->rightJoin('photos')->on(['photos.user_id' => 'users.id']);
 
         $this->assertSameQuery(
             'SELECT * FROM {users} RIGHT JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
@@ -2057,8 +2092,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testInnerJoin0(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->join('INNER', 'photos')->on(['photos.user_id' => 'users.id']);
+                                 ->from(['users'])
+                                 ->join('INNER', 'photos')->on(['photos.user_id' => 'users.id']);
 
         $this->assertSameQuery(
             'SELECT * FROM {users} INNER JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
@@ -2069,8 +2104,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testInnerJoin1(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->join('INNER', 'photos')->on('photos.user_id', 'users.id');
+                                 ->from(['users'])
+                                 ->join('INNER', 'photos')->on('photos.user_id', 'users.id');
 
         $this->assertSameQuery(
             'SELECT * FROM {users} INNER JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
@@ -2081,8 +2116,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testInnerJoin2(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->innerJoin('photos')->on('photos.user_id', 'users.id');
+                                 ->from(['users'])
+                                 ->innerJoin('photos')->on('photos.user_id', 'users.id');
 
         $this->assertSameQuery(
             'SELECT * FROM {users} INNER JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
@@ -2093,8 +2128,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testInnerJoin3(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->innerJoin('photos')->on(['photos.user_id' => 'users.id']);
+                                 ->from(['users'])
+                                 ->innerJoin('photos')->on(['photos.user_id' => 'users.id']);
 
         $this->assertSameQuery(
             'SELECT * FROM {users} INNER JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
@@ -2107,8 +2142,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testJoinWithComplexWhere(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->leftJoin('photos')->on('photos.user_id', 'users.id')->onWhere('photos.public', true);
+                                 ->from(['users'])
+                                 ->leftJoin('photos')->on('photos.user_id', 'users.id')->onWhere('photos.public', true);
 
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos}
@@ -2120,10 +2155,10 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testJoinWithComplexOrWhere(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->leftJoin('photos')
-            ->on('photos.user_id', 'users.id')
-            ->orOn('photos.group_id', 'users.group_id');
+                                 ->from(['users'])
+                                 ->leftJoin('photos')
+                                 ->on('photos.user_id', 'users.id')
+                                 ->orOn('photos.group_id', 'users.group_id');
 
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos}
@@ -2135,10 +2170,10 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testJoinWithComplexAndWhere(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->leftJoin('photos')
-            ->on('photos.user_id', 'users.id')
-            ->andOn('photos.group_id', 'users.group_id');
+                                 ->from(['users'])
+                                 ->leftJoin('photos')
+                                 ->on('photos.user_id', 'users.id')
+                                 ->andOn('photos.group_id', 'users.group_id');
 
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos}
@@ -2150,10 +2185,10 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testJoinWithComplexAndWhereDefaults(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->leftJoin('photos')
-            ->on('photos.user_id', 'users.id')
-            ->on('photos.group_id', 'users.group_id');
+                                 ->from(['users'])
+                                 ->leftJoin('photos')
+                                 ->on('photos.user_id', 'users.id')
+                                 ->on('photos.group_id', 'users.group_id');
 
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos}
@@ -2165,11 +2200,11 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testJoinWithComplexWhereAndOR(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->leftJoin('photos')
-            ->on('photos.user_id', 'users.id')
-            ->onWhere('photos.public', true)
-            ->orOnWhere('photos.magic', '>', 900);
+                                 ->from(['users'])
+                                 ->leftJoin('photos')
+                                 ->on('photos.user_id', 'users.id')
+                                 ->onWhere('photos.public', true)
+                                 ->orOnWhere('photos.magic', '>', 900);
 
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos} '
@@ -2181,11 +2216,11 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testJoinWithComplexWhereAnd(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->leftJoin('photos')
-            ->on('photos.user_id', 'users.id')
-            ->onWhere('photos.public', true)
-            ->andOnWhere('photos.magic', '>', 900);
+                                 ->from(['users'])
+                                 ->leftJoin('photos')
+                                 ->on('photos.user_id', 'users.id')
+                                 ->onWhere('photos.public', true)
+                                 ->andOnWhere('photos.magic', '>', 900);
 
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos} '
@@ -2197,11 +2232,11 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testJoinWithComplexWhereAndDefaults(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->leftJoin('photos')
-            ->on('photos.user_id', 'users.id')
-            ->onWhere('photos.public', true)
-            ->onWhere('photos.magic', '>', 900);
+                                 ->from(['users'])
+                                 ->leftJoin('photos')
+                                 ->on('photos.user_id', 'users.id')
+                                 ->onWhere('photos.public', true)
+                                 ->onWhere('photos.magic', '>', 900);
 
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos} '
@@ -2215,14 +2250,14 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testJoinAliases(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->leftJoin('photos as p')
-            ->on(
-                [
-                    'p.user_id' => 'users.id',
-                    'p.public'  => new Parameter(true)
-                ]
-            );
+                                 ->from(['users'])
+                                 ->leftJoin('photos as p')
+                                 ->on(
+                                     [
+                                         'p.user_id' => 'users.id',
+                                         'p.public'  => new Parameter(true)
+                                     ]
+                                 );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos} AS {p} '
@@ -2234,14 +2269,14 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testJoinAliasesWithPrefixes(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
-            ->from(['users'])
-            ->leftJoin('photos as p')
-            ->on(
-                [
-                    'p.user_id' => 'users.id',
-                    'p.public'  => new Parameter(true)
-                ]
-            );
+                       ->from(['users'])
+                       ->leftJoin('photos as p')
+                       ->on(
+                           [
+                               'p.user_id' => 'users.id',
+                               'p.public'  => new Parameter(true)
+                           ]
+                       );
 
         $this->assertSameQuery(
             'SELECT * FROM {prefix_users} LEFT JOIN {prefix_photos} AS {p} '
@@ -2253,14 +2288,14 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testJoinAliasesWithPrefixesAlternative(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
-            ->from(['users'])
-            ->leftJoin('photos', 'p')
-            ->on(
-                [
-                    'p.user_id' => 'users.id',
-                    'p.public'  => new Parameter(true)
-                ]
-            );
+                       ->from(['users'])
+                       ->leftJoin('photos', 'p')
+                       ->on(
+                           [
+                               'p.user_id' => 'users.id',
+                               'p.public'  => new Parameter(true)
+                           ]
+                       );
 
         $this->assertSameQuery(
             'SELECT * FROM {prefix_users} LEFT JOIN {prefix_photos} AS {p} '
@@ -2272,14 +2307,14 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testJoinAliasesWithPrefixesAndAliases(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
-            ->from(['users as u'])
-            ->leftJoin('photos as p')
-            ->on(
-                [
-                    'p.user_id' => 'u.id',
-                    'p.public'  => new Parameter(true)
-                ]
-            );
+                       ->from(['users as u'])
+                       ->leftJoin('photos as p')
+                       ->on(
+                           [
+                               'p.user_id' => 'u.id',
+                               'p.public'  => new Parameter(true)
+                           ]
+                       );
 
         $this->assertSameQuery(
             'SELECT * FROM {prefix_users} AS {u} LEFT JOIN {prefix_photos} AS {p} '
@@ -2295,14 +2330,14 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $statuses = new Parameter(['active', 'disabled']);
 
         $select = $this->db('prefixed', 'prefix_')
-            ->select('COUNT(*)', 'groups.id', 'u.id', 'SUM(t.amount)')
-            ->from(['users as u'])
-            ->leftJoin('transactions as t')->on(['t.user_id' => 'u.id'])
-            ->rightJoin('groups')->on(['groups.id' => 'u.group_id'])
-            ->onWhere('groups.public', true)
-            ->where('u.status', 'IN', $statuses)
-            ->orderBy('u.name', 'DESC')
-            ->groupBy('u.id');
+                       ->select('COUNT(*)', 'groups.id', 'u.id', 'SUM(t.amount)')
+                       ->from(['users as u'])
+                       ->leftJoin('transactions as t')->on(['t.user_id' => 'u.id'])
+                       ->rightJoin('groups')->on(['groups.id' => 'u.group_id'])
+                       ->onWhere('groups.public', true)
+                       ->where('u.status', 'IN', $statuses)
+                       ->orderBy('u.name', 'DESC')
+                       ->groupBy('u.id');
 
         $this->assertSameQuery(
             'SELECT COUNT(*), {prefix_groups}.{id}, {u}.{id}, SUM({t}.{amount}) '
@@ -2319,13 +2354,13 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testJoinQuery(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
-            ->from(['users as u'])
-            ->leftJoin(
-                $this->db('prefixed', 'prefix_')
-                    ->select()->from('posts AS p')
-                    ->where('p.user_id', new Expression('u.id')),
-                'sub_posts'
-            );
+                       ->from(['users as u'])
+                       ->leftJoin(
+                           $this->db('prefixed', 'prefix_')
+                                ->select()->from('posts AS p')
+                                ->where('p.user_id', new Expression('u.id')),
+                           'sub_posts'
+                       );
 
         $this->assertSameQuery(
             'SELECT * FROM {prefix_users} AS {u} LEFT JOIN (
@@ -2339,7 +2374,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testDirectIsNull(): void
     {
         $select = $this->database->select()->from(['users'])
-            ->where('name', 'is', null);
+                                 ->where('name', 'is', null);
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {name} IS NULL',
@@ -2350,7 +2385,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testDirectIsNot(): void
     {
         $select = $this->database->select()->from(['users'])
-            ->where('name', 'is not', null);
+                                 ->where('name', 'is not', null);
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {name} IS NOT NULL',
@@ -2361,9 +2396,9 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testSelectForUpdate(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->where('name', 'Antony')
-            ->forUpdate();
+                                 ->from(['users'])
+                                 ->where('name', 'Antony')
+                                 ->forUpdate();
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {name} = ? FOR UPDATE',
@@ -2374,9 +2409,9 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testSelectWithParametricExpression(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->where('name', 'Antony')
-            ->orWhere(new Expression('RANGE(balance, price) = ?', 10));
+                                 ->from(['users'])
+                                 ->where('name', 'Antony')
+                                 ->orWhere(new Expression('RANGE(balance, price) = ?', 10));
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {name} = ? OR RANGE({balance}, {price}) = ?',
@@ -2395,12 +2430,12 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testSelectWithParametricExpression2(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->where(
-                new Expression('RANGE(?, ?)', 101, 102),
-                '&&',
-                new Expression('RANGE(?, ?)', 103, 104)
-            );
+                                 ->from(['users'])
+                                 ->where(
+                                     new Expression('RANGE(?, ?)', 101, 102),
+                                     '&&',
+                                     new Expression('RANGE(?, ?)', 103, 104)
+                                 );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE RANGE(?, ?) && RANGE(?, ?)',
@@ -2421,12 +2456,12 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testSelectWithParametricExpression3(): void
     {
         $select = $this->database->select()
-            ->from(['users'])
-            ->where(
-                new Expression('RANGE(?, ?)', 101, 102),
-                new Expression('RANGE(name, ?)', 600),
-                new Expression('RANGE(?, ?)', 103, 104)
-            );
+                                 ->from(['users'])
+                                 ->where(
+                                     new Expression('RANGE(?, ?)', 101, 102),
+                                     new Expression('RANGE(name, ?)', 600),
+                                     new Expression('RANGE(?, ?)', 103, 104)
+                                 );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE RANGE(?, ?) RANGE({name}, ?) RANGE(?, ?)',
@@ -2440,6 +2475,68 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 600,
                 103,
                 104
+            ],
+            $select
+        );
+    }
+
+    public function testSelectWithFragmentedColumns(): void
+    {
+        $rankQ = sprintf(
+            'CASE WHEN %s ILIKE ? THEN 1 WHEN %s ILIKE ? THEN 2 WHEN %s ILIKE ? THEN 3 END AS rank',
+            'field1', // name
+            'field2', // name
+            'field3' // name
+        );
+
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->columns([new Fragment($rankQ, 1, 2, 3)])
+            ->where('id', '>', 4);
+
+        $this->assertSameQuery(
+            'SELECT CASE WHEN field1 ILIKE ? THEN 1 WHEN field2 ILIKE ? THEN2 '
+            . 'WHEN field3 ILIKE ? THEN 3 END AS rank FROM "users" WHERE "id" > ?',
+            $select
+        );
+
+        $this->assertSameParameters(
+            [
+                1,
+                2,
+                3,
+                4
+            ],
+            $select
+        );
+
+        // check cached
+        $rankQ = sprintf(
+            'CASE WHEN %s ILIKE ? THEN 1 WHEN %s ILIKE ? THEN 2 WHEN %s ILIKE ? THEN 3 END AS rank',
+            'field1', // name
+            'field2', // name
+            'field3' // name
+        );
+
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->columns([new Fragment($rankQ, 1, 2, 3)])
+            ->where('id', '>', 4);
+
+        $this->assertSameQuery(
+            'SELECT CASE WHEN field1 ILIKE ? THEN 1 WHEN field2 ILIKE ? '
+            . 'THEN2 WHEN field3 ILIKE ? THEN 3 END AS rank FROM "users" WHERE "id" > ?',
+            $select
+        );
+
+        $this->assertSameParameters(
+            [
+                1,
+                2,
+                3,
+                4
             ],
             $select
         );

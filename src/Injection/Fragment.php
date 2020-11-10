@@ -24,12 +24,23 @@ class Fragment implements FragmentInterface
     /** @var string */
     private $fragment;
 
+    /** @var ParameterInterface[] */
+    private $parameters = [];
+
     /**
      * @param string $fragment
+     * @param mixed  ...$parameters
      */
-    public function __construct(string $fragment)
+    public function __construct(string $fragment, ...$parameters)
     {
         $this->fragment = $fragment;
+        foreach ($parameters as $parameter) {
+            if ($parameter instanceof ParameterInterface) {
+                $this->parameters[] = $parameter;
+            } else {
+                $this->parameters[] = new Parameter($parameter);
+            }
+        }
     }
 
     /**
@@ -46,7 +57,10 @@ class Fragment implements FragmentInterface
      */
     public static function __set_state(array $an_array): Fragment
     {
-        return new self($an_array['fragment'] ?? $an_array['statement']);
+        return new self(
+            $an_array['fragment'] ?? $an_array['statement'],
+            ...($an_array['parameters'] ?? [])
+        );
     }
 
     /**
@@ -63,7 +77,8 @@ class Fragment implements FragmentInterface
     public function getTokens(): array
     {
         return [
-            'fragment' => $this->fragment
+            'fragment'   => $this->fragment,
+            'parameters' => $this->parameters
         ];
     }
 }

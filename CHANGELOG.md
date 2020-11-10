@@ -1,6 +1,11 @@
 CHANGELOG
 ======================
 
+v2.7.19 (10.11.2020)
+-----
+- added the ability to pass parameters into fragments
+- added the ability to use fragments and expressions as part of select query columns
+
 v2.7.18 (14.10.2020)
 -----
 - added the ability to fetch data as StdClass by @guilhermeaiolfi

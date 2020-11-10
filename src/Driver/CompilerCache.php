@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Spiral\Database\Driver;
 
 use Spiral\Database\Injection\Expression;
+use Spiral\Database\Injection\Fragment;
 use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Injection\Parameter;
 use Spiral\Database\Injection\ParameterInterface;
@@ -103,7 +104,7 @@ final class CompilerCache implements CompilerInterface
         $hash = 'i_' . $tokens['table'] . implode('_', $tokens['columns']) . '_r' . ($tokens['return'] ?? '');
         foreach ($tokens['values'] as $value) {
             if ($value instanceof FragmentInterface) {
-                if ($value instanceof Expression) {
+                if ($value instanceof Expression || $value instanceof Fragment) {
                     foreach ($tokens['parameters'] as $param) {
                         $params->push($param);
                     }
@@ -174,7 +175,7 @@ final class CompilerCache implements CompilerInterface
             $hash .= 'on' . $this->hashWhere($params, $join['on']);
         }
 
-        $hash .= implode(',', $tokens['columns']);
+        $hash .= $this->hashColumns($params, $tokens['columns']);
 
         if ($tokens['where'] !== []) {
             $hash .= 'w' . $this->hashWhere($params, $tokens['where']);
@@ -225,7 +226,7 @@ final class CompilerCache implements CompilerInterface
             }
 
             if ($context instanceof FragmentInterface) {
-                if ($context instanceof Expression) {
+                if ($context instanceof Expression || $context instanceof Fragment) {
                     foreach ($context->getTokens()['parameters'] as $param) {
                         $params->push($param);
                     }
@@ -241,7 +242,7 @@ final class CompilerCache implements CompilerInterface
             } elseif ($context[0] instanceof ParameterInterface) {
                 $hash .= $this->hashParam($params, $context[0]);
             } else {
-                if ($context[0] instanceof Expression) {
+                if ($context[0] instanceof Expression || $context[0] instanceof Fragment) {
                     foreach ($context[0]->getTokens()['parameters'] as $param) {
                         $params->push($param);
                     }
@@ -251,7 +252,7 @@ final class CompilerCache implements CompilerInterface
             }
 
             // operator
-            if ($context[1] instanceof Expression) {
+            if ($context[1] instanceof Expression || $context[1] instanceof Fragment) {
                 foreach ($context[1]->getTokens()['parameters'] as $param) {
                     $params->push($param);
                 }
@@ -265,7 +266,7 @@ final class CompilerCache implements CompilerInterface
             } elseif ($context[2] instanceof ParameterInterface) {
                 $hash .= $this->hashParam($params, $context[2]);
             } else {
-                if ($context[2] instanceof Expression) {
+                if ($context[2] instanceof Expression || $context[2] instanceof Fragment) {
                     foreach ($context[2]->getTokens()['parameters'] as $param) {
                         $params->push($param);
                     }
@@ -281,7 +282,7 @@ final class CompilerCache implements CompilerInterface
                 } elseif ($context[3] instanceof ParameterInterface) {
                     $hash .= $this->hashParam($params, $context[3]);
                 } else {
-                    if ($context[3] instanceof Expression) {
+                    if ($context[3] instanceof Expression || $context[3] instanceof Fragment) {
                         foreach ($context[3]->getTokens()['parameters'] as $param) {
                             $params->push($param);
                         }
@@ -290,6 +291,27 @@ final class CompilerCache implements CompilerInterface
                     $hash .= $context[3];
                 }
             }
+        }
+
+        return $hash;
+    }
+
+    /**
+     * @param QueryParameters $params
+     * @param array           $columns
+     * @return string
+     */
+    protected function hashColumns(QueryParameters $params, array $columns): string
+    {
+        $hash = '';
+        foreach ($columns as $column) {
+            if ($column instanceof Expression || $column instanceof Fragment) {
+                foreach ($column->getTokens()['parameters'] as $param) {
+                    $params->push($param);
+                }
+            }
+
+            $hash .= (string) $column . ',';
         }
 
         return $hash;

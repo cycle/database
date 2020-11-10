@@ -94,6 +94,10 @@ abstract class Compiler implements CompilerInterface
 
         switch ($fragment->getType()) {
             case self::FRAGMENT:
+                foreach ($tokens['parameters'] as $param) {
+                    $params->push($param);
+                }
+
                 return $tokens['fragment'];
 
             case self::EXPRESSION:
