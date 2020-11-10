@@ -2497,7 +2497,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
         $this->assertSameQuery(
             'SELECT CASE WHEN field1 ILIKE ? THEN 1 WHEN field2 ILIKE ? THEN2 '
-            . 'WHEN field3 ILIKE ? THEN 3 END AS rank FROM "users" WHERE "id" > ?',
+            . 'WHEN field3 ILIKE ? THEN 3 END AS rank FROM {users} WHERE {id} > ?',
             $select
         );
 
@@ -2527,7 +2527,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
         $this->assertSameQuery(
             'SELECT CASE WHEN field1 ILIKE ? THEN 1 WHEN field2 ILIKE ? '
-            . 'THEN2 WHEN field3 ILIKE ? THEN 3 END AS rank FROM "users" WHERE "id" > ?',
+            . 'THEN2 WHEN field3 ILIKE ? THEN 3 END AS rank FROM {users} WHERE {id} > ?',
             $select
         );
 
