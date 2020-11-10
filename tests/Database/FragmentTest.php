@@ -78,7 +78,8 @@ class FragmentTest extends TestCase
         $f = eval('return ' . var_export($fragment, true) . ';');
         $this->assertSame(
             [
-                'fragment' => 'some sql'
+                'fragment' => 'some sql',
+                'parameters' => []
             ],
             $f->getTokens()
         );
