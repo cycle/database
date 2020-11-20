@@ -1,6 +1,11 @@
 CHANGELOG
 ======================
 
+v2.7.20 (20.11.2020)
+-----
+- [bugfix] invaliding spacing while using Fragments in JOIN ON statements by @iamsaint
+- [bugfix] disable parameter registration when value is Fragment by @thenotsoft
+
 v2.7.19 (10.11.2020)
 -----
 - added the ability to pass parameters into fragments
