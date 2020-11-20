@@ -120,6 +120,10 @@ final class CompilerCache implements CompilerInterface
 
             if ($value->isArray()) {
                 foreach ($value->getValue() as $child) {
+                    if ($child instanceof FragmentInterface) {
+                        continue;
+                    }
+
                     if (!$child instanceof ParameterInterface) {
                         $child = new Parameter($child);
                     }
