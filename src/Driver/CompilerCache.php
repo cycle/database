@@ -123,7 +123,7 @@ final class CompilerCache implements CompilerInterface
                     if ($child instanceof FragmentInterface) {
                         continue;
                     }
-                    
+
                     if (!$child instanceof ParameterInterface) {
                         $child = new Parameter($child);
                     }
