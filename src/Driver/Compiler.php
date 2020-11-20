@@ -488,6 +488,7 @@ abstract class Compiler implements CompilerInterface
 
             if ($context instanceof FragmentInterface) {
                 $statement .= $this->fragment($params, $q, $context);
+                $statement .= ' ';
                 continue;
             }
 
