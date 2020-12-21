@@ -10,7 +10,7 @@
     }
   ],
   "require": {
-    "php": "^7.2",
+    "php": ">=7.2",
     "ext-pdo": "*",
     "spiral/core": "^1.1",
     "spiral/logger": "^1.0",
