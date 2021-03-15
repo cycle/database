@@ -25,7 +25,8 @@ jobs:
           - "8.0"
 
         mysql-version:
-          - "latest"
+          - "5.7"
+          - "8.0"
 
     services:
       mysql:
@@ -35,7 +36,7 @@ jobs:
           MYSQL_DATABASE: spiral
         ports:
           - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3 --default-authentication-plugin=mysql_native_password
 
     steps:
       - name: Checkout
@@ -82,5 +83,5 @@ jobs:
       - name: Run mysql tests with phpunit
         env:
           DB: mysql
-          MARIADB: ${{ matrix.configs.mariadb-version }}
+          MYSQL: ${{ matrix.mysql-version }}
         run: vendor/bin/phpunit tests/Database/Driver/MySQL --colors=always
