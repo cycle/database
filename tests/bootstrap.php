@@ -58,8 +58,8 @@ $drivers = [
         'check'      => static function () use ($db) {
             return $db === 'sqlserver' || in_array('sqlsrv', \PDO::getAvailableDrivers(), true);
         },
-        'conn'       => 'sqlsrv:Server=127.0.0.1,1433;Database=spiral',
-        'user'       => 'sa',
+        'conn'       => 'sqlsrv:Server=127.0.0.1,1433;Database=tempdb',
+        'user'       => 'SA',
         'pass'       => 'SSpaSS__1',
         'queryCache' => 100
     ],
