@@ -57,7 +57,7 @@ Database\Tests\BaseTest::$config = [
         'check'      => static function () {
             return !in_array('sqlsrv', \PDO::getAvailableDrivers(), true);
         },
-        'conn'       => 'sqlsrv:Server=127.0.0.1,11433;Database=tempdb',
+        'conn'       => 'sqlsrv:Server=127.0.0.1,11433;Database=spiral',
         'user'       => 'sa',
         'pass'       => 'SSpaSS__1',
         'queryCache' => 100
@@ -66,6 +66,21 @@ Database\Tests\BaseTest::$config = [
 
 if (!empty(getenv('DB'))) {
     switch (getenv('DB')) {
+        case 'sqlserver':
+            Database\Tests\BaseTest::$config = [
+                'debug'    => false,
+                'sqlserver' => [
+                    'driver' => Database\Driver\SQLServer\SQLServerDriver::class,
+                    'check'  => static function () {
+                        return true;
+                    },
+                    'conn'   => 'sqlsrv:Server=127.0.0.1,11433;Database=spiral',
+                    'user'   => 'SA',
+                    'pass'   => 'SSpaSS__1'
+                ],
+            ];
+            break;
+
         case 'postgres':
             Database\Tests\BaseTest::$config = [
                 'debug'    => false,
