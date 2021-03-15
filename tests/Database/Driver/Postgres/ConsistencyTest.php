@@ -14,6 +14,10 @@ namespace Spiral\Database\Tests\Driver\Postgres;
 use Spiral\Database\Driver\Postgres\PostgresDriver;
 use Spiral\Database\Injection\FragmentInterface;
 
+/**
+ * @group driver
+ * @group driver-postgres
+ */
 class ConsistencyTest extends \Spiral\Database\Tests\ConsistencyTest
 {
     public const DRIVER = 'postgres';

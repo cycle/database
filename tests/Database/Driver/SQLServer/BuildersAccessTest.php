@@ -13,6 +13,10 @@ namespace Spiral\Database\Tests\Driver\SQLServer;
 
 use Spiral\Database\Driver\SQLServer\Schema\SQLServerTable;
 
+/**
+ * @group driver
+ * @group driver-sqlserver
+ */
 class BuildersAccessTest extends \Spiral\Database\Tests\BuildersAccessTest
 {
     public const DRIVER = 'sqlserver';

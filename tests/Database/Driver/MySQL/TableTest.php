@@ -11,6 +11,10 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Tests\Driver\MySQL;
 
+/**
+ * @group driver
+ * @group driver-mysql
+ */
 class TableTest extends \Spiral\Database\Tests\TableTest
 {
     public const DRIVER = 'mysql';

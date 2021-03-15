@@ -11,6 +11,10 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Tests\Driver\MySQL;
 
+/**
+ * @group driver
+ * @group driver-mysql
+ */
 class DatetimeColumnTest extends \Spiral\Database\Tests\DatetimeColumnTest
 {
     public const DRIVER = 'mysql';

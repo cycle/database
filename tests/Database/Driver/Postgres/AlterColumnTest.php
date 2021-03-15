@@ -13,6 +13,10 @@ namespace Spiral\Database\Tests\Driver\Postgres;
 
 use Spiral\Database\Exception\StatementException;
 
+/**
+ * @group driver
+ * @group driver-postgres
+ */
 class AlterColumnTest extends \Spiral\Database\Tests\AlterColumnTest
 {
     public const DRIVER = 'postgres';

@@ -87,4 +87,4 @@ jobs:
         env:
           DB: postgres
           POSTGRES: ${{ matrix.pgsql-version }}
-        run: vendor/bin/phpunit tests/Database/Driver/Postgres --colors=always
+        run: vendor/bin/phpunit --group driver-postgres --colors=always
