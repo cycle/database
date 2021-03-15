@@ -65,4 +65,9 @@ $drivers = [
     ],
 ];
 
-Database\Tests\BaseTest::$config = ['debug' => false] + ($db === null ? $drivers : array_intersect_key($drivers, $db));
+Database\Tests\BaseTest::$config = [
+        'debug' => false,
+    ] + ($db === null
+        ? $drivers
+        : array_intersect_key($drivers, array_flip((array)$db))
+    );
