@@ -22,7 +22,7 @@ jobs:
         run: composer install --no-interaction --prefer-dist
       - name: Check CS
         run: vendor/bin/spiral-cs check src tests
-  test:
+  sqlite:
     needs: lint
     name: Test PHP ${{ matrix.php-versions }}
     runs-on: ubuntu-latest
