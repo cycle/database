@@ -47,7 +47,7 @@ Database\Tests\BaseTest::$config = [
         'check'      => static function () {
             return !in_array('pgsql', \PDO::getAvailableDrivers(), true);
         },
-        'conn'       => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
+        'conn'       => 'pgsql:host=127.0.0.1;port=5432;dbname=spiral',
         'user'       => 'postgres',
         'pass'       => 'postgres',
         'queryCache' => 100
@@ -57,58 +57,9 @@ Database\Tests\BaseTest::$config = [
         'check'      => static function () {
             return !in_array('sqlsrv', \PDO::getAvailableDrivers(), true);
         },
-        'conn'       => 'sqlsrv:Server=127.0.0.1,11433;Database=spiral',
+        'conn'       => 'sqlsrv:Server=127.0.0.1,1433;Database=spiral',
         'user'       => 'sa',
         'pass'       => 'SSpaSS__1',
         'queryCache' => 100
     ],
 ];
-
-if (!empty(getenv('DB'))) {
-    switch (getenv('DB')) {
-        case 'sqlserver':
-            Database\Tests\BaseTest::$config = [
-                'debug'    => false,
-                'sqlserver' => [
-                    'driver' => Database\Driver\SQLServer\SQLServerDriver::class,
-                    'check'  => static function () {
-                        return true;
-                    },
-                    'conn'   => 'sqlsrv:Server=127.0.0.1,11433;Database=spiral',
-                    'user'   => 'SA',
-                    'pass'   => 'SSpaSS__1'
-                ],
-            ];
-            break;
-
-        case 'postgres':
-            Database\Tests\BaseTest::$config = [
-                'debug'    => false,
-                'postgres' => [
-                    'driver' => Database\Driver\Postgres\PostgresDriver::class,
-                    'check'  => static function () {
-                        return true;
-                    },
-                    'conn'   => 'pgsql:host=127.0.0.1;port=5432;dbname=spiral',
-                    'user'   => 'postgres',
-                    'pass'   => 'postgres'
-                ],
-            ];
-            break;
-
-        case 'mariadb':
-            Database\Tests\BaseTest::$config = [
-                'debug' => false,
-                'mysql' => [
-                    'driver' => Database\Driver\MySQL\MySQLDriver::class,
-                    'check'  => static function () {
-                        return true;
-                    },
-                    'conn'   => 'mysql:host=127.0.0.1:23306;dbname=spiral',
-                    'user'   => 'root',
-                    'pass'   => 'root'
-                ],
-            ];
-            break;
-    }
-}
