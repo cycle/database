@@ -38,7 +38,7 @@ $drivers = [
         'check'      => static function () use ($db) {
             return $db === 'mysql' || in_array('mysql', \PDO::getAvailableDrivers(), true);
         },
-        'conn'       => 'mysql:host=127.0.0.1:3306;dbname=spiral',
+        'conn'       => 'mysql:host=127.0.0.1:13306;dbname=spiral',
         'user'       => 'root',
         'pass'       => 'root',
         'queryCache' => 100
@@ -48,7 +48,7 @@ $drivers = [
         'check'      => static function () use ($db) {
             return $db === 'postgres' || in_array('pgsql', \PDO::getAvailableDrivers(), true);
         },
-        'conn'       => 'pgsql:host=127.0.0.1;port=5432;dbname=spiral',
+        'conn'       => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
         'user'       => 'postgres',
         'pass'       => 'postgres',
         'queryCache' => 100
@@ -58,7 +58,7 @@ $drivers = [
         'check'      => static function () use ($db) {
             return $db === 'sqlserver' || in_array('sqlsrv', \PDO::getAvailableDrivers(), true);
         },
-        'conn'       => 'sqlsrv:Server=127.0.0.1,1433;Database=tempdb',
+        'conn'       => 'sqlsrv:Server=127.0.0.1,11433;Database=tempdb',
         'user'       => 'SA',
         'pass'       => 'SSpaSS__1',
         'queryCache' => 100
