@@ -57,7 +57,7 @@ jobs:
         run: composer install --no-interaction --prefer-dist
       - name: Execute Tests
         run: |
-          vendor/bin/phpuni --coverage-clover=coverage.xml
+          vendor/bin/phpunit --coverage-clover=coverage.xml
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
@@ -96,4 +96,4 @@ jobs:
         env:
           DB: sqlite
         run: |
-          vendor/bin/phpuni --group driver-sqlite --colors=always
+          vendor/bin/phpunit --group driver-sqlite --colors=always
