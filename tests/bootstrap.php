@@ -22,12 +22,11 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 
 $db = getenv('DB') ?: null;
 
-Database\Tests\BaseTest::$config = [
-    'debug'     => false,
+$drivers = [
     'sqlite'    => [
         'driver'     => Database\Driver\SQLite\SQLiteDriver::class,
         'check'      => static function () use ($db) {
-            return $db === 'sqlite' || !in_array('sqlite', \PDO::getAvailableDrivers(), true);
+            return $db === 'sqlite' || in_array('sqlite', \PDO::getAvailableDrivers(), true);
         },
         'conn'       => 'sqlite::memory:',
         'user'       => 'sqlite',
@@ -37,7 +36,7 @@ Database\Tests\BaseTest::$config = [
     'mysql'     => [
         'driver'     => Database\Driver\MySQL\MySQLDriver::class,
         'check'      => static function () use ($db) {
-            return $db === 'mysql' || !in_array('mysql', \PDO::getAvailableDrivers(), true);
+            return $db === 'mysql' || in_array('mysql', \PDO::getAvailableDrivers(), true);
         },
         'conn'       => 'mysql:host=127.0.0.1:3306;dbname=spiral',
         'user'       => 'root',
@@ -47,7 +46,7 @@ Database\Tests\BaseTest::$config = [
     'postgres'  => [
         'driver'     => Database\Driver\Postgres\PostgresDriver::class,
         'check'      => static function () use ($db) {
-            return $db === 'postgres' || !in_array('pgsql', \PDO::getAvailableDrivers(), true);
+            return $db === 'postgres' || in_array('pgsql', \PDO::getAvailableDrivers(), true);
         },
         'conn'       => 'pgsql:host=127.0.0.1;port=5432;dbname=spiral',
         'user'       => 'postgres',
@@ -57,7 +56,7 @@ Database\Tests\BaseTest::$config = [
     'sqlserver' => [
         'driver'     => Database\Driver\SQLServer\SQLServerDriver::class,
         'check'      => static function () use ($db) {
-            return $db === 'sqlserver' || !in_array('sqlsrv', \PDO::getAvailableDrivers(), true);
+            return $db === 'sqlserver' || in_array('sqlsrv', \PDO::getAvailableDrivers(), true);
         },
         'conn'       => 'sqlsrv:Server=127.0.0.1,1433;Database=spiral',
         'user'       => 'sa',
@@ -65,3 +64,5 @@ Database\Tests\BaseTest::$config = [
         'queryCache' => 100
     ],
 ];
+
+Database\Tests\BaseTest::$config = ['debug' => false] + ($db === null ? $drivers : array_intersect_key($drivers, $db));
