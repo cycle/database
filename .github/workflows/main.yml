@@ -38,7 +38,7 @@ jobs:
           docker-compose up -d
           cd ..
       - name: Setup PHP ${{ matrix.php-versions }}
-        uses: shivammathur/setup-php@v1
+        uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
           coverage: pcov
@@ -59,6 +59,8 @@ jobs:
         run: |
           vendor/bin/phpunit --coverage-clover=coverage.xml
       - name: Upload coverage to Codecov
+        if: matrix.php == '7.4'
+        continue-on-error: true # if is fork
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
