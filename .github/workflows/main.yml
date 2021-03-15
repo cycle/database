@@ -44,12 +44,6 @@ jobs:
           coverage: pcov
           tools: pecl
           extensions: mbstring, pdo, pdo_sqlsrv
-      - name: Install MS SQL Server deps
-        run: |
-          bash ./tests/install-sqlsrv.sh
-          sudo sed -i.bak '/^extension="pdo_sqlsrv.so"/d' /etc/php/${{ matrix.php-versions }}/cli/php.ini
-          sudo bash -c 'printf "; priority=30\nextension=pdo_sqlsrv.so\n" > /etc/php/${{ matrix.php-versions }}/mods-available/pdo_sqlsrv.ini'
-          sudo phpenmod -s cli -v ${{ matrix.php-versions }} pdo_sqlsrv
       - name: Get Composer Cache Directory
         id: composer-cache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
