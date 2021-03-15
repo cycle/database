@@ -37,7 +37,7 @@ Database\Tests\BaseTest::$config = [
         'check'      => static function () {
             return !in_array('mysql', \PDO::getAvailableDrivers(), true);
         },
-        'conn'       => 'mysql:host=127.0.0.1:13306;dbname=spiral',
+        'conn'       => 'mysql:host=127.0.0.1:3306;dbname=spiral',
         'user'       => 'root',
         'pass'       => 'root',
         'queryCache' => 100

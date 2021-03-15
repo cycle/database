@@ -85,4 +85,4 @@ jobs:
       - name: Run tests with phpunit without coverage
         env:
           DB: sqlserver
-        run: vendor/bin/phpunit tests/Database/Driver/SQLServer --coverage-clover=coverage.xml --colors=always
+        run: vendor/bin/phpunit tests/Database/Driver/SQLServer --colors=always
