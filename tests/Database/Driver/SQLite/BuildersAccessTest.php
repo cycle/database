@@ -11,6 +11,10 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Tests\Driver\SQLite;
 
+/**
+ * @group driver
+ * @group driver-sqlite
+ */
 class BuildersAccessTest extends \Spiral\Database\Tests\BuildersAccessTest
 {
     public const DRIVER = 'sqlite';

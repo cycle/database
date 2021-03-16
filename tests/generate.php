@@ -71,11 +71,16 @@ declare(strict_types=1);
 
 namespace %s;
 
-class %s extends \%s
+/**
+ * @group driver
+ * @group driver-%s
+ */
+class %s extends \\%s
 {
     const DRIVER = "%s";
 }',
                 $details['namespace'],
+                $driver,
                 $class->getShortName(),
                 $class->getName(),
                 $driver

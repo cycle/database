@@ -11,6 +11,10 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Tests\Driver\SQLite;
 
+/**
+ * @group driver
+ * @group driver-sqlite
+ */
 class ConsistencyTest extends \Spiral\Database\Tests\ConsistencyTest
 {
     public const DRIVER = 'sqlite';

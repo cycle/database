@@ -13,6 +13,10 @@ namespace Spiral\Database\Tests\Driver\MySQL;
 
 use Spiral\Database\Driver\MySQL\Schema\MySQLTable;
 
+/**
+ * @group driver
+ * @group driver-mysql
+ */
 class BuildersAccessTest extends \Spiral\Database\Tests\BuildersAccessTest
 {
     public const DRIVER = 'mysql';

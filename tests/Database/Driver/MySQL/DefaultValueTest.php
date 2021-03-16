@@ -11,6 +11,10 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Tests\Driver\MySQL;
 
+/**
+ * @group driver
+ * @group driver-mysql
+ */
 class DefaultValueTest extends \Spiral\Database\Tests\DefaultValueTest
 {
     public const DRIVER = 'mysql';

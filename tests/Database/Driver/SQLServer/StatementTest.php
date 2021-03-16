@@ -13,6 +13,10 @@ namespace Spiral\Database\Tests\Driver\SQLServer;
 
 use Spiral\Database\Driver\SQLServer\SQLServerCompiler;
 
+/**
+ * @group driver
+ * @group driver-sqlserver
+ */
 class StatementTest extends \Spiral\Database\Tests\StatementTest
 {
     public const DRIVER = 'sqlserver';

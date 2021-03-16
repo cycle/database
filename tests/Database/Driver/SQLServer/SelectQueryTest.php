@@ -11,6 +11,10 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Tests\Driver\SQLServer;
 
+/**
+ * @group driver
+ * @group driver-sqlserver
+ */
 class SelectQueryTest extends \Spiral\Database\Tests\SelectQueryTest
 {
     public const DRIVER = 'sqlserver';

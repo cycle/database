@@ -13,6 +13,10 @@ namespace Spiral\Database\Tests\Driver\Postgres;
 
 use Spiral\Database\Driver\Postgres\Query\PostgresInsertQuery;
 
+/**
+ * @group driver
+ * @group driver-postgres
+ */
 class InsertQueryTest extends \Spiral\Database\Tests\InsertQueryTest
 {
     public const DRIVER = 'postgres';

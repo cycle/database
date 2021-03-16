@@ -11,6 +11,10 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Tests\Driver\Postgres;
 
+/**
+ * @group driver
+ * @group driver-postgres
+ */
 class TableTest extends \Spiral\Database\Tests\TableTest
 {
     public const DRIVER = 'postgres';
