@@ -119,7 +119,7 @@ class PostgresDriver extends Driver
      */
     public function beginTransaction(string $isolationLevel = null): bool
     {
-        $this->transactionLevel++;
+        ++$this->transactionLevel;
 
         if ($this->transactionLevel === 1) {
             if ($this->logger !== null) {
@@ -145,10 +145,11 @@ class PostgresDriver extends Driver
                     try {
                         return $this->getPDO()->beginTransaction();
                     } catch (Throwable $e) {
+                        $this->transactionLevel = 0;
                         throw $this->mapException($e, 'BEGIN TRANSACTION');
                     }
                 } else {
-                    $this->transactionLevel--;
+                    $this->transactionLevel = 0;
                     throw $e;
                 }
             }

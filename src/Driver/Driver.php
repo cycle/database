@@ -76,7 +76,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     protected $pdo;
 
     /** @var int */
-    protected $transactionLevel;
+    protected $transactionLevel = 0;
 
     /** @var HandlerInterface */
     protected $schemaHandler;
@@ -102,7 +102,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         CompilerInterface $queryCompiler,
         BuilderInterface $queryBuilder
     ) {
-        $this->transactionLevel = 0;
         $this->schemaHandler = $schemaHandler->withDriver($this);
         $this->queryBuilder = $queryBuilder->withDriver($this);
         $this->queryCompiler = $queryCompiler;
@@ -352,7 +351,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     public function beginTransaction(string $isolationLevel = null): bool
     {
-        $this->transactionLevel++;
+        ++$this->transactionLevel;
 
         if ($this->transactionLevel === 1) {
             if ($isolationLevel !== null) {
@@ -377,10 +376,11 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
                     try {
                         return $this->getPDO()->beginTransaction();
                     } catch (Throwable $e) {
+                        $this->transactionLevel = 0;
                         throw $this->mapException($e, 'BEGIN TRANSACTION');
                     }
                 } else {
-                    $this->transactionLevel--;
+                    $this->transactionLevel = 0;
                     throw $e;
                 }
             }
@@ -395,10 +395,31 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * Commit the active database transaction.
      *
      * @return bool
+     *
+     * @throws StatementException
      */
     public function commitTransaction(): bool
     {
-        $this->transactionLevel--;
+        // Check active transaction
+        if (!$this->getPDO()->inTransaction()) {
+            if ($this->logger !== null) {
+                $this->logger->warning(
+                    sprintf(
+                        'Attempt to commit a transaction that has not yet begun. Transaction level: %d',
+                        $this->transactionLevel
+                    )
+                );
+            }
+
+            if ($this->transactionLevel === 0) {
+                return false;
+            }
+
+            $this->transactionLevel = 0;
+            return true;
+        }
+
+        --$this->transactionLevel;
 
         if ($this->transactionLevel === 0) {
             if ($this->logger !== null) {
@@ -421,10 +442,27 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * Rollback the active database transaction.
      *
      * @return bool
+     *
+     * @throws StatementException
      */
     public function rollbackTransaction(): bool
     {
-        $this->transactionLevel--;
+        // Check active transaction
+        if (!$this->getPDO()->inTransaction()) {
+            if ($this->logger !== null) {
+                $this->logger->warning(
+                    sprintf(
+                        'Attempt to rollback a transaction that has not yet begun. Transaction level: %d',
+                        $this->transactionLevel
+                    )
+                );
+            }
+
+            $this->transactionLevel = 0;
+            return false;
+        }
+
+        --$this->transactionLevel;
 
         if ($this->transactionLevel === 0) {
             if ($this->logger !== null) {
