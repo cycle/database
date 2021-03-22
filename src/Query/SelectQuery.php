@@ -52,7 +52,7 @@ class SelectQuery extends ActiveQuery implements
     /** @var array */
     protected $columns = ['*'];
 
-    /** @var string[][] */
+    /** @var string[][]|FragmentInterface[][] */
     protected $orderBy = [];
 
     /** @var array */
@@ -177,13 +177,15 @@ class SelectQuery extends ActiveQuery implements
     }
 
     /**
-     * @param string $field Field name.
-     * @param string $order Sorting direction, ASC|DESC.
+     * @param string|FragmentInterface $field
+     * @param string                   $order Sorting direction, ASC|DESC.
      * @return self|$this
      */
-    private function addOrder(string $field, string $order): SelectQuery
+    private function addOrder($field, string $order): SelectQuery
     {
-        if (!array_key_exists($field, $this->orderBy)) {
+        if (!is_string($field)) {
+            $this->orderBy[] = [$field, $order];
+        } elseif (!array_key_exists($field, $this->orderBy)) {
             $this->orderBy[$field] = [$field, $order];
         }
         return $this;
