@@ -815,6 +815,36 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    public function testOrderByTwiceBySameName(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->where(['name' => 'Anton'])
+            ->orderBy('name', 'DESC')
+            ->orderBy('name', 'ASC');
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE {name} = ? ORDER BY {name} DESC',
+            $select
+        );
+    }
+
+    public function testOrderByTwiceBySameNameArray(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->where(['name' => 'Anton'])
+            ->orderBy('name', 'DESC')
+            ->orderBy(['name' => 'ASC', 'foo' => 'DESC']);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE {name} = ? ORDER BY {name} DESC, {foo} DESC',
+            $select
+        );
+    }
+
     public function testMultipleOrderBy(): void
     {
         $select = $this->database
