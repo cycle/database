@@ -52,7 +52,7 @@ class SelectQuery extends ActiveQuery implements
     /** @var array */
     protected $columns = ['*'];
 
-    /** @var array */
+    /** @var string[][]|FragmentInterface[][] */
     protected $orderBy = [];
 
     /** @var array */
@@ -165,15 +165,29 @@ class SelectQuery extends ActiveQuery implements
     public function orderBy($expression, $direction = self::SORT_ASC): SelectQuery
     {
         if (!is_array($expression)) {
-            $this->orderBy[] = [$expression, $direction];
-
+            $this->addOrder($expression, $direction);
             return $this;
         }
 
         foreach ($expression as $nested => $dir) {
-            $this->orderBy[] = [$nested, $dir];
+            $this->addOrder($nested, $dir);
         }
 
+        return $this;
+    }
+
+    /**
+     * @param string|FragmentInterface $field
+     * @param string                   $order Sorting direction, ASC|DESC.
+     * @return self|$this
+     */
+    private function addOrder($field, string $order): SelectQuery
+    {
+        if (!is_string($field)) {
+            $this->orderBy[] = [$field, $order];
+        } elseif (!array_key_exists($field, $this->orderBy)) {
+            $this->orderBy[$field] = [$field, $order];
+        }
         return $this;
     }
 
@@ -420,7 +434,7 @@ class SelectQuery extends ActiveQuery implements
             'where'     => $this->whereTokens,
             'having'    => $this->havingTokens,
             'groupBy'   => $this->groupBy,
-            'orderBy'   => $this->orderBy,
+            'orderBy'   => array_values($this->orderBy),
             'limit'     => $this->limit,
             'offset'    => $this->offset,
             'union'     => $this->unionTokens,
