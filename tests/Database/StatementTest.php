@@ -356,21 +356,16 @@ abstract class StatementTest extends BaseTest
         );
     }
 
-    /**
-     * @expectedException \Spiral\Database\Exception\StatementException
-     */
     public function testNativeParametersError(): void
     {
         $this->fillData();
 
-        $row = $this->database->query(
+        $this->expectException(\Spiral\Database\Exception\StatementException::class);
+
+        $this->database->query(
             'SELECT * FROM sample_table WHERE id = :id',
             [':id' => [1, 2]]
         )->fetch();
-
-        $i = 4;
-        $this->assertEquals(md5((string)$i), $row['name']);
-        $this->assertEquals($i * 10, $row['value']);
     }
 
     public function testUnpackArrayFromParameter(): void

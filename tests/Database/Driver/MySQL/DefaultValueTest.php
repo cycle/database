@@ -19,23 +19,17 @@ class DefaultValueTest extends \Spiral\Database\Tests\DefaultValueTest
 {
     public const DRIVER = 'mysql';
 
-    /**
-     * @expectedException \Spiral\Database\Driver\MySQL\Exception\MySQLException
-     * @expectedExceptionMessage Column table.target of type text/blob can not have non empty
-     *                           default value
-     */
     public function testTextDefaultValueString(): void
     {
+        $this->expectException(\Spiral\Database\Driver\MySQL\Exception\MySQLException::class);
+        $this->expectExceptionMessage("Column table.target of type text/blob can not have non empty default value");
         parent::testTextDefaultValueString();
     }
 
-    /**
-     * @expectedException \Spiral\Database\Driver\MySQL\Exception\MySQLException
-     * @expectedExceptionMessage Column table.target of type text/blob can not have non empty
-     *                           default value
-     */
     public function testTextDefaultValueEmpty(): void
     {
+        $this->expectException(\Spiral\Database\Driver\MySQL\Exception\MySQLException::class);
+        $this->expectExceptionMessage("Column table.target of type text/blob can not have non empty default value");
         parent::testTextDefaultValueEmpty();
     }
 }

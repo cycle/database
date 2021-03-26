@@ -8,11 +8,12 @@
 
 declare(strict_types=1);
 
-namespace Spiral\tests\Cases\Database;
+namespace Spiral\Database\tests;
 
 use PHPUnit\Framework\TestCase;
 use Spiral\Core\Container\Autowire;
 use Spiral\Database\Config\DatabaseConfig;
+use Spiral\Database\Exception\ConfigException;
 
 class ConfigTest extends TestCase
 {
@@ -44,9 +45,6 @@ class ConfigTest extends TestCase
         $this->assertFalse($config->hasDatabase('database-1'));
     }
 
-    /**
-     * @expectedException \Spiral\Database\Exception\ConfigException
-     */
     public function testDatabaseException(): void
     {
         $config = new DatabaseConfig(
@@ -58,7 +56,10 @@ class ConfigTest extends TestCase
                 ]
             ]
         );
-        $this->assertSame('test3', $config->getDatabase('test3'));
+
+        $this->expectException(ConfigException::class);
+
+        $config->getDatabase('test3');
     }
 
     public function testDatabaseDriver(): void
@@ -215,9 +216,6 @@ class ConfigTest extends TestCase
         $this->assertFalse($config->hasDriver('database-1'));
     }
 
-    /**
-     * @expectedException \Spiral\Database\Exception\ConfigException
-     */
     public function testDriverException(): void
     {
         $config = new DatabaseConfig(
@@ -225,6 +223,8 @@ class ConfigTest extends TestCase
                 'default' => 'database-1',
             ]
         );
+
+        $this->expectException(ConfigException::class);
 
         $config->getDriver('test3');
     }

@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Spiral\Database\Tests;
 
 use Spiral\Database\Database;
+use Spiral\Database\Exception\SchemaException;
 use Spiral\Database\Schema\AbstractTable;
 
 abstract class CreateTableTest extends BaseTest
@@ -58,7 +59,7 @@ abstract class CreateTableTest extends BaseTest
         $this->assertTrue($schema->exists());
         $this->assertSameAsInDB($schema);
 
-        $this->assertInternalType('array', $schema->__debugInfo());
+        $this->assertIsArray($schema->__debugInfo());
     }
 
     public function testMultipleColumns(): void
@@ -133,13 +134,13 @@ abstract class CreateTableTest extends BaseTest
         $this->assertSame(['id'], $this->fetchSchema($schema)->getPrimaryKeys());
     }
 
-    /**
-     * @expectedException \Spiral\Database\Exception\SchemaException
-     */
     public function testDeleteNonExisted(): void
     {
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
+
+        $this->expectException(SchemaException::class);
+
         $schema->declareDropped();
     }
 }
