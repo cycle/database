@@ -613,11 +613,11 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     {
         $this->type('string');
 
-        if ($size > 255) {
-            throw new SchemaException(
-                'String size can\'t exceed 255 characters. Use text instead'
-            );
-        }
+        // if ($size > 255) {
+        //     throw new SchemaException(
+        //         'String size can\'t exceed 255 characters. Use text instead'
+        //     );
+        // }
 
         if ($size < 0) {
             throw new SchemaException(
