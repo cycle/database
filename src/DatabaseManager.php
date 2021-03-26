@@ -13,6 +13,7 @@ namespace Spiral\Database;
 
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Spiral\Core\Container;
 use Spiral\Core\FactoryInterface;
@@ -89,7 +90,9 @@ final class DatabaseManager implements
     Container\SingletonInterface,
     Container\InjectorInterface
 {
-    use LoggerTrait;
+    use LoggerTrait {
+        setLogger as protected internalSetLogger;
+    }
 
     /** @var DatabaseConfig */
     private $config;
@@ -102,6 +105,20 @@ final class DatabaseManager implements
 
     /** @var DriverInterface[] */
     private $drivers = [];
+
+    /**
+     * Set logger for all drivers
+     */
+    public function setLogger(LoggerInterface $logger): void
+    {
+        $this->internalSetLogger($logger);
+        // Assign the logger to all initialized drivers
+        foreach ($this->drivers as $driver) {
+            if ($driver instanceof LoggerAwareInterface) {
+                $driver->setLogger($this->logger);
+            }
+        }
+    }
 
     /**
      * @param DatabaseConfig   $config

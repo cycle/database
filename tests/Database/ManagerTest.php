@@ -12,6 +12,8 @@ namespace Spiral\Database\Tests;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 use Spiral\Core\Container;
 use Spiral\Database\Config\DatabaseConfig;
 use Spiral\Database\Database;
@@ -128,6 +130,27 @@ class ManagerTest extends TestCase
         $dbal->addDriver('write', $write);
 
         $this->assertCount(2, $dbal->getDrivers());
+    }
+
+    public function testSetLogger(): void
+    {
+        $logger = m::mock(LoggerInterface::class);
+
+        $driverWithoutLogger = m::mock(DriverInterface::class);
+
+        $driverWithLogger = m::mock(DriverInterface::class, LoggerAwareInterface::class)
+            ->shouldReceive('setLogger')->with($logger)->once()->andReturnNull()
+            ->getMock();
+        self::assertInstanceOf(LoggerAwareInterface::class, $driverWithLogger);
+
+        $dbal = new DatabaseManager(new DatabaseConfig(self::DEFAULT_OPTIONS));
+
+        $dbal->addDriver('read', $driverWithoutLogger);
+        $dbal->addDriver('write', $driverWithLogger);
+
+        $dbal->setLogger($logger);
+
+        m::close();
     }
 
     public function testGetDatabases(): void
