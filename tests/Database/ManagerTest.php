@@ -12,12 +12,15 @@ namespace Spiral\Database\Tests;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 use Spiral\Core\Container;
 use Spiral\Database\Config\DatabaseConfig;
 use Spiral\Database\Database;
 use Spiral\Database\DatabaseManager;
 use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Driver\SQLite\SQLiteDriver;
+use Spiral\Database\Exception\DBALException;
 
 class ManagerTest extends TestCase
 {
@@ -45,17 +48,15 @@ class ManagerTest extends TestCase
         $this->assertSame($db, $dbal->database('default'));
     }
 
-    /**
-     * @expectedException \Spiral\Database\Exception\DBALException
-     */
     public function testAddDatabaseException(): void
     {
         $driver = m::mock(DriverInterface::class);
         $db = new Database('default', '', $driver);
-
-
         $dbal = new DatabaseManager(new DatabaseConfig(self::DEFAULT_OPTIONS));
         $dbal->addDatabase($db);
+
+        $this->expectException(DBALException::class);
+
         $dbal->addDatabase($db);
     }
 
@@ -69,24 +70,21 @@ class ManagerTest extends TestCase
         $this->assertSame($driver, $dbal->driver('default'));
     }
 
-    /**
-     * @expectedException \Spiral\Database\Exception\DBALException
-     */
     public function testAddDriverException(): void
     {
         $driver = m::mock(DriverInterface::class);
-
         $dbal = new DatabaseManager(new DatabaseConfig(self::DEFAULT_OPTIONS));
         $dbal->addDriver('default', $driver);
+
+        $this->expectException(DBALException::class);
+
         $dbal->addDriver('default', $driver);
     }
 
-    /**
-     * @expectedException \Spiral\Database\Exception\DBALException
-     */
     public function testDatabaseException(): void
     {
         $dbal = new DatabaseManager(new DatabaseConfig(self::DEFAULT_OPTIONS));
+        $this->expectException(DBALException::class);
         $dbal->database('default');
     }
 
@@ -134,6 +132,27 @@ class ManagerTest extends TestCase
         $this->assertCount(2, $dbal->getDrivers());
     }
 
+    public function testSetLogger(): void
+    {
+        $logger = m::mock(LoggerInterface::class);
+
+        $driverWithoutLogger = m::mock(DriverInterface::class);
+
+        $driverWithLogger = m::mock(DriverInterface::class, LoggerAwareInterface::class)
+            ->shouldReceive('setLogger')->with($logger)->once()->andReturnNull()
+            ->getMock();
+        self::assertInstanceOf(LoggerAwareInterface::class, $driverWithLogger);
+
+        $dbal = new DatabaseManager(new DatabaseConfig(self::DEFAULT_OPTIONS));
+
+        $dbal->addDriver('read', $driverWithoutLogger);
+        $dbal->addDriver('write', $driverWithLogger);
+
+        $dbal->setLogger($logger);
+
+        m::close();
+    }
+
     public function testGetDatabases(): void
     {
         $read = m::mock(DriverInterface::class);
@@ -147,27 +166,21 @@ class ManagerTest extends TestCase
         $this->assertCount(1, $dbal->getDatabases());
     }
 
-    /**
-     * @expectedException \Spiral\Database\Exception\DBALException
-     */
     public function testGetDatabaseException(): void
     {
-        $read = m::mock(DriverInterface::class);
-        $write = m::mock(DriverInterface::class);
-
         $dbal = new DatabaseManager(new DatabaseConfig(self::DEFAULT_OPTIONS));
+
+        $this->expectException(DBALException::class);
+
         $dbal->database('other');
     }
 
-    /**
-     * @expectedException \Spiral\Database\Exception\DBALException
-     */
     public function testGetDriverException(): void
     {
-        $read = m::mock(DriverInterface::class);
-        $write = m::mock(DriverInterface::class);
-
         $dbal = new DatabaseManager(new DatabaseConfig(self::DEFAULT_OPTIONS));
+
+        $this->expectException(DBALException::class);
+
         $dbal->driver('other');
     }
 
@@ -269,21 +282,17 @@ class ManagerTest extends TestCase
         $this->assertCount(3, $dbal->getDatabases());
     }
 
-    /**
-     * @expectedException \Spiral\Database\Exception\DBALException
-     */
     public function testBadDriver(): void
     {
         $dbal = new DatabaseManager(
-            new DatabaseConfig(
-                [
-
-                    'connections' => [
-                        'default' => new Container\Autowire('unknown')
-                    ]
+            new DatabaseConfig([
+                'connections' => [
+                    'default' => new Container\Autowire('unknown')
                 ]
-            )
+            ])
         );
+
+        $this->expectException(DBALException::class);
 
         $dbal->driver('default');
     }

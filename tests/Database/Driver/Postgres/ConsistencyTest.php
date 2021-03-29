@@ -57,15 +57,12 @@ class ConsistencyTest extends \Spiral\Database\Tests\ConsistencyTest
         $this->assertSame('target', $d->getPrimaryKey('', 'table'));
     }
 
-    /**
-     * @expectedException \Spiral\Database\Exception\DriverException
-     */
     public function testPrimaryException(): void
     {
-        /**
-         * @var PostgresDriver $d
-         */
+        /** @var PostgresDriver $d */
         $d = $this->getDriver();
+
+        $this->expectException(\Spiral\Database\Exception\DriverException::class);
 
         $this->assertSame('target', $d->getPrimaryKey('', 'table'));
     }

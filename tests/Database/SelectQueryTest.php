@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Spiral\Database\Tests;
 
+use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Injection\Expression;
 use Spiral\Database\Injection\Fragment;
 use Spiral\Database\Injection\Parameter;
@@ -294,19 +295,13 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
-    /**
-     * @expectedException \Spiral\Database\Exception\BuilderException
-     * @expectedExceptionMessage Between statements expects exactly 2 values
-     */
     public function testSelectWithWhereBetweenBadValue(): void
     {
+        $this->expectExceptionMessage("Between statements expects exactly 2 values");
+        $this->expectException(BuilderException::class);
+
         $select = $this->database->select()->distinct()->from(['users'])
                                  ->where('balance', 'BETWEEN', 0);
-
-        $this->assertSameQuery(
-            'SELECT DISTINCT * FROM {users} WHERE {balance} NOT BETWEEN ? AND ?',
-            $select
-        );
     }
 
     public function testSelectWithFullySpecificColumnNameInWhere(): void
@@ -386,20 +381,14 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
-    /**
-     * @expectedException \Spiral\Database\Exception\BuilderException
-     */
     public function testSelectInvalidArrayArgument(): void
     {
+        $this->expectException(BuilderException::class);
+
         $select = $this->database->select()->distinct()
                                  ->from(['users'])
                                  ->where('name', 'Anton')
                                  ->orWhere('id', 'in', [1, 2, 3]);
-
-        $this->assertSameQuery(
-            'SELECT DISTINCT * FROM {users} WHERE {name} = ? OR {balance} > ?',
-            $select
-        );
     }
 
     public function testSelectWithWhereOrWhereAndWhere(): void
@@ -572,12 +561,11 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
-    /**
-     * @expectedException \Spiral\Database\Exception\BuilderException
-     * @expectedExceptionMessage Exactly 2 array values are required for between statement
-     */
     public function testShortWhereWithBetweenConditionBadArguments(): void
     {
+        $this->expectException(BuilderException::class);
+        $this->expectExceptionMessage("Exactly 2 array values are required for between statement");
+
         $select = $this->database
             ->select()
             ->from(['users'])
@@ -589,7 +577,6 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 ]
             );
     }
-
 
     public function testShortWhereMultiple(): void
     {
@@ -722,12 +709,11 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
-    /**
-     * @expectedException \Spiral\Database\Exception\BuilderException
-     * @expectedExceptionMessage Nested conditions should have defined operator
-     */
     public function testBadShortExpression(): void
     {
+        $this->expectException(BuilderException::class);
+        $this->expectExceptionMessage("Nested conditions should have defined operator");
+
         $select = $this->database
             ->select()
             ->from(['users'])
@@ -736,11 +722,6 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                     'status' => ['active', 'blocked']
                 ]
             );
-
-        $this->assertSameQuery(
-            'SELECT * FROM {users} WHERE {balance} = ?',
-            $select
-        );
     }
 
     //Order By
@@ -1236,19 +1217,12 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
-    /**
-     * @expectedException \Spiral\Database\Exception\BuilderException
-     * @expectedExceptionMessage Between statements expects exactly 2 values
-     */
     public function testHavingSelectWithHavingBetweenBadValue(): void
     {
+        $this->expectException(BuilderException::class);
+        $this->expectExceptionMessage("Between statements expects exactly 2 values");
         $select = $this->database->select()->distinct()->from(['users'])
                                  ->having('balance', 'BETWEEN', 0);
-
-        $this->assertSameQuery(
-            'SELECT DISTINCT * FROM {users} HAVING {balance} NOT BETWEEN ? AND ?',
-            $select
-        );
     }
 
     public function testHavingSelectWithFullySpecificColumnNameInHaving(): void
@@ -1484,12 +1458,11 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
-    /**
-     * @expectedException \Spiral\Database\Exception\BuilderException
-     * @expectedExceptionMessage Exactly 2 array values are required for between statement
-     */
     public function testHavingShortHavingWithBetweenConditionBadArguments(): void
     {
+        $this->expectException(BuilderException::class);
+        $this->expectExceptionMessage("Exactly 2 array values are required for between statement");
+
         $select = $this->database->select()
                                  ->from(['users'])
                                  ->having(
@@ -1949,23 +1922,21 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
-    /**
-     * @expectedException \Spiral\Database\Exception\BuilderException
-     * @expectedExceptionMessage Arrays must be wrapped with Parameter instance
-     */
     public function testBadArrayParameter(): void
     {
+        $this->expectException(BuilderException::class);
+        $this->expectExceptionMessage("Arrays must be wrapped with Parameter instance");
+
         $this->database->select()
                        ->from(['users'])
                        ->where('status', 'IN', ['active', 'blocked']);
     }
 
-    /**
-     * @expectedException \Spiral\Database\Exception\BuilderException
-     * @expectedExceptionMessage Arrays must be wrapped with Parameter instance
-     */
     public function testBadArrayParameterInShortWhere(): void
     {
+        $this->expectException(BuilderException::class);
+        $this->expectExceptionMessage("Arrays must be wrapped with Parameter instance");
+
         $this->database->select()
                        ->from(['users'])
                        ->where(
