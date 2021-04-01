@@ -101,7 +101,7 @@ class InsertQuery extends ActiveQuery
         }
 
         if ($rowsets === []) {
-            throw new BuilderException('Insert rowsets must not be empty');
+            return $this;
         }
 
         //Checking if provided set is array of multiple
@@ -120,19 +120,6 @@ class InsertQuery extends ActiveQuery
         }
 
         return $this;
-    }
-
-    /**
-     * @param QueryParameters|null $parameters
-     * @return string
-     */
-    public function sqlStatement(QueryParameters $parameters = null): string
-    {
-        if ($this->values === []) {
-            throw new BuilderException('Insert rowsets must not be empty');
-        }
-
-        return parent::sqlStatement($parameters);
     }
 
     /**

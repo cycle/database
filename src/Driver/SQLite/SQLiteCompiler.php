@@ -65,6 +65,13 @@ class SQLiteCompiler extends Compiler implements CachingCompilerInterface
      */
     protected function insertQuery(QueryParameters $params, Quoter $q, array $tokens): string
     {
+        if ($tokens['columns'] === []) {
+            return sprintf(
+                'INSERT INTO %s DEFAULT VALUES',
+                $this->name($params, $q, $tokens['table'], true)
+            );
+        }
+
         // @todo possibly different statement for versions higher than 3.7.11
         if (count($tokens['values']) === 1) {
             return parent::insertQuery($params, $q, $tokens);
