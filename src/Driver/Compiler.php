@@ -155,6 +155,13 @@ abstract class Compiler implements CompilerInterface
             $values[] = $this->value($params, $q, $value);
         }
 
+        if ($tokens['columns'] === []) {
+            return sprintf(
+                'INSERT INTO %s DEFAULT VALUES',
+                $this->name($params, $q, $tokens['table'], true)
+            );
+        }
+
         return sprintf(
             'INSERT INTO %s (%s) VALUES %s',
             $this->name($params, $q, $tokens['table'], true),

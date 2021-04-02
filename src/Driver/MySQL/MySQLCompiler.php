@@ -23,6 +23,24 @@ use Spiral\Database\Query\QueryParameters;
 class MySQLCompiler extends Compiler implements CachingCompilerInterface
 {
     /**
+     * @param QueryParameters $params
+     * @param Quoter          $q
+     * @param array           $tokens
+     * @return string
+     */
+    protected function insertQuery(QueryParameters $params, Quoter $q, array $tokens): string
+    {
+        if ($tokens['columns'] === []) {
+            return sprintf(
+                'INSERT INTO %s () VALUES ()',
+                $this->name($params, $q, $tokens['table'], true)
+            );
+        }
+
+        return parent::insertQuery($params, $q, $tokens);
+    }
+
+    /**
      * {@inheritdoc}
      *
      * @link http://dev.mysql.com/doc/refman/5.0/en/select.html#id4651990
