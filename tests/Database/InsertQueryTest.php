@@ -38,16 +38,32 @@ abstract class InsertQueryTest extends BaseTest
         );
     }
 
+    public function testCompileQueryDefaults(): void
+    {
+        $insert = $this->db()->insert('table')->values([]);
+
+        $this->assertSameQuery(
+            "INSERT INTO {table} DEFAULT VALUES",
+            (string)$insert
+        );
+    }
+
     public function testSimpleInsert(): void
     {
-        $insert = $this->database->insert()->into('table')->values(
-            [
-                'name' => 'Anton'
-            ]
-        );
+        $insert = $this->database->insert()->into('table')->values(['name' => 'Anton']);
 
         $this->assertSameQuery(
             'INSERT INTO {table} ({name}) VALUES (?)',
+            $insert
+        );
+    }
+
+    public function testSimpleInsertEmptyDataset(): void
+    {
+        $insert = $this->database->insert()->into('table')->values([]);
+
+        $this->assertSameQuery(
+            "INSERT INTO {table} DEFAULT VALUES",
             $insert
         );
     }
