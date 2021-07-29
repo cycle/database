@@ -9,14 +9,14 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests;
+namespace Cycle\Database\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Spiral\Database\Driver\SQLite\SQLiteCompiler;
-use Spiral\Database\Injection\Expression;
-use Spiral\Database\Injection\Fragment;
-use Spiral\Database\Injection\FragmentInterface;
-use Spiral\Database\Query\QueryParameters;
+use Cycle\Database\Driver\SQLite\SQLiteCompiler;
+use Cycle\Database\Injection\Expression;
+use Cycle\Database\Injection\Fragment;
+use Cycle\Database\Injection\FragmentInterface;
+use Cycle\Database\Query\QueryParameters;
 
 class FragmentTest extends TestCase
 {

@@ -9,10 +9,10 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver;
+namespace Cycle\Database\Driver;
 
-use Spiral\Database\Injection\FragmentInterface;
-use Spiral\Database\Query\QueryParameters;
+use Cycle\Database\Injection\FragmentInterface;
+use Cycle\Database\Query\QueryParameters;
 
 interface CompilerInterface
 {

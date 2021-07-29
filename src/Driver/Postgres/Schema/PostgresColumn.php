@@ -9,11 +9,11 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver\Postgres\Schema;
+namespace Cycle\Database\Driver\Postgres\Schema;
 
-use Spiral\Database\Driver\DriverInterface;
-use Spiral\Database\Injection\Fragment;
-use Spiral\Database\Schema\AbstractColumn;
+use Cycle\Database\Driver\DriverInterface;
+use Cycle\Database\Injection\Fragment;
+use Cycle\Database\Schema\AbstractColumn;
 
 class PostgresColumn extends AbstractColumn
 {

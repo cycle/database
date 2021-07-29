@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database;
+namespace Cycle\Database;
 
 /**
  * Represents single table index associated with set of columns.

@@ -9,12 +9,12 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver\MySQL;
+namespace Cycle\Database\Driver\MySQL;
 
 use PDO;
-use Spiral\Database\Driver\Driver;
-use Spiral\Database\Exception\StatementException;
-use Spiral\Database\Query\QueryBuilder;
+use Cycle\Database\Driver\Driver;
+use Cycle\Database\Exception\StatementException;
+use Cycle\Database\Query\QueryBuilder;
 
 /**
  * Talks to mysql databases.

@@ -9,9 +9,9 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver\SQLServer\Schema;
+namespace Cycle\Database\Driver\SQLServer\Schema;
 
-use Spiral\Database\Schema\AbstractForeignKey;
+use Cycle\Database\Schema\AbstractForeignKey;
 
 class SQlServerForeignKey extends AbstractForeignKey
 {

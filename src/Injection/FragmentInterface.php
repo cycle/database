@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Injection;
+namespace Cycle\Database\Injection;
 
 /**
  * Declares ability to be converted into sql statement.

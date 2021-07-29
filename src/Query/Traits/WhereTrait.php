@@ -9,13 +9,13 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Query\Traits;
+namespace Cycle\Database\Query\Traits;
 
 use Closure;
-use Spiral\Database\Exception\BuilderException;
-use Spiral\Database\Injection\FragmentInterface;
-use Spiral\Database\Injection\Parameter;
-use Spiral\Database\Injection\ParameterInterface;
+use Cycle\Database\Exception\BuilderException;
+use Cycle\Database\Injection\FragmentInterface;
+use Cycle\Database\Injection\Parameter;
+use Cycle\Database\Injection\ParameterInterface;
 
 trait WhereTrait
 {

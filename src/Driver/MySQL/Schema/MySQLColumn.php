@@ -9,13 +9,13 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver\MySQL\Schema;
+namespace Cycle\Database\Driver\MySQL\Schema;
 
-use Spiral\Database\Driver\DriverInterface;
-use Spiral\Database\Exception\DefaultValueException;
-use Spiral\Database\Injection\Fragment;
-use Spiral\Database\Injection\FragmentInterface;
-use Spiral\Database\Schema\AbstractColumn;
+use Cycle\Database\Driver\DriverInterface;
+use Cycle\Database\Exception\DefaultValueException;
+use Cycle\Database\Injection\Fragment;
+use Cycle\Database\Injection\FragmentInterface;
+use Cycle\Database\Schema\AbstractColumn;
 
 /**
  * Attention! You can use only one timestamp or datetime with DATETIME_NOW setting! Thought, it will

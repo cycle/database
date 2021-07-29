@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database;
+namespace Cycle\Database;
 
 /**
  * Represent table schema with it's all columns, indexes and foreign keys.

@@ -9,11 +9,11 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Query;
+namespace Cycle\Database\Query;
 
-use Spiral\Database\Driver\DriverInterface;
-use Spiral\Database\Exception\BuilderException;
-use Spiral\Database\Exception\StatementException;
+use Cycle\Database\Driver\DriverInterface;
+use Cycle\Database\Exception\BuilderException;
+use Cycle\Database\Exception\StatementException;
 use Throwable;
 
 /**

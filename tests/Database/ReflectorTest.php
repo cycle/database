@@ -8,10 +8,10 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests;
+namespace Cycle\Database\Tests;
 
-use Spiral\Database\Schema\AbstractTable;
-use Spiral\Database\Schema\Reflector;
+use Cycle\Database\Schema\AbstractTable;
+use Cycle\Database\Schema\Reflector;
 
 abstract class ReflectorTest extends BaseTest
 {

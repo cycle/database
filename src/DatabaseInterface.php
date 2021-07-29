@@ -9,14 +9,14 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database;
+namespace Cycle\Database;
 
-use Spiral\Database\Driver\DriverInterface;
-use Spiral\Database\Exception\StatementException;
-use Spiral\Database\Query\DeleteQuery;
-use Spiral\Database\Query\InsertQuery;
-use Spiral\Database\Query\SelectQuery;
-use Spiral\Database\Query\UpdateQuery;
+use Cycle\Database\Driver\DriverInterface;
+use Cycle\Database\Exception\StatementException;
+use Cycle\Database\Query\DeleteQuery;
+use Cycle\Database\Query\InsertQuery;
+use Cycle\Database\Query\SelectQuery;
+use Cycle\Database\Query\UpdateQuery;
 
 /**
  * DatabaseInterface is high level abstraction used to represent single database. You must always

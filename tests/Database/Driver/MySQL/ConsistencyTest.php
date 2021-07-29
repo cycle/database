@@ -9,13 +9,13 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests\Driver\MySQL;
+namespace Cycle\Database\Tests\Driver\MySQL;
 
 /**
  * @group driver
  * @group driver-mysql
  */
-class ConsistencyTest extends \Spiral\Database\Tests\ConsistencyTest
+class ConsistencyTest extends \Cycle\Database\Tests\ConsistencyTest
 {
     public const DRIVER = 'mysql';
 }

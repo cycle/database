@@ -9,13 +9,13 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver\MySQL;
+namespace Cycle\Database\Driver\MySQL;
 
-use Spiral\Database\Driver\CachingCompilerInterface;
-use Spiral\Database\Driver\Compiler;
-use Spiral\Database\Driver\Quoter;
-use Spiral\Database\Injection\Parameter;
-use Spiral\Database\Query\QueryParameters;
+use Cycle\Database\Driver\CachingCompilerInterface;
+use Cycle\Database\Driver\Compiler;
+use Cycle\Database\Driver\Quoter;
+use Cycle\Database\Injection\Parameter;
+use Cycle\Database\Query\QueryParameters;
 
 /**
  * MySQL syntax specific compiler.

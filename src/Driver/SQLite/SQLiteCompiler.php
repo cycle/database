@@ -9,15 +9,15 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver\SQLite;
+namespace Cycle\Database\Driver\SQLite;
 
-use Spiral\Database\Driver\CachingCompilerInterface;
-use Spiral\Database\Driver\Compiler;
-use Spiral\Database\Driver\Quoter;
-use Spiral\Database\Exception\CompilerException;
-use Spiral\Database\Injection\Parameter;
-use Spiral\Database\Injection\ParameterInterface;
-use Spiral\Database\Query\QueryParameters;
+use Cycle\Database\Driver\CachingCompilerInterface;
+use Cycle\Database\Driver\Compiler;
+use Cycle\Database\Driver\Quoter;
+use Cycle\Database\Exception\CompilerException;
+use Cycle\Database\Injection\Parameter;
+use Cycle\Database\Injection\ParameterInterface;
+use Cycle\Database\Query\QueryParameters;
 
 class SQLiteCompiler extends Compiler implements CachingCompilerInterface
 {

@@ -9,10 +9,10 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Query;
+namespace Cycle\Database\Query;
 
-use Spiral\Database\Driver\DriverInterface;
-use Spiral\Database\Injection\FragmentInterface;
+use Cycle\Database\Driver\DriverInterface;
+use Cycle\Database\Injection\FragmentInterface;
 
 interface QueryInterface extends FragmentInterface
 {

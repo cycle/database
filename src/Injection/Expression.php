@@ -9,9 +9,9 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Injection;
+namespace Cycle\Database\Injection;
 
-use Spiral\Database\Driver\CompilerInterface;
+use Cycle\Database\Driver\CompilerInterface;
 
 /**
  * Expression provides ability to mock part of SQL code responsible for operations involving

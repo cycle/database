@@ -9,11 +9,11 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests;
+namespace Cycle\Database\Tests;
 
-use Spiral\Database\Injection\Expression;
-use Spiral\Database\Injection\Parameter;
-use Spiral\Database\Query\SelectQuery;
+use Cycle\Database\Injection\Expression;
+use Cycle\Database\Injection\Parameter;
+use Cycle\Database\Query\SelectQuery;
 
 abstract class NestedQueriesTest extends BaseTest
 {

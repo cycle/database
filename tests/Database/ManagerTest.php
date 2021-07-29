@@ -8,19 +8,19 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests;
+namespace Cycle\Database\Tests;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Spiral\Core\Container;
-use Spiral\Database\Config\DatabaseConfig;
-use Spiral\Database\Database;
-use Spiral\Database\DatabaseManager;
-use Spiral\Database\Driver\DriverInterface;
-use Spiral\Database\Driver\SQLite\SQLiteDriver;
-use Spiral\Database\Exception\DBALException;
+use Cycle\Database\Config\DatabaseConfig;
+use Cycle\Database\Database;
+use Cycle\Database\DatabaseManager;
+use Cycle\Database\Driver\DriverInterface;
+use Cycle\Database\Driver\SQLite\SQLiteDriver;
+use Cycle\Database\Exception\DBALException;
 
 class ManagerTest extends TestCase
 {

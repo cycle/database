@@ -9,12 +9,12 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests\Tokens;
+namespace Cycle\Database\Tests\Tokens;
 
 use PHPUnit\Framework\TestCase;
-use Spiral\Database\Driver\CompilerInterface;
-use Spiral\Database\Injection\Parameter;
-use Spiral\Database\Query\DeleteQuery;
+use Cycle\Database\Driver\CompilerInterface;
+use Cycle\Database\Injection\Parameter;
+use Cycle\Database\Query\DeleteQuery;
 
 class DeleteQueryTest extends TestCase
 {

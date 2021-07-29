@@ -9,11 +9,11 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Schema;
+namespace Cycle\Database\Schema;
 
-use Spiral\Database\Driver\DriverInterface;
-use Spiral\Database\IndexInterface;
-use Spiral\Database\Schema\Traits\ElementTrait;
+use Cycle\Database\Driver\DriverInterface;
+use Cycle\Database\IndexInterface;
+use Cycle\Database\Schema\Traits\ElementTrait;
 
 /**
  * Abstract index schema with read (see IndexInterface) and write abilities. Must be implemented

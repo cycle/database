@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Exception;
+namespace Cycle\Database\Exception;
 
 interface StatementExceptionInterface
 {

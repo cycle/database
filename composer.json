@@ -1,5 +1,5 @@
 {
-  "name": "spiral/database",
+  "name": "cycle/database",
   "type": "library",
   "description": "DBAL, schema introspection, migration and pagination",
   "license": "MIT",
@@ -25,12 +25,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Spiral\\Database\\": "src/"
+      "Cycle\\Database\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Spiral\\Database\\Tests\\": "tests/Database/"
+      "Cycle\\Database\\Tests\\": "tests/Database/"
     }
   }
 }

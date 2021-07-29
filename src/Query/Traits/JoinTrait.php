@@ -9,15 +9,15 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Query\Traits;
+namespace Cycle\Database\Query\Traits;
 
 use Closure;
-use Spiral\Database\Exception\BuilderException;
-use Spiral\Database\Injection\Expression;
-use Spiral\Database\Injection\FragmentInterface;
-use Spiral\Database\Injection\Parameter;
-use Spiral\Database\Injection\ParameterInterface;
-use Spiral\Database\Query\ActiveQuery;
+use Cycle\Database\Exception\BuilderException;
+use Cycle\Database\Injection\Expression;
+use Cycle\Database\Injection\FragmentInterface;
+use Cycle\Database\Injection\Parameter;
+use Cycle\Database\Injection\ParameterInterface;
+use Cycle\Database\Query\ActiveQuery;
 
 /**
  * Provides ability to generate QueryCompiler JOIN tokens including ON conditions and table/column

@@ -9,10 +9,10 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver\SQLite\Schema;
+namespace Cycle\Database\Driver\SQLite\Schema;
 
-use Spiral\Database\Driver\DriverInterface;
-use Spiral\Database\Schema\AbstractForeignKey;
+use Cycle\Database\Driver\DriverInterface;
+use Cycle\Database\Schema\AbstractForeignKey;
 
 class SQLiteForeignKey extends AbstractForeignKey
 {

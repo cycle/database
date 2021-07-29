@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Schema;
+namespace Cycle\Database\Schema;
 
 /**
  * TableSchema helper used to store original table elements and run comparation between them.

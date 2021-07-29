@@ -9,9 +9,9 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver;
+namespace Cycle\Database\Driver;
 
-use Spiral\Database\Exception\CompilerException;
+use Cycle\Database\Exception\CompilerException;
 
 /**
  * Responsible for table names quoting and name aliasing.

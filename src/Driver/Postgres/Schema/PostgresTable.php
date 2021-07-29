@@ -9,13 +9,13 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver\Postgres\Schema;
+namespace Cycle\Database\Driver\Postgres\Schema;
 
-use Spiral\Database\Driver\HandlerInterface;
-use Spiral\Database\Schema\AbstractColumn;
-use Spiral\Database\Schema\AbstractForeignKey;
-use Spiral\Database\Schema\AbstractIndex;
-use Spiral\Database\Schema\AbstractTable;
+use Cycle\Database\Driver\HandlerInterface;
+use Cycle\Database\Schema\AbstractColumn;
+use Cycle\Database\Schema\AbstractForeignKey;
+use Cycle\Database\Schema\AbstractIndex;
+use Cycle\Database\Schema\AbstractTable;
 
 class PostgresTable extends AbstractTable
 {

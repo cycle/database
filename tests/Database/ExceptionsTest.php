@@ -9,11 +9,11 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests;
+namespace Cycle\Database\Tests;
 
-use Spiral\Database\Database;
-use Spiral\Database\Exception\HandlerException;
-use Spiral\Database\Exception\StatementException;
+use Cycle\Database\Database;
+use Cycle\Database\Exception\HandlerException;
+use Cycle\Database\Exception\StatementException;
 
 /**
  * Add exception versions in a future versions.

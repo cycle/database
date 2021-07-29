@@ -9,17 +9,17 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver\Postgres;
+namespace Cycle\Database\Driver\Postgres;
 
-use Spiral\Database\Driver\Driver;
-use Spiral\Database\Driver\Postgres\Query\PostgresInsertQuery;
-use Spiral\Database\Driver\Postgres\Query\PostgresSelectQuery;
-use Spiral\Database\Exception\DriverException;
-use Spiral\Database\Exception\StatementException;
-use Spiral\Database\Query\DeleteQuery;
-use Spiral\Database\Query\QueryBuilder;
-use Spiral\Database\Query\SelectQuery;
-use Spiral\Database\Query\UpdateQuery;
+use Cycle\Database\Driver\Driver;
+use Cycle\Database\Driver\Postgres\Query\PostgresInsertQuery;
+use Cycle\Database\Driver\Postgres\Query\PostgresSelectQuery;
+use Cycle\Database\Exception\DriverException;
+use Cycle\Database\Exception\StatementException;
+use Cycle\Database\Query\DeleteQuery;
+use Cycle\Database\Query\QueryBuilder;
+use Cycle\Database\Query\SelectQuery;
+use Cycle\Database\Query\UpdateQuery;
 use Throwable;
 
 /**

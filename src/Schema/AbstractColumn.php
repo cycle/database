@@ -9,17 +9,17 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Schema;
+namespace Cycle\Database\Schema;
 
 use DateTimeImmutable;
-use Spiral\Database\ColumnInterface;
-use Spiral\Database\Driver\DriverInterface;
-use Spiral\Database\Exception\DefaultValueException;
-use Spiral\Database\Exception\SchemaException;
-use Spiral\Database\Injection\Fragment;
-use Spiral\Database\Injection\FragmentInterface;
-use Spiral\Database\Query\QueryParameters;
-use Spiral\Database\Schema\Traits\ElementTrait;
+use Cycle\Database\ColumnInterface;
+use Cycle\Database\Driver\DriverInterface;
+use Cycle\Database\Exception\DefaultValueException;
+use Cycle\Database\Exception\SchemaException;
+use Cycle\Database\Injection\Fragment;
+use Cycle\Database\Injection\FragmentInterface;
+use Cycle\Database\Query\QueryParameters;
+use Cycle\Database\Schema\Traits\ElementTrait;
 
 /**
  * Abstract column schema with read (see ColumnInterface) and write abilities. Must be implemented

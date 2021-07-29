@@ -9,13 +9,13 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests\Driver\SQLite;
+namespace Cycle\Database\Tests\Driver\SQLite;
 
 /**
  * @group driver
  * @group driver-sqlite
  */
-class DatetimeColumnTest extends \Spiral\Database\Tests\DatetimeColumnTest
+class DatetimeColumnTest extends \Cycle\Database\Tests\DatetimeColumnTest
 {
     public const DRIVER = 'sqlite';
 }

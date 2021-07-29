@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Config;
+namespace Cycle\Database\Config;
 
 final class DatabasePartial
 {

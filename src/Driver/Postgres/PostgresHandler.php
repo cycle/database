@@ -9,14 +9,14 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver\Postgres;
+namespace Cycle\Database\Driver\Postgres;
 
-use Spiral\Database\Driver\Handler;
-use Spiral\Database\Driver\Postgres\Schema\PostgresColumn;
-use Spiral\Database\Driver\Postgres\Schema\PostgresTable;
-use Spiral\Database\Exception\SchemaException;
-use Spiral\Database\Schema\AbstractColumn;
-use Spiral\Database\Schema\AbstractTable;
+use Cycle\Database\Driver\Handler;
+use Cycle\Database\Driver\Postgres\Schema\PostgresColumn;
+use Cycle\Database\Driver\Postgres\Schema\PostgresTable;
+use Cycle\Database\Exception\SchemaException;
+use Cycle\Database\Schema\AbstractColumn;
+use Cycle\Database\Schema\AbstractTable;
 
 class PostgresHandler extends Handler
 {

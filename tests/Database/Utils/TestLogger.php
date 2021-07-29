@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests\Utils;
+namespace Cycle\Database\Tests\Utils;
 
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerTrait;

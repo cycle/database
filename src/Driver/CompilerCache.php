@@ -9,16 +9,16 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver;
+namespace Cycle\Database\Driver;
 
-use Spiral\Database\Injection\Expression;
-use Spiral\Database\Injection\Fragment;
-use Spiral\Database\Injection\FragmentInterface;
-use Spiral\Database\Injection\Parameter;
-use Spiral\Database\Injection\ParameterInterface;
-use Spiral\Database\Query\QueryInterface;
-use Spiral\Database\Query\QueryParameters;
-use Spiral\Database\Query\SelectQuery;
+use Cycle\Database\Injection\Expression;
+use Cycle\Database\Injection\Fragment;
+use Cycle\Database\Injection\FragmentInterface;
+use Cycle\Database\Injection\Parameter;
+use Cycle\Database\Injection\ParameterInterface;
+use Cycle\Database\Query\QueryInterface;
+use Cycle\Database\Query\QueryParameters;
+use Cycle\Database\Query\SelectQuery;
 
 /**
  * Caches calculated queries. Code in this class is performance optimized.

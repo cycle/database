@@ -9,11 +9,11 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver\SQLite;
+namespace Cycle\Database\Driver\SQLite;
 
-use Spiral\Database\Driver\Driver;
-use Spiral\Database\Exception\StatementException;
-use Spiral\Database\Query\QueryBuilder;
+use Cycle\Database\Driver\Driver;
+use Cycle\Database\Exception\StatementException;
+use Cycle\Database\Query\QueryBuilder;
 use Throwable;
 
 class SQLiteDriver extends Driver

@@ -9,13 +9,13 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests\Driver\MySQL;
+namespace Cycle\Database\Tests\Driver\MySQL;
 
 /**
  * @group driver
  * @group driver-mysql
  */
-class AlterColumnTest extends \Spiral\Database\Tests\AlterColumnTest
+class AlterColumnTest extends \Cycle\Database\Tests\AlterColumnTest
 {
     public const DRIVER = 'mysql';
 }

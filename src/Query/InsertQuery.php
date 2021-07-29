@@ -9,11 +9,11 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Query;
+namespace Cycle\Database\Query;
 
-use Spiral\Database\Driver\CompilerInterface;
-use Spiral\Database\Exception\BuilderException;
-use Spiral\Database\Injection\Parameter;
+use Cycle\Database\Driver\CompilerInterface;
+use Cycle\Database\Exception\BuilderException;
+use Cycle\Database\Injection\Parameter;
 
 /**
  * Insert statement query builder, support singular and batch inserts.

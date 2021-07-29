@@ -9,16 +9,16 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests\Driver\Postgres;
+namespace Cycle\Database\Tests\Driver\Postgres;
 
-use Spiral\Database\Driver\Postgres\PostgresDriver;
-use Spiral\Database\Injection\FragmentInterface;
+use Cycle\Database\Driver\Postgres\PostgresDriver;
+use Cycle\Database\Injection\FragmentInterface;
 
 /**
  * @group driver
  * @group driver-postgres
  */
-class ConsistencyTest extends \Spiral\Database\Tests\ConsistencyTest
+class ConsistencyTest extends \Cycle\Database\Tests\ConsistencyTest
 {
     public const DRIVER = 'postgres';
 
@@ -62,7 +62,7 @@ class ConsistencyTest extends \Spiral\Database\Tests\ConsistencyTest
         /** @var PostgresDriver $d */
         $d = $this->getDriver();
 
-        $this->expectException(\Spiral\Database\Exception\DriverException::class);
+        $this->expectException(\Cycle\Database\Exception\DriverException::class);
 
         $this->assertSame('target', $d->getPrimaryKey('', 'table'));
     }

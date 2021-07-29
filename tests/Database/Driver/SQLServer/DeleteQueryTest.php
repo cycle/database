@@ -9,13 +9,13 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests\Driver\SQLServer;
+namespace Cycle\Database\Tests\Driver\SQLServer;
 
 /**
  * @group driver
  * @group driver-sqlserver
  */
-class DeleteQueryTest extends \Spiral\Database\Tests\DeleteQueryTest
+class DeleteQueryTest extends \Cycle\Database\Tests\DeleteQueryTest
 {
     public const DRIVER = 'sqlserver';
 }

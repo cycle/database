@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database;
+namespace Cycle\Database;
 
 /**
  * Represents table schema column abstraction.

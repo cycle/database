@@ -9,15 +9,15 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests\Driver\SQLServer;
+namespace Cycle\Database\Tests\Driver\SQLServer;
 
-use Spiral\Database\Driver\SQLServer\Schema\SQLServerTable;
+use Cycle\Database\Driver\SQLServer\Schema\SQLServerTable;
 
 /**
  * @group driver
  * @group driver-sqlserver
  */
-class BuildersAccessTest extends \Spiral\Database\Tests\BuildersAccessTest
+class BuildersAccessTest extends \Cycle\Database\Tests\BuildersAccessTest
 {
     public const DRIVER = 'sqlserver';
 

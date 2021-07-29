@@ -9,14 +9,14 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver\Postgres\Query;
+namespace Cycle\Database\Driver\Postgres\Query;
 
-use Spiral\Database\Driver\DriverInterface;
-use Spiral\Database\Driver\Postgres\PostgresDriver;
-use Spiral\Database\Exception\BuilderException;
-use Spiral\Database\Query\InsertQuery;
-use Spiral\Database\Query\QueryInterface;
-use Spiral\Database\Query\QueryParameters;
+use Cycle\Database\Driver\DriverInterface;
+use Cycle\Database\Driver\Postgres\PostgresDriver;
+use Cycle\Database\Exception\BuilderException;
+use Cycle\Database\Query\InsertQuery;
+use Cycle\Database\Query\QueryInterface;
+use Cycle\Database\Query\QueryParameters;
 use Throwable;
 
 /**

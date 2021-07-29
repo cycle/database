@@ -8,12 +8,12 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests;
+namespace Cycle\Database\Tests;
 
-use Spiral\Database\Database;
-use Spiral\Database\Injection\Expression;
-use Spiral\Database\Schema\AbstractTable;
-use Spiral\Database\Table;
+use Cycle\Database\Database;
+use Cycle\Database\Injection\Expression;
+use Cycle\Database\Schema\AbstractTable;
+use Cycle\Database\Table;
 
 abstract class TableTest extends BaseTest
 {

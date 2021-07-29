@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Injection;
+namespace Cycle\Database\Injection;
 
 /**
  * Parameter interface is very similar to sql fragments, however it may not only mock sql

@@ -8,12 +8,12 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\tests;
+namespace Cycle\Database\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Spiral\Core\Container\Autowire;
-use Spiral\Database\Config\DatabaseConfig;
-use Spiral\Database\Exception\ConfigException;
+use Cycle\Database\Config\DatabaseConfig;
+use Cycle\Database\Exception\ConfigException;
 
 class ConfigTest extends TestCase
 {

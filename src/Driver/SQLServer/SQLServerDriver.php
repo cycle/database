@@ -9,16 +9,16 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver\SQLServer;
+namespace Cycle\Database\Driver\SQLServer;
 
 use DateTimeInterface;
 use PDO;
 use PDOStatement;
-use Spiral\Database\Driver\Driver;
-use Spiral\Database\Exception\DriverException;
-use Spiral\Database\Exception\StatementException;
-use Spiral\Database\Injection\ParameterInterface;
-use Spiral\Database\Query\QueryBuilder;
+use Cycle\Database\Driver\Driver;
+use Cycle\Database\Exception\DriverException;
+use Cycle\Database\Exception\StatementException;
+use Cycle\Database\Injection\ParameterInterface;
+use Cycle\Database\Query\QueryBuilder;
 
 class SQLServerDriver extends Driver
 {

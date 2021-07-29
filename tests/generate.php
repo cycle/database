@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-use Spiral\Database\Tests\BaseTest;
+use Cycle\Database\Tests\BaseTest;
 use Spiral\Tokenizer;
 use Symfony\Component\Finder\Finder;
 
@@ -21,19 +21,19 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 
 $databases = [
     'sqlite'    => [
-        'namespace' => 'Spiral\Database\Tests\Driver\SQLite',
+        'namespace' => 'Cycle\Database\Tests\Driver\SQLite',
         'directory' => __DIR__ . '/Database/Driver/SQLite/'
     ],
     'mysql'     => [
-        'namespace' => 'Spiral\Database\Tests\Driver\MySQL',
+        'namespace' => 'Cycle\Database\Tests\Driver\MySQL',
         'directory' => __DIR__ . '/Database/Driver/MySQL/'
     ],
     'postgres'  => [
-        'namespace' => 'Spiral\Database\Tests\Driver\Postgres',
+        'namespace' => 'Cycle\Database\Tests\Driver\Postgres',
         'directory' => __DIR__ . '/Database/Driver/Postgres/'
     ],
     'sqlserver' => [
-        'namespace' => 'Spiral\Database\Tests\Driver\SQLServer',
+        'namespace' => 'Cycle\Database\Tests\Driver\SQLServer',
         'directory' => __DIR__ . '/Database/Driver/SQLServer/'
     ]
 ];

@@ -9,15 +9,15 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests\Driver\MySQL;
+namespace Cycle\Database\Tests\Driver\MySQL;
 
-use Spiral\Database\Driver\MySQL\Schema\MySQLTable;
+use Cycle\Database\Driver\MySQL\Schema\MySQLTable;
 
 /**
  * @group driver
  * @group driver-mysql
  */
-class BuildersAccessTest extends \Spiral\Database\Tests\BuildersAccessTest
+class BuildersAccessTest extends \Cycle\Database\Tests\BuildersAccessTest
 {
     public const DRIVER = 'mysql';
 
