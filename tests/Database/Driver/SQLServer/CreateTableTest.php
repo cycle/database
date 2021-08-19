@@ -9,13 +9,13 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests\Driver\SQLServer;
+namespace Cycle\Database\Tests\Driver\SQLServer;
 
 /**
  * @group driver
  * @group driver-sqlserver
  */
-class CreateTableTest extends \Spiral\Database\Tests\CreateTableTest
+class CreateTableTest extends \Cycle\Database\Tests\CreateTableTest
 {
     public const DRIVER = 'sqlserver';
 }

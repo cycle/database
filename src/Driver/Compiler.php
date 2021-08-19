@@ -9,14 +9,14 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver;
+namespace Cycle\Database\Driver;
 
-use Spiral\Database\Exception\CompilerException;
-use Spiral\Database\Injection\Expression;
-use Spiral\Database\Injection\FragmentInterface;
-use Spiral\Database\Injection\Parameter;
-use Spiral\Database\Injection\ParameterInterface;
-use Spiral\Database\Query\QueryParameters;
+use Cycle\Database\Exception\CompilerException;
+use Cycle\Database\Injection\Expression;
+use Cycle\Database\Injection\FragmentInterface;
+use Cycle\Database\Injection\Parameter;
+use Cycle\Database\Injection\ParameterInterface;
+use Cycle\Database\Query\QueryParameters;
 
 abstract class Compiler implements CompilerInterface
 {

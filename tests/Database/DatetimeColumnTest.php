@@ -8,12 +8,12 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests;
+namespace Cycle\Database\Tests;
 
-use Spiral\Database\Database;
-use Spiral\Database\Driver\Handler;
-use Spiral\Database\Schema\AbstractColumn;
-use Spiral\Database\Schema\AbstractTable;
+use Cycle\Database\Database;
+use Cycle\Database\Driver\Handler;
+use Cycle\Database\Schema\AbstractColumn;
+use Cycle\Database\Schema\AbstractTable;
 
 //See MySQL Driver!
 abstract class DatetimeColumnTest extends BaseTest

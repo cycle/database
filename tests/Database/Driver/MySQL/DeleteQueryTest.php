@@ -9,13 +9,13 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests\Driver\MySQL;
+namespace Cycle\Database\Tests\Driver\MySQL;
 
 /**
  * @group driver
  * @group driver-mysql
  */
-class DeleteQueryTest extends \Spiral\Database\Tests\DeleteQueryTest
+class DeleteQueryTest extends \Cycle\Database\Tests\DeleteQueryTest
 {
     public const DRIVER = 'mysql';
 }

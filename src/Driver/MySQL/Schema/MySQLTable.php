@@ -9,14 +9,14 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver\MySQL\Schema;
+namespace Cycle\Database\Driver\MySQL\Schema;
 
-use Spiral\Database\Exception\SchemaException;
-use Spiral\Database\Schema\AbstractColumn;
-use Spiral\Database\Schema\AbstractForeignKey;
-use Spiral\Database\Schema\AbstractIndex;
-use Spiral\Database\Schema\AbstractTable;
-use Spiral\Database\Schema\State;
+use Cycle\Database\Exception\SchemaException;
+use Cycle\Database\Schema\AbstractColumn;
+use Cycle\Database\Schema\AbstractForeignKey;
+use Cycle\Database\Schema\AbstractIndex;
+use Cycle\Database\Schema\AbstractTable;
+use Cycle\Database\Schema\State;
 
 class MySQLTable extends AbstractTable
 {

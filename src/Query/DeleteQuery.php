@@ -9,11 +9,11 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Query;
+namespace Cycle\Database\Query;
 
-use Spiral\Database\Driver\CompilerInterface;
-use Spiral\Database\Query\Traits\TokenTrait;
-use Spiral\Database\Query\Traits\WhereTrait;
+use Cycle\Database\Driver\CompilerInterface;
+use Cycle\Database\Query\Traits\TokenTrait;
+use Cycle\Database\Query\Traits\WhereTrait;
 
 /**
  * Update statement builder.

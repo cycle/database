@@ -8,16 +8,16 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests;
+namespace Cycle\Database\Tests;
 
-use Spiral\Database\Driver\CompilerInterface;
-use Spiral\Database\Driver\Driver;
-use Spiral\Database\Query\DeleteQuery;
-use Spiral\Database\Query\InsertQuery;
-use Spiral\Database\Query\SelectQuery;
-use Spiral\Database\Query\UpdateQuery;
-use Spiral\Database\Schema\AbstractTable;
-use Spiral\Database\Table;
+use Cycle\Database\Driver\CompilerInterface;
+use Cycle\Database\Driver\Driver;
+use Cycle\Database\Query\DeleteQuery;
+use Cycle\Database\Query\InsertQuery;
+use Cycle\Database\Query\SelectQuery;
+use Cycle\Database\Query\UpdateQuery;
+use Cycle\Database\Schema\AbstractTable;
+use Cycle\Database\Table;
 
 abstract class BuildersAccessTest extends BaseTest
 {

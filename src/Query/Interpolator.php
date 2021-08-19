@@ -9,10 +9,10 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Query;
+namespace Cycle\Database\Query;
 
 use DateTimeInterface;
-use Spiral\Database\Injection\ParameterInterface;
+use Cycle\Database\Injection\ParameterInterface;
 
 /**
  * Simple helper class used to interpolate query with given values. To be used for profiling and

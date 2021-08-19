@@ -9,9 +9,9 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests;
+namespace Cycle\Database\Tests;
 
-use Spiral\Database\Query\DeleteQuery;
+use Cycle\Database\Query\DeleteQuery;
 
 abstract class DeleteQueryTest extends BaseTest
 {

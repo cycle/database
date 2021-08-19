@@ -9,9 +9,9 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database;
+namespace Cycle\Database;
 
-use Spiral\Database\Exception\DBALException;
+use Cycle\Database\Exception\DBALException;
 
 interface DatabaseProviderInterface
 {

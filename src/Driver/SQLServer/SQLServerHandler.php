@@ -9,16 +9,16 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver\SQLServer;
+namespace Cycle\Database\Driver\SQLServer;
 
 use PDO;
-use Spiral\Database\Driver\Handler;
-use Spiral\Database\Driver\SQLServer\Schema\SQLServerColumn;
-use Spiral\Database\Driver\SQLServer\Schema\SQLServerTable;
-use Spiral\Database\Exception\SchemaException;
-use Spiral\Database\Schema\AbstractColumn;
-use Spiral\Database\Schema\AbstractIndex;
-use Spiral\Database\Schema\AbstractTable;
+use Cycle\Database\Driver\Handler;
+use Cycle\Database\Driver\SQLServer\Schema\SQLServerColumn;
+use Cycle\Database\Driver\SQLServer\Schema\SQLServerTable;
+use Cycle\Database\Exception\SchemaException;
+use Cycle\Database\Schema\AbstractColumn;
+use Cycle\Database\Schema\AbstractIndex;
+use Cycle\Database\Schema\AbstractTable;
 
 class SQLServerHandler extends Handler
 {

@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database;
+namespace Cycle\Database;
 
 /**
  * Represents single foreign key and it's options.

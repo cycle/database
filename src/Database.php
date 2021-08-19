@@ -9,15 +9,14 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database;
+namespace Cycle\Database;
 
 use Spiral\Core\Container\InjectableInterface;
-use Spiral\Database\Driver\Driver;
-use Spiral\Database\Driver\DriverInterface;
-use Spiral\Database\Query\DeleteQuery;
-use Spiral\Database\Query\InsertQuery;
-use Spiral\Database\Query\SelectQuery;
-use Spiral\Database\Query\UpdateQuery;
+use Cycle\Database\Driver\DriverInterface;
+use Cycle\Database\Query\DeleteQuery;
+use Cycle\Database\Query\InsertQuery;
+use Cycle\Database\Query\SelectQuery;
+use Cycle\Database\Query\UpdateQuery;
 use Throwable;
 
 /**

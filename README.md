@@ -1,8 +1,8 @@
-Spiral DBAL
+Cycle DBAL
 ========
-[![Latest Stable Version](https://poser.pugx.org/spiral/database/v/stable)](https://packagist.org/packages/spiral/database) 
-[![Build Status](https://github.com/spiral/database/workflows/build/badge.svg)](https://github.com/spiral/database/actions)
-[![Codecov](https://codecov.io/gh/spiral/database/branch/master/graph/badge.svg)](https://codecov.io/gh/spiral/database/)
+[![Latest Stable Version](https://poser.pugx.org/cycle/database/v/stable)](https://packagist.org/packages/cycle/database) 
+[![Build Status](https://github.com/cycle/database/workflows/build/badge.svg)](https://github.com/cycle/database/actions)
+[![Codecov](https://codecov.io/gh/cycle/database/branch/master/graph/badge.svg)](https://codecov.io/gh/cycle/database/)
 
 Secure, multiple SQL dialects (MySQL, PostgreSQL, SQLite, SQLServer), schema introspection, schema declaration, smart identifier wrappers, database partitions, query builders, nested queries.
 
@@ -28,7 +28,7 @@ Make sure that your server is configured with following PHP version and extensio
 To install the component:
 
 ```
-$ composer require spiral/database
+$ composer require cycle/database
 ```
 
 ## Example
@@ -40,9 +40,9 @@ declare(strict_types=1);
 
 require_once "vendor/autoload.php";
 
-use Spiral\Database\Config\DatabaseConfig;
-use Spiral\Database\DatabaseManager;
-use Spiral\Database\Driver\SQLite\SQLiteDriver;
+use Cycle\Database\Config\DatabaseConfig;
+use Cycle\Database\DatabaseManager;
+use Cycle\Database\Driver\SQLite\SQLiteDriver;
 
 $dbm = new DatabaseManager(new DatabaseConfig([
     'databases'   => [

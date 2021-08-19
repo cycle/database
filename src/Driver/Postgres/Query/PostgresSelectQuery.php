@@ -9,10 +9,10 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver\Postgres\Query;
+namespace Cycle\Database\Driver\Postgres\Query;
 
-use Spiral\Database\Injection\FragmentInterface;
-use Spiral\Database\Query\SelectQuery;
+use Cycle\Database\Injection\FragmentInterface;
+use Cycle\Database\Query\SelectQuery;
 
 class PostgresSelectQuery extends SelectQuery
 {

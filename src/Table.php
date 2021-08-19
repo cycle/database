@@ -9,14 +9,14 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database;
+namespace Cycle\Database;
 
-use Spiral\Database\Exception\BuilderException;
-use Spiral\Database\Query\DeleteQuery;
-use Spiral\Database\Query\InsertQuery;
-use Spiral\Database\Query\SelectQuery;
-use Spiral\Database\Query\UpdateQuery;
-use Spiral\Database\Schema\AbstractTable;
+use Cycle\Database\Exception\BuilderException;
+use Cycle\Database\Query\DeleteQuery;
+use Cycle\Database\Query\InsertQuery;
+use Cycle\Database\Query\SelectQuery;
+use Cycle\Database\Query\UpdateQuery;
+use Cycle\Database\Schema\AbstractTable;
 
 /**
  * Represent table level abstraction with simplified access to SelectQuery associated with such

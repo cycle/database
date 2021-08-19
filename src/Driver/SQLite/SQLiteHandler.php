@@ -9,15 +9,15 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver\SQLite;
+namespace Cycle\Database\Driver\SQLite;
 
-use Spiral\Database\Driver\Handler;
-use Spiral\Database\Driver\SQLite\Schema\SQLiteTable;
-use Spiral\Database\Exception\DBALException;
-use Spiral\Database\Exception\HandlerException;
-use Spiral\Database\Schema\AbstractColumn;
-use Spiral\Database\Schema\AbstractForeignKey;
-use Spiral\Database\Schema\AbstractTable;
+use Cycle\Database\Driver\Handler;
+use Cycle\Database\Driver\SQLite\Schema\SQLiteTable;
+use Cycle\Database\Exception\DBALException;
+use Cycle\Database\Exception\HandlerException;
+use Cycle\Database\Schema\AbstractColumn;
+use Cycle\Database\Schema\AbstractForeignKey;
+use Cycle\Database\Schema\AbstractTable;
 
 class SQLiteHandler extends Handler
 {

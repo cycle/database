@@ -9,9 +9,9 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Query;
+namespace Cycle\Database\Query;
 
-use Spiral\Database\Injection\ParameterInterface;
+use Cycle\Database\Injection\ParameterInterface;
 
 /**
  * Query parameter bindings.

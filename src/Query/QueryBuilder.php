@@ -9,9 +9,9 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Query;
+namespace Cycle\Database\Query;
 
-use Spiral\Database\Driver\DriverInterface;
+use Cycle\Database\Driver\DriverInterface;
 
 /**
  * Initiates active queries.

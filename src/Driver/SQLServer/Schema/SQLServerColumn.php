@@ -9,10 +9,10 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver\SQLServer\Schema;
+namespace Cycle\Database\Driver\SQLServer\Schema;
 
-use Spiral\Database\Driver\DriverInterface;
-use Spiral\Database\Schema\AbstractColumn;
+use Cycle\Database\Driver\DriverInterface;
+use Cycle\Database\Schema\AbstractColumn;
 
 class SQLServerColumn extends AbstractColumn
 {

@@ -9,14 +9,14 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver;
+namespace Cycle\Database\Driver;
 
 use DateTimeZone;
 use PDO;
-use Spiral\Database\Exception\DriverException;
-use Spiral\Database\Exception\StatementException;
-use Spiral\Database\Query\BuilderInterface;
-use Spiral\Database\StatementInterface;
+use Cycle\Database\Exception\DriverException;
+use Cycle\Database\Exception\StatementException;
+use Cycle\Database\Query\BuilderInterface;
+use Cycle\Database\StatementInterface;
 
 /**
  * Wraps PDO connection and provides common abstractions over database operations.

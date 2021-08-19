@@ -9,9 +9,9 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver\MySQL\Exception;
+namespace Cycle\Database\Driver\MySQL\Exception;
 
-use Spiral\Database\Exception\DriverException;
+use Cycle\Database\Exception\DriverException;
 
 class MySQLException extends DriverException
 {

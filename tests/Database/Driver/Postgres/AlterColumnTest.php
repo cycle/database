@@ -9,15 +9,15 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests\Driver\Postgres;
+namespace Cycle\Database\Tests\Driver\Postgres;
 
-use Spiral\Database\Exception\StatementException;
+use Cycle\Database\Exception\StatementException;
 
 /**
  * @group driver
  * @group driver-postgres
  */
-class AlterColumnTest extends \Spiral\Database\Tests\AlterColumnTest
+class AlterColumnTest extends \Cycle\Database\Tests\AlterColumnTest
 {
     public const DRIVER = 'postgres';
 

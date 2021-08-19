@@ -9,15 +9,15 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests\Driver\Postgres;
+namespace Cycle\Database\Tests\Driver\Postgres;
 
-use Spiral\Database\Driver\Postgres\Query\PostgresInsertQuery;
+use Cycle\Database\Driver\Postgres\Query\PostgresInsertQuery;
 
 /**
  * @group driver
  * @group driver-postgres
  */
-class InsertQueryTest extends \Spiral\Database\Tests\InsertQueryTest
+class InsertQueryTest extends \Cycle\Database\Tests\InsertQueryTest
 {
     public const DRIVER = 'postgres';
 

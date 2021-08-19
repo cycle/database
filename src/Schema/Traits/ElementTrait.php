@@ -9,9 +9,9 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Schema\Traits;
+namespace Cycle\Database\Schema\Traits;
 
-use Spiral\Database\Driver\Driver;
+use Cycle\Database\Driver\Driver;
 
 trait ElementTrait
 {

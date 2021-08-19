@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver;
+namespace Cycle\Database\Driver;
 
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -18,12 +18,12 @@ use PDO;
 use PDOStatement;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use Spiral\Database\Exception\DriverException;
-use Spiral\Database\Exception\StatementException;
-use Spiral\Database\Injection\ParameterInterface;
-use Spiral\Database\Query\BuilderInterface;
-use Spiral\Database\Query\Interpolator;
-use Spiral\Database\StatementInterface;
+use Cycle\Database\Exception\DriverException;
+use Cycle\Database\Exception\StatementException;
+use Cycle\Database\Injection\ParameterInterface;
+use Cycle\Database\Query\BuilderInterface;
+use Cycle\Database\Query\Interpolator;
+use Cycle\Database\StatementInterface;
 use Throwable;
 
 /**

@@ -9,11 +9,11 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests;
+namespace Cycle\Database\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Spiral\Database\Injection\Parameter;
-use Spiral\Database\Query\Interpolator;
+use Cycle\Database\Injection\Parameter;
+use Cycle\Database\Query\Interpolator;
 
 class InterpolatorTest extends TestCase
 {

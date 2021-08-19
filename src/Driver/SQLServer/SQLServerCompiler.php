@@ -9,13 +9,13 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver\SQLServer;
+namespace Cycle\Database\Driver\SQLServer;
 
-use Spiral\Database\Driver\Compiler;
-use Spiral\Database\Driver\Quoter;
-use Spiral\Database\Injection\Fragment;
-use Spiral\Database\Injection\Parameter;
-use Spiral\Database\Query\QueryParameters;
+use Cycle\Database\Driver\Compiler;
+use Cycle\Database\Driver\Quoter;
+use Cycle\Database\Injection\Fragment;
+use Cycle\Database\Injection\Parameter;
+use Cycle\Database\Query\QueryParameters;
 
 /**
  * Microsoft SQL server specific syntax compiler.

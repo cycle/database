@@ -9,13 +9,13 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests\Driver\Postgres;
+namespace Cycle\Database\Tests\Driver\Postgres;
 
 /**
  * @group driver
  * @group driver-postgres
  */
-class DatetimeColumnTest extends \Spiral\Database\Tests\DatetimeColumnTest
+class DatetimeColumnTest extends \Cycle\Database\Tests\DatetimeColumnTest
 {
     public const DRIVER = 'postgres';
 }

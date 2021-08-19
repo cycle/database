@@ -9,14 +9,14 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Schema;
+namespace Cycle\Database\Schema;
 
-use Spiral\Database\Driver\DriverInterface;
-use Spiral\Database\Driver\HandlerInterface;
-use Spiral\Database\Exception\DriverException;
-use Spiral\Database\Exception\HandlerException;
-use Spiral\Database\Exception\SchemaException;
-use Spiral\Database\TableInterface;
+use Cycle\Database\Driver\DriverInterface;
+use Cycle\Database\Driver\HandlerInterface;
+use Cycle\Database\Exception\DriverException;
+use Cycle\Database\Exception\HandlerException;
+use Cycle\Database\Exception\SchemaException;
+use Cycle\Database\TableInterface;
 
 /**
  * AbstractTable class used to describe and manage state of specified table. It provides ability to

@@ -9,12 +9,12 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests;
+namespace Cycle\Database\Tests;
 
 use Mockery as m;
-use Spiral\Database\Database;
-use Spiral\Database\DatabaseInterface;
-use Spiral\Database\Driver\DriverInterface;
+use Cycle\Database\Database;
+use Cycle\Database\DatabaseInterface;
+use Cycle\Database\Driver\DriverInterface;
 
 abstract class DatabaseTest extends BaseTest
 {

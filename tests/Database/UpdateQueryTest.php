@@ -9,10 +9,10 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests;
+namespace Cycle\Database\Tests;
 
-use Spiral\Database\Query\UpdateQuery;
-use Spiral\Database\Schema\AbstractTable;
+use Cycle\Database\Query\UpdateQuery;
+use Cycle\Database\Schema\AbstractTable;
 
 abstract class UpdateQueryTest extends BaseTest
 {

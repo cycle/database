@@ -8,12 +8,12 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests;
+namespace Cycle\Database\Tests;
 
-use Spiral\Database\Database;
-use Spiral\Database\Schema\AbstractTable;
-use Spiral\Database\StatementInterface;
-use Spiral\Database\Table;
+use Cycle\Database\Database;
+use Cycle\Database\Schema\AbstractTable;
+use Cycle\Database\StatementInterface;
+use Cycle\Database\Table;
 use Spiral\Pagination\Paginator;
 
 abstract class StatementTest extends BaseTest
@@ -360,7 +360,7 @@ abstract class StatementTest extends BaseTest
     {
         $this->fillData();
 
-        $this->expectException(\Spiral\Database\Exception\StatementException::class);
+        $this->expectException(\Cycle\Database\Exception\StatementException::class);
 
         $this->database->query(
             'SELECT * FROM sample_table WHERE id = :id',

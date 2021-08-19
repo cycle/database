@@ -9,9 +9,9 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver\MySQL\Schema;
+namespace Cycle\Database\Driver\MySQL\Schema;
 
-use Spiral\Database\Schema\AbstractForeignKey;
+use Cycle\Database\Schema\AbstractForeignKey;
 
 class MySQLForeignKey extends AbstractForeignKey
 {

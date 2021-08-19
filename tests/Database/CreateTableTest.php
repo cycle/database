@@ -8,11 +8,11 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests;
+namespace Cycle\Database\Tests;
 
-use Spiral\Database\Database;
-use Spiral\Database\Exception\SchemaException;
-use Spiral\Database\Schema\AbstractTable;
+use Cycle\Database\Database;
+use Cycle\Database\Exception\SchemaException;
+use Cycle\Database\Schema\AbstractTable;
 
 abstract class CreateTableTest extends BaseTest
 {

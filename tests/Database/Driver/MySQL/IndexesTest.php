@@ -9,13 +9,13 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests\Driver\MySQL;
+namespace Cycle\Database\Tests\Driver\MySQL;
 
 /**
  * @group driver
  * @group driver-mysql
  */
-class IndexesTest extends \Spiral\Database\Tests\IndexesTest
+class IndexesTest extends \Cycle\Database\Tests\IndexesTest
 {
     public const DRIVER = 'mysql';
 

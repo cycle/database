@@ -9,13 +9,13 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests;
+namespace Cycle\Database\Tests;
 
-use Spiral\Database\Exception\BuilderException;
-use Spiral\Database\Injection\Expression;
-use Spiral\Database\Injection\Fragment;
-use Spiral\Database\Injection\Parameter;
-use Spiral\Database\Query\SelectQuery;
+use Cycle\Database\Exception\BuilderException;
+use Cycle\Database\Injection\Expression;
+use Cycle\Database\Injection\Fragment;
+use Cycle\Database\Injection\Parameter;
+use Cycle\Database\Query\SelectQuery;
 use Spiral\Pagination\PaginableInterface;
 
 abstract class SelectQueryTest extends BaseTest

@@ -9,9 +9,9 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests;
+namespace Cycle\Database\Tests;
 
-use Spiral\Database\Query\InsertQuery;
+use Cycle\Database\Query\InsertQuery;
 
 abstract class InsertQueryTest extends BaseTest
 {

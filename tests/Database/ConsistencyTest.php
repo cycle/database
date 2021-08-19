@@ -8,10 +8,10 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests;
+namespace Cycle\Database\Tests;
 
-use Spiral\Database\Database;
-use Spiral\Database\Schema\AbstractTable;
+use Cycle\Database\Database;
+use Cycle\Database\Schema\AbstractTable;
 
 abstract class ConsistencyTest extends BaseTest
 {

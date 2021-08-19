@@ -9,9 +9,9 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Exception\StatementException;
+namespace Cycle\Database\Exception\StatementException;
 
-use Spiral\Database\Exception\StatementException;
+use Cycle\Database\Exception\StatementException;
 
 /**
  * Connection issue while the query.

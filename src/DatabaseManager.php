@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database;
+namespace Cycle\Database;
 
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Log\LoggerAwareInterface;
@@ -17,12 +17,12 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Spiral\Core\Container;
 use Spiral\Core\FactoryInterface;
-use Spiral\Database\Config\DatabaseConfig;
-use Spiral\Database\Config\DatabasePartial;
-use Spiral\Database\Driver\Driver;
-use Spiral\Database\Driver\DriverInterface;
-use Spiral\Database\Exception\DatabaseException;
-use Spiral\Database\Exception\DBALException;
+use Cycle\Database\Config\DatabaseConfig;
+use Cycle\Database\Config\DatabasePartial;
+use Cycle\Database\Driver\Driver;
+use Cycle\Database\Driver\DriverInterface;
+use Cycle\Database\Exception\DatabaseException;
+use Cycle\Database\Exception\DBALException;
 use Spiral\Logger\Traits\LoggerTrait;
 
 /**

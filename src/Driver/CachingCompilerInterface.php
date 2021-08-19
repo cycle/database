@@ -9,9 +9,9 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver;
+namespace Cycle\Database\Driver;
 
-use Spiral\Database\Query\QueryParameters;
+use Cycle\Database\Query\QueryParameters;
 
 /**
  * Provides the ability to calculate query hash and generate cacheble statements.

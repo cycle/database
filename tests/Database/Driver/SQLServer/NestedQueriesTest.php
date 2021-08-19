@@ -9,13 +9,13 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests\Driver\SQLServer;
+namespace Cycle\Database\Tests\Driver\SQLServer;
 
 /**
  * @group driver
  * @group driver-sqlserver
  */
-class NestedQueriesTest extends \Spiral\Database\Tests\NestedQueriesTest
+class NestedQueriesTest extends \Cycle\Database\Tests\NestedQueriesTest
 {
     public const DRIVER = 'sqlserver';
 }

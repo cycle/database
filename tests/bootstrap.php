@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-use Spiral\Database;
+use Cycle\Database;
 
 // phpcs:disable
 define('SPIRAL_INITIAL_TIME', microtime(true));

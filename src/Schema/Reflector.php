@@ -9,11 +9,11 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Schema;
+namespace Cycle\Database\Schema;
 
-use Spiral\Database\Driver\Driver;
-use Spiral\Database\Driver\DriverInterface;
-use Spiral\Database\Driver\HandlerInterface;
+use Cycle\Database\Driver\Driver;
+use Cycle\Database\Driver\DriverInterface;
+use Cycle\Database\Driver\HandlerInterface;
 use Throwable;
 
 /**

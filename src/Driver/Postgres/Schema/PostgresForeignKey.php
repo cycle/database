@@ -9,9 +9,9 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver\Postgres\Schema;
+namespace Cycle\Database\Driver\Postgres\Schema;
 
-use Spiral\Database\Schema\AbstractForeignKey;
+use Cycle\Database\Schema\AbstractForeignKey;
 
 class PostgresForeignKey extends AbstractForeignKey
 {

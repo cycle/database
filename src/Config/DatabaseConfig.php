@@ -9,12 +9,12 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Config;
+namespace Cycle\Database\Config;
 
 use Spiral\Core\Container\Autowire;
 use Spiral\Core\InjectableConfig;
 use Spiral\Core\Traits\Config\AliasTrait;
-use Spiral\Database\Exception\ConfigException;
+use Cycle\Database\Exception\ConfigException;
 
 final class DatabaseConfig extends InjectableConfig
 {

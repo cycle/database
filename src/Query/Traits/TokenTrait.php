@@ -9,12 +9,12 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Query\Traits;
+namespace Cycle\Database\Query\Traits;
 
 use Closure;
-use Spiral\Database\Driver\CompilerInterface;
-use Spiral\Database\Exception\BuilderException;
-use Spiral\Database\Injection\FragmentInterface;
+use Cycle\Database\Driver\CompilerInterface;
+use Cycle\Database\Exception\BuilderException;
+use Cycle\Database\Injection\FragmentInterface;
 
 trait TokenTrait
 {

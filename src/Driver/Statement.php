@@ -9,11 +9,11 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver;
+namespace Cycle\Database\Driver;
 
 use Generator;
 use PDOStatement;
-use Spiral\Database\StatementInterface;
+use Cycle\Database\StatementInterface;
 
 /**
  * Adds few quick methods to PDOStatement and fully compatible with it. By default uses

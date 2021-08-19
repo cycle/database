@@ -8,12 +8,12 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Tests;
+namespace Cycle\Database\Tests;
 
-use Spiral\Database\Database;
-use Spiral\Database\Driver\Handler;
-use Spiral\Database\Schema\AbstractColumn;
-use Spiral\Database\Schema\AbstractTable;
+use Cycle\Database\Database;
+use Cycle\Database\Driver\Handler;
+use Cycle\Database\Schema\AbstractColumn;
+use Cycle\Database\Schema\AbstractTable;
 
 abstract class AlterColumnTest extends BaseTest
 {
@@ -139,7 +139,7 @@ abstract class AlterColumnTest extends BaseTest
 
     public function testColumnSizeException(): void
     {
-        $this->expectException(\Spiral\Database\Exception\SchemaException::class);
+        $this->expectException(\Cycle\Database\Exception\SchemaException::class);
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
 
@@ -189,7 +189,7 @@ abstract class AlterColumnTest extends BaseTest
 
     public function testDecimalSizesException(): void
     {
-        $this->expectException(\Spiral\Database\Exception\SchemaException::class);
+        $this->expectException(\Cycle\Database\Exception\SchemaException::class);
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
 

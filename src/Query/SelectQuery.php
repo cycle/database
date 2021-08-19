@@ -9,17 +9,17 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Query;
+namespace Cycle\Database\Query;
 
 use Countable;
 use IteratorAggregate;
-use Spiral\Database\Driver\CompilerInterface;
-use Spiral\Database\Injection\FragmentInterface;
-use Spiral\Database\Query\Traits\HavingTrait;
-use Spiral\Database\Query\Traits\JoinTrait;
-use Spiral\Database\Query\Traits\TokenTrait;
-use Spiral\Database\Query\Traits\WhereTrait;
-use Spiral\Database\StatementInterface;
+use Cycle\Database\Driver\CompilerInterface;
+use Cycle\Database\Injection\FragmentInterface;
+use Cycle\Database\Query\Traits\HavingTrait;
+use Cycle\Database\Query\Traits\JoinTrait;
+use Cycle\Database\Query\Traits\TokenTrait;
+use Cycle\Database\Query\Traits\WhereTrait;
+use Cycle\Database\StatementInterface;
 use Spiral\Pagination\PaginableInterface;
 use Throwable;
 

@@ -9,12 +9,12 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Database\Driver;
+namespace Cycle\Database\Driver;
 
-use Spiral\Database\Schema\AbstractColumn;
-use Spiral\Database\Schema\AbstractForeignKey;
-use Spiral\Database\Schema\AbstractIndex;
-use Spiral\Database\Schema\AbstractTable;
+use Cycle\Database\Schema\AbstractColumn;
+use Cycle\Database\Schema\AbstractForeignKey;
+use Cycle\Database\Schema\AbstractIndex;
+use Cycle\Database\Schema\AbstractTable;
 
 final class ReadonlyHandler implements HandlerInterface
 {
