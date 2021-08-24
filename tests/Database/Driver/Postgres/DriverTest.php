@@ -17,13 +17,16 @@ class DriverTest extends TestCase
             'password'   => 'postgres',
         ]);
 
+        $driver->connect();
+
         $this->assertSame(['public'], $driver->getTableSchema());
+        $this->assertSame('"$user", public', $driver->query('SHOW search_path')->fetch()['search_path']);
     }
 
     /**
      * @dataProvider schemaProvider
      */
-    public function testIfSchemaOptionsPresentsUseIt($schema): void
+    public function testIfSchemaOptionsPresentsUseIt($schema, $result): void
     {
         $driver = new PostgresDriver([
             'connection' => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
@@ -33,19 +36,6 @@ class DriverTest extends TestCase
         ]);
 
         $this->assertSame((array)$schema, $driver->getTableSchema());
-    }
-
-    /**
-     * @dataProvider schemaProvider
-     */
-    public function testSchemaShouldBeAddToSearchPathAfterConnectIfItSet($schema, $result): void
-    {
-        $driver = new PostgresDriver([
-            'connection' => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
-            'username'   => 'postgres',
-            'password'   => 'postgres',
-            'schema'     => $schema
-        ]);
 
         $driver->connect();
 

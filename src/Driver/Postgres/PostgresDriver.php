@@ -40,10 +40,6 @@ class PostgresDriver extends Driver
      */
     public function __construct(array $options)
     {
-        if (!isset($options['schema'])) {
-            $options['schema'] = 'public';
-        }
-
         // default query builder
         parent::__construct(
             $options,
@@ -73,7 +69,7 @@ class PostgresDriver extends Driver
      */
     public function getTableSchema(): array
     {
-        return (array)$this->options['schema'] ?? ['public'];
+        return (array)($this->options['schema'] ?? ['public']);
     }
 
     /**
