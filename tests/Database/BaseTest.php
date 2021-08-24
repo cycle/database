@@ -59,15 +59,19 @@ abstract class BaseTest extends TestCase
         if (!isset($this->driver)) {
             $class = $config['driver'];
 
-            $this->driver = new $class(
-                [
-                    'connection' => $config['conn'],
-                    'username'   => $config['user'],
-                    'password'   => $config['pass'],
-                    'options'    => [],
-                    'queryCache' => true
-                ]
-            );
+            $options = [
+                'connection' => $config['conn'],
+                'username'   => $config['user'],
+                'password'   => $config['pass'],
+                'options'    => [],
+                'queryCache' => true
+            ];
+
+            if (isset($config['schema'])) {
+                $options['schema'] = $config['schema'];
+            }
+
+            $this->driver = new $class($options);
         }
 
         static::$logger = static::$logger ?? new TestLogger();

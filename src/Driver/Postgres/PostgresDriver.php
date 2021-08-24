@@ -40,6 +40,10 @@ class PostgresDriver extends Driver
      */
     public function __construct(array $options)
     {
+        if (!isset($options['schema'])) {
+            $options['schema'] = 'public';
+        }
+
         // default query builder
         parent::__construct(
             $options,
@@ -60,6 +64,16 @@ class PostgresDriver extends Driver
     public function getType(): string
     {
         return 'Postgres';
+    }
+
+    /**
+     * Get the schema on the connection.
+     *
+     * @return string[]
+     */
+    public function getTableSchema(): array
+    {
+        return (array)$this->options['schema'] ?? ['public'];
     }
 
     /**
@@ -168,6 +182,11 @@ class PostgresDriver extends Driver
         // spiral is purely UTF-8
         $pdo = parent::createPDO();
         $pdo->exec("SET NAMES 'UTF-8'");
+
+        if (isset($this->options['schema'])) {
+            $schema = '"' . implode('", "', $this->getTableSchema()) . '"';
+            $pdo->exec("SET search_path TO {$schema}");
+        }
 
         return $pdo;
     }

@@ -18,6 +18,9 @@ use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Schema\AbstractTable;
 
+/**
+ * @property PostgresDriver $driver
+ */
 class PostgresHandler extends Handler
 {
     /**
@@ -33,8 +36,10 @@ class PostgresHandler extends Handler
      */
     public function getTableNames(): array
     {
-        $query = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'
-          AND table_type = 'BASE TABLE'";
+        $query = "SELECT table_name 
+            FROM information_schema.tables 
+            WHERE table_schema in ('".implode("','", $this->driver->getTableSchema())."') 
+            AND table_type = 'BASE TABLE'";
 
         $tables = [];
         foreach ($this->driver->query($query) as $row) {
@@ -49,11 +54,15 @@ class PostgresHandler extends Handler
      */
     public function hasTable(string $name): bool
     {
-        return (bool)$this->driver->query(
-            "SELECT COUNT(table_name) FROM information_schema.tables WHERE table_schema = 'public'
-          AND table_type = 'BASE TABLE' AND table_name = ?",
-            [$name]
-        )->fetchColumn();
+        [$schema, $name] = $this->parseSchemaAndTable($name);
+
+        $query = "SELECT COUNT(table_name) 
+            FROM information_schema.tables 
+            WHERE table_schema = ?
+            AND table_type = 'BASE TABLE'
+            AND table_name = ?";
+
+        return (bool)$this->driver->query($query, [$schema, $name])->fetchColumn();
     }
 
     /**
@@ -135,5 +144,27 @@ class PostgresHandler extends Handler
         );
 
         $this->run($statement);
+    }
+
+    /**
+     * Parse the table name and extract the schema and table.
+     *
+     * @param  string  $name
+     * @return string[]
+     */
+    protected function parseSchemaAndTable(string $name): array
+    {
+        $table = explode('.', $name);
+        $schemas = $this->driver->getTableSchema();
+
+        if (count($schemas) > 0) {
+            if (in_array($table[0], $schemas)) {
+                return [array_shift($table), implode('.', $table)];
+            }
+
+            $schema = reset($schemas);
+        }
+
+        return [$schema ?: 'public', implode('.', $table)];
     }
 }
