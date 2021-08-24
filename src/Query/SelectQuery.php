@@ -177,21 +177,6 @@ class SelectQuery extends ActiveQuery implements
     }
 
     /**
-     * @param string|FragmentInterface $field
-     * @param string                   $order Sorting direction, ASC|DESC.
-     * @return self|$this
-     */
-    private function addOrder($field, string $order): SelectQuery
-    {
-        if (!is_string($field)) {
-            $this->orderBy[] = [$field, $order];
-        } elseif (!array_key_exists($field, $this->orderBy)) {
-            $this->orderBy[$field] = [$field, $order];
-        }
-        return $this;
-    }
-
-    /**
      * Column or expression to group query by.
      *
      * @param string $expression
@@ -439,6 +424,21 @@ class SelectQuery extends ActiveQuery implements
             'offset'    => $this->offset,
             'union'     => $this->unionTokens,
         ];
+    }
+
+    /**
+     * @param string|FragmentInterface $field
+     * @param string                   $order Sorting direction, ASC|DESC.
+     * @return self|$this
+     */
+    private function addOrder($field, string $order): SelectQuery
+    {
+        if (!is_string($field)) {
+            $this->orderBy[] = [$field, $order];
+        } elseif (!array_key_exists($field, $this->orderBy)) {
+            $this->orderBy[$field] = [$field, $order];
+        }
+        return $this;
     }
 
     /**

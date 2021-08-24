@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Driver\Postgres;
@@ -8,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class DriverTest extends TestCase
 {
-    function testIfSchemaOptionsDoesNotPresentUsePublicSchema()
+    public function testIfSchemaOptionsDoesNotPresentUsePublicSchema(): void
     {
         $driver = new PostgresDriver([
             'connection' => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
@@ -22,7 +23,7 @@ class DriverTest extends TestCase
     /**
      * @dataProvider schemaProvider
      */
-    function testIfSchemaOptionsPresentsUseIt($schema)
+    public function testIfSchemaOptionsPresentsUseIt($schema): void
     {
         $driver = new PostgresDriver([
             'connection' => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
@@ -37,7 +38,7 @@ class DriverTest extends TestCase
     /**
      * @dataProvider schemaProvider
      */
-    function testSchemaShouldBeAddToSearchPathAfterConnectIfItSet($schema, $result)
+    public function testSchemaShouldBeAddToSearchPathAfterConnectIfItSet($schema, $result): void
     {
         $driver = new PostgresDriver([
             'connection' => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',

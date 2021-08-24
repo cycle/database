@@ -36,9 +36,9 @@ class PostgresHandler extends Handler
      */
     public function getTableNames(): array
     {
-        $query = "SELECT table_name 
-            FROM information_schema.tables 
-            WHERE table_schema in ('".implode("','", $this->driver->getTableSchema())."') 
+        $query = "SELECT table_name
+            FROM information_schema.tables
+            WHERE table_schema in ('" . implode("','", $this->driver->getTableSchema()) . "')
             AND table_type = 'BASE TABLE'";
 
         $tables = [];
@@ -56,8 +56,8 @@ class PostgresHandler extends Handler
     {
         [$schema, $name] = $this->parseSchemaAndTable($name);
 
-        $query = "SELECT COUNT(table_name) 
-            FROM information_schema.tables 
+        $query = "SELECT COUNT(table_name)
+            FROM information_schema.tables
             WHERE table_schema = ?
             AND table_type = 'BASE TABLE'
             AND table_name = ?";
@@ -127,26 +127,6 @@ class PostgresHandler extends Handler
     }
 
     /**
-     * @param AbstractTable  $table
-     * @param AbstractColumn $initial
-     * @param AbstractColumn $column
-     */
-    private function renameColumn(
-        AbstractTable $table,
-        AbstractColumn $initial,
-        AbstractColumn $column
-    ): void {
-        $statement = sprintf(
-            'ALTER TABLE %s RENAME COLUMN %s TO %s',
-            $this->identify($table),
-            $this->identify($initial),
-            $this->identify($column)
-        );
-
-        $this->run($statement);
-    }
-
-    /**
      * Parse the table name and extract the schema and table.
      *
      * @param  string  $name
@@ -166,5 +146,25 @@ class PostgresHandler extends Handler
         }
 
         return [$schema ?: 'public', implode('.', $table)];
+    }
+
+    /**
+     * @param AbstractTable  $table
+     * @param AbstractColumn $initial
+     * @param AbstractColumn $column
+     */
+    private function renameColumn(
+        AbstractTable $table,
+        AbstractColumn $initial,
+        AbstractColumn $column
+    ): void {
+        $statement = sprintf(
+            'ALTER TABLE %s RENAME COLUMN %s TO %s',
+            $this->identify($table),
+            $this->identify($initial),
+            $this->identify($column)
+        );
+
+        $this->run($statement);
     }
 }
