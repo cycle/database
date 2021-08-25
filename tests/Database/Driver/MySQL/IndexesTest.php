@@ -21,8 +21,8 @@ class IndexesTest extends \Cycle\Database\Tests\IndexesTest
 
     public function testCreateOrderedIndex(): void
     {
-        if (getenv('DB') === 'mariadb') {
-            $this->expectExceptionMessageRegExp('/column sorting is not supported$/');
+        if (!$this->isSupported()) {
+            $this->expectExceptionMessageMatches('/column sorting is not supported$/');
         }
 
         parent::testCreateOrderedIndex();
@@ -30,10 +30,19 @@ class IndexesTest extends \Cycle\Database\Tests\IndexesTest
 
     public function testDropOrderedIndex(): void
     {
-        if (getenv('DB') === 'mariadb') {
-            $this->expectExceptionMessageRegExp('/column sorting is not supported$/');
+        if (!$this->isSupported()) {
+            $this->expectExceptionMessageMatches('/column sorting is not supported$/');
         }
 
         parent::testDropOrderedIndex();
+    }
+
+    protected function isSupported(): bool
+    {
+        if (getenv('MYSQL') === '5.7') {
+            return false;
+        }
+
+        return getenv('DB') !== 'mariadb';
     }
 }

@@ -89,12 +89,14 @@ class MySQLTable extends AbstractTable
     protected function isIndexColumnSortingSupported(): bool
     {
         if (!$this->version) {
-            $this->version = $this->driver->query('SELECT VERSION() AS version')
-                ->fetch()['version'];
+            $this->version = $this->driver->query('SELECT VERSION() AS version')->fetch()['version'];
         }
 
-        $isMariaDB = strpos($this->version, 'MariaDB') !== false;
-        return !$isMariaDB;
+        if (strpos($this->version, 'MariaDB') !== false) {
+            return false;
+        }
+
+        return version_compare($this->version, '8.0', '>=');
     }
 
     /**
