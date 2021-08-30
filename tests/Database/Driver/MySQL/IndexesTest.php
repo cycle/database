@@ -21,7 +21,7 @@ class IndexesTest extends \Cycle\Database\Tests\IndexesTest
 
     public function testCreateOrderedIndex(): void
     {
-        if (!$this->isSupported()) {
+        if (!$this->isOrderedIndexSupported()) {
             $this->expectExceptionMessageMatches('/column sorting is not supported$/');
         }
 
