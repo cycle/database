@@ -37,7 +37,7 @@ class IndexesTest extends \Cycle\Database\Tests\IndexesTest
         parent::testDropOrderedIndex();
     }
 
-    protected function isSupported(): bool
+    protected function isOrderedIndexSupported(): bool
     {
         if (getenv('MYSQL') === '5.7') {
             return false;
