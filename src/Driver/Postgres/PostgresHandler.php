@@ -34,16 +34,20 @@ class PostgresHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function getTableNames(): array
+    public function getTableNames(?string $prefix = null): array
     {
-        $query = "SELECT table_name
+        $query = "SELECT table_schema, table_name
             FROM information_schema.tables
             WHERE table_schema in ('" . implode("','", $this->driver->getTableSchema()) . "')
             AND table_type = 'BASE TABLE'";
 
         $tables = [];
         foreach ($this->driver->query($query) as $row) {
-            $tables[] = $row['table_name'];
+            if ($prefix && strpos($row['table_name'], $prefix) !== 0) {
+                continue;
+            }
+
+            $tables[] = $row['table_schema'] . '.' . $row['table_name'];
         }
 
         return $tables;
@@ -52,9 +56,9 @@ class PostgresHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function hasTable(string $name): bool
+    public function hasTable(string $table): bool
     {
-        [$schema, $name] = $this->parseSchemaAndTable($name);
+        [$schema, $name] = $this->driver->parseSchemaAndTable($table);
 
         $query = "SELECT COUNT(table_name)
             FROM information_schema.tables
@@ -124,28 +128,6 @@ class PostgresHandler extends Handler
         }
 
         return parent::run($statement, $parameters);
-    }
-
-    /**
-     * Parse the table name and extract the schema and table.
-     *
-     * @param  string  $name
-     * @return string[]
-     */
-    protected function parseSchemaAndTable(string $name): array
-    {
-        $table = explode('.', $name);
-        $schemas = $this->driver->getTableSchema();
-
-        if (count($schemas) > 0) {
-            if (in_array($table[0], $schemas)) {
-                return [array_shift($table), implode('.', $table)];
-            }
-
-            $schema = reset($schemas);
-        }
-
-        return [$schema ?: 'public', implode('.', $table)];
     }
 
     /**

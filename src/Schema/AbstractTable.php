@@ -108,8 +108,9 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         $this->prefix = $prefix;
 
         //Initializing states
-        $this->initial = new State($this->prefix . $name);
-        $this->current = new State($this->prefix . $name);
+        $prefixedName = $this->prefixTableName($name);
+        $this->initial = new State($prefixedName);
+        $this->current = new State($prefixedName);
 
         if ($this->driver->getSchemaHandler()->hasTable($this->getName())) {
             $this->status = self::STATUS_EXISTS;
@@ -241,7 +242,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      */
     public function setName(string $name): string
     {
-        $this->current->setName($this->prefix . $name);
+        $this->current->setName($this->prefixTableName($name));
 
         return $this->getName();
     }
@@ -738,6 +739,18 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     protected function hasChanges(): bool
     {
         return $this->getComparator()->hasChanges() || $this->status === self::STATUS_DECLARED_DROPPED;
+    }
+
+    /**
+     * Add prefix to a given table name
+     *
+     * @param string $name
+     *
+     * @return string
+     */
+    protected function prefixTableName(string $name): string
+    {
+        return $this->prefix . $name;
     }
 
     /**

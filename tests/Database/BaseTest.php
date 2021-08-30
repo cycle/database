@@ -126,7 +126,7 @@ abstract class BaseTest extends TestCase
         //Preparing query
         $query = str_replace(
             ['{', '}'],
-            explode('.', $this->db()->getDriver()->identifier('.')),
+            explode('\0', $this->db()->getDriver()->identifier('\0')),
             $query
         );
 

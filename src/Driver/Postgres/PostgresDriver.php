@@ -171,6 +171,34 @@ class PostgresDriver extends Driver
     }
 
     /**
+     * Parse the table name and extract the schema and table.
+     *
+     * @param  string  $name
+     * @return string[]
+     */
+    public function parseSchemaAndTable(string $name): array
+    {
+        $schemas = $this->getTableSchema();
+
+        if (strpos($name, '.') === false) {
+            $schema = null;
+            $table = $name;
+        } else {
+            [$schema, $table] = explode('.', $name, 2);
+        }
+
+        if (count($schemas) > 0) {
+            if ($schema && in_array($schema, $schemas)) {
+                return [$schema, $table];
+            }
+
+            $schema = reset($schemas);
+        }
+
+        return [$schema ?: 'public', $table];
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function createPDO(): \PDO

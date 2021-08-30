@@ -33,12 +33,16 @@ class SQLServerHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function getTableNames(): array
+    public function getTableNames(?string $prefix = null): array
     {
         $query = "SELECT [table_name] FROM [information_schema].[tables] WHERE [table_type] = 'BASE TABLE'";
 
         $tables = [];
         foreach ($this->driver->query($query)->fetchAll(PDO::FETCH_NUM) as $name) {
+            if ($prefix && strpos($name[0], $prefix) !== 0) {
+                continue;
+            }
+
             $tables[] = $name[0];
         }
 

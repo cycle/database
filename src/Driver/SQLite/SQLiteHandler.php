@@ -24,7 +24,7 @@ class SQLiteHandler extends Handler
     /**
      * @return array
      */
-    public function getTableNames(): array
+    public function getTableNames(?string $prefix = null): array
     {
         $query = $this->driver->query(
             "SELECT name FROM 'sqlite_master' WHERE type = 'table'"
@@ -32,9 +32,15 @@ class SQLiteHandler extends Handler
 
         $tables = [];
         foreach ($query as $table) {
-            if ($table['name'] !== 'sqlite_sequence') {
-                $tables[] = $table['name'];
+            if ($table['name'] === 'sqlite_sequence') {
+                continue;
             }
+
+            if ($prefix && strpos($table['name'], $prefix) !== 0) {
+                continue;
+            }
+
+            $tables[] = $table['name'];
         }
 
         return $tables;

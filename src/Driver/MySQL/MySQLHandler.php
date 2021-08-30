@@ -31,10 +31,14 @@ class MySQLHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function getTableNames(): array
+    public function getTableNames(?string $prefix = null): array
     {
         $result = [];
         foreach ($this->driver->query('SHOW TABLES')->fetchAll(PDO::FETCH_NUM) as $row) {
+            if ($prefix && strpos($row[0], $prefix) !== 0) {
+                continue;
+            }
+
             $result[] = $row[0];
         }
 

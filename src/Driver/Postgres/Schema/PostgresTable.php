@@ -12,11 +12,15 @@ declare(strict_types=1);
 namespace Cycle\Database\Driver\Postgres\Schema;
 
 use Cycle\Database\Driver\HandlerInterface;
+use Cycle\Database\Driver\Postgres\PostgresDriver;
 use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Schema\AbstractForeignKey;
 use Cycle\Database\Schema\AbstractIndex;
 use Cycle\Database\Schema\AbstractTable;
 
+/**
+ * @property PostgresDriver $driver
+ */
 class PostgresTable extends AbstractTable
 {
     /**
@@ -70,11 +74,13 @@ class PostgresTable extends AbstractTable
      */
     protected function fetchColumns(): array
     {
+        [$schema, $tableName] = $this->driver->parseSchemaAndTable($this->getName());
+
         //Required for constraints fetch
         $tableOID = $this->driver->query(
             'SELECT oid FROM pg_class WHERE relname = ?',
             [
-                $this->getName(),
+                $tableName,
             ]
         )->fetchColumn();
 
@@ -83,8 +89,9 @@ class PostgresTable extends AbstractTable
                         FROM information_schema.columns
                         JOIN pg_type
                         ON (pg_type.typname = columns.udt_name)
-                        WHERE table_name = ?',
-            [$this->getName()]
+                        WHERE table_schema = ?
+                        AND table_name = ?',
+            [$schema, $tableName]
         );
 
         $result = [];
@@ -103,7 +110,7 @@ class PostgresTable extends AbstractTable
             }
 
             $result[] = PostgresColumn::createInstance(
-                $this->getName(),
+                $tableName,
                 $schema + ['tableOID' => $tableOID],
                 $this->driver
             );
@@ -117,10 +124,12 @@ class PostgresTable extends AbstractTable
      */
     protected function fetchIndexes(bool $all = false): array
     {
-        $query = "SELECT * FROM pg_indexes WHERE schemaname = 'public' AND tablename = ?";
+        [$schema, $name] = $this->driver->parseSchemaAndTable($this->getName());
+
+        $query = 'SELECT * FROM pg_indexes WHERE schemaname = ? AND tablename = ?';
 
         $result = [];
-        foreach ($this->driver->query($query, [$this->getName()]) as $schema) {
+        foreach ($this->driver->query($query, [$schema, $name]) as $schema) {
             $conType = $this->driver->query(
                 'SELECT contype FROM pg_constraint WHERE conname = ?',
                 [$schema['indexname']]
@@ -142,6 +151,8 @@ class PostgresTable extends AbstractTable
      */
     protected function fetchReferences(): array
     {
+        [$schema, $name] = $this->driver->parseSchemaAndTable($this->getName());
+
         //Mindblowing
         $query = 'SELECT tc.constraint_name, tc.table_name, kcu.column_name, rc.update_rule, '
             . 'rc.delete_rule, ccu.table_name AS foreign_table_name, '
@@ -153,10 +164,10 @@ class PostgresTable extends AbstractTable
             . "   ON ccu.constraint_name = tc.constraint_name\n"
             . "JOIN information_schema.referential_constraints AS rc\n"
             . "   ON rc.constraint_name = tc.constraint_name\n"
-            . "WHERE constraint_type = 'FOREIGN KEY' AND tc.table_name = ?";
+            . "WHERE constraint_type = 'FOREIGN KEY' AND tc.constraint_schema = ? AND tc.table_name = ?";
 
         $fks = [];
-        foreach ($this->driver->query($query, [$this->getName()]) as $schema) {
+        foreach ($this->driver->query($query, [$schema, $name]) as $schema) {
             if (!isset($fks[$schema['constraint_name']])) {
                 $fks[$schema['constraint_name']] = $schema;
                 $fks[$schema['constraint_name']]['column_name'] = [$schema['column_name']];
@@ -171,7 +182,7 @@ class PostgresTable extends AbstractTable
         $result = [];
         foreach ($fks as $schema) {
             $result[] = PostgresForeignKey::createInstance(
-                $this->getName(),
+                $name,
                 $this->getPrefix(),
                 $schema
             );
@@ -185,9 +196,11 @@ class PostgresTable extends AbstractTable
      */
     protected function fetchPrimaryKeys(): array
     {
-        $query = "SELECT * FROM pg_indexes WHERE schemaname = 'public' AND tablename = ?";
+        [$schema, $name] = $this->driver->parseSchemaAndTable($this->getName());
 
-        foreach ($this->driver->query($query, [$this->getName()]) as $schema) {
+        $query = 'SELECT * FROM pg_indexes WHERE schemaname = ? AND tablename = ?';
+
+        foreach ($this->driver->query($query, [$schema, $name]) as $schema) {
             $conType = $this->driver->query(
                 'SELECT contype FROM pg_constraint WHERE conname = ?',
                 [$schema['indexname']]
@@ -238,5 +251,21 @@ class PostgresTable extends AbstractTable
     protected function createForeign(string $name): AbstractForeignKey
     {
         return new PostgresForeignKey($this->getName(), $this->getPrefix(), $name);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function prefixTableName(string $name): string
+    {
+        $schema = null;
+
+        if (strpos($name, '.') !== false) {
+            [$schema, $name] = explode('.', $name, 2);
+        }
+
+        $name = parent::prefixTableName($name);
+
+        return $schema ? $schema . '.' . $name : $name;
     }
 }
