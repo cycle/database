@@ -30,7 +30,7 @@ class IndexesTest extends \Cycle\Database\Tests\IndexesTest
 
     public function testDropOrderedIndex(): void
     {
-        if (!$this->isSupported()) {
+        if (!$this->isOrderedIndexSupported()) {
             $this->expectExceptionMessageMatches('/column sorting is not supported$/');
         }
 
