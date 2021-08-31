@@ -26,7 +26,8 @@ use Cycle\Database\Schema\Comparator;
 
 abstract class BaseTest extends TestCase
 {
-    use TableAssertions, Loggable;
+    use TableAssertions;
+    use Loggable;
 
     public const DRIVER = null;
 

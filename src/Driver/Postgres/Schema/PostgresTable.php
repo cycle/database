@@ -86,11 +86,11 @@ class PostgresTable extends AbstractTable
 
         //Required for constraints fetch
         $tableOID = $this->driver->query(
-            'SELECT pgc.oid 
-                FROM pg_class as pgc 
-                JOIN pg_namespace as pgn 
+            'SELECT pgc.oid
+                FROM pg_class as pgc
+                JOIN pg_namespace as pgn
                     ON (pgn.oid = pgc.relnamespace)
-                WHERE pgn.nspname = ? 
+                WHERE pgn.nspname = ?
                 AND pgc.relname = ?',
             [$tableSchema, $tableName]
         )->fetchColumn();

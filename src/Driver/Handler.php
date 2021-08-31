@@ -288,7 +288,7 @@ abstract class Handler implements HandlerInterface
 
         if ($element instanceof AbstractTable) {
             return $this->driver->identifier($element->getFullName());
-        } else if ($element instanceof ElementInterface) {
+        } elseif ($element instanceof ElementInterface) {
             return $this->driver->identifier($element->getName());
         }
 

@@ -39,6 +39,15 @@ trait Helpers
         }
     }
 
+    /**
+     * @param AbstractTable $table
+     * @return AbstractTable
+     */
+    protected function fetchSchema(AbstractTable $table): AbstractTable
+    {
+        return $this->schema($table->getFullName());
+    }
+
     private function createTable(DriverInterface $driver, string $name): PostgresTable
     {
         $db = new Database('default', '', $driver);
@@ -67,14 +76,5 @@ trait Helpers
         $driver->connect();
 
         return $driver;
-    }
-
-    /**
-     * @param AbstractTable $table
-     * @return AbstractTable
-     */
-    protected function fetchSchema(AbstractTable $table): AbstractTable
-    {
-        return $this->schema($table->getFullName());
     }
 }

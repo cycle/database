@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Driver\Postgres;
@@ -15,7 +16,9 @@ use PHPUnit\Framework\TestCase;
 
 class AlterColumnsWithSchemaTest extends TestCase
 {
-    use Helpers, TableAssertions, Loggable;
+    use Helpers;
+    use TableAssertions;
+    use Loggable;
 
     /** @var Database */
     private $db;
@@ -25,7 +28,7 @@ class AlterColumnsWithSchemaTest extends TestCase
         parent::setUp();
 
         $driver = $this->getDriver(['schema1', 'schema2']);
-        
+
         $this->setUpLogger($driver)->enableProfiling();
 
         $this->db = new Database('default', '', $driver);
@@ -38,7 +41,7 @@ class AlterColumnsWithSchemaTest extends TestCase
         return $this->db->table($table)->getSchema();
     }
 
-    public function testCreatesTableWithSchema()
+    public function testCreatesTableWithSchema(): void
     {
         $schema1 = $this->db->table('test')->getSchema();
         $schema2 = $this->db->table('schema2.test')->getSchema();

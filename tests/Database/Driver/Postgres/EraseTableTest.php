@@ -16,7 +16,8 @@ use PHPUnit\Framework\TestCase;
 
 class EraseTableTest extends TestCase
 {
-    use Helpers, Loggable;
+    use Helpers;
+    use Loggable;
 
     protected function setUp(): void
     {
