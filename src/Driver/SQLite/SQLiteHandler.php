@@ -24,7 +24,7 @@ class SQLiteHandler extends Handler
     /**
      * @return array
      */
-    public function getTableNames(?string $prefix = null): array
+    public function getTableNames(string $prefix = ''): array
     {
         $query = $this->driver->query(
             "SELECT name FROM 'sqlite_master' WHERE type = 'table'"
@@ -36,7 +36,7 @@ class SQLiteHandler extends Handler
                 continue;
             }
 
-            if ($prefix && strpos($table['name'], $prefix) !== 0) {
+            if ($prefix !== '' && strpos($table['name'], $prefix) !== 0) {
                 continue;
             }
 

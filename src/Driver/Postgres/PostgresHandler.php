@@ -34,7 +34,7 @@ class PostgresHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function getTableNames(?string $prefix = null): array
+    public function getTableNames(string $prefix = ''): array
     {
         $query = "SELECT table_schema, table_name
             FROM information_schema.tables
@@ -43,7 +43,7 @@ class PostgresHandler extends Handler
 
         $tables = [];
         foreach ($this->driver->query($query) as $row) {
-            if ($prefix && strpos($row['table_name'], $prefix) !== 0) {
+            if ($prefix !== '' && strpos($row['table_name'], $prefix) !== 0) {
                 continue;
             }
 

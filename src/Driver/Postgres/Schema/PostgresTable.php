@@ -154,7 +154,7 @@ class PostgresTable extends AbstractTable
         [$schema, $name] = $this->driver->parseSchemaAndTable($this->getName());
 
         //Mindblowing
-        $query = 'SELECT tc.constraint_name, tc.table_name, kcu.column_name, rc.update_rule, '
+        $query = 'SELECT tc.constraint_name, tc.constraint_schema, tc.table_name, kcu.column_name, rc.update_rule, '
             . 'rc.delete_rule, ccu.table_name AS foreign_table_name, '
             . "ccu.column_name AS foreign_column_name\n"
             . "FROM information_schema.table_constraints AS tc\n"
@@ -164,7 +164,7 @@ class PostgresTable extends AbstractTable
             . "   ON ccu.constraint_name = tc.constraint_name\n"
             . "JOIN information_schema.referential_constraints AS rc\n"
             . "   ON rc.constraint_name = tc.constraint_name\n"
-            . "WHERE constraint_type = 'FOREIGN KEY' AND tc.constraint_schema = ? AND tc.table_name = ?";
+            . "WHERE constraint_type = 'FOREIGN KEY' AND tc.table_schema = ? AND tc.table_name = ?";
 
         $fks = [];
         foreach ($this->driver->query($query, [$schema, $name]) as $schema) {

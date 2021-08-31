@@ -65,7 +65,7 @@ interface HandlerInterface
      * @param string|null $prefix
      * @return array
      */
-    public function getTableNames(?string $prefix = null): array;
+    public function getTableNames(string $prefix = ''): array;
 
     /**
      * Check if given table exists in database.

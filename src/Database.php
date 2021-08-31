@@ -145,7 +145,7 @@ final class Database implements DatabaseInterface, InjectableInterface
         $schemaHandler = $this->getDriver(self::READ)->getSchemaHandler();
 
         $result = [];
-        foreach ($schemaHandler->getTableNames(!empty($this->prefix) ? $this->prefix : null) as $table) {
+        foreach ($schemaHandler->getTableNames($this->prefix) as $table) {
             $result[] = new Table($this, substr($table, strlen($this->prefix)));
         }
 
