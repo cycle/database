@@ -75,8 +75,19 @@ class PostgresHandler extends Handler
     public function eraseTable(AbstractTable $table): void
     {
         $this->driver->execute(
-            "TRUNCATE TABLE {$this->driver->identifier($table->getName())}"
+            "TRUNCATE TABLE {$this->driver->identifier($table->getFullName())}"
         );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function renameTable(string $table, string $name): void
+    {
+        // New table name should not contain a schema
+        [$schema, $name] = $this->driver->parseSchemaAndTable($name);
+
+        parent::renameTable($table, $name);
     }
 
     /**

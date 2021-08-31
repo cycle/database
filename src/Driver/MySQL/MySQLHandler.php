@@ -64,7 +64,7 @@ class MySQLHandler extends Handler
     public function eraseTable(AbstractTable $table): void
     {
         $this->driver->execute(
-            "TRUNCATE TABLE {$this->driver->identifier($table->getName())}"
+            "TRUNCATE TABLE {$this->driver->identifier($table->getFullName())}"
         );
     }
 

@@ -73,7 +73,7 @@ class SQLiteHandler extends Handler
     public function eraseTable(AbstractTable $table): void
     {
         $this->driver->execute(
-            "DELETE FROM {$this->driver->identifier($table->getName())}"
+            "DELETE FROM {$this->driver->identifier($table->getFullName())}"
         );
     }
 
@@ -101,8 +101,8 @@ class SQLiteHandler extends Handler
 
         //Moving data over
         $this->copyData(
-            $initial->getName(),
-            $temporary->getName(),
+            $initial->getFullName(),
+            $temporary->getFullName(),
             $this->createMapping($initial, $temporary)
         );
 
@@ -110,7 +110,7 @@ class SQLiteHandler extends Handler
         $this->dropTable($table);
 
         //Renaming temporary table (should automatically handle table renaming)
-        $this->renameTable($temporary->getName(), $initial->getName());
+        $this->renameTable($temporary->getFullName(), $initial->getFullName());
 
         //Not all databases support adding index while table creation, so we can do it after
         foreach ($table->getIndexes() as $index) {
@@ -183,7 +183,7 @@ class SQLiteHandler extends Handler
         //Temporary table is required to copy data over
         $temporary = clone $table;
         $temporary->setName(
-            'spiral_temp_' . $table->getName() . '_' . uniqid()
+            'spiral_temp_' . $table->getFullName() . '_' . uniqid()
         );
 
         //We don't need any indexes in temporary table

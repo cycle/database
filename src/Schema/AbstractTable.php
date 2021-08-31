@@ -112,7 +112,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         $this->initial = new State($prefixedName);
         $this->current = new State($prefixedName);
 
-        if ($this->driver->getSchemaHandler()->hasTable($this->getName())) {
+        if ($this->driver->getSchemaHandler()->hasTable($this->getFullName())) {
             $this->status = self::STATUS_EXISTS;
         }
 
@@ -160,7 +160,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      */
     public function __toString(): string
     {
-        return $this->getName();
+        return $this->getFullName();
     }
 
     /**
@@ -179,6 +179,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     {
         return [
             'status'      => $this->status,
+            'full_name'   => $this->getFullName(),
             'name'        => $this->getName(),
             'primaryKeys' => $this->getPrimaryKeys(),
             'columns'     => array_values($this->getColumns()),
@@ -244,13 +245,21 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     {
         $this->current->setName($this->prefixTableName($name));
 
-        return $this->getName();
+        return $this->getFullName();
     }
 
     /**
      * {@inheritdoc}
      */
     public function getName(): string
+    {
+        return $this->getFullName();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFullName(): string
     {
         return $this->current->getName();
     }
@@ -434,7 +443,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
                     throw new DriverException(sprintf(
                         'Failed to create index with `%s` on `%s`, column sorting is not supported',
                         $expression,
-                        $this->getName()
+                        $this->getFullName()
                     ));
                 }
                 $sort[$column] = $order;
@@ -447,7 +456,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         foreach ($columns as $column) {
             if (!$this->hasColumn($column)) {
                 throw new SchemaException(
-                    "Undefined column '{$column}' in '{$this->getName()}'"
+                    "Undefined column '{$column}' in '{$this->getFullName()}'"
                 );
             }
         }
@@ -484,7 +493,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     {
         foreach ($columns as $column) {
             if (!$this->hasColumn($column)) {
-                throw new SchemaException("Undefined column '{$column}' in '{$this->getName()}'");
+                throw new SchemaException("Undefined column '{$column}' in '{$this->getFullName()}'");
             }
         }
 
@@ -523,7 +532,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     {
         if (!$this->hasColumn($column)) {
             throw new SchemaException(
-                "Undefined column '{$column}' in '{$this->getName()}'"
+                "Undefined column '{$column}' in '{$this->getFullName()}'"
             );
         }
 
@@ -546,7 +555,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     {
         if (!$this->hasIndex($columns)) {
             throw new SchemaException(
-                "Undefined index ['" . implode("', '", $columns) . "'] in '{$this->getName()}'"
+                "Undefined index ['" . implode("', '", $columns) . "'] in '{$this->getFullName()}'"
             );
         }
 
@@ -569,7 +578,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         $schema = $this->current->findColumn($column);
         if ($schema === null) {
             throw new SchemaException(
-                "Undefined column '{$column}' in '{$this->getName()}'"
+                "Undefined column '{$column}' in '{$this->getFullName()}'"
             );
         }
 
@@ -592,7 +601,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         $schema = $this->current->findIndex($columns);
         if ($schema === null) {
             throw new SchemaException(
-                "Undefined index ['" . implode("', '", $columns) . "'] in '{$this->getName()}'"
+                "Undefined index ['" . implode("', '", $columns) . "'] in '{$this->getFullName()}'"
             );
         }
 
@@ -615,7 +624,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         $schema = $this->current->findForeignKey($columns);
         if ($schema === null) {
             $names = implode("','", $columns);
-            throw new SchemaException("Undefined FK on '{$names}' in '{$this->getName()}'");
+            throw new SchemaException("Undefined FK on '{$names}' in '{$this->getFullName()}'");
         }
 
         //Dropping foreign from current schema
@@ -947,7 +956,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
             $sanitized[] = self::sanitizeColumnExpression($column);
         }
 
-        $name = $this->getName()
+        $name = $this->getFullName()
             . '_' . $type
             . '_' . implode('_', $sanitized)
             . '_' . uniqid();

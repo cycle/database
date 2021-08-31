@@ -21,17 +21,11 @@ class HasTableWithSchemaTest extends TestCase
 {
     use Helpers;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->dropAllTables();
-    }
-
     public function testGetsTableNamesWithoutSchema(): void
     {
         $driver = $this->getDriver();
         $tables = $this->createTables($driver);
+
 
         $this->assertTrue($driver->getSchemaHandler()->hasTable('public.' . $tables['test_pb']));
         $this->assertTrue($driver->getSchemaHandler()->hasTable($tables['test_pb']));
@@ -79,7 +73,7 @@ class HasTableWithSchemaTest extends TestCase
         $time = time();
 
         foreach (['public.test_pb', 'schema1.test_sh1', 'schema2.test_sh2'] as $table) {
-            $this->createTable($driver, $table . '_' . $time);
+            $driver->query('CREATE TABLE ' . $table . '_' . $time . '()');
 
             $table = explode('.', $table)[1];
             $tables[$table] = $table . '_' . $time;

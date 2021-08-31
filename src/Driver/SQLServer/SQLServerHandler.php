@@ -66,7 +66,7 @@ class SQLServerHandler extends Handler
     public function eraseTable(AbstractTable $table): void
     {
         $this->driver->execute(
-            "TRUNCATE TABLE {$this->driver->identifier($table->getName())}"
+            "TRUNCATE TABLE {$this->driver->identifier($table->getFullName())}"
         );
     }
 
@@ -174,7 +174,7 @@ class SQLServerHandler extends Handler
         $this->run(
             "sp_rename ?, ?, 'COLUMN'",
             [
-                $table->getName() . '.' . $initial->getName(),
+                $table->getFullName() . '.' . $initial->getName(),
                 $column->getName()
             ]
         );

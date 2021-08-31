@@ -104,12 +104,12 @@ class MySQLTable extends AbstractTable
      */
     protected function fetchColumns(): array
     {
-        $query = "SHOW FULL COLUMNS FROM {$this->driver->identifier($this->getName())}";
+        $query = "SHOW FULL COLUMNS FROM {$this->driver->identifier($this->getFullName())}";
 
         $result = [];
         foreach ($this->driver->query($query) as $schema) {
             $result[] = MySQLColumn::createInstance(
-                $this->getName(),
+                $this->getFullName(),
                 $schema,
                 $this->driver->getTimezone()
             );
@@ -123,7 +123,7 @@ class MySQLTable extends AbstractTable
      */
     protected function fetchIndexes(): array
     {
-        $query = "SHOW INDEXES FROM {$this->driver->identifier($this->getName())}";
+        $query = "SHOW INDEXES FROM {$this->driver->identifier($this->getFullName())}";
 
         //Gluing all index definitions together
         $schemas = [];
@@ -138,7 +138,7 @@ class MySQLTable extends AbstractTable
 
         $result = [];
         foreach ($schemas as $name => $index) {
-            $result[] = MySQLIndex::createInstance($this->getName(), $name, $index);
+            $result[] = MySQLIndex::createInstance($this->getFullName(), $name, $index);
         }
 
         return $result;
@@ -152,7 +152,7 @@ class MySQLTable extends AbstractTable
         $references = $this->driver->query(
             'SELECT * FROM `information_schema`.`referential_constraints`
             WHERE `constraint_schema` = ? AND `table_name` = ?',
-            [$this->driver->getSource(), $this->getName()]
+            [$this->driver->getSource(), $this->getFullName()]
         );
 
         $result = [];
@@ -160,7 +160,7 @@ class MySQLTable extends AbstractTable
             $columns = $this->driver->query(
                 'SELECT * FROM `information_schema`.`key_column_usage`
                 WHERE `constraint_name` = ? AND `table_schema` = ? AND `table_name` = ?',
-                [$schema['CONSTRAINT_NAME'], $this->driver->getSource(), $this->getName()]
+                [$schema['CONSTRAINT_NAME'], $this->driver->getSource(), $this->getFullName()]
             )->fetchAll();
 
             $schema['COLUMN_NAME'] = [];
@@ -172,7 +172,7 @@ class MySQLTable extends AbstractTable
             }
 
             $result[] = MySQLForeignKey::createInstance(
-                $this->getName(),
+                $this->getFullName(),
                 $this->getPrefix(),
                 $schema
             );
@@ -188,7 +188,7 @@ class MySQLTable extends AbstractTable
      */
     protected function fetchPrimaryKeys(): array
     {
-        $query = "SHOW INDEXES FROM {$this->driver->identifier($this->getName())}";
+        $query = "SHOW INDEXES FROM {$this->driver->identifier($this->getFullName())}";
 
         $primaryKeys = [];
         foreach ($this->driver->query($query) as $index) {
@@ -205,7 +205,7 @@ class MySQLTable extends AbstractTable
      */
     protected function createColumn(string $name): AbstractColumn
     {
-        return new MySQLColumn($this->getName(), $name, $this->driver->getTimezone());
+        return new MySQLColumn($this->getFullName(), $name, $this->driver->getTimezone());
     }
 
     /**
@@ -213,7 +213,7 @@ class MySQLTable extends AbstractTable
      */
     protected function createIndex(string $name): AbstractIndex
     {
-        return new MySQLIndex($this->getName(), $name);
+        return new MySQLIndex($this->getFullName(), $name);
     }
 
     /**
@@ -221,6 +221,6 @@ class MySQLTable extends AbstractTable
      */
     protected function createForeign(string $name): AbstractForeignKey
     {
-        return new MySQLForeignKey($this->getName(), $this->getPrefix(), $name);
+        return new MySQLForeignKey($this->getFullName(), $this->getPrefix(), $name);
     }
 }

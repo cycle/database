@@ -51,6 +51,14 @@ class PostgresTable extends AbstractTable
 
     /**
      * {@inheritdoc}
+     */
+    public function getName(): string
+    {
+        return $this->removeSchemaFromTableName($this->getFullName());
+    }
+
+    /**
+     * {@inheritdoc}
      *
      * SQLServer will reload schemas after successful savw.
      */
@@ -58,7 +66,7 @@ class PostgresTable extends AbstractTable
     {
         parent::save($operation, $reset);
 
-        if ($reset) {
+        if (!$reset) {
             foreach ($this->fetchColumns() as $column) {
                 $currentColumn = $this->current->findColumn($column->getName());
                 if ($currentColumn !== null && $column->compare($currentColumn)) {
@@ -74,24 +82,27 @@ class PostgresTable extends AbstractTable
      */
     protected function fetchColumns(): array
     {
-        [$schema, $tableName] = $this->driver->parseSchemaAndTable($this->getName());
+        [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
 
         //Required for constraints fetch
         $tableOID = $this->driver->query(
-            'SELECT oid FROM pg_class WHERE relname = ?',
-            [
-                $tableName,
-            ]
+            'SELECT pgc.oid 
+                FROM pg_class as pgc 
+                JOIN pg_namespace as pgn 
+                    ON (pgn.oid = pgc.relnamespace)
+                WHERE pgn.nspname = ? 
+                AND pgc.relname = ?',
+            [$tableSchema, $tableName]
         )->fetchColumn();
 
         $query = $this->driver->query(
             'SELECT *
-                        FROM information_schema.columns
-                        JOIN pg_type
-                        ON (pg_type.typname = columns.udt_name)
-                        WHERE table_schema = ?
-                        AND table_name = ?',
-            [$schema, $tableName]
+                FROM information_schema.columns
+                JOIN pg_type
+                    ON (pg_type.typname = columns.udt_name)
+                WHERE table_schema = ?
+                AND table_name = ?',
+            [$tableSchema, $tableName]
         );
 
         $result = [];
@@ -110,7 +121,7 @@ class PostgresTable extends AbstractTable
             }
 
             $result[] = PostgresColumn::createInstance(
-                $tableName,
+                $tableSchema . '.' . $tableName,
                 $schema + ['tableOID' => $tableOID],
                 $this->driver
             );
@@ -124,12 +135,12 @@ class PostgresTable extends AbstractTable
      */
     protected function fetchIndexes(bool $all = false): array
     {
-        [$schema, $name] = $this->driver->parseSchemaAndTable($this->getName());
+        [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
 
         $query = 'SELECT * FROM pg_indexes WHERE schemaname = ? AND tablename = ?';
 
         $result = [];
-        foreach ($this->driver->query($query, [$schema, $name]) as $schema) {
+        foreach ($this->driver->query($query, [$tableSchema, $tableName]) as $schema) {
             $conType = $this->driver->query(
                 'SELECT contype FROM pg_constraint WHERE conname = ?',
                 [$schema['indexname']]
@@ -140,7 +151,7 @@ class PostgresTable extends AbstractTable
                 continue;
             }
 
-            $result[] = PostgresIndex::createInstance($this->getName(), $schema);
+            $result[] = PostgresIndex::createInstance($tableSchema . '.' . $tableName, $schema);
         }
 
         return $result;
@@ -151,7 +162,7 @@ class PostgresTable extends AbstractTable
      */
     protected function fetchReferences(): array
     {
-        [$schema, $name] = $this->driver->parseSchemaAndTable($this->getName());
+        [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
 
         //Mindblowing
         $query = 'SELECT tc.constraint_name, tc.constraint_schema, tc.table_name, kcu.column_name, rc.update_rule, '
@@ -167,7 +178,7 @@ class PostgresTable extends AbstractTable
             . "WHERE constraint_type = 'FOREIGN KEY' AND tc.table_schema = ? AND tc.table_name = ?";
 
         $fks = [];
-        foreach ($this->driver->query($query, [$schema, $name]) as $schema) {
+        foreach ($this->driver->query($query, [$tableSchema, $tableName]) as $schema) {
             if (!isset($fks[$schema['constraint_name']])) {
                 $fks[$schema['constraint_name']] = $schema;
                 $fks[$schema['constraint_name']]['column_name'] = [$schema['column_name']];
@@ -182,7 +193,7 @@ class PostgresTable extends AbstractTable
         $result = [];
         foreach ($fks as $schema) {
             $result[] = PostgresForeignKey::createInstance(
-                $name,
+                $tableSchema . '.' . $tableName,
                 $this->getPrefix(),
                 $schema
             );
@@ -196,11 +207,11 @@ class PostgresTable extends AbstractTable
      */
     protected function fetchPrimaryKeys(): array
     {
-        [$schema, $name] = $this->driver->parseSchemaAndTable($this->getName());
+        [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
 
         $query = 'SELECT * FROM pg_indexes WHERE schemaname = ? AND tablename = ?';
 
-        foreach ($this->driver->query($query, [$schema, $name]) as $schema) {
+        foreach ($this->driver->query($query, [$tableSchema, $tableName]) as $schema) {
             $conType = $this->driver->query(
                 'SELECT contype FROM pg_constraint WHERE conname = ?',
                 [$schema['indexname']]
@@ -212,7 +223,7 @@ class PostgresTable extends AbstractTable
             }
 
             //To simplify definitions
-            $index = PostgresIndex::createInstance($this->getName(), $schema);
+            $index = PostgresIndex::createInstance($tableSchema . '.' . $tableName, $schema);
 
             if (is_array($this->primarySequence) && count($index->getColumns()) === 1) {
                 $column = $index->getColumns()[0];
@@ -234,7 +245,11 @@ class PostgresTable extends AbstractTable
      */
     protected function createColumn(string $name): AbstractColumn
     {
-        return new PostgresColumn($this->getName(), $name, $this->driver->getTimezone());
+        return new PostgresColumn(
+            $this->getNormalizedTableName(),
+            $this->removeSchemaFromTableName($name),
+            $this->driver->getTimezone()
+        );
     }
 
     /**
@@ -242,7 +257,10 @@ class PostgresTable extends AbstractTable
      */
     protected function createIndex(string $name): AbstractIndex
     {
-        return new PostgresIndex($this->getName(), $name);
+        return new PostgresIndex(
+            $this->getNormalizedTableName(),
+            $this->removeSchemaFromTableName($name)
+        );
     }
 
     /**
@@ -250,7 +268,11 @@ class PostgresTable extends AbstractTable
      */
     protected function createForeign(string $name): AbstractForeignKey
     {
-        return new PostgresForeignKey($this->getName(), $this->getPrefix(), $name);
+        return new PostgresForeignKey(
+            $this->getNormalizedTableName(),
+            $this->getPrefix(),
+            $this->removeSchemaFromTableName($name)
+        );
     }
 
     /**
@@ -258,14 +280,26 @@ class PostgresTable extends AbstractTable
      */
     protected function prefixTableName(string $name): string
     {
-        $schema = null;
-
-        if (strpos($name, '.') !== false) {
-            [$schema, $name] = explode('.', $name, 2);
-        }
+        [$schema, $name] = $this->driver->parseSchemaAndTable($name);
 
         $name = parent::prefixTableName($name);
 
         return $schema ? $schema . '.' . $name : $name;
+    }
+
+    protected function getNormalizedTableName(): string
+    {
+        [$schema, $name] = $this->driver->parseSchemaAndTable($this->getFullName());
+
+        return $schema . '.' . $name;
+    }
+
+    protected function removeSchemaFromTableName(string $name): string
+    {
+        if (strpos($name, '.') !== false) {
+            [, $name] = explode('.', $name, 2);
+        }
+
+        return $name;
     }
 }

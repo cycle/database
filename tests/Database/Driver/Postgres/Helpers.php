@@ -15,6 +15,7 @@ use Cycle\Database\Database;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\Postgres\PostgresDriver;
 use Cycle\Database\Driver\Postgres\Schema\PostgresTable;
+use Cycle\Database\Schema\AbstractTable;
 
 trait Helpers
 {
@@ -66,5 +67,14 @@ trait Helpers
         $driver->connect();
 
         return $driver;
+    }
+
+    /**
+     * @param AbstractTable $table
+     * @return AbstractTable
+     */
+    protected function fetchSchema(AbstractTable $table): AbstractTable
+    {
+        return $this->schema($table->getFullName());
     }
 }
