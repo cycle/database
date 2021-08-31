@@ -31,7 +31,10 @@ trait Helpers
         $driver = $this->getDriver();
         $schemas = ['public', 'schema1', 'schema2'];
         foreach ($schemas as $schema) {
-            if ($driver->query("SELECT schema_name FROM information_schema.schemata WHERE schema_name = '{$schema}'")->fetch()) {
+            $query = "SELECT schema_name 
+                        FROM information_schema.schemata 
+                        WHERE schema_name = '{$schema}'";
+            if ($driver->query($query)->fetch()) {
                 $driver->query("DROP SCHEMA {$schema} CASCADE");
             }
 
