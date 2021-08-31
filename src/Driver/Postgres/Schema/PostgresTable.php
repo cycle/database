@@ -66,7 +66,7 @@ class PostgresTable extends AbstractTable
     {
         parent::save($operation, $reset);
 
-        if (!$reset) {
+        if ($reset) {
             foreach ($this->fetchColumns() as $column) {
                 $currentColumn = $this->current->findColumn($column->getName());
                 if ($currentColumn !== null && $column->compare($currentColumn)) {
@@ -282,9 +282,7 @@ class PostgresTable extends AbstractTable
     {
         [$schema, $name] = $this->driver->parseSchemaAndTable($name);
 
-        $name = parent::prefixTableName($name);
-
-        return $schema ? $schema . '.' . $name : $name;
+        return $schema . '.' . parent::prefixTableName($name);
     }
 
     protected function getNormalizedTableName(): string

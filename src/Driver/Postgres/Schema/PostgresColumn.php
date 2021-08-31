@@ -118,7 +118,7 @@ class PostgresColumn extends AbstractColumn
     protected $autoIncrement = false;
 
     /**
-     * Indication that column have enum constrain.
+     * Indication that column has enum constrain.
      *
      * @var bool
      */
