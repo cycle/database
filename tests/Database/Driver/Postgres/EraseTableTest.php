@@ -43,7 +43,6 @@ class EraseTableTest extends TestCase
     public function testEraseTableWithSchema(): void
     {
         $driver = $this->getDriver(['schema2', 'schema1']);
-        $this->setUpLogger($driver)->enableProfiling();
 
         $table2 = $this->createTable($driver, 'table_to_erase');
         $this->assertTrue($driver->getSchemaHandler()->hasTable('schema2.table_to_erase'));

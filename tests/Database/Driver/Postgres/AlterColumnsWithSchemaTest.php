@@ -29,8 +29,6 @@ class AlterColumnsWithSchemaTest extends TestCase
 
         $driver = $this->getDriver(['schema1', 'schema2']);
 
-        $this->setUpLogger($driver)->enableProfiling();
-
         $this->db = new Database('default', '', $driver);
 
         $this->dropAllTables();
