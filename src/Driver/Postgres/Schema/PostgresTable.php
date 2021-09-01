@@ -285,6 +285,11 @@ class PostgresTable extends AbstractTable
         return $schema . '.' . parent::prefixTableName($name);
     }
 
+    /**
+     * Get table name with schema. If table doesn't contain schema, schema will be added from config
+     *
+     * @return string
+     */
     protected function getNormalizedTableName(): string
     {
         [$schema, $name] = $this->driver->parseSchemaAndTable($this->getFullName());
@@ -292,6 +297,12 @@ class PostgresTable extends AbstractTable
         return $schema . '.' . $name;
     }
 
+    /**
+     * Return table name without schema
+     *
+     * @param string $name
+     * @return string
+     */
     protected function removeSchemaFromTableName(string $name): string
     {
         if (strpos($name, '.') !== false) {
