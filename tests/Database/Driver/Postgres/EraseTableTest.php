@@ -23,7 +23,14 @@ class EraseTableTest extends TestCase
     {
         parent::setUp();
 
-        $this->dropAllTables();
+        $this->setUpSchemas();
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        $this->dropUserSchema();
     }
 
     public function testEraseTable(): void
@@ -38,6 +45,18 @@ class EraseTableTest extends TestCase
 
         $driver->getSchemaHandler()->eraseTable($table);
         $this->assertSame(0, $driver->getQueryBuilder()->selectQuery('', ['public.table_to_erase'])->count());
+    }
+
+    public function testEraseTableWithNotDefinedSchemaShouldNotThrowAnException(): void
+    {
+        $driver = $this->getDriver();
+
+        $table = $this->createTable($driver, 'schema1.table_to_erase');
+        $driver->getQueryBuilder()->insertQuery('schema1.table_to_erase')->columns('id')->values([1])->run();
+        $this->assertSame(1, $driver->getQueryBuilder()->selectQuery('', ['schema1.table_to_erase'])->count());
+
+        $driver->getSchemaHandler()->eraseTable($table);
+        $this->assertSame(0, $driver->getQueryBuilder()->selectQuery('', ['schema1.table_to_erase'])->count());
     }
 
     public function testEraseTableWithSchema(): void
@@ -60,6 +79,20 @@ class EraseTableTest extends TestCase
         $this->assertSame(0, $driver->getQueryBuilder()->selectQuery('', ['schema2.table_to_erase'])->count());
         $this->assertSame(1, $driver->getQueryBuilder()->selectQuery('', ['schema1.table_to_erase'])->count());
         $driver->getSchemaHandler()->eraseTable($table1);
+        $this->assertSame(0, $driver->getQueryBuilder()->selectQuery('', ['schema1.table_to_erase'])->count());
+    }
+
+    public function testEraseTableWithSchemaForDefinedSchema(): void
+    {
+        $driver = $this->getDriver(['schema2', 'schema1'], 'schema1');
+
+        $table = $this->createTable($driver, 'table_to_erase');
+        $this->assertTrue($driver->getSchemaHandler()->hasTable('schema1.table_to_erase'));
+
+        $driver->getQueryBuilder()->insertQuery('table_to_erase')->columns('id')->values([[2], [3]])->run();
+        $this->assertSame(2, $driver->getQueryBuilder()->selectQuery('', ['table_to_erase'])->count());
+
+        $driver->getSchemaHandler()->eraseTable($table);
         $this->assertSame(0, $driver->getQueryBuilder()->selectQuery('', ['schema1.table_to_erase'])->count());
     }
 }

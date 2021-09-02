@@ -31,7 +31,7 @@ class AlterColumnsWithSchemaTest extends TestCase
 
         $this->db = new Database('default', '', $driver);
 
-        $this->dropAllTables();
+        $this->setUpSchemas();
     }
 
     public function schema(string $table): AbstractTable

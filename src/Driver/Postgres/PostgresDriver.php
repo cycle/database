@@ -27,6 +27,8 @@ use Throwable;
  */
 class PostgresDriver extends Driver
 {
+    public const PUBLIC_SCHEMA = 'public';
+
     /**
      * Cached list of primary keys associated with their table names. Used by InsertBuilder to
      * emulate last insert id.
@@ -34,6 +36,28 @@ class PostgresDriver extends Driver
      * @var array
      */
     private $primaryKeys = [];
+
+    /**
+     * Default schema for tables without schema
+     *
+     * @var string
+     */
+    private $defaultSchema;
+
+    /**
+     * Schemas to search tables in
+     *
+     * @var string
+     */
+    private $searchPath = [];
+
+    /**
+     * Available schemas. If array is empty any schemas can be used.
+     * If array is not empty, unknown schemas should throw an exception.
+     *
+     * @var array
+     */
+    private $availableSchemas = [];
 
     /**
      * @param array $options
@@ -52,6 +76,8 @@ class PostgresDriver extends Driver
                 new DeleteQuery()
             )
         );
+
+        $this->defineSchemas($this->options);
     }
 
     /**
@@ -63,13 +89,23 @@ class PostgresDriver extends Driver
     }
 
     /**
+     * Default schema for tables without schema
+     *
+     * @return string|null
+     */
+    public function getDefaultSchema(): ?string
+    {
+        return $this->defaultSchema;
+    }
+
+    /**
      * Get the schema on the connection.
      *
      * @return string[]
      */
-    public function getTableSchema(): array
+    public function getAvailableSchemas(): array
     {
-        return (array)($this->options['schema'] ?? ['public']);
+        return $this->availableSchemas;
     }
 
     /**
@@ -178,24 +214,28 @@ class PostgresDriver extends Driver
      */
     public function parseSchemaAndTable(string $name): array
     {
-        $schemas = $this->getTableSchema();
+        $schemas = $this->getAvailableSchemas();
 
-        if (strpos($name, '.') === false) {
-            $schema = null;
-            $table = $name;
-        } else {
+        $defaultSchema = $this->getDefaultSchema();
+        $schema = null;
+        $table = $name;
+
+        if (strpos($name, '.') !== false) {
             [$schema, $table] = explode('.', $name, 2);
         }
 
-        if (count($schemas) > 0) {
-            if ($schema && in_array($schema, $schemas)) {
-                return [$schema, $table];
+        if ($schema !== null && $schemas !== []) {
+            if ($schema === '$user') {
+                $schema = $this->options['username'];
             }
 
-            $schema = reset($schemas);
+            $schemas[] = $defaultSchema;
+            if (!in_array($schema, $schemas, true)) {
+                throw new DriverException("Schema `{$schema}` has not been defined.");
+            }
         }
 
-        return [$schema ?: 'public', $table];
+        return [$schema ?? $defaultSchema, $table];
     }
 
     /**
@@ -207,8 +247,8 @@ class PostgresDriver extends Driver
         $pdo = parent::createPDO();
         $pdo->exec("SET NAMES 'UTF-8'");
 
-        if (isset($this->options['schema'])) {
-            $schema = '"' . implode('", "', $this->getTableSchema()) . '"';
+        if ($this->searchPath !== [] && $this->searchPath !== ['public']) {
+            $schema = '"' . implode('", "', $this->searchPath) . '"';
             $pdo->exec("SET search_path TO {$schema}");
         }
 
@@ -237,5 +277,33 @@ class PostgresDriver extends Driver
         }
 
         return new StatementException($exception, $query);
+    }
+
+    /**
+     * Define schemas from config
+     */
+    private function defineSchemas(array $options): void
+    {
+        if (isset($options['schema'])) {
+            $this->availableSchemas = (array)$options['schema'];
+            if (($pos = array_search('$user', $this->availableSchemas)) !== false) {
+                $this->availableSchemas[$pos] = $options['username'] ?? '';
+            }
+
+            $this->searchPath = $this->availableSchemas;
+        }
+
+        $this->defaultSchema = $options['default_schema']
+            ?? $this->availableSchemas[0]
+            ?? static::PUBLIC_SCHEMA;
+
+        if ($this->defaultSchema === '$user') {
+            $this->defaultSchema = $options['username'] ?? '';
+        }
+
+        if (($index = array_search($this->defaultSchema, $this->searchPath)) !== false) {
+            unset($this->searchPath[$index]);
+        }
+        array_unshift($this->searchPath, $this->defaultSchema);
     }
 }

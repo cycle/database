@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Driver\Postgres;
 
+use Cycle\Database\Exception\DriverException;
 use PHPUnit\Framework\TestCase;
 
 class CreateTableWithSchema extends TestCase
@@ -21,26 +22,34 @@ class CreateTableWithSchema extends TestCase
     {
         parent::setUp();
 
-        $this->dropAllTables();
+        $this->setUpSchemas();
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        $this->dropUserSchema();
     }
 
     public function testCreatesWithPublicSchema(): void
     {
-        $driver = $this->getDriver();
+        $driver = $this->getDriver(null, '$user');
+        $this->createTable($driver, 'public.test');
         $this->createTable($driver, 'test');
         $this->createTable($driver, 'schema1.test');
 
         $this->assertSame([
-            'public.test'
+            'public.test', 'postgres.test', 'schema1.test'
         ], $driver->getSchemaHandler()->getTableNames());
     }
 
     public function testCreatesWithSingleSchema(): void
     {
         $driver = $this->getDriver('schema1');
+
         $this->createTable($driver, 'test');
         $this->createTable($driver, 'schema1.test1');
-        $this->createTable($driver, 'schema2.test2');
 
         $this->assertSame([
             'schema1.test',
@@ -60,5 +69,13 @@ class CreateTableWithSchema extends TestCase
             'schema1.test1',
             'schema2.test2',
         ], $driver->getSchemaHandler()->getTableNames());
+    }
+
+    public function testCreatesTableForNotDefinedSchemaShouldThrowAnException(): void
+    {
+        $this->expectException(DriverException::class);
+        $this->expectErrorMessage('Schema `schema3` has not been defined.');
+        $driver = $this->getDriver(['schema2', 'schema1']);
+        $this->createTable($driver, 'schema3.test1');
     }
 }

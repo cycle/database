@@ -23,16 +23,25 @@ trait Helpers
     {
         parent::setUp();
 
-        $this->dropAllTables();
+        $this->setUpSchemas();
     }
 
-    protected function dropAllTables(): void
+    protected function dropUserSchema(): void
     {
         $driver = $this->getDriver();
-        $schemas = ['public', 'schema1', 'schema2'];
+        $query = "SELECT schema_name FROM information_schema.schemata WHERE schema_name = 'postgres'";
+        if ($driver->query($query)->fetch()) {
+            $driver->query('DROP SCHEMA postgres CASCADE');
+        }
+    }
+
+    protected function setUpSchemas(): void
+    {
+        $driver = $this->getDriver();
+        $schemas = ['public', 'schema1', 'schema2', 'postgres'];
         foreach ($schemas as $schema) {
-            $query = "SELECT schema_name 
-                        FROM information_schema.schemata 
+            $query = "SELECT schema_name
+                        FROM information_schema.schemata
                         WHERE schema_name = '{$schema}'";
             if ($driver->query($query)->fetch()) {
                 $driver->query("DROP SCHEMA {$schema} CASCADE");
@@ -63,16 +72,20 @@ trait Helpers
         return $schema;
     }
 
-    private function getDriver($schema = null): DriverInterface
+    private function getDriver($schema = null, string $defaultSchema = null): DriverInterface
     {
         $options = [
             'connection' => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
-            'username' => 'postgres',
-            'password' => 'postgres'
+            'username'   => 'postgres',
+            'password'   => 'postgres'
         ];
 
         if ($schema) {
             $options['schema'] = $schema;
+        }
+
+        if ($defaultSchema) {
+            $options['default_schema'] = $defaultSchema;
         }
 
         $driver = new PostgresDriver($options);

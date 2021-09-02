@@ -36,10 +36,17 @@ class PostgresHandler extends Handler
      */
     public function getTableNames(string $prefix = ''): array
     {
+        $schemas = $this->driver->getAvailableSchemas();
+
         $query = "SELECT table_schema, table_name
             FROM information_schema.tables
-            WHERE table_schema in ('" . implode("','", $this->driver->getTableSchema()) . "')
-            AND table_type = 'BASE TABLE'";
+            WHERE table_type = 'BASE TABLE'";
+
+        if ($schemas !== []) {
+            $query .= " AND table_schema in ('" . implode("','", $schemas) . "')";
+        } else {
+            $query .= " AND table_schema !~ '^pg_.*' AND table_schema != 'information_schema'";
+        }
 
         $tables = [];
         foreach ($this->driver->query($query) as $row) {
@@ -85,7 +92,7 @@ class PostgresHandler extends Handler
     public function renameTable(string $table, string $name): void
     {
         // New table name should not contain a schema
-        [$schema, $name] = $this->driver->parseSchemaAndTable($name);
+        [, $name] = $this->driver->parseSchemaAndTable($name);
 
         parent::renameTable($table, $name);
     }

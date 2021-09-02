@@ -19,14 +19,81 @@ class DriverTest extends TestCase
 
         $driver->connect();
 
-        $this->assertSame(['public'], $driver->getTableSchema());
+        $this->assertSame('public', $driver->getDefaultSchema());
+        $this->assertSame([], $driver->getAvailableSchemas());
         $this->assertSame('"$user", public', $driver->query('SHOW search_path')->fetch()['search_path']);
+    }
+
+    public function testDefaultSchemaCanBeDefined(): void
+    {
+        $driver = new PostgresDriver([
+            'connection'     => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
+            'username'       => 'postgres',
+            'password'       => 'postgres',
+            'default_schema' => 'private'
+        ]);
+
+        $driver->connect();
+
+        $this->assertSame('private', $driver->getDefaultSchema());
+        $this->assertSame([], $driver->getAvailableSchemas());
+        $this->assertSame('private', $driver->query('SHOW search_path')->fetch()['search_path']);
+    }
+
+    public function testDefaultSchemaCanBeDefinedFromAvailableSchemas(): void
+    {
+        $driver = new PostgresDriver([
+            'connection' => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
+            'username'   => 'postgres',
+            'password'   => 'postgres',
+            'schema'     => 'private'
+        ]);
+
+        $driver->connect();
+
+        $this->assertSame('private', $driver->getDefaultSchema());
+        $this->assertSame(['private'], $driver->getAvailableSchemas());
+        $this->assertSame('private', $driver->query('SHOW search_path')->fetch()['search_path']);
+    }
+
+    public function testDefaultSchemaCanNotBeRedefinedFromAvailableSchemas(): void
+    {
+        $driver = new PostgresDriver([
+            'connection'     => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
+            'username'       => 'postgres',
+            'password'       => 'postgres',
+            'default_schema' => 'private',
+            'schema'         => ['test', 'private']
+        ]);
+
+        $driver->connect();
+
+        $this->assertSame('private', $driver->getDefaultSchema());
+        $this->assertSame(['test', 'private'], $driver->getAvailableSchemas());
+        $this->assertSame('private, test', $driver->query('SHOW search_path')->fetch()['search_path']);
+    }
+
+    public function testDefaultSchemaForCurrentUser(): void
+    {
+        $driver = new PostgresDriver([
+            'connection'     => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
+            'username'       => 'postgres',
+            'password'       => 'postgres',
+            'default_schema' => '$user',
+            'schema'         => ['test', 'private']
+        ]);
+
+        $driver->connect();
+
+        $this->assertSame('postgres', $driver->getDefaultSchema());
+        $this->assertSame(['test', 'private'], $driver->getAvailableSchemas());
+        $this->assertSame('postgres, test, private', $driver->query('SHOW search_path')->fetch()['search_path']);
     }
 
     /**
      * @dataProvider schemaProvider
      */
-    public function testIfSchemaOptionsPresentsUseIt($schema, $result): void
+    public function testIfSchemaOptionsPresentsUseIt($schema, $available, $result): void
     {
         $driver = new PostgresDriver([
             'connection' => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
@@ -35,18 +102,18 @@ class DriverTest extends TestCase
             'schema'     => $schema
         ]);
 
-        $this->assertSame((array)$schema, $driver->getTableSchema());
-
+        $this->assertSame($available, $driver->getAvailableSchemas());
         $driver->connect();
-
+        $this->assertSame($available[0], $driver->getDefaultSchema());
         $this->assertSame($result, $driver->query('SHOW search_path')->fetch()['search_path']);
     }
 
     public function schemaProvider()
     {
         return [
-            'string' => ['private', 'private'],
-            'array' => [['schema1', 'schema2'], 'schema1, schema2']
+            ['private', ['private'], 'private'],
+            [['schema1', 'schema2'], ['schema1', 'schema2'], 'schema1, schema2'],
+            [['$user', 'schema2'], ['postgres', 'schema2'], 'postgres, schema2']
         ];
     }
 }
