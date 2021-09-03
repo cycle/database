@@ -18,7 +18,6 @@ use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Query\DeleteQuery;
 use Cycle\Database\Query\QueryBuilder;
-use Cycle\Database\Query\SelectQuery;
 use Cycle\Database\Query\UpdateQuery;
 use Throwable;
 
@@ -27,6 +26,25 @@ use Throwable;
  */
 class PostgresDriver extends Driver
 {
+    /**
+     * Option key for default postgres schema name.
+     *
+     * @var non-empty-string
+     */
+    private const OPT_DEFAULT_SCHEMA = 'default_schema';
+
+    /**
+     * Option key for all available postgres schema names.
+     *
+     * @var non-empty-string
+     */
+    private const OPT_AVAILABLE_SCHEMAS = 'schema';
+
+    /**
+     * Default public schema name for all postgres connections.
+     *
+     * @var non-empty-string
+     */
     public const PUBLIC_SCHEMA = 'public';
 
     /**
@@ -153,7 +171,7 @@ class PostgresDriver extends Driver
      * @link http://en.wikipedia.org/wiki/Database_transaction
      * @link http://en.wikipedia.org/wiki/Isolation_(database_systems)
      *
-     * @param string $isolationLevel
+     * @param string|null $isolationLevel
      * @return bool
      */
     public function beginTransaction(string $isolationLevel = null): bool
@@ -161,9 +179,7 @@ class PostgresDriver extends Driver
         ++$this->transactionLevel;
 
         if ($this->transactionLevel === 1) {
-            if ($this->logger !== null) {
-                $this->logger->info('Begin transaction');
-            }
+            $this->logger?->info('Begin transaction');
 
             try {
                 $ok = $this->getPDO()->beginTransaction();
@@ -210,7 +226,7 @@ class PostgresDriver extends Driver
         $schema = null;
         $table = $name;
 
-        if (strpos($name, '.') !== false) {
+        if (str_contains($name, '.')) {
             [$schema, $table] = explode('.', $name, 2);
 
             if ($schema === '$user') {

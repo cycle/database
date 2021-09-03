@@ -81,9 +81,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     /** @var HandlerInterface */
     protected $schemaHandler;
 
-    /** @var CompilerInterface */
-    protected $queryCompiler;
-
     /** @var BuilderInterface */
     protected $queryBuilder;
 
@@ -99,12 +96,11 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     public function __construct(
         array $options,
         HandlerInterface $schemaHandler,
-        CompilerInterface $queryCompiler,
+        protected CompilerInterface $queryCompiler,
         BuilderInterface $queryBuilder
     ) {
         $this->schemaHandler = $schemaHandler->withDriver($this);
         $this->queryBuilder = $queryBuilder->withDriver($this);
-        $this->queryCompiler = $queryCompiler;
 
         $options['options'] = array_replace(
             static::DEFAULT_PDO_OPTIONS,
@@ -155,40 +151,30 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      *
      * @deprecated this method will be removed in a future releases.
      */
-    public function __call(string $name, array $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
-        switch ($name) {
-            case 'isProfiling':
-                return true;
-            case 'setProfiling':
-                return null;
-            case 'getSchema':
-                return $this->getSchemaHandler()->getSchema(
-                    $arguments[0],
-                    $arguments[1] ?? null
-                );
-            case 'tableNames':
-                return $this->getSchemaHandler()->getTableNames();
-            case 'hasTable':
-                return $this->getSchemaHandler()->hasTable($arguments[0]);
-            case 'identifier':
-                return $this->getQueryCompiler()->quoteIdentifier($arguments[0]);
-            case 'eraseData':
-                return $this->getSchemaHandler()->eraseTable(
-                    $this->getSchemaHandler()->getSchema($arguments[0])
-                );
-
-            case 'insertQuery':
-            case 'selectQuery':
-            case 'updateQuery':
-            case 'deleteQuery':
-                return call_user_func_array(
-                    [$this->queryBuilder, $name],
-                    $arguments
-                );
-        }
-
-        throw new DriverException("Undefined driver method `{$name}`");
+        return match($name) {
+            'isProfiling' => true,
+            'setProfiling' => null,
+            'getSchema' => $this->getSchemaHandler()->getSchema(
+                $arguments[0],
+                $arguments[1] ?? null
+            ),
+            'tableNames' => $this->getSchemaHandler()->getTableNames(),
+            'hasTable' => $this->getSchemaHandler()->hasTable($arguments[0]),
+            'identifier' => $this->getQueryCompiler()->quoteIdentifier($arguments[0]),
+            'eraseData' => $this->getSchemaHandler()->eraseTable(
+                $this->getSchemaHandler()->getSchema($arguments[0])
+            ),
+            'insertQuery',
+            'selectQuery',
+            'updateQuery',
+            'deleteQuery' => call_user_func_array(
+                [$this->queryBuilder, $name],
+                $arguments
+            ),
+            default => throw new DriverException("Undefined driver method `{$name}`")
+        };
     }
 
     /**
@@ -200,6 +186,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     public function getSource(): string
     {
+        // TODO should be optimized in future releases
         if (preg_match('/(?:dbname|database)=([^;]+)/i', $this->getDSN(), $matches)) {
             return $matches[1];
         }
@@ -249,9 +236,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     public function connect(): void
     {
-        if ($this->pdo === null) {
-            $this->pdo = $this->createPDO();
-        }
+        $this->pdo ??= $this->createPDO();
     }
 
     /**
@@ -274,9 +259,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
             $this->pdo = null;
         } catch (Throwable $e) {
             // disconnect error
-            if ($this->logger !== null) {
-                $this->logger->error($e->getMessage());
-            }
+            $this->logger?->error($e->getMessage());
         }
 
         $this->transactionLevel = 0;
@@ -332,9 +315,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     public function lastInsertID(string $sequence = null)
     {
         $result = $this->getPDO()->lastInsertId();
-        if ($this->logger !== null) {
-            $this->logger->debug("Insert ID: {$result}");
-        }
+        $this->logger?->debug("Insert ID: {$result}");
 
         return $result;
     }
@@ -346,7 +327,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * @link http://en.wikipedia.org/wiki/Database_transaction
      * @link http://en.wikipedia.org/wiki/Isolation_(database_systems)
      *
-     * @param string $isolationLevel
+     * @param string|null $isolationLevel
      * @return bool
      */
     public function beginTransaction(string $isolationLevel = null): bool
@@ -358,9 +339,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
                 $this->setIsolationLevel($isolationLevel);
             }
 
-            if ($this->logger !== null) {
-                $this->logger->info('Begin transaction');
-            }
+            $this->logger?->info('Begin transaction');
 
             try {
                 return $this->getPDO()->beginTransaction();
@@ -402,14 +381,12 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     {
         // Check active transaction
         if (!$this->getPDO()->inTransaction()) {
-            if ($this->logger !== null) {
-                $this->logger->warning(
-                    sprintf(
-                        'Attempt to commit a transaction that has not yet begun. Transaction level: %d',
-                        $this->transactionLevel
-                    )
-                );
-            }
+            $this->logger?->warning(
+                sprintf(
+                    'Attempt to commit a transaction that has not yet begun. Transaction level: %d',
+                    $this->transactionLevel
+                )
+            );
 
             if ($this->transactionLevel === 0) {
                 return false;
@@ -422,9 +399,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         --$this->transactionLevel;
 
         if ($this->transactionLevel === 0) {
-            if ($this->logger !== null) {
-                $this->logger->info('Commit transaction');
-            }
+            $this->logger?->info('Commit transaction');
 
             try {
                 return $this->getPDO()->commit();
@@ -449,14 +424,12 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     {
         // Check active transaction
         if (!$this->getPDO()->inTransaction()) {
-            if ($this->logger !== null) {
-                $this->logger->warning(
-                    sprintf(
-                        'Attempt to rollback a transaction that has not yet begun. Transaction level: %d',
-                        $this->transactionLevel
-                    )
-                );
-            }
+            $this->logger?->warning(
+                sprintf(
+                    'Attempt to rollback a transaction that has not yet begun. Transaction level: %d',
+                    $this->transactionLevel
+                )
+            );
 
             $this->transactionLevel = 0;
             return false;
@@ -465,9 +438,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         --$this->transactionLevel;
 
         if ($this->transactionLevel === 0) {
-            if ($this->logger !== null) {
-                $this->logger->info('Rollback transaction');
-            }
+            $this->logger?->info('Rollback transaction');
 
             try {
                 return $this->getPDO()->rollBack();
@@ -482,7 +453,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     public function identifier(string $identifier): string
     {
@@ -634,10 +605,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     protected function setIsolationLevel(string $level): void
     {
-        if ($this->logger !== null) {
-            $this->logger->info("Transaction isolation level '{$level}'");
-        }
-
+        $this->logger?->info("Transaction isolation level '{$level}'");
         $this->execute("SET TRANSACTION ISOLATION LEVEL {$level}");
     }
 
@@ -650,9 +618,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     protected function createSavepoint(int $level): void
     {
-        if ($this->logger !== null) {
-            $this->logger->info("Transaction: new savepoint 'SVP{$level}'");
-        }
+        $this->logger?->info("Transaction: new savepoint 'SVP{$level}'");
 
         $this->execute('SAVEPOINT ' . $this->identifier("SVP{$level}"));
     }
@@ -666,9 +632,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     protected function releaseSavepoint(int $level): void
     {
-        if ($this->logger !== null) {
-            $this->logger->info("Transaction: release savepoint 'SVP{$level}'");
-        }
+        $this->logger?->info("Transaction: release savepoint 'SVP{$level}'");
 
         $this->execute('RELEASE SAVEPOINT ' . $this->identifier("SVP{$level}"));
     }
@@ -682,9 +646,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     protected function rollbackSavepoint(int $level): void
     {
-        if ($this->logger !== null) {
-            $this->logger->info("Transaction: rollback savepoint 'SVP{$level}'");
-        }
+        $this->logger?->info("Transaction: rollback savepoint 'SVP{$level}'");
 
         $this->execute('ROLLBACK TO SAVEPOINT ' . $this->identifier("SVP{$level}"));
     }
