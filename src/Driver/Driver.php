@@ -153,7 +153,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     public function __call(string $name, array $arguments): mixed
     {
-        return match($name) {
+        return match ($name) {
             'isProfiling' => true,
             'setProfiling' => null,
             'getSchema' => $this->getSchemaHandler()->getSchema(
