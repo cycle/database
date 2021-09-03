@@ -58,7 +58,8 @@ class PostgresDriver extends Driver
     /**
      * Schemas to search tables in (search_path)
      *
-     * @var string
+     * @var string[]
+     * @psalm-var non-empty-array<non-empty-string>
      */
     private array $searchPath = [];
 
