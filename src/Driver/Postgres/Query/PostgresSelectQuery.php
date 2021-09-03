@@ -19,8 +19,9 @@ class PostgresSelectQuery extends SelectQuery
     /**
      * Apply distinct ON to the query.
      *
-     * @param string|FragmentInterface $distinctOn
-     * @return self|$this
+     * @param FragmentInterface|string $distinctOn
+     *
+     * @return $this|self
      */
     public function distinctOn($distinctOn): SelectQuery
     {

@@ -53,6 +53,7 @@ trait Helpers
 
     /**
      * @param AbstractTable $table
+     *
      * @return AbstractTable
      */
     protected function fetchSchema(AbstractTable $table): AbstractTable
@@ -76,8 +77,8 @@ trait Helpers
     {
         $options = [
             'connection' => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
-            'username'   => 'postgres',
-            'password'   => 'postgres'
+            'username' => 'postgres',
+            'password' => 'postgres',
         ];
 
         if ($schema) {

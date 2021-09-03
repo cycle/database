@@ -26,9 +26,9 @@ class TableTest extends \Cycle\Database\Tests\TableTest
         $this->assertSame(0, $table->count());
 
         $expected = [
-            'id'    => 'primary',
-            'name'  => 'text',
-            'value' => 'integer'
+            'id' => 'primary',
+            'name' => 'text',
+            'value' => 'integer',
         ];
         arsort($expected);
 
@@ -53,7 +53,7 @@ class TableTest extends \Cycle\Database\Tests\TableTest
                 ['Anton', 10],
                 ['Anton', 20],
                 ['Bob', 15],
-                ['Charlie', 10]
+                ['Charlie', 10],
             ]
         );
 
@@ -72,7 +72,7 @@ class TableTest extends \Cycle\Database\Tests\TableTest
                 ['Anton', 10],
                 ['Anton', 20],
                 ['Bob', 15],
-                ['Charlie', 10]
+                ['Charlie', 10],
             ]
         );
 

@@ -41,6 +41,7 @@ final class CompilerCache implements CompilerInterface
 
     /**
      * @param string $identifier
+     *
      * @return string
      */
     public function quoteIdentifier(string $identifier): string
@@ -52,6 +53,7 @@ final class CompilerCache implements CompilerInterface
      * @param QueryParameters   $params
      * @param string            $prefix
      * @param FragmentInterface $fragment
+     *
      * @return string
      */
     public function compile(QueryParameters $params, string $prefix, FragmentInterface $fragment): string
@@ -97,6 +99,7 @@ final class CompilerCache implements CompilerInterface
     /**
      * @param QueryParameters $params
      * @param array           $tokens
+     *
      * @return string
      */
     protected function hashInsertQuery(QueryParameters $params, array $tokens): string
@@ -145,6 +148,7 @@ final class CompilerCache implements CompilerInterface
     /**
      * @param QueryParameters $params
      * @param array           $tokens
+     *
      * @return string
      */
     protected function hashSelectQuery(QueryParameters $params, array $tokens): string
@@ -214,6 +218,7 @@ final class CompilerCache implements CompilerInterface
     /**
      * @param QueryParameters $params
      * @param array           $where
+     *
      * @return string
      */
     protected function hashWhere(QueryParameters $params, array $where): string
@@ -303,6 +308,7 @@ final class CompilerCache implements CompilerInterface
     /**
      * @param QueryParameters $params
      * @param array           $columns
+     *
      * @return string
      */
     protected function hashColumns(QueryParameters $params, array $columns): string
@@ -324,6 +330,7 @@ final class CompilerCache implements CompilerInterface
     /**
      * @param QueryParameters    $params
      * @param ParameterInterface $param
+     *
      * @return string
      */
     private function hashParam(QueryParameters $params, ParameterInterface $param): string

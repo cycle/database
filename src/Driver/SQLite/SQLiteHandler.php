@@ -48,6 +48,7 @@ class SQLiteHandler extends Handler
 
     /**
      * @param string $table
+     *
      * @return bool
      */
     public function hasTable(string $table): bool
@@ -60,6 +61,7 @@ class SQLiteHandler extends Handler
     /**
      * @param string      $table
      * @param string|null $prefix
+     *
      * @return AbstractTable
      */
     public function getSchema(string $table, string $prefix = null): AbstractTable
@@ -176,6 +178,7 @@ class SQLiteHandler extends Handler
      * Temporary table based on parent.
      *
      * @param AbstractTable $table
+     *
      * @return AbstractTable
      */
     protected function createTemporary(AbstractTable $table): AbstractTable
@@ -200,6 +203,7 @@ class SQLiteHandler extends Handler
      * Rebuild is required when columns or foreign keys are altered.
      *
      * @param AbstractTable $table
+     *
      * @return bool
      */
     private function requiresRebuild(AbstractTable $table): bool
@@ -255,6 +259,7 @@ class SQLiteHandler extends Handler
      *
      * @param AbstractTable $source
      * @param AbstractTable $target
+     *
      * @return array
      */
     private function createMapping(AbstractTable $source, AbstractTable $target): array

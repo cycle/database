@@ -137,6 +137,7 @@ final class State
 
     /**
      * @param string $name
+     *
      * @return bool
      */
     public function hasColumn(string $name): bool
@@ -146,6 +147,7 @@ final class State
 
     /**
      * @param array $columns
+     *
      * @return bool
      */
     public function hasIndex(array $columns = []): bool
@@ -155,6 +157,7 @@ final class State
 
     /**
      * @param array $columns
+     *
      * @return bool
      */
     public function hasForeignKey(array $columns): bool
@@ -190,9 +193,10 @@ final class State
      * Drop column from table schema.
      *
      * @param AbstractColumn $column
+     *
      * @return self
      */
-    public function forgetColumn(AbstractColumn $column): State
+    public function forgetColumn(AbstractColumn $column): self
     {
         foreach ($this->columns as $name => $columnSchema) {
             // todo: need better compare
@@ -239,7 +243,8 @@ final class State
 
     /**
      * @param string $name
-     * @return null|AbstractColumn
+     *
+     * @return AbstractColumn|null
      */
     public function findColumn(string $name): ?AbstractColumn
     {
@@ -256,7 +261,8 @@ final class State
      * Find index by it's columns or return null.
      *
      * @param array $columns
-     * @return null|AbstractIndex
+     *
+     * @return AbstractIndex|null
      */
     public function findIndex(array $columns): ?AbstractIndex
     {
@@ -273,7 +279,8 @@ final class State
      * Find foreign key by it's column or return null.
      *
      * @param array $columns
-     * @return null|AbstractForeignKey
+     *
+     * @return AbstractForeignKey|null
      */
     public function findForeignKey(array $columns): ?AbstractForeignKey
     {
@@ -319,7 +326,7 @@ final class State
      *
      * @return self
      */
-    public function syncState(State $source): self
+    public function syncState(self $source): self
     {
         $this->name = $source->name;
         $this->primaryKeys = $source->primaryKeys;

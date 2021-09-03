@@ -38,8 +38,8 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
 
     // Driver specific PDO options
     protected const DEFAULT_PDO_OPTIONS = [
-        PDO::ATTR_CASE             => PDO::CASE_NATURAL,
-        PDO::ATTR_ERRMODE          => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_CASE => PDO::CASE_NATURAL,
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_EMULATE_PREPARES => false,
     ];
 
@@ -51,25 +51,25 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     protected $options = [
         // allow reconnects
-        'reconnect'      => true,
+        'reconnect' => true,
 
         // all datetime objects will be converted relative to
         // this timezone (must match with DB timezone!)
-        'timezone'       => 'UTC',
+        'timezone' => 'UTC',
 
         // DSN
-        'connection'     => '',
-        'username'       => '',
-        'password'       => '',
+        'connection' => '',
+        'username' => '',
+        'password' => '',
 
         // pdo options
-        'options'        => [],
+        'options' => [],
 
         // enables query caching
-        'queryCache'     => true,
+        'queryCache' => true,
 
         // disable schema modifications
-        'readonlySchema' => false
+        'readonlySchema' => false,
     ];
 
     /** @var PDO|null */
@@ -135,10 +135,10 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     public function __debugInfo()
     {
         return [
-            'addr'      => $this->getDSN(),
-            'source'    => $this->getSource(),
+            'addr' => $this->getDSN(),
+            'source' => $this->getSource(),
             'connected' => $this->isConnected(),
-            'options'   => $this->options['options'],
+            'options' => $this->options['options'],
         ];
     }
 
@@ -147,13 +147,14 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      *
      * @param string $name
      * @param array  $arguments
+     *
      * @return mixed
      *
      * @deprecated this method will be removed in a future releases.
      */
     public function __call(string $name, array $arguments): mixed
     {
-        return match($name) {
+        return match ($name) {
             'isProfiling' => true,
             'setProfiling' => null,
             'getSchema' => $this->getSchemaHandler()->getSchema(
@@ -180,9 +181,9 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     /**
      * Get driver source database or file name.
      *
-     * @return string
-     *
      * @throws DriverException
+     *
+     * @return string
      */
     public function getSource(): string
     {
@@ -282,9 +283,10 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      *
      * @param string $statement
      * @param array  $parameters
-     * @return StatementInterface
      *
      * @throws StatementException
+     *
+     * @return StatementInterface
      */
     public function query(string $statement, array $parameters = []): StatementInterface
     {
@@ -296,9 +298,10 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      *
      * @param string $query
      * @param array  $parameters
-     * @return int
      *
      * @throws StatementException
+     *
+     * @return int
      */
     public function execute(string $query, array $parameters = []): int
     {
@@ -310,6 +313,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * such functionality may not work in some DBMS property (Postgres).
      *
      * @param string|null $sequence Name of the sequence object from which the ID should be returned.
+     *
      * @return mixed
      */
     public function lastInsertID(string $sequence = null)
@@ -328,6 +332,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * @link http://en.wikipedia.org/wiki/Isolation_(database_systems)
      *
      * @param string|null $isolationLevel
+     *
      * @return bool
      */
     public function beginTransaction(string $isolationLevel = null): bool
@@ -373,9 +378,9 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     /**
      * Commit the active database transaction.
      *
-     * @return bool
-     *
      * @throws StatementException
+     *
+     * @return bool
      */
     public function commitTransaction(): bool
     {
@@ -416,9 +421,9 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     /**
      * Rollback the active database transaction.
      *
-     * @return bool
-     *
      * @throws StatementException
+     *
+     * @return bool
      */
     public function rollbackTransaction(): bool
     {
@@ -467,9 +472,10 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * @param string    $query
      * @param iterable  $parameters
      * @param bool|null $retry
-     * @return StatementInterface
      *
      * @throws StatementException
+     *
+     * @return StatementInterface
      */
     protected function statement(
         string $query,
@@ -514,6 +520,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
 
     /**
      * @param string $query
+     *
      * @return PDOStatement
      */
     protected function prepare(string $query): PDOStatement
@@ -535,6 +542,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      *
      * @param PDOStatement $statement
      * @param iterable     $parameters
+     *
      * @return PDOStatement
      */
     protected function bindParameters(PDOStatement $statement, iterable $parameters): PDOStatement
@@ -570,9 +578,10 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * needed timezone.
      *
      * @param DateTimeInterface $value
-     * @return string
      *
      * @throws DriverException
+     *
+     * @return string
      */
     protected function formatDatetime(DateTimeInterface $value): string
     {
@@ -590,6 +599,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      *
      * @param Throwable $exception
      * @param string    $query
+     *
      * @return StatementException
      */
     abstract protected function mapException(
@@ -669,9 +679,9 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     /**
      * Get associated PDO connection. Must automatically connect if such connection does not exists.
      *
-     * @return PDO
-     *
      * @throws DriverException
+     *
+     * @return PDO
      */
     protected function getPDO(): PDO
     {

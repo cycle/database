@@ -44,8 +44,8 @@ class SQLiteTable extends AbstractTable
             $result[] = SQLiteColumn::createInstance(
                 $this->getFullName(),
                 $schema + [
-                    'quoted'     => $this->driver->quote($schema['name']),
-                    'identifier' => $this->driver->identifier($schema['name'])
+                    'quoted' => $this->driver->quote($schema['name']),
+                    'identifier' => $this->driver->identifier($schema['name']),
                 ],
                 $this->driver->getTimezone()
             );

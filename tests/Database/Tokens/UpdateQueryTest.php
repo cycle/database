@@ -34,20 +34,20 @@ class UpdateQueryTest extends TestCase
 
         $this->assertEquals(
             [
-                'table'  => 'table',
+                'table' => 'table',
                 'values' => [
-                    'name' => 'John'
+                    'name' => 'John',
                 ],
-                'where'  => [
+                'where' => [
                     [
                         'AND',
-                        ['name', '=', new Parameter('Antony')]
+                        ['name', '=', new Parameter('Antony')],
                     ],
                     [
                         'OR',
-                        ['id', '>', new Parameter(1)]
+                        ['id', '>', new Parameter(1)],
                     ],
-                ]
+                ],
             ],
             $delete->getTokens()
         );

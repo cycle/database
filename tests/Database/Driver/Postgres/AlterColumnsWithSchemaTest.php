@@ -17,8 +17,8 @@ use PHPUnit\Framework\TestCase;
 class AlterColumnsWithSchemaTest extends TestCase
 {
     use Helpers;
-    use TableAssertions;
     use Loggable;
+    use TableAssertions;
 
     /** @var Database */
     private $db;

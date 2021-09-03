@@ -51,9 +51,10 @@ class UpdateQuery extends ActiveQuery
      * Change target table.
      *
      * @param string $table Table name without prefix.
-     * @return self|$this
+     *
+     * @return $this|self
      */
-    public function in(string $table): UpdateQuery
+    public function in(string $table): self
     {
         $this->table = $table;
 
@@ -65,9 +66,10 @@ class UpdateQuery extends ActiveQuery
      * value to be set.
      *
      * @param array $values
-     * @return self|$this
+     *
+     * @return $this|self
      */
-    public function values(array $values): UpdateQuery
+    public function values(array $values): self
     {
         $this->values = $values;
 
@@ -79,9 +81,10 @@ class UpdateQuery extends ActiveQuery
      *
      * @param string $column
      * @param mixed  $value
-     * @return self|$this
+     *
+     * @return $this|self
      */
-    public function set(string $column, $value): UpdateQuery
+    public function set(string $column, $value): self
     {
         $this->values[$column] = $value;
 
@@ -117,9 +120,9 @@ class UpdateQuery extends ActiveQuery
     public function getTokens(): array
     {
         return [
-            'table'  => $this->table,
+            'table' => $this->table,
             'values' => $this->values,
-            'where'  => $this->whereTokens
+            'where' => $this->whereTokens,
         ];
     }
 }

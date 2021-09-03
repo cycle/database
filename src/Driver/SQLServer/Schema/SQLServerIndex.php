@@ -18,6 +18,7 @@ class SQLServerIndex extends AbstractIndex
     /**
      * @param string $table Table name.
      * @param array  $schema
+     *
      * @return SQLServerIndex
      */
     public static function createInstance(string $table, array $schema): self
@@ -28,7 +29,7 @@ class SQLServerIndex extends AbstractIndex
 
         foreach ($schema as $indexColumn) {
             $index->columns[] = $indexColumn['columnName'];
-            if (intval($indexColumn['isDescendingKey']) === 1) {
+            if ((int) ($indexColumn['isDescendingKey']) === 1) {
                 $index->sort[$indexColumn['columnName']] = 'DESC';
             }
         }

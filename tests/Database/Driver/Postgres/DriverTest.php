@@ -13,9 +13,9 @@ class DriverTest extends TestCase
     {
         $driver = new PostgresDriver([
             'connection' => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
-            'username'   => 'postgres',
-            'password'   => 'postgres',
-            'schema' => ['$user', 'public']
+            'username' => 'postgres',
+            'password' => 'postgres',
+            'schema' => ['$user', 'public'],
         ]);
 
         $driver->connect();
@@ -27,10 +27,10 @@ class DriverTest extends TestCase
     public function testDefaultSchemaCanBeDefined(): void
     {
         $driver = new PostgresDriver([
-            'connection'     => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
-            'username'       => 'postgres',
-            'password'       => 'postgres',
-            'default_schema' => 'private'
+            'connection' => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
+            'username' => 'postgres',
+            'password' => 'postgres',
+            'default_schema' => 'private',
         ]);
 
         $driver->connect();
@@ -43,9 +43,9 @@ class DriverTest extends TestCase
     {
         $driver = new PostgresDriver([
             'connection' => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
-            'username'   => 'postgres',
-            'password'   => 'postgres',
-            'schema'     => 'private'
+            'username' => 'postgres',
+            'password' => 'postgres',
+            'schema' => 'private',
         ]);
 
         $driver->connect();
@@ -57,11 +57,11 @@ class DriverTest extends TestCase
     public function testDefaultSchemaCanNotBeRedefinedFromAvailableSchemas(): void
     {
         $driver = new PostgresDriver([
-            'connection'     => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
-            'username'       => 'postgres',
-            'password'       => 'postgres',
+            'connection' => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
+            'username' => 'postgres',
+            'password' => 'postgres',
             'default_schema' => 'private',
-            'schema'         => ['test', 'private']
+            'schema' => ['test', 'private'],
         ]);
 
         $driver->connect();
@@ -73,11 +73,11 @@ class DriverTest extends TestCase
     public function testDefaultSchemaForCurrentUser(): void
     {
         $driver = new PostgresDriver([
-            'connection'     => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
-            'username'       => 'postgres',
-            'password'       => 'postgres',
+            'connection' => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
+            'username' => 'postgres',
+            'password' => 'postgres',
             'default_schema' => '$user',
-            'schema'         => ['test', 'private']
+            'schema' => ['test', 'private'],
         ]);
 
         $driver->connect();
@@ -93,9 +93,9 @@ class DriverTest extends TestCase
     {
         $driver = new PostgresDriver([
             'connection' => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
-            'username'   => 'postgres',
-            'password'   => 'postgres',
-            'schema'     => $schema
+            'username' => 'postgres',
+            'password' => 'postgres',
+            'schema' => $schema,
         ]);
 
         $this->assertSame($available, $driver->getSearchSchemas());
@@ -108,7 +108,7 @@ class DriverTest extends TestCase
         return [
             ['private', ['private'], 'private'],
             [['schema1', 'schema2'], ['schema1', 'schema2'], 'schema1, schema2'],
-            [['$user', 'schema2'], ['postgres', 'schema2'], '"$user", schema2']
+            [['$user', 'schema2'], ['postgres', 'schema2'], '"$user", schema2'],
         ];
     }
 }

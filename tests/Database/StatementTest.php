@@ -51,8 +51,8 @@ abstract class StatementTest extends BaseTest
         for ($i = 0; $i < 10; $i++) {
             $table->insertOne(
                 [
-                    'name'  => md5((string)$i),
-                    'value' => $i * 10
+                    'name' => md5((string)$i),
+                    'value' => $i * 10,
                 ]
             );
         }
@@ -241,7 +241,7 @@ abstract class StatementTest extends BaseTest
 
         $this->assertEquals(
             [
-                ['id' => 1, 'name' => md5('0'), 'value' => 0]
+                ['id' => 1, 'name' => md5('0'), 'value' => 0],
             ],
             $result->fetchAll()
         );
@@ -254,7 +254,7 @@ abstract class StatementTest extends BaseTest
 
         $result = $table->limit(1)->fetchAll(StatementInterface::FETCH_OBJ);
 
-        $this->assertTrue(is_object($result[0]));
+        $this->assertIsObject($result[0]);
     }
 
     public function testClose(): void

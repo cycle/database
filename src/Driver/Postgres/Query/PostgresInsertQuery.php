@@ -33,6 +33,7 @@ class PostgresInsertQuery extends InsertQuery
     /**
      * @param DriverInterface $driver
      * @param string|null     $prefix
+     *
      * @return QueryInterface
      */
     public function withDriver(DriverInterface $driver, string $prefix = null): QueryInterface
@@ -50,6 +51,7 @@ class PostgresInsertQuery extends InsertQuery
      * Set returning column. If not set, the driver will detect PK automatically.
      *
      * @param string $column
+     *
      * @return $this
      */
     public function returning(string $column): self
@@ -86,10 +88,10 @@ class PostgresInsertQuery extends InsertQuery
     public function getTokens(): array
     {
         return [
-            'table'   => $this->table,
-            'return'  => $this->getPrimaryKey(),
+            'table' => $this->table,
+            'return' => $this->getPrimaryKey(),
             'columns' => $this->columns,
-            'values'  => $this->values
+            'values' => $this->values,
         ];
     }
 

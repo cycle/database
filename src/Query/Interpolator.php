@@ -25,6 +25,7 @@ final class Interpolator
      *
      * @param string   $query
      * @param iterable $parameters
+     *
      * @return string
      */
     public static function interpolate(string $query, iterable $parameters = []): string
@@ -58,6 +59,7 @@ final class Interpolator
      * Get parameter value.
      *
      * @param mixed $parameter
+     *
      * @return string
      */
     protected static function resolveValue($parameter): string
@@ -103,6 +105,7 @@ final class Interpolator
      * @param string $search
      * @param string $replace
      * @param string $subject
+     *
      * @return string
      */
     private static function replaceOnce(

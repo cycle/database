@@ -30,7 +30,7 @@ class SelectQueryTest extends \Cycle\Database\Tests\SelectQueryTest
 
         $this->assertSameParameters(
             [
-                20
+                20,
             ],
             $select
         );

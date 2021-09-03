@@ -26,6 +26,7 @@ class PostgresCompiler extends Compiler implements CachingCompilerInterface
      * @param QueryParameters $params
      * @param Quoter          $q
      * @param array           $tokens
+     *
      * @return string
      */
     protected function insertQuery(QueryParameters $params, Quoter $q, array $tokens): string
@@ -68,6 +69,7 @@ class PostgresCompiler extends Compiler implements CachingCompilerInterface
      * @param Quoter          $q
      * @param int|null        $limit
      * @param int|null        $offset
+     *
      * @return string
      */
     protected function limit(QueryParameters $params, Quoter $q, int $limit = null, int $offset = null): string

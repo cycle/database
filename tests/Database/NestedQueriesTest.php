@@ -42,7 +42,7 @@ abstract class NestedQueriesTest extends BaseTest
             [
                 'user',
                 true,
-                100
+                100,
             ],
             $select
         );
@@ -71,7 +71,7 @@ abstract class NestedQueriesTest extends BaseTest
             [
                 'user',
                 true,
-                100
+                100,
             ],
             $select
         );
@@ -103,7 +103,7 @@ abstract class NestedQueriesTest extends BaseTest
                 'user',
                 true,
                 12,
-                100
+                100,
             ],
             $select
         );
@@ -135,7 +135,7 @@ abstract class NestedQueriesTest extends BaseTest
                 'user',
                 true,
                 12,
-                100
+                100,
             ],
             $select
         );
@@ -165,12 +165,11 @@ abstract class NestedQueriesTest extends BaseTest
             [
                 'user',
                 true,
-                100
+                100,
             ],
             $select
         );
     }
-
 
     public function testSubQueryPrefixedWithExpression(): void
     {
@@ -197,12 +196,11 @@ abstract class NestedQueriesTest extends BaseTest
             [
                 'user',
                 true,
-                100
+                100,
             ],
             $select
         );
     }
-
 
     public function testSubQueryPrefixedWithExpressionId(): void
     {
@@ -231,7 +229,7 @@ abstract class NestedQueriesTest extends BaseTest
                 'user',
                 true,
                 0,
-                100
+                100,
             ],
             $select
         );
@@ -263,7 +261,7 @@ abstract class NestedQueriesTest extends BaseTest
                 'user',
                 100,
                 'admin',
-                800
+                800,
             ],
             $select
         );
@@ -295,7 +293,7 @@ abstract class NestedQueriesTest extends BaseTest
                 'user',
                 100,
                 'admin',
-                800
+                800,
             ],
             $select
         );
@@ -337,7 +335,7 @@ abstract class NestedQueriesTest extends BaseTest
                 800,
                 8,
                 9,
-                10
+                10,
             ],
             $select
         );
@@ -381,7 +379,7 @@ abstract class NestedQueriesTest extends BaseTest
                 'open',
                 'user',
                 true,
-                100
+                100,
             ],
             $select
         );

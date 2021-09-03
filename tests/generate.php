@@ -20,22 +20,22 @@ ini_set('display_errors', '1');
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 $databases = [
-    'sqlite'    => [
+    'sqlite' => [
         'namespace' => 'Cycle\Database\Tests\Driver\SQLite',
-        'directory' => __DIR__ . '/Database/Driver/SQLite/'
+        'directory' => __DIR__ . '/Database/Driver/SQLite/',
     ],
-    'mysql'     => [
+    'mysql' => [
         'namespace' => 'Cycle\Database\Tests\Driver\MySQL',
-        'directory' => __DIR__ . '/Database/Driver/MySQL/'
+        'directory' => __DIR__ . '/Database/Driver/MySQL/',
     ],
-    'postgres'  => [
+    'postgres' => [
         'namespace' => 'Cycle\Database\Tests\Driver\Postgres',
-        'directory' => __DIR__ . '/Database/Driver/Postgres/'
+        'directory' => __DIR__ . '/Database/Driver/Postgres/',
     ],
     'sqlserver' => [
         'namespace' => 'Cycle\Database\Tests\Driver\SQLServer',
-        'directory' => __DIR__ . '/Database/Driver/SQLServer/'
-    ]
+        'directory' => __DIR__ . '/Database/Driver/SQLServer/',
+    ],
 ];
 
 echo "Generating test classes for all database types...\n";

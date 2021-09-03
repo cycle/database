@@ -301,6 +301,7 @@ class PostgresTable extends AbstractTable
      * Return table name without schema
      *
      * @param string $name
+     *
      * @return string
      */
     protected function removeSchemaFromTableName(string $name): string

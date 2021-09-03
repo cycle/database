@@ -59,9 +59,10 @@ final class Quoter
     /**
      * @param string $prefix
      * @param bool   $preserveAliases
+     *
      * @return Quoter
      */
-    public function withPrefix(string $prefix, bool $preserveAliases = false): Quoter
+    public function withPrefix(string $prefix, bool $preserveAliases = false): self
     {
         $quoter = clone $this;
         $quoter->prefix = $prefix;
@@ -88,6 +89,7 @@ final class Quoter
      * Quote identifier without registering an alias.
      *
      * @param string $identifier
+     *
      * @return string
      */
     public function identifier(string $identifier): string
@@ -118,6 +120,7 @@ final class Quoter
      *                           value.
      * @param bool   $isTable    Set to true to let quote method know that identifier is related to
      *                           table name.
+     *
      * @return mixed|string
      */
     public function quote(string $identifier, bool $isTable = false): string
@@ -146,6 +149,7 @@ final class Quoter
      * Quoting columns and tables in complex expression.
      *
      * @param string $identifier
+     *
      * @return string
      */
     private function expression(string $identifier): string
@@ -172,6 +176,7 @@ final class Quoter
      * @param string $identifier
      * @param string $alias
      * @param bool   $isTable
+     *
      * @return string
      */
     private function aliasing(string $identifier, string $alias, bool $isTable): string
@@ -205,6 +210,7 @@ final class Quoter
      * Processing pair of table and column.
      *
      * @param string $identifier
+     *
      * @return string
      */
     private function paired(string $identifier): string
@@ -224,6 +230,7 @@ final class Quoter
      *
      * @param string $identifier
      * @param bool   $isTable
+     *
      * @return string
      */
     private function unpaired(string $identifier, bool $isTable): string
@@ -245,6 +252,7 @@ final class Quoter
      * Check if string has expression markers.
      *
      * @param string $string
+     *
      * @return bool
      */
     private function hasExpressions(string $string): bool

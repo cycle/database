@@ -16,7 +16,7 @@ namespace Cycle\Database;
  */
 interface ForeignKeyInterface
 {
-    public const CASCADE   = 'CASCADE';
+    public const CASCADE = 'CASCADE';
     public const NO_ACTION = 'NO ACTION';
 
     /**

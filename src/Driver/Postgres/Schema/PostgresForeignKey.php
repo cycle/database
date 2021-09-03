@@ -19,6 +19,7 @@ class PostgresForeignKey extends AbstractForeignKey
      * @param string $table
      * @param string $tablePrefix
      * @param array  $schema
+     *
      * @return PostgresForeignKey
      */
     public static function createInstance(string $table, string $tablePrefix, array $schema): self
@@ -37,6 +38,7 @@ class PostgresForeignKey extends AbstractForeignKey
 
     /**
      * @param array $columns
+     *
      * @return array
      */
     private function normalizeKeys(array $columns): array

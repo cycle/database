@@ -142,9 +142,9 @@ final class DatabaseManager implements
     /**
      * Get all databases.
      *
-     * @return Database[]
-     *
      * @throws DatabaseException
+     *
+     * @return Database[]
      */
     public function getDatabases(): array
     {
@@ -167,9 +167,10 @@ final class DatabaseManager implements
      * Get Database associated with a given database alias or automatically created one.
      *
      * @param string|null $database
-     * @return Database|DatabaseInterface
      *
      * @throws DBALException
+     *
+     * @return Database|DatabaseInterface
      */
     public function database(string $database = null): DatabaseInterface
     {
@@ -214,9 +215,9 @@ final class DatabaseManager implements
     /**
      * Get instance of every available driver/connection.
      *
-     * @return Driver[]
-     *
      * @throws DBALException
+     *
+     * @return Driver[]
      */
     public function getDrivers(): array
     {
@@ -239,9 +240,10 @@ final class DatabaseManager implements
      * Get driver instance by it's name or automatically create one.
      *
      * @param string $driver
-     * @return DriverInterface
      *
      * @throws DBALException
+     *
+     * @return DriverInterface
      */
     public function driver(string $driver): DriverInterface
     {
@@ -271,11 +273,12 @@ final class DatabaseManager implements
      *
      * @param string          $name
      * @param DriverInterface $driver
-     * @return self
      *
      * @throws DBALException
+     *
+     * @return self
      */
-    public function addDriver(string $name, DriverInterface $driver): DatabaseManager
+    public function addDriver(string $name, DriverInterface $driver): self
     {
         if (isset($this->drivers[$name])) {
             throw new DBALException("Connection '{$name}' already exists");
@@ -288,9 +291,10 @@ final class DatabaseManager implements
 
     /**
      * @param DatabasePartial $database
-     * @return Database
      *
      * @throws DBALException
+     *
+     * @return Database
      */
     protected function makeDatabase(DatabasePartial $database): Database
     {

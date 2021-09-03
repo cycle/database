@@ -40,7 +40,7 @@ class CreateTableWithSchema extends TestCase
         $this->createTable($driver, 'schema1.test');
 
         $this->assertSame([
-            'public.test', 'postgres.test', 'schema1.test'
+            'public.test', 'postgres.test', 'schema1.test',
         ], $driver->getSchemaHandler()->getTableNames());
     }
 

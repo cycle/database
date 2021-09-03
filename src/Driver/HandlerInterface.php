@@ -23,46 +23,48 @@ use Cycle\Database\Schema\AbstractTable;
 interface HandlerInterface
 {
     //Foreign key modification behaviours
-    public const DROP_FOREIGN_KEYS   = 0b000000001;
+    public const DROP_FOREIGN_KEYS = 0b000000001;
     public const CREATE_FOREIGN_KEYS = 0b000000010;
-    public const ALTER_FOREIGN_KEYS  = 0b000000100;
+    public const ALTER_FOREIGN_KEYS = 0b000000100;
 
     //All foreign keys related operations
     public const DO_FOREIGN_KEYS = self::DROP_FOREIGN_KEYS | self::ALTER_FOREIGN_KEYS | self::CREATE_FOREIGN_KEYS;
 
     //Column modification behaviours
-    public const DROP_COLUMNS   = 0b000001000;
+    public const DROP_COLUMNS = 0b000001000;
     public const CREATE_COLUMNS = 0b000010000;
-    public const ALTER_COLUMNS  = 0b000100000;
+    public const ALTER_COLUMNS = 0b000100000;
 
     //All columns related operations
     public const DO_COLUMNS = self::DROP_COLUMNS | self::ALTER_COLUMNS | self::CREATE_COLUMNS;
 
     //Index modification behaviours
-    public const DROP_INDEXES   = 0b001000000;
+    public const DROP_INDEXES = 0b001000000;
     public const CREATE_INDEXES = 0b010000000;
-    public const ALTER_INDEXES  = 0b100000000;
+    public const ALTER_INDEXES = 0b100000000;
 
     //All index related operations
     public const DO_INDEXES = self::DROP_INDEXES | self::ALTER_INDEXES | self::CREATE_INDEXES;
 
     //General purpose schema operations
     public const DO_RENAME = 0b10000000000;
-    public const DO_DROP   = 0b01000000000;
+    public const DO_DROP = 0b01000000000;
 
     //All operations
     public const DO_ALL = self::DO_FOREIGN_KEYS | self::DO_INDEXES | self::DO_COLUMNS | self::DO_DROP | self::DO_RENAME;
 
     /**
      * @param DriverInterface $driver
+     *
      * @return HandlerInterface
      */
-    public function withDriver(DriverInterface $driver): HandlerInterface;
+    public function withDriver(DriverInterface $driver): self;
 
     /**
      * Get all available table names.
      *
      * @param string|null $prefix
+     *
      * @return array
      */
     public function getTableNames(string $prefix = ''): array;
@@ -71,6 +73,7 @@ interface HandlerInterface
      * Check if given table exists in database.
      *
      * @param string $table
+     *
      * @return bool
      */
     public function hasTable(string $table): bool;
@@ -80,9 +83,10 @@ interface HandlerInterface
      *
      * @param string      $table
      * @param string|null $prefix
-     * @return AbstractTable
      *
      * @throws HandlerException
+     *
+     * @return AbstractTable
      */
     public function getSchema(string $table, string $prefix = null): AbstractTable;
 
@@ -90,6 +94,7 @@ interface HandlerInterface
      * Create table based on a given schema.
      *
      * @param AbstractTable $table
+     *
      * @throws HandlerException
      */
     public function createTable(AbstractTable $table): void;
@@ -98,6 +103,7 @@ interface HandlerInterface
      * Truncate table.
      *
      * @param AbstractTable $table
+     *
      * @throws HandlerException
      */
     public function eraseTable(AbstractTable $table): void;
@@ -106,6 +112,7 @@ interface HandlerInterface
      * Drop table from database.
      *
      * @param AbstractTable $table
+     *
      * @throws HandlerException
      */
     public function dropTable(AbstractTable $table): void;

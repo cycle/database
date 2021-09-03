@@ -143,6 +143,7 @@ interface DriverInterface
      *
      * @param mixed $value
      * @param int   $type Parameter type.
+     *
      * @return string
      */
     public function quote(
@@ -155,9 +156,10 @@ interface DriverInterface
      *
      * @param string $statement
      * @param array  $parameters
-     * @return StatementInterface
      *
      * @throws StatementException
+     *
+     * @return StatementInterface
      */
     public function query(string $statement, array $parameters = []): StatementInterface;
 
@@ -166,9 +168,10 @@ interface DriverInterface
      *
      * @param string $query
      * @param array  $parameters
-     * @return int
      *
      * @throws StatementException
+     *
+     * @return int
      */
     public function execute(string $query, array $parameters = []): int;
 
@@ -178,6 +181,7 @@ interface DriverInterface
      *
      * @param string|null $sequence Name of the sequence object from which the ID should be
      *                              returned.
+     *
      * @return mixed
      */
     public function lastInsertID(string $sequence = null);

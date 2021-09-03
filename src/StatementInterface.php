@@ -35,6 +35,7 @@ interface StatementInterface extends \Traversable
      * Must return the next row of a result set.
      *
      * @param int $mode
+     *
      * @return mixed
      */
     public function fetch(int $mode = self::FETCH_ASSOC);
@@ -43,6 +44,7 @@ interface StatementInterface extends \Traversable
      * Must return a single column from the next row of a result set.
      *
      * @param int $columnNumber Optional column number.
+     *
      * @return mixed
      */
     public function fetchColumn(int $columnNumber = null);
@@ -51,6 +53,7 @@ interface StatementInterface extends \Traversable
      * Fetch all rows.
      *
      * @param int $mode Fetch mode.
+     *
      * @return array
      */
     public function fetchAll(int $mode = self::FETCH_ASSOC): array;

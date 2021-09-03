@@ -57,9 +57,10 @@ class Expression implements FragmentInterface
 
     /**
      * @param array $an_array
+     *
      * @return Expression
      */
-    public static function __set_state(array $an_array): Expression
+    public static function __set_state(array $an_array): self
     {
         return new self(
             $an_array['expression'] ?? $an_array['statement'],
@@ -82,7 +83,7 @@ class Expression implements FragmentInterface
     {
         return [
             'expression' => $this->expression,
-            'parameters' => $this->parameters
+            'parameters' => $this->parameters,
         ];
     }
 }

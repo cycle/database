@@ -33,9 +33,9 @@ class InsertQueryTest extends TestCase
 
         $this->assertEquals(
             [
-                'table'   => 'table',
+                'table' => 'table',
                 'columns' => ['name', 'value'],
-                'values'  => [new Parameter(['Antony', 1])]
+                'values' => [new Parameter(['Antony', 1])],
             ],
             $insert->getTokens()
         );

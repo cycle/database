@@ -66,7 +66,7 @@ abstract class SelectQueryTest extends BaseTest
         $this->assertSameQuery('SELECT * FROM {table} WHERE {id} = ?', $select);
         $this->assertSameParameters(
             [
-                1
+                1,
             ],
             $select
         );
@@ -86,7 +86,7 @@ abstract class SelectQueryTest extends BaseTest
         $this->assertSameParameters(
             [
                 'test',
-                1
+                1,
             ],
             $select
         );
@@ -107,7 +107,7 @@ abstract class SelectQueryTest extends BaseTest
         $this->assertSameParameters(
             [
                 'test',
-                1
+                1,
             ],
             $select
         );
@@ -125,7 +125,7 @@ abstract class SelectQueryTest extends BaseTest
                 1,
                 2,
                 3,
-                4
+                4,
             ],
             $select
         );
@@ -154,7 +154,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $this->assertSameParameters(
             [
                 'Antony',
-                123
+                123,
             ],
             $select
         );
@@ -176,7 +176,6 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             [
                 100,
                 'Antony',
-
             ],
             $select
         );
@@ -250,7 +249,6 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             $select
         );
     }
-
 
     public function testSelectWithSimpleWhereNotNull(): void
     {
@@ -428,7 +426,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             [
                 'Anton',
                 10,
-                1000
+                1000,
             ],
             $select
         );
@@ -512,8 +510,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 [
                     'name' => [
                         'like' => 'Anton',
-                        '!='   => 'Antony'
-                    ]
+                        '!=' => 'Antony',
+                    ],
                 ]
             );
 
@@ -531,8 +529,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             ->where(
                 [
                     'value' => [
-                        'between' => [1, 2]
-                    ]
+                        'between' => [1, 2],
+                    ],
                 ]
             );
 
@@ -550,8 +548,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             ->where(
                 [
                     'value' => [
-                        'not between' => [1, 2]
-                    ]
+                        'not between' => [1, 2],
+                    ],
                 ]
             );
 
@@ -572,8 +570,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             ->where(
                 [
                     'value' => [
-                        'between' => [1]
-                    ]
+                        'between' => [1],
+                    ],
                 ]
             );
     }
@@ -585,8 +583,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             ->from(['users'])
             ->where(
                 [
-                    'name'  => 'Anton',
-                    'value' => 1
+                    'name' => 'Anton',
+                    'value' => 1,
                 ]
             );
 
@@ -634,8 +632,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 [
                     '@or' => [
                         ['value' => 1],
-                        ['value' => ['>' => 12]]
-                    ]
+                        ['value' => ['>' => 12]],
+                    ],
                 ]
             );
 
@@ -655,8 +653,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 [
                     '@or' => [
                         ['value' => 1],
-                        ['value' => ['>' => 12]]
-                    ]
+                        ['value' => ['>' => 12]],
+                    ],
                 ]
             );
 
@@ -676,8 +674,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 [
                     '@and' => [
                         ['value' => 1],
-                        ['value' => ['>' => 12]]
-                    ]
+                        ['value' => ['>' => 12]],
+                    ],
                 ]
             );
 
@@ -686,7 +684,6 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             $select
         );
     }
-
 
     public function testOrShortWhereAND(): void
     {
@@ -698,8 +695,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 [
                     '@and' => [
                         ['value' => 1],
-                        ['value' => ['>' => 12]]
-                    ]
+                        ['value' => ['>' => 12]],
+                    ],
                 ]
             );
 
@@ -719,7 +716,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             ->from(['users'])
             ->where(
                 [
-                    'status' => ['active', 'blocked']
+                    'status' => ['active', 'blocked'],
                 ]
             );
     }
@@ -850,7 +847,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             ->orderBy(
                 [
                     'value' => SelectQuery::SORT_ASC,
-                    'name'  => SelectQuery::SORT_DESC
+                    'name' => SelectQuery::SORT_DESC,
                 ]
             );
 
@@ -998,7 +995,6 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             $select
         );
     }
-
 
     public function testAllColumns2(): void
     {
@@ -1411,8 +1407,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 [
                     'name' => [
                         'like' => 'Anton',
-                        '!='   => 'Antony'
-                    ]
+                        '!=' => 'Antony',
+                    ],
                 ]
             );
 
@@ -1429,8 +1425,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                                  ->having(
                                      [
                                          'value' => [
-                                             'between' => [1, 2]
-                                         ]
+                                             'between' => [1, 2],
+                                         ],
                                      ]
                                  );
 
@@ -1447,8 +1443,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                                  ->having(
                                      [
                                          'value' => [
-                                             'not between' => [1, 2]
-                                         ]
+                                             'not between' => [1, 2],
+                                         ],
                                      ]
                                  );
 
@@ -1468,12 +1464,11 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                                  ->having(
                                      [
                                          'value' => [
-                                             'between' => [1]
-                                         ]
+                                             'between' => [1],
+                                         ],
                                      ]
                                  );
     }
-
 
     public function testHavingShortHavingMultiple(): void
     {
@@ -1481,8 +1476,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                                  ->from(['users'])
                                  ->having(
                                      [
-                                         'name'  => 'Anton',
-                                         'value' => 1
+                                         'name' => 'Anton',
+                                         'value' => 1,
                                      ]
                                  );
 
@@ -1527,8 +1522,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                                      [
                                          '@or' => [
                                              ['value' => 1],
-                                             ['value' => ['>' => 12]]
-                                         ]
+                                             ['value' => ['>' => 12]],
+                                         ],
                                      ]
                                  );
 
@@ -1547,8 +1542,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                                      [
                                          '@or' => [
                                              ['value' => 1],
-                                             ['value' => ['>' => 12]]
-                                         ]
+                                             ['value' => ['>' => 12]],
+                                         ],
                                      ]
                                  );
 
@@ -1567,8 +1562,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                                      [
                                          '@and' => [
                                              ['value' => 1],
-                                             ['value' => ['>' => 12]]
-                                         ]
+                                             ['value' => ['>' => 12]],
+                                         ],
                                      ]
                                  );
 
@@ -1587,8 +1582,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                                      [
                                          '@and' => [
                                              ['value' => 1],
-                                             ['value' => ['>' => 12]]
-                                         ]
+                                             ['value' => ['>' => 12]],
+                                         ],
                                      ]
                                  );
 
@@ -1611,7 +1606,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
         $this->assertSameParameters(
             [
-                10
+                10,
             ],
             $select
         );
@@ -1630,12 +1625,11 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $this->assertSameParameters(
             [
                 10,
-                20
+                20,
             ],
             $select
         );
     }
-
 
     public function testOffsetNoLimit(): void
     {
@@ -1648,7 +1642,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
         $this->assertSameParameters(
             [
-                20
+                20,
             ],
             $select
         );
@@ -1671,7 +1665,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $this->assertSameParameters(
             [
                 10,
-                20
+                20,
             ],
             $select
         );
@@ -1846,7 +1840,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $select = $this->db('prefixed', 'prefix_')->select()->from(['users'])
                        ->where(
                            [
-                               'balance' => ['>' => new Expression('users.origin_balance')]
+                               'balance' => ['>' => new Expression('users.origin_balance')],
                            ]
                        );
 
@@ -1878,7 +1872,6 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             $select
         );
     }
-
 
     public function testGroupByExpressionWithPrefix(): void
     {
@@ -1941,7 +1934,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                        ->from(['users'])
                        ->where(
                            [
-                               'status' => ['IN' => ['active', 'blocked']]
+                               'status' => ['IN' => ['active', 'blocked']],
                            ]
                        );
     }
@@ -1975,7 +1968,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                                  ->from(['users'])
                                  ->where(
                                      [
-                                         'status' => ['IN' => $p]
+                                         'status' => ['IN' => $p],
                                      ]
                                  );
 
@@ -2256,7 +2249,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                                  ->on(
                                      [
                                          'p.user_id' => 'users.id',
-                                         'p.public'  => new Parameter(true)
+                                         'p.public' => new Parameter(true),
                                      ]
                                  );
 
@@ -2275,7 +2268,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                        ->on(
                            [
                                'p.user_id' => 'users.id',
-                               'p.public'  => new Parameter(true)
+                               'p.public' => new Parameter(true),
                            ]
                        );
 
@@ -2294,7 +2287,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                        ->on(
                            [
                                'p.user_id' => 'users.id',
-                               'p.public'  => new Parameter(true)
+                               'p.public' => new Parameter(true),
                            ]
                        );
 
@@ -2313,7 +2306,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                        ->on(
                            [
                                'p.user_id' => 'u.id',
-                               'p.public'  => new Parameter(true)
+                               'p.public' => new Parameter(true),
                            ]
                        );
 
@@ -2422,7 +2415,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $this->assertSameParameters(
             [
                 'Antony',
-                10
+                10,
             ],
             $select
         );
@@ -2448,7 +2441,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 101,
                 102,
                 103,
-                104
+                104,
             ],
             $select
         );
@@ -2475,7 +2468,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 102,
                 600,
                 103,
-                104
+                104,
             ],
             $select
         );
@@ -2507,7 +2500,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 1,
                 2,
                 3,
-                4
+                4,
             ],
             $select
         );
@@ -2537,7 +2530,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 1,
                 2,
                 3,
-                4
+                4,
             ],
             $select
         );

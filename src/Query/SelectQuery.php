@@ -31,13 +31,13 @@ class SelectQuery extends ActiveQuery implements
     IteratorAggregate,
     PaginableInterface
 {
-    use TokenTrait;
-    use WhereTrait;
     use HavingTrait;
     use JoinTrait;
+    use TokenTrait;
+    use WhereTrait;
 
     // sort directions
-    public const SORT_ASC  = 'ASC';
+    public const SORT_ASC = 'ASC';
     public const SORT_DESC = 'DESC';
 
     /** @var array */
@@ -52,7 +52,7 @@ class SelectQuery extends ActiveQuery implements
     /** @var array */
     protected $columns = ['*'];
 
-    /** @var string[][]|FragmentInterface[][] */
+    /** @var FragmentInterface[][]|string[][] */
     protected $orderBy = [];
 
     /** @var array */
@@ -82,11 +82,12 @@ class SelectQuery extends ActiveQuery implements
     /**
      * Mark query to return only distinct results.
      *
-     * @param bool|string|FragmentInterface $distinct You are only allowed to use string value for
+     * @param bool|FragmentInterface|string $distinct You are only allowed to use string value for
      *                                                Postgres databases.
-     * @return self|$this
+     *
+     * @return $this|self
      */
-    public function distinct($distinct = true): SelectQuery
+    public function distinct($distinct = true): self
     {
         $this->distinct = $distinct;
 
@@ -97,10 +98,11 @@ class SelectQuery extends ActiveQuery implements
      * Set table names SELECT query should be performed for. Table names can be provided with
      * specified alias (AS construction).
      *
-     * @param array|string|mixed $tables
-     * @return self|$this
+     * @param array|mixed|string $tables
+     *
+     * @return $this|self
      */
-    public function from($tables): SelectQuery
+    public function from($tables): self
     {
         $this->tables = $this->fetchIdentifiers(func_get_args());
 
@@ -119,10 +121,11 @@ class SelectQuery extends ActiveQuery implements
      * Set columns should be fetched as result of SELECT query. Columns can be provided with
      * specified alias (AS construction).
      *
-     * @param array|string|mixed $columns
-     * @return self|$this
+     * @param array|mixed|string $columns
+     *
+     * @return $this|self
      */
-    public function columns($columns): SelectQuery
+    public function columns($columns): self
     {
         $this->columns = $this->fetchIdentifiers(func_get_args());
 
@@ -140,9 +143,9 @@ class SelectQuery extends ActiveQuery implements
     /**
      * Select entities for the following update.
      *
-     * @return self|$this
+     * @return $this|self
      */
-    public function forUpdate(): SelectQuery
+    public function forUpdate(): self
     {
         $this->forUpdate = true;
 
@@ -158,11 +161,12 @@ class SelectQuery extends ActiveQuery implements
      *      'name' => SelectQuery::SORT_ASC
      * ]);
      *
-     * @param string|array $expression
+     * @param array|string $expression
      * @param string       $direction Sorting direction, ASC|DESC.
-     * @return self|$this
+     *
+     * @return $this|self
      */
-    public function orderBy($expression, $direction = self::SORT_ASC): SelectQuery
+    public function orderBy($expression, $direction = self::SORT_ASC): self
     {
         if (!is_array($expression)) {
             $this->addOrder($expression, $direction);
@@ -180,9 +184,10 @@ class SelectQuery extends ActiveQuery implements
      * Column or expression to group query by.
      *
      * @param string $expression
-     * @return self|$this
+     *
+     * @return $this|self
      */
-    public function groupBy($expression): SelectQuery
+    public function groupBy($expression): self
     {
         $this->groupBy[] = $expression;
 
@@ -193,9 +198,10 @@ class SelectQuery extends ActiveQuery implements
      * Add select query to be united with.
      *
      * @param FragmentInterface $query
-     * @return self|$this
+     *
+     * @return $this|self
      */
-    public function union(FragmentInterface $query): SelectQuery
+    public function union(FragmentInterface $query): self
     {
         $this->unionTokens[] = ['', $query];
 
@@ -207,9 +213,9 @@ class SelectQuery extends ActiveQuery implements
      *
      * @param FragmentInterface $query
      *
-     * @return self|$this
+     * @return $this|self
      */
-    public function unionAll(FragmentInterface $query): SelectQuery
+    public function unionAll(FragmentInterface $query): self
     {
         $this->unionTokens[] = ['ALL', $query];
 
@@ -221,9 +227,10 @@ class SelectQuery extends ActiveQuery implements
      * only changes pagination window. Set to 0 to disable limiting.
      *
      * @param int|null $limit
-     * @return self|$this
+     *
+     * @return $this|self
      */
-    public function limit(int $limit = null): SelectQuery
+    public function limit(int $limit = null): self
     {
         $this->limit = $limit;
 
@@ -243,9 +250,10 @@ class SelectQuery extends ActiveQuery implements
      * changes pagination window.
      *
      * @param int|null $offset
-     * @return self|$this
+     *
+     * @return $this|self
      */
-    public function offset(int $offset = null): SelectQuery
+    public function offset(int $offset = null): self
     {
         $this->offset = $offset;
 
@@ -317,6 +325,7 @@ class SelectQuery extends ActiveQuery implements
      * Count number of rows in query. Limit, offset, order by, group by values will be ignored.
      *
      * @param string $column Column to count by (every column by default).
+     *
      * @return int
      */
     public function count(string $column = '*'): int
@@ -338,6 +347,7 @@ class SelectQuery extends ActiveQuery implements
 
     /**
      * @param string $column
+     *
      * @return mixed
      */
     public function avg(string $column)
@@ -347,6 +357,7 @@ class SelectQuery extends ActiveQuery implements
 
     /**
      * @param string $column
+     *
      * @return mixed
      */
     public function max(string $column)
@@ -356,6 +367,7 @@ class SelectQuery extends ActiveQuery implements
 
     /**
      * @param string $column
+     *
      * @return mixed
      */
     public function min(string $column)
@@ -365,6 +377,7 @@ class SelectQuery extends ActiveQuery implements
 
     /**
      * @param string $column
+     *
      * @return mixed
      */
     public function sum(string $column)
@@ -412,26 +425,27 @@ class SelectQuery extends ActiveQuery implements
     {
         return [
             'forUpdate' => $this->forUpdate,
-            'from'      => $this->tables,
-            'join'      => $this->joinTokens,
-            'columns'   => $this->columns,
-            'distinct'  => $this->distinct,
-            'where'     => $this->whereTokens,
-            'having'    => $this->havingTokens,
-            'groupBy'   => $this->groupBy,
-            'orderBy'   => array_values($this->orderBy),
-            'limit'     => $this->limit,
-            'offset'    => $this->offset,
-            'union'     => $this->unionTokens,
+            'from' => $this->tables,
+            'join' => $this->joinTokens,
+            'columns' => $this->columns,
+            'distinct' => $this->distinct,
+            'where' => $this->whereTokens,
+            'having' => $this->havingTokens,
+            'groupBy' => $this->groupBy,
+            'orderBy' => array_values($this->orderBy),
+            'limit' => $this->limit,
+            'offset' => $this->offset,
+            'union' => $this->unionTokens,
         ];
     }
 
     /**
-     * @param string|FragmentInterface $field
+     * @param FragmentInterface|string $field
      * @param string                   $order Sorting direction, ASC|DESC.
-     * @return self|$this
+     *
+     * @return $this|self
      */
-    private function addOrder($field, string $order): SelectQuery
+    private function addOrder($field, string $order): self
     {
         if (!is_string($field)) {
             $this->orderBy[] = [$field, $order];
@@ -444,6 +458,7 @@ class SelectQuery extends ActiveQuery implements
     /**
      * @param string $method
      * @param string $column
+     *
      * @return mixed
      */
     private function runAggregate(string $method, string $column)

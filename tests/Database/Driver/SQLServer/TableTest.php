@@ -30,7 +30,7 @@ class TableTest extends \Cycle\Database\Tests\TableTest
                 ['Anton', 10],
                 ['John', 20],
                 ['Bob', 15],
-                ['Charlie', 10]
+                ['Charlie', 10],
             ]
         );
 
@@ -58,7 +58,7 @@ class TableTest extends \Cycle\Database\Tests\TableTest
                 ['Anton', 10],
                 ['John', 20],
                 ['Bob', 15],
-                ['Charlie', 10]
+                ['Charlie', 10],
             ]
         );
 
