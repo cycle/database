@@ -15,12 +15,12 @@ class DriverTest extends TestCase
             'connection' => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
             'username'   => 'postgres',
             'password'   => 'postgres',
+            'schema' => ['$user', 'public']
         ]);
 
         $driver->connect();
 
-        $this->assertSame('public', $driver->getDefaultSchema());
-        $this->assertSame([], $driver->getAvailableSchemas());
+        $this->assertSame(['postgres', 'public'], $driver->getSearchSchemas());
         $this->assertSame('"$user", public', $driver->query('SHOW search_path')->fetch()['search_path']);
     }
 
@@ -35,8 +35,7 @@ class DriverTest extends TestCase
 
         $driver->connect();
 
-        $this->assertSame('private', $driver->getDefaultSchema());
-        $this->assertSame([], $driver->getAvailableSchemas());
+        $this->assertSame(['private'], $driver->getSearchSchemas());
         $this->assertSame('private', $driver->query('SHOW search_path')->fetch()['search_path']);
     }
 
@@ -51,8 +50,7 @@ class DriverTest extends TestCase
 
         $driver->connect();
 
-        $this->assertSame('private', $driver->getDefaultSchema());
-        $this->assertSame(['private'], $driver->getAvailableSchemas());
+        $this->assertSame(['private'], $driver->getSearchSchemas());
         $this->assertSame('private', $driver->query('SHOW search_path')->fetch()['search_path']);
     }
 
@@ -68,8 +66,7 @@ class DriverTest extends TestCase
 
         $driver->connect();
 
-        $this->assertSame('private', $driver->getDefaultSchema());
-        $this->assertSame(['test', 'private'], $driver->getAvailableSchemas());
+        $this->assertSame(['private', 'test'], $driver->getSearchSchemas());
         $this->assertSame('private, test', $driver->query('SHOW search_path')->fetch()['search_path']);
     }
 
@@ -85,9 +82,8 @@ class DriverTest extends TestCase
 
         $driver->connect();
 
-        $this->assertSame('postgres', $driver->getDefaultSchema());
-        $this->assertSame(['test', 'private'], $driver->getAvailableSchemas());
-        $this->assertSame('postgres, test, private', $driver->query('SHOW search_path')->fetch()['search_path']);
+        $this->assertSame(['postgres', 'test', 'private'], $driver->getSearchSchemas());
+        $this->assertSame('"$user", test, private', $driver->query('SHOW search_path')->fetch()['search_path']);
     }
 
     /**
@@ -102,9 +98,8 @@ class DriverTest extends TestCase
             'schema'     => $schema
         ]);
 
-        $this->assertSame($available, $driver->getAvailableSchemas());
+        $this->assertSame($available, $driver->getSearchSchemas());
         $driver->connect();
-        $this->assertSame($available[0], $driver->getDefaultSchema());
         $this->assertSame($result, $driver->query('SHOW search_path')->fetch()['search_path']);
     }
 
@@ -113,7 +108,7 @@ class DriverTest extends TestCase
         return [
             ['private', ['private'], 'private'],
             [['schema1', 'schema2'], ['schema1', 'schema2'], 'schema1, schema2'],
-            [['$user', 'schema2'], ['postgres', 'schema2'], 'postgres, schema2']
+            [['$user', 'schema2'], ['postgres', 'schema2'], '"$user", schema2']
         ];
     }
 }

@@ -35,29 +35,22 @@ class PostgresDriver extends Driver
      *
      * @var array
      */
-    private $primaryKeys = [];
+    private array $primaryKeys = [];
 
     /**
-     * Default schema for tables without schema
+     * Schemas to search tables in (search_path)
      *
      * @var string
      */
-    private $defaultSchema;
+    private array $searchPath = [];
 
     /**
      * Schemas to search tables in
      *
-     * @var string
+     * @var string[]
+     * @psalm-var non-empty-array<non-empty-string>
      */
-    private $searchPath = [];
-
-    /**
-     * Available schemas. If array is empty any schemas can be used.
-     * If array is not empty, unknown schemas should throw an exception.
-     *
-     * @var array
-     */
-    private $availableSchemas = [];
+    private array $searchSchemas = [];
 
     /**
      * @param array $options
@@ -89,23 +82,23 @@ class PostgresDriver extends Driver
     }
 
     /**
-     * Default schema for tables without schema
-     *
-     * @return string|null
-     */
-    public function getDefaultSchema(): ?string
-    {
-        return $this->defaultSchema;
-    }
-
-    /**
-     * Get the schema on the connection.
+     * Schemas to search tables in
      *
      * @return string[]
      */
-    public function getAvailableSchemas(): array
+    public function getSearchSchemas(): array
     {
-        return $this->availableSchemas;
+        return $this->searchSchemas;
+    }
+
+    /**
+     * Check if schemas are defined
+     *
+     * @return bool
+     */
+    public function shouldUseDefinedSchemas(): bool
+    {
+        return $this->searchSchemas !== [];
     }
 
     /**
@@ -214,28 +207,18 @@ class PostgresDriver extends Driver
      */
     public function parseSchemaAndTable(string $name): array
     {
-        $schemas = $this->getAvailableSchemas();
-
-        $defaultSchema = $this->getDefaultSchema();
         $schema = null;
         $table = $name;
 
         if (strpos($name, '.') !== false) {
             [$schema, $table] = explode('.', $name, 2);
-        }
 
-        if ($schema !== null && $schemas !== []) {
             if ($schema === '$user') {
                 $schema = $this->options['username'];
             }
-
-            $schemas[] = $defaultSchema;
-            if (!in_array($schema, $schemas, true)) {
-                throw new DriverException("Schema `{$schema}` has not been defined.");
-            }
         }
 
-        return [$schema ?? $defaultSchema, $table];
+        return [$schema ?? $this->searchSchemas[0], $table];
     }
 
     /**
@@ -247,9 +230,10 @@ class PostgresDriver extends Driver
         $pdo = parent::createPDO();
         $pdo->exec("SET NAMES 'UTF-8'");
 
-        if ($this->searchPath !== [] && $this->searchPath !== ['public']) {
+        if ($this->searchPath !== []) {
             $schema = '"' . implode('", "', $this->searchPath) . '"';
             $pdo->exec("SET search_path TO {$schema}");
+            $this->searchPath = [];
         }
 
         return $pdo;
@@ -284,26 +268,18 @@ class PostgresDriver extends Driver
      */
     private function defineSchemas(array $options): void
     {
-        if (isset($options['schema'])) {
-            $this->availableSchemas = (array)$options['schema'];
-            if (($pos = array_search('$user', $this->availableSchemas)) !== false) {
-                $this->availableSchemas[$pos] = $options['username'] ?? '';
-            }
+        $options[self::OPT_AVAILABLE_SCHEMAS] = (array)($options[self::OPT_AVAILABLE_SCHEMAS] ?? []);
 
-            $this->searchPath = $this->availableSchemas;
-        }
-
-        $this->defaultSchema = $options['default_schema']
-            ?? $this->availableSchemas[0]
+        $defaultSchema = $options[self::OPT_DEFAULT_SCHEMA]
+            ?? $options[self::OPT_AVAILABLE_SCHEMAS][0]
             ?? static::PUBLIC_SCHEMA;
 
-        if ($this->defaultSchema === '$user') {
-            $this->defaultSchema = $options['username'] ?? '';
-        }
+        $this->searchSchemas = $this->searchPath = array_values(array_unique(
+            [$defaultSchema, ...$options[self::OPT_AVAILABLE_SCHEMAS]]
+        ));
 
-        if (($index = array_search($this->defaultSchema, $this->searchPath)) !== false) {
-            unset($this->searchPath[$index]);
+        if (($pos = array_search('$user', $this->searchSchemas, true)) !== false) {
+            $this->searchSchemas[$pos] = $options['username'];
         }
-        array_unshift($this->searchPath, $this->defaultSchema);
     }
 }

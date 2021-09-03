@@ -36,14 +36,12 @@ class PostgresHandler extends Handler
      */
     public function getTableNames(string $prefix = ''): array
     {
-        $schemas = $this->driver->getAvailableSchemas();
-
         $query = "SELECT table_schema, table_name
             FROM information_schema.tables
             WHERE table_type = 'BASE TABLE'";
 
-        if ($schemas !== []) {
-            $query .= " AND table_schema in ('" . implode("','", $schemas) . "')";
+        if ($this->driver->shouldUseDefinedSchemas()) {
+            $query .= " AND table_schema in ('" . implode("','", $this->driver->getSearchSchemas()) . "')";
         } else {
             $query .= " AND table_schema !~ '^pg_.*' AND table_schema != 'information_schema'";
         }
