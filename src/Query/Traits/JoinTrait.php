@@ -91,7 +91,7 @@ trait JoinTrait
             'on'    => []
         ];
 
-        return call_user_func_array([$this, 'on'], array_slice(func_get_args(), 2));
+        return $on === null ? $this : $this->on($on);
     }
 
     /**
