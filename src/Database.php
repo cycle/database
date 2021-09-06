@@ -145,12 +145,7 @@ final class Database implements DatabaseInterface, InjectableInterface
         $schemaHandler = $this->getDriver(self::READ)->getSchemaHandler();
 
         $result = [];
-        foreach ($schemaHandler->getTableNames() as $table) {
-            if ($this->prefix && strpos($table, $this->prefix) !== 0) {
-                // logical partitioning
-                continue;
-            }
-
+        foreach ($schemaHandler->getTableNames($this->prefix) as $table) {
             $result[] = new Table($this, substr($table, strlen($this->prefix)));
         }
 

@@ -24,11 +24,18 @@ interface TableInterface
     public function exists(): bool;
 
     /**
-     * Store specific table name (with included prefix).
+     * Store specific table name (with included prefix and without schema).
      *
      * @return string
      */
     public function getName(): string;
+
+    /**
+     * Store specific table name (with included prefix and schema).
+     *
+     * @return string
+     */
+    public function getFullName(): string;
 
     /**
      * Array of columns dedicated to primary index. Attention, this methods will ALWAYS return

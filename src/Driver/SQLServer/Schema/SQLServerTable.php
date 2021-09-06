@@ -49,10 +49,10 @@ class SQLServerTable extends AbstractTable
             . 'WHERE [table_name] = ?';
 
         $result = [];
-        foreach ($this->driver->query($query, [$this->getName()]) as $schema) {
+        foreach ($this->driver->query($query, [$this->getFullName()]) as $schema) {
             //Column initialization needs driver to properly resolve enum type
             $result[] = SQLServerColumn::createInstance(
-                $this->getName(),
+                $this->getFullName(),
                 $schema,
                 $this->driver
             );
@@ -80,14 +80,14 @@ class SQLServerTable extends AbstractTable
             . 'ORDER BY [indexes].[name], [indexes].[index_id], [columns].[index_column_id]';
 
         $result = $indexes = [];
-        foreach ($this->driver->query($query, [$this->getName()]) as $index) {
+        foreach ($this->driver->query($query, [$this->getFullName()]) as $index) {
             //Collecting schemas first
             $indexes[$index['indexName']][] = $index;
         }
 
         foreach ($indexes as $name => $schema) {
             //Once all columns are aggregated we can finally create an index
-            $result[] = SQLServerIndex::createInstance($this->getName(), $schema);
+            $result[] = SQLServerIndex::createInstance($this->getFullName(), $schema);
         }
 
         return $result;
@@ -98,7 +98,7 @@ class SQLServerTable extends AbstractTable
      */
     protected function fetchReferences(): array
     {
-        $query = $this->driver->query('sp_fkeys @fktable_name = ?', [$this->getName()]);
+        $query = $this->driver->query('sp_fkeys @fktable_name = ?', [$this->getFullName()]);
 
         // join keys together
         $fks = [];
@@ -117,7 +117,7 @@ class SQLServerTable extends AbstractTable
         $result = [];
         foreach ($fks as $schema) {
             $result[] = SQlServerForeignKey::createInstance(
-                $this->getName(),
+                $this->getFullName(),
                 $this->getPrefix(),
                 $schema
             );
@@ -143,7 +143,7 @@ class SQLServerTable extends AbstractTable
             . ' [indexes].[index_id], [columns].[index_column_id]';
 
         $result = [];
-        foreach ($this->driver->query($query, [$this->getName()]) as $schema) {
+        foreach ($this->driver->query($query, [$this->getFullName()]) as $schema) {
             $result[] = $schema['columnName'];
         }
 
@@ -155,7 +155,7 @@ class SQLServerTable extends AbstractTable
      */
     protected function createColumn(string $name): AbstractColumn
     {
-        return new SQLServerColumn($this->getName(), $name, $this->driver->getTimezone());
+        return new SQLServerColumn($this->getFullName(), $name, $this->driver->getTimezone());
     }
 
     /**
@@ -163,7 +163,7 @@ class SQLServerTable extends AbstractTable
      */
     protected function createIndex(string $name): AbstractIndex
     {
-        return new SQLServerIndex($this->getName(), $name);
+        return new SQLServerIndex($this->getFullName(), $name);
     }
 
     /**
@@ -171,6 +171,6 @@ class SQLServerTable extends AbstractTable
      */
     protected function createForeign(string $name): AbstractForeignKey
     {
-        return new SQlServerForeignKey($this->getName(), $this->getPrefix(), $name);
+        return new SQlServerForeignKey($this->getFullName(), $this->getPrefix(), $name);
     }
 }

@@ -18,6 +18,9 @@ use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Schema\AbstractTable;
 
+/**
+ * @property PostgresDriver $driver
+ */
 class PostgresHandler extends Handler
 {
     /**
@@ -31,14 +34,25 @@ class PostgresHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function getTableNames(): array
+    public function getTableNames(string $prefix = ''): array
     {
-        $query = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'
-          AND table_type = 'BASE TABLE'";
+        $query = "SELECT table_schema, table_name
+            FROM information_schema.tables
+            WHERE table_type = 'BASE TABLE'";
+
+        if ($this->driver->shouldUseDefinedSchemas()) {
+            $query .= " AND table_schema in ('" . implode("','", $this->driver->getSearchSchemas()) . "')";
+        } else {
+            $query .= " AND table_schema !~ '^pg_.*' AND table_schema != 'information_schema'";
+        }
 
         $tables = [];
         foreach ($this->driver->query($query) as $row) {
-            $tables[] = $row['table_name'];
+            if ($prefix !== '' && strpos($row['table_name'], $prefix) !== 0) {
+                continue;
+            }
+
+            $tables[] = $row['table_schema'] . '.' . $row['table_name'];
         }
 
         return $tables;
@@ -47,13 +61,17 @@ class PostgresHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function hasTable(string $name): bool
+    public function hasTable(string $table): bool
     {
-        return (bool)$this->driver->query(
-            "SELECT COUNT(table_name) FROM information_schema.tables WHERE table_schema = 'public'
-          AND table_type = 'BASE TABLE' AND table_name = ?",
-            [$name]
-        )->fetchColumn();
+        [$schema, $name] = $this->driver->parseSchemaAndTable($table);
+
+        $query = "SELECT COUNT(table_name)
+            FROM information_schema.tables
+            WHERE table_schema = ?
+            AND table_type = 'BASE TABLE'
+            AND table_name = ?";
+
+        return (bool)$this->driver->query($query, [$schema, $name])->fetchColumn();
     }
 
     /**
@@ -62,8 +80,19 @@ class PostgresHandler extends Handler
     public function eraseTable(AbstractTable $table): void
     {
         $this->driver->execute(
-            "TRUNCATE TABLE {$this->driver->identifier($table->getName())}"
+            "TRUNCATE TABLE {$this->driver->identifier($table->getFullName())}"
         );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function renameTable(string $table, string $name): void
+    {
+        // New table name should not contain a schema
+        [, $name] = $this->driver->parseSchemaAndTable($name);
+
+        parent::renameTable($table, $name);
     }
 
     /**

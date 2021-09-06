@@ -18,6 +18,11 @@ use Cycle\Database\Driver\DriverInterface;
 
 abstract class DatabaseTest extends BaseTest
 {
+    public function tearDown(): void
+    {
+        $this->dropDatabase($this->db());
+    }
+
     public function testConnect(): void
     {
         $this->database->getDriver()->connect();

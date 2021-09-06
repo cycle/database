@@ -43,7 +43,7 @@ abstract class InsertQueryTest extends BaseTest
         $insert = $this->db()->insert('table')->values([]);
 
         $this->assertSameQuery(
-            "INSERT INTO {table} DEFAULT VALUES",
+            'INSERT INTO {table} DEFAULT VALUES',
             (string)$insert
         );
     }
@@ -63,7 +63,7 @@ abstract class InsertQueryTest extends BaseTest
         $insert = $this->database->insert()->into('table')->values([]);
 
         $this->assertSameQuery(
-            "INSERT INTO {table} DEFAULT VALUES",
+            'INSERT INTO {table} DEFAULT VALUES',
             $insert
         );
     }

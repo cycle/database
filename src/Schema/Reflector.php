@@ -47,8 +47,8 @@ final class Reflector
      */
     public function addTable(AbstractTable $table): void
     {
-        $this->tables[$table->getName()] = $table;
-        $this->dependencies[$table->getName()] = $table->getDependencies();
+        $this->tables[$table->getFullName()] = $table;
+        $this->dependencies[$table->getFullName()] = $table->getDependencies();
 
         $this->collectDrivers();
     }

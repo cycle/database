@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests;
 
+use Cycle\Database\Tests\Traits\Loggable;
+use Cycle\Database\Tests\Traits\TableAssertions;
 use PHPUnit\Framework\TestCase;
 use Cycle\Database\Database;
 use Cycle\Database\Driver\Driver;
@@ -19,15 +21,14 @@ use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Injection\ParameterInterface;
 use Cycle\Database\Query\ActiveQuery;
 use Cycle\Database\Query\QueryParameters;
-use Cycle\Database\Schema\AbstractColumn;
-use Cycle\Database\Schema\AbstractForeignKey;
-use Cycle\Database\Schema\AbstractIndex;
 use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\Schema\Comparator;
-use Cycle\Database\Tests\Utils\TestLogger;
 
 abstract class BaseTest extends TestCase
 {
+    use TableAssertions;
+    use Loggable;
+
     public const DRIVER = null;
 
     /** @var array */
@@ -35,9 +36,6 @@ abstract class BaseTest extends TestCase
 
     /** @var array */
     public static $driverCache = [];
-
-    /** @var TestLogger */
-    public static $logger;
 
     /** @var Driver */
     protected $driver;
@@ -59,19 +57,22 @@ abstract class BaseTest extends TestCase
         if (!isset($this->driver)) {
             $class = $config['driver'];
 
-            $this->driver = new $class(
-                [
-                    'connection' => $config['conn'],
-                    'username'   => $config['user'],
-                    'password'   => $config['pass'],
-                    'options'    => [],
-                    'queryCache' => true
-                ]
-            );
+            $options = [
+                'connection' => $config['conn'],
+                'username'   => $config['user'],
+                'password'   => $config['pass'],
+                'options'    => [],
+                'queryCache' => true
+            ];
+
+            if (isset($config['schema'])) {
+                $options['schema'] = $config['schema'];
+            }
+
+            $this->driver = new $class($options);
         }
 
-        static::$logger = static::$logger ?? new TestLogger();
-        $this->driver->setLogger(static::$logger);
+        $this->setUpLogger($this->driver);
 
         if (self::$config['debug']) {
             $this->enableProfiling();
@@ -97,16 +98,6 @@ abstract class BaseTest extends TestCase
         return new Database($name, $prefix, $driver);
     }
 
-    protected function enableProfiling(): void
-    {
-        static::$logger->enable();
-    }
-
-    protected function disableProfiling(): void
-    {
-        static::$logger->disable();
-    }
-
     /**
      * Send sample query in a form where all quotation symbols replaced with { and }.
      *
@@ -122,7 +113,7 @@ abstract class BaseTest extends TestCase
         //Preparing query
         $query = str_replace(
             ['{', '}'],
-            explode('.', $this->db()->getDriver()->identifier('.')),
+            explode('\a', $this->db()->getDriver()->identifier('\a')),
             $query
         );
 
@@ -158,210 +149,13 @@ abstract class BaseTest extends TestCase
         }
     }
 
-    protected function assertSameAsInDB(AbstractTable $current): void
-    {
-        $source = $current->getState();
-        $target = $this->fetchSchema($current)->getState();
-
-        // tesing changes
-        $this->assertSame(
-            $source->getName(),
-            $target->getName(),
-            'Table name changed'
-        );
-
-        $this->assertSame(
-            $source->getPrimaryKeys(),
-            $target->getPrimaryKeys(),
-            'Primary keys changed'
-        );
-
-        $this->assertSame(
-            count($source->getColumns()),
-            count($target->getColumns()),
-            'Column number has changed'
-        );
-
-        $this->assertSame(
-            count($source->getIndexes()),
-            count($target->getIndexes()),
-            'Index number has changed'
-        );
-
-        $this->assertSame(
-            count($source->getForeignKeys()),
-            count($target->getForeignKeys()),
-            'FK number has changed'
-        );
-
-        // columns
-
-        foreach ($source->getColumns() as $column) {
-            $this->assertTrue(
-                $target->hasColumn($column->getName()),
-                "Column {$column} has been removed"
-            );
-
-            $this->compareColumns($column, $target->findColumn($column->getName()));
-        }
-
-        foreach ($target->getColumns() as $column) {
-            $this->assertTrue(
-                $source->hasColumn($column->getName()),
-                "Column {$column} has been added"
-            );
-
-            $this->compareColumns($column, $source->findColumn($column->getName()));
-        }
-
-        // indexes
-
-        foreach ($source->getIndexes() as $index) {
-            $this->assertTrue(
-                $target->hasIndex($index->getColumnsWithSort()),
-                "Index {$index->getName()} has been removed"
-            );
-
-            $this->compareIndexes($index, $target->findIndex($index->getColumnsWithSort()));
-        }
-
-        foreach ($target->getIndexes() as $index) {
-            $this->assertTrue(
-                $source->hasIndex($index->getColumnsWithSort()),
-                "Index {$index->getName()} has been removed"
-            );
-
-            $this->compareIndexes($index, $source->findIndex($index->getColumnsWithSort()));
-        }
-
-        // FK
-        foreach ($source->getForeignKeys() as $key) {
-            $this->assertTrue(
-                $target->hasForeignKey($key->getColumns()),
-                "FK {$key->getName()} has been removed"
-            );
-
-            $this->compareFK($key, $target->findForeignKey($key->getColumns()));
-        }
-
-        foreach ($target->getForeignKeys() as $key) {
-            $this->assertTrue(
-                $source->hasForeignKey($key->getColumns()),
-                "FK {$key->getName()} has been removed"
-            );
-
-            $this->compareFK($key, $source->findForeignKey($key->getColumns()));
-        }
-
-        // everything else
-        $comparator = new Comparator(
-            $current->getState(),
-            $this->schema($current->getName())->getState()
-        );
-
-        if ($comparator->hasChanges()) {
-            $this->fail($this->makeMessage($current->getName(), $comparator));
-        }
-    }
-
-    protected function compareColumns(AbstractColumn $a, AbstractColumn $b): void
-    {
-        $this->assertSame(
-            $a->getInternalType(),
-            $b->getInternalType(),
-            "Column {$a} type has been changed"
-        );
-
-        $this->assertSame(
-            $a->getScale(),
-            $b->getScale(),
-            "Column {$a} scale has been changed"
-        );
-
-        $this->assertSame(
-            $a->getPrecision(),
-            $b->getPrecision(),
-            "Column {$a} precision has been changed"
-        );
-
-        $this->assertSame(
-            $a->getEnumValues(),
-            $b->getEnumValues(),
-            "Column {$a} enum values has been changed"
-        );
-
-
-        $this->assertTrue(
-            $a->compare($b),
-            "Column {$a} has been changed"
-        );
-    }
-
-    protected function compareIndexes(AbstractIndex $a, AbstractIndex $b): void
-    {
-        $this->assertSame(
-            $a->getColumns(),
-            $b->getColumns(),
-            "Index {$a->getName()} columns has been changed"
-        );
-
-        $this->assertSame(
-            $a->isUnique(),
-            $b->isUnique(),
-            "Index {$a->getName()} uniquness has been changed"
-        );
-
-        $this->assertTrue(
-            $a->compare($b),
-            "Index {$a->getName()} has been changed"
-        );
-    }
-
-    protected function compareFK(AbstractForeignKey $a, AbstractForeignKey $b): void
-    {
-        $this->assertSame(
-            $a->getColumns(),
-            $b->getColumns(),
-            "FK {$a->getName()} column has been changed"
-        );
-
-        $this->assertSame(
-            $a->getForeignKeys(),
-            $b->getForeignKeys(),
-            "FK {$a->getName()} table has been changed"
-        );
-
-        $this->assertSame(
-            $a->getForeignKeys(),
-            $b->getForeignKeys(),
-            "FK {$a->getName()} fk has been changed"
-        );
-
-        $this->assertSame(
-            $a->getDeleteRule(),
-            $b->getDeleteRule(),
-            "FK {$a->getName()} delete rule has been changed"
-        );
-
-        $this->assertSame(
-            $a->getUpdateRule(),
-            $b->getUpdateRule(),
-            "FK {$a->getName()} update rule has been changed"
-        );
-
-        $this->assertTrue(
-            $a->compare($b),
-            "FK {$a->getName()} has been changed"
-        );
-    }
-
     /**
      * @param AbstractTable $table
      * @return AbstractTable
      */
     protected function fetchSchema(AbstractTable $table): AbstractTable
     {
-        return $this->schema($table->getName());
+        return $this->schema($table->getFullName());
     }
 
     protected function makeMessage(string $table, Comparator $comparator)

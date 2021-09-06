@@ -31,10 +31,14 @@ class MySQLHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function getTableNames(): array
+    public function getTableNames(string $prefix = ''): array
     {
         $result = [];
         foreach ($this->driver->query('SHOW TABLES')->fetchAll(PDO::FETCH_NUM) as $row) {
+            if ($prefix !== '' && strpos($row[0], $prefix) !== 0) {
+                continue;
+            }
+
             $result[] = $row[0];
         }
 
@@ -60,7 +64,7 @@ class MySQLHandler extends Handler
     public function eraseTable(AbstractTable $table): void
     {
         $this->driver->execute(
-            "TRUNCATE TABLE {$this->driver->identifier($table->getName())}"
+            "TRUNCATE TABLE {$this->driver->identifier($table->getFullName())}"
         );
     }
 

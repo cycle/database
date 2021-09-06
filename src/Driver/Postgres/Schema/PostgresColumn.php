@@ -118,7 +118,7 @@ class PostgresColumn extends AbstractColumn
     protected $autoIncrement = false;
 
     /**
-     * Indication that column have enum constrain.
+     * Indication that column has enum constrain.
      *
      * @var bool
      */
@@ -255,8 +255,7 @@ class PostgresColumn extends AbstractColumn
                     $enumSize = max($enumSize, strlen($value));
                 }
 
-                $type = "ALTER COLUMN {$identifier} TYPE character varying($enumSize)";
-                $operations[] = $type;
+                $operations[] = "ALTER COLUMN {$identifier} TYPE character varying($enumSize)";
             } else {
                 $type = "ALTER COLUMN {$identifier} TYPE {$this->type}";
 
@@ -399,7 +398,7 @@ class PostgresColumn extends AbstractColumn
     private function enumConstraint(): string
     {
         if (empty($this->constrainName)) {
-            $this->constrainName = $this->table . '_' . $this->getName() . '_enum_' . uniqid();
+            $this->constrainName = str_replace('.', '_', $this->table) . '_' . $this->getName() . '_enum_' . uniqid();
         }
 
         return $this->constrainName;

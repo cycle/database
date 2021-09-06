@@ -24,7 +24,7 @@ class InsertQueryTest extends \Cycle\Database\Tests\InsertQueryTest
         $insert = $this->db()->insert('table')->values([]);
 
         $this->assertSameQuery(
-            "INSERT INTO {table} () VALUES ()",
+            'INSERT INTO {table} () VALUES ()',
             (string)$insert
         );
     }
@@ -34,7 +34,7 @@ class InsertQueryTest extends \Cycle\Database\Tests\InsertQueryTest
         $insert = $this->database->insert()->into('table')->values([]);
 
         $this->assertSameQuery(
-            "INSERT INTO {table} () VALUES ()",
+            'INSERT INTO {table} () VALUES ()',
             $insert
         );
     }

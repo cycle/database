@@ -107,6 +107,16 @@ final class DatabaseManager implements
     private $drivers = [];
 
     /**
+     * @param DatabaseConfig   $config
+     * @param FactoryInterface $factory
+     */
+    public function __construct(DatabaseConfig $config, FactoryInterface $factory = null)
+    {
+        $this->config = $config;
+        $this->factory = $factory ?? new Container();
+    }
+
+    /**
      * Set logger for all drivers
      */
     public function setLogger(LoggerInterface $logger): void
@@ -118,16 +128,6 @@ final class DatabaseManager implements
                 $driver->setLogger($this->logger);
             }
         }
-    }
-
-    /**
-     * @param DatabaseConfig   $config
-     * @param FactoryInterface $factory
-     */
-    public function __construct(DatabaseConfig $config, FactoryInterface $factory = null)
-    {
-        $this->config = $config;
-        $this->factory = $factory ?? new Container();
     }
 
     /**

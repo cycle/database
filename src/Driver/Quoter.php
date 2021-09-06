@@ -96,7 +96,7 @@ final class Quoter
             return '*';
         }
 
-        return sprintf(
+        $identifier = sprintf(
             '%s%s%s',
             $this->left,
             str_replace(
@@ -106,6 +106,8 @@ final class Quoter
             ),
             $this->right
         );
+
+        return str_replace('.', $this->right . '.' . $this->left, $identifier);
     }
 
     /**

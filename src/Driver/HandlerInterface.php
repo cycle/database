@@ -62,9 +62,10 @@ interface HandlerInterface
     /**
      * Get all available table names.
      *
+     * @param string|null $prefix
      * @return array
      */
-    public function getTableNames(): array;
+    public function getTableNames(string $prefix = ''): array;
 
     /**
      * Check if given table exists in database.

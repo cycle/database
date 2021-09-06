@@ -33,12 +33,16 @@ class SQLServerHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function getTableNames(): array
+    public function getTableNames(string $prefix = ''): array
     {
         $query = "SELECT [table_name] FROM [information_schema].[tables] WHERE [table_type] = 'BASE TABLE'";
 
         $tables = [];
         foreach ($this->driver->query($query)->fetchAll(PDO::FETCH_NUM) as $name) {
+            if ($prefix !== '' && strpos($name[0], $prefix) !== 0) {
+                continue;
+            }
+
             $tables[] = $name[0];
         }
 
@@ -62,7 +66,7 @@ class SQLServerHandler extends Handler
     public function eraseTable(AbstractTable $table): void
     {
         $this->driver->execute(
-            "TRUNCATE TABLE {$this->driver->identifier($table->getName())}"
+            "TRUNCATE TABLE {$this->driver->identifier($table->getFullName())}"
         );
     }
 
@@ -170,7 +174,7 @@ class SQLServerHandler extends Handler
         $this->run(
             "sp_rename ?, ?, 'COLUMN'",
             [
-                $table->getName() . '.' . $initial->getName(),
+                $table->getFullName() . '.' . $initial->getName(),
                 $column->getName()
             ]
         );

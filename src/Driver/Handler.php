@@ -84,7 +84,7 @@ abstract class Handler implements HandlerInterface
         }
 
         if ($operation & self::DO_RENAME && $comparator->isRenamed()) {
-            $this->renameTable($table->getInitialName(), $table->getName());
+            $this->renameTable($table->getInitialName(), $table->getFullName());
         }
 
         /*
@@ -286,11 +286,13 @@ abstract class Handler implements HandlerInterface
             return $this->driver->identifier($element);
         }
 
-        if (!$element instanceof ElementInterface && !$element instanceof AbstractTable) {
-            throw new \InvalidArgumentException('Invalid argument type');
+        if ($element instanceof AbstractTable) {
+            return $this->driver->identifier($element->getFullName());
+        } elseif ($element instanceof ElementInterface) {
+            return $this->driver->identifier($element->getName());
         }
 
-        return $this->driver->identifier($element->getName());
+        throw new \InvalidArgumentException('Invalid argument type');
     }
 
     /**

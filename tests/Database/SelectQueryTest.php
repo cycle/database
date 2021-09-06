@@ -297,7 +297,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testSelectWithWhereBetweenBadValue(): void
     {
-        $this->expectExceptionMessage("Between statements expects exactly 2 values");
+        $this->expectExceptionMessage('Between statements expects exactly 2 values');
         $this->expectException(BuilderException::class);
 
         $select = $this->database->select()->distinct()->from(['users'])
@@ -564,7 +564,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testShortWhereWithBetweenConditionBadArguments(): void
     {
         $this->expectException(BuilderException::class);
-        $this->expectExceptionMessage("Exactly 2 array values are required for between statement");
+        $this->expectExceptionMessage('Exactly 2 array values are required for between statement');
 
         $select = $this->database
             ->select()
@@ -712,7 +712,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testBadShortExpression(): void
     {
         $this->expectException(BuilderException::class);
-        $this->expectExceptionMessage("Nested conditions should have defined operator");
+        $this->expectExceptionMessage('Nested conditions should have defined operator');
 
         $select = $this->database
             ->select()
@@ -1220,7 +1220,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testHavingSelectWithHavingBetweenBadValue(): void
     {
         $this->expectException(BuilderException::class);
-        $this->expectExceptionMessage("Between statements expects exactly 2 values");
+        $this->expectExceptionMessage('Between statements expects exactly 2 values');
         $select = $this->database->select()->distinct()->from(['users'])
                                  ->having('balance', 'BETWEEN', 0);
     }
@@ -1461,7 +1461,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testHavingShortHavingWithBetweenConditionBadArguments(): void
     {
         $this->expectException(BuilderException::class);
-        $this->expectExceptionMessage("Exactly 2 array values are required for between statement");
+        $this->expectExceptionMessage('Exactly 2 array values are required for between statement');
 
         $select = $this->database->select()
                                  ->from(['users'])
@@ -1925,7 +1925,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testBadArrayParameter(): void
     {
         $this->expectException(BuilderException::class);
-        $this->expectExceptionMessage("Arrays must be wrapped with Parameter instance");
+        $this->expectExceptionMessage('Arrays must be wrapped with Parameter instance');
 
         $this->database->select()
                        ->from(['users'])
@@ -1935,7 +1935,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testBadArrayParameterInShortWhere(): void
     {
         $this->expectException(BuilderException::class);
-        $this->expectExceptionMessage("Arrays must be wrapped with Parameter instance");
+        $this->expectExceptionMessage('Arrays must be wrapped with Parameter instance');
 
         $this->database->select()
                        ->from(['users'])

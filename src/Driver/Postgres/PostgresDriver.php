@@ -18,7 +18,6 @@ use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Query\DeleteQuery;
 use Cycle\Database\Query\QueryBuilder;
-use Cycle\Database\Query\SelectQuery;
 use Cycle\Database\Query\UpdateQuery;
 use Throwable;
 
@@ -28,12 +27,49 @@ use Throwable;
 class PostgresDriver extends Driver
 {
     /**
+     * Option key for default postgres schema name.
+     *
+     * @var non-empty-string
+     */
+    private const OPT_DEFAULT_SCHEMA = 'default_schema';
+
+    /**
+     * Option key for all available postgres schema names.
+     *
+     * @var non-empty-string
+     */
+    private const OPT_AVAILABLE_SCHEMAS = 'schema';
+
+    /**
+     * Default public schema name for all postgres connections.
+     *
+     * @var non-empty-string
+     */
+    public const PUBLIC_SCHEMA = 'public';
+
+    /**
      * Cached list of primary keys associated with their table names. Used by InsertBuilder to
      * emulate last insert id.
      *
      * @var array
      */
-    private $primaryKeys = [];
+    private array $primaryKeys = [];
+
+    /**
+     * Schemas to search tables in (search_path)
+     *
+     * @var string[]
+     * @psalm-var non-empty-array<non-empty-string>
+     */
+    private array $searchPath = [];
+
+    /**
+     * Schemas to search tables in
+     *
+     * @var string[]
+     * @psalm-var non-empty-array<non-empty-string>
+     */
+    private array $searchSchemas = [];
 
     /**
      * @param array $options
@@ -52,6 +88,8 @@ class PostgresDriver extends Driver
                 new DeleteQuery()
             )
         );
+
+        $this->defineSchemas($this->options);
     }
 
     /**
@@ -60,6 +98,26 @@ class PostgresDriver extends Driver
     public function getType(): string
     {
         return 'Postgres';
+    }
+
+    /**
+     * Schemas to search tables in
+     *
+     * @return string[]
+     */
+    public function getSearchSchemas(): array
+    {
+        return $this->searchSchemas;
+    }
+
+    /**
+     * Check if schemas are defined
+     *
+     * @return bool
+     */
+    public function shouldUseDefinedSchemas(): bool
+    {
+        return $this->searchSchemas !== [];
     }
 
     /**
@@ -114,7 +172,7 @@ class PostgresDriver extends Driver
      * @link http://en.wikipedia.org/wiki/Database_transaction
      * @link http://en.wikipedia.org/wiki/Isolation_(database_systems)
      *
-     * @param string $isolationLevel
+     * @param string|null $isolationLevel
      * @return bool
      */
     public function beginTransaction(string $isolationLevel = null): bool
@@ -122,9 +180,7 @@ class PostgresDriver extends Driver
         ++$this->transactionLevel;
 
         if ($this->transactionLevel === 1) {
-            if ($this->logger !== null) {
-                $this->logger->info('Begin transaction');
-            }
+            $this->logger?->info('Begin transaction');
 
             try {
                 $ok = $this->getPDO()->beginTransaction();
@@ -161,6 +217,28 @@ class PostgresDriver extends Driver
     }
 
     /**
+     * Parse the table name and extract the schema and table.
+     *
+     * @param  string  $name
+     * @return string[]
+     */
+    public function parseSchemaAndTable(string $name): array
+    {
+        $schema = null;
+        $table = $name;
+
+        if (str_contains($name, '.')) {
+            [$schema, $table] = explode('.', $name, 2);
+
+            if ($schema === '$user') {
+                $schema = $this->options['username'];
+            }
+        }
+
+        return [$schema ?? $this->searchSchemas[0], $table];
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function createPDO(): \PDO
@@ -168,6 +246,12 @@ class PostgresDriver extends Driver
         // spiral is purely UTF-8
         $pdo = parent::createPDO();
         $pdo->exec("SET NAMES 'UTF-8'");
+
+        if ($this->searchPath !== []) {
+            $schema = '"' . implode('", "', $this->searchPath) . '"';
+            $pdo->exec("SET search_path TO {$schema}");
+            $this->searchPath = [];
+        }
 
         return $pdo;
     }
@@ -194,5 +278,25 @@ class PostgresDriver extends Driver
         }
 
         return new StatementException($exception, $query);
+    }
+
+    /**
+     * Define schemas from config
+     */
+    private function defineSchemas(array $options): void
+    {
+        $options[self::OPT_AVAILABLE_SCHEMAS] = (array)($options[self::OPT_AVAILABLE_SCHEMAS] ?? []);
+
+        $defaultSchema = $options[self::OPT_DEFAULT_SCHEMA]
+            ?? $options[self::OPT_AVAILABLE_SCHEMAS][0]
+            ?? static::PUBLIC_SCHEMA;
+
+        $this->searchSchemas = $this->searchPath = array_values(array_unique(
+            [$defaultSchema, ...$options[self::OPT_AVAILABLE_SCHEMAS]]
+        ));
+
+        if (($pos = array_search('$user', $this->searchSchemas, true)) !== false) {
+            $this->searchSchemas[$pos] = $options['username'];
+        }
     }
 }

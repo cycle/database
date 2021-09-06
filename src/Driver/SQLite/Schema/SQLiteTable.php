@@ -28,7 +28,7 @@ class SQLiteTable extends AbstractTable
          */
         $definition = $this->driver->query(
             "SELECT sql FROM sqlite_master WHERE type = 'table' and name = ?",
-            [$this->getName()]
+            [$this->getFullName()]
         )->fetchColumn();
 
         /*
@@ -42,7 +42,7 @@ class SQLiteTable extends AbstractTable
         foreach ($this->columnSchemas(['table' => $definition]) as $schema) {
             //Making new column instance
             $result[] = SQLiteColumn::createInstance(
-                $this->getName(),
+                $this->getFullName(),
                 $schema + [
                     'quoted'     => $this->driver->quote($schema['name']),
                     'identifier' => $this->driver->identifier($schema['name'])
@@ -60,12 +60,12 @@ class SQLiteTable extends AbstractTable
     protected function fetchIndexes(): array
     {
         $primaryKeys = $this->fetchPrimaryKeys();
-        $query = "PRAGMA index_list({$this->driver->quote($this->getName())})";
+        $query = "PRAGMA index_list({$this->driver->quote($this->getFullName())})";
 
         $result = [];
         foreach ($this->driver->query($query) as $schema) {
             $index = SQLiteIndex::createInstance(
-                $this->getName(),
+                $this->getFullName(),
                 $schema,
                 // 3+ format
                 $this->driver->query(
@@ -94,7 +94,7 @@ class SQLiteTable extends AbstractTable
      */
     protected function fetchReferences(): array
     {
-        $query = "PRAGMA foreign_key_list({$this->driver->quote($this->getName())})";
+        $query = "PRAGMA foreign_key_list({$this->driver->quote($this->getFullName())})";
 
         // join keys together
         $fks = [];
@@ -113,7 +113,7 @@ class SQLiteTable extends AbstractTable
         $result = [];
         foreach ($fks as $schema) {
             $result[] = SQLiteForeignKey::createInstance(
-                $this->getName(),
+                $this->getFullName(),
                 $this->getPrefix(),
                 $schema
             );
@@ -144,7 +144,7 @@ class SQLiteTable extends AbstractTable
      */
     protected function createColumn(string $name): AbstractColumn
     {
-        return new SQLiteColumn($this->getName(), $name, $this->driver->getTimezone());
+        return new SQLiteColumn($this->getFullName(), $name, $this->driver->getTimezone());
     }
 
     /**
@@ -152,7 +152,7 @@ class SQLiteTable extends AbstractTable
      */
     protected function createIndex(string $name): AbstractIndex
     {
-        return new SQLiteIndex($this->getName(), $name);
+        return new SQLiteIndex($this->getFullName(), $name);
     }
 
     /**
@@ -160,7 +160,7 @@ class SQLiteTable extends AbstractTable
      */
     protected function createForeign(string $name): AbstractForeignKey
     {
-        return new SQLiteForeignKey($this->getName(), $this->getPrefix(), $name);
+        return new SQLiteForeignKey($this->getFullName(), $this->getPrefix(), $name);
     }
 
     /**
@@ -171,7 +171,7 @@ class SQLiteTable extends AbstractTable
     private function columnSchemas(array $include = []): array
     {
         $columns = $this->driver->query(
-            'PRAGMA TABLE_INFO(' . $this->driver->quote($this->getName()) . ')'
+            'PRAGMA TABLE_INFO(' . $this->driver->quote($this->getFullName()) . ')'
         );
 
         $result = [];

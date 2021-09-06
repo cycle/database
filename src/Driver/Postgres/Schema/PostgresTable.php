@@ -12,11 +12,15 @@ declare(strict_types=1);
 namespace Cycle\Database\Driver\Postgres\Schema;
 
 use Cycle\Database\Driver\HandlerInterface;
+use Cycle\Database\Driver\Postgres\PostgresDriver;
 use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Schema\AbstractForeignKey;
 use Cycle\Database\Schema\AbstractIndex;
 use Cycle\Database\Schema\AbstractTable;
 
+/**
+ * @property PostgresDriver $driver
+ */
 class PostgresTable extends AbstractTable
 {
     /**
@@ -47,6 +51,14 @@ class PostgresTable extends AbstractTable
 
     /**
      * {@inheritdoc}
+     */
+    public function getName(): string
+    {
+        return $this->removeSchemaFromTableName($this->getFullName());
+    }
+
+    /**
+     * {@inheritdoc}
      *
      * SQLServer will reload schemas after successful savw.
      */
@@ -70,21 +82,27 @@ class PostgresTable extends AbstractTable
      */
     protected function fetchColumns(): array
     {
+        [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
+
         //Required for constraints fetch
         $tableOID = $this->driver->query(
-            'SELECT oid FROM pg_class WHERE relname = ?',
-            [
-                $this->getName(),
-            ]
+            'SELECT pgc.oid
+                FROM pg_class as pgc
+                JOIN pg_namespace as pgn
+                    ON (pgn.oid = pgc.relnamespace)
+                WHERE pgn.nspname = ?
+                AND pgc.relname = ?',
+            [$tableSchema, $tableName]
         )->fetchColumn();
 
         $query = $this->driver->query(
             'SELECT *
-                        FROM information_schema.columns
-                        JOIN pg_type
-                        ON (pg_type.typname = columns.udt_name)
-                        WHERE table_name = ?',
-            [$this->getName()]
+                FROM information_schema.columns
+                JOIN pg_type
+                    ON (pg_type.typname = columns.udt_name)
+                WHERE table_schema = ?
+                AND table_name = ?',
+            [$tableSchema, $tableName]
         );
 
         $result = [];
@@ -103,7 +121,7 @@ class PostgresTable extends AbstractTable
             }
 
             $result[] = PostgresColumn::createInstance(
-                $this->getName(),
+                $tableSchema . '.' . $tableName,
                 $schema + ['tableOID' => $tableOID],
                 $this->driver
             );
@@ -117,10 +135,12 @@ class PostgresTable extends AbstractTable
      */
     protected function fetchIndexes(bool $all = false): array
     {
-        $query = "SELECT * FROM pg_indexes WHERE schemaname = 'public' AND tablename = ?";
+        [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
+
+        $query = 'SELECT * FROM pg_indexes WHERE schemaname = ? AND tablename = ?';
 
         $result = [];
-        foreach ($this->driver->query($query, [$this->getName()]) as $schema) {
+        foreach ($this->driver->query($query, [$tableSchema, $tableName]) as $schema) {
             $conType = $this->driver->query(
                 'SELECT contype FROM pg_constraint WHERE conname = ?',
                 [$schema['indexname']]
@@ -131,7 +151,7 @@ class PostgresTable extends AbstractTable
                 continue;
             }
 
-            $result[] = PostgresIndex::createInstance($this->getName(), $schema);
+            $result[] = PostgresIndex::createInstance($tableSchema . '.' . $tableName, $schema);
         }
 
         return $result;
@@ -142,8 +162,10 @@ class PostgresTable extends AbstractTable
      */
     protected function fetchReferences(): array
     {
+        [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
+
         //Mindblowing
-        $query = 'SELECT tc.constraint_name, tc.table_name, kcu.column_name, rc.update_rule, '
+        $query = 'SELECT tc.constraint_name, tc.constraint_schema, tc.table_name, kcu.column_name, rc.update_rule, '
             . 'rc.delete_rule, ccu.table_name AS foreign_table_name, '
             . "ccu.column_name AS foreign_column_name\n"
             . "FROM information_schema.table_constraints AS tc\n"
@@ -153,10 +175,10 @@ class PostgresTable extends AbstractTable
             . "   ON ccu.constraint_name = tc.constraint_name\n"
             . "JOIN information_schema.referential_constraints AS rc\n"
             . "   ON rc.constraint_name = tc.constraint_name\n"
-            . "WHERE constraint_type = 'FOREIGN KEY' AND tc.table_name = ?";
+            . "WHERE constraint_type = 'FOREIGN KEY' AND tc.table_schema = ? AND tc.table_name = ?";
 
         $fks = [];
-        foreach ($this->driver->query($query, [$this->getName()]) as $schema) {
+        foreach ($this->driver->query($query, [$tableSchema, $tableName]) as $schema) {
             if (!isset($fks[$schema['constraint_name']])) {
                 $fks[$schema['constraint_name']] = $schema;
                 $fks[$schema['constraint_name']]['column_name'] = [$schema['column_name']];
@@ -171,7 +193,7 @@ class PostgresTable extends AbstractTable
         $result = [];
         foreach ($fks as $schema) {
             $result[] = PostgresForeignKey::createInstance(
-                $this->getName(),
+                $tableSchema . '.' . $tableName,
                 $this->getPrefix(),
                 $schema
             );
@@ -185,9 +207,11 @@ class PostgresTable extends AbstractTable
      */
     protected function fetchPrimaryKeys(): array
     {
-        $query = "SELECT * FROM pg_indexes WHERE schemaname = 'public' AND tablename = ?";
+        [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
 
-        foreach ($this->driver->query($query, [$this->getName()]) as $schema) {
+        $query = 'SELECT * FROM pg_indexes WHERE schemaname = ? AND tablename = ?';
+
+        foreach ($this->driver->query($query, [$tableSchema, $tableName]) as $schema) {
             $conType = $this->driver->query(
                 'SELECT contype FROM pg_constraint WHERE conname = ?',
                 [$schema['indexname']]
@@ -199,7 +223,7 @@ class PostgresTable extends AbstractTable
             }
 
             //To simplify definitions
-            $index = PostgresIndex::createInstance($this->getName(), $schema);
+            $index = PostgresIndex::createInstance($tableSchema . '.' . $tableName, $schema);
 
             if (is_array($this->primarySequence) && count($index->getColumns()) === 1) {
                 $column = $index->getColumns()[0];
@@ -221,7 +245,11 @@ class PostgresTable extends AbstractTable
      */
     protected function createColumn(string $name): AbstractColumn
     {
-        return new PostgresColumn($this->getName(), $name, $this->driver->getTimezone());
+        return new PostgresColumn(
+            $this->getNormalizedTableName(),
+            $this->removeSchemaFromTableName($name),
+            $this->driver->getTimezone()
+        );
     }
 
     /**
@@ -229,7 +257,10 @@ class PostgresTable extends AbstractTable
      */
     protected function createIndex(string $name): AbstractIndex
     {
-        return new PostgresIndex($this->getName(), $name);
+        return new PostgresIndex(
+            $this->getNormalizedTableName(),
+            $this->removeSchemaFromTableName($name)
+        );
     }
 
     /**
@@ -237,6 +268,47 @@ class PostgresTable extends AbstractTable
      */
     protected function createForeign(string $name): AbstractForeignKey
     {
-        return new PostgresForeignKey($this->getName(), $this->getPrefix(), $name);
+        return new PostgresForeignKey(
+            $this->getNormalizedTableName(),
+            $this->getPrefix(),
+            $this->removeSchemaFromTableName($name)
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function prefixTableName(string $name): string
+    {
+        [$schema, $name] = $this->driver->parseSchemaAndTable($name);
+
+        return $schema . '.' . parent::prefixTableName($name);
+    }
+
+    /**
+     * Get table name with schema. If table doesn't contain schema, schema will be added from config
+     *
+     * @return string
+     */
+    protected function getNormalizedTableName(): string
+    {
+        [$schema, $name] = $this->driver->parseSchemaAndTable($this->getFullName());
+
+        return $schema . '.' . $name;
+    }
+
+    /**
+     * Return table name without schema
+     *
+     * @param string $name
+     * @return string
+     */
+    protected function removeSchemaFromTableName(string $name): string
+    {
+        if (strpos($name, '.') !== false) {
+            [, $name] = explode('.', $name, 2);
+        }
+
+        return $name;
     }
 }
