@@ -91,7 +91,7 @@ trait JoinTrait
             'on'    => []
         ];
 
-        return call_user_func_array([$this, 'on'], array_slice(func_get_args(), 2));
+        return $on === null ? $this : $this->on(...$on);
     }
 
     /**
@@ -333,18 +333,18 @@ trait JoinTrait
     /**
      * Convert various amount of where function arguments into valid where token.
      *
-     * @param string   $boolean    Boolean joiner (AND | OR).
+     * @param string $boolean    Boolean joiner (AND | OR).
      * @param array    $params     Set of parameters collected from where functions.
-     * @param array    $tokens     Array to aggregate compiled tokens. Reference.
+     * @param array $tokens     Array to aggregate compiled tokens. Reference.
      * @param callable $wrapper    Callback or closure used to wrap/collect every potential
      *                             parameter.
      *
      * @throws BuilderException
      */
     abstract protected function registerToken(
-        $boolean,
+        string $boolean,
         array $params,
-        &$tokens,
+        array &$tokens,
         callable $wrapper
     );
 

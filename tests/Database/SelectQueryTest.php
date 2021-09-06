@@ -2042,6 +2042,43 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    public function testLeftJoin4(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->join('LEFT', 'photos', 'pht', ['pht.user_id', 'users.id']);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} LEFT JOIN {photos} AS {pht} ON {pht}.{user_id} = {users}.{id}',
+            $select
+        );
+    }
+
+    // Todo: make this case valid
+    // public function testLeftJoin5(): void
+    // {
+    //     $select = $this->database->select()
+    //         ->from(['users'])
+    //         ->join('LEFT', 'photos', 'pht', ['@AND' => ['pht.user_id' => 'users.id']]);
+    //
+    //     $this->assertSameQuery(
+    //         'SELECT * FROM {users} LEFT JOIN {photos} AS {pht} ON {pht}.{user_id} = {users}.{id}',
+    //         $select
+    //     );
+    // }
+
+    public function testLeftJoin6(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->join('LEFT', 'photos', 'pht', [['pht.user_id' => 'users.id']]);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} LEFT JOIN {photos} AS {pht} ON {pht}.{user_id} = {users}.{id}',
+            $select
+        );
+    }
+
     public function testRightJoin0(): void
     {
         $select = $this->database->select()
