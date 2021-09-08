@@ -14,6 +14,7 @@ namespace Cycle\Database\Driver;
 use DateTimeZone;
 use PDO;
 use Cycle\Database\Exception\DriverException;
+use Cycle\Database\Exception\ReadonlyConnectionException;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Query\BuilderInterface;
 use Cycle\Database\StatementInterface;
@@ -85,6 +86,14 @@ interface DriverInterface
      * @link http://en.wikipedia.org/wiki/Isolation_(database_systems)
      */
     public const ISOLATION_READ_UNCOMMITTED = 'READ UNCOMMITTED';
+
+    /**
+     * Returns {@see true} in the case that the connection is available only
+     * for reading or {@see false} instead.
+     *
+     * @return bool
+     */
+    public function isReadonly(): bool;
 
     /**
      * Driver type (name).
@@ -169,6 +178,7 @@ interface DriverInterface
      * @return int
      *
      * @throws StatementException
+     * @throws ReadonlyConnectionException
      */
     public function execute(string $query, array $parameters = []): int;
 

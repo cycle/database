@@ -19,6 +19,7 @@ use PDOStatement;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Cycle\Database\Exception\DriverException;
+use Cycle\Database\Exception\ReadonlyConnectionException;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Injection\ParameterInterface;
 use Cycle\Database\Query\BuilderInterface;
@@ -69,7 +70,10 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         'queryCache'     => true,
 
         // disable schema modifications
-        'readonlySchema' => false
+        'readonlySchema' => false,
+
+        // disable write expressions
+        'readonly'       => false,
     ];
 
     /** @var PDO|null */
@@ -123,6 +127,14 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         if ($this->options['readonlySchema']) {
             $this->schemaHandler = new ReadonlyHandler($this->schemaHandler);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isReadonly(): bool
+    {
+        return (bool)($this->options['readonly'] ?? false);
     }
 
     /**
@@ -316,9 +328,14 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * @return int
      *
      * @throws StatementException
+     * @throws ReadonlyConnectionException
      */
     public function execute(string $query, array $parameters = []): int
     {
+        if ($this->isReadonly()) {
+            throw ReadonlyConnectionException::onWriteStatementExecution();
+        }
+
         return $this->statement($query, $parameters)->rowCount();
     }
 

@@ -53,7 +53,7 @@ $drivers = [
 
 $db = getenv('DB') ?: null;
 Database\Tests\BaseTest::$config = [
-        'debug' => false,
+        'debug' => getenv('DB_DEBUG') ?: false,
     ] + ($db === null
         ? $drivers
         : array_intersect_key($drivers, array_flip((array)$db))
