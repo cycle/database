@@ -30,9 +30,7 @@ $drivers = [
     ],
     'mysql'     => [
         'driver'     => Database\Driver\MySQL\MySQLDriver::class,
-        'conn'       => 'mysql:host=127.0.0.1:13306;dbname=spiral',
-        'user'       => 'root',
-        'pass'       => 'root',
+        'conn'       => 'mysql://root:root@127.0.0.1:13306/spiral',
         'queryCache' => 100
     ],
     'postgres'  => [

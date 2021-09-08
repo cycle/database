@@ -63,8 +63,8 @@ abstract class BaseTest extends TestCase
 
             $this->driver = new $class(\array_merge($options, [
                 'connection' => $config['conn'],
-                'username'   => $config['user'],
-                'password'   => $config['pass'],
+                'username'   => $config['user'] ?? '',
+                'password'   => $config['pass'] ?? '',
                 'options'    => [],
                 'queryCache' => true
             ]));

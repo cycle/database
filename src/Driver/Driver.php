@@ -18,6 +18,7 @@ use PDO;
 use PDOStatement;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Cycle\Database\Exception\ConfigException;
 use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\ReadonlyConnectionException;
 use Cycle\Database\Exception\StatementException;
@@ -126,6 +127,33 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
 
         if ($this->options['readonlySchema']) {
             $this->schemaHandler = new ReadonlyHandler($this->schemaHandler);
+        }
+
+        // Actualize DSN
+        $this->updateDSN();
+    }
+
+    /**
+     * Updates an internal options
+     *
+     * @return void
+     */
+    private function updateDSN(): void
+    {
+        [$connection, $this->options['username'], $this->options['password']] = $this->parseDSN();
+
+        // Update connection. The DSN field can be located in one of the
+        // following keys of the configuration array.
+        switch (true) {
+            case \array_key_exists('dsn', $this->options):
+                $this->options['dsn'] = $connection;
+                break;
+            case \array_key_exists('addr', $this->options):
+                $this->options['addr'] = $connection;
+                break;
+            default:
+                $this->options['connection'] = $connection;
+                break;
         }
     }
 
@@ -707,18 +735,51 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     }
 
     /**
+     * @return array{string, string, string}
+     */
+    private function parseDSN(): array
+    {
+        $dsn = $this->getDSN();
+
+        $user = (string)($this->options['username'] ?? '');
+        $pass = (string)($this->options['password'] ?? '');
+
+        if (\strpos($dsn, '://') > 0) {
+            $parts = \parse_url($dsn);
+
+            if (!isset($parts['scheme'])) {
+                throw new ConfigException('Configuration database scheme must be defined');
+            }
+
+            // Update username and password from DSN if not defined.
+            $user = $user ?: $parts['user'] ?? '';
+            $pass = $pass ?: $parts['pass'] ?? '';
+
+            // Build new DSN
+            $dsn = \sprintf('%s:host=%s', $parts['scheme'], $parts['host'] ?? 'localhost');
+
+            if (isset($parts['port'])) {
+                $dsn .= ';port=' . $parts['port'];
+            }
+
+            if (isset($parts['path']) && \trim($parts['path'], '/')) {
+                $dsn .= ';dbname=' . \trim($parts['path'], '/');
+            }
+        }
+
+        return [$dsn, $user, $pass];
+    }
+
+    /**
      * Create instance of configured PDO class.
      *
      * @return PDO
      */
     protected function createPDO(): PDO
     {
-        return new PDO(
-            $this->getDSN(),
-            $this->options['username'],
-            $this->options['password'],
-            $this->options['options']
-        );
+        [$dsn, $user, $pass] = $this->parseDSN();
+
+        return new PDO($dsn, $user, $pass, $this->options['options']);
     }
 
     /**
