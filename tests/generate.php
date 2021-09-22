@@ -32,6 +32,10 @@ $databases = [
         'namespace' => 'Cycle\Database\Tests\Driver\Postgres',
         'directory' => __DIR__ . '/Database/Driver/Postgres/'
     ],
+    'oracle'   => [
+        'namespace' => 'Cycle\Database\Tests\Driver\Oracle',
+        'directory' => __DIR__ . '/Database/Driver/Oracle/'
+    ],
     'sqlserver' => [
         'namespace' => 'Cycle\Database\Tests\Driver\SQLServer',
         'directory' => __DIR__ . '/Database/Driver/SQLServer/'

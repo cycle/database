@@ -42,6 +42,13 @@ $drivers = [
         'pass'       => 'postgres',
         'queryCache' => 100
     ],
+    'oracle'  => [
+        'driver'     => Database\Driver\Oracle\OracleDriver::class,
+        'conn'       => 'pgsql:host=127.0.0.1;port=11521;dbname=spiral',
+        'user'       => 'postgres',
+        'pass'       => 'postgres',
+        'queryCache' => 100
+    ],
     'sqlserver' => [
         'driver'     => Database\Driver\SQLServer\SQLServerDriver::class,
         'conn'       => 'sqlsrv:Server=127.0.0.1,11433;Database=tempdb',
