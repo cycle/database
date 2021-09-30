@@ -21,7 +21,7 @@ spl_autoload_register(static function (string $class) {
         $original = 'Cycle\\Database\\' . substr($class, 16);
 
         @trigger_error(
-            "$class has been deprecated since cycle/database 2.0.0 " .
+            "$class has been deprecated since cycle/database 1.0 " .
             "and will be removed in further release. Please use class $original instead.",
             E_USER_DEPRECATED
         );
