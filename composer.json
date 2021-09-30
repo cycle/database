@@ -1,36 +1,60 @@
 {
-  "name": "cycle/database",
-  "type": "library",
-  "description": "DBAL, schema introspection, migration and pagination",
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Anton Titov / Wolfy-J",
-      "email": "wolfy.jd@gmail.com"
-    }
-  ],
-  "require": {
-    "php": ">=7.2",
-    "ext-pdo": "*",
-    "spiral/core": "^2.7",
-    "spiral/logger": "^2.7",
-    "spiral/pagination": "^2.7"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "~8.0",
-    "mockery/mockery": "^1.1",
-    "spiral/dumper": "^2.7",
-    "spiral/code-style": "^1.0",
-    "spiral/tokenizer": "^2.7"
-  },
-  "autoload": {
-    "psr-4": {
-      "Cycle\\Database\\": "src/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Cycle\\Database\\Tests\\": "tests/Database/"
-    }
-  }
+    "name": "cycle/database",
+    "type": "library",
+    "description": "DBAL, schema introspection, migration and pagination",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Anton Titov / Wolfy-J",
+            "email": "wolfy.jd@gmail.com"
+        }
+    ],
+    "replace": {
+        "spiral/database": "^2.0"
+    },
+    "require": {
+        "php": ">=7.2",
+        "ext-pdo": "*",
+        "spiral/core": "^2.8",
+        "spiral/logger": "^2.8",
+        "spiral/pagination": "^2.8"
+    },
+    "autoload": {
+        "files": [
+            "src/polyfill.php"
+        ],
+        "psr-4": {
+            "Cycle\\Database\\": "src"
+        }
+    },
+    "require-dev": {
+        "vimeo/psalm": "^4.10",
+        "phpunit/phpunit": "^8.5|^9.0",
+        "mockery/mockery": "^1.3",
+        "spiral/dumper": "^2.8",
+        "spiral/code-style": "^1.0",
+        "spiral/tokenizer": "^2.8"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Cycle\\Database\\Tests\\": "tests/Database"
+        }
+    },
+    "scripts": {
+        "test": [
+            "phpcs --standard=phpcs.xml",
+            "psalm --no-cache",
+            "phpunit"
+        ]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0.x-dev"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Spiral Framework.
+ * This file is part of Cycle ORM package.
  *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -177,7 +177,8 @@ final class DatabaseManager implements
             $database = $this->config->getDefaultDatabase();
         }
 
-        //Spiral support ability to link multiple virtual databases together using aliases
+        // Cycle support ability to link multiple virtual databases together
+        // using aliases.
         $database = $this->config->resolveAlias($database);
 
         if (isset($this->databases[$database])) {

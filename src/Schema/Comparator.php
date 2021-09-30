@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Spiral Framework.
+ * This file is part of Cycle ORM package.
  *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -140,7 +140,7 @@ final class Comparator implements ComparatorInterface
     public function addedIndexes(): array
     {
         $difference = [];
-        foreach ($this->current->getIndexes() as $name => $index) {
+        foreach ($this->current->getIndexes() as $_ => $index) {
             if (!$this->initial->hasIndex($index->getColumnsWithSort())) {
                 $difference[] = $index;
             }
@@ -155,7 +155,7 @@ final class Comparator implements ComparatorInterface
     public function droppedIndexes(): array
     {
         $difference = [];
-        foreach ($this->initial->getIndexes() as $name => $index) {
+        foreach ($this->initial->getIndexes() as $_ => $index) {
             if (!$this->current->hasIndex($index->getColumnsWithSort())) {
                 $difference[] = $index;
             }
@@ -173,7 +173,7 @@ final class Comparator implements ComparatorInterface
     {
         $difference = [];
 
-        foreach ($this->current->getIndexes() as $name => $index) {
+        foreach ($this->current->getIndexes() as $_ => $index) {
             if (!$this->initial->hasIndex($index->getColumnsWithSort())) {
                 //Added into schema
                 continue;
@@ -194,7 +194,7 @@ final class Comparator implements ComparatorInterface
     public function addedForeignKeys(): array
     {
         $difference = [];
-        foreach ($this->current->getForeignKeys() as $name => $foreignKey) {
+        foreach ($this->current->getForeignKeys() as $_ => $foreignKey) {
             if (!$this->initial->hasForeignKey($foreignKey->getColumns())) {
                 $difference[] = $foreignKey;
             }
@@ -209,7 +209,7 @@ final class Comparator implements ComparatorInterface
     public function droppedForeignKeys(): array
     {
         $difference = [];
-        foreach ($this->initial->getForeignKeys() as $name => $foreignKey) {
+        foreach ($this->initial->getForeignKeys() as $_ => $foreignKey) {
             if (!$this->current->hasForeignKey($foreignKey->getColumns())) {
                 $difference[] = $foreignKey;
             }
@@ -227,7 +227,7 @@ final class Comparator implements ComparatorInterface
     {
         $difference = [];
 
-        foreach ($this->current->getForeignKeys() as $name => $foreignKey) {
+        foreach ($this->current->getForeignKeys() as $_ => $foreignKey) {
             if (!$this->initial->hasForeignKey($foreignKey->getColumns())) {
                 //Added into schema
                 continue;

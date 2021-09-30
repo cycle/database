@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Spiral Framework.
+ * This file is part of Cycle ORM package.
  *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -44,13 +44,13 @@ class MySQLHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function hasTable(string $name): bool
+    public function hasTable(string $table): bool
     {
         $query = 'SELECT COUNT(*) FROM `information_schema`.`tables` WHERE `table_schema` = ? AND `table_name` = ?';
 
         return (bool)$this->driver->query(
             $query,
-            [$this->driver->getSource(), $name]
+            [$this->driver->getSource(), $table]
         )->fetchColumn();
     }
 
