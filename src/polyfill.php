@@ -17,7 +17,7 @@ class_alias(
 );
 
 spl_autoload_register(static function (string $class) {
-    if (str_starts_with($class, 'Spiral\\Database\\')) {
+    if (strpos($class, 'Spiral\\Database\\') === 0) {
         $original = 'Cycle\\Database\\' . substr($class, 16);
 
         @trigger_error(
