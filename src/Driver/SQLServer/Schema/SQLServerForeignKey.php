@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Spiral Framework.
+ * This file is part of Cycle ORM package.
  *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -13,13 +13,13 @@ namespace Cycle\Database\Driver\SQLServer\Schema;
 
 use Cycle\Database\Schema\AbstractForeignKey;
 
-class SQlServerForeignKey extends AbstractForeignKey
+class SQLServerForeignKey extends AbstractForeignKey
 {
     /**
      * @param string $table
      * @param string $tablePrefix
      * @param array  $schema
-     * @return SQlServerForeignKey
+     * @return SQLServerForeignKey
      */
     public static function createInstance(string $table, string $tablePrefix, array $schema): self
     {

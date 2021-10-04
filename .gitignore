@@ -10,4 +10,4 @@ build/
 clover.xml
 clover.json
 .php_cs.cache
-/.phpunit.result.cache
+.phpunit.result.cache

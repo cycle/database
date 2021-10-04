@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Spiral Framework.
+ * This file is part of Cycle ORM package.
  *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -32,10 +32,11 @@ class SQLiteTable extends AbstractTable
         )->fetchColumn();
 
         /*
-        * There is not really many ways to get extra information about column in SQLite, let's parse
-        * table schema. As mention, spiral SQLite schema reader will support fully only tables created
-        * by spiral as we expecting every column definition be on new line.
-        */
+         * There is not really many ways to get extra information about column
+         * in SQLite, let's parse table schema. As mention, Cycle SQLite
+         * schema reader will support fully only tables created by Cycle as we
+         * expecting every column definition be on new line.
+         */
         $definition = explode("\n", $definition);
 
         $result = [];

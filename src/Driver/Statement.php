@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Spiral Framework.
+ * This file is part of Cycle ORM package.
  *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -21,7 +21,7 @@ use Cycle\Database\StatementInterface;
  *
  * @internal Do not use this class directly.
  */
-final class Statement implements StatementInterface, \IteratorAggregate
+final class Statement implements StatementInterface
 {
     /** @var PDOStatement */
     private $pdoStatement;

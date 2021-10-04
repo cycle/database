@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Spiral Framework.
+ * This file is part of Cycle ORM package.
  *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -18,7 +18,9 @@ use PDO;
 use PDOStatement;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Cycle\Database\Exception\ConfigException;
 use Cycle\Database\Exception\DriverException;
+use Cycle\Database\Exception\ReadonlyConnectionException;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Injection\ParameterInterface;
 use Cycle\Database\Query\BuilderInterface;
@@ -69,7 +71,10 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         'queryCache'     => true,
 
         // disable schema modifications
-        'readonlySchema' => false
+        'readonlySchema' => false,
+
+        // disable write expressions
+        'readonly'       => false,
     ];
 
     /** @var PDO|null */
@@ -119,6 +124,41 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         if ($this->options['readonlySchema']) {
             $this->schemaHandler = new ReadonlyHandler($this->schemaHandler);
         }
+
+        // Actualize DSN
+        $this->updateDSN();
+    }
+
+    /**
+     * Updates an internal options
+     *
+     * @return void
+     */
+    private function updateDSN(): void
+    {
+        [$connection, $this->options['username'], $this->options['password']] = $this->parseDSN();
+
+        // Update connection. The DSN field can be located in one of the
+        // following keys of the configuration array.
+        switch (true) {
+            case \array_key_exists('dsn', $this->options):
+                $this->options['dsn'] = $connection;
+                break;
+            case \array_key_exists('addr', $this->options):
+                $this->options['addr'] = $connection;
+                break;
+            default:
+                $this->options['connection'] = $connection;
+                break;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isReadonly(): bool
+    {
+        return (bool)($this->options['readonly'] ?? false);
     }
 
     /**
@@ -299,9 +339,14 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * @return int
      *
      * @throws StatementException
+     * @throws ReadonlyConnectionException
      */
     public function execute(string $query, array $parameters = []): int
     {
+        if ($this->isReadonly()) {
+            throw ReadonlyConnectionException::onWriteStatementExecution();
+        }
+
         return $this->statement($query, $parameters)->rowCount();
     }
 
@@ -652,18 +697,51 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     }
 
     /**
+     * @return array{string, string, string}
+     */
+    private function parseDSN(): array
+    {
+        $dsn = $this->getDSN();
+
+        $user = (string)($this->options['username'] ?? '');
+        $pass = (string)($this->options['password'] ?? '');
+
+        if (\strpos($dsn, '://') > 0) {
+            $parts = \parse_url($dsn);
+
+            if (!isset($parts['scheme'])) {
+                throw new ConfigException('Configuration database scheme must be defined');
+            }
+
+            // Update username and password from DSN if not defined.
+            $user = $user ?: $parts['user'] ?? '';
+            $pass = $pass ?: $parts['pass'] ?? '';
+
+            // Build new DSN
+            $dsn = \sprintf('%s:host=%s', $parts['scheme'], $parts['host'] ?? 'localhost');
+
+            if (isset($parts['port'])) {
+                $dsn .= ';port=' . $parts['port'];
+            }
+
+            if (isset($parts['path']) && \trim($parts['path'], '/')) {
+                $dsn .= ';dbname=' . \trim($parts['path'], '/');
+            }
+        }
+
+        return [$dsn, $user, $pass];
+    }
+
+    /**
      * Create instance of configured PDO class.
      *
      * @return PDO
      */
     protected function createPDO(): PDO
     {
-        return new PDO(
-            $this->getDSN(),
-            $this->options['username'],
-            $this->options['password'],
-            $this->options['options']
-        );
+        [$dsn, $user, $pass] = $this->parseDSN();
+
+        return new PDO($dsn, $user, $pass, $this->options['options']);
     }
 
     /**
