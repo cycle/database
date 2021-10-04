@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Spiral Framework.
+ * This file is part of Cycle ORM package.
  *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -180,7 +180,6 @@ final class Reflector
                 // do not cache statements for this transaction
                 $driver->beginTransaction(null, false);
             } else {
-                /** @var DriverInterface $driver */
                 $driver->beginTransaction(null);
             }
         }
@@ -192,7 +191,6 @@ final class Reflector
     protected function commitTransaction(): void
     {
         foreach ($this->drivers as $driver) {
-            /** @var DriverInterface $driver */
             $driver->commitTransaction();
         }
     }
@@ -203,7 +201,6 @@ final class Reflector
     protected function rollbackTransaction(): void
     {
         foreach (array_reverse($this->drivers) as $driver) {
-            /** @var DriverInterface $driver */
             $driver->rollbackTransaction();
         }
     }

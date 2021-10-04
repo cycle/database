@@ -73,7 +73,6 @@ jobs:
           file: ./coverage.xml
 
   sqlite:
-    needs: lint
     name: SQLite PHP ${{ matrix.php-versions }}
     runs-on: ubuntu-latest
     strategy:

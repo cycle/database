@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Spiral Framework.
+ * This file is part of Cycle ORM package.
  *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -85,7 +85,7 @@ class SQLServerTable extends AbstractTable
             $indexes[$index['indexName']][] = $index;
         }
 
-        foreach ($indexes as $name => $schema) {
+        foreach ($indexes as $_ => $schema) {
             //Once all columns are aggregated we can finally create an index
             $result[] = SQLServerIndex::createInstance($this->getFullName(), $schema);
         }

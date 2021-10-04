@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Spiral Framework.
+ * This file is part of Cycle ORM package.
  *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -87,6 +87,7 @@ class SQLServerDriver extends Driver
             }
 
             if ($type === PDO::PARAM_LOB) {
+                /** @psalm-suppress UndefinedConstant */
                 $statement->bindParam(
                     $index,
                     $parameter,

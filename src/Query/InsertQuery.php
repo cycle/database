@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Spiral Framework.
+ * This file is part of Cycle ORM package.
  *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Cycle\Database\Query;
 
 use Cycle\Database\Driver\CompilerInterface;
-use Cycle\Database\Exception\BuilderException;
 use Cycle\Database\Injection\Parameter;
 
 /**

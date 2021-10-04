@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Spiral Framework.
+ * This file is part of Cycle ORM package.
  *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -243,7 +243,7 @@ class PostgresDriver extends Driver
      */
     protected function createPDO(): \PDO
     {
-        // spiral is purely UTF-8
+        // Cycle is purely UTF-8
         $pdo = parent::createPDO();
         $pdo->exec("SET NAMES 'UTF-8'");
 

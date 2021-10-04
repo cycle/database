@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Spiral Framework.
+ * This file is part of Cycle ORM package.
  *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -36,6 +36,7 @@ interface StatementInterface extends \Traversable
      *
      * @param int $mode
      * @return mixed
+     * @psalm-suppress MissingReturnType
      */
     public function fetch(int $mode = self::FETCH_ASSOC);
 
