@@ -68,7 +68,7 @@ class SQLiteForeignKey extends AbstractForeignKey
      */
     public static function createInstance(string $table, string $tablePrefix, array $schema): self
     {
-        $reference = new self($table, $tablePrefix, $schema['id']);
+        $reference = new self($table, $tablePrefix, (string)$schema['id']);
 
         $reference->columns = $schema['from'];
         $reference->foreignTable = $schema['table'];
