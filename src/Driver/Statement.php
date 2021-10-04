@@ -21,7 +21,7 @@ use Cycle\Database\StatementInterface;
  *
  * @internal Do not use this class directly.
  */
-final class Statement implements StatementInterface
+final class Statement implements StatementInterface, \IteratorAggregate
 {
     /** @var PDOStatement */
     private $pdoStatement;
