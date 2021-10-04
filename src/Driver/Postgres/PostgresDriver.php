@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Spiral Framework.
+ * This file is part of Cycle ORM package.
  *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -18,7 +18,6 @@ use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Query\DeleteQuery;
 use Cycle\Database\Query\QueryBuilder;
-use Cycle\Database\Query\SelectQuery;
 use Cycle\Database\Query\UpdateQuery;
 use Throwable;
 
@@ -114,7 +113,7 @@ class PostgresDriver extends Driver
      * @link http://en.wikipedia.org/wiki/Database_transaction
      * @link http://en.wikipedia.org/wiki/Isolation_(database_systems)
      *
-     * @param string $isolationLevel
+     * @param string|null $isolationLevel
      * @return bool
      */
     public function beginTransaction(string $isolationLevel = null): bool
@@ -165,7 +164,7 @@ class PostgresDriver extends Driver
      */
     protected function createPDO(): \PDO
     {
-        // spiral is purely UTF-8
+        // Cycle is purely UTF-8
         $pdo = parent::createPDO();
         $pdo->exec("SET NAMES 'UTF-8'");
 

@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Spiral Framework.
+ * This file is part of Cycle ORM package.
  *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -221,6 +221,6 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
      */
     protected function packColumns(DriverInterface $driver, array $columns): string
     {
-        return join(', ', array_map([$driver, 'identifier'], $columns));
+        return implode(', ', array_map([$driver, 'identifier'], $columns));
     }
 }

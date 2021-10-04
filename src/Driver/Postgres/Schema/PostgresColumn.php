@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Spiral Framework.
+ * This file is part of Cycle ORM package.
  *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -346,8 +346,8 @@ class PostgresColumn extends AbstractColumn
             $column->type = $schema['typname'];
 
             /**
-             * Attention, this is not default spiral enum type emulated via CHECK. This is real
-             * Postgres enum type.
+             * Attention, this is not default enum type emulated via CHECK.
+             * This is real Postgres enum type.
              */
             self::resolveEnum($driver, $column);
         }

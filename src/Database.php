@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Spiral Framework.
+ * This file is part of Cycle ORM package.
  *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -218,17 +218,17 @@ final class Database implements DatabaseInterface, InjectableInterface
     /**
      * {@inheritdoc}
      */
-    public function select($column = '*'): SelectQuery
+    public function select($columns = '*'): SelectQuery
     {
-        $columns = func_get_args();
-        if (isset($columns[0]) && is_array($columns[0])) {
+        $arguments = func_get_args();
+        if (isset($arguments[0]) && is_array($arguments[0])) {
             //Can be required in some cases while collecting data from Table->select(), stupid bug.
-            $columns = $columns[0];
+            $arguments = $arguments[0];
         }
 
         return $this->getDriver(self::READ)
             ->getQueryBuilder()
-            ->selectQuery($this->prefix, [], $columns);
+            ->selectQuery($this->prefix, [], $arguments);
     }
 
     /**
