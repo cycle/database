@@ -11,10 +11,11 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Config\MySQL;
 
-final class MySQLPDOSocketConnectionInfo extends MySQLPDOConnectionInfo
+final class PDOUriConnectionConfig extends PDOConnectionConfig
 {
     /**
-     * @param non-empty-string $socket
+     * @param non-empty-string $host
+     * @param positive-int $port
      * @param non-empty-string $database
      * @param non-empty-string|null $charset
      * @param non-empty-string|null $user
@@ -22,21 +23,22 @@ final class MySQLPDOSocketConnectionInfo extends MySQLPDOConnectionInfo
      * @param array<non-empty-string|int, non-empty-string> $options
      */
     public function __construct(
-        public string $socket,
         string $database,
+        public string $host = 'localhost',
+        public int $port = 3307,
+        ?string $charset = null,
         ?string $user = null,
         ?string $password = null,
-        ?string $charset = null,
-        array $options = []
+        array $options = [],
     ) {
         parent::__construct($database, $charset, $user, $password, $options);
     }
 
     /**
-     * Returns the MySQL-specific PDO DSN with connection Unix socket,
+     * Returns the MySQL-specific PDO DSN with connection URI,
      * that looks like:
      * <code>
-     *  mysql:unix_socket=/tmp/mysql.sock;dbname=dbname
+     *  mysql:host=localhost;port=3307;dbname=dbname
      * </code>
      *
      * {@inheritDoc}
@@ -44,7 +46,8 @@ final class MySQLPDOSocketConnectionInfo extends MySQLPDOConnectionInfo
     public function getDsn(): string
     {
         $config = [
-            'unix_socket' => $this->socket,
+            'host' => $this->host,
+            'port' => $this->port,
             'dbname' => $this->database,
             'charset' => $this->charset,
         ];

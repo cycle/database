@@ -11,14 +11,14 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Config\SQLServer;
 
-use Cycle\Database\Config\PDOConnectionInfo;
+use Cycle\Database\Config\PDOConnectionConfig as BaseConnectionConfig;
 use Cycle\Database\Config\ProvidesSourceString;
 
 /**
  * @psalm-type IsolationLevelType = \PDO::SQLSRV_TXN_*
- * @psalm-import-type PDOFlag from PDOConnectionInfo
+ * @psalm-import-type PDOFlag from PDOConnectionConfig
  */
-class SQLServerPDOConnectionInfo extends PDOConnectionInfo implements ProvidesSourceString
+class PDOConnectionConfig extends BaseConnectionConfig implements ProvidesSourceString
 {
     /**
      * General driver specific PDO options.

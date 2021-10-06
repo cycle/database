@@ -18,9 +18,9 @@ use Cycle\Database\Driver\DriverInterface;
  * used as data source for multiple databases as table prefix and quotation
  * defined on Database instance level.
  *
- * @template T of ConnectionInfo
+ * @template T of ConnectionConfig
  */
-abstract class DriverCreateInfo
+abstract class DriverConfig
 {
     /**
      * @param T $connection
@@ -32,7 +32,7 @@ abstract class DriverCreateInfo
      * @param bool $readonly Disable write expressions
      */
     public function __construct(
-        public ConnectionInfo $connection,
+        public ConnectionConfig $connection,
         public bool $reconnect = true,
         public string $timezone = 'UTC',
         public bool $queryCache = true,

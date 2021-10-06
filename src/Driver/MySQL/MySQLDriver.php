@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\MySQL;
 
-use Cycle\Database\Config\MySQLDriverCreateInfo;
+use Cycle\Database\Config\MySQLDriverConfig;
 use Cycle\Database\Driver\Driver;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Query\QueryBuilder;
@@ -22,9 +22,9 @@ use Cycle\Database\Query\QueryBuilder;
 class MySQLDriver extends Driver
 {
     /**
-     * @param MySQLDriverCreateInfo $config
+     * @param MySQLDriverConfig $config
      */
-    public function __construct(MySQLDriverCreateInfo $config)
+    public function __construct(MySQLDriverConfig $config)
     {
         // default query builder
         parent::__construct(

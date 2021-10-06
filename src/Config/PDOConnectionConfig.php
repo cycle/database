@@ -36,7 +36,7 @@ namespace Cycle\Database\Config;
  *
  * @psalm-type PDOFlag = \PDO::ATTR_*
  */
-abstract class PDOConnectionInfo extends ConnectionInfo
+abstract class PDOConnectionConfig extends ConnectionConfig
 {
     /**
      * General driver specific PDO options.

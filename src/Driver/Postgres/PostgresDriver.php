@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\Postgres;
 
-use Cycle\Database\Config\PostgresDriverCreateInfo;
+use Cycle\Database\Config\PostgresDriverConfig;
 use Cycle\Database\Driver\Driver;
 use Cycle\Database\Driver\Postgres\Query\PostgresInsertQuery;
 use Cycle\Database\Driver\Postgres\Query\PostgresSelectQuery;
@@ -52,9 +52,9 @@ class PostgresDriver extends Driver
     private array $searchSchemas = [];
 
     /**
-     * @param PostgresDriverCreateInfo $config
+     * @param PostgresDriverConfig $config
      */
-    public function __construct(PostgresDriverCreateInfo $config)
+    public function __construct(PostgresDriverConfig $config)
     {
         // default query builder
         parent::__construct(
@@ -270,7 +270,7 @@ class PostgresDriver extends Driver
      */
     private function defineSchemas(): void
     {
-        /** @var PostgresDriverCreateInfo $config */
+        /** @var PostgresDriverConfig $config */
         $config = $this->config;
 
         $this->searchSchemas = $this->searchPath = \array_values($config->schema);

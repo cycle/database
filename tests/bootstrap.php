@@ -22,11 +22,11 @@ mb_internal_encoding('UTF-8');
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 $drivers = [
-    'sqlite'    => new Database\Config\SQLiteDriverCreateInfo(
+    'sqlite'    => new Database\Config\SQLiteDriverConfig(
         queryCache: true,
     ),
-    'mysql'     => new Database\Config\MySQLDriverCreateInfo(
-        connection: new Database\Config\MySQL\MySQLPDOUriConnectionInfo(
+    'mysql'     => new Database\Config\MySQLDriverConfig(
+        connection: new Database\Config\MySQL\PDOUriConnectionConfig(
             database: 'spiral',
             host: '127.0.0.1',
             port: 13306,
@@ -35,24 +35,26 @@ $drivers = [
         ),
         queryCache: true
     ),
-    'postgres' => new Database\Config\PostgresDriverCreateInfo(
-        connection: new Database\Config\Postgres\PostgresPDOConnectionInfo(
+    'postgres' => new Database\Config\PostgresDriverConfig(
+        connection: new Database\Config\Postgres\PDOConnectionConfig(
             database: 'spiral',
             host: '127.0.0.1',
             port: 15432,
             user: 'postgres',
             password: 'postgres',
         ),
-        queryCache: true
+        schema: 'public',
+        queryCache: true,
     ),
-    'sqlserver' => new Database\Config\SQLServerDriverCreateInfo(
-        connection: new Database\Config\SQLServer\SQLServerPDOConnectionInfo(
+    'sqlserver' => new Database\Config\SQLServerDriverConfig(
+        connection: new Database\Config\SQLServer\PDOConnectionConfig(
             database: 'tempdb',
             host: '127.0.0.1',
             port: 11433,
             user: 'SA',
             password: 'SSpaSS__1'
-        )
+        ),
+        queryCache: true
     ),
 ];
 

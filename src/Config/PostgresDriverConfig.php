@@ -11,14 +11,14 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Config;
 
-use Cycle\Database\Config\Postgres\PostgresPDOConnectionInfo;
+use Cycle\Database\Config\Postgres\PDOConnectionConfig;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\Postgres\PostgresDriver;
 
 /**
- * @template-extends DriverCreateInfo<PostgresPDOConnectionInfo>
+ * @template-extends DriverConfig<PDOConnectionConfig>
  */
-final class PostgresDriverCreateInfo extends DriverCreateInfo
+final class PostgresDriverConfig extends DriverConfig
 {
     /**
      * Default public schema name for all postgres connections.
@@ -34,16 +34,16 @@ final class PostgresDriverCreateInfo extends DriverCreateInfo
     public array $schema;
 
     /**
-     * Note: The {@see PostgresPDOConnectionInfo} PDO connection config may change
+     * Note: The {@see PDOConnectionConfig} PDO connection config may change
      *       to a common (like "PostgresConnectionInfo") one in the future.
      *
-     * @param PostgresPDOConnectionInfo $connection
+     * @param PDOConnectionConfig $connection
      * @param iterable<non-empty-string>|non-empty-string $schema
      *
      * {@inheritDoc}
      */
     public function __construct(
-        PostgresPDOConnectionInfo $connection,
+        PDOConnectionConfig $connection,
         iterable|string $schema = self::DEFAULT_SCHEMA,
         bool $reconnect = true,
         string $timezone = 'UTC',

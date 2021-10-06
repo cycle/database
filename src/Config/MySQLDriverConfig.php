@@ -11,23 +11,23 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Config;
 
-use Cycle\Database\Config\MySQL\MySQLPDOConnectionInfo;
+use Cycle\Database\Config\MySQL\PDOConnectionConfig;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\MySQL\MySQLDriver;
 
 /**
- * @template-extends DriverCreateInfo<MySQLPDOConnectionInfo>
+ * @template-extends DriverConfig<PDOConnectionConfig>
  */
-final class MySQLDriverCreateInfo extends DriverCreateInfo
+final class MySQLDriverConfig extends DriverConfig
 {
     /**
-     * Note: The {@see MySQLPDOConnectionInfo} PDO connection config may change
+     * Note: The {@see PDOConnectionConfig} PDO connection config may change
      *       to a common (like "MySQLConnectionInfo") one in the future.
      *
      * {@inheritDoc}
      */
     public function __construct(
-        MySQLPDOConnectionInfo $connection,
+        PDOConnectionConfig $connection,
         bool $reconnect = true,
         string $timezone = 'UTC',
         bool $queryCache = true,

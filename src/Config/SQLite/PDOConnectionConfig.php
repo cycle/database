@@ -11,10 +11,10 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Config\SQLite;
 
-use Cycle\Database\Config\PDOConnectionInfo;
+use Cycle\Database\Config\PDOConnectionConfig as BaseConnectionConfig;
 use Cycle\Database\Config\ProvidesSourceString;
 
-class SQLitePDOConnectionInfo extends PDOConnectionInfo implements ProvidesSourceString
+class PDOConnectionConfig extends BaseConnectionConfig implements ProvidesSourceString
 {
     /**
      * @param string $database

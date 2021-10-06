@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\SQLServer;
 
-use Cycle\Database\Config\SQLServerDriverCreateInfo;
+use Cycle\Database\Config\SQLServerDriverConfig;
 use Cycle\Database\Driver\Driver;
 use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\StatementException;
@@ -30,7 +30,7 @@ class SQLServerDriver extends Driver
      *
      * @throws DriverException
      */
-    public function __construct(SQLServerDriverCreateInfo $config)
+    public function __construct(SQLServerDriverConfig $config)
     {
         parent::__construct(
             $config,

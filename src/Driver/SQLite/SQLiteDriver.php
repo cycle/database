@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\SQLite;
 
-use Cycle\Database\Config\SQLiteDriverCreateInfo;
+use Cycle\Database\Config\SQLiteDriverConfig;
 use Cycle\Database\Driver\Driver;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Query\QueryBuilder;
@@ -19,9 +19,9 @@ use Cycle\Database\Query\QueryBuilder;
 class SQLiteDriver extends Driver
 {
     /**
-     * @param SQLiteDriverCreateInfo $config
+     * @param SQLiteDriverConfig $config
      */
-    public function __construct(SQLiteDriverCreateInfo $config)
+    public function __construct(SQLiteDriverConfig $config)
     {
         parent::__construct(
             $config,

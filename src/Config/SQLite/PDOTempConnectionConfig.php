@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Config\SQLite;
 
-final class SQLitePDOTempConnectionInfo extends SQLitePDOConnectionInfo
+final class PDOTempConnectionConfig extends PDOConnectionConfig
 {
     /**
      * @param array $options

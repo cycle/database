@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Config;
 
-abstract class ConnectionInfo
+abstract class ConnectionConfig
 {
     /**
      * @var array<non-empty-string>

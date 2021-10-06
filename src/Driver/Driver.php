@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver;
 
-use Cycle\Database\Config\DriverCreateInfo;
-use Cycle\Database\Config\PDOConnectionInfo;
+use Cycle\Database\Config\DriverConfig;
+use Cycle\Database\Config\PDOConnectionConfig;
 use Cycle\Database\Config\ProvidesSourceString;
 use Cycle\Database\Exception\ConfigException;
 use Cycle\Database\Exception\DriverException;
@@ -61,13 +61,13 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     protected $queryCache = [];
 
     /**
-     * @param DriverCreateInfo $config
+     * @param DriverConfig $config
      * @param HandlerInterface $schemaHandler
      * @param CompilerInterface $queryCompiler
      * @param BuilderInterface $queryBuilder
      */
     public function __construct(
-        protected DriverCreateInfo $config,
+        protected DriverConfig $config,
         HandlerInterface $schemaHandler,
         protected CompilerInterface $queryCompiler,
         BuilderInterface $queryBuilder
@@ -285,7 +285,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     {
         $connection = $this->config->connection;
 
-        if (! $connection instanceof PDOConnectionInfo) {
+        if (! $connection instanceof PDOConnectionConfig) {
             throw new \InvalidArgumentException(
                 'Could not establish PDO connection using non-PDO configuration'
             );

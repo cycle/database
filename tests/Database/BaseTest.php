@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests;
 
-use Cycle\Database\Config\DriverCreateInfo;
+use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Tests\Traits\Loggable;
 use Cycle\Database\Tests\Traits\TableAssertions;
@@ -73,7 +73,7 @@ abstract class BaseTest extends TestCase
         $hash = \hash('crc32', static::DRIVER . ':' . \json_encode($options));
 
         if (! isset(self::$memoizedDrivers[$hash])) {
-            /** @var DriverCreateInfo $config */
+            /** @var DriverConfig $config */
             $config = clone self::$config[static::DRIVER];
 
             // Add readonly options support

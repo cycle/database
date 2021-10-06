@@ -11,26 +11,26 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Config;
 
-use Cycle\Database\Config\SQLite\SQLitePDOConnectionInfo;
-use Cycle\Database\Config\SQLite\SQLitePDOMemoryConnectionInfo;
+use Cycle\Database\Config\SQLite\PDOConnectionConfig;
+use Cycle\Database\Config\SQLite\PDOMemoryConnectionConfig;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\SQLite\SQLiteDriver;
 
 /**
- * @template-extends DriverCreateInfo<SQLitePDOConnectionInfo>
+ * @template-extends DriverConfig<PDOConnectionConfig>
  */
-final class SQLiteDriverCreateInfo extends DriverCreateInfo
+final class SQLiteDriverConfig extends DriverConfig
 {
     /**
-     * Note: The {@see SQLitePDOConnectionInfo} PDO connection config may change
+     * Note: The {@see PDOConnectionConfig} PDO connection config may change
      *       to a common (like "SQLiteConnectionInfo") one in the future.
      *
-     * @param SQLitePDOConnectionInfo|null $connection
+     * @param PDOConnectionConfig|null $connection
      *
      * {@inheritDoc}
      */
     public function __construct(
-        ?SQLitePDOConnectionInfo $connection = null,
+        ?PDOConnectionConfig $connection = null,
         bool $reconnect = true,
         string $timezone = 'UTC',
         bool $queryCache = true,
@@ -39,7 +39,7 @@ final class SQLiteDriverCreateInfo extends DriverCreateInfo
     ) {
         /** @psalm-suppress ArgumentTypeCoercion */
         parent::__construct(
-            connection: $connection ?? new SQLitePDOMemoryConnectionInfo(),
+            connection: $connection ?? new PDOMemoryConnectionConfig(),
             reconnect: $reconnect,
             timezone: $timezone,
             queryCache: $queryCache,

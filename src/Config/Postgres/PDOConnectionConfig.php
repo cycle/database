@@ -11,10 +11,10 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Config\Postgres;
 
-use Cycle\Database\Config\PDOConnectionInfo;
+use Cycle\Database\Config\PDOConnectionConfig as BaseConnectionConfig;
 use Cycle\Database\Config\ProvidesSourceString;
 
-final class PostgresPDOConnectionInfo extends PDOConnectionInfo implements ProvidesSourceString
+final class PDOConnectionConfig extends BaseConnectionConfig implements ProvidesSourceString
 {
     /**
      * @param non-empty-string $database

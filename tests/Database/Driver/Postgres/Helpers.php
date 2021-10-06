@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Driver\Postgres;
 
-use Cycle\Database\Config\Postgres\PostgresPDOConnectionInfo;
-use Cycle\Database\Config\PostgresDriverCreateInfo;
+use Cycle\Database\Config\Postgres\PDOConnectionConfig;
+use Cycle\Database\Config\PostgresDriverConfig;
 use Cycle\Database\Database;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\Postgres\PostgresDriver;
@@ -76,8 +76,8 @@ trait Helpers
 
     private function getDriver($schema = null, string $defaultSchema = null): DriverInterface
     {
-        $options = new PostgresDriverCreateInfo(
-            connection: new PostgresPDOConnectionInfo(
+        $options = new PostgresDriverConfig(
+            connection: new PDOConnectionConfig(
                 database: 'spiral',
                 host: '127.0.0.1',
                 port: 15432,

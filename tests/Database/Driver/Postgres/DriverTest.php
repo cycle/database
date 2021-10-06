@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Driver\Postgres;
 
-use Cycle\Database\Config\Postgres\PostgresPDOConnectionInfo;
-use Cycle\Database\Config\PostgresDriverCreateInfo;
+use Cycle\Database\Config\Postgres\PDOConnectionConfig;
+use Cycle\Database\Config\PostgresDriverConfig;
 use Cycle\Database\Driver\Postgres\PostgresDriver;
 use PHPUnit\Framework\TestCase;
 
@@ -14,11 +14,11 @@ class DriverTest extends TestCase
     /**
      * TODO Should be moved in common config
      *
-     * @return PostgresPDOConnectionInfo
+     * @return PDOConnectionConfig
      */
-    protected function getConnection(): PostgresPDOConnectionInfo
+    protected function getConnection(): PDOConnectionConfig
     {
-        return new PostgresPDOConnectionInfo(
+        return new PDOConnectionConfig(
             database: 'spiral',
             host: '127.0.0.1',
             port: 15432,
@@ -30,7 +30,7 @@ class DriverTest extends TestCase
     public function testIfSchemaOptionsDoesNotPresentUsePublicSchema(): void
     {
         $driver = new PostgresDriver(
-            new PostgresDriverCreateInfo(
+            new PostgresDriverConfig(
                 connection: $this->getConnection(),
                 schema: ['$user', 'public']
             )
@@ -45,7 +45,7 @@ class DriverTest extends TestCase
     public function testDefaultSchemaCanBeDefined(): void
     {
         $driver = new PostgresDriver(
-            new PostgresDriverCreateInfo(
+            new PostgresDriverConfig(
                 connection: $this->getConnection(),
                 schema: 'private',
             )
@@ -60,7 +60,7 @@ class DriverTest extends TestCase
     public function testDefaultSchemaCanBeDefinedFromAvailableSchemas(): void
     {
         $driver = new PostgresDriver(
-            new PostgresDriverCreateInfo(
+            new PostgresDriverConfig(
                 connection: $this->getConnection(),
                 schema: 'private',
             )
@@ -75,7 +75,7 @@ class DriverTest extends TestCase
     public function testDefaultSchemaForCurrentUser(): void
     {
         $driver = new PostgresDriver(
-            new PostgresDriverCreateInfo(
+            new PostgresDriverConfig(
                 connection: $this->getConnection(),
                 schema: ['$user', 'test', 'private'],
             )
@@ -93,7 +93,7 @@ class DriverTest extends TestCase
     public function testIfSchemaOptionsPresentsUseIt($schema, $available, $result): void
     {
         $driver = new PostgresDriver(
-            new PostgresDriverCreateInfo(
+            new PostgresDriverConfig(
                 connection: $this->getConnection(),
                 schema: $schema,
             )
