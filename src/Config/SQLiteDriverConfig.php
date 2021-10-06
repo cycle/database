@@ -11,26 +11,23 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Config;
 
-use Cycle\Database\Config\SQLite\FileConnectionConfig;
+use Cycle\Database\Config\SQLite\ConnectionConfig;
 use Cycle\Database\Config\SQLite\MemoryConnectionConfig;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\SQLite\SQLiteDriver;
 
 /**
- * @template-extends DriverConfig<FileConnectionConfig>
+ * @template-extends DriverConfig<ConnectionConfig>
  */
 final class SQLiteDriverConfig extends DriverConfig
 {
     /**
-     * Note: The {@see FileConnectionConfig} PDO connection config may change
-     *       to a common (like "SQLiteConnectionInfo") one in the future.
-     *
-     * @param FileConnectionConfig|null $connection
+     * @param ConnectionConfig|null $connection
      *
      * {@inheritDoc}
      */
     public function __construct(
-        ?FileConnectionConfig $connection = null,
+        ?ConnectionConfig $connection = null,
         bool $reconnect = true,
         string $timezone = 'UTC',
         bool $queryCache = true,

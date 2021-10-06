@@ -11,12 +11,12 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Config;
 
-use Cycle\Database\Config\Postgres\UriConnectionConfig;
+use Cycle\Database\Config\Postgres\ConnectionConfig;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\Postgres\PostgresDriver;
 
 /**
- * @template-extends DriverConfig<UriConnectionConfig>
+ * @template-extends DriverConfig<ConnectionConfig>
  */
 final class PostgresDriverConfig extends DriverConfig
 {
@@ -34,16 +34,13 @@ final class PostgresDriverConfig extends DriverConfig
     public array $schema;
 
     /**
-     * Note: The {@see UriConnectionConfig} PDO connection config may change
-     *       to a common (like "PostgresConnectionInfo") one in the future.
-     *
-     * @param UriConnectionConfig $connection
+     * @param ConnectionConfig $connection
      * @param iterable<non-empty-string>|non-empty-string $schema
      *
      * {@inheritDoc}
      */
     public function __construct(
-        UriConnectionConfig $connection,
+        ConnectionConfig $connection,
         iterable|string $schema = self::DEFAULT_SCHEMA,
         bool $reconnect = true,
         string $timezone = 'UTC',

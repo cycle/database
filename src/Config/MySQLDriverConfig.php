@@ -21,8 +21,7 @@ use Cycle\Database\Driver\MySQL\MySQLDriver;
 final class MySQLDriverConfig extends DriverConfig
 {
     /**
-     * Note: The {@see ConnectionConfig} PDO connection config may change
-     *       to a common (like "MySQLConnectionInfo") one in the future.
+     * @param ConnectionConfig $connection
      *
      * {@inheritDoc}
      */
