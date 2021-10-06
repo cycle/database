@@ -17,7 +17,7 @@ use Cycle\Database\Config\ProvidesSourceString;
 /**
  * @psalm-import-type PDOFlag from PDOConnectionInfo
  */
-abstract class MySQLPDOConnectionInfo extends PDOConnectionInfo  implements ProvidesSourceString
+abstract class MySQLPDOConnectionInfo extends PDOConnectionInfo implements ProvidesSourceString
 {
     /**
      * General driver specific PDO options.

@@ -30,7 +30,8 @@ abstract class ConnectionInfo
     public function __construct(
         public ?string $user = null,
         public ?string $password = null,
-    ) {}
+    ) {
+    }
 
     /**
      * @return non-empty-string|null

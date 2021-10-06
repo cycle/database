@@ -13,22 +13,26 @@ namespace Cycle\Database\Config;
 
 /**
  * List of connection examples:
- *  MS SQL   - dblib:host=localhost:3007;dbname=dbname
- *  MS SQL   - sqlsrv:Server=localhost,1521;Database=dbname
- *  CUBRID   - cubrid:dbname=dbname;host=localhost;port=33000
- *  MySQL    - mysql:host=localhost;port=3307;dbname=dbname
- *  MySQL    - mysql:unix_socket=/tmp/mysql.sock;dbname=dbname
- *  Firebird - firebird:dbname=localhost:/path/to/file.eu3
- *  Firebird - firebird:dbname=localhost:example;charset=utf8;
- *  IBM      - ibm:DRIVER={IBM DB2 ODBC DRIVER};DATABASE=dbname;HOSTNAME=localhost;PORT=56789;PROTOCOL=TCPIP;UID=user;PWD=pass
- *  Informix - informix:host=localhost;service=9800;database=dbname;server=ids_server;protocol=onsoctcp;EnableScrollableCursors=1
- *  Oracle   - oci:dbname=//localhost:1521/dbname
- *  Oracle   - oci:dbname=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=ORCL)(SID=ORCL)))
- *  ODBC/DB2 - odbc:DRIVER={IBM DB2 ODBC DRIVER};HOSTNAME=localhost;PORT=50000;DATABASE=dbname;PROTOCOL=TCPIP;UID=db2inst1;PWD=ibmdb2;
- *  Postgres - pgsql:host=localhost;port=5432;dbname=dbname;user=login;password=pass
- *  SQLite   - sqlite:/path/to/database.db
- *  SQLite   - sqlite::memory:
- *  SQLite   - sqlite:
+ *  - MS SQL   - dblib:host=localhost:3007;dbname=dbname
+ *  - MS SQL   - sqlsrv:Server=localhost,1521;Database=dbname
+ *  - CUBRID   - cubrid:dbname=dbname;host=localhost;port=33000
+ *  - MySQL    - mysql:host=localhost;port=3307;dbname=dbname
+ *  - MySQL    - mysql:unix_socket=/tmp/mysql.sock;dbname=dbname
+ *  - Firebird - firebird:dbname=localhost:/path/to/file.eu3
+ *  - Firebird - firebird:dbname=localhost:example;charset=utf8;
+ *  - IBM      - ibm:DRIVER={IBM DB2 ODBC DRIVER};DATABASE=dbname;HOSTNAME=localhost;
+ *               PORT=56789;PROTOCOL=TCPIP;UID=user;PWD=pass
+ *  - Informix - informix:host=localhost;service=9800;database=dbname;server=ids_server;
+ *               protocol=onsoctcp;EnableScrollableCursors=1
+ *  - Oracle   - oci:dbname=//localhost:1521/dbname
+ *  - Oracle   - oci:dbname=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))
+ *               (CONNECT_DATA=(SERVICE_NAME=ORCL)(SID=ORCL)))
+ *  - ODBC/DB2 - odbc:DRIVER={IBM DB2 ODBC DRIVER};HOSTNAME=localhost;PORT=50000;DATABASE=dbname;
+ *               PROTOCOL=TCPIP;UID=db2inst1;PWD=ibmdb2;
+ *  - Postgres - pgsql:host=localhost;port=5432;dbname=dbname;user=login;password=pass
+ *  - SQLite   - sqlite:/path/to/database.db
+ *  - SQLite   - sqlite::memory:
+ *  - SQLite   - sqlite:
  *
  * @psalm-type PDOFlag = \PDO::ATTR_*
  */

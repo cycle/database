@@ -71,8 +71,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         HandlerInterface $schemaHandler,
         protected CompilerInterface $queryCompiler,
         BuilderInterface $queryBuilder
-    )
-    {
+    ) {
         $this->schemaHandler = $schemaHandler->withDriver($this);
         $this->queryBuilder = $queryBuilder->withDriver($this);
 

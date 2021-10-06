@@ -71,7 +71,7 @@ final class PostgresDriverCreateInfo extends DriverCreateInfo
     private function bootSchema(iterable|string $schema): array
     {
         // Cast any schema config variants to array
-        $schema = match(true) {
+        $schema = match (true) {
             $schema instanceof \Traversable => \iterator_to_array($schema),
             \is_string($schema) => [$schema],
             default => $schema
