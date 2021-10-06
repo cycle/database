@@ -51,7 +51,7 @@ class DsnConnectionConfig extends ConnectionConfig implements ProvidesSourceStri
     public function getSourceString(): string
     {
         /** @psalm-suppress ArgumentTypeCoercion */
-        return $this->database ??= DataSourceName::read($this->getDsn(), 'dbname') ?? '*';
+        return $this->database ??= DataSourceName::read($this->getDsn(), 'database') ?? '*';
     }
 
     /**
