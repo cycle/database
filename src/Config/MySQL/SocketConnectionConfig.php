@@ -11,7 +11,9 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Config\MySQL;
 
-final class PDOSocketConnectionConfig extends PDOConnectionConfig
+use Cycle\Database\Config\ProvidesSourceString;
+
+class SocketConnectionConfig extends ConnectionConfig implements ProvidesSourceString
 {
     /**
      * @param non-empty-string $socket
@@ -22,18 +24,26 @@ final class PDOSocketConnectionConfig extends PDOConnectionConfig
      * @param array<non-empty-string|int, non-empty-string> $options
      */
     public function __construct(
-        string $database,
+        public string $database,
         public string $socket,
+        public ?string $charset = null,
         ?string $user = null,
         ?string $password = null,
-        ?string $charset = null,
         array $options = []
     ) {
-        parent::__construct($database, $charset, $user, $password, $options);
+        parent::__construct($user, $password, $options);
     }
 
     /**
-     * Returns the MySQL-specific PDO DSN with connection Unix socket,
+     * {@inheritDoc}
+     */
+    public function getSourceString(): string
+    {
+        return $this->database;
+    }
+
+    /**
+     * Returns the MySQL-specific PDO DataSourceName with connection Unix socket,
      * that looks like:
      * <code>
      *  mysql:unix_socket=/tmp/mysql.sock;dbname=dbname

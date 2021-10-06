@@ -11,7 +11,9 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Config\MySQL;
 
-final class PDOUriConnectionConfig extends PDOConnectionConfig
+use Cycle\Database\Config\ProvidesSourceString;
+
+class UriConnectionConfig extends ConnectionConfig implements ProvidesSourceString
 {
     /**
      * @param non-empty-string $host
@@ -23,19 +25,27 @@ final class PDOUriConnectionConfig extends PDOConnectionConfig
      * @param array<non-empty-string|int, non-empty-string> $options
      */
     public function __construct(
-        string $database,
+        public string $database,
         public string $host = 'localhost',
         public int $port = 3307,
-        ?string $charset = null,
+        public ?string $charset = null,
         ?string $user = null,
         ?string $password = null,
         array $options = [],
     ) {
-        parent::__construct($database, $charset, $user, $password, $options);
+        parent::__construct($user, $password, $options);
     }
 
     /**
-     * Returns the MySQL-specific PDO DSN with connection URI,
+     * {@inheritDoc}
+     */
+    public function getSourceString(): string
+    {
+        return $this->database;
+    }
+
+    /**
+     * Returns the MySQL-specific PDO DataSourceName with connection URI,
      * that looks like:
      * <code>
      *  mysql:host=localhost;port=3307;dbname=dbname

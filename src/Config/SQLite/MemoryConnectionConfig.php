@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Config\SQLite;
 
-final class PDOMemoryConnectionConfig extends PDOConnectionConfig
+class MemoryConnectionConfig extends FileConnectionConfig
 {
     /**
      * @var non-empty-string

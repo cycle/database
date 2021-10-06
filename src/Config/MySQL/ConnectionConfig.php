@@ -12,12 +12,11 @@ declare(strict_types=1);
 namespace Cycle\Database\Config\MySQL;
 
 use Cycle\Database\Config\PDOConnectionConfig as BaseConnectionConfig;
-use Cycle\Database\Config\ProvidesSourceString;
 
 /**
- * @psalm-import-type PDOFlag from PDOConnectionConfig
+ * @psalm-import-type PDOFlag from UriConnectionConfig
  */
-abstract class PDOConnectionConfig extends BaseConnectionConfig implements ProvidesSourceString
+abstract class ConnectionConfig extends BaseConnectionConfig
 {
     /**
      * General driver specific PDO options.
@@ -33,28 +32,16 @@ abstract class PDOConnectionConfig extends BaseConnectionConfig implements Provi
     ];
 
     /**
-     * @param non-empty-string $database
      * @param non-empty-string|null $user
      * @param non-empty-string|null $password
-     * @param non-empty-string|null $charset
      * @param array<non-empty-string|int, non-empty-string> $options
      */
     public function __construct(
-        public string $database,
-        public ?string $charset = null,
         ?string $user = null,
         ?string $password = null,
         array $options = [],
     ) {
         parent::__construct($user, $password, $options);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getSourceString(): string
-    {
-        return $this->database;
     }
 
     /**

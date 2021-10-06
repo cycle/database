@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Driver\Postgres;
 
-use Cycle\Database\Config\Postgres\PDOConnectionConfig;
+use Cycle\Database\Config\Postgres\UriConnectionConfig;
 use Cycle\Database\Config\PostgresDriverConfig;
 use Cycle\Database\Driver\Postgres\PostgresDriver;
 use PHPUnit\Framework\TestCase;
@@ -14,11 +14,11 @@ class DriverTest extends TestCase
     /**
      * TODO Should be moved in common config
      *
-     * @return PDOConnectionConfig
+     * @return UriConnectionConfig
      */
-    protected function getConnection(): PDOConnectionConfig
+    protected function getConnection(): UriConnectionConfig
     {
-        return new PDOConnectionConfig(
+        return new UriConnectionConfig(
             database: 'spiral',
             host: '127.0.0.1',
             port: 15432,

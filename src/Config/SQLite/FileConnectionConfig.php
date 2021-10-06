@@ -11,10 +11,9 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Config\SQLite;
 
-use Cycle\Database\Config\PDOConnectionConfig as BaseConnectionConfig;
 use Cycle\Database\Config\ProvidesSourceString;
 
-class PDOConnectionConfig extends BaseConnectionConfig implements ProvidesSourceString
+class FileConnectionConfig extends ConnectionConfig implements ProvidesSourceString
 {
     /**
      * @param string $database
@@ -24,11 +23,11 @@ class PDOConnectionConfig extends BaseConnectionConfig implements ProvidesSource
         public string $database,
         array $options = []
     ) {
-        parent::__construct(null, null, $options);
+        parent::__construct($options);
     }
 
     /**
-     * Returns the SQLite-specific PDO DSN, that looks like:
+     * Returns the SQLite-specific PDO DataSourceName, that looks like:
      * <code>
      *  sqlite:/path/to/database.db
      * </code>
@@ -46,13 +45,5 @@ class PDOConnectionConfig extends BaseConnectionConfig implements ProvidesSource
     public function getSourceString(): string
     {
         return $this->database;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getName(): string
-    {
-        return 'sqlite';
     }
 }

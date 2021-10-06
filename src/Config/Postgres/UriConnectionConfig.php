@@ -11,10 +11,9 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Config\Postgres;
 
-use Cycle\Database\Config\PDOConnectionConfig as BaseConnectionConfig;
 use Cycle\Database\Config\ProvidesSourceString;
 
-final class PDOConnectionConfig extends BaseConnectionConfig implements ProvidesSourceString
+class UriConnectionConfig extends ConnectionConfig implements ProvidesSourceString
 {
     /**
      * @param non-empty-string $database
@@ -44,7 +43,7 @@ final class PDOConnectionConfig extends BaseConnectionConfig implements Provides
     }
 
     /**
-     * Returns the Postgres-specific PDO DSN, that looks like:
+     * Returns the Postgres-specific PDO DataSourceName, that looks like:
      * <code>
      *  pgsql:host=localhost;port=5432;dbname=dbname;user=login;password=pass
      * </code>
@@ -59,22 +58,14 @@ final class PDOConnectionConfig extends BaseConnectionConfig implements Provides
             'dbname' => $this->database,
 
             //
-            // Username and Password may be is a part of DSN
+            // Username and Password may be is a part of DataSourceName
             // However, they can also be passed as separate
-            // parameters, so we ignore the case with the DSN:
+            // parameters, so we ignore the case with the DataSourceName:
             //
             // 'user'     => $this->user,
             // 'password' => $this->password,
         ];
 
         return \sprintf('%s:%s', $this->getName(), $this->dsn($config));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getName(): string
-    {
-        return 'pgsql';
     }
 }

@@ -11,23 +11,23 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Config;
 
-use Cycle\Database\Config\SQLServer\PDOConnectionConfig;
+use Cycle\Database\Config\SQLServer\UriConnectionConfig;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\SQLServer\SQLServerDriver;
 
 /**
- * @template-extends DriverConfig<PDOConnectionConfig>
+ * @template-extends DriverConfig<UriConnectionConfig>
  */
 final class SQLServerDriverConfig extends DriverConfig
 {
     /**
-     * Note: The {@see PDOConnectionConfig} PDO connection config may change
+     * Note: The {@see UriConnectionConfig} PDO connection config may change
      *       to a common (like "SQLServerConnectionInfo") one in the future.
      *
      * {@inheritDoc}
      */
     public function __construct(
-        PDOConnectionConfig $connection,
+        UriConnectionConfig $connection,
         bool $reconnect = true,
         string $timezone = 'UTC',
         bool $queryCache = true,

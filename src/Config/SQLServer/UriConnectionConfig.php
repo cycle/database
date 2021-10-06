@@ -11,26 +11,14 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Config\SQLServer;
 
-use Cycle\Database\Config\PDOConnectionConfig as BaseConnectionConfig;
 use Cycle\Database\Config\ProvidesSourceString;
 
 /**
  * @psalm-type IsolationLevelType = \PDO::SQLSRV_TXN_*
- * @psalm-import-type PDOFlag from PDOConnectionConfig
+ * @psalm-import-type PDOFlag from UriConnectionConfig
  */
-class PDOConnectionConfig extends BaseConnectionConfig implements ProvidesSourceString
+class UriConnectionConfig extends ConnectionConfig implements ProvidesSourceString
 {
-    /**
-     * General driver specific PDO options.
-     *
-     * @var array<PDOFlag, mixed>
-     */
-    protected const DEFAULT_PDO_OPTIONS = [
-        \PDO::ATTR_CASE              => \PDO::CASE_NATURAL,
-        \PDO::ATTR_ERRMODE           => \PDO::ERRMODE_EXCEPTION,
-        \PDO::ATTR_STRINGIFY_FETCHES => false
-    ];
-
     /**
      * @param non-empty-string $database The name of the database.
      * @param non-empty-string $host Database connection host.
@@ -95,7 +83,7 @@ class PDOConnectionConfig extends BaseConnectionConfig implements ProvidesSource
     }
 
     /**
-     * Returns the SQL Server specific PDO DSN, that looks like:
+     * Returns the SQL Server specific PDO DataSourceName, that looks like:
      * <code>
      *  sqlsrv:Server=localhost,1521;Database=dbname
      * </code>
@@ -122,13 +110,5 @@ class PDOConnectionConfig extends BaseConnectionConfig implements ProvidesSource
         ];
 
         return \sprintf('%s:%s', $this->getName(), $this->dsn($config));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getName(): string
-    {
-        return 'sqlsrv';
     }
 }
