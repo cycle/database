@@ -39,7 +39,6 @@ abstract class IsolationTest extends BaseTest
     public function testChangeNameBeforeSave(): void
     {
         $schema = $this->schema('prefix_', 'table');
-
         $this->assertFalse($schema->exists());
 
         $this->assertSame('prefix_', $schema->getPrefix());

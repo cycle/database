@@ -48,7 +48,7 @@ abstract class BaseTest extends TestCase
     /**
      * @var array<string, Database>
      */
-    private static array $memoizedDatabases = [];
+    private static array $memoizedDrivers = [];
 
     public function setUp(): void
     {
@@ -70,20 +70,25 @@ abstract class BaseTest extends TestCase
      */
     private function getDriver(array $options = []): DriverInterface
     {
-        /** @var DriverCreateInfo $config */
-        $config = clone self::$config[static::DRIVER];
+        $hash = \hash('crc32', static::DRIVER . ':' . \json_encode($options));
 
-        // Add readonly options support
-        if (isset($options['readonly']) && $options['readonly'] === true) {
-            $config->readonly = true;
+        if (! isset(self::$memoizedDrivers[$hash])) {
+            /** @var DriverCreateInfo $config */
+            $config = clone self::$config[static::DRIVER];
+
+            // Add readonly options support
+            if (isset($options['readonly']) && $options['readonly'] === true) {
+                $config->readonly = true;
+            }
+
+            $driver = $config->getDriver();
+
+            $this->setUpLogger($driver);
+
+            self::$memoizedDrivers[$hash] = $driver;
         }
 
-
-        $driver = $config->getDriver();
-
-        $this->setUpLogger($driver);
-
-        return $driver;
+        return self::$memoizedDrivers[$hash];
     }
 
     /**
@@ -94,13 +99,7 @@ abstract class BaseTest extends TestCase
      */
     protected function db(string $name = 'default', string $prefix = '', array $config = []): Database
     {
-        $hash = \implode(':', [static::DRIVER, $name, $prefix, \json_encode($config)]);
-
-        if (!isset(self::$memoizedDatabases[$hash])) {
-            self::$memoizedDatabases[$hash] = new Database($name, $prefix, $this->getDriver($config));
-        }
-
-        return self::$memoizedDatabases[$hash];
+        return new Database($name, $prefix, $this->getDriver($config));
     }
 
     /**
