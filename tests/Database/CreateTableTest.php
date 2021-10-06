@@ -10,26 +10,11 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests;
 
-use Cycle\Database\Database;
 use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Schema\AbstractTable;
 
 abstract class CreateTableTest extends BaseTest
 {
-    /**
-     * @var Database
-     */
-    protected $database;
-
-    public function setUp(): void
-    {
-        $this->database = $this->db();
-    }
-
-    public function tearDown(): void
-    {
-        $this->dropDatabase($this->db());
-    }
 
     public function schema(string $table): AbstractTable
     {

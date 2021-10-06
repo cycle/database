@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\Postgres;
 
+use Cycle\Database\Config\PostgresDriverCreateInfo;
 use Cycle\Database\Driver\Driver;
 use Cycle\Database\Driver\Postgres\Query\PostgresInsertQuery;
 use Cycle\Database\Driver\Postgres\Query\PostgresSelectQuery;
@@ -26,27 +27,6 @@ use Throwable;
  */
 class PostgresDriver extends Driver
 {
-    /**
-     * Option key for default postgres schema name.
-     *
-     * @var non-empty-string
-     */
-    private const OPT_DEFAULT_SCHEMA = 'default_schema';
-
-    /**
-     * Option key for all available postgres schema names.
-     *
-     * @var non-empty-string
-     */
-    private const OPT_AVAILABLE_SCHEMAS = 'schema';
-
-    /**
-     * Default public schema name for all postgres connections.
-     *
-     * @var non-empty-string
-     */
-    public const PUBLIC_SCHEMA = 'public';
-
     /**
      * Cached list of primary keys associated with their table names. Used by InsertBuilder to
      * emulate last insert id.
@@ -67,18 +47,18 @@ class PostgresDriver extends Driver
      * Schemas to search tables in
      *
      * @var string[]
-     * @psalm-var non-empty-array<non-empty-string>
+     * @psalm-var non-empty-array<string>
      */
     private array $searchSchemas = [];
 
     /**
-     * @param array $options
+     * @param PostgresDriverCreateInfo $config
      */
-    public function __construct(array $options)
+    public function __construct(PostgresDriverCreateInfo $config)
     {
         // default query builder
         parent::__construct(
-            $options,
+            $config,
             new PostgresHandler(),
             new PostgresCompiler('""'),
             new QueryBuilder(
@@ -89,7 +69,7 @@ class PostgresDriver extends Driver
             )
         );
 
-        $this->defineSchemas($this->options);
+        $this->defineSchemas();
     }
 
     /**
@@ -117,6 +97,8 @@ class PostgresDriver extends Driver
      */
     public function shouldUseDefinedSchemas(): bool
     {
+        // TODO May be redundant?
+        //      Search schemas list can not be empty.
         return $this->searchSchemas !== [];
     }
 
@@ -189,12 +171,12 @@ class PostgresDriver extends Driver
                 }
 
                 return $ok;
-            } catch (Throwable  $e) {
+            } catch (Throwable $e) {
                 $e = $this->mapException($e, 'BEGIN TRANSACTION');
 
                 if (
                     $e instanceof StatementException\ConnectionException
-                    && $this->options['reconnect']
+                    && $this->config->reconnect
                 ) {
                     $this->disconnect();
 
@@ -231,7 +213,7 @@ class PostgresDriver extends Driver
             [$schema, $table] = explode('.', $name, 2);
 
             if ($schema === '$user') {
-                $schema = $this->options['username'];
+                $schema = $this->config->connection->getUsername();
             }
         }
 
@@ -245,8 +227,11 @@ class PostgresDriver extends Driver
     {
         // Cycle is purely UTF-8
         $pdo = parent::createPDO();
+        // TODO Should be moved into driver settings.
         $pdo->exec("SET NAMES 'UTF-8'");
 
+        // TODO May be redundant?
+        //      Search schemas list can not be empty.
         if ($this->searchPath !== []) {
             $schema = '"' . implode('", "', $this->searchPath) . '"';
             $pdo->exec("SET search_path TO {$schema}");
@@ -264,16 +249,16 @@ class PostgresDriver extends Driver
         $message = strtolower($exception->getMessage());
 
         if (
-            strpos($message, 'eof detected') !== false
-            || strpos($message, 'broken pipe') !== false
-            || strpos($message, '0800') !== false
-            || strpos($message, '080P') !== false
-            || strpos($message, 'connection') !== false
+            str_contains($message, 'eof detected')
+            || str_contains($message, 'broken pipe')
+            || str_contains($message, '0800')
+            || str_contains($message, '080P')
+            || str_contains($message, 'connection')
         ) {
             return new StatementException\ConnectionException($exception, $query);
         }
 
-        if ((int) $exception->getCode() >= 23000 && (int) $exception->getCode() < 24000) {
+        if ((int)$exception->getCode() >= 23000 && (int)$exception->getCode() < 24000) {
             return new StatementException\ConstrainException($exception, $query);
         }
 
@@ -283,20 +268,16 @@ class PostgresDriver extends Driver
     /**
      * Define schemas from config
      */
-    private function defineSchemas(array $options): void
+    private function defineSchemas(): void
     {
-        $options[self::OPT_AVAILABLE_SCHEMAS] = (array)($options[self::OPT_AVAILABLE_SCHEMAS] ?? []);
+        /** @var PostgresDriverCreateInfo $config */
+        $config = $this->config;
 
-        $defaultSchema = $options[self::OPT_DEFAULT_SCHEMA]
-            ?? $options[self::OPT_AVAILABLE_SCHEMAS][0]
-            ?? static::PUBLIC_SCHEMA;
+        $this->searchSchemas = $this->searchPath = \array_values($config->schema);
 
-        $this->searchSchemas = $this->searchPath = array_values(array_unique(
-            [$defaultSchema, ...$options[self::OPT_AVAILABLE_SCHEMAS]]
-        ));
-
-        if (($pos = array_search('$user', $this->searchSchemas, true)) !== false) {
-            $this->searchSchemas[$pos] = $options['username'];
+        $position = \array_search('$user', $this->searchSchemas, true);
+        if ($position !== false) {
+            $this->searchSchemas[$position] = (string)$config->connection->getUsername();
         }
     }
 }

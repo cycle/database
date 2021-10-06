@@ -33,18 +33,6 @@ final class Database implements DatabaseInterface, InjectableInterface
     public const ISOLATION_READ_COMMITTED   = DriverInterface::ISOLATION_READ_COMMITTED;
     public const ISOLATION_READ_UNCOMMITTED = DriverInterface::ISOLATION_READ_UNCOMMITTED;
 
-    /** @var string */
-    private $name;
-
-    /** @var string */
-    private $prefix;
-
-    /** @var DriverInterface */
-    private $driver;
-
-    /** @var DriverInterface|null */
-    private $readDriver;
-
     /**
      * @param string               $name       Internal database name/id.
      * @param string               $prefix     Default database table prefix, will be used for all
@@ -53,15 +41,11 @@ final class Database implements DatabaseInterface, InjectableInterface
      * @param DriverInterface|null $readDriver Read-only driver connection.
      */
     public function __construct(
-        string $name,
-        string $prefix,
-        DriverInterface $driver,
-        DriverInterface $readDriver = null
+        private string $name,
+        private string $prefix,
+        private DriverInterface $driver,
+        private ?DriverInterface $readDriver = null
     ) {
-        $this->name = $name;
-        $this->prefix = $prefix;
-        $this->driver = $driver;
-        $this->readDriver = $readDriver;
     }
 
     /**

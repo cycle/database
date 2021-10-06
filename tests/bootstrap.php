@@ -1,9 +1,10 @@
 <?php
 
 /**
- * Spiral Framework, SpiralScout LLC.
+ * This file is part of Cycle Database package.
  *
- * @author    Anton Titov (Wolfy-J)
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -21,32 +22,38 @@ mb_internal_encoding('UTF-8');
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 $drivers = [
-    'sqlite'    => [
-        'driver'     => Database\Driver\SQLite\SQLiteDriver::class,
-        'conn'       => 'sqlite::memory:',
-        'user'       => 'sqlite',
-        'pass'       => '',
-        'queryCache' => 100
-    ],
-    'mysql'     => [
-        'driver'     => Database\Driver\MySQL\MySQLDriver::class,
-        'conn'       => 'mysql://root:root@127.0.0.1:13306/spiral',
-        'queryCache' => 100
-    ],
-    'postgres'  => [
-        'driver'     => Database\Driver\Postgres\PostgresDriver::class,
-        'conn'       => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
-        'user'       => 'postgres',
-        'pass'       => 'postgres',
-        'queryCache' => 100
-    ],
-    'sqlserver' => [
-        'driver'     => Database\Driver\SQLServer\SQLServerDriver::class,
-        'conn'       => 'sqlsrv:Server=127.0.0.1,11433;Database=tempdb',
-        'user'       => 'SA',
-        'pass'       => 'SSpaSS__1',
-        'queryCache' => 100
-    ],
+    'sqlite'    => new Database\Config\SQLiteDriverCreateInfo(
+        queryCache: true,
+    ),
+    'mysql'     => new Database\Config\MySQLDriverCreateInfo(
+        connection: new Database\Config\MySQL\MySQLPDOUriConnectionInfo(
+            database: 'spiral',
+            host: '127.0.0.1',
+            port: 13306,
+            user: 'root',
+            password: 'root',
+        ),
+        queryCache: true
+    ),
+    'postgres' => new Database\Config\PostgresDriverCreateInfo(
+        connection: new Database\Config\Postgres\PostgresPDOConnectionInfo(
+            database: 'spiral',
+            host: '127.0.0.1',
+            port: 15432,
+            user: 'postgres',
+            password: 'postgres',
+        ),
+        queryCache: true
+    ),
+    'sqlserver' => new Database\Config\SQLServerDriverCreateInfo(
+        connection: new Database\Config\SQLServer\SQLServerPDOConnectionInfo(
+            database: 'tempdb',
+            host: '127.0.0.1',
+            port: 11433,
+            user: 'SA',
+            password: 'SSpaSS__1'
+        )
+    ),
 ];
 
 $db = getenv('DB') ?: null;

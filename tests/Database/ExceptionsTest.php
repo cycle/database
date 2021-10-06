@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests;
 
-use Cycle\Database\Database;
 use Cycle\Database\Exception\HandlerException;
 use Cycle\Database\Exception\StatementException;
 
@@ -20,16 +19,6 @@ use Cycle\Database\Exception\StatementException;
  */
 abstract class ExceptionsTest extends BaseTest
 {
-    /**
-     * @var Database
-     */
-    protected $database;
-
-    public function setUp(): void
-    {
-        $this->database = $this->db();
-    }
-
     public function testSelectionException(): void
     {
         $select = $this->database->select()->from('udnefinedTable');
@@ -64,15 +53,21 @@ abstract class ExceptionsTest extends BaseTest
 
     public function testInsertNotNullable(): void
     {
-        $schema = $this->getDriver()->getSchema('test');
+        $schema = $this->database->getDriver()->getSchema('test');
         $schema->primary('id');
         $schema->string('value')->nullable(false)->defaultValue(null);
         $schema->save();
 
-        $this->getDriver()->insertQuery('', 'test')->values(['value' => 'value'])->run();
+        $this->database->getDriver()
+            ->insertQuery('', 'test')
+            ->values(['value' => 'value'])
+            ->run();
 
         try {
-            $this->getDriver()->insertQuery('', 'test')->values(['value' => null])->run();
+            $this->database->getDriver()
+                ->insertQuery('', 'test')
+                ->values(['value' => null])
+                ->run();
         } catch (StatementException\ConstrainException $e) {
             $this->assertInstanceOf(StatementException\ConstrainException::class, $e);
         }

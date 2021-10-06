@@ -18,25 +18,15 @@ use Spiral\Pagination\Paginator;
 
 abstract class StatementTest extends BaseTest
 {
-    /**
-     * @var Database
-     */
-    protected $database;
-
     public function setUp(): void
     {
-        $this->database = $this->db();
+        parent::setUp();
 
         $schema = $this->database->table('sample_table')->getSchema();
         $schema->primary('id');
         $schema->string('name', 64);
         $schema->integer('value');
         $schema->save();
-    }
-
-    public function tearDown(): void
-    {
-        $this->dropDatabase($this->database);
     }
 
     public function schema(string $table): AbstractTable

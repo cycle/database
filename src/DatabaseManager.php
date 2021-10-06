@@ -263,7 +263,7 @@ final class DatabaseManager implements
 
             return $this->drivers[$driver];
         } catch (ContainerExceptionInterface $e) {
-            throw new DBALException($e->getMessage(), $e->getCode(), $e);
+            throw new DBALException($e->getMessage(), (int)$e->getCode(), $e);
         }
     }
 

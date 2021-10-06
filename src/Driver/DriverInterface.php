@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver;
 
-use DateTimeZone;
 use PDO;
 use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\ReadonlyConnectionException;
@@ -105,9 +104,9 @@ interface DriverInterface
     /**
      * Connection specific timezone, at this moment locked to UTC.
      *
-     * @return DateTimeZone
+     * @return \DateTimeZone
      */
-    public function getTimezone(): DateTimeZone;
+    public function getTimezone(): \DateTimeZone;
 
     /**
      * @return HandlerInterface
@@ -154,10 +153,7 @@ interface DriverInterface
      * @param int   $type Parameter type.
      * @return string
      */
-    public function quote(
-        $value,
-        int $type = PDO::PARAM_STR
-    ): string;
+    public function quote($value, int $type = PDO::PARAM_STR): string;
 
     /**
      * Wraps PDO query method with custom representation class.
