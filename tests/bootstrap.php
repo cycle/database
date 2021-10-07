@@ -26,7 +26,7 @@ $drivers = [
         queryCache: true,
     ),
     'mysql'     => new Database\Config\MySQLDriverConfig(
-        connection: new Database\Config\MySQL\UriConnectionConfig(
+        connection: new Database\Config\MySQL\TcpConnectionConfig(
             database: 'spiral',
             host: '127.0.0.1',
             port: 13306,
@@ -36,7 +36,7 @@ $drivers = [
         queryCache: true
     ),
     'postgres' => new Database\Config\PostgresDriverConfig(
-        connection: new Database\Config\Postgres\UriConnectionConfig(
+        connection: new Database\Config\Postgres\TcpConnectionConfig(
             database: 'spiral',
             host: '127.0.0.1',
             port: 15432,
@@ -47,7 +47,7 @@ $drivers = [
         queryCache: true,
     ),
     'sqlserver' => new Database\Config\SQLServerDriverConfig(
-        connection: new Database\Config\SQLServer\UriConnectionConfig(
+        connection: new Database\Config\SQLServer\TcpConnectionConfig(
             database: 'tempdb',
             host: '127.0.0.1',
             port: 11433,

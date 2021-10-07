@@ -15,9 +15,9 @@ use Cycle\Database\Config\ProvidesSourceString;
 
 /**
  * @psalm-type IsolationLevelType = \PDO::SQLSRV_TXN_*
- * @psalm-import-type PDOFlag from UriConnectionConfig
+ * @psalm-import-type PDOFlag from TcpConnectionConfig
  */
-class UriConnectionConfig extends ConnectionConfig implements ProvidesSourceString
+class TcpConnectionConfig extends ConnectionConfig implements ProvidesSourceString
 {
     /**
      * @param non-empty-string $database The name of the database.

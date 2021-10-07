@@ -18,7 +18,7 @@ use Cycle\Database\Driver\DriverInterface;
  * used as data source for multiple databases as table prefix and quotation
  * defined on Database instance level.
  *
- * @template T of UriConnectionConfig
+ * @template T of TcpConnectionConfig
  */
 abstract class DriverConfig
 {

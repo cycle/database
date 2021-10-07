@@ -13,7 +13,7 @@ namespace Cycle\Database\Config\Postgres;
 
 use Cycle\Database\Config\ProvidesSourceString;
 
-class UriConnectionConfig extends ConnectionConfig implements ProvidesSourceString
+class TcpConnectionConfig extends ConnectionConfig implements ProvidesSourceString
 {
     /**
      * @param non-empty-string $database
