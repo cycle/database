@@ -19,6 +19,7 @@ use Cycle\Database\Injection\ParameterInterface;
 use Cycle\Database\Query\QueryInterface;
 use Cycle\Database\Query\QueryParameters;
 use Cycle\Database\Query\SelectQuery;
+use Spiral\Database\Driver\CachingCompilerInterface as SpiralCachingCompilerInterface;
 
 /**
  * Caches calculated queries. Code in this class is performance optimized.
@@ -32,9 +33,10 @@ final class CompilerCache implements CompilerInterface
     private $compiler;
 
     /**
-     * @param CachingCompilerInterface $compiler
+     * @param SpiralCachingCompilerInterface|CachingCompilerInterface $compiler The signature
+     *        of this argument will be changed to {@see DriverInterface} in future release.
      */
-    public function __construct(CachingCompilerInterface $compiler)
+    public function __construct(SpiralCachingCompilerInterface $compiler)
     {
         $this->compiler = $compiler;
     }

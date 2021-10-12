@@ -17,6 +17,7 @@ use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\HandlerException;
 use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\TableInterface;
+use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
 
 /**
  * AbstractTable class used to describe and manage state of specified table. It provides ability to
@@ -98,11 +99,12 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     private $prefix;
 
     /**
-     * @param DriverInterface $driver Parent driver.
-     * @param string          $name   Table name, must include table prefix.
-     * @param string          $prefix Database specific table prefix.
+     * @param SpiralDriverInterface|DriverInterface $driver Parent driver. The signature
+     *        of this argument will be changed to {@see DriverInterface} in future release.
+     * @param string $name Table name, must include table prefix.
+     * @param string $prefix Database specific table prefix.
      */
-    public function __construct(DriverInterface $driver, string $name, string $prefix)
+    public function __construct(SpiralDriverInterface $driver, string $name, string $prefix)
     {
         $this->driver = $driver;
         $this->prefix = $prefix;

@@ -11,15 +11,18 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Exception;
 
+use Spiral\Database\Exception\StatementException as SpiralStatementException;
+
 /**
  * Schema sync related exception.
  */
 class HandlerException extends DriverException implements StatementExceptionInterface
 {
     /**
-     * @param StatementException $e
+     * @param SpiralStatementException|StatementException $e The signature of this
+     *        argument will be changed to {@see StatementException} in future release.
      */
-    public function __construct(StatementException $e)
+    public function __construct(SpiralStatementException $e)
     {
         parent::__construct($e->getMessage(), $e->getCode(), $e);
     }

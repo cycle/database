@@ -15,6 +15,7 @@ use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Schema\AbstractForeignKey;
 use Cycle\Database\Schema\AbstractIndex;
 use Cycle\Database\Schema\AbstractTable;
+use Spiral\Database\Driver\HandlerInterface as SpiralHandlerInterface;
 
 final class ReadonlyHandler implements HandlerInterface
 {
@@ -22,9 +23,10 @@ final class ReadonlyHandler implements HandlerInterface
     private $parent;
 
     /**
-     * @param HandlerInterface $parent
+     * @param SpiralHandlerInterface|HandlerInterface $parent The signature of this
+     *        argument will be changed to {@see HandlerInterface} in future release.
      */
-    public function __construct(HandlerInterface $parent)
+    public function __construct(SpiralHandlerInterface $parent)
     {
         $this->parent = $parent;
     }

@@ -18,6 +18,7 @@ use Psr\Log\NullLogger;
 use Spiral\Core\Container;
 use Spiral\Core\FactoryInterface;
 use Cycle\Database\Config\DatabaseConfig;
+use Spiral\Database\Config\DatabaseConfig as SpiralDatabaseConfig;
 use Cycle\Database\Config\DatabasePartial;
 use Cycle\Database\Driver\Driver;
 use Cycle\Database\Driver\DriverInterface;
@@ -121,10 +122,11 @@ final class DatabaseManager implements
     }
 
     /**
-     * @param DatabaseConfig   $config
-     * @param FactoryInterface $factory
+     * @param SpiralDatabaseConfig|DatabaseConfig $config The signature of this
+     *        argument will be changed to {@see DatabaseConfig} in future release.
+     * @param FactoryInterface|null $factory
      */
-    public function __construct(DatabaseConfig $config, FactoryInterface $factory = null)
+    public function __construct(SpiralDatabaseConfig $config, FactoryInterface $factory = null)
     {
         $this->config = $config;
         $this->factory = $factory ?? new Container();

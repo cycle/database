@@ -13,6 +13,7 @@ namespace Cycle\Database;
 
 use Spiral\Core\Container\InjectableInterface;
 use Cycle\Database\Driver\DriverInterface;
+use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
 use Cycle\Database\Query\DeleteQuery;
 use Cycle\Database\Query\InsertQuery;
 use Cycle\Database\Query\SelectQuery;
@@ -46,11 +47,13 @@ final class Database implements DatabaseInterface, InjectableInterface
     private $readDriver;
 
     /**
-     * @param string               $name       Internal database name/id.
-     * @param string               $prefix     Default database table prefix, will be used for all
-     *                                         table identifiers.
-     * @param DriverInterface      $driver     Driver instance responsible for database connection.
-     * @param DriverInterface|null $readDriver Read-only driver connection.
+     * @param string $name Internal database name/id.
+     * @param string $prefix Default database table prefix, will be used for all
+     *        table identifiers.
+     * @param SpiralDriverInterface|DriverInterface $driver Driver instance responsible for database connection.
+     *        The signature of this argument will be changed to {@see DriverInterface} in future release.
+     * @param SpiralDriverInterface|DriverInterface|null $readDriver Read-only driver connection.
+     *        The signature of this argument will be changed to {@see DriverInterface} in future release.
      */
     public function __construct(
         string $name,
