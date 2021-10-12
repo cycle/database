@@ -1,32 +1,53 @@
 version: "3"
 
 services:
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2019-latest
-    restart: always
-    ports:
-      - "11433:1433"
-    environment:
-      SA_PASSWORD: "SSpaSS__1"
-      ACCEPT_EULA: "Y"
+#  sqlserver:
+#    image: mcr.microsoft.com/mssql/server:2019-latest
+#    restart: always
+#    ports:
+#      - "11433:1433"
+#    environment:
+#      SA_PASSWORD: "SSpaSS__1"
+#      ACCEPT_EULA: "Y"
+#
+#  mysql_latest:
+#    image: mysql:latest
+#    restart: always
+#    command: --default-authentication-plugin=mysql_native_password
+#    ports:
+#      - "13306:3306"
+#    environment:
+#      MYSQL_DATABASE: "spiral"
+#      MYSQL_ROOT_PASSWORD: "root"
+#      MYSQL_ROOT_HOST: "%"
+#
+#  postgres:
+#    image: postgres:12
+#    restart: always
+#    ports:
+#      - "15432:5432"
+#    environment:
+#      POSTGRES_DB: "spiral"
+#      POSTGRES_USER: "postgres"
+#      POSTGRES_PASSWORD: "postgres"
 
-  mysql_latest:
-    image: mysql:latest
-    restart: always
-    command: --default-authentication-plugin=mysql_native_password
-    ports:
-      - "13306:3306"
-    environment:
-      MYSQL_DATABASE: "spiral"
-      MYSQL_ROOT_PASSWORD: "root"
-      MYSQL_ROOT_HOST: "%"
+  php:
+    build: "./php"
+    command: /app/vendor/bin/phpunit -c /app/phpunit.xml --filter Oracle /app/tests
+    volumes:
+      - ../:/app
+    depends_on:
+      - oracle
 
-  postgres:
-    image: postgres:12
+  oracle:
+    image: wnameless/oracle-xe-11g-r2:latest
     restart: always
     ports:
-      - "15432:5432"
+      - 11521:1521
     environment:
-      POSTGRES_DB: "spiral"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
+      WEB_CONSOLE: "false"
+    # sid: xe
+    # service name: xe
+    # username: system
+    # password: oracle
+    # Password for SYS & SYSTEM oracle

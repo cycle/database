@@ -35,6 +35,10 @@ $databases = [
     'sqlserver' => [
         'namespace' => 'Cycle\Database\Tests\Driver\SQLServer',
         'directory' => __DIR__ . '/Database/Driver/SQLServer/'
+    ],
+    'oracle' => [
+        'namespace' => 'Cycle\Database\Tests\Driver\Oracle',
+        'directory' => __DIR__ . '/Database/Driver/Oracle/'
     ]
 ];
 

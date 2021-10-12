@@ -49,6 +49,13 @@ $drivers = [
         'pass'       => 'SSpaSS__1',
         'queryCache' => 100
     ],
+    'oracle' => [
+        'driver'     => Database\Driver\Oracle\OracleDriver::class,
+        'conn'       => 'oci:host=oracle;port=1521;dbname=oracle/xe',
+        'user'       => 'SYSTEM',
+        'pass'       => 'oracle',
+        'queryCache' => 100
+    ],
 ];
 
 $db = getenv('DB') ?: null;
