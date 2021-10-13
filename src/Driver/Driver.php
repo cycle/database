@@ -85,27 +85,19 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function isReadonly(): bool
+    {
+        return $this->config->readonly;
+    }
+
+    /**
      * Disconnect and destruct.
      */
     public function __destruct()
     {
         $this->disconnect();
-    }
-
-    /**
-     * Disconnect driver.
-     */
-    public function disconnect(): void
-    {
-        try {
-            $this->queryCache = [];
-            $this->pdo = null;
-        } catch (Throwable $e) {
-            // disconnect error
-            $this->logger?->error($e->getMessage());
-        }
-
-        $this->transactionLevel = 0;
     }
 
     /**
@@ -119,33 +111,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
             'connected' => $this->isConnected(),
             'options' => $this->config,
         ];
-    }
-
-    /**
-     * Get driver source database or file name.
-     *
-     * @return string
-     * @throws DriverException
-     */
-    public function getSource(): string
-    {
-        $config = $this->config->connection;
-
-        if ($config instanceof ProvidesSourceString) {
-            return $config->getSourceString();
-        }
-
-        return '*';
-    }
-
-    /**
-     * Check if driver already connected.
-     *
-     * @return bool
-     */
-    public function isConnected(): bool
-    {
-        return $this->pdo !== null;
     }
 
     /**
@@ -184,6 +149,31 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     }
 
     /**
+     * Get driver source database or file name.
+     *
+     * @return string
+     * @throws DriverException
+     */
+    public function getSource(): string
+    {
+        $config = $this->config->connection;
+
+        if ($config instanceof ProvidesSourceString) {
+            return $config->getSourceString();
+        }
+
+        return '*';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTimezone(): DateTimeZone
+    {
+        return new DateTimeZone($this->config->timezone);
+    }
+
+    /**
      * @inheritdoc
      */
     public function getSchemaHandler(): HandlerInterface
@@ -211,62 +201,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     }
 
     /**
-     * @inheritdoc
-     */
-    public function quote($value, int $type = PDO::PARAM_STR): string
-    {
-        if ($value instanceof DateTimeInterface) {
-            $value = $this->formatDatetime($value);
-        }
-
-        return $this->getPDO()->quote($value, $type);
-    }
-
-    /**
-     * Convert DateTime object into local database representation. Driver will automatically force
-     * needed timezone.
-     *
-     * @param DateTimeInterface $value
-     * @return string
-     *
-     * @throws DriverException
-     */
-    protected function formatDatetime(DateTimeInterface $value): string
-    {
-        try {
-            $datetime = new DateTimeImmutable('now', $this->getTimezone());
-        } catch (Throwable $e) {
-            throw new DriverException($e->getMessage(), (int)$e->getCode(), $e);
-        }
-
-        return $datetime->setTimestamp($value->getTimestamp())->format(static::DATETIME);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getTimezone(): DateTimeZone
-    {
-        return new DateTimeZone($this->config->timezone);
-    }
-
-    /**
-     * Get associated PDO connection. Must automatically connect if such connection does not exists.
-     *
-     * @return PDO
-     *
-     * @throws DriverException
-     */
-    protected function getPDO(): PDO
-    {
-        if ($this->pdo === null) {
-            $this->connect();
-        }
-
-        return $this->pdo;
-    }
-
-    /**
      * Force driver connection.
      *
      * @throws DriverException
@@ -277,26 +211,41 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     }
 
     /**
-     * Create instance of configured PDO class.
+     * Check if driver already connected.
      *
-     * @return PDO
+     * @return bool
      */
-    protected function createPDO(): PDO
+    public function isConnected(): bool
     {
-        $connection = $this->config->connection;
+        return $this->pdo !== null;
+    }
 
-        if (! $connection instanceof PDOConnectionConfig) {
-            throw new \InvalidArgumentException(
-                'Could not establish PDO connection using non-PDO configuration'
-            );
+    /**
+     * Disconnect driver.
+     */
+    public function disconnect(): void
+    {
+        try {
+            $this->queryCache = [];
+            $this->pdo = null;
+        } catch (Throwable $e) {
+            // disconnect error
+            $this->logger?->error($e->getMessage());
         }
 
-        return new PDO(
-            dsn: $connection->getDsn(),
-            username: $connection->getUsername(),
-            password: $connection->getPassword(),
-            options: $connection->getOptions(),
-        );
+        $this->transactionLevel = 0;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function quote($value, int $type = PDO::PARAM_STR): string
+    {
+        if ($value instanceof DateTimeInterface) {
+            $value = $this->formatDatetime($value);
+        }
+
+        return $this->getPDO()->quote($value, $type);
     }
 
     /**
@@ -314,137 +263,22 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     }
 
     /**
-     * Create instance of PDOStatement using provided SQL query and set of parameters and execute
-     * it. Will attempt singular reconnect.
+     * Execute query and return number of affected rows.
      *
      * @param string $query
-     * @param iterable $parameters
-     * @param bool|null $retry
-     * @return StatementInterface
+     * @param array $parameters
+     * @return int
      *
      * @throws StatementException
+     * @throws ReadonlyConnectionException
      */
-    protected function statement(string $query, iterable $parameters = [], bool $retry = true): StatementInterface
+    public function execute(string $query, array $parameters = []): int
     {
-        $queryStart = \microtime(true);
-
-        try {
-            $statement = $this->bindParameters($this->prepare($query), $parameters);
-            $statement->execute();
-
-            return new Statement($statement);
-        } catch (Throwable $e) {
-            $e = $this->mapException($e, Interpolator::interpolate($query, $parameters));
-
-            if (
-                $retry
-                && $this->transactionLevel === 0
-                && $e instanceof StatementException\ConnectionException
-            ) {
-                $this->disconnect();
-
-                return $this->statement($query, $parameters, false);
-            }
-
-            throw $e;
-        } finally {
-            if ($this->logger !== null) {
-                $queryString = Interpolator::interpolate($query, $parameters);
-                $context = $this->defineLoggerContext($queryStart, $statement ?? null);
-
-                if (isset($e)) {
-                    $this->logger->error($queryString, $context);
-                    $this->logger->alert($e->getMessage());
-                } else {
-                    $this->logger->info($queryString, $context);
-                }
-            }
-        }
-    }
-
-    /**
-     * Bind parameters into statement.
-     *
-     * @param PDOStatement $statement
-     * @param iterable $parameters
-     * @return PDOStatement
-     */
-    protected function bindParameters(PDOStatement $statement, iterable $parameters): PDOStatement
-    {
-        $index = 0;
-        foreach ($parameters as $name => $parameter) {
-            if (is_string($name)) {
-                $index = $name;
-            } else {
-                $index++;
-            }
-
-            $type = PDO::PARAM_STR;
-
-            if ($parameter instanceof ParameterInterface) {
-                $type = $parameter->getType();
-                $parameter = $parameter->getValue();
-            }
-
-            if ($parameter instanceof DateTimeInterface) {
-                $parameter = $this->formatDatetime($parameter);
-            }
-
-            // numeric, @see http://php.net/manual/en/pdostatement.bindparam.php
-            $statement->bindValue($index, $parameter, $type);
+        if ($this->isReadonly()) {
+            throw ReadonlyConnectionException::onWriteStatementExecution();
         }
 
-        return $statement;
-    }
-
-    /**
-     * @param string $query
-     * @return PDOStatement
-     */
-    protected function prepare(string $query): PDOStatement
-    {
-        if ($this->config->queryCache && isset($this->queryCache[$query])) {
-            return $this->queryCache[$query];
-        }
-
-        $statement = $this->getPDO()->prepare($query);
-        if ($this->config->queryCache) {
-            $this->queryCache[$query] = $statement;
-        }
-
-        return $statement;
-    }
-
-    /**
-     * Convert PDO exception into query or integrity exception.
-     *
-     * @param Throwable $exception
-     * @param string $query
-     * @return StatementException
-     */
-    abstract protected function mapException(
-        Throwable $exception,
-        string $query
-    ): StatementException;
-
-    /**
-     * Creating a context for logging
-     *
-     * @param float $queryStart Query start time
-     * @param PDOStatement|null $statement Statement
-     *
-     * @return array
-     */
-    protected function defineLoggerContext(float $queryStart, ?PDOStatement $statement): array
-    {
-        $context = [
-            'elapsed' => microtime(true) - $queryStart,
-        ];
-        if ($statement !== null) {
-            $context['rowCount'] = $statement->rowCount();
-        }
-
-        return $context;
+        return $this->statement($query, $parameters)->rowCount();
     }
 
     /**
@@ -513,67 +347,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     }
 
     /**
-     * Set transaction isolation level, this feature may not be supported by specific database
-     * driver.
-     *
-     * @param string $level
-     */
-    protected function setIsolationLevel(string $level): void
-    {
-        $this->logger?->info("Transaction isolation level '{$level}'");
-        $this->execute("SET TRANSACTION ISOLATION LEVEL {$level}");
-    }
-
-    /**
-     * Execute query and return number of affected rows.
-     *
-     * @param string $query
-     * @param array $parameters
-     * @return int
-     *
-     * @throws StatementException
-     * @throws ReadonlyConnectionException
-     */
-    public function execute(string $query, array $parameters = []): int
-    {
-        if ($this->isReadonly()) {
-            throw ReadonlyConnectionException::onWriteStatementExecution();
-        }
-
-        return $this->statement($query, $parameters)->rowCount();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isReadonly(): bool
-    {
-        return $this->config->readonly;
-    }
-
-    /**
-     * Create nested transaction save point.
-     *
-     * @link http://en.wikipedia.org/wiki/Savepoint
-     *
-     * @param int $level Savepoint name/id, must not contain spaces and be valid database identifier.
-     */
-    protected function createSavepoint(int $level): void
-    {
-        $this->logger?->info("Transaction: new savepoint 'SVP{$level}'");
-
-        $this->execute('SAVEPOINT ' . $this->identifier("SVP{$level}"));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function identifier(string $identifier): string
-    {
-        return $this->queryCompiler->quoteIdentifier($identifier);
-    }
-
-    /**
      * Commit the active database transaction.
      *
      * @return bool
@@ -617,20 +390,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     }
 
     /**
-     * Commit/release savepoint.
-     *
-     * @link http://en.wikipedia.org/wiki/Savepoint
-     *
-     * @param int $level Savepoint name/id, must not contain spaces and be valid database identifier.
-     */
-    protected function releaseSavepoint(int $level): void
-    {
-        $this->logger?->info("Transaction: release savepoint 'SVP{$level}'");
-
-        $this->execute('RELEASE SAVEPOINT ' . $this->identifier("SVP{$level}"));
-    }
-
-    /**
      * Rollback the active database transaction.
      *
      * @return bool
@@ -670,6 +429,188 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function identifier(string $identifier): string
+    {
+        return $this->queryCompiler->quoteIdentifier($identifier);
+    }
+
+    /**
+     * Create instance of PDOStatement using provided SQL query and set of parameters and execute
+     * it. Will attempt singular reconnect.
+     *
+     * @param string $query
+     * @param iterable $parameters
+     * @param bool|null $retry
+     * @return StatementInterface
+     *
+     * @throws StatementException
+     */
+    protected function statement(string $query, iterable $parameters = [], bool $retry = true): StatementInterface
+    {
+        $queryStart = \microtime(true);
+
+        try {
+            $statement = $this->bindParameters($this->prepare($query), $parameters);
+            $statement->execute();
+
+            return new Statement($statement);
+        } catch (Throwable $e) {
+            $e = $this->mapException($e, Interpolator::interpolate($query, $parameters));
+
+            if (
+                $retry
+                && $this->transactionLevel === 0
+                && $e instanceof StatementException\ConnectionException
+            ) {
+                $this->disconnect();
+
+                return $this->statement($query, $parameters, false);
+            }
+
+            throw $e;
+        } finally {
+            if ($this->logger !== null) {
+                $queryString = Interpolator::interpolate($query, $parameters);
+                $context = $this->defineLoggerContext($queryStart, $statement ?? null);
+
+                if (isset($e)) {
+                    $this->logger->error($queryString, $context);
+                    $this->logger->alert($e->getMessage());
+                } else {
+                    $this->logger->info($queryString, $context);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param string $query
+     * @return PDOStatement
+     */
+    protected function prepare(string $query): PDOStatement
+    {
+        if ($this->config->queryCache && isset($this->queryCache[$query])) {
+            return $this->queryCache[$query];
+        }
+
+        $statement = $this->getPDO()->prepare($query);
+        if ($this->config->queryCache) {
+            $this->queryCache[$query] = $statement;
+        }
+
+        return $statement;
+    }
+
+    /**
+     * Bind parameters into statement.
+     *
+     * @param PDOStatement $statement
+     * @param iterable $parameters
+     * @return PDOStatement
+     */
+    protected function bindParameters(PDOStatement $statement, iterable $parameters): PDOStatement
+    {
+        $index = 0;
+        foreach ($parameters as $name => $parameter) {
+            if (is_string($name)) {
+                $index = $name;
+            } else {
+                $index++;
+            }
+
+            $type = PDO::PARAM_STR;
+
+            if ($parameter instanceof ParameterInterface) {
+                $type = $parameter->getType();
+                $parameter = $parameter->getValue();
+            }
+
+            if ($parameter instanceof DateTimeInterface) {
+                $parameter = $this->formatDatetime($parameter);
+            }
+
+            // numeric, @see http://php.net/manual/en/pdostatement.bindparam.php
+            $statement->bindValue($index, $parameter, $type);
+        }
+
+        return $statement;
+    }
+
+    /**
+     * Convert DateTime object into local database representation. Driver will automatically force
+     * needed timezone.
+     *
+     * @param DateTimeInterface $value
+     * @return string
+     *
+     * @throws DriverException
+     */
+    protected function formatDatetime(DateTimeInterface $value): string
+    {
+        try {
+            $datetime = new DateTimeImmutable('now', $this->getTimezone());
+        } catch (Throwable $e) {
+            throw new DriverException($e->getMessage(), (int)$e->getCode(), $e);
+        }
+
+        return $datetime->setTimestamp($value->getTimestamp())->format(static::DATETIME);
+    }
+
+    /**
+     * Convert PDO exception into query or integrity exception.
+     *
+     * @param Throwable $exception
+     * @param string $query
+     * @return StatementException
+     */
+    abstract protected function mapException(
+        Throwable $exception,
+        string $query
+    ): StatementException;
+
+    /**
+     * Set transaction isolation level, this feature may not be supported by specific database
+     * driver.
+     *
+     * @param string $level
+     */
+    protected function setIsolationLevel(string $level): void
+    {
+        $this->logger?->info("Transaction isolation level '{$level}'");
+        $this->execute("SET TRANSACTION ISOLATION LEVEL {$level}");
+    }
+
+    /**
+     * Create nested transaction save point.
+     *
+     * @link http://en.wikipedia.org/wiki/Savepoint
+     *
+     * @param int $level Savepoint name/id, must not contain spaces and be valid database identifier.
+     */
+    protected function createSavepoint(int $level): void
+    {
+        $this->logger?->info("Transaction: new savepoint 'SVP{$level}'");
+
+        $this->execute('SAVEPOINT ' . $this->identifier("SVP{$level}"));
+    }
+
+    /**
+     * Commit/release savepoint.
+     *
+     * @link http://en.wikipedia.org/wiki/Savepoint
+     *
+     * @param int $level Savepoint name/id, must not contain spaces and be valid database identifier.
+     */
+    protected function releaseSavepoint(int $level): void
+    {
+        $this->logger?->info("Transaction: release savepoint 'SVP{$level}'");
+
+        $this->execute('RELEASE SAVEPOINT ' . $this->identifier("SVP{$level}"));
+    }
+
+    /**
      * Rollback savepoint.
      *
      * @link http://en.wikipedia.org/wiki/Savepoint
@@ -681,5 +622,64 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         $this->logger?->info("Transaction: rollback savepoint 'SVP{$level}'");
 
         $this->execute('ROLLBACK TO SAVEPOINT ' . $this->identifier("SVP{$level}"));
+    }
+
+    /**
+     * Create instance of configured PDO class.
+     *
+     * @return PDO
+     */
+    protected function createPDO(): PDO
+    {
+        $connection = $this->config->connection;
+
+        if (! $connection instanceof PDOConnectionConfig) {
+            throw new \InvalidArgumentException(
+                'Could not establish PDO connection using non-PDO configuration'
+            );
+        }
+
+        return new PDO(
+            dsn: $connection->getDsn(),
+            username: $connection->getUsername(),
+            password: $connection->getPassword(),
+            options: $connection->getOptions(),
+        );
+    }
+
+    /**
+     * Get associated PDO connection. Must automatically connect if such connection does not exists.
+     *
+     * @return PDO
+     *
+     * @throws DriverException
+     */
+    protected function getPDO(): PDO
+    {
+        if ($this->pdo === null) {
+            $this->connect();
+        }
+
+        return $this->pdo;
+    }
+
+    /**
+     * Creating a context for logging
+     *
+     * @param float $queryStart Query start time
+     * @param PDOStatement|null $statement Statement
+     *
+     * @return array
+     */
+    protected function defineLoggerContext(float $queryStart, ?PDOStatement $statement): array
+    {
+        $context = [
+            'elapsed' => microtime(true) - $queryStart,
+        ];
+        if ($statement !== null) {
+            $context['rowCount'] = $statement->rowCount();
+        }
+
+        return $context;
     }
 }
