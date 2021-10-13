@@ -75,7 +75,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         $this->schemaHandler = $schemaHandler->withDriver($this);
         $this->queryBuilder = $queryBuilder->withDriver($this);
 
-        if ($this->config && $queryCompiler instanceof CachingCompilerInterface) {
+        if ($this->config->queryCache && $queryCompiler instanceof CachingCompilerInterface) {
             $this->queryCompiler = new CompilerCache($queryCompiler);
         }
 
