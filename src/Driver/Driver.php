@@ -103,10 +103,10 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     /**
      * @return array
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         return [
-            'addr' => $this->config->connection,
+            'connection' => $this->config->connection,
             'source' => $this->getSource(),
             'connected' => $this->isConnected(),
             'options' => $this->config,
