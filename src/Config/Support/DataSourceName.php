@@ -39,7 +39,7 @@ final class DataSourceName
     public static function read(string $haystack, array|string $needle): ?string
     {
         $needle = \array_map(static fn(string $item): string => \preg_quote($item), (array)$needle);
-        $pattern = \sprintf('/(?:%s)=([^;]+)/i', \implode('|', $needle));
+        $pattern = \sprintf('/\b(?:%s)=([^;]+)/i', \implode('|', $needle));
 
         if (\preg_match($pattern, $haystack, $matches)) {
             return $matches[1];
