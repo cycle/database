@@ -35,7 +35,9 @@ final class PostgresDriverConfig extends DriverConfig
 
     /**
      * @param ConnectionConfig $connection
-     * @param iterable<non-empty-string>|non-empty-string $schema
+     * @param iterable<non-empty-string>|non-empty-string $schema List of available Postgres
+     *        schemas for "search path" (See also {@link https://www.postgresql.org/docs/9.6/ddl-schemas.html}).
+     *        The first parameter's item will be used as default schema.
      *
      * {@inheritDoc}
      */
