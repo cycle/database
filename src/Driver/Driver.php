@@ -14,7 +14,6 @@ namespace Cycle\Database\Driver;
 use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Config\PDOConnectionConfig;
 use Cycle\Database\Config\ProvidesSourceString;
-use Cycle\Database\Exception\ConfigException;
 use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\ReadonlyConnectionException;
 use Cycle\Database\Exception\StatementException;
