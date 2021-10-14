@@ -18,7 +18,7 @@ use Cycle\Database\Driver\MySQL\MySQLDriver;
 /**
  * @template-extends DriverConfig<ConnectionConfig>
  */
-final class MySQLDriverConfig extends DriverConfig
+class MySQLDriverConfig extends DriverConfig
 {
     /**
      * @param ConnectionConfig $connection

@@ -18,7 +18,7 @@ use Cycle\Database\Driver\SQLServer\SQLServerDriver;
 /**
  * @template-extends DriverConfig<ConnectionConfig>
  */
-final class SQLServerDriverConfig extends DriverConfig
+class SQLServerDriverConfig extends DriverConfig
 {
     /**
      * @param ConnectionConfig $connection

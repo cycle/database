@@ -19,7 +19,7 @@ use Cycle\Database\Driver\SQLite\SQLiteDriver;
 /**
  * @template-extends DriverConfig<ConnectionConfig>
  */
-final class SQLiteDriverConfig extends DriverConfig
+class SQLiteDriverConfig extends DriverConfig
 {
     /**
      * @param ConnectionConfig|null $connection

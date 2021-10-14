@@ -18,7 +18,7 @@ use Cycle\Database\Driver\Postgres\PostgresDriver;
 /**
  * @template-extends DriverConfig<ConnectionConfig>
  */
-final class PostgresDriverConfig extends DriverConfig
+class PostgresDriverConfig extends DriverConfig
 {
     /**
      * Default public schema name for all postgres connections.
