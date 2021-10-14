@@ -65,7 +65,7 @@ abstract class BaseTest extends TestCase
     }
 
     /**
-     * @param array $options
+     * @param array{readonly: bool} $options
      * @return DriverInterface
      */
     private function getDriver(array $options = []): DriverInterface
@@ -94,7 +94,7 @@ abstract class BaseTest extends TestCase
     /**
      * @param string $name
      * @param string $prefix
-     * @param array $config
+     * @param array{readonly: bool} $config
      * @return Database
      */
     protected function db(string $name = 'default', string $prefix = '', array $config = []): Database
