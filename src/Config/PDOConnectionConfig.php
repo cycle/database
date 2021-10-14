@@ -106,6 +106,7 @@ abstract class PDOConnectionConfig extends ConnectionConfig
     {
         return match (true) {
             \is_bool($value) => $value ? '1' : '0',
+            // TODO Think about escaping special chars in strings
             \is_scalar($value), $value instanceof \Stringable => (string)$value,
             default => throw new \InvalidArgumentException(
                 \sprintf('Can not convert config value of type "%s" to string', \get_debug_type($value))
