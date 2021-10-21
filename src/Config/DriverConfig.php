@@ -24,6 +24,7 @@ abstract class DriverConfig
 {
     /**
      * @param T $connection
+     * @param class-string<DriverInterface> $driver
      * @param bool $reconnect Allow reconnects
      * @param non-empty-string $timezone All datetime objects will be converted
      *        relative to this timezone (must match with DB timezone!)
@@ -33,6 +34,7 @@ abstract class DriverConfig
      */
     public function __construct(
         public ConnectionConfig $connection,
+        public string $driver,
         public bool $reconnect = true,
         public string $timezone = 'UTC',
         public bool $queryCache = true,
@@ -44,5 +46,10 @@ abstract class DriverConfig
     /**
      * @return DriverInterface
      */
-    abstract public function getDriver(): DriverInterface;
+    public function getDriver(): DriverInterface
+    {
+        $class = $this->driver;
+
+        return new $class($this);
+    }
 }

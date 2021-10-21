@@ -44,6 +44,7 @@ class PostgresDriverConfig extends DriverConfig
     public function __construct(
         ConnectionConfig $connection,
         iterable|string $schema = self::DEFAULT_SCHEMA,
+        string $driver = PostgresDriver::class,
         bool $reconnect = true,
         string $timezone = 'UTC',
         bool $queryCache = true,
@@ -53,6 +54,7 @@ class PostgresDriverConfig extends DriverConfig
         /** @psalm-suppress ArgumentTypeCoercion */
         parent::__construct(
             connection: $connection,
+            driver: $driver,
             reconnect: $reconnect,
             timezone: $timezone,
             queryCache: $queryCache,
@@ -83,13 +85,5 @@ class PostgresDriverConfig extends DriverConfig
 
         // Remove schema duplications
         return \array_values(\array_unique($schema));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getDriver(): DriverInterface
-    {
-        return new PostgresDriver($this);
     }
 }

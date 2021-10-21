@@ -27,6 +27,7 @@ class MySQLDriverConfig extends DriverConfig
      */
     public function __construct(
         ConnectionConfig $connection,
+        string $driver = MySQLDriver::class,
         bool $reconnect = true,
         string $timezone = 'UTC',
         bool $queryCache = true,
@@ -36,19 +37,12 @@ class MySQLDriverConfig extends DriverConfig
         /** @psalm-suppress ArgumentTypeCoercion */
         parent::__construct(
             connection: $connection,
+            driver: $driver,
             reconnect: $reconnect,
             timezone: $timezone,
             queryCache: $queryCache,
             readonlySchema: $readonlySchema,
             readonly: $readonly,
         );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getDriver(): DriverInterface
-    {
-        return new MySQLDriver($this);
     }
 }

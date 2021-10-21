@@ -125,15 +125,16 @@ final class DatabaseConfig extends InjectableConfig
         }
 
         $config = $this->config['connections'][$driver] ?? $this->config['drivers'][$driver];
-        if ($config instanceof Autowire) {
-            return $config;
+
+        if ($config instanceof DriverConfig) {
+            return new Autowire($config->driver, ['config' => $config]);
         }
 
-        $options = $config;
-        if (isset($config['options']) && $config['options'] !== []) {
-            $options = $config['options'] + $config;
-        }
-
-        return new Autowire($config['driver'] ?? $config['class'], ['options' => $options]);
+        throw new \InvalidArgumentException(
+            \vsprintf('Driver config must be an instance of %s, but %s passed', [
+                DriverConfig::class,
+                \get_debug_type($config)
+            ])
+        );
     }
 }

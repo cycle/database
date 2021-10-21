@@ -28,6 +28,7 @@ class SQLiteDriverConfig extends DriverConfig
      */
     public function __construct(
         ?ConnectionConfig $connection = null,
+        string $driver = SQLiteDriver::class,
         bool $reconnect = true,
         string $timezone = 'UTC',
         bool $queryCache = true,
@@ -37,19 +38,12 @@ class SQLiteDriverConfig extends DriverConfig
         /** @psalm-suppress ArgumentTypeCoercion */
         parent::__construct(
             connection: $connection ?? new MemoryConnectionConfig(),
+            driver: $driver,
             reconnect: $reconnect,
             timezone: $timezone,
             queryCache: $queryCache,
             readonlySchema: $readonlySchema,
             readonly: $readonly,
         );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getDriver(): DriverInterface
-    {
-        return new SQLiteDriver($this);
     }
 }
