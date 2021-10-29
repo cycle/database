@@ -15,9 +15,14 @@ use Cycle\Database\Driver\Handler;
 use Cycle\Database\Driver\SQLite\Schema\SQLiteTable;
 use Cycle\Database\Exception\DBALException;
 use Cycle\Database\Exception\HandlerException;
-use Cycle\Database\Schema\AbstractColumn;
-use Cycle\Database\Schema\AbstractForeignKey;
 use Cycle\Database\Schema\AbstractTable;
+use Spiral\Database\Schema\AbstractColumn as SpiralAbstractColumn;
+use Spiral\Database\Schema\AbstractForeignKey as SpiralAbstractForeignKey;
+use Spiral\Database\Schema\AbstractTable as SpiralAbstractTable;
+
+class_exists(SpiralAbstractColumn::class);
+class_exists(SpiralAbstractForeignKey::class);
+class_exists(SpiralAbstractTable::class);
 
 class SQLiteHandler extends Handler
 {
@@ -64,7 +69,7 @@ class SQLiteHandler extends Handler
     /**
      * @param AbstractTable $table
      */
-    public function eraseTable(AbstractTable $table): void
+    public function eraseTable(SpiralAbstractTable $table): void
     {
         $this->driver->execute(
             "DELETE FROM {$this->driver->identifier($table->getName())}"
@@ -74,7 +79,7 @@ class SQLiteHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function syncTable(AbstractTable $table, int $operation = self::DO_ALL): void
+    public function syncTable(SpiralAbstractTable $table, int $operation = self::DO_ALL): void
     {
         if (!$this->requiresRebuild($table)) {
             //Nothing special, can be handled as usually
@@ -115,7 +120,7 @@ class SQLiteHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function createColumn(AbstractTable $table, AbstractColumn $column): void
+    public function createColumn(SpiralAbstractTable $table, SpiralAbstractColumn $column): void
     {
         //Not supported
     }
@@ -123,7 +128,7 @@ class SQLiteHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function dropColumn(AbstractTable $table, AbstractColumn $column): void
+    public function dropColumn(SpiralAbstractTable $table, SpiralAbstractColumn $column): void
     {
         //Not supported
     }
@@ -132,9 +137,9 @@ class SQLiteHandler extends Handler
      * {@inheritdoc}
      */
     public function alterColumn(
-        AbstractTable $table,
-        AbstractColumn $initial,
-        AbstractColumn $column
+        SpiralAbstractTable $table,
+        SpiralAbstractColumn $initial,
+        SpiralAbstractColumn $column
     ): void {
         //Not supported
     }
@@ -142,7 +147,7 @@ class SQLiteHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function createForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void
+    public function createForeignKey(SpiralAbstractTable $table, SpiralAbstractForeignKey $foreignKey): void
     {
         //Not supported
     }
@@ -150,7 +155,7 @@ class SQLiteHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function dropForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void
+    public function dropForeignKey(SpiralAbstractTable $table, SpiralAbstractForeignKey $foreignKey): void
     {
         //Not supported
     }
@@ -159,9 +164,9 @@ class SQLiteHandler extends Handler
      * {@inheritdoc}
      */
     public function alterForeignKey(
-        AbstractTable $table,
-        AbstractForeignKey $initial,
-        AbstractForeignKey $foreignKey
+        SpiralAbstractTable $table,
+        SpiralAbstractForeignKey $initial,
+        SpiralAbstractForeignKey $foreignKey
     ): void {
         //Not supported
     }
@@ -172,7 +177,7 @@ class SQLiteHandler extends Handler
      * @param AbstractTable $table
      * @return AbstractTable
      */
-    protected function createTemporary(AbstractTable $table): AbstractTable
+    protected function createTemporary(SpiralAbstractTable $table): AbstractTable
     {
         //Temporary table is required to copy data over
         $temporary = clone $table;

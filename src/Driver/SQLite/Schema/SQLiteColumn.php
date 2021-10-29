@@ -11,8 +11,10 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\SQLite\Schema;
 
-use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Schema\AbstractColumn;
+use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+
+interface_exists(SpiralDriverInterface::class);
 
 class SQLiteColumn extends AbstractColumn
 {
@@ -136,7 +138,7 @@ class SQLiteColumn extends AbstractColumn
     /**
      * {@inheritdoc}
      */
-    public function sqlStatement(DriverInterface $driver): string
+    public function sqlStatement(SpiralDriverInterface $driver): string
     {
         $statement = parent::sqlStatement($driver);
         if ($this->getAbstractType() !== 'enum') {
@@ -247,7 +249,7 @@ class SQLiteColumn extends AbstractColumn
     /**
      * {@inheritdoc}
      */
-    protected function quoteEnum(DriverInterface $driver): string
+    protected function quoteEnum(SpiralDriverInterface $driver): string
     {
         return '';
     }

@@ -12,6 +12,9 @@ declare(strict_types=1);
 namespace Cycle\Database\Query;
 
 use Cycle\Database\Driver\DriverInterface;
+use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+
+interface_exists(SpiralDriverInterface::class);
 
 /**
  * Responsible for query initiation in a context of specific driver.
@@ -22,7 +25,7 @@ interface BuilderInterface
      * @param DriverInterface $driver
      * @return BuilderInterface|$this
      */
-    public function withDriver(DriverInterface $driver): self;
+    public function withDriver(SpiralDriverInterface $driver): self;
 
     /**
      * Get InsertQuery builder with driver specific query compiler.

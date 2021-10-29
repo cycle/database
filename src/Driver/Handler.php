@@ -21,6 +21,19 @@ use Cycle\Database\Schema\AbstractIndex;
 use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\Schema\ComparatorInterface;
 use Cycle\Database\Schema\ElementInterface;
+use Spiral\Database\Schema\AbstractForeignKey as SpiralAbstractForeignKey;
+use Spiral\Database\Schema\AbstractColumn as SpiralAbstractColumn;
+use Spiral\Database\Schema\AbstractTable as SpiralAbstractTable;
+use Spiral\Database\Schema\ComparatorInterface as SpiralComparatorInterface;
+use Spiral\Database\Schema\AbstractIndex as SpiralAbstractIndex;
+use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+
+interface_exists(SpiralComparatorInterface::class);
+interface_exists(SpiralDriverInterface::class);
+class_exists(SpiralAbstractForeignKey::class);
+class_exists(SpiralAbstractColumn::class);
+class_exists(SpiralAbstractTable::class);
+class_exists(SpiralAbstractIndex::class);
 
 abstract class Handler implements HandlerInterface
 {
@@ -31,7 +44,7 @@ abstract class Handler implements HandlerInterface
      * @param DriverInterface $driver
      * @return HandlerInterface
      */
-    public function withDriver(DriverInterface $driver): HandlerInterface
+    public function withDriver(SpiralDriverInterface $driver): HandlerInterface
     {
         $handler = clone $this;
         $handler->driver = $driver;
@@ -52,7 +65,7 @@ abstract class Handler implements HandlerInterface
     /**
      * @inheritdoc
      */
-    public function createTable(AbstractTable $table): void
+    public function createTable(SpiralAbstractTable $table): void
     {
         $this->run($this->createStatement($table));
 
@@ -65,7 +78,7 @@ abstract class Handler implements HandlerInterface
     /**
      * @inheritdoc
      */
-    public function dropTable(AbstractTable $table): void
+    public function dropTable(SpiralAbstractTable $table): void
     {
         $this->run(
             "DROP TABLE {$this->identify($table->getInitialName())}"
@@ -75,7 +88,7 @@ abstract class Handler implements HandlerInterface
     /**
      * @inheritdoc
      */
-    public function syncTable(AbstractTable $table, int $operation = self::DO_ALL): void
+    public function syncTable(SpiralAbstractTable $table, int $operation = self::DO_ALL): void
     {
         $comparator = $table->getComparator();
 
@@ -107,7 +120,7 @@ abstract class Handler implements HandlerInterface
     /**
      * @inheritdoc
      */
-    public function createColumn(AbstractTable $table, AbstractColumn $column): void
+    public function createColumn(SpiralAbstractTable $table, SpiralAbstractColumn $column): void
     {
         $this->run(
             "ALTER TABLE {$this->identify($table)} ADD COLUMN {$column->sqlStatement($this->driver)}"
@@ -117,7 +130,7 @@ abstract class Handler implements HandlerInterface
     /**
      * @inheritdoc
      */
-    public function dropColumn(AbstractTable $table, AbstractColumn $column): void
+    public function dropColumn(SpiralAbstractTable $table, SpiralAbstractColumn $column): void
     {
         foreach ($column->getConstraints() as $constraint) {
             //We have to erase all associated constraints
@@ -132,7 +145,7 @@ abstract class Handler implements HandlerInterface
     /**
      * @inheritdoc
      */
-    public function createIndex(AbstractTable $table, AbstractIndex $index): void
+    public function createIndex(SpiralAbstractTable $table, SpiralAbstractIndex $index): void
     {
         $this->run("CREATE {$index->sqlStatement($this->driver)}");
     }
@@ -140,7 +153,7 @@ abstract class Handler implements HandlerInterface
     /**
      * @inheritdoc
      */
-    public function dropIndex(AbstractTable $table, AbstractIndex $index): void
+    public function dropIndex(SpiralAbstractTable $table, SpiralAbstractIndex $index): void
     {
         $this->run("DROP INDEX {$this->identify($index)}");
     }
@@ -149,9 +162,9 @@ abstract class Handler implements HandlerInterface
      * @inheritdoc
      */
     public function alterIndex(
-        AbstractTable $table,
-        AbstractIndex $initial,
-        AbstractIndex $index
+        SpiralAbstractTable $table,
+        SpiralAbstractIndex $initial,
+        SpiralAbstractIndex $index
     ): void {
         $this->dropIndex($table, $initial);
         $this->createIndex($table, $index);
@@ -160,7 +173,7 @@ abstract class Handler implements HandlerInterface
     /**
      * @inheritdoc
      */
-    public function createForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void
+    public function createForeignKey(SpiralAbstractTable $table, SpiralAbstractForeignKey $foreignKey): void
     {
         $this->run(
             "ALTER TABLE {$this->identify($table)} ADD {$foreignKey->sqlStatement($this->driver)}"
@@ -170,7 +183,7 @@ abstract class Handler implements HandlerInterface
     /**
      * @inheritdoc
      */
-    public function dropForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void
+    public function dropForeignKey(SpiralAbstractTable $table, SpiralAbstractForeignKey $foreignKey): void
     {
         $this->dropConstrain($table, $foreignKey->getName());
     }
@@ -179,9 +192,9 @@ abstract class Handler implements HandlerInterface
      * @inheritdoc
      */
     public function alterForeignKey(
-        AbstractTable $table,
-        AbstractForeignKey $initial,
-        AbstractForeignKey $foreignKey
+        SpiralAbstractTable $table,
+        SpiralAbstractForeignKey $initial,
+        SpiralAbstractForeignKey $foreignKey
     ): void {
         $this->dropForeignKey($table, $initial);
         $this->createForeignKey($table, $foreignKey);
@@ -190,7 +203,7 @@ abstract class Handler implements HandlerInterface
     /**
      * @inheritdoc
      */
-    public function dropConstrain(AbstractTable $table, $constraint): void
+    public function dropConstrain(SpiralAbstractTable $table, $constraint): void
     {
         $this->run(
             "ALTER TABLE {$this->identify($table)} DROP CONSTRAINT {$this->identify($constraint)}"
@@ -200,7 +213,7 @@ abstract class Handler implements HandlerInterface
     /**
      * @inheritdoc
      */
-    protected function createStatement(AbstractTable $table)
+    protected function createStatement(SpiralAbstractTable $table)
     {
         $statement = ["CREATE TABLE {$this->identify($table)} ("];
         $innerStatement = [];
@@ -235,9 +248,9 @@ abstract class Handler implements HandlerInterface
      * @param ComparatorInterface $comparator
      */
     protected function executeChanges(
-        AbstractTable $table,
+        SpiralAbstractTable $table,
         int $operation,
-        ComparatorInterface $comparator
+        SpiralComparatorInterface $comparator
     ): void {
         //Remove all non needed table constraints
         $this->dropConstrains($table, $operation, $comparator);
@@ -297,7 +310,7 @@ abstract class Handler implements HandlerInterface
      * @param AbstractTable       $table
      * @param ComparatorInterface $comparator
      */
-    protected function alterForeignKeys(AbstractTable $table, ComparatorInterface $comparator): void
+    protected function alterForeignKeys(SpiralAbstractTable $table, SpiralComparatorInterface $comparator): void
     {
         foreach ($comparator->alteredForeignKeys() as $pair) {
             /**
@@ -314,7 +327,7 @@ abstract class Handler implements HandlerInterface
      * @param AbstractTable       $table
      * @param ComparatorInterface $comparator
      */
-    protected function createForeignKeys(AbstractTable $table, ComparatorInterface $comparator): void
+    protected function createForeignKeys(SpiralAbstractTable $table, SpiralComparatorInterface $comparator): void
     {
         foreach ($comparator->addedForeignKeys() as $foreign) {
             $this->createForeignKey($table, $foreign);
@@ -325,7 +338,7 @@ abstract class Handler implements HandlerInterface
      * @param AbstractTable       $table
      * @param ComparatorInterface $comparator
      */
-    protected function alterIndexes(AbstractTable $table, ComparatorInterface $comparator): void
+    protected function alterIndexes(SpiralAbstractTable $table, SpiralComparatorInterface $comparator): void
     {
         foreach ($comparator->alteredIndexes() as $pair) {
             /**
@@ -342,7 +355,7 @@ abstract class Handler implements HandlerInterface
      * @param AbstractTable       $table
      * @param ComparatorInterface $comparator
      */
-    protected function createIndexes(AbstractTable $table, ComparatorInterface $comparator): void
+    protected function createIndexes(SpiralAbstractTable $table, SpiralComparatorInterface $comparator): void
     {
         foreach ($comparator->addedIndexes() as $index) {
             $this->createIndex($table, $index);
@@ -353,7 +366,7 @@ abstract class Handler implements HandlerInterface
      * @param AbstractTable       $table
      * @param ComparatorInterface $comparator
      */
-    protected function alterColumns(AbstractTable $table, ComparatorInterface $comparator): void
+    protected function alterColumns(SpiralAbstractTable $table, SpiralComparatorInterface $comparator): void
     {
         foreach ($comparator->alteredColumns() as $pair) {
             /**
@@ -371,7 +384,7 @@ abstract class Handler implements HandlerInterface
      * @param AbstractTable       $table
      * @param ComparatorInterface $comparator
      */
-    protected function createColumns(AbstractTable $table, ComparatorInterface $comparator): void
+    protected function createColumns(SpiralAbstractTable $table, SpiralComparatorInterface $comparator): void
     {
         foreach ($comparator->addedColumns() as $column) {
             $this->assertValid($column);
@@ -383,7 +396,7 @@ abstract class Handler implements HandlerInterface
      * @param AbstractTable       $table
      * @param ComparatorInterface $comparator
      */
-    protected function dropColumns(AbstractTable $table, ComparatorInterface $comparator): void
+    protected function dropColumns(SpiralAbstractTable $table, SpiralComparatorInterface $comparator): void
     {
         foreach ($comparator->droppedColumns() as $column) {
             $this->dropColumn($table, $column);
@@ -394,7 +407,7 @@ abstract class Handler implements HandlerInterface
      * @param AbstractTable       $table
      * @param ComparatorInterface $comparator
      */
-    protected function dropIndexes(AbstractTable $table, ComparatorInterface $comparator): void
+    protected function dropIndexes(SpiralAbstractTable $table, SpiralComparatorInterface $comparator): void
     {
         foreach ($comparator->droppedIndexes() as $index) {
             $this->dropIndex($table, $index);
@@ -405,7 +418,7 @@ abstract class Handler implements HandlerInterface
      * @param AbstractTable       $table
      * @param ComparatorInterface $comparator
      */
-    protected function dropForeignKeys(AbstractTable $table, ComparatorInterface $comparator): void
+    protected function dropForeignKeys(SpiralAbstractTable $table, SpiralComparatorInterface $comparator): void
     {
         foreach ($comparator->droppedForeignKeys() as $foreign) {
             $this->dropForeignKey($table, $foreign);
@@ -419,7 +432,7 @@ abstract class Handler implements HandlerInterface
      *
      * @throws DriverException
      */
-    protected function assertValid(AbstractColumn $column): void
+    protected function assertValid(SpiralAbstractColumn $column): void
     {
         //All valid by default
     }
@@ -430,9 +443,9 @@ abstract class Handler implements HandlerInterface
      * @param ComparatorInterface $comparator
      */
     protected function dropConstrains(
-        AbstractTable $table,
+        SpiralAbstractTable $table,
         int $operation,
-        ComparatorInterface $comparator
+        SpiralComparatorInterface $comparator
     ): void {
         if ($operation & self::DROP_FOREIGN_KEYS) {
             $this->dropForeignKeys($table, $comparator);
@@ -453,9 +466,9 @@ abstract class Handler implements HandlerInterface
      * @param ComparatorInterface $comparator
      */
     protected function setConstrains(
-        AbstractTable $table,
+        SpiralAbstractTable $table,
         int $operation,
-        ComparatorInterface $comparator
+        SpiralComparatorInterface $comparator
     ): void {
         if ($operation & self::CREATE_INDEXES) {
             $this->createIndexes($table, $comparator);

@@ -11,8 +11,10 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\SQLite\Schema;
 
-use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Schema\AbstractIndex;
+use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+
+interface_exists(SpiralDriverInterface::class);
 
 class SQLiteIndex extends AbstractIndex
 {
@@ -55,7 +57,7 @@ class SQLiteIndex extends AbstractIndex
     /**
      * @inheritdoc
      */
-    public function sqlStatement(DriverInterface $driver, bool $includeTable = true): string
+    public function sqlStatement(SpiralDriverInterface $driver, bool $includeTable = true): string
     {
         $statement = [$this->isUnique() ? 'UNIQUE INDEX' : 'INDEX'];
 

@@ -17,6 +17,11 @@ use Cycle\Database\Driver\Postgres\Schema\PostgresTable;
 use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Schema\AbstractTable;
+use Spiral\Database\Schema\AbstractColumn as SpiralAbstractColumn;
+use Spiral\Database\Schema\AbstractTable as SpiralAbstractTable;
+
+class_exists(SpiralAbstractColumn::class);
+class_exists(SpiralAbstractTable::class);
 
 class PostgresHandler extends Handler
 {
@@ -59,7 +64,7 @@ class PostgresHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function eraseTable(AbstractTable $table): void
+    public function eraseTable(SpiralAbstractTable $table): void
     {
         $this->driver->execute(
             "TRUNCATE TABLE {$this->driver->identifier($table->getName())}"
@@ -72,9 +77,9 @@ class PostgresHandler extends Handler
      * @throws SchemaException
      */
     public function alterColumn(
-        AbstractTable $table,
-        AbstractColumn $initial,
-        AbstractColumn $column
+        SpiralAbstractTable $table,
+        SpiralAbstractColumn $initial,
+        SpiralAbstractColumn $column
     ): void {
         if (!$initial instanceof PostgresColumn || !$column instanceof PostgresColumn) {
             throw new SchemaException('Postgres handler can work only with Postgres columns');

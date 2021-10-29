@@ -12,6 +12,9 @@ declare(strict_types=1);
 namespace Cycle\Database\Driver;
 
 use Cycle\Database\Query\QueryParameters;
+use Spiral\Database\Query\QueryParameters as SpiralQueryParameters;
+
+class_exists(SpiralQueryParameters::class);
 
 /**
  * Provides the ability to calculate query hash and generate cacheble statements.
@@ -25,5 +28,5 @@ interface CachingCompilerInterface extends CompilerInterface
      * @param array           $tokens
      * @return string
      */
-    public function hashLimit(QueryParameters $params, array $tokens): string;
+    public function hashLimit(SpiralQueryParameters $params, array $tokens): string;
 }

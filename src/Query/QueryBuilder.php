@@ -12,10 +12,17 @@ declare(strict_types=1);
 namespace Cycle\Database\Query;
 
 use Cycle\Database\Driver\DriverInterface;
+use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
 use Spiral\Database\Query\SelectQuery as SpiralSelectQuery;
 use Spiral\Database\Query\InsertQuery as SpiralInsertQuery;
 use Spiral\Database\Query\UpdateQuery as SpiralUpdateQuery;
 use Spiral\Database\Query\DeleteQuery as SpiralDeleteQuery;
+
+interface_exists(SpiralDriverInterface::class);
+class_exists(SpiralSelectQuery::class);
+class_exists(SpiralInsertQuery::class);
+class_exists(SpiralUpdateQuery::class);
+class_exists(SpiralDeleteQuery::class);
 
 /**
  * Initiates active queries.
@@ -40,14 +47,10 @@ final class QueryBuilder implements BuilderInterface
     /**
      * QueryBuilder constructor.
      *
-     * @param SpiralSelectQuery|SelectQuery $selectQuery The signature of this
-     *        argument will be changed to {@see SelectQuery} in future release.
-     * @param SpiralInsertQuery|InsertQuery $insertQuery The signature of this
-     *        argument will be changed to {@see InsertQuery} in future release.
-     * @param SpiralUpdateQuery|UpdateQuery $updateQuery The signature of this
-     *        argument will be changed to {@see UpdateQuery} in future release.
-     * @param SpiralDeleteQuery|DeleteQuery $deleteQuery The signature of this
-     *        argument will be changed to {@see DeleteQuery} in future release.
+     * @param SelectQuery $selectQuery
+     * @param InsertQuery $insertQuery
+     * @param UpdateQuery $updateQuery
+     * @param DeleteQuery $deleteQuery
      */
     public function __construct(
         SpiralSelectQuery $selectQuery,
@@ -65,7 +68,7 @@ final class QueryBuilder implements BuilderInterface
      * @param DriverInterface $driver
      * @return BuilderInterface
      */
-    public function withDriver(DriverInterface $driver): BuilderInterface
+    public function withDriver(SpiralDriverInterface $driver): BuilderInterface
     {
         $builder = clone $this;
         $builder->driver = $driver;

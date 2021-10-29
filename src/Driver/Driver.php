@@ -31,6 +31,10 @@ use Spiral\Database\Query\BuilderInterface as SpiralBuilderInterface;
 use Spiral\Database\Driver\HandlerInterface as SpiralHandlerInterface;
 use Spiral\Database\Driver\CompilerInterface as SpiralCompilerInterface;
 
+interface_exists(SpiralBuilderInterface::class);
+interface_exists(SpiralHandlerInterface::class);
+interface_exists(SpiralCompilerInterface::class);
+
 /**
  * Provides low level abstraction at top of
  */
@@ -100,12 +104,9 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
 
     /**
      * @param array             $options
-     * @param SpiralHandlerInterface|HandlerInterface $schemaHandler The signature of
-     *        this argument will be changed to {@see HandlerInterface} in future release.
-     * @param SpiralCompilerInterface|CompilerInterface $queryCompiler The signature of
-     *        this argument will be changed to {@see CompilerInterface} in future release.
-     * @param SpiralBuilderInterface|BuilderInterface $queryBuilder The signature of
-     *        this argument will be changed to {@see BuilderInterface} in future release.
+     * @param HandlerInterface  $schemaHandler
+     * @param CompilerInterface $queryCompiler
+     * @param BuilderInterface  $queryBuilder
      */
     public function __construct(
         array $options,

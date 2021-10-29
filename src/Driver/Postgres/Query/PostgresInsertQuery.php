@@ -19,6 +19,9 @@ use Cycle\Database\Query\InsertQuery;
 use Cycle\Database\Query\QueryInterface;
 use Cycle\Database\Query\QueryParameters;
 use Throwable;
+use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+
+interface_exists(SpiralDriverInterface::class);
 
 /**
  * Postgres driver requires little bit different way to handle last insert id.
@@ -36,7 +39,7 @@ class PostgresInsertQuery extends InsertQuery
      * @param string|null     $prefix
      * @return QueryInterface
      */
-    public function withDriver(DriverInterface $driver, string $prefix = null): QueryInterface
+    public function withDriver(SpiralDriverInterface $driver, string $prefix = null): QueryInterface
     {
         if (!$driver instanceof PostgresDriver) {
             throw new BuilderException(

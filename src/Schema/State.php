@@ -11,6 +11,14 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Schema;
 
+use Spiral\Database\Schema\AbstractColumn as SpiralAbstractColumn;
+use Spiral\Database\Schema\AbstractIndex as SpiralAbstractIndex;
+use Spiral\Database\Schema\AbstractForeignKey as SpiralAbstractForeignKey;
+
+class_exists(SpiralAbstractColumn::class);
+class_exists(SpiralAbstractIndex::class);
+class_exists(SpiralAbstractForeignKey::class);
+
 /**
  * TableSchema helper used to store original table elements and run comparation between them.
  *
@@ -165,7 +173,7 @@ final class State
     /**
      * @param AbstractColumn $column
      */
-    public function registerColumn(AbstractColumn $column): void
+    public function registerColumn(SpiralAbstractColumn $column): void
     {
         $this->columns[$column->getName()] = $column;
     }
@@ -173,7 +181,7 @@ final class State
     /**
      * @param AbstractIndex $index
      */
-    public function registerIndex(AbstractIndex $index): void
+    public function registerIndex(SpiralAbstractIndex $index): void
     {
         $this->indexes[$index->getName()] = $index;
     }
@@ -181,7 +189,7 @@ final class State
     /**
      * @param AbstractForeignKey $reference
      */
-    public function registerForeignKey(AbstractForeignKey $reference): void
+    public function registerForeignKey(SpiralAbstractForeignKey $reference): void
     {
         $this->foreignKeys[$reference->getName()] = $reference;
     }
@@ -192,7 +200,7 @@ final class State
      * @param AbstractColumn $column
      * @return self
      */
-    public function forgetColumn(AbstractColumn $column): State
+    public function forgetColumn(SpiralAbstractColumn $column): State
     {
         foreach ($this->columns as $name => $columnSchema) {
             // todo: need better compare
@@ -210,7 +218,7 @@ final class State
      *
      * @param AbstractIndex $index
      */
-    public function forgetIndex(AbstractIndex $index): void
+    public function forgetIndex(SpiralAbstractIndex $index): void
     {
         foreach ($this->indexes as $name => $indexSchema) {
             // todo: need better compare
@@ -226,7 +234,7 @@ final class State
      *
      * @param AbstractForeignKey $foreignKey
      */
-    public function forgerForeignKey(AbstractForeignKey $foreignKey): void
+    public function forgerForeignKey(SpiralAbstractForeignKey $foreignKey): void
     {
         foreach ($this->foreignKeys as $name => $foreignSchema) {
             // todo: need better compare

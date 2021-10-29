@@ -20,6 +20,8 @@ use Cycle\Database\Query\SelectQuery;
 use Cycle\Database\Query\UpdateQuery;
 use Throwable;
 
+interface_exists(SpiralDriverInterface::class);
+
 /**
  * Database class is high level abstraction at top of Driver. Databases usually linked to real
  * database or logical portion of database (filtered by prefix).
@@ -50,16 +52,14 @@ final class Database implements DatabaseInterface, InjectableInterface
      * @param string $name Internal database name/id.
      * @param string $prefix Default database table prefix, will be used for all
      *        table identifiers.
-     * @param SpiralDriverInterface|DriverInterface $driver Driver instance responsible for database connection.
-     *        The signature of this argument will be changed to {@see DriverInterface} in future release.
-     * @param SpiralDriverInterface|DriverInterface|null $readDriver Read-only driver connection.
-     *        The signature of this argument will be changed to {@see DriverInterface} in future release.
+     * @param DriverInterface $driver
+     * @param DriverInterface|null $readDriver
      */
     public function __construct(
         string $name,
         string $prefix,
-        DriverInterface $driver,
-        DriverInterface $readDriver = null
+        SpiralDriverInterface $driver,
+        SpiralDriverInterface $readDriver = null
     ) {
         $this->name = $name;
         $this->prefix = $prefix;

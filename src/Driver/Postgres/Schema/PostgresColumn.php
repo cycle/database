@@ -14,6 +14,11 @@ namespace Cycle\Database\Driver\Postgres\Schema;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Schema\AbstractColumn;
+use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+use Spiral\Database\Schema\AbstractColumn as SpiralAbstractColumn;
+
+interface_exists(SpiralDriverInterface::class);
+class_exists(SpiralAbstractColumn::class);
 
 class PostgresColumn extends AbstractColumn
 {
@@ -205,7 +210,7 @@ class PostgresColumn extends AbstractColumn
     /**
      * {@inheritdoc}
      */
-    public function sqlStatement(DriverInterface $driver): string
+    public function sqlStatement(SpiralDriverInterface $driver): string
     {
         $statement = parent::sqlStatement($driver);
 
@@ -234,7 +239,7 @@ class PostgresColumn extends AbstractColumn
      * @param AbstractColumn  $initial
      * @return array
      */
-    public function alterOperations(DriverInterface $driver, AbstractColumn $initial): array
+    public function alterOperations(SpiralDriverInterface $driver, SpiralAbstractColumn $initial): array
     {
         $operations = [];
 
@@ -312,7 +317,7 @@ class PostgresColumn extends AbstractColumn
     public static function createInstance(
         string $table,
         array $schema,
-        DriverInterface $driver
+        SpiralDriverInterface $driver
     ): self {
         $column = new self($table, $schema['column_name'], $driver->getTimezone());
 
@@ -365,7 +370,7 @@ class PostgresColumn extends AbstractColumn
     /**
      * {@inheritdoc}
      */
-    public function compare(AbstractColumn $initial): bool
+    public function compare(SpiralAbstractColumn $initial): bool
     {
         if (parent::compare($initial)) {
             return true;
@@ -385,7 +390,7 @@ class PostgresColumn extends AbstractColumn
     /**
      * {@inheritdoc}
      */
-    protected function quoteEnum(DriverInterface $driver): string
+    protected function quoteEnum(SpiralDriverInterface $driver): string
     {
         //Postgres enums are just constrained strings
         return '(' . $this->size . ')';

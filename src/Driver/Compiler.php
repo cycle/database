@@ -16,6 +16,13 @@ use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Injection\ParameterInterface;
 use Cycle\Database\Query\QueryParameters;
+use Spiral\Database\Query\QueryParameters as SpiralQueryParameters;
+use Spiral\Database\Injection\FragmentInterface as SpiralFragmentInterface;
+use Spiral\Database\Driver\Quoter as SpiralQuoter;
+
+interface_exists(SpiralFragmentInterface::class);
+class_exists(SpiralQueryParameters::class);
+class_exists(SpiralQuoter::class);
 
 abstract class Compiler implements CompilerInterface
 {
@@ -48,9 +55,9 @@ abstract class Compiler implements CompilerInterface
      * @return string
      */
     public function compile(
-        QueryParameters $params,
+        SpiralQueryParameters $params,
         string $prefix,
-        FragmentInterface $fragment
+        SpiralFragmentInterface $fragment
     ): string {
         return $this->fragment(
             $params,
@@ -63,7 +70,7 @@ abstract class Compiler implements CompilerInterface
     /**
      * @inheritDoc
      */
-    public function hashLimit(QueryParameters $params, array $tokens): string
+    public function hashLimit(SpiralQueryParameters $params, array $tokens): string
     {
         if ($tokens['limit'] !== null) {
             $params->push(new Parameter($tokens['limit']));
@@ -84,9 +91,9 @@ abstract class Compiler implements CompilerInterface
      * @return string
      */
     protected function fragment(
-        QueryParameters $params,
-        Quoter $q,
-        FragmentInterface $fragment,
+        SpiralQueryParameters $params,
+        SpiralQuoter $q,
+        SpiralFragmentInterface $fragment,
         bool $nestedQuery = true
     ): string {
         $tokens = $fragment->getTokens();
@@ -147,7 +154,7 @@ abstract class Compiler implements CompilerInterface
      * @param array           $tokens
      * @return string
      */
-    protected function insertQuery(QueryParameters $params, Quoter $q, array $tokens): string
+    protected function insertQuery(SpiralQueryParameters $params, SpiralQuoter $q, array $tokens): string
     {
         $values = [];
         foreach ($tokens['values'] as $value) {
@@ -175,7 +182,7 @@ abstract class Compiler implements CompilerInterface
      * @param array           $tokens
      * @return string
      */
-    protected function selectQuery(QueryParameters $params, Quoter $q, array $tokens): string
+    protected function selectQuery(SpiralQueryParameters $params, SpiralQuoter $q, array $tokens): string
     {
         // This statement(s) parts should be processed first to define set of table and column aliases
         $tables = [];
@@ -207,7 +214,7 @@ abstract class Compiler implements CompilerInterface
      * @param bool|string     $distinct
      * @return string
      */
-    protected function distinct(QueryParameters $params, Quoter $q, $distinct): string
+    protected function distinct(SpiralQueryParameters $params, SpiralQuoter $q, $distinct): string
     {
         if ($distinct === false) {
             return '';
@@ -222,7 +229,7 @@ abstract class Compiler implements CompilerInterface
      * @param array           $joins
      * @return string
      */
-    protected function joins(QueryParameters $params, Quoter $q, array $joins): string
+    protected function joins(SpiralQueryParameters $params, SpiralQuoter $q, array $joins): string
     {
         $statement = '';
         foreach ($joins as $join) {
@@ -253,7 +260,7 @@ abstract class Compiler implements CompilerInterface
      * @param array           $unions
      * @return string
      */
-    protected function unions(QueryParameters $params, Quoter $q, array $unions): string
+    protected function unions(SpiralQueryParameters $params, SpiralQuoter $q, array $unions): string
     {
         if ($unions === []) {
             return '';
@@ -281,7 +288,7 @@ abstract class Compiler implements CompilerInterface
      * @param array           $orderBy
      * @return string
      */
-    protected function orderBy(QueryParameters $params, Quoter $q, array $orderBy): string
+    protected function orderBy(SpiralQueryParameters $params, SpiralQuoter $q, array $orderBy): string
     {
         $result = [];
         foreach ($orderBy as $order) {
@@ -305,7 +312,7 @@ abstract class Compiler implements CompilerInterface
      * @param array           $groupBy
      * @return string
      */
-    protected function groupBy(QueryParameters $params, Quoter $q, array $groupBy): string
+    protected function groupBy(SpiralQueryParameters $params, SpiralQuoter $q, array $groupBy): string
     {
         $result = [];
         foreach ($groupBy as $identifier) {
@@ -323,8 +330,8 @@ abstract class Compiler implements CompilerInterface
      * @return string
      */
     abstract protected function limit(
-        QueryParameters $params,
-        Quoter $q,
+        SpiralQueryParameters $params,
+        SpiralQuoter $q,
         int $limit = null,
         int $offset = null
     ): string;
@@ -336,8 +343,8 @@ abstract class Compiler implements CompilerInterface
      * @return string
      */
     protected function updateQuery(
-        QueryParameters $parameters,
-        Quoter $quoter,
+        SpiralQueryParameters $parameters,
+        SpiralQuoter $quoter,
         array $tokens
     ): string {
         $values = [];
@@ -364,8 +371,8 @@ abstract class Compiler implements CompilerInterface
      * @return string
      */
     protected function deleteQuery(
-        QueryParameters $parameters,
-        Quoter $quoter,
+        SpiralQueryParameters $parameters,
+        SpiralQuoter $quoter,
         array $tokens
     ): string {
         return sprintf(
@@ -385,7 +392,7 @@ abstract class Compiler implements CompilerInterface
      * @param bool            $table
      * @return string
      */
-    protected function name(QueryParameters $params, Quoter $q, $name, bool $table = false): string
+    protected function name(SpiralQueryParameters $params, SpiralQuoter $q, $name, bool $table = false): string
     {
         if ($name instanceof FragmentInterface) {
             return $this->fragment($params, $q, $name);
@@ -405,7 +412,7 @@ abstract class Compiler implements CompilerInterface
      * @param int             $maxLength
      * @return string
      */
-    protected function columns(QueryParameters $params, Quoter $q, array $columns, int $maxLength = 180): string
+    protected function columns(SpiralQueryParameters $params, SpiralQuoter $q, array $columns, int $maxLength = 180): string
     {
         // let's quote every identifier
         $columns = array_map(
@@ -424,7 +431,7 @@ abstract class Compiler implements CompilerInterface
      * @param mixed           $value
      * @return string
      */
-    protected function value(QueryParameters $params, Quoter $q, $value): string
+    protected function value(SpiralQueryParameters $params, SpiralQuoter $q, $value): string
     {
         if ($value instanceof FragmentInterface) {
             return $this->fragment($params, $q, $value);
@@ -456,7 +463,7 @@ abstract class Compiler implements CompilerInterface
      * @param array           $tokens
      * @return string
      */
-    protected function where(QueryParameters $params, Quoter $q, array $tokens): string
+    protected function where(SpiralQueryParameters $params, SpiralQuoter $q, array $tokens): string
     {
         if ($tokens === []) {
             return '';
@@ -522,7 +529,7 @@ abstract class Compiler implements CompilerInterface
      * @param array           $context
      * @return string
      */
-    protected function condition(QueryParameters $params, Quoter $q, array $context): string
+    protected function condition(SpiralQueryParameters $params, SpiralQuoter $q, array $context): string
     {
         $operator = $context[1];
         $value = $context[2];

@@ -18,6 +18,10 @@ use Cycle\Database\Exception\HandlerException;
 use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\TableInterface;
 use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+use Spiral\Database\Schema\State as SpiralState;
+
+interface_exists(SpiralDriverInterface::class);
+class_exists(SpiralState::class);
 
 /**
  * AbstractTable class used to describe and manage state of specified table. It provides ability to
@@ -99,8 +103,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     private $prefix;
 
     /**
-     * @param SpiralDriverInterface|DriverInterface $driver Parent driver. The signature
-     *        of this argument will be changed to {@see DriverInterface} in future release.
+     * @param DriverInterface $driver Parent driver.
      * @param string $name Table name, must include table prefix.
      * @param string $prefix Database specific table prefix.
      */
@@ -645,7 +648,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      *
      * @return self|$this
      */
-    public function setState(State $state = null): AbstractTable
+    public function setState(SpiralState $state = null): AbstractTable
     {
         $this->current = new State($this->initial->getName());
 
@@ -842,7 +845,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      *
      * @param State $state
      */
-    protected function initSchema(State $state): void
+    protected function initSchema(SpiralState $state): void
     {
         foreach ($this->fetchColumns() as $column) {
             $state->registerColumn($column);

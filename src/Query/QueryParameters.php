@@ -12,6 +12,9 @@ declare(strict_types=1);
 namespace Cycle\Database\Query;
 
 use Cycle\Database\Injection\ParameterInterface;
+use Spiral\Database\Injection\ParameterInterface as SpiralParameterInterface;
+
+interface_exists(SpiralParameterInterface::class);
 
 /**
  * Query parameter bindings.
@@ -23,7 +26,7 @@ final class QueryParameters
     /**
      * @param ParameterInterface $parameter
      */
-    public function push(ParameterInterface $parameter): void
+    public function push(SpiralParameterInterface $parameter): void
     {
         if ($parameter->isArray()) {
             foreach ($parameter->getValue() as $value) {

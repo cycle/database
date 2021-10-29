@@ -25,6 +25,16 @@ use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Exception\DatabaseException;
 use Cycle\Database\Exception\DBALException;
 use Spiral\Logger\Traits\LoggerTrait;
+use Spiral\Database\Config\DatabasePartial as SpiralDatabasePartial;
+use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+use Spiral\Database\Database as SpiralDatabase;
+use Spiral\Database\DatabaseProviderInterface as SpiralDatabaseProviderInterface;
+
+interface_exists(SpiralDriverInterface::class);
+interface_exists(SpiralDatabaseProviderInterface::class);
+class_exists(SpiralDatabasePartial::class);
+class_exists(SpiralDatabase::class);
+class_exists(SpiralDatabaseConfig::class);
 
 /**
  * Automatic factory and configurator for Drivers and Databases.
@@ -87,7 +97,7 @@ use Spiral\Logger\Traits\LoggerTrait;
  * echo $manager->database('runtime')->select()->from('users')->count();
  */
 final class DatabaseManager implements
-    DatabaseProviderInterface,
+    SpiralDatabaseProviderInterface,
     Container\SingletonInterface,
     Container\InjectorInterface
 {
@@ -122,8 +132,7 @@ final class DatabaseManager implements
     }
 
     /**
-     * @param SpiralDatabaseConfig|DatabaseConfig $config The signature of this
-     *        argument will be changed to {@see DatabaseConfig} in future release.
+     * @param DatabaseConfig $config
      * @param FactoryInterface|null $factory
      */
     public function __construct(SpiralDatabaseConfig $config, FactoryInterface $factory = null)
@@ -205,7 +214,7 @@ final class DatabaseManager implements
      *
      * @throws DBALException
      */
-    public function addDatabase(Database $database): void
+    public function addDatabase(SpiralDatabase $database): void
     {
         if (isset($this->databases[$database->getName()])) {
             throw new DBALException("Database '{$database->getName()}' already exists");
@@ -278,7 +287,7 @@ final class DatabaseManager implements
      *
      * @throws DBALException
      */
-    public function addDriver(string $name, DriverInterface $driver): DatabaseManager
+    public function addDriver(string $name, SpiralDriverInterface $driver): DatabaseManager
     {
         if (isset($this->drivers[$name])) {
             throw new DBALException("Connection '{$name}' already exists");
@@ -295,7 +304,7 @@ final class DatabaseManager implements
      *
      * @throws DBALException
      */
-    protected function makeDatabase(DatabasePartial $database): Database
+    protected function makeDatabase(SpiralDatabasePartial $database): Database
     {
         return new Database(
             $database->getName(),

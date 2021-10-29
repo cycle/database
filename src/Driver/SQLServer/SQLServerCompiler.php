@@ -16,6 +16,11 @@ use Cycle\Database\Driver\Quoter;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\QueryParameters;
+use Spiral\Database\Driver\Quoter as SpiralQuoter;
+use Spiral\Database\Query\QueryParameters as SpiralQueryParameters;
+
+class_exists(SpiralQuoter::class);
+class_exists(SpiralQueryParameters::class);
 
 /**
  * Microsoft SQL server specific syntax compiler.
@@ -37,7 +42,7 @@ class SQLServerCompiler extends Compiler
      * @link http://stackoverflow.com/questions/603724/how-to-implement-limit-with-microsoft-sql-server
      * @link http://stackoverflow.com/questions/971964/limit-10-20-in-sql-server
      */
-    protected function selectQuery(QueryParameters $params, Quoter $q, array $tokens): string
+    protected function selectQuery(SpiralQueryParameters $params, SpiralQuoter $q, array $tokens): string
     {
         $limit = $tokens['limit'];
         $offset = $tokens['offset'];
@@ -79,8 +84,8 @@ class SQLServerCompiler extends Compiler
      * @link http://stackoverflow.com/questions/2135418/equivalent-of-limit-and-offset-for-sql-server
      */
     protected function limit(
-        QueryParameters $params,
-        Quoter $q,
+        SpiralQueryParameters $params,
+        SpiralQuoter $q,
         int $limit = null,
         int $offset = null,
         string $rowNumber = null

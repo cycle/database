@@ -30,19 +30,3 @@ spl_autoload_register(static function (string $class) {
         class_alias($original, $class);
     }
 });
-
-// Preload some aliases
-interface_exists(\Spiral\Database\Driver\CachingCompilerInterface::class);
-interface_exists(\Spiral\Database\Driver\CompilerInterface::class);
-interface_exists(\Spiral\Database\Driver\HandlerInterface::class);
-interface_exists(\Spiral\Database\Driver\DriverInterface::class);
-interface_exists(\Spiral\Database\Query\BuilderInterface::class);
-interface_exists(\Spiral\Database\DatabaseInterface::class);
-
-class_exists(\Spiral\Database\Exception\StatementException::class);
-class_exists(\Spiral\Database\Config\DatabaseConfig::class);
-class_exists(\Spiral\Database\Query\SelectQuery::class);
-class_exists(\Spiral\Database\Query\InsertQuery::class);
-class_exists(\Spiral\Database\Query\UpdateQuery::class);
-class_exists(\Spiral\Database\Query\DeleteQuery::class);
-class_exists(\Spiral\Database\Schema\State::class);

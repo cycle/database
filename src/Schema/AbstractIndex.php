@@ -14,6 +14,11 @@ namespace Cycle\Database\Schema;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\IndexInterface;
 use Cycle\Database\Schema\Traits\ElementTrait;
+use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+use Spiral\Database\Schema\AbstractIndex as SpiralAbstractIndex;
+
+interface_exists(SpiralDriverInterface::class);
+class_exists(SpiralAbstractIndex::class);
 
 /**
  * Abstract index schema with read (see IndexInterface) and write abilities. Must be implemented
@@ -157,7 +162,7 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
      * @param bool            $includeTable Include table ON statement (not required for inline index creation).
      * @return string
      */
-    public function sqlStatement(DriverInterface $driver, bool $includeTable = true): string
+    public function sqlStatement(SpiralDriverInterface $driver, bool $includeTable = true): string
     {
         $statement = [$this->isUnique() ? 'UNIQUE INDEX' : 'INDEX'];
 
@@ -188,7 +193,7 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
      * @param AbstractIndex $initial
      * @return bool
      */
-    public function compare(AbstractIndex $initial): bool
+    public function compare(SpiralAbstractIndex $initial): bool
     {
         return $this == clone $initial;
     }

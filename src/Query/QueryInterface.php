@@ -13,6 +13,9 @@ namespace Cycle\Database\Query;
 
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Injection\FragmentInterface;
+use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+
+interface_exists(SpiralDriverInterface::class);
 
 interface QueryInterface extends FragmentInterface
 {
@@ -23,7 +26,7 @@ interface QueryInterface extends FragmentInterface
      * @param string|null     $prefix
      * @return $this
      */
-    public function withDriver(DriverInterface $driver, string $prefix = null): self;
+    public function withDriver(SpiralDriverInterface $driver, string $prefix = null): self;
 
     /**
      * @return DriverInterface|null

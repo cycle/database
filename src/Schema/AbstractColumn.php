@@ -20,6 +20,11 @@ use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Query\QueryParameters;
 use Cycle\Database\Schema\Traits\ElementTrait;
+use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+use Spiral\Database\Schema\AbstractColumn as SpiralAbstractColumn;
+
+interface_exists(SpiralDriverInterface::class);
+class_exists(SpiralAbstractColumn::class);
 
 /**
  * Abstract column schema with read (see ColumnInterface) and write abilities. Must be implemented
@@ -650,7 +655,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     /**
      * {@inheritdoc}
      */
-    public function sqlStatement(DriverInterface $driver): string
+    public function sqlStatement(SpiralDriverInterface $driver): string
     {
         $statement = [$driver->identifier($this->name), $this->type];
 
@@ -678,7 +683,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      * @param AbstractColumn $initial
      * @return bool
      */
-    public function compare(AbstractColumn $initial): bool
+    public function compare(SpiralAbstractColumn $initial): bool
     {
         $normalized = clone $initial;
 
@@ -724,7 +729,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      * @param DriverInterface $driver
      * @return string
      */
-    protected function quoteEnum(DriverInterface $driver): string
+    protected function quoteEnum(SpiralDriverInterface $driver): string
     {
         $enumValues = [];
         foreach ($this->enumValues as $value) {
@@ -744,7 +749,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      * @param DriverInterface $driver
      * @return string
      */
-    protected function quoteDefault(DriverInterface $driver): string
+    protected function quoteDefault(SpiralDriverInterface $driver): string
     {
         $defaultValue = $this->getDefaultValue();
         if ($defaultValue === null) {
