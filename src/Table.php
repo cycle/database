@@ -17,6 +17,9 @@ use Cycle\Database\Query\InsertQuery;
 use Cycle\Database\Query\SelectQuery;
 use Cycle\Database\Query\UpdateQuery;
 use Cycle\Database\Schema\AbstractTable;
+use Spiral\Database\DatabaseInterface as SpiralDatabaseInterface;
+
+interface_exists(SpiralDatabaseInterface::class);
 
 /**
  * Represent table level abstraction with simplified access to SelectQuery associated with such
@@ -37,9 +40,9 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
 
     /**
      * @param DatabaseInterface $database Parent DBAL database.
-     * @param string            $name     Table name without prefix.
+     * @param string $name Table name without prefix.
      */
-    public function __construct(DatabaseInterface $database, string $name)
+    public function __construct(SpiralDatabaseInterface $database, string $name)
     {
         $this->name = $name;
         $this->database = $database;

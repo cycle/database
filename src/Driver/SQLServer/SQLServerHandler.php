@@ -17,8 +17,14 @@ use Cycle\Database\Driver\SQLServer\Schema\SQLServerColumn;
 use Cycle\Database\Driver\SQLServer\Schema\SQLServerTable;
 use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Schema\AbstractColumn;
-use Cycle\Database\Schema\AbstractIndex;
 use Cycle\Database\Schema\AbstractTable;
+use Spiral\Database\Schema\AbstractColumn as SpiralAbstractColumn;
+use Spiral\Database\Schema\AbstractIndex as SpiralAbstractIndex;
+use Spiral\Database\Schema\AbstractTable as SpiralAbstractTable;
+
+class_exists(SpiralAbstractColumn::class);
+class_exists(SpiralAbstractIndex::class);
+class_exists(SpiralAbstractTable::class);
 
 class SQLServerHandler extends Handler
 {
@@ -59,7 +65,7 @@ class SQLServerHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function eraseTable(AbstractTable $table): void
+    public function eraseTable(SpiralAbstractTable $table): void
     {
         $this->driver->execute(
             "TRUNCATE TABLE {$this->driver->identifier($table->getName())}"
@@ -80,7 +86,7 @@ class SQLServerHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function createColumn(AbstractTable $table, AbstractColumn $column): void
+    public function createColumn(SpiralAbstractTable $table, SpiralAbstractColumn $column): void
     {
         $this->run(
             "ALTER TABLE {$this->identify($table)} ADD {$column->sqlStatement($this->driver)}"
@@ -97,9 +103,9 @@ class SQLServerHandler extends Handler
      * @throws SchemaException
      */
     public function alterColumn(
-        AbstractTable $table,
-        AbstractColumn $initial,
-        AbstractColumn $column
+        SpiralAbstractTable $table,
+        SpiralAbstractColumn $initial,
+        SpiralAbstractColumn $column
     ): void {
         if (!$initial instanceof SQLServerColumn || !$column instanceof SQLServerColumn) {
             throw new SchemaException('SQlServer handler can work only with SQLServer columns');
@@ -154,7 +160,7 @@ class SQLServerHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function dropIndex(AbstractTable $table, AbstractIndex $index): void
+    public function dropIndex(SpiralAbstractTable $table, SpiralAbstractIndex $index): void
     {
         $this->run("DROP INDEX {$this->identify($index)} ON {$this->identify($table)}");
     }

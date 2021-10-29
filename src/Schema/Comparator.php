@@ -11,6 +11,10 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Schema;
 
+use Spiral\Database\Schema\State as SpiralState;
+
+class_exists(SpiralState::class);
+
 /**
  * Compares two table states.
  */
@@ -26,7 +30,7 @@ final class Comparator implements ComparatorInterface
      * @param State $initial
      * @param State $current
      */
-    public function __construct(State $initial, State $current)
+    public function __construct(SpiralState $initial, SpiralState $current)
     {
         $this->initial = $initial;
         $this->current = $current;

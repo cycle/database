@@ -14,6 +14,11 @@ namespace Cycle\Database\Schema;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\ForeignKeyInterface;
 use Cycle\Database\Schema\Traits\ElementTrait;
+use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+use Spiral\Database\Schema\AbstractForeignKey as SpiralAbstractForeignKey;
+
+interface_exists(SpiralDriverInterface::class);
+class_exists(SpiralAbstractForeignKey::class);
 
 /**
  * Abstract foreign schema with read (see ReferenceInterface) and write abilities. Must be
@@ -186,7 +191,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
      * @param DriverInterface $driver
      * @return string
      */
-    public function sqlStatement(DriverInterface $driver): string
+    public function sqlStatement(SpiralDriverInterface $driver): string
     {
         $statement = [];
 
@@ -208,7 +213,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
      * @param AbstractForeignKey $initial
      * @return bool
      */
-    public function compare(AbstractForeignKey $initial): bool
+    public function compare(SpiralAbstractForeignKey $initial): bool
     {
         // soft compare
         return $this == clone $initial;
@@ -219,7 +224,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
      * @param array           $columns
      * @return string
      */
-    protected function packColumns(DriverInterface $driver, array $columns): string
+    protected function packColumns(SpiralDriverInterface $driver, array $columns): string
     {
         return implode(', ', array_map([$driver, 'identifier'], $columns));
     }

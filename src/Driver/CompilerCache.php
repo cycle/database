@@ -19,6 +19,15 @@ use Cycle\Database\Injection\ParameterInterface;
 use Cycle\Database\Query\QueryInterface;
 use Cycle\Database\Query\QueryParameters;
 use Cycle\Database\Query\SelectQuery;
+use Spiral\Database\Injection\FragmentInterface as SpiralFragmentInterface;
+use Spiral\Database\Injection\ParameterInterface as SpiralParameterInterface;
+use Spiral\Database\Driver\CachingCompilerInterface as SpiralCachingCompilerInterface;
+use Spiral\Database\Query\QueryParameters as SpiralQueryParameters;
+
+interface_exists(SpiralCachingCompilerInterface::class);
+interface_exists(SpiralFragmentInterface::class);
+interface_exists(SpiralParameterInterface::class);
+class_exists(SpiralQueryParameters::class);
 
 /**
  * Caches calculated queries. Code in this class is performance optimized.
@@ -34,7 +43,7 @@ final class CompilerCache implements CompilerInterface
     /**
      * @param CachingCompilerInterface $compiler
      */
-    public function __construct(CachingCompilerInterface $compiler)
+    public function __construct(SpiralCachingCompilerInterface $compiler)
     {
         $this->compiler = $compiler;
     }
@@ -54,7 +63,7 @@ final class CompilerCache implements CompilerInterface
      * @param FragmentInterface $fragment
      * @return string
      */
-    public function compile(QueryParameters $params, string $prefix, FragmentInterface $fragment): string
+    public function compile(SpiralQueryParameters $params, string $prefix, SpiralFragmentInterface $fragment): string
     {
         if ($fragment->getType() === self::SELECT_QUERY) {
             $queryHash = $prefix . $this->hashSelectQuery($params, $fragment->getTokens());
@@ -99,7 +108,7 @@ final class CompilerCache implements CompilerInterface
      * @param array           $tokens
      * @return string
      */
-    protected function hashInsertQuery(QueryParameters $params, array $tokens): string
+    protected function hashInsertQuery(SpiralQueryParameters $params, array $tokens): string
     {
         $hash = 'i_' . $tokens['table'] . implode('_', $tokens['columns']) . '_r' . ($tokens['return'] ?? '');
         foreach ($tokens['values'] as $value) {
@@ -147,7 +156,7 @@ final class CompilerCache implements CompilerInterface
      * @param array           $tokens
      * @return string
      */
-    protected function hashSelectQuery(QueryParameters $params, array $tokens): string
+    protected function hashSelectQuery(SpiralQueryParameters $params, array $tokens): string
     {
         // stable part of hash
         if (is_array($tokens['distinct']) && isset($tokens['distinct']['on'])) {
@@ -216,7 +225,7 @@ final class CompilerCache implements CompilerInterface
      * @param array           $where
      * @return string
      */
-    protected function hashWhere(QueryParameters $params, array $where): string
+    protected function hashWhere(SpiralQueryParameters $params, array $where): string
     {
         $hash = '';
         foreach ($where as $condition) {
@@ -305,7 +314,7 @@ final class CompilerCache implements CompilerInterface
      * @param array           $columns
      * @return string
      */
-    protected function hashColumns(QueryParameters $params, array $columns): string
+    protected function hashColumns(SpiralQueryParameters $params, array $columns): string
     {
         $hash = '';
         foreach ($columns as $column) {

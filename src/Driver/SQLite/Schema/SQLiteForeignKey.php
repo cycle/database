@@ -11,8 +11,11 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\SQLite\Schema;
 
-use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Schema\AbstractForeignKey;
+use Spiral\Database\Schema\AbstractForeignKey as SpiralAbstractForeignKey;
+use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+
+interface_exists(SpiralDriverInterface::class);
 
 class SQLiteForeignKey extends AbstractForeignKey
 {
@@ -29,7 +32,7 @@ class SQLiteForeignKey extends AbstractForeignKey
     /**
      * {@inheritdoc}
      */
-    public function sqlStatement(DriverInterface $driver): string
+    public function sqlStatement(SpiralDriverInterface $driver): string
     {
         $statement = [];
 
@@ -51,7 +54,7 @@ class SQLiteForeignKey extends AbstractForeignKey
      * @param AbstractForeignKey $initial
      * @return bool
      */
-    public function compare(AbstractForeignKey $initial): bool
+    public function compare(SpiralAbstractForeignKey $initial): bool
     {
         return $this->getColumns() === $initial->getColumns()
             && $this->getForeignTable() === $initial->getForeignTable()

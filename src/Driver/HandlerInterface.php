@@ -16,6 +16,17 @@ use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Schema\AbstractForeignKey;
 use Cycle\Database\Schema\AbstractIndex;
 use Cycle\Database\Schema\AbstractTable;
+use Spiral\Database\Schema\AbstractColumn as SpiralAbstractColumn;
+use Spiral\Database\Schema\AbstractIndex as SpiralAbstractIndex;
+use Spiral\Database\Schema\AbstractForeignKey as SpiralAbstractForeignKey;
+use Spiral\Database\Schema\AbstractTable as SpiralAbstractTable;
+use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+
+interface_exists(SpiralDriverInterface::class);
+class_exists(SpiralAbstractColumn::class);
+class_exists(SpiralAbstractIndex::class);
+class_exists(SpiralAbstractForeignKey::class);
+class_exists(SpiralAbstractTable::class);
 
 /**
  * Manages database schema.
@@ -57,7 +68,7 @@ interface HandlerInterface
      * @param DriverInterface $driver
      * @return HandlerInterface
      */
-    public function withDriver(DriverInterface $driver): HandlerInterface;
+    public function withDriver(SpiralDriverInterface $driver): HandlerInterface;
 
     /**
      * Get all available table names.
@@ -91,7 +102,7 @@ interface HandlerInterface
      * @param AbstractTable $table
      * @throws HandlerException
      */
-    public function createTable(AbstractTable $table): void;
+    public function createTable(SpiralAbstractTable $table): void;
 
     /**
      * Truncate table.
@@ -99,7 +110,7 @@ interface HandlerInterface
      * @param AbstractTable $table
      * @throws HandlerException
      */
-    public function eraseTable(AbstractTable $table): void;
+    public function eraseTable(SpiralAbstractTable $table): void;
 
     /**
      * Drop table from database.
@@ -107,15 +118,15 @@ interface HandlerInterface
      * @param AbstractTable $table
      * @throws HandlerException
      */
-    public function dropTable(AbstractTable $table): void;
+    public function dropTable(SpiralAbstractTable $table): void;
 
     /**
      * Sync given table schema.
      *
      * @param AbstractTable $table
-     * @param int           $operation See behaviour constants.
+     * @param int                               $operation See behaviour constants.
      */
-    public function syncTable(AbstractTable $table, int $operation = self::DO_ALL): void;
+    public function syncTable(SpiralAbstractTable $table, int $operation = self::DO_ALL): void;
 
     /**
      * Rename table from one name to another.
@@ -135,7 +146,7 @@ interface HandlerInterface
      *
      * @throws HandlerException
      */
-    public function createColumn(AbstractTable $table, AbstractColumn $column): void;
+    public function createColumn(SpiralAbstractTable $table, SpiralAbstractColumn $column): void;
 
     /**
      * Driver specific column remove (drop) command.
@@ -143,7 +154,7 @@ interface HandlerInterface
      * @param AbstractTable  $table
      * @param AbstractColumn $column
      */
-    public function dropColumn(AbstractTable $table, AbstractColumn $column): void;
+    public function dropColumn(SpiralAbstractTable $table, SpiralAbstractColumn $column): void;
 
     /**
      * Driver specific column alter command.
@@ -155,9 +166,9 @@ interface HandlerInterface
      * @throws HandlerException
      */
     public function alterColumn(
-        AbstractTable $table,
-        AbstractColumn $initial,
-        AbstractColumn $column
+        SpiralAbstractTable $table,
+        SpiralAbstractColumn $initial,
+        SpiralAbstractColumn $column
     ): void;
 
     /**
@@ -168,7 +179,7 @@ interface HandlerInterface
      *
      * @throws HandlerException
      */
-    public function createIndex(AbstractTable $table, AbstractIndex $index): void;
+    public function createIndex(SpiralAbstractTable $table, SpiralAbstractIndex $index): void;
 
     /**
      * Driver specific index remove (drop) command.
@@ -178,7 +189,7 @@ interface HandlerInterface
      *
      * @throws HandlerException
      */
-    public function dropIndex(AbstractTable $table, AbstractIndex $index): void;
+    public function dropIndex(SpiralAbstractTable $table, SpiralAbstractIndex $index): void;
 
     /**
      * Driver specific index alter command, by default it will remove and add index.
@@ -190,9 +201,9 @@ interface HandlerInterface
      * @throws HandlerException
      */
     public function alterIndex(
-        AbstractTable $table,
-        AbstractIndex $initial,
-        AbstractIndex $index
+        SpiralAbstractTable $table,
+        SpiralAbstractIndex $initial,
+        SpiralAbstractIndex $index
     ): void;
 
     /**
@@ -203,7 +214,7 @@ interface HandlerInterface
      *
      * @throws HandlerException
      */
-    public function createForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void;
+    public function createForeignKey(SpiralAbstractTable $table, SpiralAbstractForeignKey $foreignKey): void;
 
     /**
      * Driver specific foreign key remove (drop) command.
@@ -213,7 +224,7 @@ interface HandlerInterface
      *
      * @throws HandlerException
      */
-    public function dropForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void;
+    public function dropForeignKey(SpiralAbstractTable $table, SpiralAbstractForeignKey $foreignKey): void;
 
     /**
      * Driver specific foreign key alter command, by default it will remove and add foreign key.
@@ -225,9 +236,9 @@ interface HandlerInterface
      * @throws HandlerException
      */
     public function alterForeignKey(
-        AbstractTable $table,
-        AbstractForeignKey $initial,
-        AbstractForeignKey $foreignKey
+        SpiralAbstractTable $table,
+        SpiralAbstractForeignKey $initial,
+        SpiralAbstractForeignKey $foreignKey
     ): void;
 
     /**
@@ -238,5 +249,5 @@ interface HandlerInterface
      *
      * @throws HandlerException
      */
-    public function dropConstrain(AbstractTable $table, string $constraint): void;
+    public function dropConstrain(SpiralAbstractTable $table, string $constraint): void;
 }

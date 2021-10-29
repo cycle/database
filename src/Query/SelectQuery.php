@@ -22,6 +22,9 @@ use Cycle\Database\Query\Traits\WhereTrait;
 use Cycle\Database\StatementInterface;
 use Spiral\Pagination\PaginableInterface;
 use Throwable;
+use Spiral\Database\Injection\FragmentInterface as SpiralFragmentInterface;
+
+interface_exists(SpiralFragmentInterface::class);
 
 /**
  * Builds select sql statements.
@@ -210,7 +213,7 @@ class SelectQuery extends ActiveQuery implements
      * @param FragmentInterface $query
      * @return self|$this
      */
-    public function union(FragmentInterface $query): SelectQuery
+    public function union(SpiralFragmentInterface $query): SelectQuery
     {
         $this->unionTokens[] = ['', $query];
 
@@ -224,7 +227,7 @@ class SelectQuery extends ActiveQuery implements
      *
      * @return self|$this
      */
-    public function unionAll(FragmentInterface $query): SelectQuery
+    public function unionAll(SpiralFragmentInterface $query): SelectQuery
     {
         $this->unionTokens[] = ['ALL', $query];
 

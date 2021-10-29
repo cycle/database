@@ -15,6 +15,11 @@ use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Exception\BuilderException;
 use Cycle\Database\Exception\StatementException;
 use Throwable;
+use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+use Spiral\Database\Query\QueryParameters as SpiralQueryParameters;
+
+interface_exists(SpiralDriverInterface::class);
+class_exists(SpiralQueryParameters::class);
 
 /**
  * QueryBuilder classes generate set of control tokens for query compilers, this is query level
@@ -66,7 +71,7 @@ abstract class ActiveQuery implements QueryInterface
      * @param string|null     $prefix
      * @return QueryInterface|$this
      */
-    public function withDriver(DriverInterface $driver, string $prefix = null): QueryInterface
+    public function withDriver(SpiralDriverInterface $driver, string $prefix = null): QueryInterface
     {
         $query = clone $this;
         $query->driver = $driver;
@@ -97,7 +102,7 @@ abstract class ActiveQuery implements QueryInterface
      * @param QueryParameters|null $parameters
      * @return string
      */
-    public function sqlStatement(QueryParameters $parameters = null): string
+    public function sqlStatement(SpiralQueryParameters $parameters = null): string
     {
         if ($this->driver === null) {
             throw new BuilderException('Unable to build query without associated driver');

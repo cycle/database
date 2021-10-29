@@ -11,7 +11,10 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Schema\Traits;
 
-use Cycle\Database\Driver\Driver;
+use Cycle\Database\Driver\DriverInterface;
+use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+
+interface_exists(SpiralDriverInterface::class);
 
 trait ElementTrait
 {
@@ -57,8 +60,8 @@ trait ElementTrait
     /**
      * Element creation/definition syntax (specific to parent driver).
      *
-     * @param Driver $driver
+     * @param DriverInterface $driver
      * @return string
      */
-    abstract public function sqlStatement(Driver $driver): string;
+    abstract public function sqlStatement(SpiralDriverInterface $driver): string;
 }

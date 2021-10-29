@@ -16,6 +16,11 @@ use Cycle\Database\Driver\Compiler;
 use Cycle\Database\Driver\Quoter;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\QueryParameters;
+use Spiral\Database\Query\QueryParameters as SpiralQueryParameters;
+use Spiral\Database\Driver\Quoter as SpiralQuoter;
+
+class_exists(SpiralQueryParameters::class);
+class_exists(SpiralQuoter::class);
 
 /**
  * MySQL syntax specific compiler.
@@ -28,7 +33,7 @@ class MySQLCompiler extends Compiler implements CachingCompilerInterface
      * @param array           $tokens
      * @return string
      */
-    protected function insertQuery(QueryParameters $params, Quoter $q, array $tokens): string
+    protected function insertQuery(SpiralQueryParameters $params, SpiralQuoter $q, array $tokens): string
     {
         if ($tokens['columns'] === []) {
             return sprintf(
@@ -45,7 +50,7 @@ class MySQLCompiler extends Compiler implements CachingCompilerInterface
      *
      * @link http://dev.mysql.com/doc/refman/5.0/en/select.html#id4651990
      */
-    protected function limit(QueryParameters $params, Quoter $q, int $limit = null, int $offset = null): string
+    protected function limit(SpiralQueryParameters $params, SpiralQuoter $q, int $limit = null, int $offset = null): string
     {
         if ($limit === null && $offset === null) {
             return '';

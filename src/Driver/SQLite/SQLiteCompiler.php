@@ -13,11 +13,14 @@ namespace Cycle\Database\Driver\SQLite;
 
 use Cycle\Database\Driver\CachingCompilerInterface;
 use Cycle\Database\Driver\Compiler;
-use Cycle\Database\Driver\Quoter;
 use Cycle\Database\Exception\CompilerException;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Injection\ParameterInterface;
-use Cycle\Database\Query\QueryParameters;
+use Spiral\Database\Query\QueryParameters as SpiralQueryParameters;
+use Spiral\Database\Driver\Quoter as SpiralQuoter;
+
+class_exists(SpiralQueryParameters::class);
+class_exists(SpiralQuoter::class);
 
 class SQLiteCompiler extends Compiler implements CachingCompilerInterface
 {
@@ -26,7 +29,7 @@ class SQLiteCompiler extends Compiler implements CachingCompilerInterface
      *
      * @link http://stackoverflow.com/questions/10491492/sqllite-with-skip-offset-only-not-limit
      */
-    protected function limit(QueryParameters $params, Quoter $q, int $limit = null, int $offset = null): string
+    protected function limit(SpiralQueryParameters $params, SpiralQuoter $q, int $limit = null, int $offset = null): string
     {
         if ($limit === null && $offset === null) {
             return '';
@@ -50,7 +53,7 @@ class SQLiteCompiler extends Compiler implements CachingCompilerInterface
     /**
      * @inheritDoc
      */
-    protected function selectQuery(QueryParameters $params, Quoter $q, array $tokens): string
+    protected function selectQuery(SpiralQueryParameters $params, SpiralQuoter $q, array $tokens): string
     {
         // FOR UPDATE is not available
         $tokens['forUpdate'] = false;
@@ -63,7 +66,7 @@ class SQLiteCompiler extends Compiler implements CachingCompilerInterface
      *
      * @see http://stackoverflow.com/questions/1609637/is-it-possible-to-insert-multiple-rows-at-a-time-in-an-sqlite-database
      */
-    protected function insertQuery(QueryParameters $params, Quoter $q, array $tokens): string
+    protected function insertQuery(SpiralQueryParameters $params, SpiralQuoter $q, array $tokens): string
     {
         if ($tokens['columns'] === []) {
             return sprintf(

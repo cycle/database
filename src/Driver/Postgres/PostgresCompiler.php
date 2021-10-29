@@ -16,6 +16,11 @@ use Cycle\Database\Driver\Compiler;
 use Cycle\Database\Driver\Quoter;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\QueryParameters;
+use Spiral\Database\Query\QueryParameters as SpiralQueryParameters;
+use Spiral\Database\Driver\Quoter as SpiralQuoter;
+
+class_exists(SpiralQueryParameters::class);
+class_exists(SpiralQuoter::class);
 
 /**
  * Postgres syntax specific compiler.
@@ -28,7 +33,7 @@ class PostgresCompiler extends Compiler implements CachingCompilerInterface
      * @param array           $tokens
      * @return string
      */
-    protected function insertQuery(QueryParameters $params, Quoter $q, array $tokens): string
+    protected function insertQuery(SpiralQueryParameters $params, SpiralQuoter $q, array $tokens): string
     {
         $result = parent::insertQuery($params, $q, $tokens);
 
@@ -46,7 +51,7 @@ class PostgresCompiler extends Compiler implements CachingCompilerInterface
     /**
      * {@inheritdoc}
      */
-    protected function distinct(QueryParameters $params, Quoter $q, $distinct): string
+    protected function distinct(SpiralQueryParameters $params, SpiralQuoter $q, $distinct): string
     {
         if ($distinct === false) {
             return '';
@@ -70,7 +75,7 @@ class PostgresCompiler extends Compiler implements CachingCompilerInterface
      * @param int|null        $offset
      * @return string
      */
-    protected function limit(QueryParameters $params, Quoter $q, int $limit = null, int $offset = null): string
+    protected function limit(SpiralQueryParameters $params, SpiralQuoter $q, int $limit = null, int $offset = null): string
     {
         if ($limit === null && $offset === null) {
             return '';

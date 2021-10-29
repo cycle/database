@@ -13,8 +13,9 @@ declare(strict_types=1);
 // Replaces: SQlServerForeignKey to SQLServerForeignKey
 class_alias(
     \Cycle\Database\Driver\SQLServer\Schema\SQLServerForeignKey::class,
-    \Spiral\Database\Driver\SQLServer\Schema\SQlServerForeignKey::class,
+    \Spiral\Database\Driver\SQLServer\Schema\SQlServerForeignKey::class
 );
+
 
 spl_autoload_register(static function (string $class) {
     if (strpos($class, 'Spiral\\Database\\') === 0) {

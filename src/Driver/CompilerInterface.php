@@ -13,6 +13,11 @@ namespace Cycle\Database\Driver;
 
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Query\QueryParameters;
+use Spiral\Database\Injection\FragmentInterface as SpiralFragmentInterface;
+use Spiral\Database\Query\QueryParameters as SpiralQueryParameters;
+
+interface_exists(SpiralFragmentInterface::class);
+class_exists(SpiralQueryParameters::class);
 
 interface CompilerInterface
 {
@@ -42,8 +47,8 @@ interface CompilerInterface
      * @return string
      */
     public function compile(
-        QueryParameters $params,
+        SpiralQueryParameters $params,
         string $prefix,
-        FragmentInterface $fragment
+        SpiralFragmentInterface $fragment
     ): string;
 }

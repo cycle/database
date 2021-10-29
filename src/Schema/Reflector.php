@@ -15,6 +15,7 @@ use Cycle\Database\Driver\Driver;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\HandlerInterface;
 use Throwable;
+use Spiral\Database\Schema\AbstractTable as SpiralAbstractTable;
 
 /**
  * Saves multiple linked tables at once but treating their cross dependency.
@@ -45,7 +46,7 @@ final class Reflector
      *
      * @param AbstractTable $table
      */
-    public function addTable(AbstractTable $table): void
+    public function addTable(SpiralAbstractTable $table): void
     {
         $this->tables[$table->getName()] = $table;
         $this->dependencies[$table->getName()] = $table->getDependencies();

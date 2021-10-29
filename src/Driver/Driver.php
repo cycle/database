@@ -27,6 +27,13 @@ use Cycle\Database\Query\BuilderInterface;
 use Cycle\Database\Query\Interpolator;
 use Cycle\Database\StatementInterface;
 use Throwable;
+use Spiral\Database\Query\BuilderInterface as SpiralBuilderInterface;
+use Spiral\Database\Driver\HandlerInterface as SpiralHandlerInterface;
+use Spiral\Database\Driver\CompilerInterface as SpiralCompilerInterface;
+
+interface_exists(SpiralBuilderInterface::class);
+interface_exists(SpiralHandlerInterface::class);
+interface_exists(SpiralCompilerInterface::class);
 
 /**
  * Provides low level abstraction at top of
@@ -103,9 +110,9 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     public function __construct(
         array $options,
-        HandlerInterface $schemaHandler,
-        CompilerInterface $queryCompiler,
-        BuilderInterface $queryBuilder
+        SpiralHandlerInterface $schemaHandler,
+        SpiralCompilerInterface $queryCompiler,
+        SpiralBuilderInterface $queryBuilder
     ) {
         $this->schemaHandler = $schemaHandler->withDriver($this);
         $this->queryBuilder = $queryBuilder->withDriver($this);

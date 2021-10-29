@@ -13,6 +13,11 @@ namespace Cycle\Database\Driver\SQLServer\Schema;
 
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Schema\AbstractColumn;
+use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+use Spiral\Database\Schema\AbstractColumn as SpiralAbstractColumn;
+
+interface_exists(SpiralDriverInterface::class);
+class_exists(SpiralAbstractColumn::class);
 
 class SQLServerColumn extends AbstractColumn
 {
@@ -194,7 +199,7 @@ class SQLServerColumn extends AbstractColumn
      * @param bool $withEnum When true enum constrain will be included into definition. Set to false
      *                       if you want to create constrain separately.
      */
-    public function sqlStatement(DriverInterface $driver, bool $withEnum = true): string
+    public function sqlStatement(SpiralDriverInterface $driver, bool $withEnum = true): string
     {
         if ($withEnum && $this->getAbstractType() === 'enum') {
             return "{$this->sqlStatement($driver, false)} {$this->enumStatement($driver)}";
@@ -231,7 +236,7 @@ class SQLServerColumn extends AbstractColumn
      * @param AbstractColumn  $initial
      * @return array
      */
-    public function alterOperations(DriverInterface $driver, AbstractColumn $initial): array
+    public function alterOperations(SpiralDriverInterface $driver, SpiralAbstractColumn $initial): array
     {
         $operations = [];
 
@@ -301,7 +306,7 @@ class SQLServerColumn extends AbstractColumn
     public static function createInstance(
         string $table,
         array $schema,
-        DriverInterface $driver
+        SpiralDriverInterface $driver
     ): self {
         $column = new self($table, $schema['COLUMN_NAME'], $driver->getTimezone());
 
@@ -354,7 +359,7 @@ class SQLServerColumn extends AbstractColumn
     /**
      * {@inheritdoc}
      */
-    protected function quoteDefault(DriverInterface $driver): string
+    protected function quoteDefault(SpiralDriverInterface $driver): string
     {
         $defaultValue = parent::quoteDefault($driver);
         if ($this->getAbstractType() === 'boolean') {

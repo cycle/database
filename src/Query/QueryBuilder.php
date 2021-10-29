@@ -12,6 +12,17 @@ declare(strict_types=1);
 namespace Cycle\Database\Query;
 
 use Cycle\Database\Driver\DriverInterface;
+use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+use Spiral\Database\Query\SelectQuery as SpiralSelectQuery;
+use Spiral\Database\Query\InsertQuery as SpiralInsertQuery;
+use Spiral\Database\Query\UpdateQuery as SpiralUpdateQuery;
+use Spiral\Database\Query\DeleteQuery as SpiralDeleteQuery;
+
+interface_exists(SpiralDriverInterface::class);
+class_exists(SpiralSelectQuery::class);
+class_exists(SpiralInsertQuery::class);
+class_exists(SpiralUpdateQuery::class);
+class_exists(SpiralDeleteQuery::class);
 
 /**
  * Initiates active queries.
@@ -42,10 +53,10 @@ final class QueryBuilder implements BuilderInterface
      * @param DeleteQuery $deleteQuery
      */
     public function __construct(
-        SelectQuery $selectQuery,
-        InsertQuery $insertQuery,
-        UpdateQuery $updateQuery,
-        DeleteQuery $deleteQuery
+        SpiralSelectQuery $selectQuery,
+        SpiralInsertQuery $insertQuery,
+        SpiralUpdateQuery $updateQuery,
+        SpiralDeleteQuery $deleteQuery
     ) {
         $this->selectQuery = $selectQuery;
         $this->insertQuery = $insertQuery;
@@ -57,7 +68,7 @@ final class QueryBuilder implements BuilderInterface
      * @param DriverInterface $driver
      * @return BuilderInterface
      */
-    public function withDriver(DriverInterface $driver): BuilderInterface
+    public function withDriver(SpiralDriverInterface $driver): BuilderInterface
     {
         $builder = clone $this;
         $builder->driver = $driver;

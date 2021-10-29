@@ -11,11 +11,13 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\MySQL\Schema;
 
-use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Exception\DefaultValueException;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Schema\AbstractColumn;
+use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+
+interface_exists(SpiralDriverInterface::class);
 
 /**
  * Attention! You can use only one timestamp or datetime with DATETIME_NOW setting! Thought, it will
@@ -141,7 +143,7 @@ class MySQLColumn extends AbstractColumn
     /**
      * {@inheritdoc}
      */
-    public function sqlStatement(DriverInterface $driver): string
+    public function sqlStatement(SpiralDriverInterface $driver): string
     {
         $defaultValue = $this->defaultValue;
 

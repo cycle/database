@@ -17,6 +17,9 @@ use Cycle\Database\Schema\AbstractForeignKey;
 use Cycle\Database\Schema\AbstractIndex;
 use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\Schema\State;
+use Spiral\Database\Schema\State as SpiralState;
+
+class_exists(SpiralState::class);
 
 class MySQLTable extends AbstractTable
 {
@@ -73,7 +76,7 @@ class MySQLTable extends AbstractTable
      *
      * @param State $state
      */
-    protected function initSchema(State $state): void
+    protected function initSchema(SpiralState $state): void
     {
         parent::initSchema($state);
 

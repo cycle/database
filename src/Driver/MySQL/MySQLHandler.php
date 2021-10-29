@@ -17,9 +17,16 @@ use Cycle\Database\Driver\MySQL\Exception\MySQLException;
 use Cycle\Database\Driver\MySQL\Schema\MySQLTable;
 use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Schema\AbstractColumn;
-use Cycle\Database\Schema\AbstractForeignKey;
-use Cycle\Database\Schema\AbstractIndex;
 use Cycle\Database\Schema\AbstractTable;
+use Spiral\Database\Schema\AbstractColumn as SpiralAbstractColumn;
+use Spiral\Database\Schema\AbstractIndex as SpiralAbstractIndex;
+use Spiral\Database\Schema\AbstractForeignKey as SpiralAbstractForeignKey;
+use Spiral\Database\Schema\AbstractTable as SpiralAbstractTable;
+
+class_exists(SpiralAbstractColumn::class);
+class_exists(SpiralAbstractIndex::class);
+class_exists(SpiralAbstractForeignKey::class);
+class_exists(SpiralAbstractTable::class);
 
 class MySQLHandler extends Handler
 {
@@ -57,7 +64,7 @@ class MySQLHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function eraseTable(AbstractTable $table): void
+    public function eraseTable(SpiralAbstractTable $table): void
     {
         $this->driver->execute(
             "TRUNCATE TABLE {$this->driver->identifier($table->getName())}"
@@ -68,9 +75,9 @@ class MySQLHandler extends Handler
      * {@inheritdoc}
      */
     public function alterColumn(
-        AbstractTable $table,
-        AbstractColumn $initial,
-        AbstractColumn $column
+        SpiralAbstractTable $table,
+        SpiralAbstractColumn $initial,
+        SpiralAbstractColumn $column
     ): void {
         $foreignBackup = [];
         foreach ($table->getForeignKeys() as $foreign) {
@@ -94,7 +101,7 @@ class MySQLHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function dropIndex(AbstractTable $table, AbstractIndex $index): void
+    public function dropIndex(SpiralAbstractTable $table, SpiralAbstractIndex $index): void
     {
         $this->run(
             "DROP INDEX {$this->identify($index)} ON {$this->identify($table)}"
@@ -104,7 +111,7 @@ class MySQLHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function alterIndex(AbstractTable $table, AbstractIndex $initial, AbstractIndex $index): void
+    public function alterIndex(SpiralAbstractTable $table, SpiralAbstractIndex $initial, SpiralAbstractIndex $index): void
     {
         $this->run(
             "ALTER TABLE {$this->identify($table)}
@@ -116,7 +123,7 @@ class MySQLHandler extends Handler
     /**
      * {@inheritdoc}
      */
-    public function dropForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void
+    public function dropForeignKey(SpiralAbstractTable $table, SpiralAbstractForeignKey $foreignKey): void
     {
         $this->run(
             "ALTER TABLE {$this->identify($table)} DROP FOREIGN KEY {$this->identify($foreignKey)}"
@@ -131,7 +138,7 @@ class MySQLHandler extends Handler
      *
      * @throws SchemaException
      */
-    protected function createStatement(AbstractTable $table)
+    protected function createStatement(SpiralAbstractTable $table)
     {
         if (!$table instanceof MySQLTable) {
             throw new SchemaException('MySQLHandler can process only MySQL tables');
@@ -145,7 +152,7 @@ class MySQLHandler extends Handler
      *
      * @throws MySQLException
      */
-    protected function assertValid(AbstractColumn $column): void
+    protected function assertValid(SpiralAbstractColumn $column): void
     {
         if (
             $column->getDefaultValue() !== null
