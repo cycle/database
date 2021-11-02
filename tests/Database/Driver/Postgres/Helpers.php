@@ -87,7 +87,7 @@ trait Helpers
             schema: \array_filter([$defaultSchema, ...\array_values((array)$schema)]),
         );
 
-        $driver = new PostgresDriver($options);
+        $driver = PostgresDriver::create($options);
         $driver->connect();
 
         return $driver;

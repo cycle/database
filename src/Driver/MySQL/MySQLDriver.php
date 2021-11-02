@@ -11,9 +11,13 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\MySQL;
 
+use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Config\MySQLDriverConfig;
+use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Driver\Driver;
+use Cycle\Database\Driver\HandlerInterface;
 use Cycle\Database\Exception\StatementException;
+use Cycle\Database\Query\BuilderInterface;
 use Cycle\Database\Query\QueryBuilder;
 
 /**
@@ -21,20 +25,6 @@ use Cycle\Database\Query\QueryBuilder;
  */
 class MySQLDriver extends Driver
 {
-    /**
-     * @param MySQLDriverConfig $config
-     */
-    public function __construct(MySQLDriverConfig $config)
-    {
-        // default query builder
-        parent::__construct(
-            $config,
-            new MySQLHandler(),
-            new MySQLCompiler('``'),
-            QueryBuilder::defaultBuilder()
-        );
-    }
-
     /**
      * @inheritDoc
      */
@@ -66,5 +56,23 @@ class MySQLDriver extends Driver
         }
 
         return new StatementException($exception, $query);
+    }
+
+    /**
+     * @param MySQLDriverConfig $config
+     *
+     * @return self
+     */
+    public static function create(
+        DriverConfig $config, ?HandlerInterface $handler = null,
+        ?CompilerInterface $compiler = null,
+        ?BuilderInterface $builder = null
+    ): self {
+        return new self(
+            $config,
+            $handler ?? new MySQLHandler(),
+            $handler ?? new MySQLCompiler('``'),
+            $builder ?? QueryBuilder::defaultBuilder()
+        );
     }
 }

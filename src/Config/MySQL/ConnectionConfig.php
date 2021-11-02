@@ -14,7 +14,7 @@ namespace Cycle\Database\Config\MySQL;
 use Cycle\Database\Config\PDOConnectionConfig as BaseConnectionConfig;
 
 /**
- * @psalm-import-type PDOFlag from TcpConnectionConfig
+ * @psalm-import-type PDOFlag from BaseConnectionConfig
  */
 abstract class ConnectionConfig extends BaseConnectionConfig
 {

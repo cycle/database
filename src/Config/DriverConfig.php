@@ -12,13 +12,14 @@ declare(strict_types=1);
 namespace Cycle\Database\Config;
 
 use Cycle\Database\Driver\DriverInterface;
+use Cycle\Database\Config\PDOConnectionConfig;
 
 /**
  * Connection configuration described in DBAL config file. Any driver can be
  * used as data source for multiple databases as table prefix and quotation
  * defined on Database instance level.
  *
- * @template T of TcpConnectionConfig
+ * @template T of PDOConnectionConfig
  */
 abstract class DriverConfig
 {
@@ -41,15 +42,5 @@ abstract class DriverConfig
         public bool $readonlySchema = false,
         public bool $readonly = false,
     ) {
-    }
-
-    /**
-     * @return DriverInterface
-     */
-    public function getDriver(): DriverInterface
-    {
-        $class = $this->driver;
-
-        return new $class($this);
     }
 }

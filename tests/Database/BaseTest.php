@@ -81,7 +81,7 @@ abstract class BaseTest extends TestCase
                 $config->readonly = true;
             }
 
-            $driver = $config->getDriver();
+            $driver = $config->driver::create($config);
 
             $this->setUpLogger($driver);
 

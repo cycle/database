@@ -65,7 +65,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * @param CompilerInterface $queryCompiler
      * @param BuilderInterface $queryBuilder
      */
-    public function __construct(
+    protected function __construct(
         protected DriverConfig $config,
         HandlerInterface $schemaHandler,
         protected CompilerInterface $queryCompiler,

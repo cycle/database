@@ -11,26 +11,17 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\SQLite;
 
+use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Config\SQLiteDriverConfig;
+use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Driver\Driver;
+use Cycle\Database\Driver\HandlerInterface;
 use Cycle\Database\Exception\StatementException;
+use Cycle\Database\Query\BuilderInterface;
 use Cycle\Database\Query\QueryBuilder;
 
 class SQLiteDriver extends Driver
 {
-    /**
-     * @param SQLiteDriverConfig $config
-     */
-    public function __construct(SQLiteDriverConfig $config)
-    {
-        parent::__construct(
-            $config,
-            new SQLiteHandler(),
-            new SQLiteCompiler('""'),
-            QueryBuilder::defaultBuilder()
-        );
-    }
-
     /**
      * @inheritDoc
      */
@@ -57,5 +48,24 @@ class SQLiteDriver extends Driver
     protected function setIsolationLevel(string $level): void
     {
         $this->logger?->alert("Transaction isolation level is not fully supported by SQLite ({$level})");
+    }
+
+    /**
+     * @param SQLiteDriverConfig $config
+     *
+     * @return self
+     */
+    public static function create(
+        DriverConfig $config,
+        ?HandlerInterface $handler = null,
+        ?CompilerInterface $compiler = null,
+        ?BuilderInterface $builder = null
+    ): self {
+        return new self(
+            $config,
+            $handler ?? new SQLiteHandler(),
+            $compiler ?? new SQLiteCompiler('""'),
+            $builder ?? QueryBuilder::defaultBuilder()
+        );
     }
 }

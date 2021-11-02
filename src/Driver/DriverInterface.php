@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Driver;
 
 use PDO;
+use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\ReadonlyConnectionException;
 use Cycle\Database\Exception\StatementException;
@@ -214,4 +215,11 @@ interface DriverInterface
      * @return bool True of success.
      */
     public function rollbackTransaction(): bool;
+
+    /**
+     * Create new driver instance.
+     *
+     * @return self.
+     */
+    public static function create(DriverConfig $config): self;
 }

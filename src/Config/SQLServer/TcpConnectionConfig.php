@@ -12,10 +12,11 @@ declare(strict_types=1);
 namespace Cycle\Database\Config\SQLServer;
 
 use Cycle\Database\Config\ProvidesSourceString;
+use Cycle\Database\Config\PDOConnectionConfig;
 
 /**
  * @psalm-type IsolationLevelType = \PDO::SQLSRV_TXN_*
- * @psalm-import-type PDOFlag from TcpConnectionConfig
+ * @psalm-import-type PDOFlag from PDOConnectionConfig
  */
 class TcpConnectionConfig extends ConnectionConfig implements ProvidesSourceString
 {

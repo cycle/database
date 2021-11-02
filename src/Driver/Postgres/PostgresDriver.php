@@ -11,12 +11,16 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\Postgres;
 
+use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Config\PostgresDriverConfig;
+use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Driver\Driver;
+use Cycle\Database\Driver\HandlerInterface;
 use Cycle\Database\Driver\Postgres\Query\PostgresInsertQuery;
 use Cycle\Database\Driver\Postgres\Query\PostgresSelectQuery;
 use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\StatementException;
+use Cycle\Database\Query\BuilderInterface;
 use Cycle\Database\Query\DeleteQuery;
 use Cycle\Database\Query\QueryBuilder;
 use Cycle\Database\Query\UpdateQuery;
@@ -50,27 +54,6 @@ class PostgresDriver extends Driver
      * @psalm-var non-empty-array<string>
      */
     private array $searchSchemas = [];
-
-    /**
-     * @param PostgresDriverConfig $config
-     */
-    public function __construct(PostgresDriverConfig $config)
-    {
-        // default query builder
-        parent::__construct(
-            $config,
-            new PostgresHandler(),
-            new PostgresCompiler('""'),
-            new QueryBuilder(
-                new PostgresSelectQuery(),
-                new PostgresInsertQuery(),
-                new UpdateQuery(),
-                new DeleteQuery()
-            )
-        );
-
-        $this->defineSchemas();
-    }
 
     /**
      * @return string
@@ -279,5 +262,33 @@ class PostgresDriver extends Driver
         if ($position !== false) {
             $this->searchSchemas[$position] = (string)$config->connection->getUsername();
         }
+    }
+
+    /**
+     * @param PostgresDriverConfig $config
+     *
+     * @return self
+     */
+    public static function create(
+        DriverConfig $config,
+        ?HandlerInterface $handler = null,
+        ?CompilerInterface $compiler = null,
+        ?BuilderInterface $builder = null
+    ): self {
+        $driver = new self(
+            $config,
+            $handler ?? new PostgresHandler(),
+            $compiler ?? new PostgresCompiler('""'),
+            $builder ?? new QueryBuilder(
+                new PostgresSelectQuery(),
+                new PostgresInsertQuery(),
+                new UpdateQuery(),
+                new DeleteQuery()
+            )
+        );
+
+        $driver->defineSchemas();
+
+        return $driver;
     }
 }

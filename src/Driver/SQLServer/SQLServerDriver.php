@@ -11,11 +11,15 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\SQLServer;
 
+use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Config\SQLServerDriverConfig;
+use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Driver\Driver;
+use Cycle\Database\Driver\HandlerInterface;
 use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Injection\ParameterInterface;
+use Cycle\Database\Query\BuilderInterface;
 use Cycle\Database\Query\QueryBuilder;
 
 class SQLServerDriver extends Driver
@@ -24,25 +28,6 @@ class SQLServerDriver extends Driver
      * @var non-empty-string
      */
     protected const DATETIME = 'Y-m-d\TH:i:s.000';
-
-    /**
-     * {@inheritdoc}
-     *
-     * @throws DriverException
-     */
-    public function __construct(SQLServerDriverConfig $config)
-    {
-        parent::__construct(
-            $config,
-            new SQLServerHandler(),
-            new SQLServerCompiler('[]'),
-            QueryBuilder::defaultBuilder()
-        );
-
-        if ((int)$this->getPDO()->getAttribute(\PDO::ATTR_SERVER_VERSION) < 12) {
-            throw new DriverException('SQLServer driver supports only 12+ version of SQLServer');
-        }
-    }
 
     /**
      * @return string
@@ -167,5 +152,33 @@ class SQLServerDriver extends Driver
         }
 
         return new StatementException($exception, $query);
+    }
+
+    /**
+     * @param SQLServerDriverConfig $config
+     *
+     * @return self
+     *
+     * @throws DriverException
+     */
+    public static function create(
+        DriverConfig $config,
+        ?HandlerInterface $handler = null,
+        ?CompilerInterface $compiler = null,
+        ?BuilderInterface $builder = null
+    ): self {
+
+        $driver = new self(
+            $config,
+            $handler ?? new SQLServerHandler(),
+            $compiler ?? new SQLServerCompiler('[]'),
+            $builder ?? QueryBuilder::defaultBuilder()
+        );
+
+        if ((int) $driver->getPDO()->getAttribute(\PDO::ATTR_SERVER_VERSION) < 12) {
+            throw new DriverException('SQLServer driver supports only 12+ version of SQLServer');
+        }
+
+        return $driver;
     }
 }

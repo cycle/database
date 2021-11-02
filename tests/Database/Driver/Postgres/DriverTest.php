@@ -29,7 +29,7 @@ class DriverTest extends TestCase
 
     public function testIfSchemaOptionsDoesNotPresentUsePublicSchema(): void
     {
-        $driver = new PostgresDriver(
+        $driver = PostgresDriver::create(
             new PostgresDriverConfig(
                 connection: $this->getConnection(),
                 schema: ['$user', 'public']
@@ -44,7 +44,7 @@ class DriverTest extends TestCase
 
     public function testDefaultSchemaCanBeDefined(): void
     {
-        $driver = new PostgresDriver(
+        $driver = PostgresDriver::create(
             new PostgresDriverConfig(
                 connection: $this->getConnection(),
                 schema: 'private',
@@ -59,7 +59,7 @@ class DriverTest extends TestCase
 
     public function testDefaultSchemaCanBeDefinedFromAvailableSchemas(): void
     {
-        $driver = new PostgresDriver(
+        $driver = PostgresDriver::create(
             new PostgresDriverConfig(
                 connection: $this->getConnection(),
                 schema: 'private',
@@ -74,7 +74,7 @@ class DriverTest extends TestCase
 
     public function testDefaultSchemaForCurrentUser(): void
     {
-        $driver = new PostgresDriver(
+        $driver = PostgresDriver::create(
             new PostgresDriverConfig(
                 connection: $this->getConnection(),
                 schema: ['$user', 'test', 'private'],
@@ -92,7 +92,7 @@ class DriverTest extends TestCase
      */
     public function testIfSchemaOptionsPresentsUseIt($schema, $available, $result): void
     {
-        $driver = new PostgresDriver(
+        $driver = PostgresDriver::create(
             new PostgresDriverConfig(
                 connection: $this->getConnection(),
                 schema: $schema,
