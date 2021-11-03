@@ -243,7 +243,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
                 'users.is_admin' => 'pht.is_admin',
                 fn ($select, string $boolean, callable $wrapper) => $select
                     ->on('photos.user_id', 'users.id')
-                    ->onWhere('photos.type', 'avatar')
+                    ->onWhere('photos.type', 'avatar'),
             ]);
 
         $this->assertSameQueryWithParameters(
@@ -259,7 +259,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
                         )
                         )',
             [
-                'avatar'
+                'avatar',
             ],
             $select
         );

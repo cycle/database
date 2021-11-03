@@ -54,7 +54,6 @@ use Cycle\Database\Query\ActiveQuery;
  */
 trait JoinTrait
 {
-
     /**
      * Set of join tokens with on and on where conditions associated, must be supported by
      * QueryCompilers.
@@ -151,7 +150,7 @@ trait JoinTrait
             'outer' => $outer,
             'alias' => $alias,
             'type' => 'RIGHT',
-            'on' => []
+            'on' => [],
         ];
 
         return $this;

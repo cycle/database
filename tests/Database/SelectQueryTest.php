@@ -135,7 +135,6 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             [
                 100,
                 'Antony',
-
             ],
             $select
         );
@@ -209,7 +208,6 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             $select
         );
     }
-
 
     public function testSelectWithSimpleWhereNotNull(): void
     {
@@ -646,7 +644,6 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
-
     public function testOrShortWhereAND(): void
     {
         $select = $this->database
@@ -957,7 +954,6 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             $select
         );
     }
-
 
     public function testAllColumns2(): void
     {
@@ -1371,7 +1367,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                     'name' => [
                         'like' => 'Anton',
                         '!=' => 'Antony',
-                    ]
+                    ],
                 ]
             );
 
@@ -1432,7 +1428,6 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                                      ]
                                  );
     }
-
 
     public function testHavingShortHavingMultiple(): void
     {
@@ -1594,7 +1589,6 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             $select
         );
     }
-
 
     public function testOffsetNoLimit(): void
     {
@@ -1838,7 +1832,6 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
-
     public function testGroupByExpressionWithPrefix(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
@@ -1852,7 +1845,6 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     }
 
     //Parameters (writing only)
-
     public function testWhereValueAsParameter(): void
     {
         $p = new Parameter(12);
