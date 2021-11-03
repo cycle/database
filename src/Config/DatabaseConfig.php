@@ -14,6 +14,7 @@ namespace Cycle\Database\Config;
 use Spiral\Core\Container\Autowire;
 use Spiral\Core\InjectableConfig;
 use Spiral\Core\Traits\Config\AliasTrait;
+use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Exception\ConfigException;
 
 final class DatabaseConfig extends InjectableConfig
@@ -114,11 +115,11 @@ final class DatabaseConfig extends InjectableConfig
 
     /**
      * @param string $driver
-     * @return Autowire
+     * @return DriverInterface
      *
      * @throws ConfigException
      */
-    public function getDriver(string $driver): Autowire
+    public function getDriver(string $driver): DriverInterface
     {
         if (!$this->hasDriver($driver)) {
             throw new ConfigException("Undefined driver `{$driver}`");
@@ -127,7 +128,7 @@ final class DatabaseConfig extends InjectableConfig
         $config = $this->config['connections'][$driver] ?? $this->config['drivers'][$driver];
 
         if ($config instanceof DriverConfig) {
-            return new Autowire($config->driver, ['config' => $config]);
+            return $config->driver::create($config);
         }
 
         throw new \InvalidArgumentException(

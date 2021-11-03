@@ -237,12 +237,7 @@ final class DatabaseManager implements
     }
 
     /**
-     * Get driver instance by it's name or automatically create one.
-     *
-     * @param string $driver
-     * @return DriverInterface
-     *
-     * @throws DBALException
+     * Get driver instance.
      */
     public function driver(string $driver): DriverInterface
     {
@@ -250,21 +245,17 @@ final class DatabaseManager implements
             return $this->drivers[$driver];
         }
 
-        try {
-            $driverObject = $this->config->getDriver($driver)->resolve($this->factory);
-            $this->drivers[$driver] = $driverObject;
+        $driverObject = $this->config->getDriver($driver);
+        $this->drivers[$driver] = $driverObject;
 
-            if ($driverObject instanceof LoggerAwareInterface) {
-                $logger = $this->getLogger(get_class($driverObject));
-                if (!$logger instanceof NullLogger) {
-                    $driverObject->setLogger($logger);
-                }
+        if ($driverObject instanceof LoggerAwareInterface) {
+            $logger = $this->getLogger(get_class($driverObject));
+            if (!$logger instanceof NullLogger) {
+                $driverObject->setLogger($logger);
             }
-
-            return $this->drivers[$driver];
-        } catch (ContainerExceptionInterface $e) {
-            throw new DBALException($e->getMessage(), (int)$e->getCode(), $e);
         }
+
+        return $this->drivers[$driver];
     }
 
     /**

@@ -11,8 +11,12 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Spiral\Core\Container\Autowire;
 use Cycle\Database\Config\DatabaseConfig;
+use Cycle\Database\Config\MySQLDriverConfig;
+use Cycle\Database\Config\SQLiteDriverConfig;
+use Cycle\Database\Config\MySQL\TcpConnectionConfig;
+use Cycle\Database\Driver\MySQL\MySQLDriver;
+use Cycle\Database\Driver\SQLite\SQLiteDriver;
 use Cycle\Database\Exception\ConfigException;
 
 class ConfigTest extends TestCase
@@ -234,24 +238,22 @@ class ConfigTest extends TestCase
         $config = new DatabaseConfig(
             [
                 'connections' => [
-                    'test'  => [
-                        'driver' => 'abc',
-                        'option' => 'option'
-                    ],
-                    'test2' => [
-                        'driver'  => 'bce',
-                        'options' => [
-                            'option'
-                        ]
-                    ],
-                    'test3' => new Autowire('someDriver')
+                    'test'  => new SQLiteDriverConfig(),
+                    'test2' => new MySQLDriverConfig(
+                        connection: new TcpConnectionConfig(
+                            database: 'spiral',
+                            host: '127.0.0.1',
+                            port: 13306,
+                            user: 'root',
+                            password: 'root',
+                        )
+                    )
                 ]
             ]
         );
 
-        $this->assertInstanceOf(Autowire::class, $config->getDriver('test'));
-        $this->assertInstanceOf(Autowire::class, $config->getDriver('test2'));
-        $this->assertInstanceOf(Autowire::class, $config->getDriver('test3'));
+        $this->assertInstanceOf(SQLiteDriver::class, $config->getDriver('test'));
+        $this->assertInstanceOf(MySQLDriver::class, $config->getDriver('test2'));
     }
 
     public function testDriverNames(): void
@@ -259,21 +261,20 @@ class ConfigTest extends TestCase
         $config = new DatabaseConfig(
             [
                 'connections' => [
-                    'test'  => [
-                        'driver' => 'abc',
-                        'option' => 'option'
-                    ],
-                    'test2' => [
-                        'driver'  => 'bce',
-                        'options' => [
-                            'option'
-                        ]
-                    ],
-                    'test3' => new Autowire('someDriver')
+                    'test'  => new SQLiteDriverConfig(),
+                    'test2' => new MySQLDriverConfig(
+                        connection: new TcpConnectionConfig(
+                            database: 'spiral',
+                            host: '127.0.0.1',
+                            port: 13306,
+                            user: 'root',
+                            password: 'root',
+                        )
+                    )
                 ]
             ]
         );
 
-        $this->assertSame(['test', 'test2', 'test3'], array_keys($config->getDrivers()));
+        $this->assertSame(['test', 'test2'], array_keys($config->getDrivers()));
     }
 }

@@ -13,11 +13,8 @@ namespace Cycle\Database\Driver\MySQL;
 
 use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Config\MySQLDriverConfig;
-use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Driver\Driver;
-use Cycle\Database\Driver\HandlerInterface;
 use Cycle\Database\Exception\StatementException;
-use Cycle\Database\Query\BuilderInterface;
 use Cycle\Database\Query\QueryBuilder;
 
 /**

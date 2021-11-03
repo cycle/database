@@ -13,13 +13,10 @@ namespace Cycle\Database\Driver\SQLServer;
 
 use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Config\SQLServerDriverConfig;
-use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Driver\Driver;
-use Cycle\Database\Driver\HandlerInterface;
 use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Injection\ParameterInterface;
-use Cycle\Database\Query\BuilderInterface;
 use Cycle\Database\Query\QueryBuilder;
 
 class SQLServerDriver extends Driver

@@ -13,14 +13,11 @@ namespace Cycle\Database\Driver\Postgres;
 
 use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Config\PostgresDriverConfig;
-use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Driver\Driver;
-use Cycle\Database\Driver\HandlerInterface;
 use Cycle\Database\Driver\Postgres\Query\PostgresInsertQuery;
 use Cycle\Database\Driver\Postgres\Query\PostgresSelectQuery;
 use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\StatementException;
-use Cycle\Database\Query\BuilderInterface;
 use Cycle\Database\Query\DeleteQuery;
 use Cycle\Database\Query\QueryBuilder;
 use Cycle\Database\Query\UpdateQuery;
