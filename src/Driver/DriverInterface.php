@@ -219,7 +219,7 @@ interface DriverInterface
     /**
      * Create new driver instance.
      *
-     * @return self.
+     * @return self
      */
     public static function create(DriverConfig $config): self;
 }

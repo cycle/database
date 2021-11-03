@@ -161,18 +161,13 @@ class SQLServerDriver extends Driver
      *
      * @throws DriverException
      */
-    public static function create(
-        DriverConfig $config,
-        ?HandlerInterface $handler = null,
-        ?CompilerInterface $compiler = null,
-        ?BuilderInterface $builder = null
-    ): self {
-
+    public static function create(DriverConfig $config): self
+    {
         $driver = new self(
             $config,
-            $handler ?? new SQLServerHandler(),
-            $compiler ?? new SQLServerCompiler('[]'),
-            $builder ?? QueryBuilder::defaultBuilder()
+            new SQLServerHandler(),
+            new SQLServerCompiler('[]'),
+            QueryBuilder::defaultBuilder()
         );
 
         if ((int) $driver->getPDO()->getAttribute(\PDO::ATTR_SERVER_VERSION) < 12) {

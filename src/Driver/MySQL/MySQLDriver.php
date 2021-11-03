@@ -63,16 +63,13 @@ class MySQLDriver extends Driver
      *
      * @return self
      */
-    public static function create(
-        DriverConfig $config, ?HandlerInterface $handler = null,
-        ?CompilerInterface $compiler = null,
-        ?BuilderInterface $builder = null
-    ): self {
+    public static function create(DriverConfig $config): self
+    {
         return new self(
             $config,
-            $handler ?? new MySQLHandler(),
-            $handler ?? new MySQLCompiler('``'),
-            $builder ?? QueryBuilder::defaultBuilder()
+            new MySQLHandler(),
+            new MySQLCompiler('``'),
+            QueryBuilder::defaultBuilder()
         );
     }
 }
