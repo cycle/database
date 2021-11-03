@@ -95,11 +95,11 @@ trait JoinTrait
             return $this;
         }
 
-        if ($on instanceof \Closure) {
-            return $this->on($on);
+        if (\is_array($on) && \array_is_list($on)) {
+            return $this->on(...$on);
         }
 
-        return \array_is_list($on) ? $this->on(...$on) : $this->on($on);
+        return $this->on($on);
     }
 
     /**
