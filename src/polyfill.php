@@ -29,29 +29,3 @@ spl_autoload_register(static function (string $class): void {
         class_alias($original, $class);
     }
 });
-
-if (!function_exists('array_is_list')) {
-    /**
-     * Checks whether a given array is a list
-     *
-     * @param array $array
-     *
-     * @return bool Returns true if array is a list, false otherwise.
-     */
-    function array_is_list(array $array): bool
-    {
-        if ([] === $array) {
-            return true;
-        }
-
-        $nextKey = -1;
-
-        foreach ($array as $k => $v) {
-            if ($k !== ++$nextKey) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-}

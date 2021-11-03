@@ -21,7 +21,8 @@
     },
     "autoload": {
         "files": [
-            "src/polyfill.php"
+            "src/polyfill.php",
+            "src/functions_polyfill.php"
         ],
         "psr-4": {
             "Cycle\\Database\\": "src"
