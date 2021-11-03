@@ -66,48 +66,7 @@ abstract class SelectQueryTest extends BaseTest
         $this->assertSameQuery('SELECT * FROM {table} WHERE {id} = ?', $select);
         $this->assertSameParameters(
             [
-                1
-            ],
-            $select
-        );
-    }
-
-    public function testWhereAndJoin(): void
-    {
-        $select = $this->database->select()
-                                 ->from('table')
-                                 ->leftJoin('external')->onWhere(['name' => 'test'])
-                                 ->where('id', 1);
-
-        $this->assertSameQuery(
-            'SELECT * FROM {table} LEFT JOIN {external} ON {name} = ? WHERE {id} = ?',
-            $select
-        );
-        $this->assertSameParameters(
-            [
-                'test',
-                1
-            ],
-            $select
-        );
-    }
-
-    public function testWhereAndJoinReverted(): void
-    {
-        $select = $this->database->select()
-                                 ->from('table')
-                                 ->where('id', 1)
-                                 ->leftJoin('external')->onWhere(['name' => 'test']);
-
-        $this->assertSameQuery(
-            'SELECT * FROM {table} LEFT JOIN {external} ON {name} = ? WHERE {id} = ?',
-            $select
-        );
-
-        $this->assertSameParameters(
-            [
-                'test',
-                1
+                1,
             ],
             $select
         );
@@ -125,7 +84,7 @@ abstract class SelectQueryTest extends BaseTest
                 1,
                 2,
                 3,
-                4
+                4,
             ],
             $select
         );
@@ -154,7 +113,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $this->assertSameParameters(
             [
                 'Antony',
-                123
+                123,
             ],
             $select
         );
@@ -176,7 +135,6 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             [
                 100,
                 'Antony',
-
             ],
             $select
         );
@@ -250,7 +208,6 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             $select
         );
     }
-
 
     public function testSelectWithSimpleWhereNotNull(): void
     {
@@ -428,7 +385,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             [
                 'Anton',
                 10,
-                1000
+                1000,
             ],
             $select
         );
@@ -512,8 +469,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 [
                     'name' => [
                         'like' => 'Anton',
-                        '!='   => 'Antony'
-                    ]
+                        '!=' => 'Antony',
+                    ],
                 ]
             );
 
@@ -531,8 +488,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             ->where(
                 [
                     'value' => [
-                        'between' => [1, 2]
-                    ]
+                        'between' => [1, 2],
+                    ],
                 ]
             );
 
@@ -550,8 +507,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             ->where(
                 [
                     'value' => [
-                        'not between' => [1, 2]
-                    ]
+                        'not between' => [1, 2],
+                    ],
                 ]
             );
 
@@ -572,8 +529,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             ->where(
                 [
                     'value' => [
-                        'between' => [1]
-                    ]
+                        'between' => [1],
+                    ],
                 ]
             );
     }
@@ -585,8 +542,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             ->from(['users'])
             ->where(
                 [
-                    'name'  => 'Anton',
-                    'value' => 1
+                    'name' => 'Anton',
+                    'value' => 1,
                 ]
             );
 
@@ -634,8 +591,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 [
                     '@or' => [
                         ['value' => 1],
-                        ['value' => ['>' => 12]]
-                    ]
+                        ['value' => ['>' => 12]],
+                    ],
                 ]
             );
 
@@ -655,8 +612,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 [
                     '@or' => [
                         ['value' => 1],
-                        ['value' => ['>' => 12]]
-                    ]
+                        ['value' => ['>' => 12]],
+                    ],
                 ]
             );
 
@@ -676,8 +633,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 [
                     '@and' => [
                         ['value' => 1],
-                        ['value' => ['>' => 12]]
-                    ]
+                        ['value' => ['>' => 12]],
+                    ],
                 ]
             );
 
@@ -686,7 +643,6 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             $select
         );
     }
-
 
     public function testOrShortWhereAND(): void
     {
@@ -698,8 +654,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 [
                     '@and' => [
                         ['value' => 1],
-                        ['value' => ['>' => 12]]
-                    ]
+                        ['value' => ['>' => 12]],
+                    ],
                 ]
             );
 
@@ -719,7 +675,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             ->from(['users'])
             ->where(
                 [
-                    'status' => ['active', 'blocked']
+                    'status' => ['active', 'blocked'],
                 ]
             );
     }
@@ -850,7 +806,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             ->orderBy(
                 [
                     'value' => SelectQuery::SORT_ASC,
-                    'name'  => SelectQuery::SORT_DESC
+                    'name' => SelectQuery::SORT_DESC,
                 ]
             );
 
@@ -998,7 +954,6 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             $select
         );
     }
-
 
     public function testAllColumns2(): void
     {
@@ -1411,8 +1366,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 [
                     'name' => [
                         'like' => 'Anton',
-                        '!='   => 'Antony'
-                    ]
+                        '!=' => 'Antony',
+                    ],
                 ]
             );
 
@@ -1429,8 +1384,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                                  ->having(
                                      [
                                          'value' => [
-                                             'between' => [1, 2]
-                                         ]
+                                             'between' => [1, 2],
+                                         ],
                                      ]
                                  );
 
@@ -1447,8 +1402,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                                  ->having(
                                      [
                                          'value' => [
-                                             'not between' => [1, 2]
-                                         ]
+                                             'not between' => [1, 2],
+                                         ],
                                      ]
                                  );
 
@@ -1468,12 +1423,11 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                                  ->having(
                                      [
                                          'value' => [
-                                             'between' => [1]
-                                         ]
+                                             'between' => [1],
+                                         ],
                                      ]
                                  );
     }
-
 
     public function testHavingShortHavingMultiple(): void
     {
@@ -1481,8 +1435,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                                  ->from(['users'])
                                  ->having(
                                      [
-                                         'name'  => 'Anton',
-                                         'value' => 1
+                                         'name' => 'Anton',
+                                         'value' => 1,
                                      ]
                                  );
 
@@ -1527,8 +1481,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                                      [
                                          '@or' => [
                                              ['value' => 1],
-                                             ['value' => ['>' => 12]]
-                                         ]
+                                             ['value' => ['>' => 12]],
+                                         ],
                                      ]
                                  );
 
@@ -1547,8 +1501,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                                      [
                                          '@or' => [
                                              ['value' => 1],
-                                             ['value' => ['>' => 12]]
-                                         ]
+                                             ['value' => ['>' => 12]],
+                                         ],
                                      ]
                                  );
 
@@ -1567,8 +1521,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                                      [
                                          '@and' => [
                                              ['value' => 1],
-                                             ['value' => ['>' => 12]]
-                                         ]
+                                             ['value' => ['>' => 12]],
+                                         ],
                                      ]
                                  );
 
@@ -1587,8 +1541,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                                      [
                                          '@and' => [
                                              ['value' => 1],
-                                             ['value' => ['>' => 12]]
-                                         ]
+                                             ['value' => ['>' => 12]],
+                                         ],
                                      ]
                                  );
 
@@ -1611,7 +1565,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
         $this->assertSameParameters(
             [
-                10
+                10,
             ],
             $select
         );
@@ -1630,12 +1584,11 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $this->assertSameParameters(
             [
                 10,
-                20
+                20,
             ],
             $select
         );
     }
-
 
     public function testOffsetNoLimit(): void
     {
@@ -1648,7 +1601,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
         $this->assertSameParameters(
             [
-                20
+                20,
             ],
             $select
         );
@@ -1671,7 +1624,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $this->assertSameParameters(
             [
                 10,
-                20
+                20,
             ],
             $select
         );
@@ -1846,7 +1799,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $select = $this->db('prefixed', 'prefix_')->select()->from(['users'])
                        ->where(
                            [
-                               'balance' => ['>' => new Expression('users.origin_balance')]
+                               'balance' => ['>' => new Expression('users.origin_balance')],
                            ]
                        );
 
@@ -1879,7 +1832,6 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
-
     public function testGroupByExpressionWithPrefix(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
@@ -1893,7 +1845,6 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     }
 
     //Parameters (writing only)
-
     public function testWhereValueAsParameter(): void
     {
         $p = new Parameter(12);
@@ -1941,7 +1892,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                        ->from(['users'])
                        ->where(
                            [
-                               'status' => ['IN' => ['active', 'blocked']]
+                               'status' => ['IN' => ['active', 'blocked']],
                            ]
                        );
     }
@@ -1975,7 +1926,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                                  ->from(['users'])
                                  ->where(
                                      [
-                                         'status' => ['IN' => $p]
+                                         'status' => ['IN' => $p],
                                      ]
                                  );
 
@@ -1988,423 +1939,6 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {status} IN (?)',
-            $select
-        );
-    }
-
-    //Joins
-
-    public function testLeftJoin0(): void
-    {
-        $select = $this->database->select()
-                                 ->from(['users'])
-                                 ->join('LEFT', 'photos')->on(['photos.user_id' => 'users.id']);
-
-        $this->assertSameQuery(
-            'SELECT * FROM {users} LEFT JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
-            $select
-        );
-    }
-
-    public function testLeftJoin1(): void
-    {
-        $select = $this->database->select()
-                                 ->from(['users'])
-                                 ->join('LEFT', 'photos')->on('photos.user_id', 'users.id');
-
-        $this->assertSameQuery(
-            'SELECT * FROM {users} LEFT JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
-            $select
-        );
-    }
-
-    public function testLeftJoin2(): void
-    {
-        $select = $this->database->select()
-                                 ->from(['users'])
-                                 ->leftJoin('photos')->on('photos.user_id', 'users.id');
-
-        $this->assertSameQuery(
-            'SELECT * FROM {users} LEFT JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
-            $select
-        );
-    }
-
-    public function testLeftJoin3(): void
-    {
-        $select = $this->database->select()
-                                 ->from(['users'])
-                                 ->leftJoin('photos')->on(['photos.user_id' => 'users.id']);
-
-        $this->assertSameQuery(
-            'SELECT * FROM {users} LEFT JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
-            $select
-        );
-    }
-
-    public function testLeftJoin4(): void
-    {
-        $select = $this->database->select()
-            ->from(['users'])
-            ->join('LEFT', 'photos', 'pht', ['pht.user_id', 'users.id']);
-
-        $this->assertSameQuery(
-            'SELECT * FROM {users} LEFT JOIN {photos} AS {pht} ON {pht}.{user_id} = {users}.{id}',
-            $select
-        );
-    }
-
-    // Todo: make this case valid
-    // public function testLeftJoin5(): void
-    // {
-    //     $select = $this->database->select()
-    //         ->from(['users'])
-    //         ->join('LEFT', 'photos', 'pht', ['@AND' => ['pht.user_id' => 'users.id']]);
-    //
-    //     $this->assertSameQuery(
-    //         'SELECT * FROM {users} LEFT JOIN {photos} AS {pht} ON {pht}.{user_id} = {users}.{id}',
-    //         $select
-    //     );
-    // }
-
-    public function testLeftJoin6(): void
-    {
-        $select = $this->database->select()
-            ->from(['users'])
-            ->join('LEFT', 'photos', 'pht', [['pht.user_id' => 'users.id']]);
-
-        $this->assertSameQuery(
-            'SELECT * FROM {users} LEFT JOIN {photos} AS {pht} ON {pht}.{user_id} = {users}.{id}',
-            $select
-        );
-    }
-
-    public function testRightJoin0(): void
-    {
-        $select = $this->database->select()
-                                 ->from(['users'])
-                                 ->join('RIGHT', 'photos')->on(['photos.user_id' => 'users.id']);
-
-        $this->assertSameQuery(
-            'SELECT * FROM {users} RIGHT JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
-            $select
-        );
-    }
-
-    public function testRightJoin1(): void
-    {
-        $select = $this->database->select()
-                                 ->from(['users'])
-                                 ->join('RIGHT', 'photos')->on('photos.user_id', 'users.id');
-
-        $this->assertSameQuery(
-            'SELECT * FROM {users} RIGHT JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
-            $select
-        );
-    }
-
-    public function testRightJoin2(): void
-    {
-        $select = $this->database->select()
-                                 ->from(['users'])
-                                 ->rightJoin('photos')->on('photos.user_id', 'users.id');
-
-        $this->assertSameQuery(
-            'SELECT * FROM {users} RIGHT JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
-            $select
-        );
-    }
-
-    public function testRightJoin3(): void
-    {
-        $select = $this->database->select()
-                                 ->from(['users'])
-                                 ->rightJoin('photos')->on(['photos.user_id' => 'users.id']);
-
-        $this->assertSameQuery(
-            'SELECT * FROM {users} RIGHT JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
-            $select
-        );
-    }
-
-    public function testInnerJoin0(): void
-    {
-        $select = $this->database->select()
-                                 ->from(['users'])
-                                 ->join('INNER', 'photos')->on(['photos.user_id' => 'users.id']);
-
-        $this->assertSameQuery(
-            'SELECT * FROM {users} INNER JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
-            $select
-        );
-    }
-
-    public function testInnerJoin1(): void
-    {
-        $select = $this->database->select()
-                                 ->from(['users'])
-                                 ->join('INNER', 'photos')->on('photos.user_id', 'users.id');
-
-        $this->assertSameQuery(
-            'SELECT * FROM {users} INNER JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
-            $select
-        );
-    }
-
-    public function testInnerJoin2(): void
-    {
-        $select = $this->database->select()
-                                 ->from(['users'])
-                                 ->innerJoin('photos')->on('photos.user_id', 'users.id');
-
-        $this->assertSameQuery(
-            'SELECT * FROM {users} INNER JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
-            $select
-        );
-    }
-
-    public function testInnerJoin3(): void
-    {
-        $select = $this->database->select()
-                                 ->from(['users'])
-                                 ->innerJoin('photos')->on(['photos.user_id' => 'users.id']);
-
-        $this->assertSameQuery(
-            'SELECT * FROM {users} INNER JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
-            $select
-        );
-    }
-
-    //Join with WHERE
-
-    public function testJoinWithComplexWhere(): void
-    {
-        $select = $this->database->select()
-                                 ->from(['users'])
-                                 ->leftJoin('photos')->on('photos.user_id', 'users.id')->onWhere('photos.public', true);
-
-        $this->assertSameQuery(
-            'SELECT * FROM {users} LEFT JOIN {photos}
-                    ON {photos}.{user_id} = {users}.{id} AND {photos}.{public} = ?',
-            $select
-        );
-    }
-
-    public function testJoinWithComplexOrWhere(): void
-    {
-        $select = $this->database->select()
-                                 ->from(['users'])
-                                 ->leftJoin('photos')
-                                 ->on('photos.user_id', 'users.id')
-                                 ->orOn('photos.group_id', 'users.group_id');
-
-        $this->assertSameQuery(
-            'SELECT * FROM {users} LEFT JOIN {photos}
-                    ON {photos}.{user_id} = {users}.{id} OR {photos}.{group_id} = {users}.{group_id}',
-            $select
-        );
-    }
-
-    public function testJoinWithComplexAndWhere(): void
-    {
-        $select = $this->database->select()
-                                 ->from(['users'])
-                                 ->leftJoin('photos')
-                                 ->on('photos.user_id', 'users.id')
-                                 ->andOn('photos.group_id', 'users.group_id');
-
-        $this->assertSameQuery(
-            'SELECT * FROM {users} LEFT JOIN {photos}
-                    ON {photos}.{user_id} = {users}.{id} AND {photos}.{group_id} = {users}.{group_id}',
-            $select
-        );
-    }
-
-    public function testJoinWithComplexAndWhereDefaults(): void
-    {
-        $select = $this->database->select()
-                                 ->from(['users'])
-                                 ->leftJoin('photos')
-                                 ->on('photos.user_id', 'users.id')
-                                 ->on('photos.group_id', 'users.group_id');
-
-        $this->assertSameQuery(
-            'SELECT * FROM {users} LEFT JOIN {photos}
-                        ON {photos}.{user_id} = {users}.{id} AND {photos}.{group_id} = {users}.{group_id}',
-            $select
-        );
-    }
-
-    public function testJoinWithComplexWhereAndOR(): void
-    {
-        $select = $this->database->select()
-                                 ->from(['users'])
-                                 ->leftJoin('photos')
-                                 ->on('photos.user_id', 'users.id')
-                                 ->onWhere('photos.public', true)
-                                 ->orOnWhere('photos.magic', '>', 900);
-
-        $this->assertSameQuery(
-            'SELECT * FROM {users} LEFT JOIN {photos} '
-            . 'ON {photos}.{user_id} = {users}.{id} AND {photos}.{public} = ? OR {photos}.{magic} > ?',
-            $select
-        );
-    }
-
-    public function testJoinWithComplexWhereAnd(): void
-    {
-        $select = $this->database->select()
-                                 ->from(['users'])
-                                 ->leftJoin('photos')
-                                 ->on('photos.user_id', 'users.id')
-                                 ->onWhere('photos.public', true)
-                                 ->andOnWhere('photos.magic', '>', 900);
-
-        $this->assertSameQuery(
-            'SELECT * FROM {users} LEFT JOIN {photos} '
-            . 'ON {photos}.{user_id} = {users}.{id} AND {photos}.{public} = ? AND {photos}.{magic} > ?',
-            $select
-        );
-    }
-
-    public function testJoinWithComplexWhereAndDefaults(): void
-    {
-        $select = $this->database->select()
-                                 ->from(['users'])
-                                 ->leftJoin('photos')
-                                 ->on('photos.user_id', 'users.id')
-                                 ->onWhere('photos.public', true)
-                                 ->onWhere('photos.magic', '>', 900);
-
-        $this->assertSameQuery(
-            'SELECT * FROM {users} LEFT JOIN {photos} '
-            . 'ON {photos}.{user_id} = {users}.{id} AND {photos}.{public} = ? AND {photos}.{magic} > ?',
-            $select
-        );
-    }
-
-    //Join aliases
-
-    public function testJoinAliases(): void
-    {
-        $select = $this->database->select()
-                                 ->from(['users'])
-                                 ->leftJoin('photos as p')
-                                 ->on(
-                                     [
-                                         'p.user_id' => 'users.id',
-                                         'p.public'  => new Parameter(true)
-                                     ]
-                                 );
-
-        $this->assertSameQuery(
-            'SELECT * FROM {users} LEFT JOIN {photos} AS {p} '
-            . 'ON ({p}.{user_id} = {users}.{id} AND {p}.{public} = ?)',
-            $select
-        );
-    }
-
-    public function testJoinAliasesWithPrefixes(): void
-    {
-        $select = $this->db('prefixed', 'prefix_')->select()
-                       ->from(['users'])
-                       ->leftJoin('photos as p')
-                       ->on(
-                           [
-                               'p.user_id' => 'users.id',
-                               'p.public'  => new Parameter(true)
-                           ]
-                       );
-
-        $this->assertSameQuery(
-            'SELECT * FROM {prefix_users} LEFT JOIN {prefix_photos} AS {p} '
-            . 'ON ({p}.{user_id} = {prefix_users}.{id} AND {p}.{public} = ?)',
-            $select
-        );
-    }
-
-    public function testJoinAliasesWithPrefixesAlternative(): void
-    {
-        $select = $this->db('prefixed', 'prefix_')->select()
-                       ->from(['users'])
-                       ->leftJoin('photos', 'p')
-                       ->on(
-                           [
-                               'p.user_id' => 'users.id',
-                               'p.public'  => new Parameter(true)
-                           ]
-                       );
-
-        $this->assertSameQuery(
-            'SELECT * FROM {prefix_users} LEFT JOIN {prefix_photos} AS {p} '
-            . 'ON ({p}.{user_id} = {prefix_users}.{id} AND {p}.{public} = ?)',
-            $select
-        );
-    }
-
-    public function testJoinAliasesWithPrefixesAndAliases(): void
-    {
-        $select = $this->db('prefixed', 'prefix_')->select()
-                       ->from(['users as u'])
-                       ->leftJoin('photos as p')
-                       ->on(
-                           [
-                               'p.user_id' => 'u.id',
-                               'p.public'  => new Parameter(true)
-                           ]
-                       );
-
-        $this->assertSameQuery(
-            'SELECT * FROM {prefix_users} AS {u} LEFT JOIN {prefix_photos} AS {p} '
-            . 'ON ({p}.{user_id} = {u}.{id} AND {p}.{public} = ?)',
-            $select
-        );
-    }
-
-    //Complex verification example
-
-    public function testComplexExample(): void
-    {
-        $statuses = new Parameter(['active', 'disabled']);
-
-        $select = $this->db('prefixed', 'prefix_')
-                       ->select('COUNT(*)', 'groups.id', 'u.id', 'SUM(t.amount)')
-                       ->from(['users as u'])
-                       ->leftJoin('transactions as t')->on(['t.user_id' => 'u.id'])
-                       ->rightJoin('groups')->on(['groups.id' => 'u.group_id'])
-                       ->onWhere('groups.public', true)
-                       ->where('u.status', 'IN', $statuses)
-                       ->orderBy('u.name', 'DESC')
-                       ->groupBy('u.id');
-
-        $this->assertSameQuery(
-            'SELECT COUNT(*), {prefix_groups}.{id}, {u}.{id}, SUM({t}.{amount}) '
-            . 'FROM {prefix_users} AS {u}'
-            . 'LEFT JOIN {prefix_transactions} AS {t} ON {t}.{user_id} = {u}.{id}'
-            . 'RIGHT JOIN {prefix_groups} ON {prefix_groups}.{id} = {u}.{group_id} AND {prefix_groups}.{public} = ?'
-            . 'WHERE {u}.{status} IN (?,?)'
-            . 'GROUP BY {u}.{id}'
-            . 'ORDER BY {u}.{name} DESC',
-            $select
-        );
-    }
-
-    public function testJoinQuery(): void
-    {
-        $select = $this->db('prefixed', 'prefix_')->select()
-                       ->from(['users as u'])
-                       ->leftJoin(
-                           $this->db('prefixed', 'prefix_')
-                                ->select()->from('posts AS p')
-                                ->where('p.user_id', new Expression('u.id')),
-                           'sub_posts'
-                       );
-
-        $this->assertSameQuery(
-            'SELECT * FROM {prefix_users} AS {u} LEFT JOIN (
-                        SELECT * FROM {prefix_posts} AS {p}
-                        WHERE {p}.{user_id} = {u}.{id}
-                      ) AS {sub_posts} ',
             $select
         );
     }
@@ -2459,7 +1993,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $this->assertSameParameters(
             [
                 'Antony',
-                10
+                10,
             ],
             $select
         );
@@ -2485,7 +2019,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 101,
                 102,
                 103,
-                104
+                104,
             ],
             $select
         );
@@ -2512,7 +2046,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 102,
                 600,
                 103,
-                104
+                104,
             ],
             $select
         );
@@ -2544,7 +2078,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 1,
                 2,
                 3,
-                4
+                4,
             ],
             $select
         );
@@ -2574,7 +2108,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 1,
                 2,
                 3,
-                4
+                4,
             ],
             $select
         );

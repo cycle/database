@@ -16,7 +16,7 @@ class_alias(
     \Spiral\Database\Driver\SQLServer\Schema\SQlServerForeignKey::class,
 );
 
-spl_autoload_register(static function (string $class) {
+spl_autoload_register(static function (string $class): void {
     if (strpos($class, 'Spiral\\Database\\') === 0) {
         $original = 'Cycle\\Database\\' . substr($class, 16);
 
