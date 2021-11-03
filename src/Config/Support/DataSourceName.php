@@ -12,7 +12,8 @@ declare(strict_types=1);
 namespace Cycle\Database\Config\Support;
 
 /**
- * @internal Cycle\Database\Config\Support\DataSourceName is an internal library class, please do not use it in your code.
+ * @internal Cycle\Database\Config\Support\DataSourceName is an internal library class,
+ * please do not use it in your code.
  * @psalm-internal Cycle\Database\Config
  */
 final class DataSourceName
