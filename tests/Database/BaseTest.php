@@ -50,6 +50,7 @@ abstract class BaseTest extends TestCase
 
     /**
      * @param array $options
+     *
      * @return Driver
      */
     public function getDriver(array $options = []): Driver

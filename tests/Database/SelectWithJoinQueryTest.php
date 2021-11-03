@@ -27,7 +27,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
             'SELECT * FROM {table} LEFT JOIN {external} ON {name} = ? WHERE {id} = ?',
             [
                 'test',
-                1
+                1,
             ],
             $select
         );
@@ -44,7 +44,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
             'SELECT * FROM {table} LEFT JOIN {external} ON {name} = ? WHERE {id} = ?',
             [
                 'test',
-                1
+                1,
             ],
             $select
         );
@@ -116,8 +116,8 @@ abstract class SelectWithJoinQueryTest extends BaseTest
             ->from(['users'])
             ->join('LEFT', 'photos', 'pht', [
                 '@and' => [
-                    ['pht.user_id' => 'users.id']
-                ]
+                    ['pht.user_id' => 'users.id'],
+                ],
             ]);
 
         $this->assertSameQuery(
@@ -135,16 +135,16 @@ abstract class SelectWithJoinQueryTest extends BaseTest
                     '@or' => [
                         [
                             'pht.user_id' => 'users.id',
-                            'users.is_admin' => new Parameter(true)
+                            'users.is_admin' => new Parameter(true),
                         ],
                         [
                             '@or' => [
                                 ['pht.user_id' => 'users.parent_id'],
                                 ['users.is_admin' => new Parameter(false)],
-                            ]
-                        ]
-                    ]
-                ]
+                            ],
+                        ],
+                    ],
+                ],
             ]);
 
         $this->assertSameQueryWithParameters(
@@ -179,12 +179,12 @@ abstract class SelectWithJoinQueryTest extends BaseTest
                 '@or' => [
                     [
                         'users.name' => new Parameter('Anton'),
-                        'users.is_admin' => 'pht.is_admin'
+                        'users.is_admin' => 'pht.is_admin',
                     ],
                     [
-                        'users.status' => new Parameter('disabled')
+                        'users.status' => new Parameter('disabled'),
                     ],
-                ]
+                ],
             ]);
 
         $this->assertSameQueryWithParameters(
@@ -228,7 +228,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
                         {photos}.{type} = ?
                         )',
             [
-                'avatar'
+                'avatar',
             ],
             $select
         );
@@ -491,7 +491,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
             ->on(
                 [
                     'p.user_id' => 'users.id',
-                    'p.public' => new Parameter(true)
+                    'p.public' => new Parameter(true),
                 ]
             );
 
@@ -510,7 +510,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
             ->on(
                 [
                     'p.user_id' => 'users.id',
-                    'p.public' => new Parameter(true)
+                    'p.public' => new Parameter(true),
                 ]
             );
 
@@ -529,7 +529,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
             ->on(
                 [
                     'p.user_id' => 'users.id',
-                    'p.public' => new Parameter(true)
+                    'p.public' => new Parameter(true),
                 ]
             );
 
@@ -548,7 +548,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
             ->on(
                 [
                     'p.user_id' => 'u.id',
-                    'p.public' => new Parameter(true)
+                    'p.public' => new Parameter(true),
                 ]
             );
 

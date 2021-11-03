@@ -123,7 +123,7 @@ trait JoinTrait
             'outer' => $outer,
             'alias' => $alias,
             'type' => 'INNER',
-            'on' => []
+            'on' => [],
         ];
 
         return $this;
@@ -136,21 +136,22 @@ trait JoinTrait
      * @link http://www.w3schools.com/sql/sql_join_right.asp
      * @see  join()
      *
-     * @param string|ActiveQuery $outer   Joined table name (without prefix), may include AS statement.
+     * @param ActiveQuery|string $outer   Joined table name (without prefix), may include AS statement.
      * @param string             $alias   Joined table or query alias.
      * @param mixed              $on      Simplified on definition linking table names (no
      *                                    parameters allowed) or closure.
-     * @return $this
      *
      * @throws BuilderException
+     *
+     * @return $this
      */
     public function rightJoin($outer, string $alias = null, $on = null): self
     {
         $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
             'alias' => $alias,
-            'type'  => 'RIGHT',
-            'on'    => []
+            'type' => 'RIGHT',
+            'on' => []
         ];
 
         return $this;
@@ -177,7 +178,7 @@ trait JoinTrait
             'outer' => $outer,
             'alias' => $alias,
             'type' => 'LEFT',
-            'on' => []
+            'on' => [],
         ];
 
         return $this;
@@ -204,7 +205,7 @@ trait JoinTrait
             'outer' => $outer,
             'alias' => $alias,
             'type' => 'FULL',
-            'on' => []
+            'on' => [],
         ];
 
         return $this;
@@ -287,7 +288,6 @@ trait JoinTrait
      * @return $this
      *
      * @see AbstractWhere
-     *
      */
     public function onWhere(...$args): self
     {
@@ -312,7 +312,6 @@ trait JoinTrait
      * @return $this
      *
      * @see AbstractWhere
-     *
      */
     public function andOnWhere(...$args): self
     {
@@ -337,7 +336,6 @@ trait JoinTrait
      * @return $this
      *
      * @see AbstractWhere
-     *
      */
     public function orOnWhere(...$args): self
     {

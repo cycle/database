@@ -136,7 +136,7 @@ trait TokenTrait
                         strtoupper($operator),
                         $wrapper($params[2]),
                         $wrapper($params[3]),
-                    ]
+                    ],
                 ];
                 break;
             default:
@@ -225,6 +225,7 @@ trait TokenTrait
      * @param array    $where       Operations associated with identifier.
      * @param array    $tokens      Array to aggregate compiled tokens. Reference.
      * @param callable $wrapper     Callback or closure used to wrap/collect every potential parameter.
+     *
      * @return array
      */
     private function pushCondition(string $innerJoiner, string $key, $where, &$tokens, callable $wrapper): array

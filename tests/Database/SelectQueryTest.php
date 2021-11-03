@@ -471,7 +471,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 [
                     'name' => [
                         'like' => 'Anton',
-                        '!='   => 'Antony',
+                        '!=' => 'Antony',
                     ],
                 ]
             );
@@ -544,7 +544,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             ->from(['users'])
             ->where(
                 [
-                    'name'  => 'Anton',
+                    'name' => 'Anton',
                     'value' => 1,
                 ]
             );
@@ -809,7 +809,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             ->orderBy(
                 [
                     'value' => SelectQuery::SORT_ASC,
-                    'name'  => SelectQuery::SORT_DESC,
+                    'name' => SelectQuery::SORT_DESC,
                 ]
             );
 
@@ -1370,7 +1370,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 [
                     'name' => [
                         'like' => 'Anton',
-                        '!='   => 'Antony',
+                        '!=' => 'Antony',
                     ]
                 ]
             );
@@ -1440,7 +1440,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                                  ->from(['users'])
                                  ->having(
                                      [
-                                         'name'  => 'Anton',
+                                         'name' => 'Anton',
                                          'value' => 1,
                                      ]
                                  );
