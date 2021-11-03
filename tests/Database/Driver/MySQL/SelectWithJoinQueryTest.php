@@ -17,5 +17,5 @@ namespace Cycle\Database\Tests\Driver\MySQL;
  */
 class SelectWithJoinQueryTest extends \Cycle\Database\Tests\SelectWithJoinQueryTest
 {
-    const DRIVER = "mysql";
+    public const DRIVER = 'mysql';
 }

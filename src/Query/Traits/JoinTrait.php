@@ -73,22 +73,23 @@ trait JoinTrait
      * Register new JOIN with specified type with set of on conditions (linking one table to
      * another, no parametric on conditions allowed here).
      *
-     * @param string|ActiveQuery $type    Join type. Allowed values, LEFT, RIGHT, INNER and etc.
+     * @param ActiveQuery|string $type    Join type. Allowed values, LEFT, RIGHT, INNER and etc.
      * @param string             $outer   Joined table name (without prefix), may include AS statement.
      * @param string             $alias   Joined table or query alias.
      * @param mixed              $on      Simplified on definition linking table names (no
      *                                    parameters allowed) or closure.
-     * @return $this
      *
      * @throws BuilderException
+     *
+     * @return $this
      */
     public function join($type, $outer, string $alias = null, $on = null): self
     {
         $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
             'alias' => $alias,
-            'type'  => strtoupper($type),
-            'on'    => []
+            'type' => strtoupper($type),
+            'on' => [],
         ];
 
         if ($on === null) {
@@ -109,19 +110,20 @@ trait JoinTrait
      * @link http://www.w3schools.com/sql/sql_join_inner.asp
      * @see  join()
      *
-     * @param string|ActiveQuery $outer Joined table name (without prefix), may include AS statement.
+     * @param ActiveQuery|string $outer Joined table name (without prefix), may include AS statement.
      * @param string             $alias Joined table or query alias.
-     * @return $this
      *
      * @throws BuilderException
+     *
+     * @return $this
      */
     public function innerJoin($outer, string $alias = null): self
     {
         $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
             'alias' => $alias,
-            'type'  => 'INNER',
-            'on'    => []
+            'type' => 'INNER',
+            'on' => []
         ];
 
         return $this;
@@ -162,19 +164,20 @@ trait JoinTrait
      * @link http://www.w3schools.com/sql/sql_join_left.asp
      * @see  join()
      *
-     * @param string|ActiveQuery $outer Joined table name (without prefix), may include AS statement.
+     * @param ActiveQuery|string $outer Joined table name (without prefix), may include AS statement.
      * @param string             $alias Joined table or query alias.
-     * @return $this
      *
      * @throws BuilderException
+     *
+     * @return $this
      */
     public function leftJoin($outer, string $alias = null): self
     {
         $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
             'alias' => $alias,
-            'type'  => 'LEFT',
-            'on'    => []
+            'type' => 'LEFT',
+            'on' => []
         ];
 
         return $this;
@@ -188,19 +191,20 @@ trait JoinTrait
      * @link http://www.w3schools.com/sql/sql_join_full.asp
      * @see  join()
      *
-     * @param string|ActiveQuery $outer Joined table name (without prefix), may include AS statement.
+     * @param ActiveQuery|string $outer Joined table name (without prefix), may include AS statement.
      * @param string             $alias Joined table or query alias.
-     * @return $this
      *
      * @throws BuilderException
+     *
+     * @return $this
      */
     public function fullJoin($outer, string $alias = null): self
     {
         $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
             'alias' => $alias,
-            'type'  => 'FULL',
-            'on'    => []
+            'type' => 'FULL',
+            'on' => []
         ];
 
         return $this;
@@ -211,9 +215,10 @@ trait JoinTrait
      * together, no parametric values allowed.
      *
      * @param mixed ...$args [(column, outer column), (column, operator, outer column)]
-     * @return $this
      *
      * @throws BuilderException
+     *
+     * @return $this
      */
     public function on(...$args): self
     {
@@ -232,9 +237,10 @@ trait JoinTrait
      * together, no parametric values allowed.
      *
      * @param mixed ...$args [(column, outer column), (column, operator, outer column)]
-     * @return $this
      *
      * @throws BuilderException
+     *
+     * @return $this
      */
     public function andOn(...$args): self
     {
@@ -253,9 +259,10 @@ trait JoinTrait
      * together, no parametric values allowed.
      *
      * @param mixed ...$args [(column, outer column), (column, operator, outer column)]
-     * @return $this
      *
      * @throws BuilderException
+     *
+     * @return $this
      */
     public function orOn(...$args): self
     {
@@ -274,9 +281,11 @@ trait JoinTrait
      * such methods.
      *
      * @param mixed ...$args [(column, value), (column, operator, value)]
-     * @return $this
      *
      * @throws BuilderException
+     *
+     * @return $this
+     *
      * @see AbstractWhere
      *
      */
@@ -297,9 +306,11 @@ trait JoinTrait
      * such methods.
      *
      * @param mixed ...$args [(column, value), (column, operator, value)]
-     * @return $this
      *
      * @throws BuilderException
+     *
+     * @return $this
+     *
      * @see AbstractWhere
      *
      */
@@ -320,9 +331,11 @@ trait JoinTrait
      * such methods.
      *
      * @param mixed ...$args [(column, value), (column, operator, value)]
-     * @return $this
      *
      * @throws BuilderException
+     *
+     * @return $this
+     *
      * @see AbstractWhere
      *
      */

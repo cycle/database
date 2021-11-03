@@ -16,7 +16,7 @@ class_alias(
     \Spiral\Database\Driver\SQLServer\Schema\SQlServerForeignKey::class,
 );
 
-spl_autoload_register(static function (string $class) {
+spl_autoload_register(static function (string $class): void {
     if (strpos($class, 'Spiral\\Database\\') === 0) {
         $original = 'Cycle\\Database\\' . substr($class, 16);
 
@@ -35,6 +35,7 @@ if (!function_exists('array_is_list')) {
      * Checks whether a given array is a list
      *
      * @param array $array
+     *
      * @return bool Returns true if array is a list, false otherwise.
      */
     function array_is_list(array $array): bool

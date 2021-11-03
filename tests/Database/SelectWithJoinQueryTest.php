@@ -216,10 +216,9 @@ abstract class SelectWithJoinQueryTest extends BaseTest
     {
         $select = $this->database->select()
             ->from(['users', 'admins'])
-            ->join('LEFT', 'photos', 'pht', fn($select, string $boolean, callable $wrapper) => $select
+            ->join('LEFT', 'photos', 'pht', fn ($select, string $boolean, callable $wrapper) => $select
                 ->on('photos.user_id', 'users.id')
-                ->onWhere('photos.type', 'avatar')
-            );
+                ->onWhere('photos.type', 'avatar'));
 
         $this->assertSameQueryWithParameters(
             'SELECT * FROM {users}, {admins} LEFT JOIN {photos} AS {pht}
@@ -242,7 +241,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
             ->join('LEFT', 'photos', 'pht', [
                 'pht.user_id' => 'users.id',
                 'users.is_admin' => 'pht.is_admin',
-                fn($select, string $boolean, callable $wrapper) => $select
+                fn ($select, string $boolean, callable $wrapper) => $select
                     ->on('photos.user_id', 'users.id')
                     ->onWhere('photos.type', 'avatar')
             ]);

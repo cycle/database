@@ -17,5 +17,5 @@ namespace Cycle\Database\Tests\Driver\SQLServer;
  */
 class SelectWithJoinQueryTest extends \Cycle\Database\Tests\SelectWithJoinQueryTest
 {
-    const DRIVER = "sqlserver";
+    public const DRIVER = 'sqlserver';
 }

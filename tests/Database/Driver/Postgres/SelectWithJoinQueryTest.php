@@ -17,5 +17,5 @@ namespace Cycle\Database\Tests\Driver\Postgres;
  */
 class SelectWithJoinQueryTest extends \Cycle\Database\Tests\SelectWithJoinQueryTest
 {
-    const DRIVER = "postgres";
+    public const DRIVER = 'postgres';
 }

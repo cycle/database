@@ -17,5 +17,5 @@ namespace Cycle\Database\Tests\Driver\SQLite;
  */
 class SelectWithJoinQueryTest extends \Cycle\Database\Tests\SelectWithJoinQueryTest
 {
-    const DRIVER = "sqlite";
+    public const DRIVER = 'sqlite';
 }

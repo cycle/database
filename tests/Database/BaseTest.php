@@ -26,8 +26,8 @@ use Cycle\Database\Schema\Comparator;
 
 abstract class BaseTest extends TestCase
 {
-    use TableAssertions;
     use Loggable;
+    use TableAssertions;
 
     public const DRIVER = null;
 
@@ -61,10 +61,10 @@ abstract class BaseTest extends TestCase
 
             $options = \array_merge($options, [
                 'connection' => $config['conn'],
-                'username'   => $config['user'] ?? '',
-                'password'   => $config['pass'] ?? '',
-                'options'    => [],
-                'queryCache' => true
+                'username' => $config['user'] ?? '',
+                'password' => $config['pass'] ?? '',
+                'options' => [],
+                'queryCache' => true,
             ]);
 
             if (isset($config['schema'])) {
@@ -87,6 +87,7 @@ abstract class BaseTest extends TestCase
      * @param string $name
      * @param string $prefix
      * @param array $config
+     *
      * @return Database|null When non empty null will be given, for safety, for science.
      */
     protected function db(string $name = 'default', string $prefix = '', array $config = []): ?Database
@@ -105,7 +106,7 @@ abstract class BaseTest extends TestCase
      *
      * @param string                   $query
      * @param string                   $parameters
-     * @param string|FragmentInterface $fragment
+     * @param FragmentInterface|string $fragment
      */
     protected function assertSameQueryWithParameters(string $query, array $parameters, $fragment): void
     {
@@ -117,7 +118,7 @@ abstract class BaseTest extends TestCase
      * Send sample query in a form where all quotation symbols replaced with { and }.
      *
      * @param string                   $query
-     * @param string|FragmentInterface $fragment
+     * @param FragmentInterface|string $fragment
      */
     protected function assertSameQuery(string $query, $fragment): void
     {
@@ -166,6 +167,7 @@ abstract class BaseTest extends TestCase
 
     /**
      * @param AbstractTable $table
+     *
      * @return AbstractTable
      */
     protected function fetchSchema(AbstractTable $table): AbstractTable
@@ -194,7 +196,7 @@ abstract class BaseTest extends TestCase
                 print_r($pair);
             }
 
-            return "Table '{$table}' not synced, column(s) '" . join(
+            return "Table '{$table}' not synced, column(s) '" . implode(
                 "', '",
                 $names
             ) . "' have been changed.";
