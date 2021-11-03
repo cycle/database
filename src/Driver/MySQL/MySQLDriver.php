@@ -67,6 +67,7 @@ class MySQLDriver extends Driver
             strpos($message, 'server has gone away') !== false
             || strpos($message, 'broken pipe') !== false
             || strpos($message, 'connection') !== false
+            || strpos($message, 'packets out of order') !== false
             || ((int)$exception->getCode() > 2000 && (int)$exception->getCode() < 2100)
         ) {
             return new StatementException\ConnectionException($exception, $query);
