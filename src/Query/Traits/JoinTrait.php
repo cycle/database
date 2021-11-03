@@ -91,7 +91,15 @@ trait JoinTrait
             'on'    => []
         ];
 
-        return $on === null ? $this : $this->on(...$on);
+        if ($on === null) {
+            return $this;
+        }
+
+        if ($on instanceof \Closure) {
+            return $this->on($on);
+        }
+
+        return \array_is_list($on) ? $this->on(...$on) : $this->on($on);
     }
 
     /**

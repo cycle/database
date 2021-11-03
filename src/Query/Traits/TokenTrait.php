@@ -160,6 +160,14 @@ trait TokenTrait
         $boolean = ($grouper === CompilerInterface::TOKEN_AND ? 'AND' : 'OR');
 
         foreach ($where as $key => $value) {
+            // Support for closures
+            if (is_int($key) && $value instanceof \Closure) {
+                $tokens[] = [$boolean, '('];
+                $value($this, $boolean, $wrapper);
+                $tokens[] = ['', ')'];
+                continue;
+            }
+
             $token = strtoupper($key);
 
             // Grouping identifier (@OR, @AND), MongoDB like style

@@ -104,6 +104,19 @@ abstract class BaseTest extends TestCase
      * Send sample query in a form where all quotation symbols replaced with { and }.
      *
      * @param string                   $query
+     * @param string                   $parameters
+     * @param string|FragmentInterface $fragment
+     */
+    protected function assertSameQueryWithParameters(string $query, array $parameters, $fragment): void
+    {
+        $this->assertSameQuery($query, $fragment);
+        $this->assertSameParameters($parameters, $fragment);
+    }
+
+    /**
+     * Send sample query in a form where all quotation symbols replaced with { and }.
+     *
+     * @param string                   $query
      * @param string|FragmentInterface $fragment
      */
     protected function assertSameQuery(string $query, $fragment): void
