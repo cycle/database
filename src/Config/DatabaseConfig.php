@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Config;
 
-use Spiral\Core\Container\Autowire;
 use Spiral\Core\InjectableConfig;
 use Spiral\Core\Traits\Config\AliasTrait;
 use Cycle\Database\Driver\DriverInterface;
@@ -61,7 +60,7 @@ final class DatabaseConfig extends InjectableConfig
     /**
      * Get names list of all driver connections.
      *
-     * @return Autowire[]
+     * @return DriverInterface[]
      */
     public function getDrivers(): array
     {
