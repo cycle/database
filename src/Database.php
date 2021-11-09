@@ -146,12 +146,9 @@ final class Database implements DatabaseInterface, InjectableInterface
 
         $result = [];
         foreach ($schemaHandler->getTableNames($this->prefix) as $table) {
-            if (($pos = strpos($table, '.')) !== false) {
-                $schema = substr($table, 0, $pos);
-                $table = $schema . '.' . substr(substr($table, $pos + 1), strlen($this->prefix));
-            } else {
-                $table = substr($table, strlen($this->prefix));
-            }
+            $table = strpos($table, '.') !== false
+                ? str_replace('.'.$this->prefix, '.', $table)
+                : substr($table, strlen($this->prefix));
 
             $result[] = new Table($this, $table);
         }
