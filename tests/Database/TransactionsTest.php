@@ -189,6 +189,45 @@ abstract class TransactionsTest extends BaseTest
         $this->assertSame(1, $this->database->table->count());
     }
 
+    public function testRollbackDDLChanges(): void
+    {
+        if (static::DRIVER === 'mysql') {
+            $this->markTestSkipped('MySQL does not support DDL transactions.');
+        }
+
+        // Creating a new table with primary field
+        $table = $this->database->table('table');
+        $schema = $table->getSchema();
+        $schema->primary('id');
+        $schema->save();
+
+        $this->database->begin();
+
+        // Add a new field on a first transaction level
+        $schema->integer('value');
+        $schema->save();
+
+        $this->assertTrue($table->hasColumn('value'));
+
+        // Nested savepoint
+        $this->database->begin();
+
+        // Add another one field on a second transaction level
+        $schema->integer('new_value');
+        $schema->save();
+
+        $this->assertTrue($table->hasColumn('new_value'));
+
+        // Revert changes on the second level
+        $this->database->rollback();
+
+        // Commit changes on the first level
+        $this->database->commit();
+
+        $this->assertTrue($table->hasColumn('value'));
+        $this->assertFalse($table->hasColumn('new_value'));
+    }
+
     public function testSelectForUpdateException(): void
     {
         $id = $this->database->table->insertOne(['name' => 'Anton', 'value' => 123]);
