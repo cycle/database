@@ -1,13 +1,13 @@
-Cycle DBAL
-========
+# Cycle DBAL
+
 [![Latest Stable Version](https://poser.pugx.org/cycle/database/v/stable)](https://packagist.org/packages/cycle/database) 
 [![Build Status](https://github.com/cycle/database/workflows/build/badge.svg)](https://github.com/cycle/database/actions)
 [![Codecov](https://codecov.io/gh/cycle/database/branch/master/graph/badge.svg)](https://codecov.io/gh/cycle/database/)
 
 Secure, multiple SQL dialects (MySQL, PostgreSQL, SQLite, SQLServer), schema introspection, schema declaration, smart identifier wrappers, database partitions, query builders, nested queries.
 
-Documentation
---------
+## Documentation
+
 * [Installation and Configuration](https://spiral.dev/docs/database-configuration)
 * [Access Database](https://spiral.dev/docs/database-access)
 * [Database Isolation](https://spiral.dev/docs/database-isolation)
@@ -18,13 +18,14 @@ Documentation
 * [Migrations](https://spiral.dev/docs/database-migrations)
 * [Errata](https://spiral.dev/docs/database-errata)
 
-Requirements
---------
+## Requirements
+
 Make sure that your server is configured with following PHP version and extensions:
-* PHP 7.2+
+* PHP 8.0+
 * PDO Extension with desired database drivers
 
 ## Installation
+
 To install the component:
 
 ```
@@ -32,6 +33,7 @@ $ composer require cycle/database
 ```
 
 ## Example
+
 Given example demonstrates the connection to SQLite database, creation of table schema, data insertion and selection:
 
 ```php
@@ -41,6 +43,7 @@ declare(strict_types=1);
 require_once "vendor/autoload.php";
 
 use Cycle\Database\Config\DatabaseConfig;
+use Cycle\Database\Config\SQLiteDriverConfig;
 use Cycle\Database\DatabaseManager;
 use Cycle\Database\Driver\SQLite\SQLiteDriver;
 
@@ -49,10 +52,9 @@ $dbm = new DatabaseManager(new DatabaseConfig([
         'default' => ['connection' => 'sqlite'],
     ],
     'connections' => [
-        'sqlite' => [
-            'driver'     => SQLiteDriver::class,
-            'connection' => 'sqlite:database.db',
-        ],
+        'sqlite' => new SQLiteDriverConfig(
+            queryCache: true
+        ),
     ],
 ]));
 
@@ -79,6 +81,6 @@ foreach ($users->select()->where(['name' => 'test']) as $u) {
 }
 ```
 
-License:
---------
+## License:
+
 MIT License (MIT). Please see [`LICENSE`](./LICENSE) for more information. Maintained by [Spiral Scout](https://spiralscout.com).
