@@ -8,15 +8,15 @@ Secure, multiple SQL dialects (MySQL, PostgreSQL, SQLite, SQLServer), schema int
 
 Documentation
 --------
-* [Installation and Configuration](https://cycle.dev/docs/database-configuration)
-* [Access Database](https://cycle.dev/docs/database-access)
-* [Database Isolation](https://cycle.dev/docs/database-isolation)
-* [Query Builders](https://cycle.dev/docs/database-query-builders)
-* [Transactions](https://cycle.dev/docs/database-transactions)
-* [Schema Introspection](https://cycle.dev/docs/database-introspection)
-* [Schema Declaration](https://cycle.dev/docs/database-declaration)
-* [Migrations](https://cycle.dev/docs/database-migrations)
-* [Errata](https://cycle.dev/docs/database-errata)
+* [Installation and Configuration](https://cycle-orm.dev/docs/database-configuration)
+* [Access Database](https://cycle-orm.dev/docs/database-access)
+* [Database Isolation](https://cycle-orm.dev/docs/database-isolation)
+* [Query Builders](https://cycle-orm.dev/docs/database-query-builders)
+* [Transactions](https://cycle-orm.dev/docs/database-transactions)
+* [Schema Introspection](https://cycle-orm.dev/docs/database-introspection)
+* [Schema Declaration](https://cycle-orm.dev/docs/database-declaration)
+* [Migrations](https://cycle-orm.dev/docs/database-migrations)
+* [Errata](https://cycle-orm.dev/docs/database-errata)
 
 Requirements
 --------
