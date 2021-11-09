@@ -42,17 +42,18 @@ declare(strict_types=1);
 
 require_once "vendor/autoload.php";
 
-use Cycle\Database\Config\DatabaseConfig;
-use Cycle\Database\Config\SQLiteDriverConfig;
+use Cycle\Database\Config;
 use Cycle\Database\DatabaseManager;
 
-$dbm = new DatabaseManager(new DatabaseConfig([
+$dbm = new DatabaseManager(new Config\DatabaseConfig([
     'databases'   => [
         'default' => ['connection' => 'sqlite'],
     ],
     'connections' => [
-        'sqlite' => new SQLiteDriverConfig(
-            queryCache: true
+        'sqlite' => new Config\SQLiteDriverConfig(
+            connection: new Config\SQLite\FileConnectionConfig(
+                database: 'runtime/database.db'
+            ),
         ),
     ],
 ]));
