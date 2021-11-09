@@ -4,19 +4,37 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Driver\Postgres;
 
+use Cycle\Database\Config\Postgres\TcpConnectionConfig;
+use Cycle\Database\Config\PostgresDriverConfig;
 use Cycle\Database\Driver\Postgres\PostgresDriver;
 use PHPUnit\Framework\TestCase;
 
 class DriverTest extends TestCase
 {
+    /**
+     * TODO Should be moved in common config
+     *
+     * @return TcpConnectionConfig
+     */
+    protected function getConnection(): TcpConnectionConfig
+    {
+        return new TcpConnectionConfig(
+            database: 'spiral',
+            host: '127.0.0.1',
+            port: 15432,
+            user: 'postgres',
+            password: 'postgres'
+        );
+    }
+
     public function testIfSchemaOptionsDoesNotPresentUsePublicSchema(): void
     {
-        $driver = new PostgresDriver([
-            'connection' => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
-            'username'   => 'postgres',
-            'password'   => 'postgres',
-            'schema' => ['$user', 'public']
-        ]);
+        $driver = PostgresDriver::create(
+            new PostgresDriverConfig(
+                connection: $this->getConnection(),
+                schema: ['$user', 'public']
+            )
+        );
 
         $driver->connect();
 
@@ -26,12 +44,12 @@ class DriverTest extends TestCase
 
     public function testDefaultSchemaCanBeDefined(): void
     {
-        $driver = new PostgresDriver([
-            'connection'     => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
-            'username'       => 'postgres',
-            'password'       => 'postgres',
-            'default_schema' => 'private'
-        ]);
+        $driver = PostgresDriver::create(
+            new PostgresDriverConfig(
+                connection: $this->getConnection(),
+                schema: 'private',
+            )
+        );
 
         $driver->connect();
 
@@ -41,12 +59,12 @@ class DriverTest extends TestCase
 
     public function testDefaultSchemaCanBeDefinedFromAvailableSchemas(): void
     {
-        $driver = new PostgresDriver([
-            'connection' => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
-            'username'   => 'postgres',
-            'password'   => 'postgres',
-            'schema'     => 'private'
-        ]);
+        $driver = PostgresDriver::create(
+            new PostgresDriverConfig(
+                connection: $this->getConnection(),
+                schema: 'private',
+            )
+        );
 
         $driver->connect();
 
@@ -54,31 +72,14 @@ class DriverTest extends TestCase
         $this->assertSame('private', $driver->query('SHOW search_path')->fetch()['search_path']);
     }
 
-    public function testDefaultSchemaCanNotBeRedefinedFromAvailableSchemas(): void
-    {
-        $driver = new PostgresDriver([
-            'connection'     => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
-            'username'       => 'postgres',
-            'password'       => 'postgres',
-            'default_schema' => 'private',
-            'schema'         => ['test', 'private']
-        ]);
-
-        $driver->connect();
-
-        $this->assertSame(['private', 'test'], $driver->getSearchSchemas());
-        $this->assertSame('private, test', $driver->query('SHOW search_path')->fetch()['search_path']);
-    }
-
     public function testDefaultSchemaForCurrentUser(): void
     {
-        $driver = new PostgresDriver([
-            'connection'     => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
-            'username'       => 'postgres',
-            'password'       => 'postgres',
-            'default_schema' => '$user',
-            'schema'         => ['test', 'private']
-        ]);
+        $driver = PostgresDriver::create(
+            new PostgresDriverConfig(
+                connection: $this->getConnection(),
+                schema: ['$user', 'test', 'private'],
+            )
+        );
 
         $driver->connect();
 
@@ -91,12 +92,12 @@ class DriverTest extends TestCase
      */
     public function testIfSchemaOptionsPresentsUseIt($schema, $available, $result): void
     {
-        $driver = new PostgresDriver([
-            'connection' => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
-            'username'   => 'postgres',
-            'password'   => 'postgres',
-            'schema'     => $schema
-        ]);
+        $driver = PostgresDriver::create(
+            new PostgresDriverConfig(
+                connection: $this->getConnection(),
+                schema: $schema,
+            )
+        );
 
         $this->assertSame($available, $driver->getSearchSchemas());
         $driver->connect();

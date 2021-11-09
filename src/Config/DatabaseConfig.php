@@ -11,9 +11,9 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Config;
 
-use Spiral\Core\Container\Autowire;
 use Spiral\Core\InjectableConfig;
 use Spiral\Core\Traits\Config\AliasTrait;
+use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Exception\ConfigException;
 
 final class DatabaseConfig extends InjectableConfig
@@ -60,7 +60,7 @@ final class DatabaseConfig extends InjectableConfig
     /**
      * Get names list of all driver connections.
      *
-     * @return Autowire[]
+     * @return DriverInterface[]
      */
     public function getDrivers(): array
     {
@@ -114,26 +114,27 @@ final class DatabaseConfig extends InjectableConfig
 
     /**
      * @param string $driver
-     * @return Autowire
+     * @return DriverInterface
      *
      * @throws ConfigException
      */
-    public function getDriver(string $driver): Autowire
+    public function getDriver(string $driver): DriverInterface
     {
         if (!$this->hasDriver($driver)) {
             throw new ConfigException("Undefined driver `{$driver}`");
         }
 
         $config = $this->config['connections'][$driver] ?? $this->config['drivers'][$driver];
-        if ($config instanceof Autowire) {
-            return $config;
+
+        if ($config instanceof DriverConfig) {
+            return $config->driver::create($config);
         }
 
-        $options = $config;
-        if (isset($config['options']) && $config['options'] !== []) {
-            $options = $config['options'] + $config;
-        }
-
-        return new Autowire($config['driver'] ?? $config['class'], ['options' => $options]);
+        throw new \InvalidArgumentException(
+            \vsprintf('Driver config must be an instance of %s, but %s passed', [
+                DriverConfig::class,
+                \get_debug_type($config)
+            ])
+        );
     }
 }

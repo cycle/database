@@ -15,11 +15,6 @@ use Cycle\Database\Schema\Reflector;
 
 abstract class ReflectorTest extends BaseTest
 {
-    public function tearDown(): void
-    {
-        $this->dropDatabase($this->db());
-    }
-
     public function schema(string $table, string $prefix = ''): AbstractTable
     {
         return $this->db('default', $prefix)->table($table)->getSchema();

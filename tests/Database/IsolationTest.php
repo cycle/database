@@ -15,14 +15,11 @@ use Cycle\Database\Schema\AbstractTable;
 
 abstract class IsolationTest extends BaseTest
 {
-    public function tearDown(): void
-    {
-        $this->dropDatabase($this->db());
-    }
-
     public function schema(string $prefix, string $table): AbstractTable
     {
-        return $this->db('default', $prefix)->table($table)->getSchema();
+        return $this->db('default', $prefix)
+            ->table($table)
+            ->getSchema();
     }
 
     public function testGetPrefix(): void

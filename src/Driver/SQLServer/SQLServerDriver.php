@@ -11,9 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\SQLServer;
 
-use DateTimeInterface;
-use PDO;
-use PDOStatement;
+use Cycle\Database\Config\DriverConfig;
+use Cycle\Database\Config\SQLServerDriverConfig;
 use Cycle\Database\Driver\Driver;
 use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\StatementException;
@@ -22,31 +21,10 @@ use Cycle\Database\Query\QueryBuilder;
 
 class SQLServerDriver extends Driver
 {
-    protected const DATETIME            = 'Y-m-d\TH:i:s.000';
-    protected const DEFAULT_PDO_OPTIONS = [
-        PDO::ATTR_CASE              => PDO::CASE_NATURAL,
-        PDO::ATTR_ERRMODE           => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_STRINGIFY_FETCHES => false
-    ];
-
     /**
-     * {@inheritdoc}
-     *
-     * @throws DriverException
+     * @var non-empty-string
      */
-    public function __construct(array $options)
-    {
-        parent::__construct(
-            $options,
-            new SQLServerHandler(),
-            new SQLServerCompiler('[]'),
-            QueryBuilder::defaultBuilder()
-        );
-
-        if ((int)$this->getPDO()->getAttribute(\PDO::ATTR_SERVER_VERSION) < 12) {
-            throw new DriverException('SQLServer driver supports only 12+ version of SQLServer');
-        }
-    }
+    protected const DATETIME = 'Y-m-d\TH:i:s.000';
 
     /**
      * @return string
@@ -59,15 +37,14 @@ class SQLServerDriver extends Driver
     /**
      * Bind parameters into statement. SQLServer need encoding to be specified for binary parameters.
      *
-     * @param PDOStatement $statement
+     * @param \PDOStatement $statement
      * @param array        $parameters
-     * @return PDOStatement
+     * @return \PDOStatement
      */
-    protected function bindParameters(
-        PDOStatement $statement,
-        iterable $parameters
-    ): PDOStatement {
+    protected function bindParameters(\PDOStatement $statement, iterable $parameters): \PDOStatement
+    {
         $index = 0;
+
         foreach ($parameters as $name => $parameter) {
             if (is_string($name)) {
                 $index = $name;
@@ -75,25 +52,25 @@ class SQLServerDriver extends Driver
                 $index++;
             }
 
-            $type = PDO::PARAM_STR;
+            $type = \PDO::PARAM_STR;
 
             if ($parameter instanceof ParameterInterface) {
                 $type = $parameter->getType();
                 $parameter = $parameter->getValue();
             }
 
-            if ($parameter instanceof DateTimeInterface) {
+            if ($parameter instanceof \DateTimeInterface) {
                 $parameter = $this->formatDatetime($parameter);
             }
 
-            if ($type === PDO::PARAM_LOB) {
+            if ($type === \PDO::PARAM_LOB) {
                 /** @psalm-suppress UndefinedConstant */
                 $statement->bindParam(
                     $index,
                     $parameter,
                     $type,
                     0,
-                    PDO::SQLSRV_ENCODING_BINARY
+                    \PDO::SQLSRV_ENCODING_BINARY
                 );
 
                 unset($parameter);
@@ -118,9 +95,7 @@ class SQLServerDriver extends Driver
      */
     protected function createSavepoint(int $level): void
     {
-        if ($this->logger !== null) {
-            $this->logger->info("Transaction: new savepoint 'SVP{$level}'");
-        }
+        $this->logger?->info("Transaction: new savepoint 'SVP{$level}'");
 
         $this->execute('SAVE TRANSACTION ' . $this->identifier("SVP{$level}"));
     }
@@ -134,9 +109,8 @@ class SQLServerDriver extends Driver
      */
     protected function releaseSavepoint(int $level): void
     {
-        if ($this->logger !== null) {
-            $this->logger->info("Transaction: release savepoint 'SVP{$level}'");
-        }
+        $this->logger?->info("Transaction: release savepoint 'SVP{$level}'");
+
         // SQLServer automatically commits nested transactions with parent transaction
     }
 
@@ -149,9 +123,7 @@ class SQLServerDriver extends Driver
      */
     protected function rollbackSavepoint(int $level): void
     {
-        if ($this->logger !== null) {
-            $this->logger->info("Transaction: rollback savepoint 'SVP{$level}'");
-        }
+        $this->logger?->info("Transaction: rollback savepoint 'SVP{$level}'");
 
         $this->execute('ROLLBACK TRANSACTION ' . $this->identifier("SVP{$level}"));
     }
@@ -163,10 +135,11 @@ class SQLServerDriver extends Driver
     {
         $message = strtolower($exception->getMessage());
 
+
         if (
-            strpos($message, '0800') !== false
-            || strpos($message, '080P') !== false
-            || strpos($message, 'connection') !== false
+            \str_contains($message, '0800')
+            || \str_contains($message, '080P')
+            || \str_contains($message, 'connection')
         ) {
             return new StatementException\ConnectionException($exception, $query);
         }
@@ -176,5 +149,28 @@ class SQLServerDriver extends Driver
         }
 
         return new StatementException($exception, $query);
+    }
+
+    /**
+     * @param SQLServerDriverConfig $config
+     *
+     * @return self
+     *
+     * @throws DriverException
+     */
+    public static function create(DriverConfig $config): self
+    {
+        $driver = new self(
+            $config,
+            new SQLServerHandler(),
+            new SQLServerCompiler('[]'),
+            QueryBuilder::defaultBuilder()
+        );
+
+        if ((int) $driver->getPDO()->getAttribute(\PDO::ATTR_SERVER_VERSION) < 12) {
+            throw new DriverException('SQLServer driver supports only 12+ version of SQLServer');
+        }
+
+        return $driver;
     }
 }

@@ -11,14 +11,9 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver;
 
-use DateTimeImmutable;
-use DateTimeInterface;
-use DateTimeZone;
-use PDO;
-use PDOStatement;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerAwareTrait;
-use Cycle\Database\Exception\ConfigException;
+use Cycle\Database\Config\DriverConfig;
+use Cycle\Database\Config\PDOConnectionConfig;
+use Cycle\Database\Config\ProvidesSourceString;
 use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\ReadonlyConnectionException;
 use Cycle\Database\Exception\StatementException;
@@ -26,6 +21,13 @@ use Cycle\Database\Injection\ParameterInterface;
 use Cycle\Database\Query\BuilderInterface;
 use Cycle\Database\Query\Interpolator;
 use Cycle\Database\StatementInterface;
+use DateTimeImmutable;
+use DateTimeInterface;
+use DateTimeZone;
+use PDO;
+use PDOStatement;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Throwable;
 
 /**
@@ -35,50 +37,15 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    // DateTime format to be used to perform automatic conversion of DateTime objects.
+    /**
+     * DateTime format to be used to perform automatic conversion of DateTime objects.
+     *
+     * @var non-empty-string (Typehint required for overriding behaviour)
+     */
     protected const DATETIME = 'Y-m-d H:i:s';
 
-    // Driver specific PDO options
-    protected const DEFAULT_PDO_OPTIONS = [
-        PDO::ATTR_CASE             => PDO::CASE_NATURAL,
-        PDO::ATTR_ERRMODE          => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_EMULATE_PREPARES => false,
-    ];
-
-    /**
-     * Connection configuration described in DBAL config file. Any driver can be used as data source
-     * for multiple databases as table prefix and quotation defined on Database instance level.
-     *
-     * @var array
-     */
-    protected $options = [
-        // allow reconnects
-        'reconnect'      => true,
-
-        // all datetime objects will be converted relative to
-        // this timezone (must match with DB timezone!)
-        'timezone'       => 'UTC',
-
-        // DSN
-        'connection'     => '',
-        'username'       => '',
-        'password'       => '',
-
-        // pdo options
-        'options'        => [],
-
-        // enables query caching
-        'queryCache'     => true,
-
-        // disable schema modifications
-        'readonlySchema' => false,
-
-        // disable write expressions
-        'readonly'       => false,
-    ];
-
     /** @var PDO|null */
-    protected $pdo;
+    protected ?\PDO $pdo = null;
 
     /** @var int */
     protected $transactionLevel = 0;
@@ -93,13 +60,13 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     protected $queryCache = [];
 
     /**
-     * @param array             $options
-     * @param HandlerInterface  $schemaHandler
+     * @param DriverConfig $config
+     * @param HandlerInterface $schemaHandler
      * @param CompilerInterface $queryCompiler
-     * @param BuilderInterface  $queryBuilder
+     * @param BuilderInterface $queryBuilder
      */
-    public function __construct(
-        array $options,
+    protected function __construct(
+        protected DriverConfig $config,
         HandlerInterface $schemaHandler,
         protected CompilerInterface $queryCompiler,
         BuilderInterface $queryBuilder
@@ -107,49 +74,12 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         $this->schemaHandler = $schemaHandler->withDriver($this);
         $this->queryBuilder = $queryBuilder->withDriver($this);
 
-        $options['options'] = array_replace(
-            static::DEFAULT_PDO_OPTIONS,
-            $options['options'] ?? []
-        );
-
-        $this->options = array_replace(
-            $this->options,
-            $options
-        );
-
-        if ($this->options['queryCache'] && $queryCompiler instanceof CachingCompilerInterface) {
+        if ($this->config->queryCache && $queryCompiler instanceof CachingCompilerInterface) {
             $this->queryCompiler = new CompilerCache($queryCompiler);
         }
 
-        if ($this->options['readonlySchema']) {
+        if ($this->config->readonlySchema) {
             $this->schemaHandler = new ReadonlyHandler($this->schemaHandler);
-        }
-
-        // Actualize DSN
-        $this->updateDSN();
-    }
-
-    /**
-     * Updates an internal options
-     *
-     * @return void
-     */
-    private function updateDSN(): void
-    {
-        [$connection, $this->options['username'], $this->options['password']] = $this->parseDSN();
-
-        // Update connection. The DSN field can be located in one of the
-        // following keys of the configuration array.
-        switch (true) {
-            case \array_key_exists('dsn', $this->options):
-                $this->options['dsn'] = $connection;
-                break;
-            case \array_key_exists('addr', $this->options):
-                $this->options['addr'] = $connection;
-                break;
-            default:
-                $this->options['connection'] = $connection;
-                break;
         }
     }
 
@@ -158,7 +88,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     public function isReadonly(): bool
     {
-        return (bool)($this->options['readonly'] ?? false);
+        return $this->config->readonly;
     }
 
     /**
@@ -172,13 +102,13 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     /**
      * @return array
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         return [
-            'addr'      => $this->getDSN(),
-            'source'    => $this->getSource(),
+            'connection' => $this->config->connection,
+            'source' => $this->getSource(),
             'connected' => $this->isConnected(),
-            'options'   => $this->options['options'],
+            'options' => $this->config,
         ];
     }
 
@@ -186,7 +116,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * Compatibility with deprecated methods.
      *
      * @param string $name
-     * @param array  $arguments
+     * @param array $arguments
      * @return mixed
      *
      * @deprecated this method will be removed in a future releases.
@@ -221,14 +151,14 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * Get driver source database or file name.
      *
      * @return string
-     *
      * @throws DriverException
      */
     public function getSource(): string
     {
-        // TODO should be optimized in future releases
-        if (preg_match('/(?:dbname|database)=([^;]+)/i', $this->getDSN(), $matches)) {
-            return $matches[1];
+        $config = $this->config->connection;
+
+        if ($config instanceof ProvidesSourceString) {
+            return $config->getSourceString();
         }
 
         return '*';
@@ -239,7 +169,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     public function getTimezone(): DateTimeZone
     {
-        return new DateTimeZone($this->options['timezone']);
+        return new DateTimeZone($this->config->timezone);
     }
 
     /**
@@ -321,7 +251,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * Execute query and return query statement.
      *
      * @param string $statement
-     * @param array  $parameters
+     * @param array $parameters
      * @return StatementInterface
      *
      * @throws StatementException
@@ -335,7 +265,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * Execute query and return number of affected rows.
      *
      * @param string $query
-     * @param array  $parameters
+     * @param array $parameters
      * @return int
      *
      * @throws StatementException
@@ -393,7 +323,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
 
                 if (
                     $e instanceof StatementException\ConnectionException
-                    && $this->options['reconnect']
+                    && $this->config->reconnect
                 ) {
                     $this->disconnect();
 
@@ -509,26 +439,23 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * Create instance of PDOStatement using provided SQL query and set of parameters and execute
      * it. Will attempt singular reconnect.
      *
-     * @param string    $query
-     * @param iterable  $parameters
+     * @param string $query
+     * @param iterable $parameters
      * @param bool|null $retry
      * @return StatementInterface
      *
      * @throws StatementException
      */
-    protected function statement(
-        string $query,
-        iterable $parameters = [],
-        bool $retry = true
-    ): StatementInterface {
-        $queryStart = microtime(true);
+    protected function statement(string $query, iterable $parameters = [], bool $retry = true): StatementInterface
+    {
+        $queryStart = \microtime(true);
 
         try {
             $statement = $this->bindParameters($this->prepare($query), $parameters);
             $statement->execute();
 
             return new Statement($statement);
-        } catch (Throwable  $e) {
+        } catch (Throwable $e) {
             $e = $this->mapException($e, Interpolator::interpolate($query, $parameters));
 
             if (
@@ -563,12 +490,12 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     protected function prepare(string $query): PDOStatement
     {
-        if ($this->options['queryCache'] && isset($this->queryCache[$query])) {
+        if ($this->config->queryCache && isset($this->queryCache[$query])) {
             return $this->queryCache[$query];
         }
 
         $statement = $this->getPDO()->prepare($query);
-        if ($this->options['queryCache']) {
+        if ($this->config->queryCache) {
             $this->queryCache[$query] = $statement;
         }
 
@@ -579,7 +506,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * Bind parameters into statement.
      *
      * @param PDOStatement $statement
-     * @param iterable     $parameters
+     * @param iterable $parameters
      * @return PDOStatement
      */
     protected function bindParameters(PDOStatement $statement, iterable $parameters): PDOStatement
@@ -624,7 +551,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         try {
             $datetime = new DateTimeImmutable('now', $this->getTimezone());
         } catch (Throwable $e) {
-            throw new DriverException($e->getMessage(), $e->getCode(), $e);
+            throw new DriverException($e->getMessage(), (int)$e->getCode(), $e);
         }
 
         return $datetime->setTimestamp($value->getTimestamp())->format(static::DATETIME);
@@ -634,7 +561,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * Convert PDO exception into query or integrity exception.
      *
      * @param Throwable $exception
-     * @param string    $query
+     * @param string $query
      * @return StatementException
      */
     abstract protected function mapException(
@@ -697,51 +624,26 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     }
 
     /**
-     * @return array{string, string, string}
-     */
-    private function parseDSN(): array
-    {
-        $dsn = $this->getDSN();
-
-        $user = (string)($this->options['username'] ?? '');
-        $pass = (string)($this->options['password'] ?? '');
-
-        if (\strpos($dsn, '://') > 0) {
-            $parts = \parse_url($dsn);
-
-            if (!isset($parts['scheme'])) {
-                throw new ConfigException('Configuration database scheme must be defined');
-            }
-
-            // Update username and password from DSN if not defined.
-            $user = $user ?: $parts['user'] ?? '';
-            $pass = $pass ?: $parts['pass'] ?? '';
-
-            // Build new DSN
-            $dsn = \sprintf('%s:host=%s', $parts['scheme'], $parts['host'] ?? 'localhost');
-
-            if (isset($parts['port'])) {
-                $dsn .= ';port=' . $parts['port'];
-            }
-
-            if (isset($parts['path']) && \trim($parts['path'], '/')) {
-                $dsn .= ';dbname=' . \trim($parts['path'], '/');
-            }
-        }
-
-        return [$dsn, $user, $pass];
-    }
-
-    /**
      * Create instance of configured PDO class.
      *
      * @return PDO
      */
     protected function createPDO(): PDO
     {
-        [$dsn, $user, $pass] = $this->parseDSN();
+        $connection = $this->config->connection;
 
-        return new PDO($dsn, $user, $pass, $this->options['options']);
+        if (! $connection instanceof PDOConnectionConfig) {
+            throw new \InvalidArgumentException(
+                'Could not establish PDO connection using non-PDO configuration'
+            );
+        }
+
+        return new PDO(
+            dsn: $connection->getDsn(),
+            username: $connection->getUsername(),
+            password: $connection->getPassword(),
+            options: $connection->getOptions(),
+        );
     }
 
     /**
@@ -761,20 +663,10 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     }
 
     /**
-     * Connection DSN.
-     *
-     * @return string
-     */
-    protected function getDSN(): string
-    {
-        return $this->options['connection'] ?? $this->options['dsn'] ?? $this->options['addr'];
-    }
-
-    /**
      * Creating a context for logging
      *
-     * @param float             $queryStart Query start time
-     * @param PDOStatement|null $statement  Statement
+     * @param float $queryStart Query start time
+     * @param PDOStatement|null $statement Statement
      *
      * @return array
      */

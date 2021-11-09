@@ -23,7 +23,7 @@ class AlterColumnTest extends \Cycle\Database\Tests\AlterColumnTest
 
     public function testNativeEnums(): void
     {
-        $driver = $this->getDriver();
+        $driver = $this->database->getDriver();
         try {
             $driver->execute("CREATE TYPE mood AS ENUM ('sad', 'ok', 'happy');");
         } catch (StatementException $e) {

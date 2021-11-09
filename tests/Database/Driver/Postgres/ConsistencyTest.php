@@ -27,7 +27,7 @@ class ConsistencyTest extends \Cycle\Database\Tests\ConsistencyTest
         /**
          * @var PostgresDriver $d
          */
-        $d = $this->getDriver();
+        $d = $this->database->getDriver();
 
         $schema = $d->getSchema('table');
         $this->assertFalse($schema->exists());
@@ -60,7 +60,7 @@ class ConsistencyTest extends \Cycle\Database\Tests\ConsistencyTest
     public function testPrimaryException(): void
     {
         /** @var PostgresDriver $d */
-        $d = $this->getDriver();
+        $d = $this->database->getDriver();
 
         $this->expectException(\Cycle\Database\Exception\DriverException::class);
 

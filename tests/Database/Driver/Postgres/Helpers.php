@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Driver\Postgres;
 
+use Cycle\Database\Config\Postgres\TcpConnectionConfig;
+use Cycle\Database\Config\PostgresDriverConfig;
 use Cycle\Database\Database;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\Postgres\PostgresDriver;
@@ -74,21 +76,18 @@ trait Helpers
 
     private function getDriver($schema = null, string $defaultSchema = null): DriverInterface
     {
-        $options = [
-            'connection' => 'pgsql:host=127.0.0.1;port=15432;dbname=spiral',
-            'username'   => 'postgres',
-            'password'   => 'postgres'
-        ];
+        $options = new PostgresDriverConfig(
+            connection: new TcpConnectionConfig(
+                database: 'spiral',
+                host: '127.0.0.1',
+                port: 15432,
+                user: 'postgres',
+                password: 'postgres'
+            ),
+            schema: \array_filter([$defaultSchema, ...\array_values((array)$schema)]),
+        );
 
-        if ($schema) {
-            $options['schema'] = $schema;
-        }
-
-        if ($defaultSchema) {
-            $options['default_schema'] = $defaultSchema;
-        }
-
-        $driver = new PostgresDriver($options);
+        $driver = PostgresDriver::create($options);
         $driver->connect();
 
         return $driver;

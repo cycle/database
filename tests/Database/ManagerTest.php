@@ -16,6 +16,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Spiral\Core\Container;
 use Cycle\Database\Config\DatabaseConfig;
+use Cycle\Database\Config\SQLiteDriverConfig;
 use Cycle\Database\Database;
 use Cycle\Database\DatabaseManager;
 use Cycle\Database\Driver\DriverInterface;
@@ -199,14 +200,7 @@ class ManagerTest extends TestCase
                         ],
                     ],
                     'connections' => [
-                        'default' => [
-                            'driver'  => SQLiteDriver::class,
-                            'options' => [
-                                'connection' => 'sqlite::memory:',
-                                'username'   => 'sqlite',
-                                'password'   => ''
-                            ]
-                        ]
+                        'default' => new SQLiteDriverConfig()
                     ]
                 ]
             )
@@ -231,14 +225,7 @@ class ManagerTest extends TestCase
                         ],
                     ],
                     'connections' => [
-                        'default' => [
-                            'driver'  => SQLiteDriver::class,
-                            'options' => [
-                                'connection' => 'sqlite::memory:',
-                                'username'   => 'sqlite',
-                                'password'   => ''
-                            ]
-                        ]
+                        'default' => new SQLiteDriverConfig()
                     ]
                 ]
             )
@@ -262,12 +249,7 @@ class ManagerTest extends TestCase
                         ],
                     ],
                     'connections' => [
-                        'default' => [
-                            'driver'     => SQLiteDriver::class,
-                            'connection' => 'sqlite::memory:',
-                            'username'   => 'sqlite',
-                            'password'   => ''
-                        ]
+                        'default' => new SQLiteDriverConfig()
                     ]
                 ]
             )
@@ -292,7 +274,7 @@ class ManagerTest extends TestCase
             ])
         );
 
-        $this->expectException(DBALException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $dbal->driver('default');
     }

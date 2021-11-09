@@ -42,7 +42,7 @@ abstract class DatabaseTest extends BaseTest
     {
         $db = $this->db();
         $this->assertSame(
-            $this->getDriver()->getType(),
+            $db->getDriver()->getType(),
             $db->getType()
         );
 

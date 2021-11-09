@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests;
 
-use Cycle\Database\Database;
 use Cycle\Database\Driver\Driver;
 use Cycle\Database\Exception\ReadonlyConnectionException;
 use Cycle\Database\Table;
@@ -18,7 +17,7 @@ abstract class ReadonlyTest extends BaseTest
 
     public function setUp(): void
     {
-        $this->database = new Database('default', '', $this->getDriver(['readonly' => true]));
+        $this->database = $this->db('default', '', ['readonly' => true]);
 
         $this->allowWrite(function () {
             $table = $this->database->table($this->table);
@@ -35,11 +34,11 @@ abstract class ReadonlyTest extends BaseTest
         $driver = $this->database->getDriver();
 
         (function (\Closure $then): void {
-            $this->options['readonly'] = false;
+            $this->config->readonly = false;
             try {
                 $then();
             } finally {
-                $this->options['readonly'] = true;
+                $this->config->readonly = true;
             }
         })->call($driver, $then);
     }

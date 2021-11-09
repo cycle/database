@@ -11,11 +11,12 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests;
 
+use Cycle\Database\Config\DriverConfig;
+use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Tests\Traits\Loggable;
 use Cycle\Database\Tests\Traits\TableAssertions;
 use PHPUnit\Framework\TestCase;
 use Cycle\Database\Database;
-use Cycle\Database\Driver\Driver;
 use Cycle\Database\Driver\Handler;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Injection\ParameterInterface;
@@ -31,75 +32,61 @@ abstract class BaseTest extends TestCase
 
     public const DRIVER = null;
 
-    /** @var array */
-    public static $config;
-
-    /** @var array */
-    public static $driverCache = [];
-
-    /** @var Driver */
-    protected $driver;
-
-    /** @var Database */
-    protected $database;
+    public static array $config;
+    protected Database $database;
+    private static array $memoizedDrivers = [];
 
     public function setUp(): void
     {
-        $this->database = $this->db();
-    }
-
-    /**
-     * @param array $options
-     *
-     * @return Driver
-     */
-    public function getDriver(array $options = []): Driver
-    {
-        $config = self::$config[static::DRIVER];
-
-        if (!isset($this->driver)) {
-            $class = $config['driver'];
-
-            $options = \array_merge($options, [
-                'connection' => $config['conn'],
-                'username' => $config['user'] ?? '',
-                'password' => $config['pass'] ?? '',
-                'options' => [],
-                'queryCache' => true,
-            ]);
-
-            if (isset($config['schema'])) {
-                $options['schema'] = $config['schema'];
-            }
-
-            $this->driver = new $class($options);
-        }
-
-        $this->setUpLogger($this->driver);
-
-        if (self::$config['debug']) {
+        if (self::$config['debug'] ?? false) {
             $this->enableProfiling();
         }
 
-        return $this->driver;
+        $this->database = $this->db();
+    }
+
+    public function tearDown(): void
+    {
+        $this->dropDatabase($this->database);
+    }
+
+    /**
+     * @param array{readonly: bool} $options
+     * @return DriverInterface
+     */
+    private function getDriver(array $options = []): DriverInterface
+    {
+        $hash = \hash('crc32', static::DRIVER . ':' . \json_encode($options));
+
+        if (! isset(self::$memoizedDrivers[$hash])) {
+            /** @var DriverConfig $config */
+            $config = clone self::$config[static::DRIVER];
+
+            // Add readonly options support
+            if (isset($options['readonly']) && $options['readonly'] === true) {
+                $config->readonly = true;
+            }
+
+            $driver = $config->driver::create($config);
+
+            $this->setUpLogger($driver);
+
+            self::$memoizedDrivers[$hash] = $driver;
+        }
+
+        return self::$memoizedDrivers[$hash];
     }
 
     /**
      * @param string $name
      * @param string $prefix
-     * @param array $config
+     * @param array{readonly: bool} $config
      *
      * @return Database|null When non empty null will be given, for safety, for science.
      */
-    protected function db(string $name = 'default', string $prefix = '', array $config = []): ?Database
+    protected function db(string $name = 'default', string $prefix = '', array $config = []): Database
     {
-        if (isset(static::$driverCache[static::DRIVER])) {
-            $driver = static::$driverCache[static::DRIVER];
-        } else {
-            static::$driverCache[static::DRIVER] = $driver = $this->getDriver($config);
-        }
-
-        return new Database($name, $prefix, $driver);
+        return new Database($name, $prefix, $this->getDriver($config));
     }
 
     /**
@@ -145,7 +132,7 @@ abstract class BaseTest extends TestCase
      */
     protected function dropDatabase(Database $database = null): void
     {
-        if ($database == null) {
+        if ($database === null) {
             return;
         }
 

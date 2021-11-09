@@ -11,7 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\MySQL;
 
-use PDO;
+use Cycle\Database\Config\DriverConfig;
+use Cycle\Database\Config\MySQLDriverConfig;
 use Cycle\Database\Driver\Driver;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Query\QueryBuilder;
@@ -21,27 +22,6 @@ use Cycle\Database\Query\QueryBuilder;
  */
 class MySQLDriver extends Driver
 {
-    protected const DEFAULT_PDO_OPTIONS = [
-        PDO::ATTR_CASE               => PDO::CASE_NATURAL,
-        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-        PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES "UTF8"',
-        PDO::ATTR_STRINGIFY_FETCHES  => false,
-    ];
-
-    /**
-     * @param array $options
-     */
-    public function __construct(array $options)
-    {
-        // default query builder
-        parent::__construct(
-            $options,
-            new MySQLHandler(),
-            new MySQLCompiler('``'),
-            QueryBuilder::defaultBuilder()
-        );
-    }
-
     /**
      * @inheritDoc
      */
@@ -64,15 +44,30 @@ class MySQLDriver extends Driver
         $message = strtolower($exception->getMessage());
 
         if (
-            strpos($message, 'server has gone away') !== false
-            || strpos($message, 'broken pipe') !== false
-            || strpos($message, 'connection') !== false
-            || strpos($message, 'packets out of order') !== false
+            str_contains($message, 'server has gone away')
+            || str_contains($message, 'broken pipe')
+            || str_contains($message, 'connection')
+            || str_contains($message, 'packets out of order')
             || ((int)$exception->getCode() > 2000 && (int)$exception->getCode() < 2100)
         ) {
             return new StatementException\ConnectionException($exception, $query);
         }
 
         return new StatementException($exception, $query);
+    }
+
+    /**
+     * @param MySQLDriverConfig $config
+     *
+     * @return self
+     */
+    public static function create(DriverConfig $config): self
+    {
+        return new self(
+            $config,
+            new MySQLHandler(),
+            new MySQLCompiler('``'),
+            QueryBuilder::defaultBuilder()
+        );
     }
 }

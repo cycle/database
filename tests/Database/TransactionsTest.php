@@ -15,25 +15,15 @@ use Cycle\Database\Schema\AbstractTable;
 
 abstract class TransactionsTest extends BaseTest
 {
-    /**
-     * @var Database
-     */
-    protected $database;
-
     public function setUp(): void
     {
-        $this->database = $this->db();
+        parent::setUp();
 
         $schema = $this->database->table('table')->getSchema();
         $schema->primary('id');
         $schema->text('name');
         $schema->integer('value');
         $schema->save();
-    }
-
-    public function tearDown(): void
-    {
-        $this->dropDatabase($this->db());
     }
 
     public function schema(string $table): AbstractTable
