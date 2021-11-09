@@ -45,7 +45,6 @@ require_once "vendor/autoload.php";
 use Cycle\Database\Config\DatabaseConfig;
 use Cycle\Database\Config\SQLiteDriverConfig;
 use Cycle\Database\DatabaseManager;
-use Cycle\Database\Driver\SQLite\SQLiteDriver;
 
 $dbm = new DatabaseManager(new DatabaseConfig([
     'databases'   => [
