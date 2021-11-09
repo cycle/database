@@ -8,15 +8,15 @@ Secure, multiple SQL dialects (MySQL, PostgreSQL, SQLite, SQLServer), schema int
 
 ## Documentation
 
-* [Installation and Configuration](https://spiral.dev/docs/database-configuration)
-* [Access Database](https://spiral.dev/docs/database-access)
-* [Database Isolation](https://spiral.dev/docs/database-isolation)
-* [Query Builders](https://spiral.dev/docs/database-query-builders)
-* [Transactions](https://spiral.dev/docs/database-transactions)
-* [Schema Introspection](https://spiral.dev/docs/database-introspection)
-* [Schema Declaration](https://spiral.dev/docs/database-declaration)
-* [Migrations](https://spiral.dev/docs/database-migrations)
-* [Errata](https://spiral.dev/docs/database-errata)
+* [Installation and Configuration](https://cycle.dev/docs/database-configuration)
+* [Access Database](https://cycle.dev/docs/database-access)
+* [Database Isolation](https://cycle.dev/docs/database-isolation)
+* [Query Builders](https://cycle.dev/docs/database-query-builders)
+* [Transactions](https://cycle.dev/docs/database-transactions)
+* [Schema Introspection](https://cycle.dev/docs/database-introspection)
+* [Schema Declaration](https://cycle.dev/docs/database-declaration)
+* [Migrations](https://cycle.dev/docs/database-migrations)
+* [Errata](https://cycle.dev/docs/database-errata)
 
 ## Requirements
 
