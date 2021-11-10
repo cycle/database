@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests;
 
+use const PHP_VERSION;
+use const PHP_VERSION_ID;
+
 /**
  * @group driver
  * @group driver-mysql
@@ -17,6 +20,10 @@ class MysqlTransactionsTest extends BaseTest
      */
     public function testRollbackDDLChanges(): void
     {
+        if (PHP_VERSION_ID < 80000) {
+            $this->markTestSkipped('Expecting PHP version >=8.0. Skipped due to ' . PHP_VERSION);
+        }
+
         // Creating a new table with primary field
         $table = $this->database->table('table');
         $schema = $table->getSchema();
