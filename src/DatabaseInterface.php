@@ -17,6 +17,7 @@ use Cycle\Database\Query\DeleteQuery;
 use Cycle\Database\Query\InsertQuery;
 use Cycle\Database\Query\SelectQuery;
 use Cycle\Database\Query\UpdateQuery;
+use Spiral\Database\DatabaseInterface as SpiralDatabaseInterface;
 
 /**
  * DatabaseInterface is high level abstraction used to represent single database. You must always
@@ -176,3 +177,4 @@ interface DatabaseInterface
      */
     public function rollback(): bool;
 }
+\class_alias(DatabaseInterface::class, SpiralDatabaseInterface::class, false);

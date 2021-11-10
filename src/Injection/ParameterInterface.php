@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Injection;
 
+use Spiral\Database\Injection\ParameterInterface as SpiralParameterInterface;
+
 /**
  * Parameter interface is very similar to sql fragments, however it may not only mock sql
  * expressions but also data-set of parameters to be injected into this expression.
@@ -50,3 +52,4 @@ interface ParameterInterface
      */
     public function isNull(): bool;
 }
+\class_alias(ParameterInterface::class, SpiralParameterInterface::class, false);

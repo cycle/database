@@ -29,6 +29,7 @@ use Spiral\Database\Config\DatabasePartial as SpiralDatabasePartial;
 use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
 use Spiral\Database\Database as SpiralDatabase;
 use Spiral\Database\DatabaseProviderInterface as SpiralDatabaseProviderInterface;
+use Spiral\Database\DatabaseManager as SpiralDatabaseManager;
 
 interface_exists(SpiralDriverInterface::class);
 interface_exists(SpiralDatabaseProviderInterface::class);
@@ -314,3 +315,4 @@ final class DatabaseManager implements
         );
     }
 }
+\class_alias(DatabaseManager::class, SpiralDatabaseManager::class, false);

@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Driver\SQLServer\Schema;
 
 use Cycle\Database\Schema\AbstractIndex;
+use Spiral\Database\Driver\SQLServer\Schema\SQLServerIndex as SpiralSQLServerIndex;
 
 class SQLServerIndex extends AbstractIndex
 {
@@ -36,3 +37,4 @@ class SQLServerIndex extends AbstractIndex
         return $index;
     }
 }
+\class_alias(SQLServerIndex::class, SpiralSQLServerIndex::class, false);

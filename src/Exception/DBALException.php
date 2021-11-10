@@ -11,9 +11,12 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Exception;
 
+use Spiral\Database\Exception\DBALException as SpiralDBALException;
+
 /**
  * Generic DBAL exception.
  */
 class DBALException extends \RuntimeException
 {
 }
+\class_alias(DBALException::class, SpiralDBALException::class, false);

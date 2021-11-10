@@ -12,7 +12,9 @@ declare(strict_types=1);
 namespace Cycle\Database\Driver\MySQL\Exception;
 
 use Cycle\Database\Exception\DriverException;
+use Spiral\Database\Driver\MySQL\Exception\MySQLException as SpiralMySQLException;
 
 class MySQLException extends DriverException
 {
 }
+\class_alias(MySQLException::class, SpiralMySQLException::class, false);

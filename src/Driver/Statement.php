@@ -14,6 +14,7 @@ namespace Cycle\Database\Driver;
 use Generator;
 use PDOStatement;
 use Cycle\Database\StatementInterface;
+use Spiral\Database\Driver\Statement as SpiralStatement;
 
 /**
  * Adds few quick methods to PDOStatement and fully compatible with it. By default uses
@@ -116,3 +117,4 @@ final class Statement implements StatementInterface
         $this->pdoStatement->closeCursor();
     }
 }
+\class_alias(Statement::class, SpiralStatement::class, false);

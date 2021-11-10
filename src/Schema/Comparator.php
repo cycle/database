@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Schema;
 
 use Spiral\Database\Schema\State as SpiralState;
+use Spiral\Database\Schema\Comparator as SpiralComparator;
 
 class_exists(SpiralState::class);
 
@@ -246,3 +247,4 @@ final class Comparator implements ComparatorInterface
         return $difference;
     }
 }
+\class_alias(Comparator::class, SpiralComparator::class, false);

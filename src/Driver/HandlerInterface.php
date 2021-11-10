@@ -21,6 +21,7 @@ use Spiral\Database\Schema\AbstractIndex as SpiralAbstractIndex;
 use Spiral\Database\Schema\AbstractForeignKey as SpiralAbstractForeignKey;
 use Spiral\Database\Schema\AbstractTable as SpiralAbstractTable;
 use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+use Spiral\Database\Driver\HandlerInterface as SpiralHandlerInterface;
 
 interface_exists(SpiralDriverInterface::class);
 class_exists(SpiralAbstractColumn::class);
@@ -251,3 +252,4 @@ interface HandlerInterface
      */
     public function dropConstrain(SpiralAbstractTable $table, string $constraint): void;
 }
+\class_alias(HandlerInterface::class, SpiralHandlerInterface::class, false);

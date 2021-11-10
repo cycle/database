@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Injection;
 
+use Spiral\Database\Injection\FragmentInterface as SpiralFragmentInterface;
+
 /**
  * Declares ability to be converted into sql statement.
  */
@@ -30,3 +32,4 @@ interface FragmentInterface
      */
     public function getTokens(): array;
 }
+\class_alias(FragmentInterface::class, SpiralFragmentInterface::class, false);

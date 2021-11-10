@@ -18,6 +18,7 @@ use Cycle\Database\Query\SelectQuery;
 use Cycle\Database\Query\UpdateQuery;
 use Cycle\Database\Schema\AbstractTable;
 use Spiral\Database\DatabaseInterface as SpiralDatabaseInterface;
+use Spiral\Database\Table as SpiralTable;
 
 interface_exists(SpiralDatabaseInterface::class);
 
@@ -335,3 +336,4 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
         return $this->getSchema()->getDependencies();
     }
 }
+\class_alias(Table::class, SpiralTable::class, false);

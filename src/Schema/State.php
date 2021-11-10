@@ -14,6 +14,7 @@ namespace Cycle\Database\Schema;
 use Spiral\Database\Schema\AbstractColumn as SpiralAbstractColumn;
 use Spiral\Database\Schema\AbstractIndex as SpiralAbstractIndex;
 use Spiral\Database\Schema\AbstractForeignKey as SpiralAbstractForeignKey;
+use Spiral\Database\Schema\State as SpiralState;
 
 class_exists(SpiralAbstractColumn::class);
 class_exists(SpiralAbstractIndex::class);
@@ -352,3 +353,4 @@ final class State
         return $this;
     }
 }
+\class_alias(State::class, SpiralState::class, false);

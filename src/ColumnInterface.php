@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database;
 
+use Spiral\Database\ColumnInterface as SpiralColumnInterface;
+
 /**
  * Represents table schema column abstraction.
  */
@@ -95,3 +97,4 @@ interface ColumnInterface
      */
     public function getDefaultValue();
 }
+\class_alias(ColumnInterface::class, SpiralColumnInterface::class, false);

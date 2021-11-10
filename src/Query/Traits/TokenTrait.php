@@ -15,6 +15,7 @@ use Closure;
 use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Exception\BuilderException;
 use Cycle\Database\Injection\FragmentInterface;
+use Spiral\Database\Query\Traits\TokenTrait as SpiralTokenTrait;
 
 trait TokenTrait
 {
@@ -253,3 +254,4 @@ trait TokenTrait
         return $tokens;
     }
 }
+\class_alias(TokenTrait::class, SpiralTokenTrait::class, false);

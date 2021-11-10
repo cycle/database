@@ -14,6 +14,7 @@ namespace Cycle\Database\Query;
 use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Query\Traits\TokenTrait;
 use Cycle\Database\Query\Traits\WhereTrait;
+use Spiral\Database\Query\DeleteQuery as SpiralDeleteQuery;
 
 /**
  * Update statement builder.
@@ -84,3 +85,4 @@ class DeleteQuery extends ActiveQuery
         ];
     }
 }
+\class_alias(DeleteQuery::class, SpiralDeleteQuery::class, false);

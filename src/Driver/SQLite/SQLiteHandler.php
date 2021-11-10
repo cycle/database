@@ -19,6 +19,7 @@ use Cycle\Database\Schema\AbstractTable;
 use Spiral\Database\Schema\AbstractColumn as SpiralAbstractColumn;
 use Spiral\Database\Schema\AbstractForeignKey as SpiralAbstractForeignKey;
 use Spiral\Database\Schema\AbstractTable as SpiralAbstractTable;
+use Spiral\Database\Driver\SQLite\SQLiteHandler as SpiralSQLiteHandler;
 
 class_exists(SpiralAbstractColumn::class);
 class_exists(SpiralAbstractForeignKey::class);
@@ -268,3 +269,4 @@ class SQLiteHandler extends Handler
         return $mapping;
     }
 }
+\class_alias(SQLiteHandler::class, SpiralSQLiteHandler::class, false);

@@ -19,6 +19,7 @@ use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Injection\ParameterInterface;
 use Cycle\Database\Query\QueryBuilder;
+use Spiral\Database\Driver\SQLServer\SQLServerDriver as SpiralSQLServerDriver;
 
 class SQLServerDriver extends Driver
 {
@@ -178,3 +179,4 @@ class SQLServerDriver extends Driver
         return new StatementException($exception, $query);
     }
 }
+\class_alias(SQLServerDriver::class, SpiralSQLServerDriver::class, false);

@@ -18,6 +18,7 @@ use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\QueryParameters;
 use Spiral\Database\Driver\Quoter as SpiralQuoter;
 use Spiral\Database\Query\QueryParameters as SpiralQueryParameters;
+use Spiral\Database\Driver\SQLServer\SQLServerCompiler as SpiralSQLServerCompiler;
 
 class_exists(SpiralQuoter::class);
 class_exists(SpiralQueryParameters::class);
@@ -153,3 +154,4 @@ class SQLServerCompiler extends Compiler
         );
     }
 }
+\class_alias(SQLServerCompiler::class, SpiralSQLServerCompiler::class, false);

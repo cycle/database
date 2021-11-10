@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Exception;
 
+use Spiral\Database\Exception\ReadonlyConnectionException as SpiralReadonlyConnectionException;
+
 class ReadonlyConnectionException extends DBALException
 {
     private const WRITE_STMT_MESSAGE = 'Can not execute non-query statement on readonly connection.';
@@ -25,3 +27,4 @@ class ReadonlyConnectionException extends DBALException
         return new self(self::WRITE_STMT_MESSAGE, $code, $prev);
     }
 }
+\class_alias(ReadonlyConnectionException::class, SpiralReadonlyConnectionException::class, false);

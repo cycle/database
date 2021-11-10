@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Driver;
 
 use Cycle\Database\Exception\CompilerException;
+use Spiral\Database\Driver\Quoter as SpiralQuoter;
 
 /**
  * Responsible for table names quoting and name aliasing.
@@ -256,3 +257,4 @@ final class Quoter
         return false;
     }
 }
+\class_alias(Quoter::class, SpiralQuoter::class, false);

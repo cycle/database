@@ -11,6 +11,9 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Exception;
 
+use Spiral\Database\Exception\ConfigException as SpiralConfigException;
+
 class ConfigException extends DBALException
 {
 }
+\class_alias(ConfigException::class, SpiralConfigException::class, false);

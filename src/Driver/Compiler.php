@@ -19,6 +19,7 @@ use Cycle\Database\Query\QueryParameters;
 use Spiral\Database\Query\QueryParameters as SpiralQueryParameters;
 use Spiral\Database\Injection\FragmentInterface as SpiralFragmentInterface;
 use Spiral\Database\Driver\Quoter as SpiralQuoter;
+use Spiral\Database\Driver\Compiler as SpiralCompiler;
 
 interface_exists(SpiralFragmentInterface::class);
 class_exists(SpiralQueryParameters::class);
@@ -602,3 +603,4 @@ abstract class Compiler implements CompilerInterface
         return $prefix . $expression . $postfix;
     }
 }
+\class_alias(Compiler::class, SpiralCompiler::class, false);

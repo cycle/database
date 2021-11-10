@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Exception\StatementException;
 
 use Cycle\Database\Exception\StatementException;
+use Spiral\Database\Exception\StatementException\ConnectionException as SpiralConnectionException;
 
 /**
  * Connection issue while the query.
@@ -19,3 +20,4 @@ use Cycle\Database\Exception\StatementException;
 class ConnectionException extends StatementException
 {
 }
+\class_alias(ConnectionException::class, SpiralConnectionException::class, false);

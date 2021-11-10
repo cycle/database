@@ -13,6 +13,7 @@ namespace Cycle\Database\Driver\SQLite\Schema;
 
 use Cycle\Database\Schema\AbstractIndex;
 use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+use Spiral\Database\Driver\SQLite\Schema\SQLiteIndex as SpiralSQLiteIndex;
 
 interface_exists(SpiralDriverInterface::class);
 
@@ -86,3 +87,4 @@ class SQLiteIndex extends AbstractIndex
         return implode(' ', $statement);
     }
 }
+\class_alias(SQLiteIndex::class, SpiralSQLiteIndex::class, false);

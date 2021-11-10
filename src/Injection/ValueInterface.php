@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Injection;
 
+use Spiral\Database\Injection\ValueInterface as SpiralValueInterface;
+
 interface ValueInterface
 {
     /**
@@ -27,3 +29,4 @@ interface ValueInterface
      */
     public function rawType(): int;
 }
+\class_alias(ValueInterface::class, SpiralValueInterface::class, false);

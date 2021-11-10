@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database;
 
+use Spiral\Database\StatementInterface as SpiralStatementInterface;
+
 /**
  * Must implement Traversable as IteratorAggregate or Iterator. You can access underlying PDOStatement
  * using getPDOStatement() method of `Cycle\Database\Driver\Statement` object.
@@ -75,3 +77,4 @@ interface StatementInterface extends \IteratorAggregate
      */
     public function close();
 }
+\class_alias(StatementInterface::class, SpiralStatementInterface::class, false);

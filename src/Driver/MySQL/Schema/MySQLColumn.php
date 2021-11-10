@@ -16,6 +16,7 @@ use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Schema\AbstractColumn;
 use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+use Spiral\Database\Driver\MySQL\Schema\MySQLColumn as SpiralMySQLColumn;
 
 interface_exists(SpiralDriverInterface::class);
 
@@ -268,3 +269,4 @@ class MySQLColumn extends AbstractColumn
         return parent::formatDatetime($type, $value);
     }
 }
+\class_alias(MySQLColumn::class, SpiralMySQLColumn::class, false);

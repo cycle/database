@@ -21,6 +21,7 @@ use Cycle\Database\Schema\AbstractTable;
 use Spiral\Database\Schema\AbstractColumn as SpiralAbstractColumn;
 use Spiral\Database\Schema\AbstractIndex as SpiralAbstractIndex;
 use Spiral\Database\Schema\AbstractTable as SpiralAbstractTable;
+use Spiral\Database\Driver\SQLServer\SQLServerHandler as SpiralSQLServerHandler;
 
 class_exists(SpiralAbstractColumn::class);
 class_exists(SpiralAbstractIndex::class);
@@ -182,3 +183,4 @@ class SQLServerHandler extends Handler
         );
     }
 }
+\class_alias(SQLServerHandler::class, SpiralSQLServerHandler::class, false);

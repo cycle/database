@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database;
 
+use Spiral\Database\ForeignKeyInterface as SpiralForeignKeyInterface;
+
 /**
  * Represents single foreign key and it's options.
  */
@@ -61,3 +63,4 @@ interface ForeignKeyInterface
      */
     public function getUpdateRule(): string;
 }
+\class_alias(ForeignKeyInterface::class, SpiralForeignKeyInterface::class, false);

@@ -821,3 +821,4 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         return $value;
     }
 }
+\class_alias(AbstractColumn::class, SpiralAbstractColumn::class, false);

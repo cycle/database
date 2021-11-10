@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Driver\MySQL\Schema;
 
 use Cycle\Database\Schema\AbstractIndex;
+use Spiral\Database\Driver\MySQL\Schema\MySQLIndex as SpiralMySQLIndex;
 
 class MySQLIndex extends AbstractIndex
 {
@@ -36,3 +37,4 @@ class MySQLIndex extends AbstractIndex
         return $index;
     }
 }
+\class_alias(MySQLIndex::class, SpiralMySQLIndex::class, false);

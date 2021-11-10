@@ -18,6 +18,7 @@ use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Injection\ParameterInterface;
 use Spiral\Database\Query\QueryParameters as SpiralQueryParameters;
 use Spiral\Database\Driver\Quoter as SpiralQuoter;
+use Spiral\Database\Driver\SQLite\SQLiteCompiler as SpiralSQLiteCompiler;
 
 class_exists(SpiralQueryParameters::class);
 class_exists(SpiralQuoter::class);
@@ -125,3 +126,4 @@ class SQLiteCompiler extends Compiler implements CachingCompilerInterface
         return implode("\n", $statement);
     }
 }
+\class_alias(SQLiteCompiler::class, SpiralSQLiteCompiler::class, false);

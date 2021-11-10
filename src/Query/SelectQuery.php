@@ -23,6 +23,7 @@ use Cycle\Database\StatementInterface;
 use Spiral\Pagination\PaginableInterface;
 use Throwable;
 use Spiral\Database\Injection\FragmentInterface as SpiralFragmentInterface;
+use Spiral\Database\Query\SelectQuery as SpiralSelectQuery;
 
 interface_exists(SpiralFragmentInterface::class);
 
@@ -464,3 +465,4 @@ class SelectQuery extends ActiveQuery implements
         }
     }
 }
+\class_alias(SelectQuery::class, SpiralSelectQuery::class, false);

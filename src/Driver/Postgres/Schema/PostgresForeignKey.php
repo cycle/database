@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Driver\Postgres\Schema;
 
 use Cycle\Database\Schema\AbstractForeignKey;
+use Spiral\Database\Driver\Postgres\Schema\PostgresForeignKey as SpiralPostgresForeignKey;
 
 class PostgresForeignKey extends AbstractForeignKey
 {
@@ -51,3 +52,4 @@ class PostgresForeignKey extends AbstractForeignKey
         return $result;
     }
 }
+\class_alias(PostgresForeignKey::class, SpiralPostgresForeignKey::class, false);

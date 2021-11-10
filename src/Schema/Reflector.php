@@ -16,6 +16,7 @@ use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\HandlerInterface;
 use Throwable;
 use Spiral\Database\Schema\AbstractTable as SpiralAbstractTable;
+use Spiral\Database\Schema\Reflector as SpiralReflector;
 
 /**
  * Saves multiple linked tables at once but treating their cross dependency.
@@ -239,3 +240,4 @@ final class Reflector
         $this->states[$key] = self::STATE_PASSED;
     }
 }
+\class_alias(Reflector::class, SpiralReflector::class, false);

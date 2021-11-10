@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Cycle\Database;
 
 use Cycle\Database\Exception\DBALException;
+use Spiral\Database\DatabaseProviderInterface as SpiralDatabaseProviderInterface;
 
 interface DatabaseProviderInterface
 {
@@ -25,3 +26,4 @@ interface DatabaseProviderInterface
      */
     public function database(string $database = null): DatabaseInterface;
 }
+\class_alias(DatabaseProviderInterface::class, SpiralDatabaseProviderInterface::class, false);

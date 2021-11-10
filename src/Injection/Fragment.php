@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Injection;
 
 use Cycle\Database\Driver\CompilerInterface;
+use Spiral\Database\Injection\Fragment as SpiralFragment;
 
 /**
  * Default implementation of SQLFragmentInterface, provides ability to inject custom SQL code into
@@ -82,3 +83,4 @@ class Fragment implements FragmentInterface
         ];
     }
 }
+\class_alias(Fragment::class, SpiralFragment::class, false);

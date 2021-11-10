@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database;
 
+use Spiral\Database\IndexInterface as SpiralIndexInterface;
+
 /**
  * Represents single table index associated with set of columns.
  */
@@ -44,3 +46,4 @@ interface IndexInterface
      */
     public function getSort(): array;
 }
+\class_alias(IndexInterface::class, SpiralIndexInterface::class, false);

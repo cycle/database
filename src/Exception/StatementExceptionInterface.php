@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Exception;
 
+use Spiral\Database\Exception\StatementExceptionInterface as SpiralStatementExceptionInterface;
+
 interface StatementExceptionInterface
 {
     /**
@@ -20,3 +22,4 @@ interface StatementExceptionInterface
      */
     public function getQuery(): string;
 }
+\class_alias(StatementExceptionInterface::class, SpiralStatementExceptionInterface::class, false);

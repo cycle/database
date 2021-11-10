@@ -11,9 +11,12 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Exception;
 
+use Spiral\Database\Exception\SchemaException as SpiralSchemaException;
+
 /**
  * Error while building table schema.
  */
 class SchemaException extends DBALException
 {
 }
+\class_alias(SchemaException::class, SpiralSchemaException::class, false);

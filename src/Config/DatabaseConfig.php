@@ -15,6 +15,7 @@ use Spiral\Core\Container\Autowire;
 use Spiral\Core\InjectableConfig;
 use Spiral\Core\Traits\Config\AliasTrait;
 use Cycle\Database\Exception\ConfigException;
+use Spiral\Database\Config\DatabaseConfig as SpiralDatabaseConfig;
 
 final class DatabaseConfig extends InjectableConfig
 {
@@ -137,3 +138,4 @@ final class DatabaseConfig extends InjectableConfig
         return new Autowire($config['driver'] ?? $config['class'], ['options' => $options]);
     }
 }
+\class_alias(DatabaseConfig::class, SpiralDatabaseConfig::class, false);

@@ -14,6 +14,7 @@ namespace Cycle\Database\Query;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Injection\FragmentInterface;
 use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+use Spiral\Database\Query\QueryInterface as SpiralQueryInterface;
 
 interface_exists(SpiralDriverInterface::class);
 
@@ -40,3 +41,4 @@ interface QueryInterface extends FragmentInterface
      */
     public function getPrefix(): ?string;
 }
+\class_alias(QueryInterface::class, SpiralQueryInterface::class, false);

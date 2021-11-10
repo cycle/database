@@ -13,6 +13,7 @@ namespace Cycle\Database\Query;
 
 use Cycle\Database\Driver\DriverInterface;
 use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+use Spiral\Database\Query\BuilderInterface as SpiralBuilderInterface;
 
 interface_exists(SpiralDriverInterface::class);
 
@@ -81,3 +82,4 @@ interface BuilderInterface
         array $values = []
     ): UpdateQuery;
 }
+\class_alias(BuilderInterface::class, SpiralBuilderInterface::class, false);

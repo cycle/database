@@ -19,6 +19,7 @@ use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\TableInterface;
 use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
 use Spiral\Database\Schema\State as SpiralState;
+use Spiral\Database\Schema\AbstractTable as SpiralAbstractTable;
 
 interface_exists(SpiralDriverInterface::class);
 class_exists(SpiralState::class);
@@ -952,3 +953,4 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         return $name;
     }
 }
+\class_alias(AbstractTable::class, SpiralAbstractTable::class, false);

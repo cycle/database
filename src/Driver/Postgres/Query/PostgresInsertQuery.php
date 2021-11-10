@@ -20,6 +20,7 @@ use Cycle\Database\Query\QueryInterface;
 use Cycle\Database\Query\QueryParameters;
 use Throwable;
 use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+use Spiral\Database\Driver\Postgres\Query\PostgresInsertQuery as SpiralPostgresInsertQuery;
 
 interface_exists(SpiralDriverInterface::class);
 
@@ -118,3 +119,4 @@ class PostgresInsertQuery extends InsertQuery
         return $primaryKey;
     }
 }
+\class_alias(PostgresInsertQuery::class, SpiralPostgresInsertQuery::class, false);

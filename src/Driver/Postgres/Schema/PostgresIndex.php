@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Driver\Postgres\Schema;
 
 use Cycle\Database\Schema\AbstractIndex;
+use Spiral\Database\Driver\Postgres\Schema\PostgresIndex as SpiralPostgresIndex;
 
 class PostgresIndex extends AbstractIndex
 {
@@ -43,3 +44,4 @@ class PostgresIndex extends AbstractIndex
         return $index;
     }
 }
+\class_alias(PostgresIndex::class, SpiralPostgresIndex::class, false);

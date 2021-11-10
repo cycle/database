@@ -13,6 +13,7 @@ namespace Cycle\Database\Query;
 
 use Cycle\Database\Injection\ParameterInterface;
 use Spiral\Database\Injection\ParameterInterface as SpiralParameterInterface;
+use Spiral\Database\Query\QueryParameters as SpiralQueryParameters;
 
 interface_exists(SpiralParameterInterface::class);
 
@@ -45,3 +46,4 @@ final class QueryParameters
         return $this->flatten;
     }
 }
+\class_alias(QueryParameters::class, SpiralQueryParameters::class, false);

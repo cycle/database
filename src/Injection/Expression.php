@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Injection;
 
 use Cycle\Database\Driver\CompilerInterface;
+use Spiral\Database\Injection\Expression as SpiralExpression;
 
 /**
  * Expression provides ability to mock part of SQL code responsible for operations involving
@@ -86,3 +87,4 @@ class Expression implements FragmentInterface
         ];
     }
 }
+\class_alias(Expression::class, SpiralExpression::class, false);

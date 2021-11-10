@@ -11,6 +11,9 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Exception;
 
+use Spiral\Database\Exception\InterpolatorException as SpiralInterpolatorException;
+
 class InterpolatorException extends DBALException
 {
 }
+\class_alias(InterpolatorException::class, SpiralInterpolatorException::class, false);

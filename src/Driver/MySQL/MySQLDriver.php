@@ -15,6 +15,7 @@ use PDO;
 use Cycle\Database\Driver\Driver;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Query\QueryBuilder;
+use Spiral\Database\Driver\MySQL\MySQLDriver as SpiralMySQLDriver;
 
 /**
  * Talks to mysql databases.
@@ -76,3 +77,4 @@ class MySQLDriver extends Driver
         return new StatementException($exception, $query);
     }
 }
+\class_alias(MySQLDriver::class, SpiralMySQLDriver::class, false);

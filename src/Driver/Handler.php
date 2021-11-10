@@ -27,6 +27,7 @@ use Spiral\Database\Schema\AbstractTable as SpiralAbstractTable;
 use Spiral\Database\Schema\ComparatorInterface as SpiralComparatorInterface;
 use Spiral\Database\Schema\AbstractIndex as SpiralAbstractIndex;
 use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+use Spiral\Database\Driver\Handler as SpiralHandler;
 
 interface_exists(SpiralComparatorInterface::class);
 interface_exists(SpiralDriverInterface::class);
@@ -487,3 +488,4 @@ abstract class Handler implements HandlerInterface
         }
     }
 }
+\class_alias(Handler::class, SpiralHandler::class, false);

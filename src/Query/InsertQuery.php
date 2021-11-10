@@ -13,6 +13,7 @@ namespace Cycle\Database\Query;
 
 use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Injection\Parameter;
+use Spiral\Database\Query\InsertQuery as SpiralInsertQuery;
 
 /**
  * Insert statement query builder, support singular and batch inserts.
@@ -164,3 +165,4 @@ class InsertQuery extends ActiveQuery
         ];
     }
 }
+\class_alias(InsertQuery::class, SpiralInsertQuery::class, false);

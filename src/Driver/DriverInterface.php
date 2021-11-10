@@ -18,6 +18,7 @@ use Cycle\Database\Exception\ReadonlyConnectionException;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Query\BuilderInterface;
 use Cycle\Database\StatementInterface;
+use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
 
 /**
  * Wraps PDO connection and provides common abstractions over database operations.
@@ -219,3 +220,4 @@ interface DriverInterface
      */
     public function rollbackTransaction(): bool;
 }
+\class_alias(DriverInterface::class, SpiralDriverInterface::class, false);

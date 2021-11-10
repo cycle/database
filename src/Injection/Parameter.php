@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Injection;
 
 use PDO;
+use Spiral\Database\Injection\Parameter as SpiralParameter;
 
 /**
  * Default implementation of ParameterInterface, provides ability to mock value or array of values
@@ -127,3 +128,4 @@ class Parameter implements ParameterInterface
         }
     }
 }
+\class_alias(Parameter::class, SpiralParameter::class, false);

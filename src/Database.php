@@ -13,6 +13,7 @@ namespace Cycle\Database;
 
 use Spiral\Core\Container\InjectableInterface;
 use Cycle\Database\Driver\DriverInterface;
+use Spiral\Database\Database as SpiralDatabase;
 use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
 use Cycle\Database\Query\DeleteQuery;
 use Cycle\Database\Query\InsertQuery;
@@ -280,3 +281,4 @@ final class Database implements DatabaseInterface, InjectableInterface
         return $this->getDriver(self::WRITE)->rollbackTransaction();
     }
 }
+\class_alias(Database::class, SpiralDatabase::class, false);
