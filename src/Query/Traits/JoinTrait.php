@@ -18,6 +18,7 @@ use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Injection\ParameterInterface;
 use Cycle\Database\Query\ActiveQuery;
+use Spiral\Database\Query\Traits\JoinTrait as SpiralJoinTrait;
 
 /**
  * Provides ability to generate QueryCompiler JOIN tokens including ON conditions and table/column
@@ -387,3 +388,4 @@ trait JoinTrait
         };
     }
 }
+\class_alias(JoinTrait::class, SpiralJoinTrait::class, false);

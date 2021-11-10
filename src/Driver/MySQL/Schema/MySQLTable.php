@@ -18,6 +18,7 @@ use Cycle\Database\Schema\AbstractIndex;
 use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\Schema\State;
 use Spiral\Database\Schema\State as SpiralState;
+use Spiral\Database\Driver\MySQL\Schema\MySQLTable as SpiralMySQLTable;
 
 class_exists(SpiralState::class);
 
@@ -227,3 +228,4 @@ class MySQLTable extends AbstractTable
         return new MySQLForeignKey($this->getName(), $this->getPrefix(), $name);
     }
 }
+\class_alias(MySQLTable::class, SpiralMySQLTable::class, false);

@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Schema;
 
+use Spiral\Database\Schema\ComparatorInterface as SpiralComparatorInterface;
+
 interface ComparatorInterface
 {
     /**
@@ -79,3 +81,4 @@ interface ComparatorInterface
      */
     public function alteredForeignKeys(): array;
 }
+\class_alias(ComparatorInterface::class, SpiralComparatorInterface::class, false);

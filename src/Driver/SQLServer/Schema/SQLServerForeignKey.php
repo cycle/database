@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Driver\SQLServer\Schema;
 
 use Cycle\Database\Schema\AbstractForeignKey;
+use Spiral\Database\Driver\SQLServer\Schema\SQlServerForeignKey as SpiralSQLServerForeignKey;
 
 class SQLServerForeignKey extends AbstractForeignKey
 {
@@ -35,3 +36,4 @@ class SQLServerForeignKey extends AbstractForeignKey
         return $foreign;
     }
 }
+\class_alias(SQLServerForeignKey::class, SpiralSQLServerForeignKey::class, false);

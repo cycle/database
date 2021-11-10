@@ -13,6 +13,7 @@ namespace Cycle\Database\Schema\Traits;
 
 use Cycle\Database\Driver\DriverInterface;
 use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+use Spiral\Database\Schema\Traits\ElementTrait as SpiralElementTrait;
 
 interface_exists(SpiralDriverInterface::class);
 
@@ -65,3 +66,4 @@ trait ElementTrait
      */
     abstract public function sqlStatement(SpiralDriverInterface $driver): string;
 }
+\class_alias(ElementTrait::class, SpiralElementTrait::class, false);

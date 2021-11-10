@@ -13,6 +13,7 @@ namespace Cycle\Database\Driver\SQLite\Schema;
 
 use Cycle\Database\Schema\AbstractColumn;
 use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+use Spiral\Database\Driver\SQLite\Schema\SQLiteColumn as SpiralSQLiteColumn;
 
 interface_exists(SpiralDriverInterface::class);
 
@@ -254,3 +255,4 @@ class SQLiteColumn extends AbstractColumn
         return '';
     }
 }
+\class_alias(SQLiteColumn::class, SpiralSQLiteColumn::class, false);

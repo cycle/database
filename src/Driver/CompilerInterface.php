@@ -15,6 +15,7 @@ use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Query\QueryParameters;
 use Spiral\Database\Injection\FragmentInterface as SpiralFragmentInterface;
 use Spiral\Database\Query\QueryParameters as SpiralQueryParameters;
+use Spiral\Database\Driver\CompilerInterface as SpiralCompilerInterface;
 
 interface_exists(SpiralFragmentInterface::class);
 class_exists(SpiralQueryParameters::class);
@@ -52,3 +53,4 @@ interface CompilerInterface
         SpiralFragmentInterface $fragment
     ): string;
 }
+\class_alias(CompilerInterface::class, SpiralCompilerInterface::class, false);

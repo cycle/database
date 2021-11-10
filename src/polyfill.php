@@ -9,14 +9,6 @@
 
 declare(strict_types=1);
 
-// Class name (letter case) bugfix.
-// Replaces: SQlServerForeignKey to SQLServerForeignKey
-class_alias(
-    \Cycle\Database\Driver\SQLServer\Schema\SQLServerForeignKey::class,
-    \Spiral\Database\Driver\SQLServer\Schema\SQlServerForeignKey::class
-);
-
-
 spl_autoload_register(static function (string $class) {
     if (strpos($class, 'Spiral\\Database\\') === 0) {
         $original = 'Cycle\\Database\\' . substr($class, 16);
@@ -27,6 +19,8 @@ spl_autoload_register(static function (string $class) {
             E_USER_DEPRECATED
         );
 
-        class_alias($original, $class);
+        if (class_exists($original) && (!class_exists($class) && !interface_exists($class))) {
+            class_alias($original, $class);
+        }
     }
 });

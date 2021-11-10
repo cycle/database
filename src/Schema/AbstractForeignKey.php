@@ -229,3 +229,4 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
         return implode(', ', array_map([$driver, 'identifier'], $columns));
     }
 }
+\class_alias(AbstractForeignKey::class, SpiralAbstractForeignKey::class, false);

@@ -231,3 +231,4 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
         ];
     }
 }
+\class_alias(AbstractIndex::class, SpiralAbstractIndex::class, false);

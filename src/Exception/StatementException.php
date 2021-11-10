@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Exception;
 
+use Spiral\Database\Exception\StatementException as SpiralStatementException;
+
 /**
  * Query specific exception (bad parameters, database failure).
  */
@@ -38,3 +40,4 @@ class StatementException extends DatabaseException implements StatementException
         return $this->query;
     }
 }
+\class_alias(StatementException::class, SpiralStatementException::class, false);

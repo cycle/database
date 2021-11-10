@@ -14,6 +14,7 @@ namespace Cycle\Database\Query;
 use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Query\Traits\TokenTrait;
 use Cycle\Database\Query\Traits\WhereTrait;
+use Spiral\Database\Query\UpdateQuery as SpiralUpdateQuery;
 
 /**
  * Update statement builder.
@@ -123,3 +124,4 @@ class UpdateQuery extends ActiveQuery
         ];
     }
 }
+\class_alias(UpdateQuery::class, SpiralUpdateQuery::class, false);

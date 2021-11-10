@@ -16,6 +16,7 @@ use Cycle\Database\Exception\BuilderException;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Injection\ParameterInterface;
+use Spiral\Database\Query\Traits\WhereTrait as SpiralWhereTrait;
 
 trait WhereTrait
 {
@@ -122,3 +123,4 @@ trait WhereTrait
         };
     }
 }
+\class_alias(WhereTrait::class, SpiralWhereTrait::class, false);

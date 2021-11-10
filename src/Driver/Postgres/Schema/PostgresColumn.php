@@ -16,6 +16,7 @@ use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Schema\AbstractColumn;
 use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
 use Spiral\Database\Schema\AbstractColumn as SpiralAbstractColumn;
+use Spiral\Database\Driver\Postgres\Schema\PostgresColumn as SpiralPostgresColumn;
 
 interface_exists(SpiralDriverInterface::class);
 class_exists(SpiralAbstractColumn::class);
@@ -506,3 +507,4 @@ class PostgresColumn extends AbstractColumn
         }
     }
 }
+\class_alias(PostgresColumn::class, SpiralPostgresColumn::class, false);

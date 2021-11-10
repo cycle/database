@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Schema;
 
+use Spiral\Database\Schema\ElementInterface as SpiralElementInterface;
+
 interface ElementInterface
 {
     /**
@@ -20,3 +22,4 @@ interface ElementInterface
      */
     public function getName(): string;
 }
+\class_alias(ElementInterface::class, SpiralElementInterface::class, false);

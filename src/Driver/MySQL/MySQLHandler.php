@@ -22,6 +22,7 @@ use Spiral\Database\Schema\AbstractColumn as SpiralAbstractColumn;
 use Spiral\Database\Schema\AbstractIndex as SpiralAbstractIndex;
 use Spiral\Database\Schema\AbstractForeignKey as SpiralAbstractForeignKey;
 use Spiral\Database\Schema\AbstractTable as SpiralAbstractTable;
+use Spiral\Database\Driver\MySQL\MySQLHandler as SpiralMySQLHandler;
 
 class_exists(SpiralAbstractColumn::class);
 class_exists(SpiralAbstractIndex::class);
@@ -167,3 +168,4 @@ class MySQLHandler extends Handler
         }
     }
 }
+\class_alias(MySQLHandler::class, SpiralMySQLHandler::class, false);

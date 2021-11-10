@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database;
 
+use Spiral\Database\TableInterface as SpiralTableInterface;
+
 /**
  * Represent table schema with it's all columns, indexes and foreign keys.
  */
@@ -91,3 +93,4 @@ interface TableInterface
      */
     public function getDependencies(): array;
 }
+\class_alias(TableInterface::class, SpiralTableInterface::class, false);

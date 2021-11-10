@@ -18,6 +18,7 @@ use Spiral\Database\Schema\AbstractForeignKey as SpiralAbstractForeignKey;
 use Spiral\Database\Schema\AbstractColumn as SpiralAbstractColumn;
 use Spiral\Database\Schema\AbstractIndex as SpiralAbstractIndex;
 use Spiral\Database\Schema\AbstractTable as SpiralAbstractTable;
+use Spiral\Database\Driver\ReadonlyHandler as SpiralReadonlyHandler;
 
 interface_exists(SpiralDriverInterface::class);
 interface_exists(SpiralHandlerInterface::class);
@@ -183,3 +184,4 @@ final class ReadonlyHandler implements HandlerInterface
     {
     }
 }
+\class_alias(ReadonlyHandler::class, SpiralReadonlyHandler::class, false);

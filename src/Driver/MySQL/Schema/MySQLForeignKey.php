@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Driver\MySQL\Schema;
 
 use Cycle\Database\Schema\AbstractForeignKey;
+use Spiral\Database\Driver\MySQL\Schema\MySQLForeignKey as SpiralMySQLForeignKey;
 
 class MySQLForeignKey extends AbstractForeignKey
 {
@@ -35,3 +36,4 @@ class MySQLForeignKey extends AbstractForeignKey
         return $reference;
     }
 }
+\class_alias(MySQLForeignKey::class, SpiralMySQLForeignKey::class, false);

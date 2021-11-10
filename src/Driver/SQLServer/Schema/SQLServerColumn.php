@@ -15,6 +15,7 @@ use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Schema\AbstractColumn;
 use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
 use Spiral\Database\Schema\AbstractColumn as SpiralAbstractColumn;
+use Spiral\Database\Driver\SQLServer\Schema\SQLServerColumn as SpiralSQLServerColumn;
 
 interface_exists(SpiralDriverInterface::class);
 class_exists(SpiralAbstractColumn::class);
@@ -487,3 +488,4 @@ class SQLServerColumn extends AbstractColumn
         }
     }
 }
+\class_alias(SQLServerColumn::class, SpiralSQLServerColumn::class, false);

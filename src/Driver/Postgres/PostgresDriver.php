@@ -20,6 +20,7 @@ use Cycle\Database\Query\DeleteQuery;
 use Cycle\Database\Query\QueryBuilder;
 use Cycle\Database\Query\UpdateQuery;
 use Throwable;
+use Spiral\Database\Driver\Postgres\PostgresDriver as SpiralPostgresDriver;
 
 /**
  * Talks to postgres databases.
@@ -195,3 +196,4 @@ class PostgresDriver extends Driver
         return new StatementException($exception, $query);
     }
 }
+\class_alias(PostgresDriver::class, SpiralPostgresDriver::class, false);

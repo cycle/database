@@ -16,6 +16,7 @@ use Cycle\Database\Exception\BuilderException;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Injection\ParameterInterface;
+use Spiral\Database\Query\Traits\HavingTrait as SpiralHavingTrait;
 
 trait HavingTrait
 {
@@ -123,3 +124,4 @@ trait HavingTrait
         };
     }
 }
+\class_alias(HavingTrait::class, SpiralHavingTrait::class, false);

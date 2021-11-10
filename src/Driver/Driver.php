@@ -30,6 +30,7 @@ use Throwable;
 use Spiral\Database\Query\BuilderInterface as SpiralBuilderInterface;
 use Spiral\Database\Driver\HandlerInterface as SpiralHandlerInterface;
 use Spiral\Database\Driver\CompilerInterface as SpiralCompilerInterface;
+use Spiral\Database\Driver\Driver as SpiralDriver;
 
 interface_exists(SpiralBuilderInterface::class);
 interface_exists(SpiralHandlerInterface::class);
@@ -835,3 +836,4 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         return $context;
     }
 }
+\class_alias(Driver::class, SpiralDriver::class, false);

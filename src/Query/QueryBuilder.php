@@ -17,6 +17,7 @@ use Spiral\Database\Query\SelectQuery as SpiralSelectQuery;
 use Spiral\Database\Query\InsertQuery as SpiralInsertQuery;
 use Spiral\Database\Query\UpdateQuery as SpiralUpdateQuery;
 use Spiral\Database\Query\DeleteQuery as SpiralDeleteQuery;
+use Spiral\Database\Query\QueryBuilder as SpiralQueryBuilder;
 
 interface_exists(SpiralDriverInterface::class);
 class_exists(SpiralSelectQuery::class);
@@ -175,3 +176,4 @@ final class QueryBuilder implements BuilderInterface
         );
     }
 }
+\class_alias(QueryBuilder::class, SpiralQueryBuilder::class, false);

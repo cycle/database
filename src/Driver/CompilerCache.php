@@ -23,6 +23,7 @@ use Spiral\Database\Injection\FragmentInterface as SpiralFragmentInterface;
 use Spiral\Database\Injection\ParameterInterface as SpiralParameterInterface;
 use Spiral\Database\Driver\CachingCompilerInterface as SpiralCachingCompilerInterface;
 use Spiral\Database\Query\QueryParameters as SpiralQueryParameters;
+use Spiral\Database\Driver\CompilerCache as SpiralCompilerCache;
 
 interface_exists(SpiralCachingCompilerInterface::class);
 interface_exists(SpiralFragmentInterface::class);
@@ -350,3 +351,4 @@ final class CompilerCache implements CompilerInterface
         return '?';
     }
 }
+\class_alias(CompilerCache::class, SpiralCompilerCache::class, false);

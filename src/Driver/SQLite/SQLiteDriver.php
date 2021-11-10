@@ -15,6 +15,7 @@ use Cycle\Database\Driver\Driver;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Query\QueryBuilder;
 use Throwable;
+use Spiral\Database\Driver\SQLite\SQLiteDriver as SpiralSQLiteDriver;
 
 class SQLiteDriver extends Driver
 {
@@ -72,3 +73,4 @@ class SQLiteDriver extends Driver
         }
     }
 }
+\class_alias(SQLiteDriver::class, SpiralSQLiteDriver::class, false);

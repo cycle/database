@@ -16,6 +16,7 @@ use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Schema\AbstractForeignKey;
 use Cycle\Database\Schema\AbstractIndex;
 use Cycle\Database\Schema\AbstractTable;
+use Spiral\Database\Driver\SQLServer\Schema\SQLServerTable as SpiralSQLServerTable;
 
 class SQLServerTable extends AbstractTable
 {
@@ -174,3 +175,4 @@ class SQLServerTable extends AbstractTable
         return new SQLServerForeignKey($this->getName(), $this->getPrefix(), $name);
     }
 }
+\class_alias(SQLServerTable::class, SpiralSQLServerTable::class, false);

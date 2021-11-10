@@ -14,6 +14,7 @@ namespace Cycle\Database\Driver\SQLite\Schema;
 use Cycle\Database\Schema\AbstractForeignKey;
 use Spiral\Database\Schema\AbstractForeignKey as SpiralAbstractForeignKey;
 use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
+use Spiral\Database\Driver\SQLite\Schema\SQLiteForeignKey as SpiralSQLiteForeignKey;
 
 interface_exists(SpiralDriverInterface::class);
 
@@ -86,3 +87,4 @@ class SQLiteForeignKey extends AbstractForeignKey
         return $reference;
     }
 }
+\class_alias(SQLiteForeignKey::class, SpiralSQLiteForeignKey::class, false);

@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Config;
 
+use Spiral\Database\Config\DatabasePartial as SpiralDatabasePartial;
+
 final class DatabasePartial
 {
     /** @var string */
@@ -75,3 +77,4 @@ final class DatabasePartial
         return $this->readDriver;
     }
 }
+\class_alias(DatabasePartial::class, SpiralDatabasePartial::class, false);

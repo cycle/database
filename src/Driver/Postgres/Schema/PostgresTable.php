@@ -16,6 +16,7 @@ use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Schema\AbstractForeignKey;
 use Cycle\Database\Schema\AbstractIndex;
 use Cycle\Database\Schema\AbstractTable;
+use Spiral\Database\Driver\Postgres\Schema\PostgresTable as SpiralPostgresTable;
 
 class PostgresTable extends AbstractTable
 {
@@ -240,3 +241,4 @@ class PostgresTable extends AbstractTable
         return new PostgresForeignKey($this->getName(), $this->getPrefix(), $name);
     }
 }
+\class_alias(PostgresTable::class, SpiralPostgresTable::class, false);

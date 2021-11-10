@@ -11,9 +11,12 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Exception;
 
+use Spiral\Database\Exception\DriverException as SpiralDriverException;
+
 /**
  * Driver specific exception.
  */
 class DriverException extends DBALException
 {
 }
+\class_alias(DriverException::class, SpiralDriverException::class, false);

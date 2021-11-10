@@ -13,6 +13,7 @@ namespace Cycle\Database\Driver;
 
 use Cycle\Database\Query\QueryParameters;
 use Spiral\Database\Query\QueryParameters as SpiralQueryParameters;
+use Spiral\Database\Driver\CachingCompilerInterface as SpiralCachingCompilerInterface;
 
 class_exists(SpiralQueryParameters::class);
 
@@ -30,3 +31,4 @@ interface CachingCompilerInterface extends CompilerInterface
      */
     public function hashLimit(SpiralQueryParameters $params, array $tokens): string;
 }
+\class_alias(CachingCompilerInterface::class, SpiralCachingCompilerInterface::class, false);

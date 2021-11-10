@@ -19,6 +19,7 @@ use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Schema\AbstractTable;
 use Spiral\Database\Schema\AbstractColumn as SpiralAbstractColumn;
 use Spiral\Database\Schema\AbstractTable as SpiralAbstractTable;
+use Spiral\Database\Driver\Postgres\PostgresHandler as SpiralPostgresHandler;
 
 class_exists(SpiralAbstractColumn::class);
 class_exists(SpiralAbstractTable::class);
@@ -142,3 +143,4 @@ class PostgresHandler extends Handler
         $this->run($statement);
     }
 }
+\class_alias(PostgresHandler::class, SpiralPostgresHandler::class, false);

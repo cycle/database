@@ -15,6 +15,7 @@ use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Schema\AbstractForeignKey;
 use Cycle\Database\Schema\AbstractIndex;
 use Cycle\Database\Schema\AbstractTable;
+use Spiral\Database\Driver\SQLite\Schema\SQLiteTable as SpiralSQLiteTable;
 
 class SQLiteTable extends AbstractTable
 {
@@ -184,3 +185,4 @@ class SQLiteTable extends AbstractTable
         return $result;
     }
 }
+\class_alias(SQLiteTable::class, SpiralSQLiteTable::class, false);

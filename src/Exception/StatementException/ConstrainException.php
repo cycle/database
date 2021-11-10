@@ -12,7 +12,9 @@ declare(strict_types=1);
 namespace Cycle\Database\Exception\StatementException;
 
 use Cycle\Database\Exception\StatementException;
+use Spiral\Database\Exception\StatementException\ConstrainException as SpiralConstrainException;
 
 class ConstrainException extends StatementException
 {
 }
+\class_alias(ConstrainException::class, SpiralConstrainException::class, false);

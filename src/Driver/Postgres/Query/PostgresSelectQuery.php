@@ -13,6 +13,7 @@ namespace Cycle\Database\Driver\Postgres\Query;
 
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Query\SelectQuery;
+use Spiral\Database\Driver\Postgres\Query\PostgresSelectQuery as SpiralPostgresSelectQuery;
 
 class PostgresSelectQuery extends SelectQuery
 {
@@ -29,3 +30,4 @@ class PostgresSelectQuery extends SelectQuery
         return $this;
     }
 }
+\class_alias(PostgresSelectQuery::class, SpiralPostgresSelectQuery::class, false);

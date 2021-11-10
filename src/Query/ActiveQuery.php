@@ -17,6 +17,7 @@ use Cycle\Database\Exception\StatementException;
 use Throwable;
 use Spiral\Database\Driver\DriverInterface as SpiralDriverInterface;
 use Spiral\Database\Query\QueryParameters as SpiralQueryParameters;
+use Spiral\Database\Query\ActiveQuery as SpiralActiveQuery;
 
 interface_exists(SpiralDriverInterface::class);
 class_exists(SpiralQueryParameters::class);
@@ -146,3 +147,4 @@ abstract class ActiveQuery implements QueryInterface
         return $identifiers;
     }
 }
+\class_alias(ActiveQuery::class, SpiralActiveQuery::class, false);

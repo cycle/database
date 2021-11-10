@@ -11,6 +11,9 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Exception;
 
+use Spiral\Database\Exception\DefaultValueException as SpiralDefaultValueException;
+
 class DefaultValueException extends SchemaException
 {
 }
+\class_alias(DefaultValueException::class, SpiralDefaultValueException::class, false);

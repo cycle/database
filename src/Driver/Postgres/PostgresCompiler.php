@@ -18,6 +18,7 @@ use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\QueryParameters;
 use Spiral\Database\Query\QueryParameters as SpiralQueryParameters;
 use Spiral\Database\Driver\Quoter as SpiralQuoter;
+use Spiral\Database\Driver\Postgres\PostgresCompiler as SpiralPostgresCompiler;
 
 class_exists(SpiralQueryParameters::class);
 class_exists(SpiralQuoter::class);
@@ -95,3 +96,4 @@ class PostgresCompiler extends Compiler implements CachingCompilerInterface
         return trim($statement);
     }
 }
+\class_alias(PostgresCompiler::class, SpiralPostgresCompiler::class, false);

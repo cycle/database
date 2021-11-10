@@ -13,6 +13,7 @@ namespace Cycle\Database\Query;
 
 use DateTimeInterface;
 use Cycle\Database\Injection\ParameterInterface;
+use Spiral\Database\Query\Interpolator as SpiralInterpolator;
 
 /**
  * Simple helper class used to interpolate query with given values. To be used for profiling and
@@ -118,3 +119,4 @@ final class Interpolator
         return $subject;
     }
 }
+\class_alias(Interpolator::class, SpiralInterpolator::class, false);
