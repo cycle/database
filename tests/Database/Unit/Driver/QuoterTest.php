@@ -336,12 +336,7 @@ class QuoterTest extends TestCase
         );
     }
 
-    /**
-     * @param string $prefix
-     * @param string $quote
-     * @return Quoter
-     */
-    protected function makeQuoter($prefix = '', string $quote = '""')
+    protected function makeQuoter(string $prefix = '', string $quote = '""'): Quoter
     {
         return new Quoter($prefix, $quote);
     }

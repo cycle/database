@@ -165,7 +165,6 @@ abstract class NestedQueriesTest extends BaseTest
         );
     }
 
-
     public function testSubQueryPrefixedWithExpression(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
@@ -196,7 +195,6 @@ abstract class NestedQueriesTest extends BaseTest
             $select
         );
     }
-
 
     public function testSubQueryPrefixedWithExpressionId(): void
     {

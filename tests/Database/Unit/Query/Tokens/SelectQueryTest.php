@@ -28,11 +28,11 @@ class SelectQueryTest extends TestCase
         $this->assertEquals(
             [
                 'forUpdate' => false,
-                'from'      => ['table'],
-                'join'      => [],
-                'columns'   => ['name', 'value'],
-                'distinct'  => false,
-                'where'     => [
+                'from' => ['table'],
+                'join' => [],
+                'columns' => ['name', 'value'],
+                'distinct' => false,
+                'where' => [
                     [
                         'AND',
                         ['name', '=', new Parameter('Antony')],
@@ -42,12 +42,12 @@ class SelectQueryTest extends TestCase
                         ['id', '>', new Parameter(1)],
                     ],
                 ],
-                'having'    => [],
-                'groupBy'   => [],
-                'orderBy'   => [],
-                'limit'     => null,
-                'offset'    => null,
-                'union'     => [],
+                'having' => [],
+                'groupBy' => [],
+                'orderBy' => [],
+                'limit' => null,
+                'offset' => null,
+                'union' => [],
             ],
             $select->getTokens()
         );

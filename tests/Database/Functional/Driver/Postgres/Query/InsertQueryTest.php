@@ -51,7 +51,6 @@ class InsertQueryTest extends CommonClass
         );
     }
 
-
     public function testSimpleInsertWithStatesValues(): void
     {
         $insert = $this->database->insert()->into('target_table')

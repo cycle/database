@@ -30,13 +30,13 @@ class DeleteQueryTest extends TestCase
                 'where' => [
                     [
                         'AND',
-                        ['name', '=', new Parameter('Antony')]
+                        ['name', '=', new Parameter('Antony')],
                     ],
                     [
                         'OR',
-                        ['id', '>', new Parameter(1)]
+                        ['id', '>', new Parameter(1)],
                     ],
-                ]
+                ],
             ],
             $delete->getTokens()
         );

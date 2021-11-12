@@ -47,7 +47,7 @@ class StatementTest extends CommonClass
                     'id' => 1,
                     'name' => md5('0'),
                     'value' => 0,
-                    SQLServerCompiler::ROW_NUMBER => 1
+                    SQLServerCompiler::ROW_NUMBER => 1,
                 ],
             ],
             $result->fetchAll()

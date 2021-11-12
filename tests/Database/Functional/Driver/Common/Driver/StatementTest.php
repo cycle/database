@@ -35,7 +35,7 @@ abstract class StatementTest extends BaseTest
         for ($i = 0; $i < 10; $i++) {
             $table->insertOne(
                 [
-                    'name'  => md5((string)$i),
+                    'name' => md5((string)$i),
                     'value' => $i * 10,
                 ]
             );

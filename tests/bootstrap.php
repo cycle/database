@@ -15,10 +15,10 @@ mb_internal_encoding('UTF-8');
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 $drivers = [
-    'sqlite'    => new Database\Config\SQLiteDriverConfig(
+    'sqlite' => new Database\Config\SQLiteDriverConfig(
         queryCache: true,
     ),
-    'mysql'     => new Database\Config\MySQLDriverConfig(
+    'mysql' => new Database\Config\MySQLDriverConfig(
         connection: new Database\Config\MySQL\TcpConnectionConfig(
             database: 'spiral',
             host: '127.0.0.1',
@@ -53,8 +53,8 @@ $drivers = [
 
 $db = getenv('DB') ?: null;
 Database\Tests\Functional\Driver\Common\BaseTest::$config = [
-        'debug' => getenv('DB_DEBUG') ?: false,
-    ] + ($db === null
-        ? $drivers
-        : array_intersect_key($drivers, array_flip((array)$db))
-    );
+    'debug' => getenv('DB_DEBUG') ?: false,
+] + ($db === null
+    ? $drivers
+    : array_intersect_key($drivers, array_flip((array)$db))
+);

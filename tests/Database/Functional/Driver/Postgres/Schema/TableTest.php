@@ -22,8 +22,8 @@ class TableTest extends CommonClass
         $this->assertSame(0, $table->count());
 
         $expected = [
-            'id'    => 'primary',
-            'name'  => 'text',
+            'id' => 'primary',
+            'name' => 'text',
             'value' => 'integer',
         ];
         arsort($expected);
