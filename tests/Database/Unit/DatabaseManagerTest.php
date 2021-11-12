@@ -28,7 +28,7 @@ class DatabaseManagerTest extends TestCase
                 'write' => 'write',
             ],
         ],
-        'connections' => []
+        'connections' => [],
     ];
 
     public function testAddDatabase(): void
