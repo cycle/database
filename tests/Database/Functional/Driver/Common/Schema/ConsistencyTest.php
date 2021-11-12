@@ -343,13 +343,13 @@ abstract class ConsistencyTest extends BaseTest
 
         $this->database->table('table')->insertOne(
             [
-                'target' => 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'
+                'target' => 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
             ]
         );
 
         $this->assertEquals(
             [
-                'target' => 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'
+                'target' => 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
             ],
             $this->database->table('table')->select()->fetchAll()[0]
         );
@@ -373,13 +373,13 @@ abstract class ConsistencyTest extends BaseTest
 
         $this->database->table('table')->insertOne(
             [
-                'target' => 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'
+                'target' => 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
             ]
         );
 
         $this->assertEquals(
             [
-                'target' => 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'
+                'target' => 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
             ],
             $this->database->table('table')->select()->fetchAll()[0]
         );

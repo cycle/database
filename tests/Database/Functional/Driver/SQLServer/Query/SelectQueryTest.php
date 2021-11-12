@@ -30,7 +30,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters(
             [
                 1,
-                10
+                10,
             ],
             $select
         );
@@ -51,7 +51,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters(
             [
                 21,
-                30
+                30,
             ],
             $select
         );
@@ -74,7 +74,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters(
             [
                 20,
-                10
+                10,
             ],
             $select
         );
@@ -94,7 +94,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameParameters(
             [
-                21
+                21,
             ],
             $select
         );

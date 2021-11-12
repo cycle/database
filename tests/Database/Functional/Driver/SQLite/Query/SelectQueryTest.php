@@ -26,7 +26,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameParameters(
             [
-                20
+                20,
             ],
             $select
         );

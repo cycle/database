@@ -19,7 +19,7 @@ class ConfigTest extends TestCase
     {
         $config = new DatabaseConfig(
             [
-                'default' => 'database-1'
+                'default' => 'database-1',
             ]
         );
 
@@ -34,7 +34,7 @@ class ConfigTest extends TestCase
                 'databases' => [
                     'test'  => [],
                     'test2' => [],
-                ]
+                ],
             ]
         );
 
@@ -51,7 +51,7 @@ class ConfigTest extends TestCase
                 'databases' => [
                     'test'  => [],
                     'test2' => [],
-                ]
+                ],
             ]
         );
 
@@ -67,12 +67,12 @@ class ConfigTest extends TestCase
                 'default'   => 'database-1',
                 'databases' => [
                     'test'  => [
-                        'connection' => 'abc'
+                        'connection' => 'abc',
                     ],
                     'test2' => [
-                        'write' => 'bce'
+                        'write' => 'bce',
                     ],
-                ]
+                ],
             ]
         );
 
@@ -88,16 +88,16 @@ class ConfigTest extends TestCase
                 'databases' => [
                     'test'  => [
                         'connection'     => 'dce',
-                        'readConnection' => 'abc'
+                        'readConnection' => 'abc',
                     ],
                     'test1' => [
-                        'connection' => 'abc'
+                        'connection' => 'abc',
                     ],
                     'test2' => [
                         'write' => 'dce',
-                        'read'  => 'bce'
+                        'read'  => 'bce',
                     ],
-                ]
+                ],
             ]
         );
 
@@ -114,16 +114,16 @@ class ConfigTest extends TestCase
                 'databases' => [
                     'test'  => [
                         'tablePrefix' => 'abc',
-                        'driver'      => 'test'
+                        'driver'      => 'test',
                     ],
                     'test2' => [
                         'tablePrefix' => 'bce',
-                        'driver'      => 'test'
+                        'driver'      => 'test',
                     ],
                     'test3' => [
-                        'driver' => 'test'
-                    ]
-                ]
+                        'driver' => 'test',
+                    ],
+                ],
             ]
         );
 
@@ -140,12 +140,12 @@ class ConfigTest extends TestCase
                 'default'   => 'database-1',
                 'databases' => [
                     'test'  => [
-                        'driver' => 'test'
+                        'driver' => 'test',
                     ],
                     'test2' => [
-                        'driver' => 'test'
+                        'driver' => 'test',
                     ],
-                ]
+                ],
             ]
         );
 
@@ -163,12 +163,12 @@ class ConfigTest extends TestCase
                     //Recursive
                     'test6' => 'test5',
                     'test5' => 'test4',
-                    'test4' => 'test'
+                    'test4' => 'test',
                 ],
                 'databases' => [
                     'test'  => [],
                     'test2' => [],
-                ]
+                ],
             ]
         );
 
@@ -192,7 +192,7 @@ class ConfigTest extends TestCase
                 'connections' => [
                     'test'  => [],
                     'test2' => [],
-                ]
+                ],
             ]
         );
 
@@ -205,7 +205,7 @@ class ConfigTest extends TestCase
                 'drivers' => [
                     'test'  => [],
                     'test2' => [],
-                ]
+                ],
             ]
         );
 
@@ -241,8 +241,8 @@ class ConfigTest extends TestCase
                             user: 'root',
                             password: 'root',
                         )
-                    )
-                ]
+                    ),
+                ],
             ]
         );
 
@@ -264,8 +264,8 @@ class ConfigTest extends TestCase
                             user: 'root',
                             password: 'root',
                         )
-                    )
-                ]
+                    ),
+                ],
             ]
         );
 

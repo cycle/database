@@ -44,11 +44,11 @@ class StatementTest extends CommonClass
         $this->assertEquals(
             [
                 [
-                    'id'                          => 1,
-                    'name'                        => md5('0'),
-                    'value'                       => 0,
+                    'id' => 1,
+                    'name' => md5('0'),
+                    'value' => 0,
                     SQLServerCompiler::ROW_NUMBER => 1
-                ]
+                ],
             ],
             $result->fetchAll()
         );

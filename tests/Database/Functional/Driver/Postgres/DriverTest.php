@@ -109,7 +109,7 @@ class DriverTest extends TestCase
         return [
             ['private', ['private'], 'private'],
             [['schema1', 'schema2'], ['schema1', 'schema2'], 'schema1, schema2'],
-            [['$user', 'schema2'], ['postgres', 'schema2'], '"$user", schema2']
+            [['$user', 'schema2'], ['postgres', 'schema2'], '"$user", schema2'],
         ];
     }
 }

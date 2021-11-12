@@ -24,7 +24,7 @@ class TableTest extends CommonClass
         $expected = [
             'id'    => 'primary',
             'name'  => 'text',
-            'value' => 'integer'
+            'value' => 'integer',
         ];
         arsort($expected);
 
@@ -49,7 +49,7 @@ class TableTest extends CommonClass
                 ['Anton', 10],
                 ['Anton', 20],
                 ['Bob', 15],
-                ['Charlie', 10]
+                ['Charlie', 10],
             ]
         );
 
@@ -68,7 +68,7 @@ class TableTest extends CommonClass
                 ['Anton', 10],
                 ['Anton', 20],
                 ['Bob', 15],
-                ['Charlie', 10]
+                ['Charlie', 10],
             ]
         );
 

@@ -41,7 +41,7 @@ class InsertQueryTest extends CommonClass
     {
         $insert = $this->database->insert()->into('target_table')->values(
             [
-                'name' => 'Anton'
+                'name' => 'Anton',
             ]
         );
 

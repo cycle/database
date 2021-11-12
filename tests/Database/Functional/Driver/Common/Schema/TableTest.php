@@ -155,7 +155,7 @@ abstract class TableTest extends BaseTest
             [
                 'id'    => 'primary',
                 'name'  => 'text',
-                'value' => 'integer'
+                'value' => 'integer',
             ],
             $columns
         );
@@ -170,7 +170,7 @@ abstract class TableTest extends BaseTest
         $id = $table->insertOne(
             [
                 'name'  => 'Anton',
-                'value' => 10
+                'value' => 10,
             ]
         );
 
@@ -181,7 +181,7 @@ abstract class TableTest extends BaseTest
 
         $this->assertEquals(
             [
-                ['id' => 1, 'name' => 'Anton', 'value' => 10]
+                ['id' => 1, 'name' => 'Anton', 'value' => 10],
             ],
             $table->fetchAll()
         );
@@ -195,7 +195,7 @@ abstract class TableTest extends BaseTest
         $id = $table->insertOne(
             [
                 'name'  => 'Anton',
-                'value' => 10
+                'value' => 10,
             ]
         );
 
@@ -205,7 +205,7 @@ abstract class TableTest extends BaseTest
         $id = $table->insertOne(
             [
                 'name'  => 'John',
-                'value' => 20
+                'value' => 20,
             ]
         );
 
@@ -234,7 +234,7 @@ abstract class TableTest extends BaseTest
                 ['Anton', 10],
                 ['John', 20],
                 ['Bob', 30],
-                ['Charlie', 40]
+                ['Charlie', 40],
             ]
         );
 
@@ -262,7 +262,7 @@ abstract class TableTest extends BaseTest
                 ['Anton', 10],
                 ['John', 20],
                 ['Bob', 30],
-                ['Charlie', 40]
+                ['Charlie', 40],
             ]
         );
 
@@ -281,7 +281,7 @@ abstract class TableTest extends BaseTest
                 ['Anton', 10],
                 ['John', 20],
                 ['Bob', 30],
-                ['Charlie', 40]
+                ['Charlie', 40],
             ]
         );
 
@@ -300,7 +300,7 @@ abstract class TableTest extends BaseTest
                 ['Anton', 10],
                 ['John', 20],
                 ['Bob', 30],
-                ['Charlie', 40]
+                ['Charlie', 40],
             ]
         );
 
@@ -319,7 +319,7 @@ abstract class TableTest extends BaseTest
                 ['Anton', 10],
                 ['John', 20],
                 ['Bob', 30],
-                ['Charlie', 40]
+                ['Charlie', 40],
             ]
         );
 
@@ -338,7 +338,7 @@ abstract class TableTest extends BaseTest
                 ['Anton', 10],
                 ['John', 20],
                 ['Bob', 15],
-                ['Charlie', 10]
+                ['Charlie', 10],
             ]
         );
 
@@ -357,7 +357,7 @@ abstract class TableTest extends BaseTest
                 ['Anton', 10],
                 ['John', 20],
                 ['Bob', 15],
-                ['Charlie', 10]
+                ['Charlie', 10],
             ]
         );
 
@@ -377,7 +377,7 @@ abstract class TableTest extends BaseTest
                 ['Anton', 10],
                 ['John', 20],
                 ['Bob', 15],
-                ['Charlie', 10]
+                ['Charlie', 10],
             ]
         );
 
@@ -397,7 +397,7 @@ abstract class TableTest extends BaseTest
                 ['Anton', 10],
                 ['John', 20],
                 ['Bob', 15],
-                ['Charlie', 10]
+                ['Charlie', 10],
             ]
         );
 
@@ -421,7 +421,7 @@ abstract class TableTest extends BaseTest
                 ['Anton', 10],
                 ['John', 20],
                 ['Bob', 15],
-                ['Charlie', 10]
+                ['Charlie', 10],
             ]
         );
 
@@ -441,7 +441,7 @@ abstract class TableTest extends BaseTest
                 ['Anton', 10],
                 ['John', 20],
                 ['Bob', 15],
-                ['Charlie', 10]
+                ['Charlie', 10],
             ]
         );
 
@@ -459,7 +459,7 @@ abstract class TableTest extends BaseTest
                 ['Anton', 10],
                 ['John', 20],
                 ['Bob', 15],
-                ['Charlie', 10]
+                ['Charlie', 10],
             ]
         );
 

@@ -45,6 +45,7 @@ abstract class BaseTest extends TestCase
 
     /**
      * @param array{readonly: bool} $options
+     *
      * @return DriverInterface
      */
     private function getDriver(array $options = []): DriverInterface

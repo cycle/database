@@ -45,10 +45,6 @@ trait Helpers
         }
     }
 
-    /**
-     * @param AbstractTable $table
-     * @return AbstractTable
-     */
     protected function fetchSchema(AbstractTable $table): AbstractTable
     {
         return $this->schema($table->getFullName());

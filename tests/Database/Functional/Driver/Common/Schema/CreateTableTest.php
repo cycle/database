@@ -10,7 +10,6 @@ use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
 abstract class CreateTableTest extends BaseTest
 {
-
     public function schema(string $table): AbstractTable
     {
         return $this->database->table($table)->getSchema();

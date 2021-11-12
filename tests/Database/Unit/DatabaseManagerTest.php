@@ -20,13 +20,13 @@ use Cycle\Database\Exception\DBALException;
 class DatabaseManagerTest extends TestCase
 {
     public const DEFAULT_OPTIONS = [
-        'default'     => 'default',
-        'databases'   => [
+        'default' => 'default',
+        'databases' => [
             'default' => [
                 'prefix' => 'prefix_',
-                'read'   => 'read',
-                'write'  => 'write'
-            ]
+                'read' => 'read',
+                'write' => 'write',
+            ],
         ],
         'connections' => []
     ];
@@ -184,18 +184,18 @@ class DatabaseManagerTest extends TestCase
         $dbal = new DatabaseManager(
             new DatabaseConfig(
                 [
-                    'default'     => 'default',
-                    'databases'   => [
+                    'default' => 'default',
+                    'databases' => [
                         'default' => [
-                            'driver' => 'default'
+                            'driver' => 'default',
                         ],
-                        'test'    => [
-                            'driver' => 'default'
+                        'test' => [
+                            'driver' => 'default',
                         ],
                     ],
                     'connections' => [
-                        'default' => new SQLiteDriverConfig()
-                    ]
+                        'default' => new SQLiteDriverConfig(),
+                    ],
                 ]
             )
         );
@@ -209,18 +209,18 @@ class DatabaseManagerTest extends TestCase
         $dbal = new DatabaseManager(
             new DatabaseConfig(
                 [
-                    'default'     => 'default',
-                    'databases'   => [
+                    'default' => 'default',
+                    'databases' => [
                         'default' => [
-                            'driver' => 'default'
+                            'driver' => 'default',
                         ],
-                        'test'    => [
-                            'driver' => 'default'
+                        'test' => [
+                            'driver' => 'default',
                         ],
                     ],
                     'connections' => [
-                        'default' => new SQLiteDriverConfig()
-                    ]
+                        'default' => new SQLiteDriverConfig(),
+                    ],
                 ]
             )
         );
@@ -233,18 +233,18 @@ class DatabaseManagerTest extends TestCase
         $dbal = new DatabaseManager(
             new DatabaseConfig(
                 [
-                    'default'     => 'default',
-                    'databases'   => [
+                    'default' => 'default',
+                    'databases' => [
                         'default' => [
-                            'driver' => 'default'
+                            'driver' => 'default',
                         ],
-                        'test'    => [
-                            'driver' => 'default'
+                        'test' => [
+                            'driver' => 'default',
                         ],
                     ],
                     'connections' => [
-                        'default' => new SQLiteDriverConfig()
-                    ]
+                        'default' => new SQLiteDriverConfig(),
+                    ],
                 ]
             )
         );
@@ -263,8 +263,8 @@ class DatabaseManagerTest extends TestCase
         $dbal = new DatabaseManager(
             new DatabaseConfig([
                 'connections' => [
-                    'default' => new Container\Autowire('unknown')
-                ]
+                    'default' => new Container\Autowire('unknown'),
+                ],
             ])
         );
 
