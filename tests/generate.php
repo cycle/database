@@ -1,17 +1,8 @@
 <?php
 
-/**
- * Spiral Framework.
- *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
- */
-
 declare(strict_types=1);
 
-use Cycle\Database\Tests\BaseTest;
 use Spiral\Tokenizer;
-use Symfony\Component\Finder\Finder;
 
 error_reporting(E_ALL | E_STRICT);
 ini_set('display_errors', '1');
@@ -19,70 +10,103 @@ ini_set('display_errors', '1');
 //Composer
 require dirname(__DIR__) . '/vendor/autoload.php';
 
+$tokenizer = new Tokenizer\Tokenizer(new Tokenizer\Config\TokenizerConfig([
+    'directories' => [__DIR__ . '/Database/Functional/Driver/Common'],
+    'exclude' => [],
+]));
+
 $databases = [
-    'sqlite'    => [
-        'namespace' => 'Cycle\Database\Tests\Driver\SQLite',
-        'directory' => __DIR__ . '/Database/Driver/SQLite/'
+    'sqlite' => [
+        'namespace' => 'Cycle\Database\Tests\Functional\Driver\SQLite',
+        'directory' => __DIR__ . '/Database/Functional/Driver/SQLite/',
     ],
-    'mysql'     => [
-        'namespace' => 'Cycle\Database\Tests\Driver\MySQL',
-        'directory' => __DIR__ . '/Database/Driver/MySQL/'
+    'mysql' => [
+        'namespace' => 'Cycle\Database\Tests\Functional\Driver\MySQL',
+        'directory' => __DIR__ . '/Database/Functional/Driver/MySQL/',
     ],
-    'postgres'  => [
-        'namespace' => 'Cycle\Database\Tests\Driver\Postgres',
-        'directory' => __DIR__ . '/Database/Driver/Postgres/'
+    'postgres' => [
+        'namespace' => 'Cycle\Database\Tests\Functional\Driver\Postgres',
+        'directory' => __DIR__ . '/Database/Functional/Driver/Postgres/',
     ],
     'sqlserver' => [
-        'namespace' => 'Cycle\Database\Tests\Driver\SQLServer',
-        'directory' => __DIR__ . '/Database/Driver/SQLServer/'
-    ]
+        'namespace' => 'Cycle\Database\Tests\Functional\Driver\SQLServer',
+        'directory' => __DIR__ . '/Database/Functional/Driver/SQLServer/',
+    ],
 ];
 
 echo "Generating test classes for all database types...\n";
 
-$classes = (new Tokenizer\ClassLocator(Finder::create()->in(__DIR__)->files()))
-    ->getClasses(BaseTest::class);
+$classes = $tokenizer
+    ->classLocator()
+    ->getClasses(\Cycle\Database\Tests\Functional\Driver\Common\BaseTest::class);
 
 foreach ($classes as $class) {
-    if (!$class->isAbstract() || $class->getName() === BaseTest::class) {
+    foreach ($class->getMethods() as $method) {
+        if ($method->isAbstract()) {
+            echo "Skip class {$class->getName()} with abstract methods.\n";
+            continue 2;
+        }
+    }
+
+    if (
+        !$class->isAbstract()
+        // Has abstract methods
+        || $class->getName() == \Cycle\Database\Tests\Functional\Driver\Common\BaseTest::class
+    ) {
         continue;
     }
 
     echo "Found {$class->getName()}\n";
+
+    $path = str_replace(
+        [str_replace('\\', '/', __DIR__), 'Database/Functional/Driver/Common/'],
+        '',
+        str_replace('\\', '/', $class->getFileName())
+    );
+
+    $path = ltrim($path, '/');
+
     foreach ($databases as $driver => $details) {
-        $filename = sprintf('%s/%s.php', $details['directory'], $class->getShortName());
-        if (file_exists($filename)) {
-            continue;
+        $filename = sprintf('%s%s', $details['directory'], $path);
+        $dir = pathinfo($filename, PATHINFO_DIRNAME);
+
+        $namespace = str_replace(
+            'Cycle\\Database\\Tests\\Functional\\Driver\\Common',
+            $details['namespace'],
+            $class->getNamespaceName()
+        );
+
+        if (!is_dir($dir)) {
+            mkdir($dir, recursive: true);
         }
 
         file_put_contents(
             $filename,
             sprintf(
-                '<?php
-
-/**
- * Spiral Framework.
- *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
- */
+                <<<PHP
+<?php
 
 declare(strict_types=1);
 
 namespace %s;
 
+// phpcs:ignore
+use %s as CommonClass;
+
 /**
  * @group driver
  * @group driver-%s
  */
-class %s extends \\%s
+class %s extends CommonClass
 {
-    const DRIVER = "%s";
-}',
-                $details['namespace'],
+    public const DRIVER = '%s';
+}
+
+PHP,
+                $namespace,
+                $class->getName(),
                 $driver,
                 $class->getShortName(),
-                $class->getName(),
                 $driver
             )
         );
