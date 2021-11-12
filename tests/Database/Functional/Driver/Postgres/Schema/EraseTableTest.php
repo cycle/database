@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Functional\Driver\Postgres\Schema;
 
+use Cycle\Database\Tests\Functional\Driver\Postgres\Helpers;
 use Cycle\Database\Tests\Traits\Loggable;
 use PHPUnit\Framework\TestCase;
 

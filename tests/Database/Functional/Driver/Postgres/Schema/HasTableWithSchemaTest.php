@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Functional\Driver\Postgres\Schema;
 
 use Cycle\Database\Driver\DriverInterface;
+use Cycle\Database\Tests\Functional\Driver\Postgres\Helpers;
 use PHPUnit\Framework\TestCase;
 
 /**

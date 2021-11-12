@@ -9,6 +9,7 @@ use Cycle\Database\Driver\Handler;
 use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\TableInterface;
+use Cycle\Database\Tests\Functional\Driver\Postgres\Helpers;
 use Cycle\Database\Tests\Traits\Loggable;
 use Cycle\Database\Tests\Traits\TableAssertions;
 use PHPUnit\Framework\ExpectationFailedException;
