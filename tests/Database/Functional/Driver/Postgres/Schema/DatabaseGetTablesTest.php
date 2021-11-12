@@ -31,9 +31,9 @@ class DatabaseGetTablesTest extends BaseTest
         $this->assertTrue($db->hasTable('test'));
         $this->assertTrue($db->hasTable('sample_test'));
 
-        $tables = $db->getTables();
+        $tables = array_map(fn($table) => $table->getName(), $db->getTables());
 
-        $this->assertSame('public.test', $tables[0]->getName());
-        $this->assertSame('public.sample_test', $tables[1]->getName());
+        $this->assertTrue(in_array('public.test', $tables));
+        $this->assertTrue(in_array('public.sample_test', $tables));
     }
 }
