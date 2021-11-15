@@ -53,6 +53,7 @@ class SQLiteForeignKey extends AbstractForeignKey
      * Name insensitive compare.
      *
      * @param AbstractForeignKey $initial
+     *
      * @return bool
      */
     public function compare(SpiralAbstractForeignKey $initial): bool
@@ -68,6 +69,7 @@ class SQLiteForeignKey extends AbstractForeignKey
      * @param string $table
      * @param string $tablePrefix
      * @param array  $schema
+     *
      * @return SQLiteForeignKey
      */
     public static function createInstance(string $table, string $tablePrefix, array $schema): self
