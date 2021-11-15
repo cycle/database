@@ -28,9 +28,9 @@ final class Database implements DatabaseInterface, InjectableInterface
     public const INJECTOR = DatabaseManager::class;
 
     // Isolation levels for transactions
-    public const ISOLATION_SERIALIZABLE     = DriverInterface::ISOLATION_SERIALIZABLE;
-    public const ISOLATION_REPEATABLE_READ  = DriverInterface::ISOLATION_REPEATABLE_READ;
-    public const ISOLATION_READ_COMMITTED   = DriverInterface::ISOLATION_READ_COMMITTED;
+    public const ISOLATION_SERIALIZABLE = DriverInterface::ISOLATION_SERIALIZABLE;
+    public const ISOLATION_REPEATABLE_READ = DriverInterface::ISOLATION_REPEATABLE_READ;
+    public const ISOLATION_READ_COMMITTED = DriverInterface::ISOLATION_READ_COMMITTED;
     public const ISOLATION_READ_UNCOMMITTED = DriverInterface::ISOLATION_READ_UNCOMMITTED;
 
     /**
@@ -52,6 +52,7 @@ final class Database implements DatabaseInterface, InjectableInterface
      * Shortcut to get table abstraction.
      *
      * @param string $name Table name without prefix.
+     *
      * @return Table
      */
     public function __get(string $name): Table
@@ -131,7 +132,7 @@ final class Database implements DatabaseInterface, InjectableInterface
         $result = [];
         foreach ($schemaHandler->getTableNames($this->prefix) as $table) {
             $table = strpos($table, '.') !== false
-                ? str_replace('.'.$this->prefix, '.', $table)
+                ? str_replace('.' . $this->prefix, '.', $table)
                 : substr($table, strlen($this->prefix));
 
             $result[] = new Table($this, $table);
