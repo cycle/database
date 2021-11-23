@@ -684,6 +684,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
 
     public function getTransactionLevel(): int
     {
-        return $this->getPDO()->inTransaction() ? $this->transactionLevel : 0;
+        return $this->transactionLevel;
     }
 }

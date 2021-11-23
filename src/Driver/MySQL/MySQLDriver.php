@@ -56,6 +56,17 @@ class MySQLDriver extends Driver
         return new StatementException($exception, $query);
     }
 
+    public function getTransactionLevel(): int
+    {
+        if (!$this->getPDO()->inTransaction()) {
+            $this->transactionLevel = 0;
+
+            return 0;
+        }
+
+        return $this->transactionLevel;
+    }
+
     /**
      * @param MySQLDriverConfig $config
      *
