@@ -217,6 +217,11 @@ interface DriverInterface
     public function rollbackTransaction(): bool;
 
     /**
+     * Get current opened transaction level.
+     */
+    public function getTransactionLevel(): int;
+
+    /**
      * Create new driver instance.
      *
      * @return self
