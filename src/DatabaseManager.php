@@ -11,18 +11,15 @@ declare(strict_types=1);
 
 namespace Cycle\Database;
 
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
-use Spiral\Core\Container;
-use Spiral\Core\FactoryInterface;
 use Cycle\Database\Config\DatabaseConfig;
 use Cycle\Database\Config\DatabasePartial;
 use Cycle\Database\Driver\Driver;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Exception\DatabaseException;
 use Cycle\Database\Exception\DBALException;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Spiral\Logger\Traits\LoggerTrait;
 
 /**
@@ -85,35 +82,21 @@ use Spiral\Logger\Traits\LoggerTrait;
  *
  * echo $manager->database('runtime')->select()->from('users')->count();
  */
-final class DatabaseManager implements
-    DatabaseProviderInterface,
-    Container\SingletonInterface,
-    Container\InjectorInterface
+final class DatabaseManager implements DatabaseProviderInterface
 {
     use LoggerTrait {
         setLogger as protected internalSetLogger;
     }
 
-    /** @var DatabaseConfig */
-    private $config;
-
-    /**  @var FactoryInterface */
-    private $factory;
-
     /** @var Database[] */
-    private $databases = [];
+    private array $databases = [];
 
     /** @var DriverInterface[] */
-    private $drivers = [];
+    private array $drivers = [];
 
-    /**
-     * @param DatabaseConfig   $config
-     * @param FactoryInterface $factory
-     */
-    public function __construct(DatabaseConfig $config, FactoryInterface $factory = null)
-    {
-        $this->config = $config;
-        $this->factory = $factory ?? new Container();
+    public function __construct(
+        private DatabaseConfig $config
+    ) {
     }
 
     /**
@@ -128,15 +111,6 @@ final class DatabaseManager implements
                 $driver->setLogger($this->logger);
             }
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function createInjection(\ReflectionClass $class, string $context = null)
-    {
-        // if context is empty default database will be returned
-        return $this->database($context);
     }
 
     /**

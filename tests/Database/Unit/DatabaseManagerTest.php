@@ -8,7 +8,6 @@ use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
-use Spiral\Core\Container;
 use Cycle\Database\Config\DatabaseConfig;
 use Cycle\Database\Config\SQLiteDriverConfig;
 use Cycle\Database\Database;
@@ -94,20 +93,6 @@ class DatabaseManagerTest extends TestCase
 
         $db = $dbal->database('default');
 
-        $this->assertSame($read, $db->getDriver(Database::READ));
-        $this->assertSame($write, $db->getDriver(Database::WRITE));
-    }
-
-    public function testInjection(): void
-    {
-        $read = m::mock(DriverInterface::class);
-        $write = m::mock(DriverInterface::class);
-        $dbal = new DatabaseManager(new DatabaseConfig(self::DEFAULT_OPTIONS));
-        $dbal->addDriver('read', $read);
-        $dbal->addDriver('write', $write);
-        $container = new Container();
-        $container->bind(DatabaseManager::class, $dbal);
-        $db = $container->get(Database::class);
         $this->assertSame($read, $db->getDriver(Database::READ));
         $this->assertSame($write, $db->getDriver(Database::WRITE));
     }
@@ -263,7 +248,7 @@ class DatabaseManagerTest extends TestCase
         $dbal = new DatabaseManager(
             new DatabaseConfig([
                 'connections' => [
-                    'default' => new Container\Autowire('unknown'),
+                    'default' => 'unknown',
                 ],
             ])
         );

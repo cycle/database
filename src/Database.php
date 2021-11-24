@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Cycle\Database;
 
-use Spiral\Core\Container\InjectableInterface;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Query\DeleteQuery;
 use Cycle\Database\Query\InsertQuery;
@@ -23,10 +22,8 @@ use Throwable;
  * Database class is high level abstraction at top of Driver. Databases usually linked to real
  * database or logical portion of database (filtered by prefix).
  */
-final class Database implements DatabaseInterface, InjectableInterface
+final class Database implements DatabaseInterface
 {
-    public const INJECTOR = DatabaseManager::class;
-
     // Isolation levels for transactions
     public const ISOLATION_SERIALIZABLE = DriverInterface::ISOLATION_SERIALIZABLE;
     public const ISOLATION_REPEATABLE_READ = DriverInterface::ISOLATION_REPEATABLE_READ;
