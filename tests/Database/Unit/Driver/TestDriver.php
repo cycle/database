@@ -16,7 +16,7 @@ class TestDriver extends Driver
 
     protected function mapException(\Throwable $exception, string $query): StatementException
     {
-        // TODO: Implement mapException() method.
+        throw $exception;
     }
 
     public function getType(): string
