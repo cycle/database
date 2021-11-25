@@ -5,20 +5,14 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Unit\Driver;
 
 use Cycle\Database\Config\DatabaseConfig;
-use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Config\SQLiteDriverConfig;
 use Cycle\Database\DatabaseManager;
 use Cycle\Database\Driver\Driver;
 use Cycle\Database\Driver\DriverInterface;
-use Cycle\Database\Driver\SQLite\SQLiteCompiler;
-use Cycle\Database\Driver\SQLite\SQLiteHandler;
-use Cycle\Database\Exception\StatementException;
 use Cycle\Database\LoggerFactoryInterface;
-use Cycle\Database\Query\QueryBuilder;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use Throwable;
 
 class DatabaseManagerTest extends TestCase
 {
@@ -62,17 +56,9 @@ class DatabaseManagerTest extends TestCase
 
     public function testDatabaseManagerWithoutLoggerAndLoggerFactoryShouldReturnNullLogger()
     {
-        $manager = new DatabaseManager(
-            new DatabaseConfig([
-                'connections' => [
-                    'test' => new SQLiteDriverConfig(
-                        driver: DatabaseManagerTestDriver::class
-                    ),
-                ],
-            ])
-        );
+        $manager = new DatabaseManager($this->getDatabaseConfig());
 
-        $this->assertInstanceOf(DatabaseManagerTestDriver::class, $driver = $manager->driver('test'));
+        $this->assertInstanceOf(TestDriver::class, $driver = $manager->driver('test'));
 
         $refl = new \ReflectionClass($driver);
         $property = $refl->getProperty('logger');
@@ -82,15 +68,7 @@ class DatabaseManagerTest extends TestCase
 
     public function testDatabaseManagerWithLoggerAndWithoutLoggerFactoryShouldReturnLogger()
     {
-        $manager = new DatabaseManager(
-            new DatabaseConfig([
-                'connections' => [
-                    'test' => new SQLiteDriverConfig(
-                        driver: DatabaseManagerTestDriver::class
-                    ),
-                ],
-            ])
-        );
+        $manager = new DatabaseManager($this->getDatabaseConfig());
 
         $manager->setLogger($this->logger);
         $driver = $manager->driver('test');
@@ -104,13 +82,7 @@ class DatabaseManagerTest extends TestCase
     public function testDatabaseManagerWithLoggerAndWithLoggerFactoryShouldReturnLoggerFromFactory()
     {
         $manager = new DatabaseManager(
-            new DatabaseConfig([
-                'connections' => [
-                    'test' => new SQLiteDriverConfig(
-                        driver: DatabaseManagerTestDriver::class
-                    ),
-                ],
-            ]),
+            $this->getDatabaseConfig(),
             $this->loggerFactory
         );
 
@@ -118,7 +90,7 @@ class DatabaseManagerTest extends TestCase
 
         $this->loggerFactory->expects($this->once())
             ->method('getLogger')
-            ->with($this->isInstanceOf(DatabaseManagerTestDriver::class))
+            ->with($this->isInstanceOf(TestDriver::class))
             ->willReturn($loggerFromFactory);
 
         $manager->setLogger($this->logger);
@@ -129,28 +101,18 @@ class DatabaseManagerTest extends TestCase
         $property->setAccessible(true);
         $this->assertSame($loggerFromFactory, $property->getValue($driver));
     }
-}
 
-class DatabaseManagerTestDriver extends Driver
-{
-
-    protected function mapException(Throwable $exception, string $query): StatementException
+    /**
+     * @return DatabaseConfig
+     */
+    private function getDatabaseConfig(): DatabaseConfig
     {
-        // TODO: Implement mapException() method.
-    }
-
-    public function getType(): string
-    {
-        return 'test';
-    }
-
-    public static function create(DriverConfig $config): DriverInterface
-    {
-        return new self(
-            $config,
-            new SQLiteHandler(),
-            new SQLiteCompiler('""'),
-            QueryBuilder::defaultBuilder()
-        );
+        return new DatabaseConfig([
+            'connections' => [
+                'test' => new SQLiteDriverConfig(
+                    driver: TestDriver::class
+                ),
+            ],
+        ]);
     }
 }

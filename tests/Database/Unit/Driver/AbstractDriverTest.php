@@ -23,7 +23,7 @@ class AbstractDriverTest extends TestCase
     {
         parent::setUp();
 
-        $this->driver = TestAbstractDriver::create(new SQLiteDriverConfig());
+        $this->driver = TestDriver::create(new SQLiteDriverConfig());
     }
 
     public function testLoggerShouldBeSet()
@@ -34,29 +34,5 @@ class AbstractDriverTest extends TestCase
 
         $this->driver->setLogger($logger);
         $this->driver->lastInsertID();
-    }
-}
-
-class TestAbstractDriver extends Driver
-{
-
-    protected function mapException(Throwable $exception, string $query): StatementException
-    {
-        // TODO: Implement mapException() method.
-    }
-
-    public function getType(): string
-    {
-        return 'test';
-    }
-
-    public static function create(DriverConfig $config): Driver
-    {
-        return new self(
-            $config,
-            new SQLiteHandler(),
-            new SQLiteCompiler('""'),
-            QueryBuilder::defaultBuilder()
-        );
     }
 }
