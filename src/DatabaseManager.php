@@ -84,7 +84,7 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
     /**
      * Get Database associated with a given database alias or automatically created one.
      *
-     * @param  string|null  $database
+     * @param string|null $database
      * @return Database|DatabaseInterface
      *
      * @throws DBALException
@@ -117,7 +117,7 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
     /**
      * Add new database.
      *
-     * @param  Database  $database
+     * @param Database $database
      *
      * @throws DBALException
      */
@@ -179,8 +179,8 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
     /**
      * Manually set connection instance.
      *
-     * @param  string  $name
-     * @param  DriverInterface  $driver
+     * @param string $name
+     * @param DriverInterface $driver
      * @return self
      *
      * @throws DBALException
@@ -197,12 +197,12 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
     }
 
     /**
-     * @param  DatabasePartial  $database
+     * @param DatabasePartial $database
      * @return Database
      *
      * @throws DBALException
      */
-    protected function makeDatabase(DatabasePartial $database): Database
+    private function makeDatabase(DatabasePartial $database): Database
     {
         return new Database(
             $database->getName(),
