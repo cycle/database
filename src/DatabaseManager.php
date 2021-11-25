@@ -20,82 +20,25 @@ use Cycle\Database\Exception\DBALException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Spiral\Logger\Traits\LoggerTrait;
 
 /**
  * Automatic factory and configurator for Drivers and Databases.
- *
- * Example:
- * $config = [
- *  'default'     => 'default',
- *  'aliases'     => [
- *      'default'  => 'primary',
- *      'database' => 'primary',
- *      'db'       => 'primary',
- *  ],
- *  'databases'   => [
- *      'primary'   => [
- *          'connection'  => 'mysql',
- *          'tablePrefix' => 'db_'
- *      ],
- *      'secondary' => [
- *          'connection'  => 'postgres',
- *          'tablePrefix' => '',
- *      ],
- *  ],
- *  'connections' => [
- *      'mysql'     => [
- *          'driver'     => Driver\MySQL\MySQLDriver::class,
- *          'options' => [
- *              'connection' => 'mysql:host=127.0.0.1;dbname=database',
- *              'username'   => 'mysql',
- *              'password'   => 'mysql',
- *           ],
- *      ],
- *      'postgres'  => [
- *          'driver'     => Driver\Postgres\PostgresDriver::class,
- *          'options' => [
- *              'connection' => 'pgsql:host=127.0.0.1;dbname=database',
- *              'username'   => 'postgres',
- *              'password'   => 'postgres',
- *           ],
- *      ],
- *      'runtime'   => [
- *          'driver'     => Driver\SQLite\SQLiteDriver::class,
- *          'options' => [
- *              'connection' => 'sqlite:' . directory('runtime') . 'runtime.db',
- *              'username'   => 'sqlite',
- *           ],
- *      ],
- *      'sqlServer' => [
- *          'driver'     => Driver\SQLServer\SQLServerDriver::class,
- *          'options' => [
- *              'connection' => 'sqlsrv:Server=OWNER;Database=DATABASE',
- *              'username'   => 'sqlServer',
- *              'password'   => 'sqlServer',
- *           ],
- *      ],
- *   ]
- * ];
  *
  * $manager = new DatabaseManager(new DatabaseConfig($config));
  *
  * echo $manager->database('runtime')->select()->from('users')->count();
  */
-final class DatabaseManager implements DatabaseProviderInterface
+final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInterface
 {
-    use LoggerTrait {
-        setLogger as protected internalSetLogger;
-    }
-
     /** @var Database[] */
     private array $databases = [];
-
     /** @var DriverInterface[] */
     private array $drivers = [];
+    private ?LoggerInterface $logger = null;
 
     public function __construct(
-        private DatabaseConfig $config
+        private DatabaseConfig $config,
+        private ?LoggerFactoryInterface $loggerFactory = null
     ) {
     }
 
@@ -104,7 +47,8 @@ final class DatabaseManager implements DatabaseProviderInterface
      */
     public function setLogger(LoggerInterface $logger): void
     {
-        $this->internalSetLogger($logger);
+        $this->logger = $logger;
+
         // Assign the logger to all initialized drivers
         foreach ($this->drivers as $driver) {
             if ($driver instanceof LoggerAwareInterface) {
@@ -140,7 +84,7 @@ final class DatabaseManager implements DatabaseProviderInterface
     /**
      * Get Database associated with a given database alias or automatically created one.
      *
-     * @param string|null $database
+     * @param  string|null  $database
      * @return Database|DatabaseInterface
      *
      * @throws DBALException
@@ -159,7 +103,7 @@ final class DatabaseManager implements DatabaseProviderInterface
             return $this->databases[$database];
         }
 
-        if (!$this->config->hasDatabase($database)) {
+        if (! $this->config->hasDatabase($database)) {
             throw new DBALException(
                 "Unable to create Database, no presets for '{$database}' found"
             );
@@ -173,7 +117,7 @@ final class DatabaseManager implements DatabaseProviderInterface
     /**
      * Add new database.
      *
-     * @param Database $database
+     * @param  Database  $database
      *
      * @throws DBALException
      */
@@ -223,8 +167,8 @@ final class DatabaseManager implements DatabaseProviderInterface
         $this->drivers[$driver] = $driverObject;
 
         if ($driverObject instanceof LoggerAwareInterface) {
-            $logger = $this->getLogger(get_class($driverObject));
-            if (!$logger instanceof NullLogger) {
+            $logger = $this->getLoggerForDriver($driverObject);
+            if (! $logger instanceof NullLogger) {
                 $driverObject->setLogger($logger);
             }
         }
@@ -235,8 +179,8 @@ final class DatabaseManager implements DatabaseProviderInterface
     /**
      * Manually set connection instance.
      *
-     * @param string          $name
-     * @param DriverInterface $driver
+     * @param  string  $name
+     * @param  DriverInterface  $driver
      * @return self
      *
      * @throws DBALException
@@ -253,7 +197,7 @@ final class DatabaseManager implements DatabaseProviderInterface
     }
 
     /**
-     * @param DatabasePartial $database
+     * @param  DatabasePartial  $database
      * @return Database
      *
      * @throws DBALException
@@ -266,5 +210,14 @@ final class DatabaseManager implements DatabaseProviderInterface
             $this->driver($database->getDriver()),
             $database->getReadDriver() ? $this->driver($database->getReadDriver()) : null
         );
+    }
+
+    private function getLoggerForDriver(DriverInterface $driver): LoggerInterface
+    {
+        if (! $this->loggerFactory) {
+            return $this->logger ??= new NullLogger();
+        }
+
+        return $this->loggerFactory->getLogger($driver);
     }
 }

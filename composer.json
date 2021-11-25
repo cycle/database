@@ -16,7 +16,6 @@
         "php": ">=8.0",
         "ext-pdo": "*",
         "spiral/core": "^2.9",
-        "spiral/logger": "^2.9",
         "spiral/pagination": "^2.9"
     },
     "autoload": {
