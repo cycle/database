@@ -15,6 +15,7 @@ use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\Postgres\PostgresDriver;
 use Cycle\Database\Exception\BuilderException;
 use Cycle\Database\Exception\ReadonlyConnectionException;
+use Cycle\Database\Query\ColumnReturnableInterface;
 use Cycle\Database\Query\InsertQuery;
 use Cycle\Database\Query\QueryInterface;
 use Cycle\Database\Query\QueryParameters;
@@ -23,22 +24,16 @@ use Throwable;
 /**
  * Postgres driver requires little bit different way to handle last insert id.
  */
-class PostgresInsertQuery extends InsertQuery
+class PostgresInsertQuery extends InsertQuery implements ColumnReturnableInterface
 {
     /** @var PostgresDriver */
     protected $driver;
 
-    /** @var string|null */
-    protected $returning;
+    protected ?string $returning = null;
 
-    /**
-     * @param DriverInterface $driver
-     * @param string|null     $prefix
-     * @return QueryInterface
-     */
     public function withDriver(DriverInterface $driver, string $prefix = null): QueryInterface
     {
-        if (!$driver instanceof PostgresDriver) {
+        if (! $driver instanceof PostgresDriver) {
             throw new BuilderException(
                 'Postgres InsertQuery can be used only with Postgres driver'
             );
@@ -50,14 +45,14 @@ class PostgresInsertQuery extends InsertQuery
     /**
      * Set returning column. If not set, the driver will detect PK automatically.
      *
-     * @param string $column
+     * @param  string  $column
      * @return $this
+     *
+     * @deprecated use returningColumns instead
      */
     public function returning(string $column): self
     {
-        $this->returning = $column;
-
-        return $this;
+        return $this->returningColumns($column);
     }
 
     /**
@@ -85,22 +80,16 @@ class PostgresInsertQuery extends InsertQuery
         }
     }
 
-    /**
-     * @return array
-     */
     public function getTokens(): array
     {
         return [
-            'table'   => $this->table,
-            'return'  => $this->getPrimaryKey(),
+            'table' => $this->table,
+            'return' => $this->getPrimaryKey(),
             'columns' => $this->columns,
-            'values'  => $this->values
+            'values' => $this->values,
         ];
     }
 
-    /**
-     * @return string
-     */
     private function getPrimaryKey(): ?string
     {
         $primaryKey = $this->returning;
@@ -113,5 +102,24 @@ class PostgresInsertQuery extends InsertQuery
         }
 
         return $primaryKey;
+    }
+
+    public function returningColumns(string ...$columns): self
+    {
+        if ($columns === []) {
+            throw new BuilderException(
+                'RETURNING clause should contain at least 1 column.'
+            );
+        }
+
+        if (count($columns) > 1) {
+            throw new BuilderException(
+                'Postgres driver supports only single column returning at this moment.'
+            );
+        }
+
+        $this->returning = $columns[0];
+
+        return $this;
     }
 }

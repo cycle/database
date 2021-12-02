@@ -117,7 +117,9 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     {
         $select = $this->db()
                        ->select('id')
-                       ->from((new SelectQuery())->from('users')->where('id', '>', 100))
+                       ->from([
+                           [(new SelectQuery())->from('users')->where('id', '>', 100), 't']
+                       ])
                        ->where(['name' => 'Antony']);
 
         $this->assertSameQuery(
