@@ -15,6 +15,8 @@ use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\Postgres\PostgresDriver;
 use Cycle\Database\Exception\BuilderException;
 use Cycle\Database\Exception\ReadonlyConnectionException;
+use Cycle\Database\Injection\FragmentInterface;
+use Cycle\Database\Query\ReturningInterface;
 use Cycle\Database\Query\InsertQuery;
 use Cycle\Database\Query\QueryInterface;
 use Cycle\Database\Query\QueryParameters;
@@ -23,22 +25,16 @@ use Throwable;
 /**
  * Postgres driver requires little bit different way to handle last insert id.
  */
-class PostgresInsertQuery extends InsertQuery
+class PostgresInsertQuery extends InsertQuery implements ReturningInterface
 {
     /** @var PostgresDriver */
     protected $driver;
 
-    /** @var string|null */
-    protected $returning;
+    protected ?string $returning = null;
 
-    /**
-     * @param DriverInterface $driver
-     * @param string|null     $prefix
-     * @return QueryInterface
-     */
     public function withDriver(DriverInterface $driver, string $prefix = null): QueryInterface
     {
-        if (!$driver instanceof PostgresDriver) {
+        if (! $driver instanceof PostgresDriver) {
             throw new BuilderException(
                 'Postgres InsertQuery can be used only with Postgres driver'
             );
@@ -49,13 +45,22 @@ class PostgresInsertQuery extends InsertQuery
 
     /**
      * Set returning column. If not set, the driver will detect PK automatically.
-     *
-     * @param string $column
-     * @return $this
      */
-    public function returning(string $column): self
+    public function returning(string|FragmentInterface ...$columns): self
     {
-        $this->returning = $column;
+        if ($columns === []) {
+            throw new BuilderException(
+                'RETURNING clause should contain at least 1 column.'
+            );
+        }
+
+        if (count($columns) > 1) {
+            throw new BuilderException(
+                'Postgres driver supports only single column returning at this moment.'
+            );
+        }
+
+        $this->returning = (string)$columns[0];
 
         return $this;
     }
@@ -85,22 +90,16 @@ class PostgresInsertQuery extends InsertQuery
         }
     }
 
-    /**
-     * @return array
-     */
     public function getTokens(): array
     {
         return [
-            'table'   => $this->table,
-            'return'  => $this->getPrimaryKey(),
+            'table' => $this->table,
+            'return' => $this->getPrimaryKey(),
             'columns' => $this->columns,
-            'values'  => $this->values
+            'values' => $this->values,
         ];
     }
 
-    /**
-     * @return string
-     */
     private function getPrimaryKey(): ?string
     {
         $primaryKey = $this->returning;

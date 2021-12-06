@@ -6,6 +6,8 @@ namespace Cycle\Database\Tests\Functional\Driver\Postgres\Query;
 
 // phpcs:ignore
 use Cycle\Database\Driver\Postgres\Query\PostgresInsertQuery;
+use Cycle\Database\Exception\BuilderException;
+use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Tests\Functional\Driver\Common\Query\InsertQueryTest as CommonClass;
 
 /**
@@ -87,5 +89,40 @@ class InsertQueryTest extends CommonClass
             'INSERT INTO {table} ({name}, {balance}) VALUES (?, ?) RETURNING {name}',
             $insert
         );
+    }
+
+    public function testCustomReturningWithFragment(): void
+    {
+        $insert = $this->database->insert()->into('table')
+            ->columns('name', 'balance')
+            ->values('Anton', 100)
+            ->returning(new Fragment('COUNT(name)'));
+
+        $this->assertSameQuery(
+            'INSERT INTO {table} ({name}, {balance}) VALUES (?, ?) RETURNING {COUNT(name)}',
+            $insert
+        );
+    }
+
+    public function testCustomReturningShouldContainColumns(): void
+    {
+        $this->expectException(BuilderException::class);
+        $this->expectErrorMessage('RETURNING clause should contain at least 1 column.');
+
+        $this->database->insert()->into('table')
+            ->columns('name', 'balance')
+            ->values('Anton', 100)
+            ->returning();
+    }
+
+    public function testCustomReturningSupportsOnlySingleColumn(): void
+    {
+        $this->expectException(BuilderException::class);
+        $this->expectErrorMessage('Postgres driver supports only single column returning at this moment.');
+
+        $this->database->insert()->into('table')
+            ->columns('name', 'balance')
+            ->values('Anton', 100)
+            ->returning('name', 'id');
     }
 }
