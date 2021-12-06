@@ -7,6 +7,7 @@ namespace Cycle\Database\Tests\Functional\Driver\Postgres\Query;
 // phpcs:ignore
 use Cycle\Database\Driver\Postgres\Query\PostgresInsertQuery;
 use Cycle\Database\Exception\BuilderException;
+use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Tests\Functional\Driver\Common\Query\InsertQueryTest as CommonClass;
 
 /**
@@ -86,6 +87,19 @@ class InsertQueryTest extends CommonClass
 
         $this->assertSameQuery(
             'INSERT INTO {table} ({name}, {balance}) VALUES (?, ?) RETURNING {name}',
+            $insert
+        );
+    }
+
+    public function testCustomReturningWithFragment(): void
+    {
+        $insert = $this->database->insert()->into('table')
+            ->columns('name', 'balance')
+            ->values('Anton', 100)
+            ->returning(new Fragment('COUNT(name)'));
+
+        $this->assertSameQuery(
+            'INSERT INTO {table} ({name}, {balance}) VALUES (?, ?) RETURNING {COUNT(name)}',
             $insert
         );
     }
