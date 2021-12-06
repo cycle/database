@@ -6,7 +6,7 @@ namespace Cycle\Database\Query;
 
 use Cycle\Database\Injection\FragmentInterface;
 
-interface ReturnableInterface extends QueryInterface
+interface ReturningInterface extends QueryInterface
 {
     /**
      * Set returning column or expression.
