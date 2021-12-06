@@ -15,7 +15,8 @@ use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\Postgres\PostgresDriver;
 use Cycle\Database\Exception\BuilderException;
 use Cycle\Database\Exception\ReadonlyConnectionException;
-use Cycle\Database\Query\ColumnReturnableInterface;
+use Cycle\Database\Injection\FragmentInterface;
+use Cycle\Database\Query\ReturnableInterface;
 use Cycle\Database\Query\InsertQuery;
 use Cycle\Database\Query\QueryInterface;
 use Cycle\Database\Query\QueryParameters;
@@ -24,7 +25,7 @@ use Throwable;
 /**
  * Postgres driver requires little bit different way to handle last insert id.
  */
-class PostgresInsertQuery extends InsertQuery implements ColumnReturnableInterface
+class PostgresInsertQuery extends InsertQuery implements ReturnableInterface
 {
     /** @var PostgresDriver */
     protected $driver;
@@ -44,15 +45,24 @@ class PostgresInsertQuery extends InsertQuery implements ColumnReturnableInterfa
 
     /**
      * Set returning column. If not set, the driver will detect PK automatically.
-     *
-     * @param  string  $column
-     * @return $this
-     *
-     * @deprecated use returningColumns instead
      */
-    public function returning(string $column): self
+    public function returning(string|FragmentInterface ...$columns): self
     {
-        return $this->returningColumns($column);
+        if ($columns === []) {
+            throw new BuilderException(
+                'RETURNING clause should contain at least 1 column.'
+            );
+        }
+
+        if (count($columns) > 1) {
+            throw new BuilderException(
+                'Postgres driver supports only single column returning at this moment.'
+            );
+        }
+
+        $this->returning = (string)$columns[0];
+
+        return $this;
     }
 
     /**
@@ -102,24 +112,5 @@ class PostgresInsertQuery extends InsertQuery implements ColumnReturnableInterfa
         }
 
         return $primaryKey;
-    }
-
-    public function returningColumns(string ...$columns): self
-    {
-        if ($columns === []) {
-            throw new BuilderException(
-                'RETURNING clause should contain at least 1 column.'
-            );
-        }
-
-        if (count($columns) > 1) {
-            throw new BuilderException(
-                'Postgres driver supports only single column returning at this moment.'
-            );
-        }
-
-        $this->returning = $columns[0];
-
-        return $this;
     }
 }

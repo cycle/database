@@ -82,7 +82,7 @@ class InsertQueryTest extends CommonClass
         $insert = $this->database->insert()->into('table')
             ->columns('name', 'balance')
             ->values('Anton', 100)
-            ->returningColumns('name');
+            ->returning('name');
 
         $this->assertSameQuery(
             'INSERT INTO {table} ({name}, {balance}) VALUES (?, ?) RETURNING {name}',
@@ -98,7 +98,7 @@ class InsertQueryTest extends CommonClass
         $this->database->insert()->into('table')
             ->columns('name', 'balance')
             ->values('Anton', 100)
-            ->returningColumns();
+            ->returning();
     }
 
     public function testCustomReturningSupportsOnlySingleColumn(): void
@@ -109,6 +109,6 @@ class InsertQueryTest extends CommonClass
         $this->database->insert()->into('table')
             ->columns('name', 'balance')
             ->values('Anton', 100)
-            ->returningColumns('name', 'id');
+            ->returning('name', 'id');
     }
 }
