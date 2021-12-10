@@ -44,7 +44,7 @@ trait TokenTrait
                 return;
             }
 
-            if (is_array($complex)) {
+            if (\is_array($complex)) {
                 if (count($complex) === 0) {
                     // nothing to do
                     return;
@@ -161,7 +161,7 @@ trait TokenTrait
 
         foreach ($where as $key => $value) {
             // Support for closures
-            if (is_int($key) && $value instanceof \Closure) {
+            if (\is_int($key) && $value instanceof \Closure) {
                 $tokens[] = [$boolean, '('];
                 $value($this, $boolean, $wrapper);
                 $tokens[] = ['', ')'];
@@ -191,7 +191,7 @@ trait TokenTrait
             }
 
             // AND|OR [name] = [value]
-            if (!is_array($value)) {
+            if (!\is_array($value)) {
                 $tokens[] = [
                     $boolean,
                     [$key, '=', $wrapper($value)],
@@ -225,10 +225,8 @@ trait TokenTrait
      * @param array    $where       Operations associated with identifier.
      * @param array    $tokens      Array to aggregate compiled tokens. Reference.
      * @param callable $wrapper     Callback or closure used to wrap/collect every potential parameter.
-     *
-     * @return array
      */
-    private function pushCondition(string $innerJoiner, string $key, $where, &$tokens, callable $wrapper): array
+    private function pushCondition(string $innerJoiner, string $key, array $where, &$tokens, callable $wrapper): array
     {
         foreach ($where as $operation => $value) {
             if (is_numeric($operation)) {

@@ -29,44 +29,25 @@ interface DatabaseInterface
     public const WRITE = 0;
     public const READ  = 1;
 
-    /**
-     * @return string
-     */
     public function getName(): string;
 
     /**
      * Database type matched to one of database constants. You MUST write SQL for execute and query
      * methods by respecting result of this method.
-     *
-     * @return string
      */
     public function getType(): string;
 
-    /**
-     * @param int $type
-     * @return DriverInterface
-     */
     public function getDriver(int $type = self::WRITE): DriverInterface;
 
     /**
      * Return database with new isolation prefix.
-     *
-     * @param string $prefix
-     * @param bool   $add
-     * @return self|$this
      */
     public function withPrefix(string $prefix, bool $add = true): self;
 
-    /**
-     * @return string
-     */
     public function getPrefix(): string;
 
     /**
      * Check if table exists.
-     *
-     * @param string $name
-     * @return bool
      */
     public function hasTable(string $name): bool;
 
@@ -77,10 +58,6 @@ interface DatabaseInterface
      */
     public function getTables(): array;
 
-    /**
-     * @param string $name
-     * @return TableInterface
-     */
     public function table(string $name): TableInterface;
 
     /**
@@ -88,7 +65,6 @@ interface DatabaseInterface
      *
      * @param string $query
      * @param array  $parameters Parameters to be binded into query.
-     * @return int
      *
      * @throws StatementException
      */
@@ -99,7 +75,6 @@ interface DatabaseInterface
      *
      * @param string $query
      * @param array  $parameters Parameters to be binded into query.
-     * @return StatementInterface
      *
      * @throws StatementException
      */
@@ -109,7 +84,6 @@ interface DatabaseInterface
      * Get instance of InsertBuilder associated with current Database.
      *
      * @param string $table Table where values should be inserted to.
-     * @return InsertQuery
      */
     public function insert(string $table = ''): InsertQuery;
 
@@ -119,7 +93,6 @@ interface DatabaseInterface
      * @param string $table  Table where rows should be updated in.
      * @param array  $values Initial set of columns to update associated with their values.
      * @param array  $where  Initial set of where rules specified as array.
-     * @return UpdateQuery
      */
     public function update(string $table = '', array $values = [], array $where = []): UpdateQuery;
 
@@ -128,7 +101,6 @@ interface DatabaseInterface
      *
      * @param string $table Table where rows should be deleted from.
      * @param array  $where Initial set of where rules specified as array.
-     * @return DeleteQuery
      */
     public function delete(string $table = '', array $where = []): DeleteQuery;
 
@@ -136,43 +108,33 @@ interface DatabaseInterface
      * Get instance of SelectBuilder associated with current Database.
      *
      * @param array|string $columns Columns to select.
-     * @return SelectQuery
      */
-    public function select($columns = '*'): SelectQuery;
+    public function select(mixed $columns = '*'): SelectQuery;
 
     /**
      * Execute multiple commands defined by Closure function inside one transaction. Closure or
      * function must receive only one argument - DatabaseInterface instance.
      *
      * @link http://en.wikipedia.org/wiki/Database_transaction
-     * @param callable $callback
-     * @param string   $isolationLevel
-     * @return mixed
      *
      * @throws \Throwable
      */
-    public function transaction(callable $callback, string $isolationLevel = null);
+    public function transaction(callable $callback, string $isolationLevel = null): mixed;
 
     /**
      * Start database transaction.
      *
      * @link http://en.wikipedia.org/wiki/Database_transaction
-     * @param string $isolationLevel
-     * @return bool
      */
     public function begin(string $isolationLevel = null): bool;
 
     /**
      * Commit the active database transaction.
-     *
-     * @return bool
      */
     public function commit(): bool;
 
     /**
      * Rollback the active database transaction.
-     *
-     * @return bool
      */
     public function rollback(): bool;
 }

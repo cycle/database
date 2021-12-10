@@ -38,10 +38,7 @@ class SQLServerColumn extends AbstractColumn
         'enumConstraint'
     ];
 
-    /**
-     * {@inheritdoc}
-     */
-    protected $mapping = [
+    protected array $mapping = [
         //Primary sequences
         'primary'     => ['type' => 'int', 'identity' => true, 'nullable' => false],
         'bigPrimary'  => ['type' => 'bigint', 'identity' => true, 'nullable' => false],
@@ -89,10 +86,7 @@ class SQLServerColumn extends AbstractColumn
         'uuid'        => ['type' => 'varchar', 'size' => 36],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
-    protected $reverseMapping = [
+    protected array $reverseMapping = [
         'primary'     => [['type' => 'int', 'identity' => true]],
         'bigPrimary'  => [['type' => 'bigint', 'identity' => true]],
         'enum'        => ['enum'],
@@ -113,38 +107,23 @@ class SQLServerColumn extends AbstractColumn
 
     /**
      * Field is table identity.
-     *
-     * @var bool
      */
-    protected $identity = false;
+    protected bool $identity = false;
 
-    /**
-     * @var bool
-     */
-    protected $constrainedDefault = false;
+    protected bool $constrainedDefault = false;
 
     /**
      * Name of default constraint.
-     *
-     * @var string
      */
-    protected $defaultConstraint = '';
+    protected string $defaultConstraint = '';
 
-    /**
-     * @var bool
-     */
-    protected $constrainedEnum = false;
+    protected bool $constrainedEnum = false;
 
     /**
      * Name of enum constraint.
-     *
-     * @var string
      */
-    protected $enumConstraint = '';
+    protected string $enumConstraint = '';
 
-    /**
-     * {@inheritdoc}
-     */
     public function getConstraints(): array
     {
         $constraints = parent::getConstraints();
@@ -160,22 +139,12 @@ class SQLServerColumn extends AbstractColumn
         return $constraints;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAbstractType(): string
     {
-        if (!empty($this->enumValues)) {
-            return 'enum';
-        }
-
-        return parent::getAbstractType();
+        return !empty($this->enumValues) ? 'enum' : parent::getAbstractType();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function enum($values): AbstractColumn
+    public function enum(mixed $values): AbstractColumn
     {
         $this->enumValues = array_map('strval', is_array($values) ? $values : func_get_args());
         sort($this->enumValues);
@@ -189,8 +158,6 @@ class SQLServerColumn extends AbstractColumn
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param bool $withEnum When true enum constrain will be included into definition. Set to false
      *                       if you want to create constrain separately.
      */
@@ -226,10 +193,6 @@ class SQLServerColumn extends AbstractColumn
     /**
      * Generate set of operations need to change column. We are expecting that column constrains
      * will be dropped separately.
-     *
-     * @param DriverInterface $driver
-     * @param AbstractColumn  $initial
-     * @return array
      */
     public function alterOperations(DriverInterface $driver, AbstractColumn $initial): array
     {
@@ -293,10 +256,8 @@ class SQLServerColumn extends AbstractColumn
 
     /**
      * @param string          $table  Table name.
-     * @param array           $schema
      * @param DriverInterface $driver SQLServer columns are bit more complex.
      *
-     * @return SQLServerColumn
      */
     public static function createInstance(
         string $table,
@@ -351,14 +312,11 @@ class SQLServerColumn extends AbstractColumn
         return $column;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function quoteDefault(DriverInterface $driver): string
     {
         $defaultValue = parent::quoteDefault($driver);
         if ($this->getAbstractType() === 'boolean') {
-            $defaultValue = strval((int)$this->defaultValue);
+            $defaultValue = (string) ((int)$this->defaultValue);
         }
 
         return $defaultValue;
@@ -366,8 +324,6 @@ class SQLServerColumn extends AbstractColumn
 
     /**
      * Get/generate name of enum constraint.
-     *
-     * @return string
      */
     protected function enumConstraint(): string
     {
@@ -380,8 +336,6 @@ class SQLServerColumn extends AbstractColumn
 
     /**
      * Get/generate name of default constrain.
-     *
-     * @return string
      */
     protected function defaultConstrain(): string
     {
@@ -394,9 +348,6 @@ class SQLServerColumn extends AbstractColumn
 
     /**
      * In SQLServer we can emulate enums similar way as in Postgres via column constrain.
-     *
-     * @param DriverInterface $driver
-     * @return string
      */
     private function enumStatement(DriverInterface $driver): string
     {
@@ -444,10 +395,6 @@ class SQLServerColumn extends AbstractColumn
 
     /**
      * Resolve enum values if any.
-     *
-     * @param DriverInterface $driver
-     * @param array           $schema
-     * @param SQLServerColumn $column
      */
     private static function resolveEnum(
         DriverInterface $driver,

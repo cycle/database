@@ -23,24 +23,14 @@ class UpdateQuery extends ActiveQuery
     use TokenTrait;
     use WhereTrait;
 
-    /** @var string */
-    protected $table = '';
+    protected string $table = '';
 
-    /** @var array */
-    protected $values = [];
-
-    /**
-     * @param string|null $table
-     * @param array       $where
-     * @param array       $values
-     */
     public function __construct(
         string $table = null,
         array $where = [],
-        array $values = []
+        protected array $values = []
     ) {
         $this->table = $table ?? '';
-        $this->values = $values;
 
         if ($where !== []) {
             $this->where($where);
@@ -51,7 +41,6 @@ class UpdateQuery extends ActiveQuery
      * Change target table.
      *
      * @param string $table Table name without prefix.
-     * @return self|$this
      */
     public function in(string $table): UpdateQuery
     {
@@ -63,9 +52,6 @@ class UpdateQuery extends ActiveQuery
     /**
      * Change value set to be updated, must be represented by array of columns associated with new
      * value to be set.
-     *
-     * @param array $values
-     * @return self|$this
      */
     public function values(array $values): UpdateQuery
     {
@@ -76,12 +62,8 @@ class UpdateQuery extends ActiveQuery
 
     /**
      * Set update value.
-     *
-     * @param string $column
-     * @param mixed  $value
-     * @return self|$this
      */
-    public function set(string $column, $value): UpdateQuery
+    public function set(string $column, mixed $value): UpdateQuery
     {
         $this->values[$column] = $value;
 
@@ -89,11 +71,7 @@ class UpdateQuery extends ActiveQuery
     }
 
     /**
-     * {@inheritdoc}
-     *
      * Affect queries will return count of affected rows.
-     *
-     * @return int
      */
     public function run(): int
     {
@@ -103,17 +81,11 @@ class UpdateQuery extends ActiveQuery
         return $this->driver->execute($queryString, $params->getParameters());
     }
 
-    /**
-     * @return int
-     */
     public function getType(): int
     {
         return CompilerInterface::UPDATE_QUERY;
     }
 
-    /**
-     * @return array
-     */
     public function getTokens(): array
     {
         return [

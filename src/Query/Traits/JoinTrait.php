@@ -18,6 +18,7 @@ use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Injection\ParameterInterface;
 use Cycle\Database\Query\ActiveQuery;
+use Cycle\Database\Query\SelectQuery;
 
 /**
  * Provides ability to generate QueryCompiler JOIN tokens including ON conditions and table/column
@@ -57,16 +58,12 @@ trait JoinTrait
     /**
      * Set of join tokens with on and on where conditions associated, must be supported by
      * QueryCompilers.
-     *
-     * @var array
      */
-    protected $joinTokens = [];
+    protected array $joinTokens = [];
     /**
      * Name/id of last join, every ON and ON WHERE call will be associated with this join.
-     *
-     * @var string
      */
-    private $lastJoin = null;
+    private int|string|null $lastJoin = null;
 
     /**
      * Register new JOIN with specified type with set of on conditions (linking one table to
@@ -79,11 +76,13 @@ trait JoinTrait
      *                                    parameters allowed) or closure.
      *
      * @throws BuilderException
-     *
-     * @return $this
      */
-    public function join($type, $outer, string $alias = null, $on = null): self
-    {
+    public function join(
+        ActiveQuery|string $type,
+        string|ActiveQuery $outer,
+        string $alias = null,
+        mixed $on = null
+    ): self {
         $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
             'alias' => $alias,
@@ -113,10 +112,8 @@ trait JoinTrait
      * @param string             $alias Joined table or query alias.
      *
      * @throws BuilderException
-     *
-     * @return $this
      */
-    public function innerJoin($outer, string $alias = null): self
+    public function innerJoin(ActiveQuery|string $outer, string $alias = null): self
     {
         $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
@@ -141,10 +138,8 @@ trait JoinTrait
      *                                    parameters allowed) or closure.
      *
      * @throws BuilderException
-     *
-     * @return $this
      */
-    public function rightJoin($outer, string $alias = null, $on = null): self
+    public function rightJoin(ActiveQuery|string $outer, string $alias = null, mixed $on = null): self
     {
         $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
@@ -168,10 +163,8 @@ trait JoinTrait
      * @param string             $alias Joined table or query alias.
      *
      * @throws BuilderException
-     *
-     * @return $this
      */
-    public function leftJoin($outer, string $alias = null): self
+    public function leftJoin(ActiveQuery|string $outer, string $alias = null): self
     {
         $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
@@ -198,7 +191,7 @@ trait JoinTrait
      *
      * @return $this
      */
-    public function fullJoin($outer, string $alias = null): self
+    public function fullJoin(ActiveQuery|string $outer, string $alias = null): self
     {
         $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
@@ -217,10 +210,8 @@ trait JoinTrait
      * @param mixed ...$args [(column, outer column), (column, operator, outer column)]
      *
      * @throws BuilderException
-     *
-     * @return $this
      */
-    public function on(...$args): self
+    public function on(mixed ...$args): self
     {
         $this->registerToken(
             'AND',
@@ -239,10 +230,8 @@ trait JoinTrait
      * @param mixed ...$args [(column, outer column), (column, operator, outer column)]
      *
      * @throws BuilderException
-     *
-     * @return $this
      */
-    public function andOn(...$args): self
+    public function andOn(mixed ...$args): self
     {
         $this->registerToken(
             'AND',
@@ -261,10 +250,8 @@ trait JoinTrait
      * @param mixed ...$args [(column, outer column), (column, operator, outer column)]
      *
      * @throws BuilderException
-     *
-     * @return $this
      */
-    public function orOn(...$args): self
+    public function orOn(mixed ...$args): self
     {
         $this->registerToken(
             'OR',
@@ -284,11 +271,9 @@ trait JoinTrait
      *
      * @throws BuilderException
      *
-     * @return $this
-     *
      * @see AbstractWhere
      */
-    public function onWhere(...$args): self
+    public function onWhere(mixed ...$args): self
     {
         $this->registerToken(
             'AND',
@@ -308,11 +293,9 @@ trait JoinTrait
      *
      * @throws BuilderException
      *
-     * @return $this
-     *
      * @see AbstractWhere
      */
-    public function andOnWhere(...$args): self
+    public function andOnWhere(mixed ...$args): self
     {
         $this->registerToken(
             'AND',
@@ -332,11 +315,9 @@ trait JoinTrait
      *
      * @throws BuilderException
      *
-     * @return $this
-     *
      * @see AbstractWhere
      */
-    public function orOnWhere(...$args): self
+    public function orOnWhere(mixed ...$args): self
     {
         $this->registerToken(
             'OR',
@@ -368,40 +349,28 @@ trait JoinTrait
 
     /**
      * Convert parameters used in JOIN ON statements into sql expressions.
-     *
-     * @return Closure
      */
     private function onWrapper(): Closure
     {
         return static function ($parameter) {
-            if ($parameter instanceof FragmentInterface || $parameter instanceof ParameterInterface) {
-                return $parameter;
-            }
-
-            return new Expression($parameter);
+            return $parameter instanceof FragmentInterface || $parameter instanceof ParameterInterface
+                ? $parameter
+                : new Expression($parameter);
         };
     }
 
     /**
      * Applied to every potential parameter while ON WHERE tokens generation.
-     *
-     * @return Closure
      */
     private function onWhereWrapper(): Closure
     {
         return static function ($parameter) {
-            if (is_array($parameter)) {
-                throw new BuilderException(
-                    'Arrays must be wrapped with Parameter instance'
-                );
-            }
+            \is_array($parameter) && throw new BuilderException('Arrays must be wrapped with Parameter instance');
 
             //Wrapping all values with ParameterInterface
-            if (!$parameter instanceof ParameterInterface && !$parameter instanceof FragmentInterface) {
-                $parameter = new Parameter($parameter);
-            }
-
-            return $parameter;
+            return !$parameter instanceof ParameterInterface && !$parameter instanceof FragmentInterface
+                ? new Parameter($parameter)
+                : $parameter;
         };
     }
 }

@@ -25,35 +25,18 @@ use Cycle\Database\Query\SelectQuery;
  */
 final class CompilerCache implements CompilerInterface
 {
-    /** @var array */
-    private $cache = [];
+    private array $cache = [];
 
-    /** @var CachingCompilerInterface */
-    private $compiler;
-
-    /**
-     * @param CachingCompilerInterface $compiler
-     */
-    public function __construct(CachingCompilerInterface $compiler)
-    {
-        $this->compiler = $compiler;
+    public function __construct(
+        private CachingCompilerInterface $compiler
+    ) {
     }
 
-    /**
-     * @param string $identifier
-     * @return string
-     */
     public function quoteIdentifier(string $identifier): string
     {
         return $this->compiler->quoteIdentifier($identifier);
     }
 
-    /**
-     * @param QueryParameters   $params
-     * @param string            $prefix
-     * @param FragmentInterface $fragment
-     * @return string
-     */
     public function compile(QueryParameters $params, string $prefix, FragmentInterface $fragment): string
     {
         if ($fragment->getType() === self::SELECT_QUERY) {
@@ -94,11 +77,6 @@ final class CompilerCache implements CompilerInterface
         );
     }
 
-    /**
-     * @param QueryParameters $params
-     * @param array           $tokens
-     * @return string
-     */
     protected function hashInsertQuery(QueryParameters $params, array $tokens): string
     {
         $hash = 'i_' . $tokens['table'] . implode('_', $tokens['columns']) . '_r' . ($tokens['return'] ?? '');
@@ -142,11 +120,6 @@ final class CompilerCache implements CompilerInterface
         return $hash;
     }
 
-    /**
-     * @param QueryParameters $params
-     * @param array           $tokens
-     * @return string
-     */
     protected function hashSelectQuery(QueryParameters $params, array $tokens): string
     {
         // stable part of hash
@@ -211,11 +184,6 @@ final class CompilerCache implements CompilerInterface
         return $hash;
     }
 
-    /**
-     * @param QueryParameters $params
-     * @param array           $where
-     * @return string
-     */
     protected function hashWhere(QueryParameters $params, array $where): string
     {
         $hash = '';
@@ -300,11 +268,6 @@ final class CompilerCache implements CompilerInterface
         return $hash;
     }
 
-    /**
-     * @param QueryParameters $params
-     * @param array           $columns
-     * @return string
-     */
     protected function hashColumns(QueryParameters $params, array $columns): string
     {
         $hash = '';
@@ -321,11 +284,6 @@ final class CompilerCache implements CompilerInterface
         return $hash;
     }
 
-    /**
-     * @param QueryParameters    $params
-     * @param ParameterInterface $param
-     * @return string
-     */
     private function hashParam(QueryParameters $params, ParameterInterface $param): string
     {
         if ($param->isNull()) {

@@ -28,17 +28,14 @@ use Throwable;
 class PostgresInsertQuery extends InsertQuery implements ReturningInterface
 {
     /** @var PostgresDriver */
-    protected $driver;
+    protected DriverInterface $driver;
 
     protected ?string $returning = null;
 
     public function withDriver(DriverInterface $driver, string $prefix = null): QueryInterface
     {
-        if (! $driver instanceof PostgresDriver) {
-            throw new BuilderException(
-                'Postgres InsertQuery can be used only with Postgres driver'
-            );
-        }
+        !$driver instanceof PostgresDriver
+        && throw new BuilderException('Postgres InsertQuery can be used only with Postgres driver');
 
         return parent::withDriver($driver, $prefix);
     }
@@ -48,11 +45,7 @@ class PostgresInsertQuery extends InsertQuery implements ReturningInterface
      */
     public function returning(string|FragmentInterface ...$columns): self
     {
-        if ($columns === []) {
-            throw new BuilderException(
-                'RETURNING clause should contain at least 1 column.'
-            );
-        }
+        $columns === [] && throw new BuilderException('RETURNING clause should contain at least 1 column.');
 
         if (count($columns) > 1) {
             throw new BuilderException(
@@ -65,17 +58,12 @@ class PostgresInsertQuery extends InsertQuery implements ReturningInterface
         return $this;
     }
 
-    /**
-     * @return int|string|null
-     */
-    public function run()
+    public function run(): int|string|null
     {
         $params = new QueryParameters();
         $queryString = $this->sqlStatement($params);
 
-        if ($this->driver->isReadonly()) {
-            throw ReadonlyConnectionException::onWriteStatementExecution();
-        }
+        $this->driver->isReadonly() && throw ReadonlyConnectionException::onWriteStatementExecution();
 
         $result = $this->driver->query($queryString, $params->getParameters());
 
@@ -106,7 +94,7 @@ class PostgresInsertQuery extends InsertQuery implements ReturningInterface
         if ($primaryKey === null && $this->driver !== null && $this->table !== null) {
             try {
                 $primaryKey = $this->driver->getPrimaryKey($this->prefix, $this->table);
-            } catch (Throwable $e) {
+            } catch (Throwable) {
                 return null;
             }
         }

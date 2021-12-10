@@ -15,16 +15,8 @@ use Cycle\Database\Driver\Driver;
 
 trait ElementTrait
 {
-    /** @var string */
-    protected $name = '';
-
-    /**  @var string */
-    protected $table = '';
-
     /**
      * Associated table name (full name).
-     *
-     * @return string
      */
     public function getTable(): string
     {
@@ -33,9 +25,6 @@ trait ElementTrait
 
     /**
      * Set element name.
-     *
-     * @param string $name
-     * @return self|$this
      */
     public function setName(string $name): self
     {
@@ -46,8 +35,6 @@ trait ElementTrait
 
     /**
      * Get element name (unquoted).
-     *
-     * @return string
      */
     public function getName(): string
     {
@@ -56,9 +43,6 @@ trait ElementTrait
 
     /**
      * Element creation/definition syntax (specific to parent driver).
-     *
-     * @param Driver $driver
-     * @return string
      */
     abstract public function sqlStatement(Driver $driver): string;
 }

@@ -19,18 +19,16 @@ use Cycle\Database\Injection\ParameterInterface;
 
 trait HavingTrait
 {
-    /** @var array */
-    protected $havingTokens = [];
+    protected array $havingTokens = [];
 
     /**
      * Simple HAVING condition with various set of arguments.
      *
      * @param mixed ...$args [(column, value), (column, operator, value)]
-     * @return self|$this
      *
      * @throws BuilderException
      */
-    public function having(...$args): self
+    public function having(mixed ...$args): self
     {
         $this->registerToken(
             'AND',
@@ -46,11 +44,10 @@ trait HavingTrait
      * Simple AND HAVING condition with various set of arguments.
      *
      * @param mixed ...$args [(column, value), (column, operator, value)]
-     * @return self|$this
      *
      * @throws BuilderException
      */
-    public function andHaving(...$args): self
+    public function andHaving(mixed ...$args): self
     {
         $this->registerToken(
             'AND',
@@ -67,11 +64,9 @@ trait HavingTrait
      *
      * @param mixed ...$args [(column, value), (column, operator, value)]
      *
-     * @return self|$this
-     *
      * @throws BuilderException
      */
-    public function orHaving(...$args): self
+    public function orHaving(mixed ...$args): self
     {
         $this->registerToken(
             'OR',
@@ -99,27 +94,19 @@ trait HavingTrait
         array $params,
         array &$tokens,
         callable $wrapper
-    );
+    ): void;
 
     /**
      * Applied to every potential parameter while having tokens generation.
-     *
-     * @return Closure
      */
     private function havingWrapper(): Closure
     {
         return static function ($parameter) {
-            if (is_array($parameter)) {
-                throw new BuilderException(
-                    'Arrays must be wrapped with Parameter instance'
-                );
-            }
+            \is_array($parameter) && throw new BuilderException('Arrays must be wrapped with Parameter instance');
 
-            if (!$parameter instanceof ParameterInterface && !$parameter instanceof FragmentInterface) {
-                return new Parameter($parameter);
-            }
-
-            return $parameter;
+            return !$parameter instanceof ParameterInterface && !$parameter instanceof FragmentInterface
+                ? new Parameter($parameter)
+                : $parameter;
         };
     }
 }

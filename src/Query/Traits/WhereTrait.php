@@ -19,8 +19,7 @@ use Cycle\Database\Injection\ParameterInterface;
 
 trait WhereTrait
 {
-    /** @var array */
-    protected $whereTokens = [];
+    protected array $whereTokens = [];
 
     /**
      * Simple WHERE condition with various set of arguments.
@@ -30,7 +29,7 @@ trait WhereTrait
      *
      * @throws BuilderException
      */
-    public function where(...$args): self
+    public function where(mixed ...$args): self
     {
         $this->registerToken(
             'AND',
@@ -50,7 +49,7 @@ trait WhereTrait
      *
      * @throws BuilderException
      */
-    public function andWhere(...$args): self
+    public function andWhere(mixed ...$args): self
     {
         $this->registerToken(
             'AND',
@@ -70,7 +69,7 @@ trait WhereTrait
      *
      * @throws BuilderException
      */
-    public function orWhere(...$args): self
+    public function orWhere(mixed ...$args): self
     {
         $this->registerToken(
             'OR',
@@ -98,28 +97,20 @@ trait WhereTrait
         array $params,
         array &$tokens,
         callable $wrapper
-    );
+    ): void;
 
     /**
      * Applied to every potential parameter while where tokens generation. Used to prepare and
      * collect where parameters.
-     *
-     * @return Closure
      */
     private function whereWrapper(): Closure
     {
         return static function ($parameter) {
-            if (is_array($parameter)) {
-                throw new BuilderException(
-                    'Arrays must be wrapped with Parameter instance'
-                );
-            }
+            \is_array($parameter) && throw new BuilderException('Arrays must be wrapped with Parameter instance');
 
-            if (!$parameter instanceof ParameterInterface && !$parameter instanceof FragmentInterface) {
-                return new Parameter($parameter);
-            }
-
-            return $parameter;
+            return !$parameter instanceof ParameterInterface && !$parameter instanceof FragmentInterface
+                ? new Parameter($parameter)
+                : $parameter;
         };
     }
 }

@@ -26,24 +26,18 @@ final class Reflector
     public const STATE_PASSED = 2;
 
     /** @var AbstractTable[] */
-    private $tables = [];
+    private array $tables = [];
 
-    /** @var array mixed[] */
-    private $dependencies = [];
+    private array $dependencies = [];
 
     /** @var DriverInterface[] */
-    private $drivers = [];
+    private array $drivers = [];
 
-    /** @var array */
-    private $states = [];
-
-    /** @var array mixed[] */
-    private $stack = [];
+    private array $states = [];
+    private array $stack = [];
 
     /**
      * Add table to the collection.
-     *
-     * @param AbstractTable $table
      */
     public function addTable(AbstractTable $table): void
     {
@@ -63,8 +57,6 @@ final class Reflector
 
     /**
      * Return sorted stack.
-     *
-     * @return array
      */
     public function sortedTables(): array
     {
@@ -217,10 +209,6 @@ final class Reflector
         }
     }
 
-    /**
-     * @param string $key
-     * @param array  $dependencies
-     */
     private function sort(string $key, array $dependencies): void
     {
         if (isset($this->states[$key])) {

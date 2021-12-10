@@ -47,79 +47,47 @@ final class Database implements DatabaseInterface
 
     /**
      * Shortcut to get table abstraction.
-     *
-     * @param string $name Table name without prefix.
-     *
-     * @return Table
      */
-    public function __get(string $name): Table
+    public function __get(string $name): TableInterface
     {
         return $this->table($name);
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): string
     {
         return $this->getDriver(self::WRITE)->getType();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDriver(int $type = DatabaseInterface::WRITE): DriverInterface
     {
-        if ($type === self::READ && $this->readDriver !== null) {
-            return $this->readDriver;
-        }
-
-        return $this->driver;
+        return $type === self::READ && $this->readDriver !== null ? $this->readDriver : $this->driver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function withPrefix(string $prefix, bool $add = true): DatabaseInterface
     {
         $database = clone $this;
 
-        if ($add) {
-            $database->prefix .= $prefix;
-        } else {
-            $database->prefix = $prefix;
-        }
+        $add ? $database->prefix .= $prefix : $database->prefix = $prefix;
 
         return $database;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPrefix(): string
     {
         return $this->prefix;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasTable(string $name): bool
     {
         return $this->getDriver()->getSchemaHandler()->hasTable($this->prefix . $name);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return Table[]
      */
     public function getTables(): array
@@ -128,7 +96,7 @@ final class Database implements DatabaseInterface
 
         $result = [];
         foreach ($schemaHandler->getTableNames($this->prefix) as $table) {
-            $table = strpos($table, '.') !== false
+            $table = str_contains($table, '.')
                 ? str_replace('.' . $this->prefix, '.', $table)
                 : substr($table, strlen($this->prefix));
 
@@ -138,37 +106,23 @@ final class Database implements DatabaseInterface
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return Table
-     */
     public function table(string $name): TableInterface
     {
         return new Table($this, $name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(string $query, array $parameters = []): int
     {
         return $this->getDriver(self::WRITE)
             ->execute($query, $parameters);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function query(string $query, array $parameters = []): StatementInterface
     {
         return $this->getDriver(self::READ)
             ->query($query, $parameters);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function insert(string $table = null): InsertQuery
     {
         return $this->getDriver(self::WRITE)
@@ -176,9 +130,6 @@ final class Database implements DatabaseInterface
             ->insertQuery($this->prefix, $table);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function update(string $table = null, array $values = [], array $where = []): UpdateQuery
     {
         return $this->getDriver(self::WRITE)
@@ -186,9 +137,6 @@ final class Database implements DatabaseInterface
             ->updateQuery($this->prefix, $table, $where, $values);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function delete(string $table = null, array $where = []): DeleteQuery
     {
         return $this->getDriver(self::WRITE)
@@ -196,13 +144,10 @@ final class Database implements DatabaseInterface
             ->deleteQuery($this->prefix, $table, $where);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function select($columns = '*'): SelectQuery
+    public function select(mixed $columns = '*'): SelectQuery
     {
-        $arguments = func_get_args();
-        if (isset($arguments[0]) && is_array($arguments[0])) {
+        $arguments = \func_get_args();
+        if (isset($arguments[0]) && \is_array($arguments[0])) {
             //Can be required in some cases while collecting data from Table->select(), stupid bug.
             $arguments = $arguments[0];
         }
@@ -212,15 +157,10 @@ final class Database implements DatabaseInterface
             ->selectQuery($this->prefix, [], $arguments);
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @param bool $cacheStatements
-     */
     public function transaction(
         callable $callback,
         string $isolationLevel = null
-    ) {
+    ): mixed {
         $this->begin($isolationLevel);
 
         try {
@@ -229,30 +169,21 @@ final class Database implements DatabaseInterface
 
             return $result;
         } catch (Throwable $e) {
-            $this->rollBack();
+            $this->rollback();
             throw $e;
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function begin(string $isolationLevel = null): bool
     {
         return $this->getDriver(self::WRITE)->beginTransaction($isolationLevel);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function commit(): bool
     {
         return $this->getDriver(self::WRITE)->commitTransaction();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function rollback(): bool
     {
         return $this->getDriver(self::WRITE)->rollbackTransaction();

@@ -23,8 +23,7 @@ class DeleteQuery extends ActiveQuery
     use TokenTrait;
     use WhereTrait;
 
-    /** @var string */
-    protected $table;
+    protected string $table = '';
 
     /**
      * @param string $table Associated table name.
@@ -43,7 +42,6 @@ class DeleteQuery extends ActiveQuery
      * Change target table.
      *
      * @param string $into Table name without prefix.
-     * @return self
      */
     public function from(string $into): DeleteQuery
     {
@@ -54,8 +52,6 @@ class DeleteQuery extends ActiveQuery
 
     /**
      * Alias for execute method();
-     *
-     * @return int
      */
     public function run(): int
     {
@@ -65,17 +61,11 @@ class DeleteQuery extends ActiveQuery
         return $this->driver->execute($queryString, $params->getParameters());
     }
 
-    /**
-     * @return int
-     */
     public function getType(): int
     {
         return CompilerInterface::DELETE_QUERY;
     }
 
-    /**
-     * @return array
-     */
     public function getTokens(): array
     {
         return [

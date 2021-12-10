@@ -25,42 +25,31 @@ class PostgresTable extends AbstractTable
 {
     /**
      * Found table sequences.
-     *
-     * @var array
      */
-    private $sequences = [];
+    private array $sequences = [];
 
     /**
      * Sequence object name usually defined only for primary keys and required by ORM to correctly
      * resolve inserted row id.
-     *
-     * @var string|null
      */
-    private $primarySequence = null;
+    private ?string $primarySequence = null;
 
     /**
      * Sequence object name usually defined only for primary keys and required by ORM to correctly
      * resolve inserted row id.
-     *
-     * @return string|null
      */
-    public function getSequence()
+    public function getSequence(): ?string
     {
         return $this->primarySequence;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName(): string
     {
         return $this->removeSchemaFromTableName($this->getFullName());
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * SQLServer will reload schemas after successful savw.
+     * SQLServer will reload schemas after successful save.
      */
     public function save(int $operation = HandlerInterface::DO_ALL, bool $reset = true): void
     {
@@ -77,9 +66,6 @@ class PostgresTable extends AbstractTable
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function fetchColumns(): array
     {
         [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
@@ -130,9 +116,6 @@ class PostgresTable extends AbstractTable
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function fetchIndexes(bool $all = false): array
     {
         [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
@@ -157,9 +140,6 @@ class PostgresTable extends AbstractTable
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function fetchReferences(): array
     {
         [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
@@ -202,9 +182,6 @@ class PostgresTable extends AbstractTable
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function fetchPrimaryKeys(): array
     {
         [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
@@ -225,7 +202,7 @@ class PostgresTable extends AbstractTable
             //To simplify definitions
             $index = PostgresIndex::createInstance($tableSchema . '.' . $tableName, $schema);
 
-            if (is_array($this->primarySequence) && count($index->getColumns()) === 1) {
+            if (\is_array($this->primarySequence) && count($index->getColumns()) === 1) {
                 $column = $index->getColumns()[0];
 
                 if (isset($this->sequences[$column])) {
@@ -240,9 +217,6 @@ class PostgresTable extends AbstractTable
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createColumn(string $name): AbstractColumn
     {
         return new PostgresColumn(
@@ -252,9 +226,6 @@ class PostgresTable extends AbstractTable
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createIndex(string $name): AbstractIndex
     {
         return new PostgresIndex(
@@ -263,9 +234,6 @@ class PostgresTable extends AbstractTable
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createForeign(string $name): AbstractForeignKey
     {
         return new PostgresForeignKey(
@@ -275,9 +243,6 @@ class PostgresTable extends AbstractTable
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function prefixTableName(string $name): string
     {
         [$schema, $name] = $this->driver->parseSchemaAndTable($name);
@@ -287,8 +252,6 @@ class PostgresTable extends AbstractTable
 
     /**
      * Get table name with schema. If table doesn't contain schema, schema will be added from config
-     *
-     * @return string
      */
     protected function getNormalizedTableName(): string
     {
@@ -299,13 +262,10 @@ class PostgresTable extends AbstractTable
 
     /**
      * Return table name without schema
-     *
-     * @param string $name
-     * @return string
      */
     protected function removeSchemaFromTableName(string $name): string
     {
-        if (strpos($name, '.') !== false) {
+        if (str_contains($name, '.')) {
             [, $name] = explode('.', $name, 2);
         }
 

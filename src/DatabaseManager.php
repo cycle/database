@@ -84,9 +84,6 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
     /**
      * Get Database associated with a given database alias or automatically created one.
      *
-     * @param string|null $database
-     * @return Database|DatabaseInterface
-     *
      * @throws DBALException
      */
     public function database(string $database = null): DatabaseInterface
@@ -103,29 +100,21 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
             return $this->databases[$database];
         }
 
-        if (! $this->config->hasDatabase($database)) {
-            throw new DBALException(
-                "Unable to create Database, no presets for '{$database}' found"
-            );
-        }
+        !$this->config->hasDatabase($database)
+        && throw new DBALException("Unable to create Database, no presets for '{$database}' found");
 
-        return $this->databases[$database] = $this->makeDatabase(
-            $this->config->getDatabase($database)
-        );
+        return $this->databases[$database] = $this->makeDatabase($this->config->getDatabase($database));
     }
 
     /**
      * Add new database.
      *
-     * @param Database $database
-     *
      * @throws DBALException
      */
     public function addDatabase(Database $database): void
     {
-        if (isset($this->databases[$database->getName()])) {
-            throw new DBALException("Database '{$database->getName()}' already exists");
-        }
+        isset($this->databases[$database->getName()])
+        && throw new DBALException("Database '{$database->getName()}' already exists");
 
         $this->databases[$database->getName()] = $database;
     }
@@ -179,17 +168,11 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
     /**
      * Manually set connection instance.
      *
-     * @param string $name
-     * @param DriverInterface $driver
-     * @return self
-     *
      * @throws DBALException
      */
     public function addDriver(string $name, DriverInterface $driver): DatabaseManager
     {
-        if (isset($this->drivers[$name])) {
-            throw new DBALException("Connection '{$name}' already exists");
-        }
+        isset($this->drivers[$name]) && throw new DBALException("Connection '{$name}' already exists");
 
         $this->drivers[$name] = $driver;
 
@@ -197,9 +180,6 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
     }
 
     /**
-     * @param DatabasePartial $database
-     * @return Database
-     *
      * @throws DBALException
      */
     private function makeDatabase(DatabasePartial $database): Database

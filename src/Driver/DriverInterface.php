@@ -90,41 +90,28 @@ interface DriverInterface
     /**
      * Returns {@see true} in the case that the connection is available only
      * for reading or {@see false} instead.
-     *
-     * @return bool
      */
     public function isReadonly(): bool;
 
     /**
      * Driver type (name).
-     *
-     * @return string
      */
     public function getType(): string;
 
     /**
      * Connection specific timezone, at this moment locked to UTC.
-     *
-     * @return \DateTimeZone
      */
     public function getTimezone(): \DateTimeZone;
 
-    /**
-     * @return HandlerInterface
-     */
     public function getSchemaHandler(): HandlerInterface;
 
     /**
      * Returns query compiler associated with the driver.
-     *
-     * @return CompilerInterface
      */
     public function getQueryCompiler(): CompilerInterface;
 
     /**
      * Provides the ability to initiate active queries.
-     *
-     * @return BuilderInterface
      */
     public function getQueryBuilder(): BuilderInterface;
 
@@ -133,35 +120,29 @@ interface DriverInterface
      *
      * @throws DriverException
      */
-    public function connect();
+    public function connect(): void;
 
     /**
      * Check if driver already connected.
-     *
-     * @return bool
      */
     public function isConnected(): bool;
 
     /**
      * Disconnect driver.
      */
-    public function disconnect();
+    public function disconnect(): void;
 
     /**
      * Quote value.
      *
      * @param mixed $value
      * @param int   $type Parameter type.
-     * @return string
      */
     public function quote($value, int $type = PDO::PARAM_STR): string;
 
     /**
      * Wraps PDO query method with custom representation class.
      *
-     * @param string $statement
-     * @param array  $parameters
-     * @return StatementInterface
      *
      * @throws StatementException
      */
@@ -170,9 +151,6 @@ interface DriverInterface
     /**
      * Execute query and return number of affected rows.
      *
-     * @param string $query
-     * @param array  $parameters
-     * @return int
      *
      * @throws StatementException
      * @throws ReadonlyConnectionException
@@ -196,7 +174,6 @@ interface DriverInterface
      * @link   http://en.wikipedia.org/wiki/Database_transaction
      * @link   http://en.wikipedia.org/wiki/Isolation_(database_systems)
      *
-     * @param string $isolationLevel
      *
      * @return bool True of success.
      */
@@ -223,8 +200,6 @@ interface DriverInterface
 
     /**
      * Create new driver instance.
-     *
-     * @return self
      */
     public static function create(DriverConfig $config): self;
 }

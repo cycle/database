@@ -6,7 +6,6 @@
     errorLevel="7"
     hoistConstants="true"
     resolveFromConfigFile="true"
-    allowPhpStormGenerics="true"
     findUnusedPsalmSuppress="true"
     findUnusedVariablesAndParams="true"
     ensureArrayStringOffsetsExist="true"

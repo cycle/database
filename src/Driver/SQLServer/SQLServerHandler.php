@@ -39,7 +39,7 @@ class SQLServerHandler extends Handler
 
         $tables = [];
         foreach ($this->driver->query($query)->fetchAll(PDO::FETCH_NUM) as $name) {
-            if ($prefix !== '' && strpos($name[0], $prefix) !== 0) {
+            if ($prefix !== '' && !str_starts_with($name[0], $prefix)) {
                 continue;
             }
 
@@ -93,10 +93,6 @@ class SQLServerHandler extends Handler
 
     /**
      * Driver specific column alter command.
-     *
-     * @param AbstractTable  $table
-     * @param AbstractColumn $initial
-     * @param AbstractColumn $column
      *
      * @throws SchemaException
      */

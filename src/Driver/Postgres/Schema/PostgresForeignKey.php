@@ -15,12 +15,6 @@ use Cycle\Database\Schema\AbstractForeignKey;
 
 class PostgresForeignKey extends AbstractForeignKey
 {
-    /**
-     * @param string $table
-     * @param string $tablePrefix
-     * @param array  $schema
-     * @return PostgresForeignKey
-     */
     public static function createInstance(string $table, string $tablePrefix, array $schema): self
     {
         $foreign = new self($table, $tablePrefix, $schema['constraint_name']);
@@ -35,15 +29,11 @@ class PostgresForeignKey extends AbstractForeignKey
         return $foreign;
     }
 
-    /**
-     * @param array $columns
-     * @return array
-     */
     private function normalizeKeys(array $columns): array
     {
         $result = [];
         foreach ($columns as $column) {
-            if (array_search($column, $result, true) === false) {
+            if (!in_array($column, $result, true)) {
                 $result[] = $column;
             }
         }

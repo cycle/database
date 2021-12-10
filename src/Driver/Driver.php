@@ -43,28 +43,14 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * @var non-empty-string (Typehint required for overriding behaviour)
      */
     protected const DATETIME = 'Y-m-d H:i:s';
-
-    /** @var PDO|null */
     protected ?\PDO $pdo = null;
-
-    /** @var int */
-    protected $transactionLevel = 0;
-
-    /** @var HandlerInterface */
-    protected $schemaHandler;
-
-    /** @var BuilderInterface */
-    protected $queryBuilder;
+    protected int $transactionLevel = 0;
+    protected HandlerInterface $schemaHandler;
+    protected BuilderInterface $queryBuilder;
 
     /** @var PDOStatement[] */
-    protected $queryCache = [];
+    protected array $queryCache = [];
 
-    /**
-     * @param DriverConfig $config
-     * @param HandlerInterface $schemaHandler
-     * @param CompilerInterface $queryCompiler
-     * @param BuilderInterface $queryBuilder
-     */
     protected function __construct(
         protected DriverConfig $config,
         HandlerInterface $schemaHandler,
@@ -83,9 +69,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function isReadonly(): bool
     {
         return $this->config->readonly;
@@ -99,9 +82,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         $this->disconnect();
     }
 
-    /**
-     * @return array
-     */
     public function __debugInfo(): array
     {
         return [
@@ -115,9 +95,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     /**
      * Compatibility with deprecated methods.
      *
-     * @param string $name
-     * @param array $arguments
-     * @return mixed
      *
      * @deprecated this method will be removed in a future releases.
      */
@@ -150,18 +127,13 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     /**
      * Get driver source database or file name.
      *
-     * @return string
      * @throws DriverException
      */
     public function getSource(): string
     {
         $config = $this->config->connection;
 
-        if ($config instanceof ProvidesSourceString) {
-            return $config->getSourceString();
-        }
-
-        return '*';
+        return $config instanceof ProvidesSourceString ? $config->getSourceString() : '*';
     }
 
     /**
@@ -172,9 +144,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         return new DateTimeZone($this->config->timezone);
     }
 
-    /**
-     * @inheritdoc
-     */
     public function getSchemaHandler(): HandlerInterface
     {
         // do not allow to carry prepared statements between schema changes
@@ -183,17 +152,11 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         return $this->schemaHandler;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function getQueryCompiler(): CompilerInterface
     {
         return $this->queryCompiler;
     }
 
-    /**
-     * @return BuilderInterface
-     */
     public function getQueryBuilder(): BuilderInterface
     {
         return $this->queryBuilder;
@@ -211,8 +174,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
 
     /**
      * Check if driver already connected.
-     *
-     * @return bool
      */
     public function isConnected(): bool
     {
@@ -250,9 +211,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     /**
      * Execute query and return query statement.
      *
-     * @param string $statement
-     * @param array $parameters
-     * @return StatementInterface
      *
      * @throws StatementException
      */
@@ -264,9 +222,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     /**
      * Execute query and return number of affected rows.
      *
-     * @param string $query
-     * @param array $parameters
-     * @return int
      *
      * @throws StatementException
      * @throws ReadonlyConnectionException
@@ -303,7 +258,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * @link http://en.wikipedia.org/wiki/Isolation_(database_systems)
      *
      * @param string|null $isolationLevel
-     * @return bool
      */
     public function beginTransaction(string $isolationLevel = null): bool
     {
@@ -348,8 +302,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     /**
      * Commit the active database transaction.
      *
-     * @return bool
-     *
      * @throws StatementException
      */
     public function commitTransaction(): bool
@@ -391,8 +343,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     /**
      * Rollback the active database transaction.
      *
-     * @return bool
-     *
      * @throws StatementException
      */
     public function rollbackTransaction(): bool
@@ -427,9 +377,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function identifier(string $identifier): string
     {
         return $this->queryCompiler->quoteIdentifier($identifier);
@@ -438,11 +385,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     /**
      * Create instance of PDOStatement using provided SQL query and set of parameters and execute
      * it. Will attempt singular reconnect.
-     *
-     * @param string $query
-     * @param iterable $parameters
-     * @param bool|null $retry
-     * @return StatementInterface
      *
      * @throws StatementException
      */
@@ -484,10 +426,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         }
     }
 
-    /**
-     * @param string $query
-     * @return PDOStatement
-     */
     protected function prepare(string $query): PDOStatement
     {
         if ($this->config->queryCache && isset($this->queryCache[$query])) {
@@ -504,10 +442,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
 
     /**
      * Bind parameters into statement.
-     *
-     * @param PDOStatement $statement
-     * @param iterable $parameters
-     * @return PDOStatement
      */
     protected function bindParameters(PDOStatement $statement, iterable $parameters): PDOStatement
     {
@@ -541,9 +475,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * Convert DateTime object into local database representation. Driver will automatically force
      * needed timezone.
      *
-     * @param DateTimeInterface $value
-     * @return string
-     *
      * @throws DriverException
      */
     protected function formatDatetime(DateTimeInterface $value): string
@@ -559,10 +490,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
 
     /**
      * Convert PDO exception into query or integrity exception.
-     *
-     * @param Throwable $exception
-     * @param string $query
-     * @return StatementException
      */
     abstract protected function mapException(
         Throwable $exception,
@@ -572,8 +499,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     /**
      * Set transaction isolation level, this feature may not be supported by specific database
      * driver.
-     *
-     * @param string $level
      */
     protected function setIsolationLevel(string $level): void
     {
@@ -625,8 +550,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
 
     /**
      * Create instance of configured PDO class.
-     *
-     * @return PDO
      */
     protected function createPDO(): PDO
     {
@@ -649,8 +572,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     /**
      * Get associated PDO connection. Must automatically connect if such connection does not exists.
      *
-     * @return PDO
-     *
      * @throws DriverException
      */
     protected function getPDO(): PDO
@@ -667,8 +588,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      *
      * @param float $queryStart Query start time
      * @param PDOStatement|null $statement Statement
-     *
-     * @return array
      */
     protected function defineLoggerContext(float $queryStart, ?PDOStatement $statement): array
     {

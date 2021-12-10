@@ -23,17 +23,11 @@ use Cycle\Database\Schema\AbstractTable;
  */
 class PostgresHandler extends Handler
 {
-    /**
-     * @inheritDoc
-     */
     public function getSchema(string $table, string $prefix = null): AbstractTable
     {
         return new PostgresTable($this->driver, $table, $prefix ?? '');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTableNames(string $prefix = ''): array
     {
         $query = "SELECT table_schema, table_name
@@ -48,7 +42,7 @@ class PostgresHandler extends Handler
 
         $tables = [];
         foreach ($this->driver->query($query) as $row) {
-            if ($prefix !== '' && strpos($row['table_name'], $prefix) !== 0) {
+            if ($prefix !== '' && !str_starts_with($row['table_name'], $prefix)) {
                 continue;
             }
 
@@ -58,9 +52,6 @@ class PostgresHandler extends Handler
         return $tables;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasTable(string $table): bool
     {
         [$schema, $name] = $this->driver->parseSchemaAndTable($table);
@@ -74,9 +65,6 @@ class PostgresHandler extends Handler
         return (bool)$this->driver->query($query, [$schema, $name])->fetchColumn();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function eraseTable(AbstractTable $table): void
     {
         $this->driver->execute(
@@ -84,9 +72,6 @@ class PostgresHandler extends Handler
         );
     }
 
-    /**
-     * @inheritdoc
-     */
     public function renameTable(string $table, string $name): void
     {
         // New table name should not contain a schema
@@ -96,8 +81,6 @@ class PostgresHandler extends Handler
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @throws SchemaException
      */
     public function alterColumn(
@@ -133,9 +116,6 @@ class PostgresHandler extends Handler
         $this->run($query);
     }
 
-    /**
-     * @inheritdoc
-     */
     protected function run(string $statement, array $parameters = []): int
     {
         if ($this->driver instanceof PostgresDriver) {
@@ -146,11 +126,6 @@ class PostgresHandler extends Handler
         return parent::run($statement, $parameters);
     }
 
-    /**
-     * @param AbstractTable  $table
-     * @param AbstractColumn $initial
-     * @param AbstractColumn $column
-     */
     private function renameColumn(
         AbstractTable $table,
         AbstractColumn $initial,

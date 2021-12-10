@@ -21,17 +21,12 @@ use Cycle\Database\Driver\CompilerInterface;
  */
 class Fragment implements FragmentInterface
 {
-    /** @var string */
-    private $fragment;
+    private string $fragment;
 
     /** @var ParameterInterface[] */
-    private $parameters = [];
+    private array $parameters = [];
 
-    /**
-     * @param string $fragment
-     * @param mixed  ...$parameters
-     */
-    public function __construct(string $fragment, ...$parameters)
+    public function __construct(string $fragment, mixed ...$parameters)
     {
         $this->fragment = $fragment;
         foreach ($parameters as $parameter) {
@@ -43,18 +38,11 @@ class Fragment implements FragmentInterface
         }
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return $this->fragment;
     }
 
-    /**
-     * @param array $an_array
-     * @return Fragment
-     */
     public static function __set_state(array $an_array): Fragment
     {
         return new self(
@@ -63,17 +51,11 @@ class Fragment implements FragmentInterface
         );
     }
 
-    /**
-     * @return int
-     */
     public function getType(): int
     {
         return CompilerInterface::FRAGMENT;
     }
 
-    /**
-     * @return array
-     */
     public function getTokens(): array
     {
         return [

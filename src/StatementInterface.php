@@ -26,52 +26,41 @@ interface StatementInterface extends \Traversable
     // Fetch rows as object where each property is the column name.
     public const FETCH_OBJ = 5;
 
-    /**
-     * @return string
-     */
     public function getQueryString(): string;
 
     /**
      * Must return the next row of a result set.
      *
-     * @param int $mode
-     * @return mixed
      * @psalm-suppress MissingReturnType
      */
-    public function fetch(int $mode = self::FETCH_ASSOC);
+    public function fetch(int $mode = self::FETCH_ASSOC): mixed;
 
     /**
      * Must return a single column from the next row of a result set.
      *
      * @param int $columnNumber Optional column number.
-     * @return mixed
      */
-    public function fetchColumn(int $columnNumber = null);
+    public function fetchColumn(int $columnNumber = null): mixed;
 
     /**
      * Fetch all rows.
      *
      * @param int $mode Fetch mode.
-     * @return array
      */
     public function fetchAll(int $mode = self::FETCH_ASSOC): array;
 
     /**
      * Number of rows in a statement.
-     *
-     * @return int
      */
     public function rowCount(): int;
 
     /**
      * Return number of columns in a statement.
-     *
-     * @return int
      */
     public function columnCount(): int;
 
     /**
      * Close the statement, must be called once all the data is retrieved.
      */
-    public function close();
+    public function close(): void;
 }
