@@ -35,7 +35,7 @@ class MySQLTable extends AbstractTable
     /**
      * MySQL version.
      */
-    private string $version;
+    private ?string $version = null;
 
     /**
      * Change table engine. Such operation will be applied only at moment of table creation.
