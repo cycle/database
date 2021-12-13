@@ -75,8 +75,9 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
      */
     public function getColumnsWithSort(): array
     {
+        $self = $this;
         return array_map(
-            fn ($column) => ($order = $this->sort[$column] ?? null) ? "$column $order" : $column,
+            static fn (string $column): string => ($order = $self->sort[$column] ?? null) ? "$column $order" : $column,
             $this->columns
         );
     }
