@@ -100,8 +100,9 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
             return $this->databases[$database];
         }
 
-        !$this->config->hasDatabase($database)
-        && throw new DBALException("Unable to create Database, no presets for '{$database}' found");
+        $this->config->hasDatabase($database) or throw new DBALException(
+            "Unable to create Database, no presets for '{$database}' found"
+        );
 
         return $this->databases[$database] = $this->makeDatabase($this->config->getDatabase($database));
     }
@@ -113,8 +114,9 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
      */
     public function addDatabase(Database $database): void
     {
-        isset($this->databases[$database->getName()])
-        && throw new DBALException("Database '{$database->getName()}' already exists");
+        isset($this->databases[$database->getName()]) and throw new DBALException(
+            "Database '{$database->getName()}' already exists"
+        );
 
         $this->databases[$database->getName()] = $database;
     }
@@ -174,7 +176,7 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
      */
     public function addDriver(string $name, DriverInterface $driver): DatabaseManager
     {
-        isset($this->drivers[$name]) && throw new DBALException("Connection '{$name}' already exists");
+        isset($this->drivers[$name]) and throw new DBALException("Connection '{$name}' already exists");
 
         $this->drivers[$name] = $driver;
 

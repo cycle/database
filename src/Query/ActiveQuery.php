@@ -78,7 +78,7 @@ abstract class ActiveQuery implements QueryInterface
      */
     public function sqlStatement(QueryParameters $parameters = null): string
     {
-        $this->driver === null && throw new BuilderException('Unable to build query without associated driver');
+        $this->driver === null and throw new BuilderException('Unable to build query without associated driver');
 
         return $this->driver->getQueryCompiler()->compile(
             $parameters ?? new QueryParameters(),

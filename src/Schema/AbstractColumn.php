@@ -444,7 +444,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
             $abstract = $this->aliases[$abstract];
         }
 
-        !isset($this->mapping[$abstract]) && throw new SchemaException("Undefined abstract/virtual type '{$abstract}'");
+        isset($this->mapping[$abstract]) or throw new SchemaException("Undefined abstract/virtual type '{$abstract}'");
 
         // Originally specified type.
         $this->userType = $abstract;

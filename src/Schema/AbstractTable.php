@@ -244,7 +244,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      */
     public function declareDropped(): void
     {
-        $this->status === self::STATUS_NEW && throw new SchemaException('Unable to drop non existed table');
+        $this->status === self::STATUS_NEW and throw new SchemaException('Unable to drop non existed table');
 
         //Declaring as dropped
         $this->status = self::STATUS_DECLARED_DROPPED;
@@ -373,8 +373,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
 
             // If expression like 'column DESC' was passed, we cast it to 'column' => 'DESC'
             if ($order !== null) {
-                !$this->isIndexColumnSortingSupported()
-                && throw new DriverException(sprintf(
+                $this->isIndexColumnSortingSupported() or throw new DriverException(sprintf(
                     'Failed to create index with `%s` on `%s`, column sorting is not supported',
                     $expression,
                     $this->getFullName()
@@ -388,8 +387,9 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         $columns = $normalized;
 
         foreach ($columns as $column) {
-            !$this->hasColumn($column)
-            && throw new SchemaException("Undefined column '{$column}' in '{$this->getFullName()}'");
+            $this->hasColumn($column) or throw new SchemaException(
+                "Undefined column '{$column}' in '{$this->getFullName()}'"
+            );
         }
 
         if ($this->hasIndex($original)) {
@@ -420,8 +420,9 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     public function foreignKey(array $columns): AbstractForeignKey
     {
         foreach ($columns as $column) {
-            !$this->hasColumn($column) &&
-            throw new SchemaException("Undefined column '{$column}' in '{$this->getFullName()}'");
+            $this->hasColumn($column) or throw new SchemaException(
+                "Undefined column '{$column}' in '{$this->getFullName()}'"
+            );
         }
 
         if ($this->hasForeignKey($columns)) {
@@ -456,8 +457,9 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      */
     public function renameColumn(string $column, string $name): AbstractTable
     {
-        !$this->hasColumn($column)
-        && throw new SchemaException("Undefined column '{$column}' in '{$this->getFullName()}'");
+        $this->hasColumn($column) or throw new SchemaException(
+            "Undefined column '{$column}' in '{$this->getFullName()}'"
+        );
 
         //Rename operation is simple about declaring new name
         $this->column($column)->setName($name);
@@ -475,8 +477,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      */
     public function renameIndex(array $columns, string $name): AbstractTable
     {
-        !$this->hasIndex($columns)
-        && throw new SchemaException(
+        $this->hasIndex($columns) or throw new SchemaException(
             "Undefined index ['" . implode("', '", $columns) . "'] in '{$this->getFullName()}'"
         );
 
@@ -496,7 +497,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     public function dropColumn(string $column): AbstractTable
     {
         $schema = $this->current->findColumn($column);
-        $schema === null && throw new SchemaException("Undefined column '{$column}' in '{$this->getFullName()}'");
+        $schema === null and throw new SchemaException("Undefined column '{$column}' in '{$this->getFullName()}'");
 
         //Dropping column from current schema
         $this->current->forgetColumn($schema);
@@ -512,8 +513,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     public function dropIndex(array $columns): AbstractTable
     {
         $schema = $this->current->findIndex($columns);
-        $schema === null
-        && throw new SchemaException(
+        $schema === null and throw new SchemaException(
             "Undefined index ['" . implode("', '", $columns) . "'] in '{$this->getFullName()}'"
         );
 

@@ -32,7 +32,7 @@ final class Quoter
         private string $prefix,
         string $quotes
     ) {
-        strlen($quotes) !== 2 && throw new CompilerException('Invalid quoter quotes, expected 2 characters string');
+        strlen($quotes) !== 2 and throw new CompilerException('Invalid quoter quotes, expected 2 characters string');
 
         $this->left = $quotes[0];
         $this->right = $quotes[1];

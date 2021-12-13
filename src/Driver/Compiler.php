@@ -244,8 +244,9 @@ abstract class Compiler implements CompilerInterface
         foreach ($orderBy as $order) {
             $direction = strtoupper($order[1]);
 
-            !\in_array($direction, ['ASC', 'DESC'])
-            && throw new CompilerException('Invalid sorting direction, only ASC and DESC are allowed');
+            \in_array($direction, ['ASC', 'DESC']) or throw new CompilerException(
+                'Invalid sorting direction, only ASC and DESC are allowed'
+            );
 
             $result[] = $this->name($params, $q, $order[0]) . ' ' . $direction;
         }
@@ -418,7 +419,7 @@ abstract class Compiler implements CompilerInterface
             $statement .= ' ';
         }
 
-        $activeGroup && throw new CompilerException('Unable to build where statement, unclosed where group');
+        $activeGroup and throw new CompilerException('Unable to build where statement, unclosed where group');
 
         if (trim($statement, ' ()') === '') {
             return '';

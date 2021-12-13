@@ -119,7 +119,7 @@ class MySQLHandler extends Handler
      */
     protected function createStatement(AbstractTable $table): string
     {
-        !$table instanceof MySQLTable && throw new SchemaException('MySQLHandler can process only MySQL tables');
+        $table instanceof MySQLTable or throw new SchemaException('MySQLHandler can process only MySQL tables');
 
         return parent::createStatement($table) . " ENGINE {$table->getEngine()}";
     }

@@ -363,7 +363,7 @@ trait JoinTrait
     private function onWhereWrapper(): Closure
     {
         return static function ($parameter) {
-            \is_array($parameter) && throw new BuilderException('Arrays must be wrapped with Parameter instance');
+            \is_array($parameter) and throw new BuilderException('Arrays must be wrapped with Parameter instance');
 
             //Wrapping all values with ParameterInterface
             return !$parameter instanceof ParameterInterface && !$parameter instanceof FragmentInterface

@@ -34,8 +34,9 @@ class PostgresInsertQuery extends InsertQuery implements ReturningInterface
 
     public function withDriver(DriverInterface $driver, string $prefix = null): QueryInterface
     {
-        !$driver instanceof PostgresDriver
-        && throw new BuilderException('Postgres InsertQuery can be used only with Postgres driver');
+        $driver instanceof PostgresDriver or throw new BuilderException(
+            'Postgres InsertQuery can be used only with Postgres driver'
+        );
 
         return parent::withDriver($driver, $prefix);
     }
@@ -45,7 +46,7 @@ class PostgresInsertQuery extends InsertQuery implements ReturningInterface
      */
     public function returning(string|FragmentInterface ...$columns): self
     {
-        $columns === [] && throw new BuilderException('RETURNING clause should contain at least 1 column.');
+        $columns === [] and throw new BuilderException('RETURNING clause should contain at least 1 column.');
 
         if (count($columns) > 1) {
             throw new BuilderException(
@@ -66,7 +67,7 @@ class PostgresInsertQuery extends InsertQuery implements ReturningInterface
         $params = new QueryParameters();
         $queryString = $this->sqlStatement($params);
 
-        $this->driver->isReadonly() && throw ReadonlyConnectionException::onWriteStatementExecution();
+        $this->driver->isReadonly() and throw ReadonlyConnectionException::onWriteStatementExecution();
 
         $result = $this->driver->query($queryString, $params->getParameters());
 

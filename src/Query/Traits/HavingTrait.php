@@ -101,7 +101,7 @@ trait HavingTrait
     private function havingWrapper(): Closure
     {
         return static function ($parameter) {
-            \is_array($parameter) && throw new BuilderException('Arrays must be wrapped with Parameter instance');
+            \is_array($parameter) and throw new BuilderException('Arrays must be wrapped with Parameter instance');
 
             return !$parameter instanceof ParameterInterface && !$parameter instanceof FragmentInterface
                 ? new Parameter($parameter)
