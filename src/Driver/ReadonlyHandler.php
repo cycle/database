@@ -36,11 +36,17 @@ final class ReadonlyHandler implements HandlerInterface
         return $this->parent->getTableNames();
     }
 
+    /**
+     * @psalm-param non-empty-string $table
+     */
     public function hasTable(string $table): bool
     {
         return $this->parent->hasTable($table);
     }
 
+    /**
+     * @psalm-param non-empty-string $table
+     */
     public function getSchema(string $table, string $prefix = null): AbstractTable
     {
         return $this->parent->getSchema($table, $prefix);
@@ -63,6 +69,10 @@ final class ReadonlyHandler implements HandlerInterface
     {
     }
 
+    /**
+     * @psalm-param non-empty-string $table
+     * @psalm-param non-empty-string $name
+     */
     public function renameTable(string $table, string $name): void
     {
     }
@@ -106,6 +116,9 @@ final class ReadonlyHandler implements HandlerInterface
     ): void {
     }
 
+    /**
+     * @psalm-param non-empty-string $constraint
+     */
     public function dropConstrain(AbstractTable $table, string $constraint): void
     {
     }

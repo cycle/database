@@ -29,6 +29,9 @@ class Expression implements FragmentInterface
     /** @var ParameterInterface[] */
     private array $parameters = [];
 
+    /**
+     * @psalm-param non-empty-string $statement
+     */
     public function __construct(string $statement, mixed ...$parameters)
     {
         $this->expression = $statement;

@@ -40,6 +40,8 @@ class MySQLTable extends AbstractTable
     /**
      * Change table engine. Such operation will be applied only at moment of table creation.
      *
+     * @psalm-param non-empty-string $engine
+     *
      * @throws SchemaException
      */
     public function setEngine(string $engine): MySQLTable
@@ -53,6 +55,9 @@ class MySQLTable extends AbstractTable
         return $this;
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     public function getEngine(): string
     {
         return $this->engine;
@@ -177,16 +182,25 @@ class MySQLTable extends AbstractTable
         return $primaryKeys;
     }
 
+    /**
+     * @psalm-param non-empty-string $name
+     */
     protected function createColumn(string $name): AbstractColumn
     {
         return new MySQLColumn($this->getFullName(), $name, $this->driver->getTimezone());
     }
 
+    /**
+     * @psalm-param non-empty-string $name
+     */
     protected function createIndex(string $name): AbstractIndex
     {
         return new MySQLIndex($this->getFullName(), $name);
     }
 
+    /**
+     * @psalm-param non-empty-string $name
+     */
     protected function createForeign(string $name): AbstractForeignKey
     {
         return new MySQLForeignKey($this->getFullName(), $this->getPrefix(), $name);

@@ -160,6 +160,8 @@ class SQLServerColumn extends AbstractColumn
     /**
      * @param bool $withEnum When true enum constrain will be included into definition. Set to false
      *                       if you want to create constrain separately.
+     *
+     * @psalm-return non-empty-string
      */
     public function sqlStatement(DriverInterface $driver, bool $withEnum = true): string
     {
@@ -193,6 +195,8 @@ class SQLServerColumn extends AbstractColumn
     /**
      * Generate set of operations need to change column. We are expecting that column constrains
      * will be dropped separately.
+     *
+     * @return string[]
      */
     public function alterOperations(DriverInterface $driver, AbstractColumn $initial): array
     {
@@ -255,9 +259,8 @@ class SQLServerColumn extends AbstractColumn
     }
 
     /**
-     * @param string          $table  Table name.
+     * @psalm-param non-empty-string $table Table name.
      * @param DriverInterface $driver SQLServer columns are bit more complex.
-     *
      */
     public static function createInstance(
         string $table,
@@ -312,6 +315,9 @@ class SQLServerColumn extends AbstractColumn
         return $column;
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     protected function quoteDefault(DriverInterface $driver): string
     {
         $defaultValue = parent::quoteDefault($driver);
@@ -348,6 +354,8 @@ class SQLServerColumn extends AbstractColumn
 
     /**
      * In SQLServer we can emulate enums similar way as in Postgres via column constrain.
+     *
+     * @psalm-return non-empty-string
      */
     private function enumStatement(DriverInterface $driver): string
     {

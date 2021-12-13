@@ -263,12 +263,10 @@ class PostgresDriver extends Driver
 
     /**
      * @param PostgresDriverConfig $config
-     *
-     * @return self
      */
-    public static function create(DriverConfig $config): self
+    public static function create(DriverConfig $config): static
     {
-        $driver = new self(
+        $driver = new static(
             $config,
             new PostgresHandler(),
             new PostgresCompiler('""'),

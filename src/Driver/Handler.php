@@ -76,6 +76,10 @@ abstract class Handler implements HandlerInterface
         $this->executeChanges($table, $operation, $comparator);
     }
 
+    /**
+     * @psalm-param non-empty-string $table
+     * @psalm-param non-empty-string $name
+     */
     public function renameTable(string $table, string $name): void
     {
         $this->run(
@@ -149,6 +153,9 @@ abstract class Handler implements HandlerInterface
         );
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     protected function createStatement(AbstractTable $table): string
     {
         $statement = ["CREATE TABLE {$this->identify($table)} ("];
@@ -203,6 +210,8 @@ abstract class Handler implements HandlerInterface
     /**
      * Execute statement.
      *
+     * @psalm-param non-empty-string $statement
+     *
      * @throws HandlerException
      */
     protected function run(string $statement, array $parameters = []): int
@@ -216,6 +225,8 @@ abstract class Handler implements HandlerInterface
 
     /**
      * Create element identifier.
+     *
+     * @psalm-return non-empty-string
      */
     protected function identify(AbstractTable|ElementInterface|string $element): string
     {

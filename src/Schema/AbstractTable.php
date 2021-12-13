@@ -81,8 +81,8 @@ abstract class AbstractTable implements TableInterface, ElementInterface
 
     /**
      * @param DriverInterface $driver Parent driver.
-     * @param string          $name   Table name, must include table prefix.
-     * @param string          $prefix Database specific table prefix. Required for table renames.
+     * @psalm-param non-empty-string $name Table name, must include table prefix.
+     * @param string $prefix Database specific table prefix. Required for table renames.
      */
     public function __construct(
         protected DriverInterface $driver,
@@ -108,6 +108,8 @@ abstract class AbstractTable implements TableInterface, ElementInterface
 
     /**
      * Shortcut for column() method.
+     *
+     * @psalm-param non-empty-string $column
      */
     public function __get(string $column): AbstractColumn
     {
@@ -122,8 +124,8 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * $table->string("name");
      * $table->text("some_column");
      *
-     * @param string $type
-     * @param array  $arguments Type specific parameters.
+     * @psalm-param non-empty-string $type
+     * @param array $arguments Type specific parameters.
      */
     public function __call(string $type, array $arguments): AbstractColumn
     {
@@ -198,8 +200,8 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * Sets table name. Use this function in combination with save to rename table.
      *
-     * @param string $name
-     * @return string Prefixed table name.
+     * @psalm-param non-empty-string $name
+     * @psalm-return non-empty-string Prefixed table name.
      */
     public function setName(string $name): string
     {
@@ -208,11 +210,17 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         return $this->getFullName();
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     public function getName(): string
     {
         return $this->getFullName();
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     public function getFullName(): string
     {
         return $this->current->getName();
@@ -220,6 +228,8 @@ abstract class AbstractTable implements TableInterface, ElementInterface
 
     /**
      * Table name before rename.
+     *
+     * @psalm-return non-empty-string
      */
     public function getInitialName(): string
     {
@@ -313,6 +323,8 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * Get/create instance of AbstractColumn associated with current table.
      *
      * Attention, renamed column will be available by it's old name until being synced!
+     *
+     * @psalm-param non-empty-string $name
      *
      * Examples:
      * $table->column('name')->string();
@@ -437,8 +449,8 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * Rename column (only if column exists).
      *
-     * @param string $column
-     * @param string $name New column name.
+     * @psalm-param non-empty-string $column
+     * @psalm-param non-empty-string $name New column name.
      *
      * @throws SchemaException
      */
@@ -456,8 +468,8 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * Rename index (only if index exists).
      *
-     * @param array  $columns Index forming columns.
-     * @param string $name    New index name.
+     * @param array $columns Index forming columns.
+     * @psalm-param non-empty-string $name New index name.
      *
      * @throws SchemaException
      */
@@ -476,6 +488,8 @@ abstract class AbstractTable implements TableInterface, ElementInterface
 
     /**
      * Drop column by it's name.
+     *
+     * @psalm-param non-empty-string $column
      *
      * @throws SchemaException
      */
@@ -617,6 +631,10 @@ abstract class AbstractTable implements TableInterface, ElementInterface
 
     /**
      * Sanitize column expression for index name
+     *
+     * @psalm-param non-empty-string $column
+     *
+     * @psalm-return non-empty-string
      */
     public static function sanitizeColumnExpression(string $column): string
     {
@@ -633,6 +651,10 @@ abstract class AbstractTable implements TableInterface, ElementInterface
 
     /**
      * Add prefix to a given table name
+     *
+     * @psalm-param non-empty-string $column
+     *
+     * @psalm-return non-empty-string
      */
     protected function prefixTableName(string $name): string
     {
@@ -780,22 +802,30 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * Create column with a given name.
      *
+     * @psalm-param non-empty-string $name
+     *
      * @return AbstractColumn
      */
     abstract protected function createColumn(string $name): AbstractColumn;
 
     /**
      * Create index for a given set of columns.
+     *
+     * @psalm-param non-empty-string $name
      */
     abstract protected function createIndex(string $name): AbstractIndex;
 
     /**
      * Create reference on a given column set.
+     *
+     * @psalm-param non-empty-string $name
      */
     abstract protected function createForeign(string $name): AbstractForeignKey;
 
     /**
      * Generate unique name for indexes and foreign keys.
+     *
+     * @psalm-param non-empty-string $type
      */
     protected function createIdentifier(string $type, array $columns): string
     {

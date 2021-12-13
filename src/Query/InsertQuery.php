@@ -30,6 +30,7 @@ class InsertQuery extends ActiveQuery
 
     /**
      * Set target insertion table.
+     * @psalm-param non-empty-string $into
      */
     public function into(string $into): InsertQuery
     {
@@ -106,6 +107,8 @@ class InsertQuery extends ActiveQuery
 
     /**
      * Run the query and return last insert id.
+     *
+     * @psalm-return int|non-empty-string|null
      */
     public function run(): int|string|null
     {

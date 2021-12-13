@@ -33,6 +33,9 @@ final class State
      */
     private array $primaryKeys = [];
 
+    /**
+     * @psalm-param non-empty-string $name
+     */
     public function __construct(
         private string $name
     ) {
@@ -58,12 +61,17 @@ final class State
 
     /**
      * Set table name. Operation will be applied at moment of saving.
+     *
+     * @psalm-param non-empty-string $name
      */
     public function setName(string $name): void
     {
         $this->name = $name;
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     public function getName(): string
     {
         return $this->name;
@@ -117,6 +125,9 @@ final class State
         return array_unique(array_merge($this->primaryKeys, $primaryColumns));
     }
 
+    /**
+     * @psalm-param non-empty-string $name
+     */
     public function hasColumn(string $name): bool
     {
         return $this->findColumn($name) !== null;
@@ -191,6 +202,9 @@ final class State
         }
     }
 
+    /**
+     * @psalm-param non-empty-string $name
+     */
     public function findColumn(string $name): ?AbstractColumn
     {
         foreach ($this->columns as $column) {

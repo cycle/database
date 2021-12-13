@@ -17,6 +17,8 @@ trait ElementTrait
 {
     /**
      * Associated table name (full name).
+     *
+     * @psalm-return non-empty-string
      */
     public function getTable(): string
     {
@@ -25,6 +27,8 @@ trait ElementTrait
 
     /**
      * Set element name.
+     *
+     * @psalm-param non-empty-string $name
      */
     public function setName(string $name): self
     {
@@ -35,6 +39,8 @@ trait ElementTrait
 
     /**
      * Get element name (unquoted).
+     *
+     * @psalm-return non-empty-string
      */
     public function getName(): string
     {

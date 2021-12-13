@@ -41,7 +41,7 @@ class DeleteQuery extends ActiveQuery
     /**
      * Change target table.
      *
-     * @param string $into Table name without prefix.
+     * @psalm-param non-empty-string $into Table name without prefix.
      */
     public function from(string $into): DeleteQuery
     {

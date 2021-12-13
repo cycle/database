@@ -32,11 +32,17 @@ final class CompilerCache implements CompilerInterface
     ) {
     }
 
+    /**
+     * @psalm-param non-empty-string $identifier
+     */
     public function quoteIdentifier(string $identifier): string
     {
         return $this->compiler->quoteIdentifier($identifier);
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     public function compile(QueryParameters $params, string $prefix, FragmentInterface $fragment): string
     {
         if ($fragment->getType() === self::SELECT_QUERY) {
@@ -77,6 +83,9 @@ final class CompilerCache implements CompilerInterface
         );
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     protected function hashInsertQuery(QueryParameters $params, array $tokens): string
     {
         $hash = 'i_' . $tokens['table'] . implode('_', $tokens['columns']) . '_r' . ($tokens['return'] ?? '');
@@ -120,6 +129,9 @@ final class CompilerCache implements CompilerInterface
         return $hash;
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     protected function hashSelectQuery(QueryParameters $params, array $tokens): string
     {
         // stable part of hash
@@ -184,6 +196,9 @@ final class CompilerCache implements CompilerInterface
         return $hash;
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     protected function hashWhere(QueryParameters $params, array $where): string
     {
         $hash = '';
@@ -268,6 +283,9 @@ final class CompilerCache implements CompilerInterface
         return $hash;
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     protected function hashColumns(QueryParameters $params, array $columns): string
     {
         $hash = '';
@@ -284,6 +302,9 @@ final class CompilerCache implements CompilerInterface
         return $hash;
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     private function hashParam(QueryParameters $params, ParameterInterface $param): string
     {
         if ($param->isNull()) {

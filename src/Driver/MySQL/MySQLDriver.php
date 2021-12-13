@@ -22,6 +22,9 @@ use Cycle\Database\Query\QueryBuilder;
  */
 class MySQLDriver extends Driver
 {
+    /**
+     * @psalm-return non-empty-string
+     */
     public function getType(): string
     {
         return 'MySQL';

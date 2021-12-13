@@ -15,6 +15,9 @@ use Cycle\Database\Schema\AbstractIndex;
 
 class SQLServerIndex extends AbstractIndex
 {
+    /**
+     * @psalm-param non-empty-string $table
+     */
     public static function createInstance(string $table, array $schema): self
     {
         //Schema is basically array of index columns merged with index meta

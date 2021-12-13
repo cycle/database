@@ -95,6 +95,8 @@ interface DriverInterface
 
     /**
      * Driver type (name).
+     *
+     * @psalm-return non-empty-string
      */
     public function getType(): string;
 
@@ -136,13 +138,15 @@ interface DriverInterface
      * Quote value.
      *
      * @param mixed $value
-     * @param int   $type Parameter type.
+     * @param int $type Parameter type.
+     *
+     * @psalm-return non-empty-string
      */
     public function quote($value, int $type = PDO::PARAM_STR): string;
 
     /**
      * Wraps PDO query method with custom representation class.
-     *
+     * @psalm-param non-empty-string $statement
      *
      * @throws StatementException
      */
@@ -150,7 +154,7 @@ interface DriverInterface
 
     /**
      * Execute query and return number of affected rows.
-     *
+     * @psalm-param non-empty-string $query
      *
      * @throws StatementException
      * @throws ReadonlyConnectionException

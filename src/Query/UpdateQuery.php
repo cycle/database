@@ -40,7 +40,7 @@ class UpdateQuery extends ActiveQuery
     /**
      * Change target table.
      *
-     * @param string $table Table name without prefix.
+     * @psalm-param non-empty-string $table Table name without prefix.
      */
     public function in(string $table): UpdateQuery
     {
@@ -62,6 +62,7 @@ class UpdateQuery extends ActiveQuery
 
     /**
      * Set update value.
+     * @psalm-param non-empty-string $column
      */
     public function set(string $column, mixed $value): UpdateQuery
     {

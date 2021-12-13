@@ -130,6 +130,9 @@ class PostgresColumn extends AbstractColumn
         return $constraints;
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     public function getAbstractType(): string
     {
         return !empty($this->enumValues) ? 'enum' : parent::getAbstractType();
@@ -171,6 +174,9 @@ class PostgresColumn extends AbstractColumn
         return $this;
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     public function sqlStatement(DriverInterface $driver): string
     {
         $statement = parent::sqlStatement($driver);
@@ -265,7 +271,7 @@ class PostgresColumn extends AbstractColumn
     }
 
     /**
-     * @param string          $table  Table name.
+     * @psalm-param non-empty-string $table Table name.
      * @param DriverInterface $driver Postgres columns are bit more complex.
      */
     public static function createInstance(
@@ -338,6 +344,9 @@ class PostgresColumn extends AbstractColumn
         return false;
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     protected function quoteEnum(DriverInterface $driver): string
     {
         //Postgres enums are just constrained strings

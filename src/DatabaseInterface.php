@@ -29,11 +29,16 @@ interface DatabaseInterface
     public const WRITE = 0;
     public const READ  = 1;
 
+    /**
+     * @psalm-return non-empty-string
+     */
     public function getName(): string;
 
     /**
      * Database type matched to one of database constants. You MUST write SQL for execute and query
      * methods by respecting result of this method.
+     *
+     * @psalm-return non-empty-string
      */
     public function getType(): string;
 
@@ -48,6 +53,7 @@ interface DatabaseInterface
 
     /**
      * Check if table exists.
+     * @psalm-param non-empty-string $name
      */
     public function hasTable(string $name): bool;
 
@@ -58,13 +64,16 @@ interface DatabaseInterface
      */
     public function getTables(): array;
 
+    /**
+     * @psalm-param non-empty-string $name
+     */
     public function table(string $name): TableInterface;
 
     /**
      * Execute statement and return number of affected rows.
      *
-     * @param string $query
-     * @param array  $parameters Parameters to be binded into query.
+     * @psalm-param non-empty-string $query
+     * @param array $parameters Parameters to be binded into query.
      *
      * @throws StatementException
      */
@@ -73,7 +82,7 @@ interface DatabaseInterface
     /**
      * Execute statement and return query iterator.
      *
-     * @param string $query
+     * @psalm-param non-empty-string $query
      * @param array  $parameters Parameters to be binded into query.
      *
      * @throws StatementException

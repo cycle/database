@@ -45,6 +45,10 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
      */
     protected array $sort = [];
 
+    /**
+     * @psalm-param non-empty-string $table
+     * @psalm-param non-empty-string $name
+     */
     public function __construct(
         protected string $table,
         protected string $name
@@ -129,7 +133,9 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
      * Index sql creation syntax.
      *
      * @param DriverInterface $driver
-     * @param bool            $includeTable Include table ON statement (not required for inline index creation).
+     * @param bool $includeTable Include table ON statement (not required for inline index creation).
+     *
+     * @psalm-return non-empty-string
      */
     public function sqlStatement(DriverInterface $driver, bool $includeTable = true): string
     {

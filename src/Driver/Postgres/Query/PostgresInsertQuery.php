@@ -58,6 +58,9 @@ class PostgresInsertQuery extends InsertQuery implements ReturningInterface
         return $this;
     }
 
+    /**
+     * @psalm-return int|non-empty-string|null
+     */
     public function run(): int|string|null
     {
         $params = new QueryParameters();

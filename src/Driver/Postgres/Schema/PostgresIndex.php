@@ -16,7 +16,7 @@ use Cycle\Database\Schema\AbstractIndex;
 class PostgresIndex extends AbstractIndex
 {
     /**
-     * @param string $table Table name.
+     * @psalm-param non-empty-string $table Table name.
      */
     public static function createInstance(string $table, array $schema): self
     {

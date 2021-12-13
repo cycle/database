@@ -23,6 +23,9 @@ use Cycle\Database\Schema\AbstractTable;
  */
 class PostgresHandler extends Handler
 {
+    /**
+     * @psalm-param non-empty-string $table
+     */
     public function getSchema(string $table, string $prefix = null): AbstractTable
     {
         return new PostgresTable($this->driver, $table, $prefix ?? '');
@@ -52,6 +55,9 @@ class PostgresHandler extends Handler
         return $tables;
     }
 
+    /**
+     * @psalm-param non-empty-string $table
+     */
     public function hasTable(string $table): bool
     {
         [$schema, $name] = $this->driver->parseSchemaAndTable($table);
@@ -72,6 +78,10 @@ class PostgresHandler extends Handler
         );
     }
 
+    /**
+     * @psalm-param non-empty-string $table
+     * @psalm-param non-empty-string $name
+     */
     public function renameTable(string $table, string $name): void
     {
         // New table name should not contain a schema
@@ -116,6 +126,9 @@ class PostgresHandler extends Handler
         $this->run($query);
     }
 
+    /**
+     * @psalm-param non-empty-string $statement
+     */
     protected function run(string $statement, array $parameters = []): int
     {
         if ($this->driver instanceof PostgresDriver) {

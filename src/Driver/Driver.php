@@ -95,6 +95,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     /**
      * Compatibility with deprecated methods.
      *
+     * @psalm-param non-empty-string $name
      *
      * @deprecated this method will be removed in a future releases.
      */
@@ -127,6 +128,8 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     /**
      * Get driver source database or file name.
      *
+     * @psalm-return non-empty-string
+     *
      * @throws DriverException
      */
     public function getSource(): string
@@ -136,9 +139,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         return $config instanceof ProvidesSourceString ? $config->getSourceString() : '*';
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getTimezone(): DateTimeZone
     {
         return new DateTimeZone($this->config->timezone);
@@ -197,7 +197,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     }
 
     /**
-     * @inheritdoc
+     * @psalm-return non-empty-string
      */
     public function quote($value, int $type = PDO::PARAM_STR): string
     {
@@ -211,6 +211,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     /**
      * Execute query and return query statement.
      *
+     * @psalm-param non-empty-string $statement
      *
      * @throws StatementException
      */
@@ -222,6 +223,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     /**
      * Execute query and return number of affected rows.
      *
+     * @psalm-param non-empty-string $query
      *
      * @throws StatementException
      * @throws ReadonlyConnectionException
@@ -377,6 +379,9 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         return true;
     }
 
+    /**
+     * @psalm-param non-empty-string $identifier
+     */
     public function identifier(string $identifier): string
     {
         return $this->queryCompiler->quoteIdentifier($identifier);
@@ -385,6 +390,8 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     /**
      * Create instance of PDOStatement using provided SQL query and set of parameters and execute
      * it. Will attempt singular reconnect.
+     *
+     * @psalm-param non-empty-string $query
      *
      * @throws StatementException
      */
@@ -426,6 +433,9 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         }
     }
 
+    /**
+     * @psalm-param non-empty-string $query
+     */
     protected function prepare(string $query): PDOStatement
     {
         if ($this->config->queryCache && isset($this->queryCache[$query])) {
@@ -490,6 +500,9 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
 
     /**
      * Convert PDO exception into query or integrity exception.
+     *
+     * @param Throwable $exception
+     * @psalm-param non-empty-string $query
      */
     abstract protected function mapException(
         Throwable $exception,
@@ -499,6 +512,8 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     /**
      * Set transaction isolation level, this feature may not be supported by specific database
      * driver.
+     *
+     * @psalm-param non-empty-string $level
      */
     protected function setIsolationLevel(string $level): void
     {

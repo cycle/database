@@ -49,12 +49,10 @@ class SQLiteDriver extends Driver
 
     /**
      * @param SQLiteDriverConfig $config
-     *
-     * @return self
      */
-    public static function create(DriverConfig $config): self
+    public static function create(DriverConfig $config): static
     {
-        return new self(
+        return new static(
             $config,
             new SQLiteHandler(),
             new SQLiteCompiler('""'),

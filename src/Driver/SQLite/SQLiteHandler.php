@@ -21,6 +21,9 @@ use Cycle\Database\Schema\AbstractTable;
 
 class SQLiteHandler extends Handler
 {
+    /**
+     * @return string[]
+     */
     public function getTableNames(string $prefix = ''): array
     {
         $query = $this->driver->query(
@@ -43,6 +46,9 @@ class SQLiteHandler extends Handler
         return $tables;
     }
 
+    /**
+     * @psalm-param non-empty-string $table
+     */
     public function hasTable(string $table): bool
     {
         $query = "SELECT COUNT('sql') FROM 'sqlite_master' WHERE type = 'table' and name = ?";
@@ -182,6 +188,8 @@ class SQLiteHandler extends Handler
      *
      * @see http://stackoverflow.com/questions/4007014/alter-column-in-sqlite
      *
+     * @psalm-param non-empty-string $source
+     * @psalm-param non-empty-string $to
      * @param array  $mapping (destination => source)
      *
      * @throws HandlerException

@@ -26,6 +26,9 @@ class Fragment implements FragmentInterface
     /** @var ParameterInterface[] */
     private array $parameters = [];
 
+    /**
+     * @psalm-param non-empty-string $fragment
+     */
     public function __construct(string $fragment, mixed ...$parameters)
     {
         $this->fragment = $fragment;

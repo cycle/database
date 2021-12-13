@@ -21,16 +21,27 @@ abstract class Compiler implements CompilerInterface
 {
     private Quoter $quoter;
 
+    /**
+     * @psalm-param non-empty-string $quotes
+     */
     public function __construct(string $quotes = '""')
     {
         $this->quoter = new Quoter('', $quotes);
     }
 
+    /**
+     * @psalm-param non-empty-string $identifier
+     *
+     * @psalm-return non-empty-string
+     */
     public function quoteIdentifier(string $identifier): string
     {
         return $this->quoter->identifier($identifier);
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     public function compile(
         QueryParameters $params,
         string $prefix,
@@ -44,6 +55,9 @@ abstract class Compiler implements CompilerInterface
         );
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     public function hashLimit(QueryParameters $params, array $tokens): string
     {
         if ($tokens['limit'] !== null) {
@@ -57,6 +71,9 @@ abstract class Compiler implements CompilerInterface
         return '_' . ($tokens['limit'] === null) . '_' . ($tokens['offset'] === null);
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     protected function fragment(
         QueryParameters $params,
         Quoter $q,
@@ -115,6 +132,9 @@ abstract class Compiler implements CompilerInterface
         );
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     protected function insertQuery(QueryParameters $params, Quoter $q, array $tokens): string
     {
         $values = [];
@@ -137,6 +157,9 @@ abstract class Compiler implements CompilerInterface
         );
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     protected function selectQuery(QueryParameters $params, Quoter $q, array $tokens): string
     {
         // This statement(s) parts should be processed first to define set of table and column aliases
@@ -269,6 +292,9 @@ abstract class Compiler implements CompilerInterface
         );
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     protected function deleteQuery(
         QueryParameters $parameters,
         Quoter $quoter,
@@ -284,6 +310,9 @@ abstract class Compiler implements CompilerInterface
         );
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     protected function name(QueryParameters $params, Quoter $q, $name, bool $table = false): string
     {
         if ($name instanceof FragmentInterface) {
@@ -297,6 +326,9 @@ abstract class Compiler implements CompilerInterface
         return $q->quote($name, $table);
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     protected function columns(QueryParameters $params, Quoter $q, array $columns, int $maxLength = 180): string
     {
         // let's quote every identifier
@@ -310,6 +342,9 @@ abstract class Compiler implements CompilerInterface
         return wordwrap(implode(', ', $columns), $maxLength);
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     protected function value(QueryParameters $params, Quoter $q, $value): string
     {
         if ($value instanceof FragmentInterface) {
@@ -392,6 +427,9 @@ abstract class Compiler implements CompilerInterface
         return $statement;
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     protected function condition(QueryParameters $params, Quoter $q, array $context): string
     {
         $operator = $context[1];

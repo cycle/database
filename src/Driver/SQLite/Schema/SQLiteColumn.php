@@ -113,6 +113,8 @@ class SQLiteColumn extends AbstractColumn
     /**
      * DBMS specific reverse mapping must map database specific type into limited set of abstract
      * types.
+     *
+     * @psalm-return non-empty-string
      */
     public function getAbstractType(): string
     {
@@ -123,6 +125,9 @@ class SQLiteColumn extends AbstractColumn
         return parent::getAbstractType();
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     public function sqlStatement(DriverInterface $driver): string
     {
         $statement = parent::sqlStatement($driver);
@@ -140,6 +145,9 @@ class SQLiteColumn extends AbstractColumn
         return "$statement CHECK ({$quoted} IN (" . implode(', ', $enumValues) . '))';
     }
 
+    /**
+     * @psalm-param non-empty-string $table
+     */
     public static function createInstance(
         string $table,
         array $schema,

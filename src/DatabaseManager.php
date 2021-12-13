@@ -145,6 +145,7 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
 
     /**
      * Get driver instance.
+     * @psalm-param non-empty-string $driver
      */
     public function driver(string $driver): DriverInterface
     {
@@ -167,6 +168,7 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
 
     /**
      * Manually set connection instance.
+     * @psalm-param non-empty-string $name
      *
      * @throws DBALException
      */

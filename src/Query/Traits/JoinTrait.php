@@ -332,11 +332,10 @@ trait JoinTrait
     /**
      * Convert various amount of where function arguments into valid where token.
      *
-     * @param string $boolean    Boolean joiner (AND | OR).
-     * @param array    $params     Set of parameters collected from where functions.
-     * @param array $tokens     Array to aggregate compiled tokens. Reference.
-     * @param callable $wrapper    Callback or closure used to wrap/collect every potential
-     *                             parameter.
+     * @psalm-param non-empty-string $boolean Boolean joiner (AND | OR).
+     * @param array $params Set of parameters collected from where functions.
+     * @param array $tokens Array to aggregate compiled tokens. Reference.
+     * @param callable $wrapper Callback or closure used to wrap/collect every potential parameter.
      *
      * @throws BuilderException
      */
@@ -352,11 +351,10 @@ trait JoinTrait
      */
     private function onWrapper(): Closure
     {
-        return static function ($parameter) {
-            return $parameter instanceof FragmentInterface || $parameter instanceof ParameterInterface
+        return static fn ($parameter) =>
+            $parameter instanceof FragmentInterface || $parameter instanceof ParameterInterface
                 ? $parameter
                 : new Expression($parameter);
-        };
     }
 
     /**

@@ -22,6 +22,9 @@ use Cycle\Database\Query\QueryParameters;
  */
 class PostgresCompiler extends Compiler implements CachingCompilerInterface
 {
+    /**
+     * @psalm-return non-empty-string
+     */
     protected function insertQuery(QueryParameters $params, Quoter $q, array $tokens): string
     {
         $result = parent::insertQuery($params, $q, $tokens);

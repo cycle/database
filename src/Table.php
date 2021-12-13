@@ -29,22 +29,20 @@ use Cycle\Database\Schema\AbstractTable;
  */
 final class Table implements TableInterface, \IteratorAggregate, \Countable
 {
-    protected DatabaseInterface $database;
-
-    private string $name;
-
     /**
      * @param DatabaseInterface $database Parent DBAL database.
-     * @param string            $name     Table name without prefix.
+     * @psalm-param non-empty-string $name Table name without prefix.
      */
-    public function __construct(DatabaseInterface $database, string $name)
-    {
-        $this->name = $name;
-        $this->database = $database;
+    public function __construct(
+        protected DatabaseInterface $database,
+        private string $name
+    ) {
     }
 
     /**
      * Bypass call to SelectQuery builder.
+     *
+     * @psalm-param non-empty-string $method
      *
      * @return SelectQuery|mixed
      */
@@ -63,12 +61,17 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
 
     /**
      * Real table name, will include database prefix.
+     *
+     * @psalm-return non-empty-string
      */
     public function getFullName(): string
     {
         return $this->database->getPrefix() . $this->name;
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     public function getName(): string
     {
         return $this->name;
@@ -223,7 +226,7 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
     /**
      * Check if table have specified column.
      *
-     * @param string $name Column name.
+     * @psalm-param non-empty-string $name Column name.
      */
     public function hasColumn(string $name): bool
     {

@@ -217,6 +217,9 @@ class PostgresTable extends AbstractTable
         return [];
     }
 
+    /**
+     * @psalm-param non-empty-string $name
+     */
     protected function createColumn(string $name): AbstractColumn
     {
         return new PostgresColumn(
@@ -226,6 +229,9 @@ class PostgresTable extends AbstractTable
         );
     }
 
+    /**
+     * @psalm-param non-empty-string $name
+     */
     protected function createIndex(string $name): AbstractIndex
     {
         return new PostgresIndex(
@@ -234,6 +240,9 @@ class PostgresTable extends AbstractTable
         );
     }
 
+    /**
+     * @psalm-param non-empty-string $name
+     */
     protected function createForeign(string $name): AbstractForeignKey
     {
         return new PostgresForeignKey(
@@ -243,6 +252,9 @@ class PostgresTable extends AbstractTable
         );
     }
 
+    /**
+     * @psalm-param non-empty-string $name
+     */
     protected function prefixTableName(string $name): string
     {
         [$schema, $name] = $this->driver->parseSchemaAndTable($name);
@@ -262,6 +274,8 @@ class PostgresTable extends AbstractTable
 
     /**
      * Return table name without schema
+     *
+     * @psalm-param non-empty-string $name
      */
     protected function removeSchemaFromTableName(string $name): string
     {

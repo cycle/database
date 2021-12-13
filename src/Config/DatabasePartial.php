@@ -13,6 +13,12 @@ namespace Cycle\Database\Config;
 
 final class DatabasePartial
 {
+    /**
+     * @psalm-param non-empty-string $name
+     * @param string $prefix
+     * @psalm-param non-empty-string $driver
+     * @psalm-param non-empty-string|null $readDriver
+     */
     public function __construct(
         private string $name,
         private string $prefix,

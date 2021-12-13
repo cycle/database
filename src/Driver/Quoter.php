@@ -25,6 +25,9 @@ final class Quoter
     private string $right;
     private array $aliases = [];
 
+    /**
+     * @psalm-param non-empty-string $quotes
+     */
     public function __construct(
         private string $prefix,
         string $quotes
@@ -57,6 +60,9 @@ final class Quoter
 
     /**
      * Register new quotation alias.
+     *
+     * @psalm-param non-empty-string $alias
+     * @psalm-param non-empty-string $identifier
      */
     public function registerAlias(string $alias, string $identifier): void
     {
@@ -65,6 +71,10 @@ final class Quoter
 
     /**
      * Quote identifier without registering an alias.
+     *
+     * @psalm-param non-empty-string $identifier
+     *
+     * @psalm-return non-empty-string
      */
     public function identifier(string $identifier): string
     {
@@ -89,11 +99,11 @@ final class Quoter
     /**
      * Query query identifier, if identified stated as table - table prefix must be added.
      *
-     * @param string $identifier Identifier can include simple column operations and functions,
-     *                           having "." in it will automatically force table prefix to first
-     *                           value.
-     * @param bool   $isTable    Set to true to let quote method know that identifier is related to
-     *                           table name
+     * @psalm-param non-empty-string $identifier Identifier can include simple column operations and functions,
+     *      having "." in it will automatically force table prefix to first value.
+     * @param bool $isTable Set to true to let quote method know that identifier is related to table name
+     *
+     * @psalm-return non-empty-string
      */
     public function quote(string $identifier, bool $isTable = false): string
     {
@@ -119,6 +129,8 @@ final class Quoter
 
     /**
      * Quoting columns and tables in complex expression.
+     *
+     * @psalm-param non-empty-string $identifier
      */
     private function expression(string $identifier): string
     {
@@ -140,6 +152,11 @@ final class Quoter
 
     /**
      * Handle "IDENTIFIER AS ALIAS" expression.
+     *
+     * @psalm-param non-empty-string $identifier
+     * @psalm-param non-empty-string $alias
+     *
+     * @psalm-return non-empty-string
      */
     private function aliasing(string $identifier, string $alias, bool $isTable): string
     {
@@ -170,6 +187,10 @@ final class Quoter
 
     /**
      * Processing pair of table and column.
+     *
+     * @psalm-param non-empty-string $identifier
+     *
+     * @psalm-return non-empty-string
      */
     private function paired(string $identifier): string
     {
@@ -185,6 +206,10 @@ final class Quoter
 
     /**
      * Process unpaired (no . separator) identifier.
+     *
+     * @psalm-param non-empty-string $identifier
+     *
+     * @psalm-return non-empty-string
      */
     private function unpaired(string $identifier, bool $isTable): string
     {
@@ -203,6 +228,8 @@ final class Quoter
 
     /**
      * Check if string has expression markers.
+     *
+     * @psalm-param non-empty-string $string
      */
     private function hasExpressions(string $string): bool
     {

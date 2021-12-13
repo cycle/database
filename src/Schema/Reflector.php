@@ -209,6 +209,9 @@ final class Reflector
         }
     }
 
+    /**
+     * @psalm-param non-empty-string $key
+     */
     private function sort(string $key, array $dependencies): void
     {
         if (isset($this->states[$key])) {

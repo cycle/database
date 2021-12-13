@@ -15,6 +15,9 @@ use Cycle\Database\Schema\AbstractForeignKey;
 
 class PostgresForeignKey extends AbstractForeignKey
 {
+    /**
+     * @psalm-param non-empty-string $table
+     */
     public static function createInstance(string $table, string $tablePrefix, array $schema): self
     {
         $foreign = new self($table, $tablePrefix, $schema['constraint_name']);

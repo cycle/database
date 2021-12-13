@@ -257,7 +257,7 @@ class SelectQuery extends ActiveQuery implements
     /**
      * Count number of rows in query. Limit, offset, order by, group by values will be ignored.
      *
-     * @param string $column Column to count by (every column by default).
+     * @psalm-param non-empty-string $column Column to count by (every column by default).
      */
     public function count(string $column = '*'): int
     {
@@ -276,21 +276,33 @@ class SelectQuery extends ActiveQuery implements
         }
     }
 
+    /**
+     * @psalm-param non-empty-string $column
+     */
     public function avg(string $column): mixed
     {
         return $this->runAggregate('AVG', $column);
     }
 
+    /**
+     * @psalm-param non-empty-string $column
+     */
     public function max(string $column): mixed
     {
         return $this->runAggregate('MAX', $column);
     }
 
+    /**
+     * @psalm-param non-empty-string $column
+     */
     public function min(string $column): mixed
     {
         return $this->runAggregate('MIN', $column);
     }
 
+    /**
+     * @psalm-param non-empty-string $column
+     */
     public function sum(string $column): mixed
     {
         return $this->runAggregate('SUM', $column);
@@ -352,6 +364,10 @@ class SelectQuery extends ActiveQuery implements
         return $this;
     }
 
+    /**
+     * @psalm-param non-empty-string $method
+     * @psalm-param non-empty-string $column
+     */
     private function runAggregate(string $method, string $column): mixed
     {
         $select = clone $this;

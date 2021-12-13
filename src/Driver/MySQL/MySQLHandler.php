@@ -23,6 +23,9 @@ use Cycle\Database\Schema\AbstractTable;
 
 class MySQLHandler extends Handler
 {
+    /**
+     * @psalm-param non-empty-string $table
+     */
     public function getSchema(string $table, string $prefix = null): AbstractTable
     {
         return new MySQLTable($this->driver, $table, $prefix ?? '');
@@ -42,6 +45,9 @@ class MySQLHandler extends Handler
         return $result;
     }
 
+    /**
+     * @psalm-param non-empty-string $table
+     */
     public function hasTable(string $table): bool
     {
         $query = 'SELECT COUNT(*) FROM `information_schema`.`tables` WHERE `table_schema` = ? AND `table_name` = ?';

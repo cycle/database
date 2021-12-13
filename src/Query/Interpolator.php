@@ -22,6 +22,9 @@ final class Interpolator
 {
     /**
      * Injects parameters into statement. For debug purposes only.
+     * @psalm-param non-empty-string $query
+     *
+     * @psalm-return non-empty-string
      */
     public static function interpolate(string $query, iterable $parameters = []): string
     {
@@ -52,6 +55,8 @@ final class Interpolator
 
     /**
      * Get parameter value.
+     *
+     * @psalm-return non-empty-string
      */
     protected static function resolveValue(mixed $parameter): string
     {
@@ -90,6 +95,12 @@ final class Interpolator
 
     /**
      * Replace search value only once.
+     *
+     * @psalm-param non-empty-string $search
+     * @psalm-param non-empty-string $replace
+     * @psalm-param non-empty-string $subject
+     *
+     * @psalm-return non-empty-string
      *
      * @see http://stackoverflow.com/questions/1252693/using-str-replace-so-that-it-only-acts-on-the-first-match
      */

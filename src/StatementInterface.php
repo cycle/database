@@ -26,6 +26,9 @@ interface StatementInterface extends \Traversable
     // Fetch rows as object where each property is the column name.
     public const FETCH_OBJ = 5;
 
+    /**
+     * @psalm-return non-empty-string
+     */
     public function getQueryString(): string;
 
     /**

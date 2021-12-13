@@ -31,10 +31,9 @@ final class Database implements DatabaseInterface
     public const ISOLATION_READ_UNCOMMITTED = DriverInterface::ISOLATION_READ_UNCOMMITTED;
 
     /**
-     * @param string               $name       Internal database name/id.
-     * @param string               $prefix     Default database table prefix, will be used for all
-     *                                         table identifiers.
-     * @param DriverInterface      $driver     Driver instance responsible for database connection.
+     * @psalm-param non-empty-string $name Internal database name/id.
+     * @param string $prefix Default database table prefix, will be used for all table identifiers.
+     * @param DriverInterface $driver Driver instance responsible for database connection.
      * @param DriverInterface|null $readDriver Read-only driver connection.
      */
     public function __construct(
@@ -47,17 +46,24 @@ final class Database implements DatabaseInterface
 
     /**
      * Shortcut to get table abstraction.
+     * @psalm-param non-empty-string $name Table name without prefix.
      */
     public function __get(string $name): TableInterface
     {
         return $this->table($name);
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     public function getName(): string
     {
         return $this->name;
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     public function getType(): string
     {
         return $this->getDriver(self::WRITE)->getType();
@@ -82,6 +88,9 @@ final class Database implements DatabaseInterface
         return $this->prefix;
     }
 
+    /**
+     * @psalm-param non-empty-string $name
+     */
     public function hasTable(string $name): bool
     {
         return $this->getDriver()->getSchemaHandler()->hasTable($this->prefix . $name);
@@ -106,17 +115,26 @@ final class Database implements DatabaseInterface
         return $result;
     }
 
-    public function table(string $name): TableInterface
+    /**
+     * @psalm-param non-empty-string $name
+     */
+    public function table(string $name): Table
     {
         return new Table($this, $name);
     }
 
+    /**
+     * @psalm-param non-empty-string $query
+     */
     public function execute(string $query, array $parameters = []): int
     {
         return $this->getDriver(self::WRITE)
             ->execute($query, $parameters);
     }
 
+    /**
+     * @psalm-param non-empty-string $query
+     */
     public function query(string $query, array $parameters = []): StatementInterface
     {
         return $this->getDriver(self::READ)

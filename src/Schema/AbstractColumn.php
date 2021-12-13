@@ -225,6 +225,10 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         self::FLOAT => ['double', 'float', 'decimal'],
     ];
 
+    /**
+     * @psalm-param non-empty-string $table
+     * @psalm-param non-empty-string $name
+     */
     public function __construct(
         protected string $table,
         protected string $name,
@@ -235,6 +239,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
 
     /**
      * Shortcut for AbstractColumn->type() method.
+     * @psalm-param non-empty-string $type
      */
     public function __call(string $type, array $arguments = []): AbstractColumn
     {
@@ -357,6 +362,9 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         return $this->type;
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     public function getType(): string
     {
         $schemaType = $this->getAbstractType();
@@ -424,7 +432,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      * Attention, changing type of existed columns in some databases has a lot of restrictions like
      * cross type conversions and etc. Try do not change column type without a reason.
      *
-     * @param string $abstract Abstract or virtual type declared in mapping.
+     * @psalm-param non-empty-string $abstract Abstract or virtual type declared in mapping.
      *
      * @throws SchemaException
      * @todo Support native database types (simply bypass abstractType)!
@@ -654,6 +662,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
 
     /**
      * Ensure that datetime fields are correctly formatted.
+     * @psalm-param non-empty-string $type
      *
      * @throws DefaultValueException
      */

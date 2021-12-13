@@ -48,6 +48,11 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
      */
     protected string $updateRule = self::NO_ACTION;
 
+    /**
+     * @psalm-param non-empty-string $table
+     * @param string $tablePrefix
+     * @psalm-param non-empty-string $name
+     */
     public function __construct(
         protected string $table,
         protected string $tablePrefix,
@@ -70,11 +75,17 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
         return $this->foreignKeys;
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     public function getDeleteRule(): string
     {
         return $this->deleteRule;
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     public function getUpdateRule(): string
     {
         return $this->updateRule;
@@ -95,11 +106,9 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
      * Set foreign table name and key local column must reference to. Make sure local and foreign
      * column types are identical.
      *
-     * @param string $table       Foreign table name with or without database prefix (see 3rd
-     *                            argument).
-     * @param array  $columns     Foreign key names (id by default).
-     * @param bool   $forcePrefix When true foreign table will get same prefix as table being
-     *                            modified.
+     * @@psalm-param non-empty-string $table Foreign table name with or without database prefix (see 3rd argument).
+     * @param array $columns Foreign key names (id by default).
+     * @param bool $forcePrefix When true foreign table will get same prefix as table being modified.
      */
     public function references(
         string $table,
@@ -115,7 +124,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
     /**
      * Set foreign key delete behaviour.
      *
-     * @param string $rule Possible values: NO ACTION, CASCADE, etc (driver specific).
+     * @psalm-param non-empty-string $rule Possible values: NO ACTION, CASCADE, etc (driver specific).
      */
     public function onDelete(string $rule = self::NO_ACTION): AbstractForeignKey
     {
@@ -127,7 +136,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
     /**
      * Set foreign key update behaviour.
      *
-     * @param string $rule Possible values: NO ACTION, CASCADE, etc (driver specific).
+     * @psalm-param non-empty-string $rule Possible values: NO ACTION, CASCADE, etc (driver specific).
      */
     public function onUpdate(string $rule = self::NO_ACTION): AbstractForeignKey
     {
@@ -138,6 +147,8 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
 
     /**
      * Foreign key creation syntax.
+     *
+     * @psalm-return non-empty-string
      */
     public function sqlStatement(DriverInterface $driver): string
     {
@@ -163,6 +174,9 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
         return $this == clone $initial;
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     protected function packColumns(DriverInterface $driver, array $columns): string
     {
         return implode(', ', array_map([$driver, 'identifier'], $columns));

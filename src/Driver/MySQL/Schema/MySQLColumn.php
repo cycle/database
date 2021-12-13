@@ -128,6 +128,9 @@ class MySQLColumn extends AbstractColumn
      */
     protected bool $autoIncrement = false;
 
+    /**
+     * @psalm-return non-empty-string
+     */
     public function sqlStatement(DriverInterface $driver): string
     {
         $defaultValue = $this->defaultValue;
@@ -147,6 +150,9 @@ class MySQLColumn extends AbstractColumn
         return $statement;
     }
 
+    /**
+     * @psalm-param non-empty-string $table
+     */
     public static function createInstance(string $table, array $schema, \DateTimeZone $timezone = null): self
     {
         $column = new self($table, $schema['Field'], $timezone);
@@ -223,6 +229,8 @@ class MySQLColumn extends AbstractColumn
 
     /**
      * Ensure that datetime fields are correctly formatted.
+     *
+     * @psalm-param non-empty-string $type
      *
      * @throws DefaultValueException
      */

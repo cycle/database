@@ -23,16 +23,13 @@ use Cycle\Database\Schema\AbstractTable;
 class SQLServerHandler extends Handler
 {
     /**
-     * @inheritDoc
+     * @psalm-param non-empty-string $table
      */
     public function getSchema(string $table, string $prefix = null): AbstractTable
     {
         return new SQLServerTable($this->driver, $table, $prefix ?? '');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTableNames(string $prefix = ''): array
     {
         $query = "SELECT [table_name] FROM [information_schema].[tables] WHERE [table_type] = 'BASE TABLE'";
@@ -50,7 +47,7 @@ class SQLServerHandler extends Handler
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-param non-empty-string $table
      */
     public function hasTable(string $table): bool
     {
@@ -60,9 +57,6 @@ class SQLServerHandler extends Handler
         return (bool)$this->driver->query($query, [$table])->fetchColumn();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function eraseTable(AbstractTable $table): void
     {
         $this->driver->execute(
@@ -71,7 +65,8 @@ class SQLServerHandler extends Handler
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-param non-empty-string $table
+     * @psalm-param non-empty-string $name
      */
     public function renameTable(string $table, string $name): void
     {
@@ -81,9 +76,6 @@ class SQLServerHandler extends Handler
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function createColumn(AbstractTable $table, AbstractColumn $column): void
     {
         $this->run(
@@ -151,17 +143,11 @@ class SQLServerHandler extends Handler
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function dropIndex(AbstractTable $table, AbstractIndex $index): void
     {
         $this->run("DROP INDEX {$this->identify($index)} ON {$this->identify($table)}");
     }
 
-    /**
-     * {@inheritdoc}
-     */
     private function renameColumn(
         AbstractTable $table,
         AbstractColumn $initial,

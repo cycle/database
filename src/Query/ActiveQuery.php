@@ -73,6 +73,8 @@ abstract class ActiveQuery implements QueryInterface
 
     /**
      * Generate SQL query, must have associated driver instance.
+     *
+     * @psalm-return non-empty-string
      */
     public function sqlStatement(QueryParameters $parameters = null): string
     {

@@ -21,11 +21,10 @@ trait TokenTrait
     /**
      * Convert various amount of where function arguments into valid where token.
      *
-     * @param string $boolean    Boolean joiner (AND | OR).
-     * @param array    $params     Set of parameters collected from where functions.
-     * @param array $tokens     Array to aggregate compiled tokens. Reference.
-     * @param callable $wrapper    Callback or closure used to wrap/collect every potential
-     *                             parameter.
+     * @psalm-param non-empty-string $boolean Boolean joiner (AND | OR).
+     * @param array $params Set of parameters collected from where functions.
+     * @param array $tokens Array to aggregate compiled tokens. Reference.
+     * @param callable $wrapper Callback or closure used to wrap/collect every potential parameter.
      *
      * @throws BuilderException
      */
@@ -147,11 +146,10 @@ trait TokenTrait
     /**
      * Convert simplified where definition into valid set of where tokens.
      *
-     * @param string   $grouper Grouper type (see self::TOKEN_AND, self::TOKEN_OR).
-     * @param array    $where   Simplified where definition.
-     * @param array    $tokens  Array to aggregate compiled tokens. Reference.
-     * @param callable $wrapper Callback or closure used to wrap/collect every potential
-     *                          parameter.
+     * @psalm-param non-empty-string $grouper Grouper type (see self::TOKEN_AND, self::TOKEN_OR).
+     * @param array $where Simplified where definition.
+     * @param array $tokens Array to aggregate compiled tokens. Reference.
+     * @param callable $wrapper Callback or closure used to wrap/collect every potential parameter.
      *
      * @throws BuilderException
      */
@@ -220,11 +218,11 @@ trait TokenTrait
     /**
      * Build set of conditions for specified identifier.
      *
-     * @param string   $innerJoiner Inner boolean joiner.
-     * @param string   $key         Column identifier.
-     * @param array    $where       Operations associated with identifier.
-     * @param array    $tokens      Array to aggregate compiled tokens. Reference.
-     * @param callable $wrapper     Callback or closure used to wrap/collect every potential parameter.
+     * @psalm-param non-empty-string $innerJoiner Inner boolean joiner.
+     * @psalm-param non-empty-string $key Column identifier.
+     * @param array $where Operations associated with identifier.
+     * @param array $tokens Array to aggregate compiled tokens. Reference.
+     * @param callable $wrapper Callback or closure used to wrap/collect every potential parameter.
      */
     private function pushCondition(string $innerJoiner, string $key, array $where, &$tokens, callable $wrapper): array
     {
