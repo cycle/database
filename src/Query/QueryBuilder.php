@@ -18,45 +18,16 @@ use Cycle\Database\Driver\DriverInterface;
  */
 final class QueryBuilder implements BuilderInterface
 {
-    /** @var SelectQuery */
-    private $selectQuery;
+    private DriverInterface $driver;
 
-    /** @var InsertQuery */
-    private $insertQuery;
-
-    /** @var UpdateQuery */
-    private $updateQuery;
-
-    /** @var DeleteQuery */
-    private $deleteQuery;
-
-    /** @var DriverInterface */
-    private $driver;
-
-    /**
-     * QueryBuilder constructor.
-     *
-     * @param SelectQuery $selectQuery
-     * @param InsertQuery $insertQuery
-     * @param UpdateQuery $updateQuery
-     * @param DeleteQuery $deleteQuery
-     */
     public function __construct(
-        SelectQuery $selectQuery,
-        InsertQuery $insertQuery,
-        UpdateQuery $updateQuery,
-        DeleteQuery $deleteQuery
+        private SelectQuery $selectQuery,
+        private InsertQuery $insertQuery,
+        private UpdateQuery $updateQuery,
+        private DeleteQuery $deleteQuery
     ) {
-        $this->selectQuery = $selectQuery;
-        $this->insertQuery = $insertQuery;
-        $this->updateQuery = $updateQuery;
-        $this->deleteQuery = $deleteQuery;
     }
 
-    /**
-     * @param DriverInterface $driver
-     * @return BuilderInterface
-     */
     public function withDriver(DriverInterface $driver): BuilderInterface
     {
         $builder = clone $this;
@@ -67,10 +38,6 @@ final class QueryBuilder implements BuilderInterface
 
     /**
      * Get InsertQuery builder with driver specific query compiler.
-     *
-     * @param string      $prefix
-     * @param string|null $table
-     * @return InsertQuery
      */
     public function insertQuery(
         string $prefix,
@@ -87,11 +54,6 @@ final class QueryBuilder implements BuilderInterface
 
     /**
      * Get SelectQuery builder with driver specific query compiler.
-     *
-     * @param string $prefix
-     * @param array  $from
-     * @param array  $columns
-     * @return SelectQuery
      */
     public function selectQuery(
         string $prefix,
@@ -107,12 +69,6 @@ final class QueryBuilder implements BuilderInterface
         return $select->from($from)->columns($columns);
     }
 
-    /**
-     * @param string      $prefix
-     * @param string|null $from
-     * @param array       $where
-     * @return DeleteQuery
-     */
     public function deleteQuery(
         string $prefix,
         string $from = null,
@@ -129,12 +85,6 @@ final class QueryBuilder implements BuilderInterface
 
     /**
      * Get UpdateQuery builder with driver specific query compiler.
-     *
-     * @param string      $prefix
-     * @param string|null $table
-     * @param array       $where
-     * @param array       $values
-     * @return UpdateQuery
      */
     public function updateQuery(
         string $prefix,
@@ -151,9 +101,6 @@ final class QueryBuilder implements BuilderInterface
         return $update->where($where)->values($values);
     }
 
-    /**
-     * @return QueryBuilder
-     */
     public static function defaultBuilder(): QueryBuilder
     {
         return new self(

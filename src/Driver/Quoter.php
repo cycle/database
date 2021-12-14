@@ -21,29 +21,19 @@ final class Quoter
     // Used to detect functions and expression.
     private const STOPS = [')', '(', ' '];
 
-    /** @var string */
-    private $prefix;
-
-    /** @var string */
-    private $left;
-
-    /** @var string */
-    private $right;
-
-    /** @var array */
-    private $aliases = [];
+    private string $left;
+    private string $right;
+    private array $aliases = [];
 
     /**
-     * @param string $prefix
-     * @param string $quotes
+     * @psalm-param non-empty-string $quotes
      */
-    public function __construct(string $prefix, string $quotes)
-    {
-        if (strlen($quotes) !== 2) {
-            throw new CompilerException('Invalid quoter quotes, expected 2 characters string');
-        }
+    public function __construct(
+        private string $prefix,
+        string $quotes
+    ) {
+        strlen($quotes) !== 2 and throw new CompilerException('Invalid quoter quotes, expected 2 characters string');
 
-        $this->prefix = $prefix;
         $this->left = $quotes[0];
         $this->right = $quotes[1];
     }
@@ -56,11 +46,6 @@ final class Quoter
         $this->aliases = [];
     }
 
-    /**
-     * @param string $prefix
-     * @param bool   $preserveAliases
-     * @return Quoter
-     */
     public function withPrefix(string $prefix, bool $preserveAliases = false): Quoter
     {
         $quoter = clone $this;
@@ -76,8 +61,8 @@ final class Quoter
     /**
      * Register new quotation alias.
      *
-     * @param string $alias
-     * @param string $identifier
+     * @psalm-param non-empty-string $alias
+     * @psalm-param non-empty-string $identifier
      */
     public function registerAlias(string $alias, string $identifier): void
     {
@@ -87,8 +72,9 @@ final class Quoter
     /**
      * Quote identifier without registering an alias.
      *
-     * @param string $identifier
-     * @return string
+     * @psalm-param non-empty-string $identifier
+     *
+     * @psalm-return non-empty-string
      */
     public function identifier(string $identifier): string
     {
@@ -113,12 +99,11 @@ final class Quoter
     /**
      * Query query identifier, if identified stated as table - table prefix must be added.
      *
-     * @param string $identifier Identifier can include simple column operations and functions,
-     *                           having "." in it will automatically force table prefix to first
-     *                           value.
-     * @param bool   $isTable    Set to true to let quote method know that identifier is related to
-     *                           table name.
-     * @return mixed|string
+     * @psalm-param non-empty-string $identifier Identifier can include simple column operations and functions,
+     *      having "." in it will automatically force table prefix to first value.
+     * @param bool $isTable Set to true to let quote method know that identifier is related to table name
+     *
+     * @psalm-return non-empty-string
      */
     public function quote(string $identifier, bool $isTable = false): string
     {
@@ -133,7 +118,7 @@ final class Quoter
             return $this->expression($identifier);
         }
 
-        if (strpos($identifier, '.') === false) {
+        if (!str_contains($identifier, '.')) {
             // no table/column pair found
             return $this->unpaired($identifier, $isTable);
         }
@@ -145,8 +130,7 @@ final class Quoter
     /**
      * Quoting columns and tables in complex expression.
      *
-     * @param string $identifier
-     * @return string
+     * @psalm-param non-empty-string $identifier
      */
     private function expression(string $identifier): string
     {
@@ -169,14 +153,14 @@ final class Quoter
     /**
      * Handle "IDENTIFIER AS ALIAS" expression.
      *
-     * @param string $identifier
-     * @param string $alias
-     * @param bool   $isTable
-     * @return string
+     * @psalm-param non-empty-string $identifier
+     * @psalm-param non-empty-string $alias
+     *
+     * @psalm-return non-empty-string
      */
     private function aliasing(string $identifier, string $alias, bool $isTable): string
     {
-        if (strpos($identifier, '.') !== false) {
+        if (str_contains($identifier, '.')) {
             // non table alias
             return sprintf(
                 '%s AS %s',
@@ -204,8 +188,9 @@ final class Quoter
     /**
      * Processing pair of table and column.
      *
-     * @param string $identifier
-     * @return string
+     * @psalm-param non-empty-string $identifier
+     *
+     * @psalm-return non-empty-string
      */
     private function paired(string $identifier): string
     {
@@ -222,9 +207,9 @@ final class Quoter
     /**
      * Process unpaired (no . separator) identifier.
      *
-     * @param string $identifier
-     * @param bool   $isTable
-     * @return string
+     * @psalm-param non-empty-string $identifier
+     *
+     * @psalm-return non-empty-string
      */
     private function unpaired(string $identifier, bool $isTable): string
     {
@@ -244,13 +229,12 @@ final class Quoter
     /**
      * Check if string has expression markers.
      *
-     * @param string $string
-     * @return bool
+     * @psalm-param non-empty-string $string
      */
     private function hasExpressions(string $string): bool
     {
         foreach (self::STOPS as $symbol) {
-            if (strpos($string, $symbol) !== false) {
+            if (str_contains($string, $symbol)) {
                 return true;
             }
         }

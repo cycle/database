@@ -22,10 +22,9 @@ final class Interpolator
 {
     /**
      * Injects parameters into statement. For debug purposes only.
+     * @psalm-param non-empty-string $query
      *
-     * @param string   $query
-     * @param iterable $parameters
-     * @return string
+     * @psalm-return non-empty-string
      */
     public static function interpolate(string $query, iterable $parameters = []): string
     {
@@ -57,10 +56,9 @@ final class Interpolator
     /**
      * Get parameter value.
      *
-     * @param mixed $parameter
-     * @return string
+     * @psalm-return non-empty-string
      */
-    protected static function resolveValue($parameter): string
+    protected static function resolveValue(mixed $parameter): string
     {
         if ($parameter instanceof ParameterInterface) {
             return self::resolveValue($parameter->getValue());
@@ -98,12 +96,13 @@ final class Interpolator
     /**
      * Replace search value only once.
      *
-     * @see http://stackoverflow.com/questions/1252693/using-str-replace-so-that-it-only-acts-on-the-first-match
+     * @psalm-param non-empty-string $search
+     * @psalm-param non-empty-string $replace
+     * @psalm-param non-empty-string $subject
      *
-     * @param string $search
-     * @param string $replace
-     * @param string $subject
-     * @return string
+     * @psalm-return non-empty-string
+     *
+     * @see http://stackoverflow.com/questions/1252693/using-str-replace-so-that-it-only-acts-on-the-first-match
      */
     private static function replaceOnce(
         string $search,

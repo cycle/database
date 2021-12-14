@@ -24,17 +24,15 @@ use Cycle\Database\Driver\CompilerInterface;
  */
 class Expression implements FragmentInterface
 {
-    /** @var string */
-    private $expression;
+    private string $expression;
 
     /** @var ParameterInterface[] */
-    private $parameters = [];
+    private array $parameters = [];
 
     /**
-     * @param string $statement
-     * @param mixed  ...$parameters
+     * @psalm-param non-empty-string $statement
      */
-    public function __construct(string $statement, ...$parameters)
+    public function __construct(string $statement, mixed ...$parameters)
     {
         $this->expression = $statement;
 
@@ -47,18 +45,11 @@ class Expression implements FragmentInterface
         }
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return 'exp:' . $this->expression;
     }
 
-    /**
-     * @param array $an_array
-     * @return Expression
-     */
     public static function __set_state(array $an_array): Expression
     {
         return new self(
@@ -67,17 +58,11 @@ class Expression implements FragmentInterface
         );
     }
 
-    /**
-     * @return int
-     */
     public function getType(): int
     {
         return CompilerInterface::EXPRESSION;
     }
 
-    /**
-     * @return array
-     */
     public function getTokens(): array
     {
         return [

@@ -24,13 +24,8 @@ use Cycle\Database\Schema\ElementInterface;
 
 abstract class Handler implements HandlerInterface
 {
-    /** @var DriverInterface */
-    protected $driver;
+    protected ?DriverInterface $driver = null;
 
-    /**
-     * @param DriverInterface $driver
-     * @return HandlerInterface
-     */
     public function withDriver(DriverInterface $driver): HandlerInterface
     {
         $handler = clone $this;
@@ -41,17 +36,12 @@ abstract class Handler implements HandlerInterface
 
     /**
      * Associated driver.
-     *
-     * @return DriverInterface
      */
     public function getDriver(): DriverInterface
     {
         return $this->driver;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function createTable(AbstractTable $table): void
     {
         $this->run($this->createStatement($table));
@@ -62,9 +52,6 @@ abstract class Handler implements HandlerInterface
         }
     }
 
-    /**
-     * @inheritdoc
-     */
     public function dropTable(AbstractTable $table): void
     {
         $this->run(
@@ -72,16 +59,11 @@ abstract class Handler implements HandlerInterface
         );
     }
 
-    /**
-     * @inheritdoc
-     */
     public function syncTable(AbstractTable $table, int $operation = self::DO_ALL): void
     {
         $comparator = $table->getComparator();
 
-        if ($comparator->isPrimaryChanged()) {
-            throw new DBALException('Unable to change primary keys for existed table');
-        }
+        $comparator->isPrimaryChanged() and throw new DBALException('Unable to change primary keys for existed table');
 
         if ($operation & self::DO_RENAME && $comparator->isRenamed()) {
             $this->renameTable($table->getInitialName(), $table->getFullName());
@@ -95,7 +77,8 @@ abstract class Handler implements HandlerInterface
     }
 
     /**
-     * @inheritdoc
+     * @psalm-param non-empty-string $table
+     * @psalm-param non-empty-string $name
      */
     public function renameTable(string $table, string $name): void
     {
@@ -104,9 +87,6 @@ abstract class Handler implements HandlerInterface
         );
     }
 
-    /**
-     * @inheritdoc
-     */
     public function createColumn(AbstractTable $table, AbstractColumn $column): void
     {
         $this->run(
@@ -114,9 +94,6 @@ abstract class Handler implements HandlerInterface
         );
     }
 
-    /**
-     * @inheritdoc
-     */
     public function dropColumn(AbstractTable $table, AbstractColumn $column): void
     {
         foreach ($column->getConstraints() as $constraint) {
@@ -129,25 +106,16 @@ abstract class Handler implements HandlerInterface
         );
     }
 
-    /**
-     * @inheritdoc
-     */
     public function createIndex(AbstractTable $table, AbstractIndex $index): void
     {
         $this->run("CREATE {$index->sqlStatement($this->driver)}");
     }
 
-    /**
-     * @inheritdoc
-     */
     public function dropIndex(AbstractTable $table, AbstractIndex $index): void
     {
         $this->run("DROP INDEX {$this->identify($index)}");
     }
 
-    /**
-     * @inheritdoc
-     */
     public function alterIndex(
         AbstractTable $table,
         AbstractIndex $initial,
@@ -157,9 +125,6 @@ abstract class Handler implements HandlerInterface
         $this->createIndex($table, $index);
     }
 
-    /**
-     * @inheritdoc
-     */
     public function createForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void
     {
         $this->run(
@@ -167,17 +132,11 @@ abstract class Handler implements HandlerInterface
         );
     }
 
-    /**
-     * @inheritdoc
-     */
     public function dropForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void
     {
         $this->dropConstrain($table, $foreignKey->getName());
     }
 
-    /**
-     * @inheritdoc
-     */
     public function alterForeignKey(
         AbstractTable $table,
         AbstractForeignKey $initial,
@@ -187,10 +146,7 @@ abstract class Handler implements HandlerInterface
         $this->createForeignKey($table, $foreignKey);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function dropConstrain(AbstractTable $table, $constraint): void
+    public function dropConstrain(AbstractTable $table, string $constraint): void
     {
         $this->run(
             "ALTER TABLE {$this->identify($table)} DROP CONSTRAINT {$this->identify($constraint)}"
@@ -198,9 +154,9 @@ abstract class Handler implements HandlerInterface
     }
 
     /**
-     * @inheritdoc
+     * @psalm-return non-empty-string
      */
-    protected function createStatement(AbstractTable $table)
+    protected function createStatement(AbstractTable $table): string
     {
         $statement = ["CREATE TABLE {$this->identify($table)} ("];
         $innerStatement = [];
@@ -229,11 +185,6 @@ abstract class Handler implements HandlerInterface
         return implode("\n", $statement);
     }
 
-    /**
-     * @param AbstractTable       $table
-     * @param int                 $operation
-     * @param ComparatorInterface $comparator
-     */
     protected function executeChanges(
         AbstractTable $table,
         int $operation,
@@ -259,9 +210,7 @@ abstract class Handler implements HandlerInterface
     /**
      * Execute statement.
      *
-     * @param string $statement
-     * @param array  $parameters
-     * @return int
+     * @psalm-param non-empty-string $statement
      *
      * @throws HandlerException
      */
@@ -277,28 +226,25 @@ abstract class Handler implements HandlerInterface
     /**
      * Create element identifier.
      *
-     * @param ElementInterface|AbstractTable|string $element
-     * @return string
+     * @psalm-return non-empty-string
      */
-    protected function identify($element): string
+    protected function identify(AbstractTable|ElementInterface|string $element): string
     {
-        if (is_string($element)) {
+        if (\is_string($element)) {
             return $this->driver->identifier($element);
         }
 
         if ($element instanceof AbstractTable) {
             return $this->driver->identifier($element->getFullName());
-        } elseif ($element instanceof ElementInterface) {
+        }
+
+        if ($element instanceof ElementInterface) {
             return $this->driver->identifier($element->getName());
         }
 
         throw new \InvalidArgumentException('Invalid argument type');
     }
 
-    /**
-     * @param AbstractTable       $table
-     * @param ComparatorInterface $comparator
-     */
     protected function alterForeignKeys(AbstractTable $table, ComparatorInterface $comparator): void
     {
         foreach ($comparator->alteredForeignKeys() as $pair) {
@@ -312,10 +258,6 @@ abstract class Handler implements HandlerInterface
         }
     }
 
-    /**
-     * @param AbstractTable       $table
-     * @param ComparatorInterface $comparator
-     */
     protected function createForeignKeys(AbstractTable $table, ComparatorInterface $comparator): void
     {
         foreach ($comparator->addedForeignKeys() as $foreign) {
@@ -323,10 +265,6 @@ abstract class Handler implements HandlerInterface
         }
     }
 
-    /**
-     * @param AbstractTable       $table
-     * @param ComparatorInterface $comparator
-     */
     protected function alterIndexes(AbstractTable $table, ComparatorInterface $comparator): void
     {
         foreach ($comparator->alteredIndexes() as $pair) {
@@ -340,10 +278,6 @@ abstract class Handler implements HandlerInterface
         }
     }
 
-    /**
-     * @param AbstractTable       $table
-     * @param ComparatorInterface $comparator
-     */
     protected function createIndexes(AbstractTable $table, ComparatorInterface $comparator): void
     {
         foreach ($comparator->addedIndexes() as $index) {
@@ -351,10 +285,6 @@ abstract class Handler implements HandlerInterface
         }
     }
 
-    /**
-     * @param AbstractTable       $table
-     * @param ComparatorInterface $comparator
-     */
     protected function alterColumns(AbstractTable $table, ComparatorInterface $comparator): void
     {
         foreach ($comparator->alteredColumns() as $pair) {
@@ -369,10 +299,6 @@ abstract class Handler implements HandlerInterface
         }
     }
 
-    /**
-     * @param AbstractTable       $table
-     * @param ComparatorInterface $comparator
-     */
     protected function createColumns(AbstractTable $table, ComparatorInterface $comparator): void
     {
         foreach ($comparator->addedColumns() as $column) {
@@ -381,10 +307,6 @@ abstract class Handler implements HandlerInterface
         }
     }
 
-    /**
-     * @param AbstractTable       $table
-     * @param ComparatorInterface $comparator
-     */
     protected function dropColumns(AbstractTable $table, ComparatorInterface $comparator): void
     {
         foreach ($comparator->droppedColumns() as $column) {
@@ -392,10 +314,6 @@ abstract class Handler implements HandlerInterface
         }
     }
 
-    /**
-     * @param AbstractTable       $table
-     * @param ComparatorInterface $comparator
-     */
     protected function dropIndexes(AbstractTable $table, ComparatorInterface $comparator): void
     {
         foreach ($comparator->droppedIndexes() as $index) {
@@ -403,10 +321,6 @@ abstract class Handler implements HandlerInterface
         }
     }
 
-    /**
-     * @param AbstractTable       $table
-     * @param ComparatorInterface $comparator
-     */
     protected function dropForeignKeys(AbstractTable $table, ComparatorInterface $comparator): void
     {
         foreach ($comparator->droppedForeignKeys() as $foreign) {
@@ -417,8 +331,6 @@ abstract class Handler implements HandlerInterface
     /**
      * Applied to every column in order to make sure that driver support it.
      *
-     * @param AbstractColumn $column
-     *
      * @throws DriverException
      */
     protected function assertValid(AbstractColumn $column): void
@@ -426,11 +338,6 @@ abstract class Handler implements HandlerInterface
         //All valid by default
     }
 
-    /**
-     * @param AbstractTable       $table
-     * @param int                 $operation
-     * @param ComparatorInterface $comparator
-     */
     protected function dropConstrains(
         AbstractTable $table,
         int $operation,
@@ -449,11 +356,6 @@ abstract class Handler implements HandlerInterface
         }
     }
 
-    /**
-     * @param AbstractTable       $table
-     * @param int                 $operation
-     * @param ComparatorInterface $comparator
-     */
     protected function setConstrains(
         AbstractTable $table,
         int $operation,

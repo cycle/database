@@ -13,7 +13,6 @@ use Cycle\Database\Query\QueryBuilder;
 
 class TestDriver extends Driver
 {
-
     protected function mapException(\Throwable $exception, string $query): StatementException
     {
         throw $exception;

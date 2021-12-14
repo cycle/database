@@ -27,14 +27,14 @@ interface ParameterInterface
      *
      * @return mixed|array
      */
-    public function getValue();
+    public function getValue(): mixed;
 
     /**
      * Parameter type.
      *
      * @return int|mixed
      */
-    public function getType();
+    public function getType(): mixed;
 
     /**
      * Indication that parameter represent multiple values.

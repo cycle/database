@@ -19,13 +19,10 @@ use Cycle\Database\Query\QueryParameters;
 
 abstract class Compiler implements CompilerInterface
 {
-    /** @var Quoter */
-    private $quoter;
+    private Quoter $quoter;
 
     /**
-     * Compiler constructor.
-     *
-     * @param string $quotes
+     * @psalm-param non-empty-string $quotes
      */
     public function __construct(string $quotes = '""')
     {
@@ -33,8 +30,9 @@ abstract class Compiler implements CompilerInterface
     }
 
     /**
-     * @param string $identifier
-     * @return string
+     * @psalm-param non-empty-string $identifier
+     *
+     * @psalm-return non-empty-string
      */
     public function quoteIdentifier(string $identifier): string
     {
@@ -42,10 +40,7 @@ abstract class Compiler implements CompilerInterface
     }
 
     /**
-     * @param QueryParameters   $params
-     * @param string            $prefix
-     * @param FragmentInterface $fragment
-     * @return string
+     * @psalm-return non-empty-string
      */
     public function compile(
         QueryParameters $params,
@@ -61,7 +56,7 @@ abstract class Compiler implements CompilerInterface
     }
 
     /**
-     * @inheritDoc
+     * @psalm-return non-empty-string
      */
     public function hashLimit(QueryParameters $params, array $tokens): string
     {
@@ -77,11 +72,7 @@ abstract class Compiler implements CompilerInterface
     }
 
     /**
-     * @param QueryParameters   $params
-     * @param Quoter            $q
-     * @param FragmentInterface $fragment
-     * @param bool              $nestedQuery
-     * @return string
+     * @psalm-return non-empty-string
      */
     protected function fragment(
         QueryParameters $params,
@@ -142,10 +133,7 @@ abstract class Compiler implements CompilerInterface
     }
 
     /**
-     * @param QueryParameters $params
-     * @param Quoter          $q
-     * @param array           $tokens
-     * @return string
+     * @psalm-return non-empty-string
      */
     protected function insertQuery(QueryParameters $params, Quoter $q, array $tokens): string
     {
@@ -170,10 +158,7 @@ abstract class Compiler implements CompilerInterface
     }
 
     /**
-     * @param QueryParameters $params
-     * @param Quoter          $q
-     * @param array           $tokens
-     * @return string
+     * @psalm-return non-empty-string
      */
     protected function selectQuery(QueryParameters $params, Quoter $q, array $tokens): string
     {
@@ -201,27 +186,11 @@ abstract class Compiler implements CompilerInterface
         );
     }
 
-    /**
-     * @param QueryParameters $params
-     * @param Quoter          $q
-     * @param bool|string     $distinct
-     * @return string
-     */
-    protected function distinct(QueryParameters $params, Quoter $q, $distinct): string
+    protected function distinct(QueryParameters $params, Quoter $q, string|bool|array $distinct): string
     {
-        if ($distinct === false) {
-            return '';
-        }
-
-        return 'DISTINCT';
+        return $distinct === false ? '' : 'DISTINCT';
     }
 
-    /**
-     * @param QueryParameters $params
-     * @param Quoter          $q
-     * @param array           $joins
-     * @return string
-     */
     protected function joins(QueryParameters $params, Quoter $q, array $joins): string
     {
         $statement = '';
@@ -247,12 +216,6 @@ abstract class Compiler implements CompilerInterface
         return $statement;
     }
 
-    /**
-     * @param QueryParameters $params
-     * @param Quoter          $q
-     * @param array           $unions
-     * @return string
-     */
     protected function unions(QueryParameters $params, Quoter $q, array $unions): string
     {
         if ($unions === []) {
@@ -275,23 +238,15 @@ abstract class Compiler implements CompilerInterface
         return ltrim($statement, "\n");
     }
 
-    /**
-     * @param QueryParameters $params
-     * @param Quoter          $q
-     * @param array           $orderBy
-     * @return string
-     */
     protected function orderBy(QueryParameters $params, Quoter $q, array $orderBy): string
     {
         $result = [];
         foreach ($orderBy as $order) {
             $direction = strtoupper($order[1]);
 
-            if (!in_array($direction, ['ASC', 'DESC'])) {
-                throw new CompilerException(
-                    'Invalid sorting direction, only ASC and DESC are allowed'
-                );
-            }
+            \in_array($direction, ['ASC', 'DESC']) or throw new CompilerException(
+                'Invalid sorting direction, only ASC and DESC are allowed'
+            );
 
             $result[] = $this->name($params, $q, $order[0]) . ' ' . $direction;
         }
@@ -299,12 +254,6 @@ abstract class Compiler implements CompilerInterface
         return implode(', ', $result);
     }
 
-    /**
-     * @param QueryParameters $params
-     * @param Quoter          $q
-     * @param array           $groupBy
-     * @return string
-     */
     protected function groupBy(QueryParameters $params, Quoter $q, array $groupBy): string
     {
         $result = [];
@@ -315,13 +264,6 @@ abstract class Compiler implements CompilerInterface
         return implode(', ', $result);
     }
 
-    /**
-     * @param QueryParameters $params
-     * @param Quoter          $q
-     * @param int|null        $limit
-     * @param int|null        $offset
-     * @return string
-     */
     abstract protected function limit(
         QueryParameters $params,
         Quoter $q,
@@ -329,12 +271,6 @@ abstract class Compiler implements CompilerInterface
         int $offset = null
     ): string;
 
-    /**
-     * @param QueryParameters $parameters
-     * @param Quoter          $quoter
-     * @param array           $tokens
-     * @return string
-     */
     protected function updateQuery(
         QueryParameters $parameters,
         Quoter $quoter,
@@ -358,10 +294,7 @@ abstract class Compiler implements CompilerInterface
     }
 
     /**
-     * @param QueryParameters $parameters
-     * @param Quoter          $quoter
-     * @param array           $tokens
-     * @return string
+     * @psalm-return non-empty-string
      */
     protected function deleteQuery(
         QueryParameters $parameters,
@@ -379,11 +312,7 @@ abstract class Compiler implements CompilerInterface
     }
 
     /**
-     * @param QueryParameters $params
-     * @param Quoter          $q
-     * @param mixed           $name
-     * @param bool            $table
-     * @return string
+     * @psalm-return non-empty-string
      */
     protected function name(QueryParameters $params, Quoter $q, $name, bool $table = false): string
     {
@@ -399,11 +328,7 @@ abstract class Compiler implements CompilerInterface
     }
 
     /**
-     * @param QueryParameters $params
-     * @param Quoter          $q
-     * @param array           $columns
-     * @param int             $maxLength
-     * @return string
+     * @psalm-return non-empty-string
      */
     protected function columns(QueryParameters $params, Quoter $q, array $columns, int $maxLength = 180): string
     {
@@ -419,10 +344,7 @@ abstract class Compiler implements CompilerInterface
     }
 
     /**
-     * @param QueryParameters $params
-     * @param Quoter          $q
-     * @param mixed           $value
-     * @return string
+     * @psalm-return non-empty-string
      */
     protected function value(QueryParameters $params, Quoter $q, $value): string
     {
@@ -448,14 +370,6 @@ abstract class Compiler implements CompilerInterface
         return '?';
     }
 
-    /**
-     * Compile where statement.
-     *
-     * @param QueryParameters $params
-     * @param Quoter          $q
-     * @param array           $tokens
-     * @return string
-     */
     protected function where(QueryParameters $params, Quoter $q, array $tokens): string
     {
         if ($tokens === []) {
@@ -482,7 +396,7 @@ abstract class Compiler implements CompilerInterface
              * When context is string it usually represent control keyword/syntax such as opening
              * or closing braces.
              */
-            if (is_string($context)) {
+            if (\is_string($context)) {
                 if ($context === '(') {
                     // new where group.
                     $activeGroup = true;
@@ -505,9 +419,7 @@ abstract class Compiler implements CompilerInterface
             $statement .= ' ';
         }
 
-        if ($activeGroup) {
-            throw new CompilerException('Unable to build where statement, unclosed where group');
-        }
+        $activeGroup and throw new CompilerException('Unable to build where statement, unclosed where group');
 
         if (trim($statement, ' ()') === '') {
             return '';
@@ -517,10 +429,7 @@ abstract class Compiler implements CompilerInterface
     }
 
     /**
-     * @param QueryParameters $params
-     * @param Quoter          $q
-     * @param array           $context
-     * @return string
+     * @psalm-return non-empty-string
      */
     protected function condition(QueryParameters $params, Quoter $q, array $context): string
     {
@@ -529,7 +438,7 @@ abstract class Compiler implements CompilerInterface
 
         if ($operator instanceof FragmentInterface) {
             $operator = $this->fragment($params, $q, $operator);
-        } elseif (!is_string($operator)) {
+        } elseif (!\is_string($operator)) {
             throw new CompilerException('Invalid operator type, string or fragment is expected');
         }
 
@@ -576,11 +485,6 @@ abstract class Compiler implements CompilerInterface
     /**
      * Combine expression with prefix/postfix (usually SQL keyword) but only if expression is not
      * empty.
-     *
-     * @param string $prefix
-     * @param string $expression
-     * @param string $postfix
-     * @return string
      */
     protected function optional(string $prefix, string $expression, string $postfix = ''): string
     {

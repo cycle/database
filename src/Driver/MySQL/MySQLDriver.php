@@ -23,7 +23,7 @@ use Cycle\Database\Query\QueryBuilder;
 class MySQLDriver extends Driver
 {
     /**
-     * @inheritDoc
+     * @psalm-return non-empty-string
      */
     public function getType(): string
     {
@@ -69,12 +69,10 @@ class MySQLDriver extends Driver
 
     /**
      * @param MySQLDriverConfig $config
-     *
-     * @return self
      */
-    public static function create(DriverConfig $config): self
+    public static function create(DriverConfig $config): static
     {
-        return new self(
+        return new static(
             $config,
             new MySQLHandler(),
             new MySQLCompiler('``'),

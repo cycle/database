@@ -22,16 +22,10 @@ use Throwable;
  */
 abstract class ActiveQuery implements QueryInterface
 {
-    /** @var DriverInterface */
-    protected $driver;
+    protected DriverInterface $driver;
+    protected ?string $prefix = null;
 
-    /** @var string|null */
-    protected $prefix;
-
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         $parameters = new QueryParameters();
 
@@ -41,10 +35,7 @@ abstract class ActiveQuery implements QueryInterface
         );
     }
 
-    /**
-     * @return array
-     */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         $parameters = new QueryParameters();
 
@@ -61,11 +52,6 @@ abstract class ActiveQuery implements QueryInterface
         ];
     }
 
-    /**
-     * @param DriverInterface $driver
-     * @param string|null     $prefix
-     * @return QueryInterface|$this
-     */
     public function withDriver(DriverInterface $driver, string $prefix = null): QueryInterface
     {
         $query = clone $this;
@@ -75,17 +61,11 @@ abstract class ActiveQuery implements QueryInterface
         return $query;
     }
 
-    /**
-     * @return DriverInterface|null
-     */
     public function getDriver(): ?DriverInterface
     {
         return $this->driver;
     }
 
-    /**
-     * @return string|null
-     */
     public function getPrefix(): ?string
     {
         return $this->prefix;
@@ -94,14 +74,11 @@ abstract class ActiveQuery implements QueryInterface
     /**
      * Generate SQL query, must have associated driver instance.
      *
-     * @param QueryParameters|null $parameters
-     * @return string
+     * @psalm-return non-empty-string
      */
     public function sqlStatement(QueryParameters $parameters = null): string
     {
-        if ($this->driver === null) {
-            throw new BuilderException('Unable to build query without associated driver');
-        }
+        $this->driver === null and throw new BuilderException('Unable to build query without associated driver');
 
         return $this->driver->getQueryCompiler()->compile(
             $parameters ?? new QueryParameters(),
@@ -113,20 +90,14 @@ abstract class ActiveQuery implements QueryInterface
     /**
      * Compile and run query.
      *
-     * @return mixed
-     *
      * @throws BuilderException
      * @throws StatementException
      */
-    abstract public function run();
+    abstract public function run(): mixed;
 
     /**
      * Helper methods used to correctly fetch and split identifiers provided by function
      * parameters. Example: fI(['name, email']) => 'name', 'email'
-     *
-     * @param array $identifiers
-     *
-     * @return array
      */
     protected function fetchIdentifiers(array $identifiers): array
     {

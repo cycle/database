@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace Cycle\Database\Query;
 
 use Countable;
+use Cycle\Database\Injection\Expression;
+use Cycle\Database\Injection\Fragment;
 use IteratorAggregate;
 use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Injection\FragmentInterface;
@@ -40,32 +42,17 @@ class SelectQuery extends ActiveQuery implements
     public const SORT_ASC  = 'ASC';
     public const SORT_DESC = 'DESC';
 
-    /** @var array */
-    protected $tables = [];
-
-    /** @var array */
-    protected $unionTokens = [];
-
-    /** @var bool|string */
-    protected $distinct = false;
-
-    /** @var array */
-    protected $columns = ['*'];
-
+    protected array $tables = [];
+    protected array $unionTokens = [];
+    protected bool|string|array $distinct = false;
+    protected array $columns = ['*'];
     /** @var string[][]|FragmentInterface[][] */
-    protected $orderBy = [];
+    protected array $orderBy = [];
+    protected array $groupBy = [];
+    protected bool $forUpdate = false;
 
-    /** @var array */
-    protected $groupBy = [];
-
-    /** @var bool */
-    protected $forUpdate = false;
-
-    /** @var int */
-    private $limit;
-
-    /** @var int */
-    private $offset;
+    private ?int $limit = null;
+    private ?int $offset = null;
 
     /**
      * @param array $from    Initial set of table names.
@@ -84,9 +71,8 @@ class SelectQuery extends ActiveQuery implements
      *
      * @param bool|string|FragmentInterface $distinct You are only allowed to use string value for
      *                                                Postgres databases.
-     * @return self|$this
      */
-    public function distinct($distinct = true): SelectQuery
+    public function distinct(bool|string|FragmentInterface $distinct = true): SelectQuery
     {
         $this->distinct = $distinct;
 
@@ -96,20 +82,14 @@ class SelectQuery extends ActiveQuery implements
     /**
      * Set table names SELECT query should be performed for. Table names can be provided with
      * specified alias (AS construction).
-     *
-     * @param array|string|mixed $tables
-     * @return self|$this
      */
-    public function from($tables): SelectQuery
+    public function from(mixed $tables): SelectQuery
     {
-        $this->tables = $this->fetchIdentifiers(func_get_args());
+        $this->tables = $this->fetchIdentifiers(\func_get_args());
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getTables(): array
     {
         return $this->tables;
@@ -118,20 +98,14 @@ class SelectQuery extends ActiveQuery implements
     /**
      * Set columns should be fetched as result of SELECT query. Columns can be provided with
      * specified alias (AS construction).
-     *
-     * @param array|string|mixed $columns
-     * @return self|$this
      */
-    public function columns($columns): SelectQuery
+    public function columns(mixed $columns): SelectQuery
     {
         $this->columns = $this->fetchIdentifiers(func_get_args());
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getColumns(): array
     {
         return $this->columns;
@@ -139,8 +113,6 @@ class SelectQuery extends ActiveQuery implements
 
     /**
      * Select entities for the following update.
-     *
-     * @return self|$this
      */
     public function forUpdate(): SelectQuery
     {
@@ -160,11 +132,10 @@ class SelectQuery extends ActiveQuery implements
      *
      * @param string|array $expression
      * @param string       $direction Sorting direction, ASC|DESC.
-     * @return self|$this
      */
-    public function orderBy($expression, $direction = self::SORT_ASC): SelectQuery
+    public function orderBy(string|FragmentInterface|array $expression, string $direction = self::SORT_ASC): SelectQuery
     {
-        if (!is_array($expression)) {
+        if (!\is_array($expression)) {
             $this->addOrder($expression, $direction);
             return $this;
         }
@@ -178,11 +149,8 @@ class SelectQuery extends ActiveQuery implements
 
     /**
      * Column or expression to group query by.
-     *
-     * @param string $expression
-     * @return self|$this
      */
-    public function groupBy($expression): SelectQuery
+    public function groupBy(string|Fragment|Expression $expression): SelectQuery
     {
         $this->groupBy[] = $expression;
 
@@ -191,9 +159,6 @@ class SelectQuery extends ActiveQuery implements
 
     /**
      * Add select query to be united with.
-     *
-     * @param FragmentInterface $query
-     * @return self|$this
      */
     public function union(FragmentInterface $query): SelectQuery
     {
@@ -204,10 +169,6 @@ class SelectQuery extends ActiveQuery implements
 
     /**
      * Add select query to be united with. Duplicate values will be included in result.
-     *
-     * @param FragmentInterface $query
-     *
-     * @return self|$this
      */
     public function unionAll(FragmentInterface $query): SelectQuery
     {
@@ -219,9 +180,6 @@ class SelectQuery extends ActiveQuery implements
     /**
      * Set selection limit. Attention, this limit value does not affect values set in paginator but
      * only changes pagination window. Set to 0 to disable limiting.
-     *
-     * @param int|null $limit
-     * @return self|$this
      */
     public function limit(int $limit = null): SelectQuery
     {
@@ -230,9 +188,6 @@ class SelectQuery extends ActiveQuery implements
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getLimit(): ?int
     {
         return $this->limit;
@@ -241,9 +196,6 @@ class SelectQuery extends ActiveQuery implements
     /**
      * Set selection offset. Attention, this value does not affect associated paginator but only
      * changes pagination window.
-     *
-     * @param int|null $offset
-     * @return self|$this
      */
     public function offset(int $offset = null): SelectQuery
     {
@@ -252,19 +204,11 @@ class SelectQuery extends ActiveQuery implements
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getOffset(): ?int
     {
         return $this->offset;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return StatementInterface
-     */
     public function run(): StatementInterface
     {
         $params = new QueryParameters();
@@ -282,9 +226,6 @@ class SelectQuery extends ActiveQuery implements
      * });
      *
      * You must return FALSE from walk function to stop chunking.
-     *
-     * @param int      $limit
-     * @param callable $callback
      *
      * @throws Throwable
      */
@@ -316,8 +257,7 @@ class SelectQuery extends ActiveQuery implements
     /**
      * Count number of rows in query. Limit, offset, order by, group by values will be ignored.
      *
-     * @param string $column Column to count by (every column by default).
-     * @return int
+     * @psalm-param non-empty-string $column Column to count by (every column by default).
      */
     public function count(string $column = '*'): int
     {
@@ -337,46 +277,37 @@ class SelectQuery extends ActiveQuery implements
     }
 
     /**
-     * @param string $column
-     * @return mixed
+     * @psalm-param non-empty-string $column
      */
-    public function avg(string $column)
+    public function avg(string $column): mixed
     {
         return $this->runAggregate('AVG', $column);
     }
 
     /**
-     * @param string $column
-     * @return mixed
+     * @psalm-param non-empty-string $column
      */
-    public function max(string $column)
+    public function max(string $column): mixed
     {
         return $this->runAggregate('MAX', $column);
     }
 
     /**
-     * @param string $column
-     * @return mixed
+     * @psalm-param non-empty-string $column
      */
-    public function min(string $column)
+    public function min(string $column): mixed
     {
         return $this->runAggregate('MIN', $column);
     }
 
     /**
-     * @param string $column
-     * @return mixed
+     * @psalm-param non-empty-string $column
      */
-    public function sum(string $column)
+    public function sum(string $column): mixed
     {
         return $this->runAggregate('SUM', $column);
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return StatementInterface
-     */
     public function getIterator(): StatementInterface
     {
         return $this->run();
@@ -384,8 +315,6 @@ class SelectQuery extends ActiveQuery implements
 
     /**
      * Request all results as array.
-     *
-     * @return array
      */
     public function fetchAll(int $mode = StatementInterface::FETCH_ASSOC): array
     {
@@ -397,17 +326,11 @@ class SelectQuery extends ActiveQuery implements
         }
     }
 
-    /**
-     * @return int
-     */
     public function getType(): int
     {
         return CompilerInterface::SELECT_QUERY;
     }
 
-    /**
-     * @return array
-     */
     public function getTokens(): array
     {
         return [
@@ -431,22 +354,21 @@ class SelectQuery extends ActiveQuery implements
      * @param string                   $order Sorting direction, ASC|DESC.
      * @return self|$this
      */
-    private function addOrder($field, string $order): SelectQuery
+    private function addOrder(string|FragmentInterface $field, string $order): SelectQuery
     {
-        if (!is_string($field)) {
+        if (!\is_string($field)) {
             $this->orderBy[] = [$field, $order];
-        } elseif (!array_key_exists($field, $this->orderBy)) {
+        } elseif (!\array_key_exists($field, $this->orderBy)) {
             $this->orderBy[$field] = [$field, $order];
         }
         return $this;
     }
 
     /**
-     * @param string $method
-     * @param string $column
-     * @return mixed
+     * @psalm-param non-empty-string $method
+     * @psalm-param non-empty-string $column
      */
-    private function runAggregate(string $method, string $column)
+    private function runAggregate(string $method, string $column): mixed
     {
         $select = clone $this;
 

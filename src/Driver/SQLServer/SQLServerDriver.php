@@ -154,13 +154,11 @@ class SQLServerDriver extends Driver
     /**
      * @param SQLServerDriverConfig $config
      *
-     * @return self
-     *
      * @throws DriverException
      */
-    public static function create(DriverConfig $config): self
+    public static function create(DriverConfig $config): static
     {
-        $driver = new self(
+        $driver = new static(
             $config,
             new SQLServerHandler(),
             new SQLServerCompiler('[]'),

@@ -24,85 +24,59 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
     use ElementTrait;
 
     /**
-     * Parent table isolation prefix.
-     *
-     * @var string
-     */
-    protected $tablePrefix = '';
-
-    /**
      * Local column name (key name).
-     *
-     * @var array
      */
-    protected $columns = [];
+    protected array $columns = [];
 
     /**
      * Referenced table name (including prefix).
-     *
-     * @var string
      */
-    protected $foreignTable = '';
+    protected string $foreignTable = '';
 
     /**
      * Linked foreign key name (foreign column).
-     *
-     * @var array
      */
-    protected $foreignKeys = [];
+    protected array $foreignKeys = [];
 
     /**
      * Action on foreign column value deletion.
-     *
-     * @var string
      */
-    protected $deleteRule = self::NO_ACTION;
+    protected string $deleteRule = self::NO_ACTION;
 
     /**
      * Action on foreign column value update.
-     *
-     * @var string
      */
-    protected $updateRule = self::NO_ACTION;
+    protected string $updateRule = self::NO_ACTION;
 
     /**
-     * @param string $table
+     * @psalm-param non-empty-string $table
      * @param string $tablePrefix
-     * @param string $name
+     * @psalm-param non-empty-string $name
      */
-    public function __construct(string $table, string $tablePrefix, string $name)
-    {
-        $this->table = $table;
-        $this->name = $name;
-        $this->tablePrefix = $tablePrefix;
+    public function __construct(
+        protected string $table,
+        protected string $tablePrefix,
+        protected string $name
+    ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getColumns(): array
     {
         return $this->columns;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForeignTable(): string
     {
         return $this->foreignTable;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getForeignKeys(): array
     {
         return $this->foreignKeys;
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-return non-empty-string
      */
     public function getDeleteRule(): string
     {
@@ -110,7 +84,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-return non-empty-string
      */
     public function getUpdateRule(): string
     {
@@ -120,9 +94,6 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
     /**
      * Set local column names foreign key relates to. Make sure column type is the same as foreign
      * column one.
-     *
-     * @param array $columns
-     * @return self
      */
     public function columns(array $columns): AbstractForeignKey
     {
@@ -135,13 +106,9 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
      * Set foreign table name and key local column must reference to. Make sure local and foreign
      * column types are identical.
      *
-     * @param string $table       Foreign table name with or without database prefix (see 3rd
-     *                            argument).
-     * @param array  $columns     Foreign key names (id by default).
-     * @param bool   $forcePrefix When true foreign table will get same prefix as table being
-     *                            modified.
-     *
-     * @return self
+     * @@psalm-param non-empty-string $table Foreign table name with or without database prefix (see 3rd argument).
+     * @param array $columns Foreign key names (id by default).
+     * @param bool $forcePrefix When true foreign table will get same prefix as table being modified.
      */
     public function references(
         string $table,
@@ -157,8 +124,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
     /**
      * Set foreign key delete behaviour.
      *
-     * @param string $rule Possible values: NO ACTION, CASCADE, etc (driver specific).
-     * @return self
+     * @psalm-param non-empty-string $rule Possible values: NO ACTION, CASCADE, etc (driver specific).
      */
     public function onDelete(string $rule = self::NO_ACTION): AbstractForeignKey
     {
@@ -170,8 +136,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
     /**
      * Set foreign key update behaviour.
      *
-     * @param string $rule Possible values: NO ACTION, CASCADE, etc (driver specific).
-     * @return self
+     * @psalm-param non-empty-string $rule Possible values: NO ACTION, CASCADE, etc (driver specific).
      */
     public function onUpdate(string $rule = self::NO_ACTION): AbstractForeignKey
     {
@@ -183,8 +148,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
     /**
      * Foreign key creation syntax.
      *
-     * @param DriverInterface $driver
-     * @return string
+     * @psalm-return non-empty-string
      */
     public function sqlStatement(DriverInterface $driver): string
     {
@@ -204,10 +168,6 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
         return implode(' ', $statement);
     }
 
-    /**
-     * @param AbstractForeignKey $initial
-     * @return bool
-     */
     public function compare(AbstractForeignKey $initial): bool
     {
         // soft compare
@@ -215,9 +175,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
     }
 
     /**
-     * @param DriverInterface $driver
-     * @param array           $columns
-     * @return string
+     * @psalm-return non-empty-string
      */
     protected function packColumns(DriverInterface $driver, array $columns): string
     {

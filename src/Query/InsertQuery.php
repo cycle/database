@@ -19,18 +19,10 @@ use Cycle\Database\Injection\Parameter;
  */
 class InsertQuery extends ActiveQuery
 {
-    /** @var string */
-    protected $table;
+    protected string $table;
+    protected array $columns = [];
+    protected array $values = [];
 
-    /** @var array */
-    protected $columns = [];
-
-    /** @var array */
-    protected $values = [];
-
-    /**
-     * @param string|null $table
-     */
     public function __construct(string $table = null)
     {
         $this->table = $table ?? '';
@@ -38,9 +30,7 @@ class InsertQuery extends ActiveQuery
 
     /**
      * Set target insertion table.
-     *
-     * @param string $into
-     * @return self
+     * @psalm-param non-empty-string $into
      */
     public function into(string $into): InsertQuery
     {
@@ -57,11 +47,8 @@ class InsertQuery extends ActiveQuery
      * $insert->columns(["name", "email"]);
      * $insert->columns("name", "email");
      * $insert->columns("name, email");
-     *
-     * @param array|string $columns
-     * @return self
      */
-    public function columns(...$columns): InsertQuery
+    public function columns(array|string ...$columns): InsertQuery
     {
         $this->columns = $this->fetchIdentifiers($columns);
 
@@ -89,11 +76,8 @@ class InsertQuery extends ActiveQuery
      *      "balance" => 20
      *  ]
      * ]);
-     *
-     * @param mixed $rowsets
-     * @return self
      */
-    public function values($rowsets): InsertQuery
+    public function values(mixed $rowsets): InsertQuery
     {
         if (!is_array($rowsets)) {
             return $this->values(func_get_args());
@@ -124,9 +108,9 @@ class InsertQuery extends ActiveQuery
     /**
      * Run the query and return last insert id.
      *
-     * @return int|string|null
+     * @psalm-return int|non-empty-string|null
      */
-    public function run()
+    public function run(): int|string|null
     {
         $params = new QueryParameters();
         $queryString = $this->sqlStatement($params);
@@ -144,17 +128,11 @@ class InsertQuery extends ActiveQuery
         return $lastID;
     }
 
-    /**
-     * @return int
-     */
     public function getType(): int
     {
         return CompilerInterface::INSERT_QUERY;
     }
 
-    /**
-     * @return array
-     */
     public function getTokens(): array
     {
         return [

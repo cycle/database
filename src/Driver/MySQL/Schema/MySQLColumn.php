@@ -28,10 +28,7 @@ class MySQLColumn extends AbstractColumn
      */
     public const DATETIME_NOW = 'CURRENT_TIMESTAMP';
 
-    /**
-     * {@inheritdoc}
-     */
-    protected $mapping = [
+    protected array $mapping = [
         //Primary sequences
         'primary'     => [
             'type'          => 'int',
@@ -89,10 +86,7 @@ class MySQLColumn extends AbstractColumn
         'uuid'        => ['type' => 'varchar', 'size' => 36],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
-    protected $reverseMapping = [
+    protected array $reverseMapping = [
         'primary'     => [['type' => 'int', 'autoIncrement' => true]],
         'bigPrimary'  => ['serial', ['type' => 'bigint', 'autoIncrement' => true]],
         'enum'        => ['enum'],
@@ -118,10 +112,8 @@ class MySQLColumn extends AbstractColumn
 
     /**
      * List of types forbids default value set.
-     *
-     * @var array
      */
-    protected $forbiddenDefaults = [
+    protected array $forbiddenDefaults = [
         'text',
         'mediumtext',
         'tinytext',
@@ -133,19 +125,17 @@ class MySQLColumn extends AbstractColumn
 
     /**
      * Column is auto incremental.
-     *
-     * @var bool
      */
-    protected $autoIncrement = false;
+    protected bool $autoIncrement = false;
 
     /**
-     * {@inheritdoc}
+     * @psalm-return non-empty-string
      */
     public function sqlStatement(DriverInterface $driver): string
     {
         $defaultValue = $this->defaultValue;
 
-        if (in_array($this->type, $this->forbiddenDefaults, true)) {
+        if (\in_array($this->type, $this->forbiddenDefaults, true)) {
             //Flushing default value for forbidden types
             $this->defaultValue = null;
         }
@@ -161,16 +151,10 @@ class MySQLColumn extends AbstractColumn
     }
 
     /**
-     * @param string        $table
-     * @param array         $schema
-     * @param \DateTimeZone $timezone
-     * @return MySQLColumn
+     * @psalm-param non-empty-string $table
      */
-    public static function createInstance(
-        string $table,
-        array $schema,
-        \DateTimeZone $timezone = null
-    ): self {
+    public static function createInstance(string $table, array $schema, \DateTimeZone $timezone = null): self
+    {
         $column = new self($table, $schema['Field'], $timezone);
 
         $column->type = $schema['Type'];
@@ -221,12 +205,7 @@ class MySQLColumn extends AbstractColumn
 
         //Fetching enum values
         if ($options !== [] && $column->getAbstractType() === 'enum') {
-            $column->enumValues = array_map(
-                static function ($value) {
-                    return trim($value, $value[0]);
-                },
-                $options
-            );
+            $column->enumValues = array_map(static fn($value) => trim($value, $value[0]), $options);
 
             return $column;
         }
@@ -251,14 +230,14 @@ class MySQLColumn extends AbstractColumn
     /**
      * Ensure that datetime fields are correctly formatted.
      *
-     * @param string $type
-     * @param string $value
-     * @return string|FragmentInterface|\DateTime
+     * @psalm-param non-empty-string $type
      *
      * @throws DefaultValueException
      */
-    protected function formatDatetime(string $type, $value)
-    {
+    protected function formatDatetime(
+        string $type,
+        string|int|\DateTimeInterface $value
+    ): \DateTimeInterface|FragmentInterface|string {
         if ($value === 'current_timestamp()') {
             $value = self::DATETIME_NOW;
         }

@@ -32,10 +32,7 @@ class PostgresColumn extends AbstractColumn
         'constrainName'
     ];
 
-    /**
-     * {@inheritdoc}
-     */
-    protected $mapping = [
+    protected array $mapping = [
         //Primary sequences
         'primary'     => ['type' => 'serial', 'autoIncrement' => true, 'nullable' => false],
         'bigPrimary'  => ['type' => 'bigserial', 'autoIncrement' => true, 'nullable' => false],
@@ -85,10 +82,7 @@ class PostgresColumn extends AbstractColumn
         'uuid'        => 'uuid'
     ];
 
-    /**
-     * {@inheritdoc}
-     */
-    protected $reverseMapping = [
+    protected array $reverseMapping = [
         'primary'     => ['serial'],
         'bigPrimary'  => ['bigserial'],
         'enum'        => ['enum'],
@@ -112,28 +106,19 @@ class PostgresColumn extends AbstractColumn
 
     /**
      * Field is auto incremental.
-     *
-     * @var bool
      */
-    protected $autoIncrement = false;
+    protected bool $autoIncrement = false;
 
     /**
      * Indication that column has enum constrain.
-     *
-     * @var bool
      */
-    protected $constrained = false;
+    protected bool $constrained = false;
 
     /**
      * Name of enum constraint associated with field.
-     *
-     * @var string
      */
-    protected $constrainName = '';
+    protected string $constrainName = '';
 
-    /**
-     * {@inheritdoc}
-     */
     public function getConstraints(): array
     {
         $constraints = parent::getConstraints();
@@ -146,20 +131,13 @@ class PostgresColumn extends AbstractColumn
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-return non-empty-string
      */
     public function getAbstractType(): string
     {
-        if (!empty($this->enumValues)) {
-            return 'enum';
-        }
-
-        return parent::getAbstractType();
+        return !empty($this->enumValues) ? 'enum' : parent::getAbstractType();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function primary(): AbstractColumn
     {
         if (!empty($this->type) && $this->type !== 'serial') {
@@ -172,9 +150,6 @@ class PostgresColumn extends AbstractColumn
         return $this->type('primary');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function bigPrimary(): AbstractColumn
     {
         if (!empty($this->type) && $this->type !== 'bigserial') {
@@ -187,23 +162,20 @@ class PostgresColumn extends AbstractColumn
         return $this->type('bigPrimary');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function enum($values): AbstractColumn
+    public function enum(string|array $values): AbstractColumn
     {
-        $this->enumValues = array_map('strval', is_array($values) ? $values : func_get_args());
+        $this->enumValues = array_map('strval', \is_array($values) ? $values : \func_get_args());
 
         $this->type = 'character varying';
         foreach ($this->enumValues as $value) {
-            $this->size = max((int)$this->size, strlen($value));
+            $this->size = max((int)$this->size, \strlen($value));
         }
 
         return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-return non-empty-string
      */
     public function sqlStatement(DriverInterface $driver): string
     {
@@ -229,10 +201,6 @@ class PostgresColumn extends AbstractColumn
 
     /**
      * Generate set of operations need to change column.
-     *
-     * @param DriverInterface $driver
-     * @param AbstractColumn  $initial
-     * @return array
      */
     public function alterOperations(DriverInterface $driver, AbstractColumn $initial): array
     {
@@ -303,10 +271,8 @@ class PostgresColumn extends AbstractColumn
     }
 
     /**
-     * @param string          $table  Table name.
-     * @param array           $schema
+     * @psalm-param non-empty-string $table Table name.
      * @param DriverInterface $driver Postgres columns are bit more complex.
-     * @return PostgresColumn
      */
     public static function createInstance(
         string $table,
@@ -320,8 +286,8 @@ class PostgresColumn extends AbstractColumn
         $column->nullable = $schema['is_nullable'] === 'YES';
 
         if (
-            is_string($column->defaultValue)
-            && in_array($column->type, ['int', 'bigint', 'integer'])
+            \is_string($column->defaultValue)
+            && \in_array($column->type, ['int', 'bigint', 'integer'])
             && preg_match('/nextval(.*)/', $column->defaultValue)
         ) {
             $column->type = ($column->type === 'bigint' ? 'bigserial' : 'serial');
@@ -332,7 +298,7 @@ class PostgresColumn extends AbstractColumn
             return $column;
         }
 
-        if (strpos($column->type, 'char') !== false && $schema['character_maximum_length']) {
+        if (str_contains($column->type, 'char') && $schema['character_maximum_length']) {
             $column->size = $schema['character_maximum_length'];
         }
 
@@ -351,7 +317,7 @@ class PostgresColumn extends AbstractColumn
             self::resolveEnum($driver, $column);
         }
 
-        if (!empty($column->size) && strpos($column->type, 'char') !== false) {
+        if (!empty($column->size) && str_contains($column->type, 'char')) {
             //Potential enum with manually created constraint (check in)
             self::resolveConstrains($driver, $schema, $column);
         }
@@ -361,9 +327,6 @@ class PostgresColumn extends AbstractColumn
         return $column;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function compare(AbstractColumn $initial): bool
     {
         if (parent::compare($initial)) {
@@ -382,7 +345,7 @@ class PostgresColumn extends AbstractColumn
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-return non-empty-string
      */
     protected function quoteEnum(DriverInterface $driver): string
     {
@@ -392,8 +355,6 @@ class PostgresColumn extends AbstractColumn
 
     /**
      * Get/generate name for enum constraint.
-     *
-     * @return string
      */
     private function enumConstraint(): string
     {
@@ -430,17 +391,11 @@ class PostgresColumn extends AbstractColumn
                 //Negative numeric values
                 $this->defaultValue = $matches[1];
             }
-
-            return;
         }
     }
 
     /**
      * Resolving enum constrain and converting it into proper enum values set.
-     *
-     * @param DriverInterface $driver
-     * @param array           $schema
-     * @param PostgresColumn  $column
      */
     private static function resolveConstrains(
         DriverInterface $driver,
@@ -480,9 +435,6 @@ class PostgresColumn extends AbstractColumn
 
     /**
      * Resolve native ENUM type if presented.
-     *
-     * @param DriverInterface $driver
-     * @param PostgresColumn  $column
      */
     private static function resolveEnum(DriverInterface $driver, PostgresColumn $column): void
     {

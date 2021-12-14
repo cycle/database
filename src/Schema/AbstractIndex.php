@@ -32,54 +32,39 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
     /**
      * Index type, by default NORMAL and UNIQUE indexes supported, additional types can be
      * implemented on database driver level.
-     *
-     * @var string
      */
-    protected $type = self::NORMAL;
+    protected string $type = self::NORMAL;
 
     /**
      * Columns used to form index.
-     *
-     * @var array
      */
-    protected $columns = [];
+    protected array $columns = [];
 
     /**
      * Columns mapping to sorting order
-     *
-     * @var array
      */
-    protected $sort = [];
+    protected array $sort = [];
 
     /**
-     * @param string $table
-     * @param string $name
+     * @psalm-param non-empty-string $table
+     * @psalm-param non-empty-string $name
      */
-    public function __construct(string $table, string $name)
-    {
-        $this->table = $table;
-        $this->name = $name;
+    public function __construct(
+        protected string $table,
+        protected string $name
+    ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isUnique(): bool
     {
         return $this->type === self::UNIQUE;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getColumns(): array
     {
         return $this->columns;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSort(): array
     {
         return $this->sort;
@@ -90,20 +75,15 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
      */
     public function getColumnsWithSort(): array
     {
-        return array_map(function ($column) {
-            if ($order = $this->sort[$column] ?? null) {
-                return "$column $order";
-            }
-
-            return $column;
-        }, $this->columns);
+        $self = $this;
+        return array_map(
+            static fn (string $column): string => ($order = $self->sort[$column] ?? null) ? "$column $order" : $column,
+            $this->columns
+        );
     }
 
     /**
      * Declare index type and behaviour to unique/non-unique state.
-     *
-     * @param bool $unique
-     * @return self
      */
     public function unique(bool $unique = true): AbstractIndex
     {
@@ -123,9 +103,9 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
      * @param string|array $columns Columns array or comma separated list of parameters.
      * @return self
      */
-    public function columns($columns): AbstractIndex
+    public function columns(string|array $columns): AbstractIndex
     {
-        if (!is_array($columns)) {
+        if (!\is_array($columns)) {
             $columns = func_get_args();
         }
 
@@ -154,8 +134,9 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
      * Index sql creation syntax.
      *
      * @param DriverInterface $driver
-     * @param bool            $includeTable Include table ON statement (not required for inline index creation).
-     * @return string
+     * @param bool $includeTable Include table ON statement (not required for inline index creation).
+     *
+     * @psalm-return non-empty-string
      */
     public function sqlStatement(DriverInterface $driver, bool $includeTable = true): string
     {
@@ -184,38 +165,31 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
         return implode(' ', $statement);
     }
 
-    /**
-     * @param AbstractIndex $initial
-     * @return bool
-     */
     public function compare(AbstractIndex $initial): bool
     {
         return $this == clone $initial;
     }
 
-
     /**
      * Parse column name and order from column expression
-     *
-     * @param mixed $column
-     *
-     * @return array
      */
-    public static function parseColumn($column)
+    public static function parseColumn(array|string $column): array
     {
-        if (is_array($column)) {
+        if (\is_array($column)) {
             return $column;
         }
 
         // Contains ASC
-        if (substr($column, -4) === ' ASC') {
+        if (str_ends_with($column, ' ASC')) {
             return [
-                substr($column, 0, strlen($column) - 4),
+                substr($column, 0, -4),
                 'ASC'
             ];
-        } elseif (substr($column, -5) === ' DESC') {
+        }
+
+        if (str_ends_with($column, ' DESC')) {
             return [
-                substr($column, 0, strlen($column) - 5),
+                substr($column, 0, -5),
                 'DESC'
             ];
         }

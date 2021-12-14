@@ -23,19 +23,19 @@ use Cycle\Database\Schema\AbstractTable;
 
 class MySQLHandler extends Handler
 {
+    /**
+     * @psalm-param non-empty-string $table
+     */
     public function getSchema(string $table, string $prefix = null): AbstractTable
     {
         return new MySQLTable($this->driver, $table, $prefix ?? '');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTableNames(string $prefix = ''): array
     {
         $result = [];
         foreach ($this->driver->query('SHOW TABLES')->fetchAll(PDO::FETCH_NUM) as $row) {
-            if ($prefix !== '' && strpos($row[0], $prefix) !== 0) {
+            if ($prefix !== '' && !str_starts_with($row[0], $prefix)) {
                 continue;
             }
 
@@ -46,7 +46,7 @@ class MySQLHandler extends Handler
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-param non-empty-string $table
      */
     public function hasTable(string $table): bool
     {
@@ -58,9 +58,6 @@ class MySQLHandler extends Handler
         )->fetchColumn();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function eraseTable(AbstractTable $table): void
     {
         $this->driver->execute(
@@ -68,9 +65,6 @@ class MySQLHandler extends Handler
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function alterColumn(
         AbstractTable $table,
         AbstractColumn $initial,
@@ -95,9 +89,6 @@ class MySQLHandler extends Handler
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function dropIndex(AbstractTable $table, AbstractIndex $index): void
     {
         $this->run(
@@ -105,9 +96,6 @@ class MySQLHandler extends Handler
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function alterIndex(AbstractTable $table, AbstractIndex $initial, AbstractIndex $index): void
     {
         $this->run(
@@ -117,9 +105,6 @@ class MySQLHandler extends Handler
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function dropForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void
     {
         $this->run(
@@ -130,30 +115,23 @@ class MySQLHandler extends Handler
     /**
      * Get statement needed to create table.
      *
-     * @param AbstractTable $table
-     * @return string
-     *
      * @throws SchemaException
      */
-    protected function createStatement(AbstractTable $table)
+    protected function createStatement(AbstractTable $table): string
     {
-        if (!$table instanceof MySQLTable) {
-            throw new SchemaException('MySQLHandler can process only MySQL tables');
-        }
+        $table instanceof MySQLTable or throw new SchemaException('MySQLHandler can process only MySQL tables');
 
         return parent::createStatement($table) . " ENGINE {$table->getEngine()}";
     }
 
     /**
-     * @param AbstractColumn $column
-     *
      * @throws MySQLException
      */
     protected function assertValid(AbstractColumn $column): void
     {
         if (
             $column->getDefaultValue() !== null
-            && in_array(
+            && \in_array(
                 $column->getAbstractType(),
                 ['text', 'tinyText', 'longText', 'blob', 'tinyBlob', 'longBlob']
             )
