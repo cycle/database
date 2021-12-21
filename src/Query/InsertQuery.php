@@ -110,7 +110,7 @@ class InsertQuery extends ActiveQuery
      *
      * @psalm-return int|non-empty-string|null
      */
-    public function run(): int|string|null
+    public function run(): mixed
     {
         $params = new QueryParameters();
         $queryString = $this->sqlStatement($params);
