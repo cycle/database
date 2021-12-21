@@ -10,7 +10,7 @@ Please make sure that the following requirements are satisfied before submitting
 > Use our discord server to check for the advice or suggestion https://discord.gg/FZ9BCWg
 
 ## Testing Cycle
-To test ORM engine locally, download the `cycle/database` repository and start docker containers inside the tests folder:
+To test Cycle DBAL locally, download the `cycle/database` repository and start docker containers inside the tests folder:
 
 ```bash
 $ cd tests/
@@ -48,9 +48,9 @@ If you found something which shouldn't be there or a bug which opens a security 
 [team@spiralscout.com](mailto:team@spiralscout.com)
 
 ## Official Support
-Cycle ORM and all related components are maintained by [Spiral Scout](https://spiralscout.com/).
+Cycle DBAL are maintained by [Spiral Scout](https://spiralscout.com/).
 
 For commercial support please contact team@spiralscout.com.
 
 ## Licensing
-Cycle ORM and its components will remain under [MIT license](/LICENSE) indefinitely.
+Cycle DBAL will remain under [MIT license](/LICENSE) indefinitely.
