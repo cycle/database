@@ -2,7 +2,7 @@
 
 [![Latest Stable Version](https://poser.pugx.org/cycle/database/v/stable)](https://packagist.org/packages/cycle/database)
 [![Build Status](https://github.com/cycle/database/workflows/build/badge.svg)](https://github.com/cycle/database/actions)
-[![Codecov](https://codecov.io/gh/cycle/database/branch/master/graph/badge.svg)](https://codecov.io/gh/cycle/database/)
+[![Codecov](https://codecov.io/gh/cycle/database/branch/2.x/graph/badge.svg)](https://codecov.io/gh/cycle/database/)
 
 Secure, multiple SQL dialects (MySQL, PostgreSQL, SQLite, SQLServer), schema introspection, schema declaration, smart
 identifier wrappers, database partitions, query builders, nested queries.
