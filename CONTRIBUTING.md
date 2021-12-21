@@ -9,7 +9,7 @@ Please make sure that the following requirements are satisfied before submitting
 
 > Use our discord server to check for the advice or suggestion https://discord.gg/FZ9BCWg
 
-## Testing Cycle
+## Testing Cycle DBAL
 To test Cycle DBAL locally, download the `cycle/database` repository and start docker containers inside the tests folder:
 
 ```bash
