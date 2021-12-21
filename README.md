@@ -1,26 +1,28 @@
 # Cycle DBAL
 
-[![Latest Stable Version](https://poser.pugx.org/cycle/database/v/stable)](https://packagist.org/packages/cycle/database) 
+[![Latest Stable Version](https://poser.pugx.org/cycle/database/v/stable)](https://packagist.org/packages/cycle/database)
 [![Build Status](https://github.com/cycle/database/workflows/build/badge.svg)](https://github.com/cycle/database/actions)
 [![Codecov](https://codecov.io/gh/cycle/database/branch/master/graph/badge.svg)](https://codecov.io/gh/cycle/database/)
 
-Secure, multiple SQL dialects (MySQL, PostgreSQL, SQLite, SQLServer), schema introspection, schema declaration, smart identifier wrappers, database partitions, query builders, nested queries.
+Secure, multiple SQL dialects (MySQL, PostgreSQL, SQLite, SQLServer), schema introspection, schema declaration, smart
+identifier wrappers, database partitions, query builders, nested queries.
 
 ## Documentation
 
-* [Installation and Configuration](https://spiral.dev/docs/database-configuration)
-* [Access Database](https://spiral.dev/docs/database-access)
-* [Database Isolation](https://spiral.dev/docs/database-isolation)
-* [Query Builders](https://spiral.dev/docs/database-query-builders)
-* [Transactions](https://spiral.dev/docs/database-transactions)
-* [Schema Introspection](https://spiral.dev/docs/database-introspection)
-* [Schema Declaration](https://spiral.dev/docs/database-declaration)
-* [Migrations](https://spiral.dev/docs/database-migrations)
-* [Errata](https://spiral.dev/docs/database-errata)
+* [Installation and Configuration](https://cycle-orm.dev/docs/database-configuration)
+* [Access Database](https://cycle-orm.dev/docs/database-access)
+* [Database Isolation](https://cycle-orm.dev/docs/database-isolation)
+* [Query Builders](https://cycle-orm.dev/docs/database-query-builders)
+* [Transactions](https://cycle-orm.dev/docs/database-transactions)
+* [Schema Introspection](https://cycle-orm.dev/docs/database-introspection)
+* [Schema Declaration](https://cycle-orm.dev/docs/database-declaration)
+* [Migrations](https://cycle-orm.dev/docs/database-migrations)
+* [Errata](https://cycle-orm.dev/docs/database-errata)
 
 ## Requirements
 
 Make sure that your server is configured with following PHP version and extensions:
+
 * PHP 8.0+
 * PDO Extension with desired database drivers
 
@@ -83,4 +85,5 @@ foreach ($users->select()->where(['name' => 'test']) as $u) {
 
 ## License:
 
-MIT License (MIT). Please see [`LICENSE`](./LICENSE) for more information. Maintained by [Spiral Scout](https://spiralscout.com).
+MIT License (MIT). Please see [`LICENSE`](./LICENSE) for more information. Maintained
+by [Spiral Scout](https://spiralscout.com).
