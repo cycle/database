@@ -298,13 +298,13 @@ class PostgresColumn extends AbstractColumn
             return $column;
         }
 
-        if (str_contains($column->type, 'char') && $schema['character_maximum_length']) {
+        if (str_contains($column->type, 'char') && (int) $schema['character_maximum_length']) {
             $column->size = $schema['character_maximum_length'];
         }
 
         if ($column->type === 'numeric') {
-            $column->precision = $schema['numeric_precision'];
-            $column->scale = $schema['numeric_scale'];
+            $column->precision = (int) $schema['numeric_precision'];
+            $column->scale = (int) $schema['numeric_scale'];
         }
 
         if ($column->type === 'USER-DEFINED' && $schema['typtype'] === 'e') {
