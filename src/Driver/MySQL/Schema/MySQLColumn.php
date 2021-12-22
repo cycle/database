@@ -205,7 +205,7 @@ class MySQLColumn extends AbstractColumn
 
         //Fetching enum values
         if ($options !== [] && $column->getAbstractType() === 'enum') {
-            $column->enumValues = array_map(static fn($value) => trim($value, $value[0]), $options);
+            $column->enumValues = array_map(static fn ($value) => trim($value, $value[0]), $options);
 
             return $column;
         }

@@ -29,7 +29,7 @@ class PostgresColumn extends AbstractColumn
         'userType',
         'timezone',
         'constrained',
-        'constrainName'
+        'constrainName',
     ];
 
     protected array $mapping = [
@@ -79,7 +79,7 @@ class PostgresColumn extends AbstractColumn
         //Additional types
         'json'        => 'text',
         'jsonb'       => 'jsonb',
-        'uuid'        => 'uuid'
+        'uuid'        => 'uuid',
     ];
 
     protected array $reverseMapping = [
@@ -101,7 +101,7 @@ class PostgresColumn extends AbstractColumn
         'timestamptz' => ['timestamp with time zone'],
         'binary'      => ['bytea'],
         'json'        => ['json'],
-        'jsonb'       => ['jsonb']
+        'jsonb'       => ['jsonb'],
     ];
 
     /**
@@ -272,6 +272,7 @@ class PostgresColumn extends AbstractColumn
 
     /**
      * @psalm-param non-empty-string $table Table name.
+     *
      * @param DriverInterface $driver Postgres columns are bit more complex.
      */
     public static function createInstance(
@@ -333,15 +334,15 @@ class PostgresColumn extends AbstractColumn
             return true;
         }
 
-        if (
+        return (bool) (
             in_array($this->getAbstractType(), ['primary', 'bigPrimary'])
             && $initial->getDefaultValue() != $this->getDefaultValue()
-        ) {
+        )
             //PG adds default values to primary keys
-            return true;
-        }
 
-        return false;
+
+
+         ;
     }
 
     /**
@@ -400,7 +401,7 @@ class PostgresColumn extends AbstractColumn
     private static function resolveConstrains(
         DriverInterface $driver,
         array $schema,
-        PostgresColumn $column
+        self $column
     ): void {
         $query = "SELECT conname, pg_get_constraintdef(oid) as consrc FROM pg_constraint
         WHERE conrelid = ? AND contype = 'c' AND conkey = ?";
@@ -436,7 +437,7 @@ class PostgresColumn extends AbstractColumn
     /**
      * Resolve native ENUM type if presented.
      */
-    private static function resolveEnum(DriverInterface $driver, PostgresColumn $column): void
+    private static function resolveEnum(DriverInterface $driver, self $column): void
     {
         $range = $driver->query('SELECT enum_range(NULL::' . $column->type . ')')->fetchColumn(0);
 

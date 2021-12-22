@@ -44,7 +44,7 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
      *
      * @psalm-param non-empty-string $method
      *
-     * @return SelectQuery|mixed
+     * @return mixed|SelectQuery
      */
     public function __call(string $method, array $arguments): mixed
     {

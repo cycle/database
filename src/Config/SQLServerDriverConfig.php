@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Cycle\Database\Config;
 
 use Cycle\Database\Config\SQLServer\ConnectionConfig;
-use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\SQLServer\SQLServerDriver;
 
 /**

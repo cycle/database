@@ -101,7 +101,7 @@ final class QueryBuilder implements BuilderInterface
         return $update->where($where)->values($values);
     }
 
-    public static function defaultBuilder(): QueryBuilder
+    public static function defaultBuilder(): self
     {
         return new self(
             new SelectQuery(),

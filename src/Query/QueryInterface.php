@@ -21,6 +21,7 @@ interface QueryInterface extends FragmentInterface
      *
      * @param DriverInterface $driver
      * @param string|null     $prefix
+     *
      * @return $this
      */
     public function withDriver(DriverInterface $driver, string $prefix = null): self;

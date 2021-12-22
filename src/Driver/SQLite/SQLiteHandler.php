@@ -190,6 +190,7 @@ class SQLiteHandler extends Handler
      *
      * @psalm-param non-empty-string $source
      * @psalm-param non-empty-string $to
+     *
      * @param array  $mapping (destination => source)
      *
      * @throws HandlerException

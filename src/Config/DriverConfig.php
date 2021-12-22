@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Cycle\Database\Config;
 
 use Cycle\Database\Driver\DriverInterface;
-use Cycle\Database\Config\PDOConnectionConfig;
 
 /**
  * Connection configuration described in DBAL config file. Any driver can be

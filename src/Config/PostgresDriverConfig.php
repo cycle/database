@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Cycle\Database\Config;
 
 use Cycle\Database\Config\Postgres\ConnectionConfig;
-use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\Postgres\PostgresDriver;
 
 /**
@@ -67,6 +66,7 @@ class PostgresDriverConfig extends DriverConfig
 
     /**
      * @param iterable<non-empty-string>|non-empty-string $schema
+     *
      * @return array<non-empty-string>
      */
     private function bootSchema(iterable|string $schema): array

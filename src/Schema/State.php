@@ -161,7 +161,7 @@ final class State
     /**
      * Drop column from table schema.
      */
-    public function forgetColumn(AbstractColumn $column): State
+    public function forgetColumn(AbstractColumn $column): self
     {
         foreach ($this->columns as $name => $columnSchema) {
             // todo: need better compare
@@ -273,7 +273,7 @@ final class State
      * Re-populate schema elements using other state as source. Elements will be cloned under their
      * schema name.
      */
-    public function syncState(State $source): self
+    public function syncState(self $source): self
     {
         $this->name = $source->name;
         $this->primaryKeys = $source->primaryKeys;

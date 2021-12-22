@@ -50,6 +50,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
 
     /**
      * @psalm-param non-empty-string $table
+     *
      * @param string $tablePrefix
      * @psalm-param non-empty-string $name
      */
@@ -95,7 +96,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
      * Set local column names foreign key relates to. Make sure column type is the same as foreign
      * column one.
      */
-    public function columns(array $columns): AbstractForeignKey
+    public function columns(array $columns): self
     {
         $this->columns = $columns;
 
@@ -107,6 +108,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
      * column types are identical.
      *
      * @@psalm-param non-empty-string $table Foreign table name with or without database prefix (see 3rd argument).
+     *
      * @param array $columns Foreign key names (id by default).
      * @param bool $forcePrefix When true foreign table will get same prefix as table being modified.
      */
@@ -114,7 +116,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
         string $table,
         array $columns = ['id'],
         bool $forcePrefix = true
-    ): AbstractForeignKey {
+    ): self {
         $this->foreignTable = ($forcePrefix ? $this->tablePrefix : '') . $table;
         $this->foreignKeys = $columns;
 
@@ -126,7 +128,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
      *
      * @psalm-param non-empty-string $rule Possible values: NO ACTION, CASCADE, etc (driver specific).
      */
-    public function onDelete(string $rule = self::NO_ACTION): AbstractForeignKey
+    public function onDelete(string $rule = self::NO_ACTION): self
     {
         $this->deleteRule = strtoupper($rule);
 
@@ -138,7 +140,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
      *
      * @psalm-param non-empty-string $rule Possible values: NO ACTION, CASCADE, etc (driver specific).
      */
-    public function onUpdate(string $rule = self::NO_ACTION): AbstractForeignKey
+    public function onUpdate(string $rule = self::NO_ACTION): self
     {
         $this->updateRule = strtoupper($rule);
 
@@ -168,7 +170,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
         return implode(' ', $statement);
     }
 
-    public function compare(AbstractForeignKey $initial): bool
+    public function compare(self $initial): bool
     {
         // soft compare
         return $this == clone $initial;

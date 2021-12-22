@@ -21,7 +21,7 @@ class SocketConnectionConfig extends ConnectionConfig implements ProvidesSourceS
      * @param non-empty-string|null $charset
      * @param non-empty-string|null $user
      * @param non-empty-string|null $password
-     * @param array<non-empty-string|int, non-empty-string> $options
+     * @param array<int, non-empty-string|non-empty-string> $options
      */
     public function __construct(
         public string $database,

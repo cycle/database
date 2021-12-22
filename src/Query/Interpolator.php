@@ -22,6 +22,7 @@ final class Interpolator
 {
     /**
      * Injects parameters into statement. For debug purposes only.
+     *
      * @psalm-param non-empty-string $query
      *
      * @psalm-return non-empty-string

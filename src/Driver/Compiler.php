@@ -258,7 +258,7 @@ abstract class Compiler implements CompilerInterface
     {
         $result = [];
         foreach ($groupBy as $identifier) {
-            $result[] =  $this->name($params, $q, $identifier);
+            $result[] = $this->name($params, $q, $identifier);
         }
 
         return implode(', ', $result);

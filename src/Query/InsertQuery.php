@@ -30,9 +30,10 @@ class InsertQuery extends ActiveQuery
 
     /**
      * Set target insertion table.
+     *
      * @psalm-param non-empty-string $into
      */
-    public function into(string $into): InsertQuery
+    public function into(string $into): self
     {
         $this->table = $into;
 
@@ -48,7 +49,7 @@ class InsertQuery extends ActiveQuery
      * $insert->columns("name", "email");
      * $insert->columns("name, email");
      */
-    public function columns(array|string ...$columns): InsertQuery
+    public function columns(array|string ...$columns): self
     {
         $this->columns = $this->fetchIdentifiers($columns);
 
@@ -77,7 +78,7 @@ class InsertQuery extends ActiveQuery
      *  ]
      * ]);
      */
-    public function values(mixed $rowsets): InsertQuery
+    public function values(mixed $rowsets): self
     {
         if (!is_array($rowsets)) {
             return $this->values(func_get_args());
@@ -138,7 +139,7 @@ class InsertQuery extends ActiveQuery
         return [
             'table'   => $this->table,
             'columns' => $this->columns,
-            'values'  => $this->values
+            'values'  => $this->values,
         ];
     }
 }

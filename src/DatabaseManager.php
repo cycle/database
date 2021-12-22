@@ -60,9 +60,9 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
     /**
      * Get all databases.
      *
-     * @return Database[]
-     *
      * @throws DatabaseException
+     *
+     * @return Database[]
      */
     public function getDatabases(): array
     {
@@ -124,9 +124,9 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
     /**
      * Get instance of every available driver/connection.
      *
-     * @return Driver[]
-     *
      * @throws DBALException
+     *
+     * @return Driver[]
      */
     public function getDrivers(): array
     {
@@ -147,6 +147,7 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
 
     /**
      * Get driver instance.
+     *
      * @psalm-param non-empty-string $driver
      */
     public function driver(string $driver): DriverInterface
@@ -170,11 +171,12 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
 
     /**
      * Manually set connection instance.
+     *
      * @psalm-param non-empty-string $name
      *
      * @throws DBALException
      */
-    public function addDriver(string $name, DriverInterface $driver): DatabaseManager
+    public function addDriver(string $name, DriverInterface $driver): self
     {
         isset($this->drivers[$name]) and throw new DBALException("Connection '{$name}' already exists");
 

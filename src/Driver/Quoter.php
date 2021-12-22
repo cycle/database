@@ -46,7 +46,7 @@ final class Quoter
         $this->aliases = [];
     }
 
-    public function withPrefix(string $prefix, bool $preserveAliases = false): Quoter
+    public function withPrefix(string $prefix, bool $preserveAliases = false): self
     {
         $quoter = clone $this;
         $quoter->prefix = $prefix;
@@ -101,6 +101,7 @@ final class Quoter
      *
      * @psalm-param non-empty-string $identifier Identifier can include simple column operations and functions,
      *      having "." in it will automatically force table prefix to first value.
+     *
      * @param bool $isTable Set to true to let quote method know that identifier is related to table name
      *
      * @psalm-return non-empty-string

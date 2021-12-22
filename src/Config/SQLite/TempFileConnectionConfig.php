@@ -20,6 +20,7 @@ class TempFileConnectionConfig extends FileConnectionConfig
     {
         /**
          * If an empty database string is passed, a temporary db file will be used.
+         *
          * @see https://www.php.net/manual/en/ref.pdo-sqlite.connection.php
          */
         parent::__construct('', $options);

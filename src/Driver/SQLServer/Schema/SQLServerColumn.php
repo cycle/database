@@ -35,7 +35,7 @@ class SQLServerColumn extends AbstractColumn
         'constrainedDefault',
         'defaultConstraint',
         'constrainedEnum',
-        'enumConstraint'
+        'enumConstraint',
     ];
 
     protected array $mapping = [
@@ -260,6 +260,7 @@ class SQLServerColumn extends AbstractColumn
 
     /**
      * @psalm-param non-empty-string $table Table name.
+     *
      * @param DriverInterface $driver SQLServer columns are bit more complex.
      */
     public static function createInstance(
@@ -407,7 +408,7 @@ class SQLServerColumn extends AbstractColumn
     private static function resolveEnum(
         DriverInterface $driver,
         array $schema,
-        SQLServerColumn $column
+        self $column
     ): void {
         $query = 'SELECT object_definition([o].[object_id]) AS [definition], '
             . "OBJECT_NAME([o].[object_id]) AS [name]\nFROM [sys].[objects] AS [o]\n"

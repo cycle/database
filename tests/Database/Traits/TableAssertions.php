@@ -15,7 +15,6 @@ use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Schema\AbstractForeignKey;
 use Cycle\Database\Schema\AbstractIndex;
 use Cycle\Database\Schema\AbstractTable;
-use Cycle\Database\Schema\State;
 
 trait TableAssertions
 {

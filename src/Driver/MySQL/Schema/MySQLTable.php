@@ -44,7 +44,7 @@ class MySQLTable extends AbstractTable
      *
      * @throws SchemaException
      */
-    public function setEngine(string $engine): MySQLTable
+    public function setEngine(string $engine): self
     {
         if ($this->exists()) {
             throw new SchemaException('Table engine can be set only at moment of creation');
@@ -74,7 +74,7 @@ class MySQLTable extends AbstractTable
         $this->engine = $this->driver->query(
             'SHOW TABLE STATUS WHERE `Name` = ?',
             [
-                $state->getName()
+                $state->getName(),
             ]
         )->fetch()['Engine'];
     }

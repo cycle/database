@@ -32,6 +32,7 @@ final class Database implements DatabaseInterface
 
     /**
      * @psalm-param non-empty-string $name Internal database name/id.
+     *
      * @param string $prefix Default database table prefix, will be used for all table identifiers.
      * @param DriverInterface $driver Driver instance responsible for database connection.
      * @param DriverInterface|null $readDriver Read-only driver connection.
@@ -46,6 +47,7 @@ final class Database implements DatabaseInterface
 
     /**
      * Shortcut to get table abstraction.
+     *
      * @psalm-param non-empty-string $name Table name without prefix.
      */
     public function __get(string $name): TableInterface

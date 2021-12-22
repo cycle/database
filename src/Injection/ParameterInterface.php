@@ -25,7 +25,7 @@ interface ParameterInterface
     /**
      * Get mocked parameter value or values in array form.
      *
-     * @return mixed|array
+     * @return array|mixed
      */
     public function getValue(): mixed;
 

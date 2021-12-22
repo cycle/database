@@ -51,6 +51,7 @@ abstract class ConnectionConfig
 
     /**
      * @param bool $secure
+     *
      * @return array
      */
     protected function toArray(bool $secure = true): array
