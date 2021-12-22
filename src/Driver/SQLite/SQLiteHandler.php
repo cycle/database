@@ -22,7 +22,7 @@ use Cycle\Database\Schema\AbstractTable;
 class SQLiteHandler extends Handler
 {
     /**
-     * @return array
+     * @return string[]
      */
     public function getTableNames(string $prefix = ''): array
     {
@@ -36,7 +36,7 @@ class SQLiteHandler extends Handler
                 continue;
             }
 
-            if ($prefix !== '' && strpos($table['name'], $prefix) !== 0) {
+            if ($prefix !== '' && !str_starts_with($table['name'], $prefix)) {
                 continue;
             }
 
@@ -47,8 +47,7 @@ class SQLiteHandler extends Handler
     }
 
     /**
-     * @param string $table
-     * @return bool
+     * @psalm-param non-empty-string $table
      */
     public function hasTable(string $table): bool
     {
@@ -57,19 +56,11 @@ class SQLiteHandler extends Handler
         return (bool)$this->driver->query($query, [$table])->fetchColumn();
     }
 
-    /**
-     * @param string      $table
-     * @param string|null $prefix
-     * @return AbstractTable
-     */
     public function getSchema(string $table, string $prefix = null): AbstractTable
     {
         return new SQLiteTable($this->driver, $table, $prefix ?? '');
     }
 
-    /**
-     * @param AbstractTable $table
-     */
     public function eraseTable(AbstractTable $table): void
     {
         $this->driver->execute(
@@ -77,9 +68,6 @@ class SQLiteHandler extends Handler
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function syncTable(AbstractTable $table, int $operation = self::DO_ALL): void
     {
         if (!$this->requiresRebuild($table)) {
@@ -118,25 +106,16 @@ class SQLiteHandler extends Handler
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function createColumn(AbstractTable $table, AbstractColumn $column): void
     {
         //Not supported
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function dropColumn(AbstractTable $table, AbstractColumn $column): void
     {
         //Not supported
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function alterColumn(
         AbstractTable $table,
         AbstractColumn $initial,
@@ -145,25 +124,16 @@ class SQLiteHandler extends Handler
         //Not supported
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function createForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void
     {
         //Not supported
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function dropForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void
     {
         //Not supported
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function alterForeignKey(
         AbstractTable $table,
         AbstractForeignKey $initial,
@@ -174,9 +144,6 @@ class SQLiteHandler extends Handler
 
     /**
      * Temporary table based on parent.
-     *
-     * @param AbstractTable $table
-     * @return AbstractTable
      */
     protected function createTemporary(AbstractTable $table): AbstractTable
     {
@@ -198,9 +165,6 @@ class SQLiteHandler extends Handler
 
     /**
      * Rebuild is required when columns or foreign keys are altered.
-     *
-     * @param AbstractTable $table
-     * @return bool
      */
     private function requiresRebuild(AbstractTable $table): bool
     {
@@ -224,8 +188,8 @@ class SQLiteHandler extends Handler
      *
      * @see http://stackoverflow.com/questions/4007014/alter-column-in-sqlite
      *
-     * @param string $source
-     * @param string $to
+     * @psalm-param non-empty-string $source
+     * @psalm-param non-empty-string $to
      * @param array  $mapping (destination => source)
      *
      * @throws HandlerException
@@ -252,10 +216,6 @@ class SQLiteHandler extends Handler
 
     /**
      * Get mapping between new and initial columns.
-     *
-     * @param AbstractTable $source
-     * @param AbstractTable $target
-     * @return array
      */
     private function createMapping(AbstractTable $source, AbstractTable $target): array
     {

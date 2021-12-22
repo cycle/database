@@ -30,10 +30,7 @@ class SQLiteColumn extends AbstractColumn
         'size',
     ];
 
-    /**
-     * {@inheritdoc}
-     */
-    protected $mapping = [
+    protected array $mapping = [
         //Primary sequences
         'primary'     => [
             'type'       => 'integer',
@@ -89,10 +86,7 @@ class SQLiteColumn extends AbstractColumn
         'uuid'        => ['type' => 'varchar', 'size' => 36],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
-    protected $reverseMapping = [
+    protected array $reverseMapping = [
         'primary'     => [['type' => 'integer', 'primaryKey' => true]],
         'enum'        => ['enum'],
         'boolean'     => ['boolean'],
@@ -113,16 +107,14 @@ class SQLiteColumn extends AbstractColumn
 
     /**
      * Indication that column is primary key.
-     *
-     * @var bool
      */
-    protected $primaryKey = false;
+    protected bool $primaryKey = false;
 
     /**
      * DBMS specific reverse mapping must map database specific type into limited set of abstract
      * types.
      *
-     * @return string
+     * @psalm-return non-empty-string
      */
     public function getAbstractType(): string
     {
@@ -134,7 +126,7 @@ class SQLiteColumn extends AbstractColumn
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-return non-empty-string
      */
     public function sqlStatement(DriverInterface $driver): string
     {
@@ -154,10 +146,7 @@ class SQLiteColumn extends AbstractColumn
     }
 
     /**
-     * @param string        $table
-     * @param array         $schema
-     * @param \DateTimeZone $timezone
-     * @return SQLiteColumn
+     * @psalm-param non-empty-string $table
      */
     public static function createInstance(
         string $table,
@@ -244,9 +233,6 @@ class SQLiteColumn extends AbstractColumn
         return $column;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function quoteEnum(DriverInterface $driver): string
     {
         return '';

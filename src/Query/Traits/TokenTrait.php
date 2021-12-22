@@ -21,11 +21,10 @@ trait TokenTrait
     /**
      * Convert various amount of where function arguments into valid where token.
      *
-     * @param string $boolean    Boolean joiner (AND | OR).
-     * @param array    $params     Set of parameters collected from where functions.
-     * @param array $tokens     Array to aggregate compiled tokens. Reference.
-     * @param callable $wrapper    Callback or closure used to wrap/collect every potential
-     *                             parameter.
+     * @psalm-param non-empty-string $boolean Boolean joiner (AND | OR).
+     * @param array $params Set of parameters collected from where functions.
+     * @param array $tokens Array to aggregate compiled tokens. Reference.
+     * @param callable $wrapper Callback or closure used to wrap/collect every potential parameter.
      *
      * @throws BuilderException
      */
@@ -44,7 +43,7 @@ trait TokenTrait
                 return;
             }
 
-            if (is_array($complex)) {
+            if (\is_array($complex)) {
                 if (count($complex) === 0) {
                     // nothing to do
                     return;
@@ -147,11 +146,10 @@ trait TokenTrait
     /**
      * Convert simplified where definition into valid set of where tokens.
      *
-     * @param string   $grouper Grouper type (see self::TOKEN_AND, self::TOKEN_OR).
-     * @param array    $where   Simplified where definition.
-     * @param array    $tokens  Array to aggregate compiled tokens. Reference.
-     * @param callable $wrapper Callback or closure used to wrap/collect every potential
-     *                          parameter.
+     * @psalm-param non-empty-string $grouper Grouper type (see self::TOKEN_AND, self::TOKEN_OR).
+     * @param array $where Simplified where definition.
+     * @param array $tokens Array to aggregate compiled tokens. Reference.
+     * @param callable $wrapper Callback or closure used to wrap/collect every potential parameter.
      *
      * @throws BuilderException
      */
@@ -161,7 +159,7 @@ trait TokenTrait
 
         foreach ($where as $key => $value) {
             // Support for closures
-            if (is_int($key) && $value instanceof \Closure) {
+            if (\is_int($key) && $value instanceof \Closure) {
                 $tokens[] = [$boolean, '('];
                 $value($this, $boolean, $wrapper);
                 $tokens[] = ['', ')'];
@@ -191,7 +189,7 @@ trait TokenTrait
             }
 
             // AND|OR [name] = [value]
-            if (!is_array($value)) {
+            if (!\is_array($value)) {
                 $tokens[] = [
                     $boolean,
                     [$key, '=', $wrapper($value)],
@@ -220,15 +218,13 @@ trait TokenTrait
     /**
      * Build set of conditions for specified identifier.
      *
-     * @param string   $innerJoiner Inner boolean joiner.
-     * @param string   $key         Column identifier.
-     * @param array    $where       Operations associated with identifier.
-     * @param array    $tokens      Array to aggregate compiled tokens. Reference.
-     * @param callable $wrapper     Callback or closure used to wrap/collect every potential parameter.
-     *
-     * @return array
+     * @psalm-param non-empty-string $innerJoiner Inner boolean joiner.
+     * @psalm-param non-empty-string $key Column identifier.
+     * @param array $where Operations associated with identifier.
+     * @param array $tokens Array to aggregate compiled tokens. Reference.
+     * @param callable $wrapper Callback or closure used to wrap/collect every potential parameter.
      */
-    private function pushCondition(string $innerJoiner, string $key, $where, &$tokens, callable $wrapper): array
+    private function pushCondition(string $innerJoiner, string $key, array $where, &$tokens, callable $wrapper): array
     {
         foreach ($where as $operation => $value) {
             if (is_numeric($operation)) {

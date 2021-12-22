@@ -13,63 +13,35 @@ namespace Cycle\Database\Config;
 
 final class DatabasePartial
 {
-    /** @var string */
-    private $name;
-
-    /** @var string */
-    private $prefix;
-
-    /** @var string */
-    private $driver;
-
-    /** @var null|string */
-    private $readDriver;
-
     /**
-     * @param string      $name
-     * @param string      $prefix
-     * @param string      $driver
-     * @param string|null $readDriver
+     * @psalm-param non-empty-string $name
+     * @param string $prefix
+     * @psalm-param non-empty-string $driver
+     * @psalm-param non-empty-string|null $readDriver
      */
     public function __construct(
-        string $name,
-        string $prefix,
-        string $driver,
-        string $readDriver = null
+        private string $name,
+        private string $prefix,
+        private string $driver,
+        private ?string $readDriver = null
     ) {
-        $this->name = $name;
-        $this->prefix = $prefix;
-        $this->driver = $driver;
-        $this->readDriver = $readDriver;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
     public function getPrefix(): string
     {
         return $this->prefix;
     }
 
-    /**
-     * @return string
-     */
     public function getDriver(): string
     {
         return $this->driver;
     }
 
-    /**
-     * @return null|string
-     */
     public function getReadDriver(): ?string
     {
         return $this->readDriver;

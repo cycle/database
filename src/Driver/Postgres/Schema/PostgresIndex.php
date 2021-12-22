@@ -16,14 +16,12 @@ use Cycle\Database\Schema\AbstractIndex;
 class PostgresIndex extends AbstractIndex
 {
     /**
-     * @param string $table Table name.
-     * @param array  $schema
-     * @return PostgresIndex
+     * @psalm-param non-empty-string $table Table name.
      */
     public static function createInstance(string $table, array $schema): self
     {
         $index = new self($table, $schema['indexname']);
-        $index->type = strpos($schema['indexdef'], ' UNIQUE ') ? self::UNIQUE : self::NORMAL;
+        $index->type = str_contains($schema['indexdef'], ' UNIQUE ') ? self::UNIQUE : self::NORMAL;
 
         if (preg_match('/\(([^)]+)\)/', $schema['indexdef'], $matches)) {
             $columns = explode(',', $matches[1]);

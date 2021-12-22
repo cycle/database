@@ -18,11 +18,8 @@ use Cycle\Database\Injection\ParameterInterface;
  */
 final class QueryParameters
 {
-    private $flatten = [];
+    private array $flatten = [];
 
-    /**
-     * @param ParameterInterface $parameter
-     */
     public function push(ParameterInterface $parameter): void
     {
         if ($parameter->isArray()) {
@@ -34,9 +31,6 @@ final class QueryParameters
         }
     }
 
-    /**
-     * @return array
-     */
     public function getParameters(): array
     {
         return $this->flatten;

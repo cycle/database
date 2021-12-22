@@ -18,32 +18,27 @@ namespace Cycle\Database\Schema;
  */
 final class State
 {
-    /** @var string */
-    private $name;
-
     /** @var AbstractColumn[] */
-    private $columns = [];
+    private array $columns = [];
 
     /** @var AbstractIndex[] */
-    private $indexes = [];
+    private array $indexes = [];
 
     /** @var AbstractForeignKey[] */
-    private $foreignKeys = [];
+    private array $foreignKeys = [];
 
     /**
      * Primary key columns are stored separately from other indexes and
      * can only be modified during table creation.
-     *
-     * @var array
      */
-    private $primaryKeys = [];
+    private array $primaryKeys = [];
 
     /**
-     * @param string $name
+     * @psalm-param non-empty-string $name
      */
-    public function __construct(string $name)
-    {
-        $this->name = $name;
+    public function __construct(
+        private string $name
+    ) {
     }
 
     /**
@@ -67,7 +62,7 @@ final class State
     /**
      * Set table name. Operation will be applied at moment of saving.
      *
-     * @param string $name
+     * @psalm-param non-empty-string $name
      */
     public function setName(string $name): void
     {
@@ -75,7 +70,7 @@ final class State
     }
 
     /**
-     * @return string
+     * @psalm-return non-empty-string
      */
     public function getName(): string
     {
@@ -106,9 +101,6 @@ final class State
         return $this->foreignKeys;
     }
 
-    /**
-     * @param array $columns
-     */
     public function setPrimaryKeys(array $columns): void
     {
         $this->primaryKeys = $columns;
@@ -116,8 +108,6 @@ final class State
 
     /**
      * Method combines primary keys with primary keys automatically calculated based on registered columns.
-     *
-     * @return array
      */
     public function getPrimaryKeys(): array
     {
@@ -125,7 +115,7 @@ final class State
         foreach ($this->getColumns() as $column) {
             $type = $column->getAbstractType();
             if ($type === 'primary' || $type === 'bigPrimary') {
-                if (!in_array($column->getName(), $this->primaryKeys, true)) {
+                if (!\in_array($column->getName(), $this->primaryKeys, true)) {
                     //Only columns not listed as primary keys already
                     $primaryColumns[] = $column->getName();
                 }
@@ -136,51 +126,33 @@ final class State
     }
 
     /**
-     * @param string $name
-     * @return bool
+     * @psalm-param non-empty-string $name
      */
     public function hasColumn(string $name): bool
     {
         return $this->findColumn($name) !== null;
     }
 
-    /**
-     * @param array $columns
-     * @return bool
-     */
     public function hasIndex(array $columns = []): bool
     {
         return $this->findIndex($columns) !== null;
     }
 
-    /**
-     * @param array $columns
-     * @return bool
-     */
     public function hasForeignKey(array $columns): bool
     {
         return $this->findForeignKey($columns) !== null;
     }
 
-    /**
-     * @param AbstractColumn $column
-     */
     public function registerColumn(AbstractColumn $column): void
     {
         $this->columns[$column->getName()] = $column;
     }
 
-    /**
-     * @param AbstractIndex $index
-     */
     public function registerIndex(AbstractIndex $index): void
     {
         $this->indexes[$index->getName()] = $index;
     }
 
-    /**
-     * @param AbstractForeignKey $reference
-     */
     public function registerForeignKey(AbstractForeignKey $reference): void
     {
         $this->foreignKeys[$reference->getName()] = $reference;
@@ -188,9 +160,6 @@ final class State
 
     /**
      * Drop column from table schema.
-     *
-     * @param AbstractColumn $column
-     * @return self
      */
     public function forgetColumn(AbstractColumn $column): State
     {
@@ -207,8 +176,6 @@ final class State
 
     /**
      * Drop index from table schema using it's name or forming columns.
-     *
-     * @param AbstractIndex $index
      */
     public function forgetIndex(AbstractIndex $index): void
     {
@@ -223,8 +190,6 @@ final class State
 
     /**
      * Drop foreign key from table schema using it's forming column.
-     *
-     * @param AbstractForeignKey $foreignKey
      */
     public function forgerForeignKey(AbstractForeignKey $foreignKey): void
     {
@@ -238,8 +203,7 @@ final class State
     }
 
     /**
-     * @param string $name
-     * @return null|AbstractColumn
+     * @psalm-param non-empty-string $name
      */
     public function findColumn(string $name): ?AbstractColumn
     {
@@ -254,9 +218,6 @@ final class State
 
     /**
      * Find index by it's columns or return null.
-     *
-     * @param array $columns
-     * @return null|AbstractIndex
      */
     public function findIndex(array $columns): ?AbstractIndex
     {
@@ -271,9 +232,6 @@ final class State
 
     /**
      * Find foreign key by it's column or return null.
-     *
-     * @param array $columns
-     * @return null|AbstractForeignKey
      */
     public function findForeignKey(array $columns): ?AbstractForeignKey
     {
@@ -314,10 +272,6 @@ final class State
     /**
      * Re-populate schema elements using other state as source. Elements will be cloned under their
      * schema name.
-     *
-     * @param State $source
-     *
-     * @return self
      */
     public function syncState(State $source): self
     {

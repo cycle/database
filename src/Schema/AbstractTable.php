@@ -61,52 +61,34 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     public const STATUS_DECLARED_DROPPED = 2;
 
     /**
-     * @internal
-     *
-     * @var DriverInterface
-     */
-    protected $driver;
-
-    /**
      * Initial table state.
      *
      * @internal
-     * @var State
      */
-    protected $initial;
+    protected State $initial;
 
     /**
      * Currently defined table state.
      *
      * @internal
-     * @var State
      */
-    protected $current;
+    protected State $current;
 
     /**
      * Indication that table is exists and current schema is fetched from database.
-     *
-     * @var int
      */
-    private $status = self::STATUS_NEW;
-
-    /**
-     * Database specific tablePrefix. Required for table renames.
-     *
-     * @var string
-     */
-    private $prefix;
+    private int $status = self::STATUS_NEW;
 
     /**
      * @param DriverInterface $driver Parent driver.
-     * @param string          $name   Table name, must include table prefix.
-     * @param string          $prefix Database specific table prefix.
+     * @psalm-param non-empty-string $name Table name, must include table prefix.
+     * @param string $prefix Database specific table prefix. Required for table renames.
      */
-    public function __construct(DriverInterface $driver, string $name, string $prefix)
-    {
-        $this->driver = $driver;
-        $this->prefix = $prefix;
-
+    public function __construct(
+        protected DriverInterface $driver,
+        string $name,
+        private string $prefix
+    ) {
         //Initializing states
         $prefixedName = $this->prefixTableName($name);
         $this->initial = new State($prefixedName);
@@ -127,10 +109,9 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * Shortcut for column() method.
      *
-     * @param string $column
-     * @return AbstractColumn
+     * @psalm-param non-empty-string $column
      */
-    public function __get(string $column)
+    public function __get(string $column): AbstractColumn
     {
         return $this->column($column);
     }
@@ -143,21 +124,17 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * $table->string("name");
      * $table->text("some_column");
      *
-     * @param string $type
-     * @param array  $arguments Type specific parameters.
-     * @return AbstractColumn
+     * @psalm-param non-empty-string $type
+     * @param array $arguments Type specific parameters.
      */
-    public function __call(string $type, array $arguments)
+    public function __call(string $type, array $arguments): AbstractColumn
     {
-        return call_user_func_array(
+        return \call_user_func_array(
             [$this->column($arguments[0]), $type],
-            array_slice($arguments, 1)
+            \array_slice($arguments, 1)
         );
     }
 
-    /**
-     * @return AbstractColumn|string
-     */
     public function __toString(): string
     {
         return $this->getFullName();
@@ -172,10 +149,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         $this->current = clone $this->current;
     }
 
-    /**
-     * @return array
-     */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         return [
             'status'      => $this->status,
@@ -190,8 +164,6 @@ abstract class AbstractTable implements TableInterface, ElementInterface
 
     /**
      * Get instance of associated driver.
-     *
-     * @return DriverInterface
      */
     public function getDriver(): DriverInterface
     {
@@ -200,25 +172,17 @@ abstract class AbstractTable implements TableInterface, ElementInterface
 
     /**
      * Return database specific table prefix.
-     *
-     * @return string
      */
     public function getPrefix(): string
     {
         return $this->prefix;
     }
 
-    /**
-     * @return ComparatorInterface
-     */
     public function getComparator(): ComparatorInterface
     {
         return new Comparator($this->initial, $this->current);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function exists(): bool
     {
         // Declared as dropped != actually dropped
@@ -227,8 +191,6 @@ abstract class AbstractTable implements TableInterface, ElementInterface
 
     /**
      * Table status (see codes above).
-     *
-     * @return int
      */
     public function getStatus(): int
     {
@@ -238,8 +200,8 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * Sets table name. Use this function in combination with save to rename table.
      *
-     * @param string $name
-     * @return string Prefixed table name.
+     * @psalm-param non-empty-string $name
+     * @psalm-return non-empty-string Prefixed table name.
      */
     public function setName(string $name): string
     {
@@ -249,7 +211,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-return non-empty-string
      */
     public function getName(): string
     {
@@ -257,7 +219,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-return non-empty-string
      */
     public function getFullName(): string
     {
@@ -267,7 +229,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * Table name before rename.
      *
-     * @return string
+     * @psalm-return non-empty-string
      */
     public function getInitialName(): string
     {
@@ -282,9 +244,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      */
     public function declareDropped(): void
     {
-        if ($this->status === self::STATUS_NEW) {
-            throw new SchemaException('Unable to drop non existed table');
-        }
+        $this->status === self::STATUS_NEW and throw new SchemaException('Unable to drop non existed table');
 
         //Declaring as dropped
         $this->status = self::STATUS_DECLARED_DROPPED;
@@ -293,9 +253,6 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * Set table primary keys. Operation can only be applied for newly created tables. Now every
      * database might support compound indexes.
-     *
-     * @param array $columns
-     * @return self
      */
     public function setPrimaryKeys(array $columns): AbstractTable
     {
@@ -308,25 +265,17 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPrimaryKeys(): array
     {
         return $this->current->getPrimaryKeys();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasColumn(string $name): bool
     {
         return $this->current->hasColumn($name);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return AbstractColumn[]
      */
     public function getColumns(): array
@@ -334,17 +283,12 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         return $this->current->getColumns();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasIndex(array $columns = []): bool
     {
         return $this->current->hasIndex($columns);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return AbstractIndex[]
      */
     public function getIndexes(): array
@@ -352,17 +296,12 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         return $this->current->getIndexes();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasForeignKey(array $columns): bool
     {
         return $this->current->hasForeignKey($columns);
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return AbstractForeignKey[]
      */
     public function getForeignKeys(): array
@@ -370,9 +309,6 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         return $this->current->getForeignKeys();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDependencies(): array
     {
         $tables = [];
@@ -388,11 +324,10 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      *
      * Attention, renamed column will be available by it's old name until being synced!
      *
+     * @psalm-param non-empty-string $name
+     *
      * Examples:
      * $table->column('name')->string();
-     *
-     * @param string $name
-     * @return AbstractColumn
      */
     public function column(string $name): AbstractColumn
     {
@@ -422,8 +357,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * $table->index(['key']);
      * $table->index(['key', 'key2']);
      *
-     * @param array $columns List of index columns.
-     * @return AbstractIndex
+     * @param array $columns List of index columns
      *
      * @throws SchemaException
      * @throws DriverException
@@ -439,13 +373,12 @@ abstract class AbstractTable implements TableInterface, ElementInterface
 
             // If expression like 'column DESC' was passed, we cast it to 'column' => 'DESC'
             if ($order !== null) {
-                if (!$this->isIndexColumnSortingSupported()) {
-                    throw new DriverException(sprintf(
-                        'Failed to create index with `%s` on `%s`, column sorting is not supported',
-                        $expression,
-                        $this->getFullName()
-                    ));
-                }
+                $this->isIndexColumnSortingSupported() or throw new DriverException(sprintf(
+                    'Failed to create index with `%s` on `%s`, column sorting is not supported',
+                    $expression,
+                    $this->getFullName()
+                ));
+
                 $sort[$column] = $order;
             }
 
@@ -454,11 +387,9 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         $columns = $normalized;
 
         foreach ($columns as $column) {
-            if (!$this->hasColumn($column)) {
-                throw new SchemaException(
-                    "Undefined column '{$column}' in '{$this->getFullName()}'"
-                );
-            }
+            $this->hasColumn($column) or throw new SchemaException(
+                "Undefined column '{$column}' in '{$this->getFullName()}'"
+            );
         }
 
         if ($this->hasIndex($original)) {
@@ -484,17 +415,14 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * Get/create instance of AbstractReference associated with current table based on local column
      * name.
      *
-     * @param array $columns
-     * @return AbstractForeignKey
-     *
      * @throws SchemaException
      */
     public function foreignKey(array $columns): AbstractForeignKey
     {
         foreach ($columns as $column) {
-            if (!$this->hasColumn($column)) {
-                throw new SchemaException("Undefined column '{$column}' in '{$this->getFullName()}'");
-            }
+            $this->hasColumn($column) or throw new SchemaException(
+                "Undefined column '{$column}' in '{$this->getFullName()}'"
+            );
         }
 
         if ($this->hasForeignKey($columns)) {
@@ -522,19 +450,16 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * Rename column (only if column exists).
      *
-     * @param string $column
-     * @param string $name New column name.
-     * @return self
+     * @psalm-param non-empty-string $column
+     * @psalm-param non-empty-string $name New column name.
      *
      * @throws SchemaException
      */
     public function renameColumn(string $column, string $name): AbstractTable
     {
-        if (!$this->hasColumn($column)) {
-            throw new SchemaException(
-                "Undefined column '{$column}' in '{$this->getFullName()}'"
-            );
-        }
+        $this->hasColumn($column) or throw new SchemaException(
+            "Undefined column '{$column}' in '{$this->getFullName()}'"
+        );
 
         //Rename operation is simple about declaring new name
         $this->column($column)->setName($name);
@@ -545,19 +470,16 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * Rename index (only if index exists).
      *
-     * @param array  $columns Index forming columns.
-     * @param string $name    New index name.
-     * @return self
+     * @param array $columns Index forming columns.
+     * @psalm-param non-empty-string $name New index name.
      *
      * @throws SchemaException
      */
     public function renameIndex(array $columns, string $name): AbstractTable
     {
-        if (!$this->hasIndex($columns)) {
-            throw new SchemaException(
-                "Undefined index ['" . implode("', '", $columns) . "'] in '{$this->getFullName()}'"
-            );
-        }
+        $this->hasIndex($columns) or throw new SchemaException(
+            "Undefined index ['" . implode("', '", $columns) . "'] in '{$this->getFullName()}'"
+        );
 
         //Declaring new index name
         $this->index($columns)->setName($name);
@@ -568,19 +490,14 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * Drop column by it's name.
      *
-     * @param string $column
-     * @return self
+     * @psalm-param non-empty-string $column
      *
      * @throws SchemaException
      */
     public function dropColumn(string $column): AbstractTable
     {
         $schema = $this->current->findColumn($column);
-        if ($schema === null) {
-            throw new SchemaException(
-                "Undefined column '{$column}' in '{$this->getFullName()}'"
-            );
-        }
+        $schema === null and throw new SchemaException("Undefined column '{$column}' in '{$this->getFullName()}'");
 
         //Dropping column from current schema
         $this->current->forgetColumn($schema);
@@ -591,19 +508,14 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * Drop index by it's forming columns.
      *
-     * @param array $columns
-     * @return self
-     *
      * @throws SchemaException
      */
     public function dropIndex(array $columns): AbstractTable
     {
         $schema = $this->current->findIndex($columns);
-        if ($schema === null) {
-            throw new SchemaException(
-                "Undefined index ['" . implode("', '", $columns) . "'] in '{$this->getFullName()}'"
-            );
-        }
+        $schema === null and throw new SchemaException(
+            "Undefined index ['" . implode("', '", $columns) . "'] in '{$this->getFullName()}'"
+        );
 
         //Dropping index from current schema
         $this->current->forgetIndex($schema);
@@ -613,9 +525,6 @@ abstract class AbstractTable implements TableInterface, ElementInterface
 
     /**
      * Drop foreign key by it's name.
-     *
-     * @param array $columns
-     * @return self
      *
      * @throws SchemaException
      */
@@ -635,8 +544,6 @@ abstract class AbstractTable implements TableInterface, ElementInterface
 
     /**
      * Get current table state (detached).
-     *
-     * @return State
      */
     public function getState(): State
     {
@@ -650,8 +557,6 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * Reset table state to new form.
      *
      * @param State $state Use null to flush table schema.
-     *
-     * @return self|$this
      */
     public function setState(State $state = null): AbstractTable
     {
@@ -667,8 +572,6 @@ abstract class AbstractTable implements TableInterface, ElementInterface
 
     /**
      * Reset table state to it initial form.
-     *
-     * @return self|$this
      */
     public function resetState(): AbstractTable
     {
@@ -707,9 +610,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         }
 
         // Ensure that columns references to valid indexes and et
-        $prepared = $this->normalizeSchema(
-            ($operation & HandlerInterface::CREATE_FOREIGN_KEYS) !== 0
-        );
+        $prepared = $this->normalizeSchema(($operation & HandlerInterface::CREATE_FOREIGN_KEYS) !== 0);
 
         if ($this->status === self::STATUS_NEW) {
             //Executing table creation
@@ -731,19 +632,17 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * Sanitize column expression for index name
      *
-     * @param mixed $column
+     * @psalm-param non-empty-string $column
      *
-     * @return string
+     * @psalm-return non-empty-string
      */
-    public static function sanitizeColumnExpression($column)
+    public static function sanitizeColumnExpression(string $column): string
     {
         return preg_replace(['/\(/', '/\)/', '/ /'], '__', strtolower($column));
     }
 
     /**
      * Check if table schema has been modified since synchronization.
-     *
-     * @return bool
      */
     protected function hasChanges(): bool
     {
@@ -753,9 +652,9 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * Add prefix to a given table name
      *
-     * @param string $name
+     * @psalm-param non-empty-string $column
      *
-     * @return string
+     * @psalm-return non-empty-string
      */
     protected function prefixTableName(string $name): string
     {
@@ -765,9 +664,6 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * Ensure that no wrong indexes left in table. This method will create AbstracTable
      * copy in order to prevent cross modifications.
-     *
-     * @param bool $withForeignKeys
-     * @return AbstractTable
      */
     protected function normalizeSchema(bool $withForeignKeys = true): AbstractTable
     {
@@ -787,7 +683,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
          */
         foreach ($this->getComparator()->droppedColumns() as $column) {
             foreach ($target->getIndexes() as $index) {
-                if (in_array($column->getName(), $index->getColumns(), true)) {
+                if (\in_array($column->getName(), $index->getColumns(), true)) {
                     $target->current->forgetIndex($index);
                 }
             }
@@ -808,7 +704,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
             [$name, $initial] = $pair;
 
             foreach ($target->getIndexes() as $index) {
-                if (in_array($initial->getName(), $index->getColumns(), true)) {
+                if (\in_array($initial->getName(), $index->getColumns(), true)) {
                     $columns = $index->getColumns();
 
                     //Replacing column name
@@ -834,13 +730,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
             foreach ($target->getForeignKeys() as $foreign) {
                 $foreign->columns(
                     array_map(
-                        static function ($column) use ($initial, $name) {
-                            if ($column === $initial->getName()) {
-                                return $name->getName();
-                            }
-
-                            return $column;
-                        },
+                        static fn ($column) => $column === $initial->getName() ? $name->getName() : $column,
                         $foreign->getColumns()
                     )
                 );
@@ -859,8 +749,6 @@ abstract class AbstractTable implements TableInterface, ElementInterface
 
     /**
      * Populate table schema with values from database.
-     *
-     * @param State $state
      */
     protected function initSchema(State $state): void
     {
@@ -908,15 +796,13 @@ abstract class AbstractTable implements TableInterface, ElementInterface
 
     /**
      * Fetch names of primary keys from table.
-     *
-     * @return array
      */
     abstract protected function fetchPrimaryKeys(): array;
 
     /**
      * Create column with a given name.
      *
-     * @param string $name
+     * @psalm-param non-empty-string $name
      *
      * @return AbstractColumn
      */
@@ -925,28 +811,21 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * Create index for a given set of columns.
      *
-     * @param string $name
-     *
-     * @return AbstractIndex
+     * @psalm-param non-empty-string $name
      */
     abstract protected function createIndex(string $name): AbstractIndex;
 
     /**
      * Create reference on a given column set.
      *
-     * @param string $name
-     *
-     * @return AbstractForeignKey
+     * @psalm-param non-empty-string $name
      */
     abstract protected function createForeign(string $name): AbstractForeignKey;
 
     /**
      * Generate unique name for indexes and foreign keys.
      *
-     * @param string $type
-     * @param array  $columns
-     *
-     * @return string
+     * @psalm-param non-empty-string $type
      */
     protected function createIdentifier(string $type, array $columns): string
     {
@@ -961,7 +840,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
             . '_' . implode('_', $sanitized)
             . '_' . uniqid();
 
-        if (strlen($name) > 64) {
+        if (\strlen($name) > 64) {
             //Many DBMS has limitations on identifier length
             $name = md5($name);
         }

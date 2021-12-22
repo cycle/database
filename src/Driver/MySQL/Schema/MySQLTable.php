@@ -29,27 +29,22 @@ class MySQLTable extends AbstractTable
 
     /**
      * MySQL table engine.
-     *
-     * @var string
      */
-    private $engine = self::ENGINE_INNODB;
+    private string $engine = self::ENGINE_INNODB;
 
     /**
      * MySQL version.
-     *
-     * @var string
      */
-    private $version;
+    private ?string $version = null;
 
     /**
      * Change table engine. Such operation will be applied only at moment of table creation.
      *
-     * @param string $engine
-     * @return $this
+     * @psalm-param non-empty-string $engine
      *
      * @throws SchemaException
      */
-    public function setEngine($engine): MySQLTable
+    public function setEngine(string $engine): MySQLTable
     {
         if ($this->exists()) {
             throw new SchemaException('Table engine can be set only at moment of creation');
@@ -61,7 +56,7 @@ class MySQLTable extends AbstractTable
     }
 
     /**
-     * @return string
+     * @psalm-return non-empty-string
      */
     public function getEngine(): string
     {
@@ -70,8 +65,6 @@ class MySQLTable extends AbstractTable
 
     /**
      * Populate table schema with values from database.
-     *
-     * @param State $state
      */
     protected function initSchema(State $state): void
     {
@@ -92,16 +85,13 @@ class MySQLTable extends AbstractTable
             $this->version = $this->driver->query('SELECT VERSION() AS version')->fetch()['version'];
         }
 
-        if (strpos($this->version, 'MariaDB') !== false) {
+        if (str_contains($this->version, 'MariaDB')) {
             return false;
         }
 
         return version_compare($this->version, '8.0', '>=');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function fetchColumns(): array
     {
         $query = "SHOW FULL COLUMNS FROM {$this->driver->identifier($this->getFullName())}";
@@ -118,9 +108,6 @@ class MySQLTable extends AbstractTable
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function fetchIndexes(): array
     {
         $query = "SHOW INDEXES FROM {$this->driver->identifier($this->getFullName())}";
@@ -144,9 +131,6 @@ class MySQLTable extends AbstractTable
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function fetchReferences(): array
     {
         $references = $this->driver->query(
@@ -183,8 +167,6 @@ class MySQLTable extends AbstractTable
 
     /**
      * Fetching primary keys from table.
-     *
-     * @return array
      */
     protected function fetchPrimaryKeys(): array
     {
@@ -201,7 +183,7 @@ class MySQLTable extends AbstractTable
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-param non-empty-string $name
      */
     protected function createColumn(string $name): AbstractColumn
     {
@@ -209,7 +191,7 @@ class MySQLTable extends AbstractTable
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-param non-empty-string $name
      */
     protected function createIndex(string $name): AbstractIndex
     {
@@ -217,7 +199,7 @@ class MySQLTable extends AbstractTable
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-param non-empty-string $name
      */
     protected function createForeign(string $name): AbstractForeignKey
     {

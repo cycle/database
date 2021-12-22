@@ -23,10 +23,7 @@ use Cycle\Database\Query\QueryParameters;
 class PostgresCompiler extends Compiler implements CachingCompilerInterface
 {
     /**
-     * @param QueryParameters $params
-     * @param Quoter          $q
-     * @param array           $tokens
-     * @return string
+     * @psalm-return non-empty-string
      */
     protected function insertQuery(QueryParameters $params, Quoter $q, array $tokens): string
     {
@@ -43,33 +40,23 @@ class PostgresCompiler extends Compiler implements CachingCompilerInterface
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function distinct(QueryParameters $params, Quoter $q, $distinct): string
+    protected function distinct(QueryParameters $params, Quoter $q, string|bool|array $distinct): string
     {
         if ($distinct === false) {
             return '';
         }
 
-        if (is_array($distinct) && isset($distinct['on'])) {
+        if (\is_array($distinct) && isset($distinct['on'])) {
             return sprintf('DISTINCT ON (%s)', $this->name($params, $q, $distinct['on']));
         }
 
-        if (is_string($distinct)) {
+        if (\is_string($distinct)) {
             return sprintf('DISTINCT (%s)', $this->name($params, $q, $distinct));
         }
 
         return 'DISTINCT';
     }
 
-    /**
-     * @param QueryParameters $params
-     * @param Quoter          $q
-     * @param int|null        $limit
-     * @param int|null        $offset
-     * @return string
-     */
     protected function limit(QueryParameters $params, Quoter $q, int $limit = null, int $offset = null): string
     {
         if ($limit === null && $offset === null) {

@@ -25,24 +25,16 @@ class Parameter implements ParameterInterface
     public const DETECT_TYPE = 900888;
 
     /** @var mixed|array */
-    private $value;
+    private mixed $value;
 
-    /** @var int */
-    private $type = PDO::PARAM_STR;
+    private int $type = PDO::PARAM_STR;
 
-    /**
-     * @param mixed $value
-     * @param int   $type
-     */
-    public function __construct($value, int $type = self::DETECT_TYPE)
+    public function __construct(mixed $value, int $type = self::DETECT_TYPE)
     {
         $this->setValue($value, $type);
     }
 
-    /**
-     * @return array
-     */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         return [
             'value' => $this->value,
@@ -52,19 +44,13 @@ class Parameter implements ParameterInterface
 
     /**
      * Parameter type.
-     *
-     * @return int
      */
     public function getType(): int
     {
         return $this->type;
     }
 
-    /**
-     * @param mixed $value
-     * @param int   $type
-     */
-    public function setValue($value, int $type = self::DETECT_TYPE): void
+    public function setValue(mixed $value, int $type = self::DETECT_TYPE): void
     {
         $this->value = $value;
 
@@ -80,10 +66,7 @@ class Parameter implements ParameterInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getValue()
+    public function getValue(): mixed
     {
         if ($this->value instanceof ValueInterface) {
             return $this->value->rawValue();
@@ -92,38 +75,23 @@ class Parameter implements ParameterInterface
         return $this->value;
     }
 
-    /**
-     * @return bool
-     */
     public function isArray(): bool
     {
-        return is_array($this->value);
+        return \is_array($this->value);
     }
 
-    /**
-     * @return bool
-     */
     public function isNull(): bool
     {
         return $this->value === null;
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @return int
-     */
-    private function detectType($value): int
+    private function detectType(mixed $value): int
     {
-        switch (gettype($value)) {
-            case 'boolean':
-                return PDO::PARAM_BOOL;
-            case 'integer':
-                return PDO::PARAM_INT;
-            case 'NULL':
-                return PDO::PARAM_NULL;
-            default:
-                return PDO::PARAM_STR;
-        }
+        return match (gettype($value)) {
+            'boolean' => PDO::PARAM_BOOL,
+            'integer' => PDO::PARAM_INT,
+            'NULL' => PDO::PARAM_NULL,
+            default => PDO::PARAM_STR
+        };
     }
 }

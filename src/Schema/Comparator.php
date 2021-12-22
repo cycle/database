@@ -16,25 +16,12 @@ namespace Cycle\Database\Schema;
  */
 final class Comparator implements ComparatorInterface
 {
-    /** @var State */
-    private $initial;
-
-    /** @var State */
-    private $current;
-
-    /**
-     * @param State $initial
-     * @param State $current
-     */
-    public function __construct(State $initial, State $current)
-    {
-        $this->initial = $initial;
-        $this->current = $current;
+    public function __construct(
+        private State $initial,
+        private State $current
+    ) {
     }
 
-    /**
-     * @return bool
-     */
     public function hasChanges(): bool
     {
         if ($this->isRenamed()) {
@@ -60,17 +47,11 @@ final class Comparator implements ComparatorInterface
         return array_sum($difference) !== 0;
     }
 
-    /**
-     * @return bool
-     */
     public function isRenamed(): bool
     {
         return $this->current->getName() !== $this->initial->getName();
     }
 
-    /**
-     * @return bool
-     */
     public function isPrimaryChanged(): bool
     {
         return $this->current->getPrimaryKeys() !== $this->initial->getPrimaryKeys();
@@ -112,8 +93,6 @@ final class Comparator implements ComparatorInterface
 
     /**
      * Returns array where each value contain current and initial element state.
-     *
-     * @return array
      */
     public function alteredColumns(): array
     {
@@ -166,8 +145,6 @@ final class Comparator implements ComparatorInterface
 
     /**
      * Returns array where each value contain current and initial element state.
-     *
-     * @return array
      */
     public function alteredIndexes(): array
     {
@@ -220,8 +197,6 @@ final class Comparator implements ComparatorInterface
 
     /**
      * Returns array where each value contain current and initial element state.
-     *
-     * @return array
      */
     public function alteredForeignKeys(): array
     {
