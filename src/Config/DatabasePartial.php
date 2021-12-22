@@ -15,6 +15,7 @@ final class DatabasePartial
 {
     /**
      * @psalm-param non-empty-string $name
+     *
      * @param string $prefix
      * @psalm-param non-empty-string $driver
      * @psalm-param non-empty-string|null $readDriver

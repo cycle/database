@@ -18,6 +18,7 @@ class ReadonlyConnectionException extends DBALException
     /**
      * @param int $code
      * @param \Throwable|null $prev
+     *
      * @return static
      */
     public static function onWriteStatementExecution(int $code = 0, \Throwable $prev = null): self

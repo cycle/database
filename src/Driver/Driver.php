@@ -242,6 +242,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * such functionality may not work in some DBMS property (Postgres).
      *
      * @param string|null $sequence Name of the sequence object from which the ID should be returned.
+     *
      * @return mixed
      */
     public function lastInsertID(string $sequence = null)

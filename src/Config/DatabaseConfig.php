@@ -20,11 +20,12 @@ final class DatabaseConfig extends InjectableConfig
 {
     use AliasTrait;
 
-    public const CONFIG           = 'database';
+    public const CONFIG = 'database';
     public const DEFAULT_DATABASE = 'default';
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $config = [
@@ -74,6 +75,7 @@ final class DatabaseConfig extends InjectableConfig
 
     /**
      * @param string $database
+     *
      * @return bool
      */
     public function hasDatabase(string $database): bool
@@ -83,9 +85,10 @@ final class DatabaseConfig extends InjectableConfig
 
     /**
      * @param string $database
-     * @return DatabasePartial
      *
      * @throws ConfigException
+     *
+     * @return DatabasePartial
      */
     public function getDatabase(string $database): DatabasePartial
     {
@@ -105,6 +108,7 @@ final class DatabaseConfig extends InjectableConfig
 
     /**
      * @param string $driver
+     *
      * @return bool
      */
     public function hasDriver(string $driver): bool
@@ -114,9 +118,10 @@ final class DatabaseConfig extends InjectableConfig
 
     /**
      * @param string $driver
-     * @return DriverInterface
      *
      * @throws ConfigException
+     *
+     * @return DriverInterface
      */
     public function getDriver(string $driver): DriverInterface
     {
@@ -133,7 +138,7 @@ final class DatabaseConfig extends InjectableConfig
         throw new \InvalidArgumentException(
             \vsprintf('Driver config must be an instance of %s, but %s passed', [
                 DriverConfig::class,
-                \get_debug_type($config)
+                \get_debug_type($config),
             ])
         );
     }

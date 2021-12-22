@@ -42,7 +42,7 @@ class UpdateQuery extends ActiveQuery
      *
      * @psalm-param non-empty-string $table Table name without prefix.
      */
-    public function in(string $table): UpdateQuery
+    public function in(string $table): self
     {
         $this->table = $table;
 
@@ -53,7 +53,7 @@ class UpdateQuery extends ActiveQuery
      * Change value set to be updated, must be represented by array of columns associated with new
      * value to be set.
      */
-    public function values(array $values): UpdateQuery
+    public function values(array $values): self
     {
         $this->values = $values;
 
@@ -62,9 +62,10 @@ class UpdateQuery extends ActiveQuery
 
     /**
      * Set update value.
+     *
      * @psalm-param non-empty-string $column
      */
-    public function set(string $column, mixed $value): UpdateQuery
+    public function set(string $column, mixed $value): self
     {
         $this->values[$column] = $value;
 
@@ -92,7 +93,7 @@ class UpdateQuery extends ActiveQuery
         return [
             'table'  => $this->table,
             'values' => $this->values,
-            'where'  => $this->whereTokens
+            'where'  => $this->whereTokens,
         ];
     }
 }

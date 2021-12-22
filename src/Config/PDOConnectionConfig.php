@@ -78,7 +78,8 @@ abstract class PDOConnectionConfig extends ConnectionConfig
     }
 
     /**
-     * @param iterable<non-empty-string|int, mixed> ...$fields
+     * @param iterable<int, mixed|non-empty-string> ...$fields
+     *
      * @return string
      */
     protected function dsn(iterable $fields): string
@@ -100,6 +101,7 @@ abstract class PDOConnectionConfig extends ConnectionConfig
 
     /**
      * @param mixed $value
+     *
      * @return string
      */
     private function dsnValueToString(mixed $value): string

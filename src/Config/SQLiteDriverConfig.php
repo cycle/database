@@ -13,7 +13,6 @@ namespace Cycle\Database\Config;
 
 use Cycle\Database\Config\SQLite\ConnectionConfig;
 use Cycle\Database\Config\SQLite\MemoryConnectionConfig;
-use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\SQLite\SQLiteDriver;
 
 /**

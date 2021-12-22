@@ -24,7 +24,7 @@ class Parameter implements ParameterInterface
      */
     public const DETECT_TYPE = 900888;
 
-    /** @var mixed|array */
+    /** @var array|mixed */
     private mixed $value;
 
     private int $type = PDO::PARAM_STR;
@@ -38,7 +38,7 @@ class Parameter implements ParameterInterface
     {
         return [
             'value' => $this->value,
-            'type'  => $this->type
+            'type'  => $this->type,
         ];
     }
 

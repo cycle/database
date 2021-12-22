@@ -46,7 +46,7 @@ class Fragment implements FragmentInterface
         return $this->fragment;
     }
 
-    public static function __set_state(array $an_array): Fragment
+    public static function __set_state(array $an_array): self
     {
         return new self(
             $an_array['fragment'] ?? $an_array['statement'],
@@ -63,7 +63,7 @@ class Fragment implements FragmentInterface
     {
         return [
             'fragment'   => $this->fragment,
-            'parameters' => $this->parameters
+            'parameters' => $this->parameters,
         ];
     }
 }

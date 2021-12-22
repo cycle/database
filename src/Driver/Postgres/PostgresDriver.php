@@ -88,9 +88,9 @@ class PostgresDriver extends Driver
      * @param string $prefix Database prefix if any.
      * @param string $table  Fully specified table name, including postfix.
      *
-     * @return string|null
-     *
      * @throws DriverException
+     *
+     * @return string|null
      */
     public function getPrimaryKey(string $prefix, string $table): ?string
     {
@@ -135,6 +135,7 @@ class PostgresDriver extends Driver
      * @link http://en.wikipedia.org/wiki/Isolation_(database_systems)
      *
      * @param string|null $isolationLevel
+     *
      * @return bool
      */
     public function beginTransaction(string $isolationLevel = null): bool
@@ -182,6 +183,7 @@ class PostgresDriver extends Driver
      * Parse the table name and extract the schema and table.
      *
      * @param  string  $name
+     *
      * @return string[]
      */
     public function parseSchemaAndTable(string $name): array

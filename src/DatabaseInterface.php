@@ -27,7 +27,7 @@ interface DatabaseInterface
 {
     // Driver types
     public const WRITE = 0;
-    public const READ  = 1;
+    public const READ = 1;
 
     /**
      * @psalm-return non-empty-string
@@ -53,6 +53,7 @@ interface DatabaseInterface
 
     /**
      * Check if table exists.
+     *
      * @psalm-param non-empty-string $name
      */
     public function hasTable(string $name): bool;
@@ -73,6 +74,7 @@ interface DatabaseInterface
      * Execute statement and return number of affected rows.
      *
      * @psalm-param non-empty-string $query
+     *
      * @param array $parameters Parameters to be binded into query.
      *
      * @throws StatementException
@@ -83,6 +85,7 @@ interface DatabaseInterface
      * Execute statement and return query iterator.
      *
      * @psalm-param non-empty-string $query
+     *
      * @param array  $parameters Parameters to be binded into query.
      *
      * @throws StatementException

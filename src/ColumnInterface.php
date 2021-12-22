@@ -19,10 +19,10 @@ interface ColumnInterface
     /**
      * PHP types for phpType() method.
      */
-    public const INT    = 'int';
-    public const BOOL   = 'bool';
+    public const INT = 'int';
+    public const BOOL = 'bool';
     public const STRING = 'string';
-    public const FLOAT  = 'float';
+    public const FLOAT = 'float';
 
     /**
      * Get element name (unquoted).

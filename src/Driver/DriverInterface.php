@@ -146,6 +146,7 @@ interface DriverInterface
 
     /**
      * Wraps PDO query method with custom representation class.
+     *
      * @psalm-param non-empty-string $statement
      *
      * @throws StatementException
@@ -154,6 +155,7 @@ interface DriverInterface
 
     /**
      * Execute query and return number of affected rows.
+     *
      * @psalm-param non-empty-string $query
      *
      * @throws StatementException
@@ -167,6 +169,7 @@ interface DriverInterface
      *
      * @param string|null $sequence Name of the sequence object from which the ID should be
      *                              returned.
+     *
      * @return mixed
      */
     public function lastInsertID(string $sequence = null);
@@ -177,7 +180,6 @@ interface DriverInterface
      *
      * @link   http://en.wikipedia.org/wiki/Database_transaction
      * @link   http://en.wikipedia.org/wiki/Isolation_(database_systems)
-     *
      *
      * @return bool True of success.
      */

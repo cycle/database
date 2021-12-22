@@ -102,7 +102,7 @@ class SQLiteColumn extends AbstractColumn
         'time'        => ['time'],
         'timestamp'   => ['timestamp'],
         'binary'      => ['blob'],
-        'string'      => ['varchar']
+        'string'      => ['varchar'],
     ];
 
     /**

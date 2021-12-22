@@ -48,7 +48,7 @@ abstract class ActiveQuery implements QueryInterface
         return [
             'queryString' => Interpolator::interpolate($queryString, $parameters->getParameters()),
             'parameters'  => $parameters->getParameters(),
-            'driver'      => $this->driver
+            'driver'      => $this->driver,
         ];
     }
 

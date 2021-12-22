@@ -25,9 +25,10 @@ trait WhereTrait
      * Simple WHERE condition with various set of arguments.
      *
      * @param mixed ...$args [(column, value), (column, operator, value)]
-     * @return self|$this
      *
      * @throws BuilderException
+     *
+     * @return $this|self
      */
     public function where(mixed ...$args): self
     {
@@ -45,9 +46,10 @@ trait WhereTrait
      * Simple AND WHERE condition with various set of arguments.
      *
      * @param mixed ...$args [(column, value), (column, operator, value)]
-     * @return self|$this
      *
      * @throws BuilderException
+     *
+     * @return $this|self
      */
     public function andWhere(mixed ...$args): self
     {
@@ -65,9 +67,10 @@ trait WhereTrait
      * Simple OR WHERE condition with various set of arguments.
      *
      * @param mixed ...$args [(column, value), (column, operator, value)]
-     * @return self|$this
      *
      * @throws BuilderException
+     *
+     * @return $this|self
      */
     public function orWhere(mixed ...$args): self
     {
@@ -85,6 +88,7 @@ trait WhereTrait
      * Convert various amount of where function arguments into valid where token.
      *
      * @psalm-param non-empty-string $boolean Boolean joiner (AND | OR).
+     *
      * @param array $params Set of parameters collected from where functions.
      * @param array $tokens Array to aggregate compiled tokens. Reference.
      * @param callable $wrapper Callback or closure used to wrap/collect every potential parameter.

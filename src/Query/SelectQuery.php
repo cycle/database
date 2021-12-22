@@ -33,20 +33,20 @@ class SelectQuery extends ActiveQuery implements
     IteratorAggregate,
     PaginableInterface
 {
-    use TokenTrait;
-    use WhereTrait;
     use HavingTrait;
     use JoinTrait;
+    use TokenTrait;
+    use WhereTrait;
 
     // sort directions
-    public const SORT_ASC  = 'ASC';
+    public const SORT_ASC = 'ASC';
     public const SORT_DESC = 'DESC';
 
     protected array $tables = [];
     protected array $unionTokens = [];
     protected bool|string|array $distinct = false;
     protected array $columns = ['*'];
-    /** @var string[][]|FragmentInterface[][] */
+    /** @var FragmentInterface[][]|string[][] */
     protected array $orderBy = [];
     protected array $groupBy = [];
     protected bool $forUpdate = false;
@@ -69,10 +69,10 @@ class SelectQuery extends ActiveQuery implements
     /**
      * Mark query to return only distinct results.
      *
-     * @param bool|string|FragmentInterface $distinct You are only allowed to use string value for
+     * @param bool|FragmentInterface|string $distinct You are only allowed to use string value for
      *                                                Postgres databases.
      */
-    public function distinct(bool|string|FragmentInterface $distinct = true): SelectQuery
+    public function distinct(bool|string|FragmentInterface $distinct = true): self
     {
         $this->distinct = $distinct;
 
@@ -83,7 +83,7 @@ class SelectQuery extends ActiveQuery implements
      * Set table names SELECT query should be performed for. Table names can be provided with
      * specified alias (AS construction).
      */
-    public function from(mixed $tables): SelectQuery
+    public function from(mixed $tables): self
     {
         $this->tables = $this->fetchIdentifiers(\func_get_args());
 
@@ -99,7 +99,7 @@ class SelectQuery extends ActiveQuery implements
      * Set columns should be fetched as result of SELECT query. Columns can be provided with
      * specified alias (AS construction).
      */
-    public function columns(mixed $columns): SelectQuery
+    public function columns(mixed $columns): self
     {
         $this->columns = $this->fetchIdentifiers(func_get_args());
 
@@ -114,7 +114,7 @@ class SelectQuery extends ActiveQuery implements
     /**
      * Select entities for the following update.
      */
-    public function forUpdate(): SelectQuery
+    public function forUpdate(): self
     {
         $this->forUpdate = true;
 
@@ -130,10 +130,10 @@ class SelectQuery extends ActiveQuery implements
      *      'name' => SelectQuery::SORT_ASC
      * ]);
      *
-     * @param string|array $expression
+     * @param array|string $expression
      * @param string       $direction Sorting direction, ASC|DESC.
      */
-    public function orderBy(string|FragmentInterface|array $expression, string $direction = self::SORT_ASC): SelectQuery
+    public function orderBy(string|FragmentInterface|array $expression, string $direction = self::SORT_ASC): self
     {
         if (!\is_array($expression)) {
             $this->addOrder($expression, $direction);
@@ -150,7 +150,7 @@ class SelectQuery extends ActiveQuery implements
     /**
      * Column or expression to group query by.
      */
-    public function groupBy(string|Fragment|Expression $expression): SelectQuery
+    public function groupBy(string|Fragment|Expression $expression): self
     {
         $this->groupBy[] = $expression;
 
@@ -160,7 +160,7 @@ class SelectQuery extends ActiveQuery implements
     /**
      * Add select query to be united with.
      */
-    public function union(FragmentInterface $query): SelectQuery
+    public function union(FragmentInterface $query): self
     {
         $this->unionTokens[] = ['', $query];
 
@@ -170,7 +170,7 @@ class SelectQuery extends ActiveQuery implements
     /**
      * Add select query to be united with. Duplicate values will be included in result.
      */
-    public function unionAll(FragmentInterface $query): SelectQuery
+    public function unionAll(FragmentInterface $query): self
     {
         $this->unionTokens[] = ['ALL', $query];
 
@@ -181,7 +181,7 @@ class SelectQuery extends ActiveQuery implements
      * Set selection limit. Attention, this limit value does not affect values set in paginator but
      * only changes pagination window. Set to 0 to disable limiting.
      */
-    public function limit(int $limit = null): SelectQuery
+    public function limit(int $limit = null): self
     {
         $this->limit = $limit;
 
@@ -197,7 +197,7 @@ class SelectQuery extends ActiveQuery implements
      * Set selection offset. Attention, this value does not affect associated paginator but only
      * changes pagination window.
      */
-    public function offset(int $offset = null): SelectQuery
+    public function offset(int $offset = null): self
     {
         $this->offset = $offset;
 
@@ -350,11 +350,12 @@ class SelectQuery extends ActiveQuery implements
     }
 
     /**
-     * @param string|FragmentInterface $field
+     * @param FragmentInterface|string $field
      * @param string                   $order Sorting direction, ASC|DESC.
-     * @return self|$this
+     *
+     * @return $this|self
      */
-    private function addOrder(string|FragmentInterface $field, string $order): SelectQuery
+    private function addOrder(string|FragmentInterface $field, string $order): self
     {
         if (!\is_string($field)) {
             $this->orderBy[] = [$field, $order];

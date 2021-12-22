@@ -43,7 +43,7 @@ class DeleteQuery extends ActiveQuery
      *
      * @psalm-param non-empty-string $into Table name without prefix.
      */
-    public function from(string $into): DeleteQuery
+    public function from(string $into): self
     {
         $this->table = $into;
 
@@ -70,7 +70,7 @@ class DeleteQuery extends ActiveQuery
     {
         return [
             'table' => $this->table,
-            'where' => $this->whereTokens
+            'where' => $this->whereTokens,
         ];
     }
 }

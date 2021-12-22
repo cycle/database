@@ -22,7 +22,7 @@ use Throwable;
  */
 final class Reflector
 {
-    public const STATE_NEW    = 1;
+    public const STATE_NEW = 1;
     public const STATE_PASSED = 2;
 
     /** @var AbstractTable[] */

@@ -39,6 +39,7 @@ class SQLServerDriver extends Driver
      *
      * @param \PDOStatement $statement
      * @param array        $parameters
+     *
      * @return \PDOStatement
      */
     protected function bindParameters(\PDOStatement $statement, iterable $parameters): \PDOStatement
