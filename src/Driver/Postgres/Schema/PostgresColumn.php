@@ -300,7 +300,7 @@ class PostgresColumn extends AbstractColumn
         }
 
         if (str_contains($column->type, 'char') && (int) $schema['character_maximum_length']) {
-            $column->size = $schema['character_maximum_length'];
+            $column->size = (int) $schema['character_maximum_length'];
         }
 
         if ($column->type === 'numeric') {
