@@ -13,5 +13,5 @@ use Cycle\Database\Tests\Functional\Driver\Common\Query\ExceptionsTest as Common
  */
 class ExceptionsTest extends CommonClass
 {
-    public const DRIVER = 'postgres_custom_pdo_options';
+    public const DRIVER = 'postgres';
 }

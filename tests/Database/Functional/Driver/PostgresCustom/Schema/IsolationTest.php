@@ -13,5 +13,5 @@ use Cycle\Database\Tests\Functional\Driver\Common\Schema\IsolationTest as Common
  */
 class IsolationTest extends CommonClass
 {
-    public const DRIVER = 'postgres_custom_pdo_options';
+    public const DRIVER = 'postgres';
 }

@@ -13,5 +13,5 @@ use Cycle\Database\Tests\Functional\Driver\Common\Query\UpdateQueryTest as Commo
  */
 class UpdateQueryTest extends CommonClass
 {
-    public const DRIVER = 'postgres_custom_pdo_options';
+    public const DRIVER = 'postgres';
 }

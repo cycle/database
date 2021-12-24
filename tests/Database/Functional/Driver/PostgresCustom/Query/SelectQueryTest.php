@@ -13,5 +13,5 @@ use Cycle\Database\Tests\Functional\Driver\Common\Query\SelectQueryTest as Commo
  */
 class SelectQueryTest extends CommonClass
 {
-    public const DRIVER = 'postgres_custom_pdo_options';
+    public const DRIVER = 'postgres';
 }
