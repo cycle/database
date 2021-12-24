@@ -3,9 +3,6 @@
     "type": "library",
     "description": "DBAL, schema introspection, migration and pagination",
     "license": "MIT",
-    "replace": {
-        "spiral/database": "^2.0"
-    },
     "require": {
         "php": ">=8.0",
         "ext-pdo": "*",
