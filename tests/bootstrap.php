@@ -39,6 +39,34 @@ $drivers = [
         schema: 'public',
         queryCache: true,
     ),
+    'postgres_custom_pdo_options' => new Database\Config\PostgresDriverConfig(
+        connection: new Database\Config\Postgres\TcpConnectionConfig(
+            database: 'spiral',
+            host: '127.0.0.1',
+            port: 15432,
+            user: 'postgres',
+            password: 'postgres',
+            options: [
+                /**
+                 * Native PostgreSQL prepared statements are very permissive
+                 * when it comes to data types, especially booleans.
+                 * Emulating prepares on PHP side will help us catch bugs with data types
+                 */
+                PDO::ATTR_EMULATE_PREPARES => true,
+                /**
+                 * Stringify fetches will return everything as string,
+                 * so e.g. decimal/numeric type will not be converted to float, thus losing the precision
+                 * and letting users handle it differently.
+                 *
+                 * As a result, int is also returned as string, so we need to make sure
+                 * that we're properly casting schema information details.
+                 */
+                PDO::ATTR_STRINGIFY_FETCHES => true,
+            ],
+        ),
+        schema: 'public',
+        queryCache: true,
+    ),
     'sqlserver' => new Database\Config\SQLServerDriverConfig(
         connection: new Database\Config\SQLServer\TcpConnectionConfig(
             database: 'tempdb',
