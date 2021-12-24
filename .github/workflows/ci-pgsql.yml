@@ -94,6 +94,6 @@ jobs:
 
       - name: Run pgsql tests with custom PDO options with phpunit
         env:
-          DB: postgres
+          DB: postgres_custom_pdo_options
           POSTGRES: ${{ matrix.pgsql-version }}
         run: vendor/bin/phpunit --group driver-postgres_custom_pdo_options --colors=always
