@@ -28,6 +28,10 @@ $databases = [
         'namespace' => 'Cycle\Database\Tests\Functional\Driver\Postgres',
         'directory' => __DIR__ . '/Database/Functional/Driver/Postgres/',
     ],
+    'postgres_custom_pdo_options' => [
+        'namespace' => 'Cycle\Database\Tests\Functional\Driver\PostgresCustom',
+        'directory' => __DIR__ . '/Database/Functional/Driver/PostgresCustom/',
+    ],
     'sqlserver' => [
         'namespace' => 'Cycle\Database\Tests\Functional\Driver\SQLServer',
         'directory' => __DIR__ . '/Database/Functional/Driver/SQLServer/',
