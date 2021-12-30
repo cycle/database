@@ -120,16 +120,17 @@ class PostgresTable extends AbstractTable
     {
         [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
 
-        $query = 'SELECT * FROM pg_indexes WHERE schemaname = ? AND tablename = ?';
+        $query = <<<SQL
+            SELECT i.indexname, i.indexdef, c.contype FROM pg_indexes i
+            LEFT JOIN pg_constraint c
+                ON c.conname = i.indexname
+                AND c.connamespace = (SELECT oid FROM pg_namespace WHERE nspname = ?)
+            WHERE i.schemaname = ? AND tablename = ?
+            SQL;
 
         $result = [];
-        foreach ($this->driver->query($query, [$tableSchema, $tableName]) as $schema) {
-            $conType = $this->driver->query(
-                'SELECT contype FROM pg_constraint WHERE conname = ?',
-                [$schema['indexname']]
-            )->fetchColumn();
-
-            if ($conType === 'p') {
+        foreach ($this->driver->query($query, [$tableSchema, $tableSchema, $tableName]) as $schema) {
+            if ($schema['contype'] === 'p') {
                 //Skipping primary keys
                 continue;
             }
@@ -186,15 +187,16 @@ class PostgresTable extends AbstractTable
     {
         [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
 
-        $query = 'SELECT * FROM pg_indexes WHERE schemaname = ? AND tablename = ?';
+        $query = <<<SQL
+            SELECT i.indexname, i.indexdef, c.contype FROM pg_indexes i
+            LEFT JOIN pg_constraint c
+                ON c.conname = i.indexname
+                AND c.connamespace = (SELECT oid FROM pg_namespace WHERE nspname = ?)
+            WHERE i.schemaname = ? AND tablename = ?
+            SQL;
 
-        foreach ($this->driver->query($query, [$tableSchema, $tableName]) as $schema) {
-            $conType = $this->driver->query(
-                'SELECT contype FROM pg_constraint WHERE conname = ?',
-                [$schema['indexname']]
-            )->fetchColumn();
-
-            if ($conType !== 'p') {
+        foreach ($this->driver->query($query, [$tableSchema, $tableSchema, $tableName]) as $schema) {
+            if ($schema['contype'] !== 'p') {
                 //Skipping primary keys
                 continue;
             }
