@@ -9,6 +9,7 @@
     "require": {
         "php": ">=8.0",
         "ext-pdo": "*",
+        "psr/log": "^1.0",
         "spiral/core": "^2.9",
         "spiral/pagination": "^2.9"
     },
@@ -50,3 +51,4 @@
     "minimum-stability": "dev",
     "prefer-stable": true
 }
+
