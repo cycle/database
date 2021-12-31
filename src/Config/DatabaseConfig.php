@@ -11,10 +11,11 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Config;
 
-use Spiral\Core\InjectableConfig;
-use Spiral\Core\Traits\Config\AliasTrait;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Exception\ConfigException;
+use Cycle\Database\NamedInterface;
+use Spiral\Core\InjectableConfig;
+use Spiral\Core\Traits\Config\AliasTrait;
 
 final class DatabaseConfig extends InjectableConfig
 {
@@ -132,7 +133,13 @@ final class DatabaseConfig extends InjectableConfig
         $config = $this->config['connections'][$driver] ?? $this->config['drivers'][$driver];
 
         if ($config instanceof DriverConfig) {
-            return $config->driver::create($config);
+            $driverObject = $config->driver::create($config);
+
+            if ($driverObject instanceof NamedInterface) {
+                return $driverObject->withName($driver);
+            }
+
+            return $driverObject;
         }
 
         throw new \InvalidArgumentException(

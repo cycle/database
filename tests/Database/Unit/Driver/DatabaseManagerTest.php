@@ -27,6 +27,25 @@ class DatabaseManagerTest extends TestCase
         $this->logger = $this->createMock(LoggerInterface::class);
     }
 
+    public function testDriverShouldHaveNameIfITHasNamedInterface()
+    {
+        $manager = new DatabaseManager(
+            new DatabaseConfig([
+                'connections' => [
+                    'driver_without_name' => new SQLiteDriverConfig(
+                        driver: TestDriver::class
+                    ),
+                    'driver_with_name' => new SQLiteDriverConfig(),
+                ],
+            ])
+        );
+
+        $this->assertSame(
+            'driver_with_name',
+            $manager->driver('driver_with_name')->getName()
+        );
+    }
+
     public function testSetsLoggerShouldPassLoggerToDrivers()
     {
         $manager = new DatabaseManager(
