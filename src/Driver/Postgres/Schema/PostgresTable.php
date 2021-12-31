@@ -120,20 +120,23 @@ class PostgresTable extends AbstractTable
     {
         [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
 
-        $query = 'SELECT * FROM pg_indexes WHERE schemaname = ? AND tablename = ?';
+        $query = <<<SQL
+            SELECT i.indexname, i.indexdef, c.contype
+            FROM pg_indexes i
+            LEFT JOIN pg_namespace ns
+                ON nspname = i.schemaname
+            LEFT JOIN pg_constraint c
+                ON c.conname = i.indexname
+                AND c.connamespace = ns.oid
+            WHERE i.schemaname = ? AND i.tablename = ?
+            SQL;
 
         $result = [];
         foreach ($this->driver->query($query, [$tableSchema, $tableName]) as $schema) {
-            $conType = $this->driver->query(
-                'SELECT contype FROM pg_constraint WHERE conname = ?',
-                [$schema['indexname']]
-            )->fetchColumn();
-
-            if ($conType === 'p') {
+            if ($schema['contype'] === 'p') {
                 //Skipping primary keys
                 continue;
             }
-
             $result[] = PostgresIndex::createInstance($tableSchema . '.' . $tableName, $schema);
         }
 
@@ -186,19 +189,19 @@ class PostgresTable extends AbstractTable
     {
         [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
 
-        $query = 'SELECT * FROM pg_indexes WHERE schemaname = ? AND tablename = ?';
+        $query = <<<SQL
+            SELECT i.indexname, i.indexdef, c.contype
+            FROM pg_indexes i
+            INNER JOIN pg_namespace ns
+                ON nspname = i.schemaname
+            INNER JOIN pg_constraint c
+                ON c.conname = i.indexname
+                AND c.connamespace = ns.oid
+            WHERE i.schemaname = ? AND i.tablename = ?
+              AND c.contype = 'p'
+            SQL;
 
         foreach ($this->driver->query($query, [$tableSchema, $tableName]) as $schema) {
-            $conType = $this->driver->query(
-                'SELECT contype FROM pg_constraint WHERE conname = ?',
-                [$schema['indexname']]
-            )->fetchColumn();
-
-            if ($conType !== 'p') {
-                //Skipping primary keys
-                continue;
-            }
-
             //To simplify definitions
             $index = PostgresIndex::createInstance($tableSchema . '.' . $tableName, $schema);
 
