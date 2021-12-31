@@ -28,7 +28,7 @@ abstract class BaseTest extends TestCase
 
     public static array $config;
     protected Database $database;
-    protected static array $memoizedDrivers = [];
+    private static array $memoizedDrivers = [];
 
     public function setUp(): void
     {
