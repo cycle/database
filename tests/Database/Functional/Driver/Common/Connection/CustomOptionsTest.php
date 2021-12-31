@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Functional\Driver\Common\Connection;
 
 use Cycle\Database\Driver\Handler;
-use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
@@ -38,41 +37,6 @@ abstract class CustomOptionsTest extends BaseTest
         parent::setUp();
     }
 
-    public function testNativeEnums(): void
-    {
-        $driver = $this->database->getDriver();
-        try {
-            $driver->execute("CREATE TYPE mood AS ENUM ('sad', 'ok', 'happy');");
-        } catch (StatementException $e) {
-        }
-
-        try {
-            $driver->execute(
-                'CREATE TABLE person (
-    name text,
-    current_mood mood
-);'
-            );
-        } catch (StatementException $e) {
-        }
-
-        $schema = $driver->getSchema('person');
-        $this->assertSame('enum', $schema->column('current_mood')->getAbstractType());
-        $this->assertSame(['sad', 'ok', 'happy'], $schema->column('current_mood')->getEnumValues());
-
-        // convert to internal type
-        $schema->save();
-
-        $schema = $driver->getSchema('person');
-        $schema->column('current_mood')->enum(['angry', 'happy']);
-        $schema->save();
-
-        $this->assertSameAsInDB($schema);
-
-        $driver->execute('DROP TABLE person');
-        $driver->execute('DROP TYPE mood');
-    }
-
     public function testDecimalSizes(): void
     {
         $schema = $this->sampleSchema('table');
@@ -87,29 +51,6 @@ abstract class CustomOptionsTest extends BaseTest
 
         $this->assertIsArray($schema->decimal('double_2', 10, 1)->__debugInfo());
     }
-
-    // public function testCreateAndDrop(): void
-    // {
-    //     $schema = $this->schema('table');
-    //     $this->assertFalse($schema->exists());
-    //
-    //     $schema->primary('id');
-    //     $schema->save();
-    //
-    //     $this->assertSame('public.table', $schema->column('id')->getTable());
-    //
-    //     $this->assertTrue($schema->exists());
-    //
-    //     $schema->declareDropped();
-    //     $schema->save();
-    //
-    //     $schema = $this->schema('table');
-    //     $this->assertFalse($schema->exists());
-    // }
-
-
-
-
 
     public function sampleSchema(string $table): AbstractTable
     {
