@@ -17,27 +17,18 @@ $tokenizer = new Tokenizer\Tokenizer(new Tokenizer\Config\TokenizerConfig([
 
 $databases = [
     'sqlite' => [
-        'driver' => 'sqlite',
         'namespace' => 'Cycle\Database\Tests\Functional\Driver\SQLite',
         'directory' => __DIR__ . '/Database/Functional/Driver/SQLite/',
     ],
     'mysql' => [
-        'driver' => 'mysql',
         'namespace' => 'Cycle\Database\Tests\Functional\Driver\MySQL',
         'directory' => __DIR__ . '/Database/Functional/Driver/MySQL/',
     ],
     'postgres' => [
-        'driver' => 'postgres',
         'namespace' => 'Cycle\Database\Tests\Functional\Driver\Postgres',
         'directory' => __DIR__ . '/Database/Functional/Driver/Postgres/',
     ],
-    'postgres_custom_pdo_options' => [
-        'driver' => 'postgres',
-        'namespace' => 'Cycle\Database\Tests\Functional\Driver\PostgresCustom',
-        'directory' => __DIR__ . '/Database/Functional/Driver/PostgresCustom/',
-    ],
     'sqlserver' => [
-        'driver' => 'sqlserver',
         'namespace' => 'Cycle\Database\Tests\Functional\Driver\SQLServer',
         'directory' => __DIR__ . '/Database/Functional/Driver/SQLServer/',
     ],
@@ -116,7 +107,7 @@ PHP,
                 $class->getName(),
                 $driver,
                 $class->getShortName(),
-                $details['driver'],
+                $driver
             )
         );
     }
