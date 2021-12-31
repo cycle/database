@@ -17,12 +17,6 @@ abstract class CustomOptionsTest extends BaseTest
         $this->database = $this->db(connectionConfig: [
             'options' => [
                 /**
-                 * Native PostgreSQL prepared statements are very permissive
-                 * when it comes to data types, especially booleans.
-                 * Emulating prepares on PHP side will help us catch bugs with data types
-                 */
-                PDO::ATTR_EMULATE_PREPARES => true,
-                /**
                  * Stringify fetches will return everything as string,
                  * so e.g. decimal/numeric type will not be converted to float, thus losing the precision
                  * and letting users handle it differently.
