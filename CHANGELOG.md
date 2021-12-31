@@ -2,11 +2,11 @@
 
 v2.1.0 (31.12.2021)
 --------------------
-* Add `psr/log` dependency by @thgs (#35)
-* Add ability to get/set driver name by @butschster (#38)
-* Optimize fetching indexes and primary keys in Postgres driver by @hustlahusky (#37)
-* Fix type casting for column size value in the PG Column class by @rauanmayemir (#34)
-* Downgrade spiral dependencies to stable by @roxblnfk (#40)
+- Add `psr/log` dependency by @thgs (#35)
+- Add ability to get/set driver name by @butschster (#38)
+- Optimize fetching indexes and primary keys in Postgres driver by @hustlahusky (#37)
+- Fix type casting for column size value in the PG Column class by @rauanmayemir (#34)
+- Downgrade spiral dependencies to stable by @roxblnfk (#40)
 
 v2.0.0 (22.12.2021)
 --------------------
