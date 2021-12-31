@@ -17,7 +17,6 @@ use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\Schema\Comparator;
 use Cycle\Database\Tests\Traits\Loggable;
 use Cycle\Database\Tests\Traits\TableAssertions;
-use PDO;
 use PHPUnit\Framework\TestCase;
 
 abstract class BaseTest extends TestCase
