@@ -17,6 +17,7 @@ use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\Schema\Comparator;
 use Cycle\Database\Tests\Traits\Loggable;
 use Cycle\Database\Tests\Traits\TableAssertions;
+use PDO;
 use PHPUnit\Framework\TestCase;
 
 abstract class BaseTest extends TestCase
@@ -58,7 +59,7 @@ abstract class BaseTest extends TestCase
             assert($config instanceof DriverConfig);
 
             $this->applyDriverOptions($config, $driverConfig);
-            $this->applyConnectionOptions($config->connection, $connectionConfig);
+            $config->connection = $this->applyConnectionOptions($config->connection, $connectionConfig);
 
             $driver = $config->driver::create($config);
 
@@ -70,11 +71,16 @@ abstract class BaseTest extends TestCase
         return self::$memoizedDrivers[$hash];
     }
 
-    private function applyConnectionOptions(ConnectionConfig $config, array $options): void
+    private function applyConnectionOptions(ConnectionConfig $config, array $options): ConnectionConfig
     {
+        if ($options === []) {
+            return $config;
+        }
+        $config = clone $config;
         foreach ($options as $key => $value) {
             $config->$key = $value;
         }
+        return $config;
     }
 
     private function applyDriverOptions(DriverConfig $config, array $options): void
