@@ -121,20 +121,22 @@ class PostgresTable extends AbstractTable
         [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
 
         $query = <<<SQL
-            SELECT i.indexname, i.indexdef, c.contype FROM pg_indexes i
+            SELECT i.indexname, i.indexdef, c.contype
+            FROM pg_indexes i
+            LEFT JOIN pg_namespace ns
+                ON nspname = i.schemaname
             LEFT JOIN pg_constraint c
                 ON c.conname = i.indexname
-                AND c.connamespace = (SELECT oid FROM pg_namespace WHERE nspname = ?)
-            WHERE i.schemaname = ? AND tablename = ?
+                AND c.connamespace = ns.oid
+            WHERE i.schemaname = ? AND i.tablename = ?
             SQL;
 
         $result = [];
-        foreach ($this->driver->query($query, [$tableSchema, $tableSchema, $tableName]) as $schema) {
+        foreach ($this->driver->query($query, [$tableSchema, $tableName]) as $schema) {
             if ($schema['contype'] === 'p') {
                 //Skipping primary keys
                 continue;
             }
-
             $result[] = PostgresIndex::createInstance($tableSchema . '.' . $tableName, $schema);
         }
 
@@ -188,19 +190,18 @@ class PostgresTable extends AbstractTable
         [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
 
         $query = <<<SQL
-            SELECT i.indexname, i.indexdef, c.contype FROM pg_indexes i
-            LEFT JOIN pg_constraint c
+            SELECT i.indexname, i.indexdef, c.contype
+            FROM pg_indexes i
+            INNER JOIN pg_namespace ns
+                ON nspname = i.schemaname
+            INNER JOIN pg_constraint c
                 ON c.conname = i.indexname
-                AND c.connamespace = (SELECT oid FROM pg_namespace WHERE nspname = ?)
-            WHERE i.schemaname = ? AND tablename = ?
+                AND c.connamespace = ns.oid
+            WHERE i.schemaname = ? AND i.tablename = ?
+              AND c.contype = 'p'
             SQL;
 
-        foreach ($this->driver->query($query, [$tableSchema, $tableSchema, $tableName]) as $schema) {
-            if ($schema['contype'] !== 'p') {
-                //Skipping primary keys
-                continue;
-            }
-
+        foreach ($this->driver->query($query, [$tableSchema, $tableName]) as $schema) {
             //To simplify definitions
             $index = PostgresIndex::createInstance($tableSchema . '.' . $tableName, $schema);
 
