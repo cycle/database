@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Functional\Driver\Common;
 
+use Cycle\Database\Config\ConnectionConfig;
 use Cycle\Database\Config\DriverConfig;
-use Cycle\Database\Driver\DriverInterface;
-use Cycle\Database\Tests\Traits\Loggable;
-use Cycle\Database\Tests\Traits\TableAssertions;
-use PHPUnit\Framework\TestCase;
 use Cycle\Database\Database;
+use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\Handler;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Injection\ParameterInterface;
@@ -17,6 +15,9 @@ use Cycle\Database\Query\ActiveQuery;
 use Cycle\Database\Query\QueryParameters;
 use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\Schema\Comparator;
+use Cycle\Database\Tests\Traits\Loggable;
+use Cycle\Database\Tests\Traits\TableAssertions;
+use PHPUnit\Framework\TestCase;
 
 abstract class BaseTest extends TestCase
 {
@@ -27,7 +28,7 @@ abstract class BaseTest extends TestCase
 
     public static array $config;
     protected Database $database;
-    private static array $memoizedDrivers = [];
+    protected static array $memoizedDrivers = [];
 
     public function setUp(): void
     {
@@ -35,7 +36,7 @@ abstract class BaseTest extends TestCase
             $this->enableProfiling();
         }
 
-        $this->database = $this->db();
+        $this->database ??= $this->db();
     }
 
     public function tearDown(): void
@@ -44,22 +45,20 @@ abstract class BaseTest extends TestCase
     }
 
     /**
-     * @param array{readonly: bool} $options
+     * @param array{readonly: bool} $driverConfig
      *
      * @return DriverInterface
      */
-    private function getDriver(array $options = []): DriverInterface
+    private function getDriver(array $driverConfig = [], array $connectionConfig = []): DriverInterface
     {
-        $hash = \hash('crc32', static::DRIVER . ':' . \json_encode($options));
+        $hash = \hash('crc32', static::DRIVER . ':' . \json_encode($driverConfig) . \json_encode($connectionConfig));
 
         if (! isset(self::$memoizedDrivers[$hash])) {
-            /** @var DriverConfig $config */
             $config = clone self::$config[static::DRIVER];
+            assert($config instanceof DriverConfig);
 
-            // Add readonly options support
-            if (isset($options['readonly']) && $options['readonly'] === true) {
-                $config->readonly = true;
-            }
+            $this->applyDriverOptions($config, $driverConfig);
+            $this->applyConnectionOptions($config->connection, $connectionConfig);
 
             $driver = $config->driver::create($config);
 
@@ -71,16 +70,34 @@ abstract class BaseTest extends TestCase
         return self::$memoizedDrivers[$hash];
     }
 
-    /**
-     * @param string $name
-     * @param string $prefix
-     * @param array{readonly: bool} $config
-     *
-     * @return Database|null When non empty null will be given, for safety, for science.
-     */
-    protected function db(string $name = 'default', string $prefix = '', array $config = []): Database
+    private function applyConnectionOptions(ConnectionConfig $config, array $options): void
     {
-        return new Database($name, $prefix, $this->getDriver($config));
+        foreach ($options as $key => $value) {
+            $config->$key = $value;
+        }
+    }
+
+    private function applyDriverOptions(DriverConfig $config, array $options): void
+    {
+        // Add readonly options support
+        if (isset($options['readonly']) && $options['readonly'] === true) {
+            $config->readonly = true;
+        }
+    }
+
+    /**
+     * @param array{readonly: bool} $driverConfig
+     * @param array $connectionConfig
+     *
+     * @return Database
+     */
+    protected function db(
+        string $name = 'default',
+        string $prefix = '',
+        array $driverConfig = [],
+        array $connectionConfig = []
+    ): Database {
+        return new Database($name, $prefix, $this->getDriver($driverConfig, $connectionConfig));
     }
 
     /**
