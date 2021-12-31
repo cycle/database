@@ -18,6 +18,7 @@ use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\ReadonlyConnectionException;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Injection\ParameterInterface;
+use Cycle\Database\NamedInterface;
 use Cycle\Database\Query\BuilderInterface;
 use Cycle\Database\Query\Interpolator;
 use Cycle\Database\StatementInterface;
@@ -33,7 +34,7 @@ use Throwable;
 /**
  * Provides low level abstraction at top of
  */
-abstract class Driver implements DriverInterface, LoggerAwareInterface
+abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
@@ -50,6 +51,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
 
     /** @var PDOStatement[] */
     protected array $queryCache = [];
+    private ?string $name = null;
 
     protected function __construct(
         protected DriverConfig $config,
@@ -67,6 +69,24 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         if ($this->config->readonlySchema) {
             $this->schemaHandler = new ReadonlyHandler($this->schemaHandler);
         }
+    }
+
+    /**
+     * @param non-empty-string $name
+     *
+     * @internal
+     */
+    public function withName(string $name): static
+    {
+        $driver = clone $this;
+        $driver->name = $name;
+
+        return $driver;
+    }
+
+    public function getName(): string
+    {
+        return $this->name ?? throw new \RuntimeException('Driver name is not defined.');
     }
 
     public function isReadonly(): bool
