@@ -145,6 +145,13 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
         };
     }
 
+    public function __clone(): void
+    {
+        if ($this->pdo !== null) {
+            throw new \RuntimeException('Can\'t clone connected driver.');
+        }
+    }
+
     /**
      * Get driver source database or file name.
      *
@@ -400,6 +407,11 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
         return true;
     }
 
+    public function getTransactionLevel(): int
+    {
+        return $this->transactionLevel;
+    }
+
     /**
      * @psalm-param non-empty-string $identifier
      */
@@ -635,10 +647,5 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
         }
 
         return $context;
-    }
-
-    public function getTransactionLevel(): int
-    {
-        return $this->transactionLevel;
     }
 }
