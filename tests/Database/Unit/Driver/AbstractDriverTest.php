@@ -6,6 +6,7 @@ namespace Cycle\Database\Tests\Unit\Driver;
 
 use Cycle\Database\Config\SQLiteDriverConfig;
 use Cycle\Database\Driver\Driver;
+use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\HandlerInterface;
 use Cycle\Database\Query\BuilderInterface;
 use Mockery as m;
@@ -59,7 +60,39 @@ class AbstractDriverTest extends TestCase
         $driver->getSchemaHandler()->shouldReceive('withDriver')->once();
         $driver->getQueryBuilder()->shouldReceive('withDriver')->once();
 
-        $driver = $driver->withName('test');
-        $this->assertSame('test', $driver->getName());
+        $newDriver = $driver->withName('test');
+        $this->assertSame('test', $newDriver->getName());
+
+        $this->checkImmutability($driver, $newDriver);
+    }
+
+    public function testClone()
+    {
+        $handler = m::mock(HandlerInterface::class);
+        $builder = m::mock(BuilderInterface::class);
+
+        $handler->shouldReceive('withDriver')->once();
+        $builder->shouldReceive('withDriver')->once();
+
+        $driver = TestDriver::createWith(
+            new SQLiteDriverConfig(),
+            $handler,
+            $builder
+        );
+
+        $driver->getSchemaHandler()->shouldReceive('withDriver')->once();
+        $driver->getQueryBuilder()->shouldReceive('withDriver')->once();
+
+        $newDriver = clone $driver;
+
+        $this->checkImmutability($driver, $newDriver);
+    }
+
+    private function checkImmutability(DriverInterface $driver, DriverInterface $newDriver): void
+    {
+        // Immutability
+        $this->assertNotSame($driver, $newDriver);
+        $this->assertNotSame($driver->getSchemaHandler(), $newDriver->getSchemaHandler());
+        $this->assertNotSame($driver->getQueryBuilder(), $newDriver->getQueryBuilder());
     }
 }
