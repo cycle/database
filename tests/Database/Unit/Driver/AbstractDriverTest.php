@@ -6,7 +6,6 @@ namespace Cycle\Database\Tests\Unit\Driver;
 
 use Cycle\Database\Config\SQLiteDriverConfig;
 use Cycle\Database\Driver\Driver;
-use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\HandlerInterface;
 use Cycle\Database\Query\BuilderInterface;
 use Mockery as m;
