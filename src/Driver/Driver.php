@@ -73,6 +73,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
 
     /**
      * @param non-empty-string $name
+     *
      * @internal
      */
     public function withName(string $name): static
