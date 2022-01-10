@@ -145,6 +145,12 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
         };
     }
 
+    public function __clone()
+    {
+        $this->schemaHandler = $this->schemaHandler->withDriver($this);
+        $this->queryBuilder = $this->queryBuilder->withDriver($this);
+    }
+
     /**
      * Get driver source database or file name.
      *
@@ -271,6 +277,11 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
         $this->logger?->debug("Insert ID: {$result}");
 
         return $result;
+    }
+
+    public function getTransactionLevel(): int
+    {
+        return $this->transactionLevel;
     }
 
     /**
@@ -635,10 +646,5 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
         }
 
         return $context;
-    }
-
-    public function getTransactionLevel(): int
-    {
-        return $this->transactionLevel;
     }
 }
