@@ -6,9 +6,11 @@ namespace Cycle\Database\Tests\Unit\Driver;
 
 use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Driver\Driver;
+use Cycle\Database\Driver\HandlerInterface;
 use Cycle\Database\Driver\SQLite\SQLiteCompiler;
 use Cycle\Database\Driver\SQLite\SQLiteHandler;
 use Cycle\Database\Exception\StatementException;
+use Cycle\Database\Query\BuilderInterface;
 use Cycle\Database\Query\QueryBuilder;
 
 class TestDriver extends Driver
@@ -30,6 +32,19 @@ class TestDriver extends Driver
             new SQLiteHandler(),
             new SQLiteCompiler('""'),
             QueryBuilder::defaultBuilder()
+        );
+    }
+
+    public static function createWith(
+        DriverConfig $config,
+        HandlerInterface $handler,
+        BuilderInterface $builder
+    ): Driver {
+        return new self(
+            $config,
+            $handler,
+            new SQLiteCompiler('""'),
+            $builder
         );
     }
 }
