@@ -130,7 +130,7 @@ class SelectQuery extends ActiveQuery implements
      *      'name' => SelectQuery::SORT_ASC
      * ]);
      *
-     * @param string  $direction Sorting direction, ASC|DESC.
+     * @param 'ASC'|'DESC' $direction Sorting direction
      */
     public function orderBy(string|FragmentInterface|array $expression, string $direction = self::SORT_ASC): self
     {
