@@ -642,7 +642,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
         return $context;
     }
 
-    public function __clone(): void
+    public function __clone()
     {
         $this->schemaHandler = $this->schemaHandler->withDriver($this);
         $this->queryBuilder = $this->queryBuilder->withDriver($this);
