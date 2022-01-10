@@ -272,6 +272,11 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
         return $result;
     }
 
+    public function getTransactionLevel(): int
+    {
+        return $this->transactionLevel;
+    }
+
     /**
      * Start SQL transaction with specified isolation level (not all DBMS support it). Nested
      * transactions are processed using savepoints.
@@ -636,8 +641,9 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
         return $context;
     }
 
-    public function getTransactionLevel(): int
+    public function __clone(): void
     {
-        return $this->transactionLevel;
+        $this->schemaHandler = $this->schemaHandler->withDriver($this);
+        $this->queryBuilder = $this->queryBuilder->withDriver($this);
     }
 }
