@@ -1,7 +1,12 @@
 # CHANGELOG
 
+v2.1.1 (12.01.2022)
+-------------------
+- Fix phpdoc for the `SelectQuery::orderBy` method by @butschster (#45)
+- Fix problem with driver cloning by @butschster (#44)
+
 v2.1.0 (31.12.2021)
---------------------
+-------------------
 - Add `psr/log` dependency by @thgs (#35)
 - Add ability to get/set driver name by @butschster (#38)
 - Optimize fetching indexes and primary keys in Postgres driver by @hustlahusky (#37)
@@ -9,7 +14,7 @@ v2.1.0 (31.12.2021)
 - Downgrade spiral dependencies to stable by @roxblnfk (#40)
 
 v2.0.0 (22.12.2021)
---------------------
+-------------------
 - The package moved from `spiral/database` to `cycle/database`
 - Namespace `Spiral\Database` replaced with `Cycle\Database` @butschster (#1)
 - Minimal PHP version is 8.0 (#26, #31)
