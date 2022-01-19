@@ -27,8 +27,8 @@ use Throwable;
  */
 class PostgresInsertQuery extends InsertQuery implements ReturningInterface
 {
-    /** @var PostgresDriver */
-    protected DriverInterface $driver;
+    /** @var PostgresDriver|null */
+    protected ?DriverInterface $driver = null;
 
     protected ?string $returning = null;
 

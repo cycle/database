@@ -19,6 +19,8 @@ use Throwable;
 /**
  * QueryBuilder classes generate set of control tokens for query compilers, this is query level
  * abstraction.
+ *
+ * @internal
  */
 abstract class ActiveQuery implements QueryInterface
 {
