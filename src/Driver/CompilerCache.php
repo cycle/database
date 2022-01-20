@@ -151,6 +151,8 @@ final class CompilerCache implements CompilerInterface
             $hash .= $table;
         }
 
+        $hash .= $this->hashColumns($params, $tokens['columns']);
+
         foreach ($tokens['join'] as $join) {
             $hash .= 'j' . $join['alias'] . $join['type'];
 
@@ -163,8 +165,6 @@ final class CompilerCache implements CompilerInterface
             $hash .= $join['outer'];
             $hash .= 'on' . $this->hashWhere($params, $join['on']);
         }
-
-        $hash .= $this->hashColumns($params, $tokens['columns']);
 
         if ($tokens['where'] !== []) {
             $hash .= 'w' . $this->hashWhere($params, $tokens['where']);

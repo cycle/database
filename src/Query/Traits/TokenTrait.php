@@ -31,7 +31,7 @@ trait TokenTrait
      */
     protected function registerToken(string $boolean, array $params, array &$tokens, callable $wrapper): void
     {
-        $count = count($params);
+        $count = \count($params);
         if ($count === 0) {
             // nothing to do
             return;
@@ -45,12 +45,12 @@ trait TokenTrait
             }
 
             if (\is_array($complex)) {
-                if (count($complex) === 0) {
+                if (\count($complex) === 0) {
                     // nothing to do
                     return;
                 }
 
-                if (count($complex) === 1) {
+                if (\count($complex) === 1) {
                     $this->flattenWhere(
                         $boolean === 'AND' ? CompilerInterface::TOKEN_AND : CompilerInterface::TOKEN_OR,
                         $complex,
@@ -155,7 +155,7 @@ trait TokenTrait
      *
      * @throws BuilderException
      */
-    private function flattenWhere(string $grouper, array $where, &$tokens, callable $wrapper): void
+    private function flattenWhere(string $grouper, array $where, array &$tokens, callable $wrapper): void
     {
         $boolean = ($grouper === CompilerInterface::TOKEN_AND ? 'AND' : 'OR');
 
