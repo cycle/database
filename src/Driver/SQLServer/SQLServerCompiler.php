@@ -129,8 +129,9 @@ class SQLServerCompiler extends Compiler
         foreach ($tokens['from'] as $table) {
             $tables[] = $this->name($params, $q, $table, true);
         }
-
-        $joins = $this->joins($params, $q, $tokens['join']);
+        foreach ($tokens['join'] as $join) {
+            $this->name($params, $q, $join['outer'], true);
+        }
 
         return sprintf(
             "SELECT%s %s\nFROM %s%s%s%s%s%s%s%s%s",
@@ -138,7 +139,7 @@ class SQLServerCompiler extends Compiler
             $this->columns($params, $q, $tokens['columns']),
             implode(', ', $tables),
             $this->optional(' ', $tokens['forUpdate'] ? 'WITH (UPDLOCK,ROWLOCK)' : '', ' '),
-            $this->optional(' ', $joins, ' '),
+            $this->optional(' ', $this->joins($params, $q, $tokens['join']), ' '),
             $this->optional("\nWHERE", $this->where($params, $q, $tokens['where'])),
             $this->optional("\nGROUP BY", $this->groupBy($params, $q, $tokens['groupBy']), ' '),
             $this->optional("\nHAVING", $this->where($params, $q, $tokens['having'])),

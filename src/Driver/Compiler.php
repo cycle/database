@@ -167,15 +167,16 @@ abstract class Compiler implements CompilerInterface
         foreach ($tokens['from'] as $table) {
             $tables[] = $this->name($params, $q, $table, true);
         }
-
-        $joins = $this->joins($params, $q, $tokens['join']);
+        foreach ($tokens['join'] as $join) {
+            $this->name($params, $q, $join['outer'], true);
+        }
 
         return sprintf(
             "SELECT%s %s\nFROM %s%s%s%s%s%s%s%s%s",
             $this->optional(' ', $this->distinct($params, $q, $tokens['distinct'])),
             $this->columns($params, $q, $tokens['columns']),
-            implode(', ', $tables),
-            $this->optional(' ', $joins, ' '),
+            \implode(', ', $tables),
+            $this->optional(' ', $this->joins($params, $q, $tokens['join']), ' '),
             $this->optional("\nWHERE", $this->where($params, $q, $tokens['where'])),
             $this->optional("\nGROUP BY", $this->groupBy($params, $q, $tokens['groupBy']), ' '),
             $this->optional("\nHAVING", $this->where($params, $q, $tokens['having'])),
@@ -235,14 +236,14 @@ abstract class Compiler implements CompilerInterface
             }
         }
 
-        return ltrim($statement, "\n");
+        return \ltrim($statement, "\n");
     }
 
     protected function orderBy(QueryParameters $params, Quoter $q, array $orderBy): string
     {
         $result = [];
         foreach ($orderBy as $order) {
-            $direction = strtoupper($order[1]);
+            $direction = \strtoupper($order[1]);
 
             \in_array($direction, ['ASC', 'DESC']) or throw new CompilerException(
                 'Invalid sorting direction, only ASC and DESC are allowed'
@@ -251,7 +252,7 @@ abstract class Compiler implements CompilerInterface
             $result[] = $this->name($params, $q, $order[0]) . ' ' . $direction;
         }
 
-        return implode(', ', $result);
+        return \implode(', ', $result);
     }
 
     protected function groupBy(QueryParameters $params, Quoter $q, array $groupBy): string
@@ -261,7 +262,7 @@ abstract class Compiler implements CompilerInterface
             $result[] = $this->name($params, $q, $identifier);
         }
 
-        return implode(', ', $result);
+        return \implode(', ', $result);
     }
 
     abstract protected function limit(

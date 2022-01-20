@@ -161,7 +161,7 @@ final class Quoter
      */
     private function aliasing(string $identifier, string $alias, bool $isTable): string
     {
-        if (str_contains($identifier, '.')) {
+        if (\str_contains($identifier, '.')) {
             // non table alias
             return sprintf(
                 '%s AS %s',

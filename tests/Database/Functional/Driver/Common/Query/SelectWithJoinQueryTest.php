@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Functional\Driver\Common\Query;
 
 use Cycle\Database\Injection\Expression;
+use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
@@ -368,6 +369,31 @@ abstract class SelectWithJoinQueryTest extends BaseTest
     }
 
     //Join with WHERE
+
+    public function testJoinOnWhereParameterOrder(): void
+    {
+        $select = $this->database
+            ->select()
+            ->columns([
+                'users.id as memberId',
+                'users.name as name',
+                new Fragment('? as memberType', 1),
+                new Fragment('? as accessType', 3),
+                new Fragment('IF(admins.id, ?, ?) as invited', 1, 0),
+            ])
+            ->from(['users', 'admins'])
+            ->leftJoin('admins', 'admins')
+            ->on('users.admin_id', 'admins.id')
+            ->onWhere('admins.id', 37);
+
+        $this->assertSameQueryWithParameters(
+            'SELECT {users}.{id} AS {memberId}, {users}.{name} AS {name},? as memberType,? as accessType, IF(admins.id, ?, ?) as invited
+             FROM {users}, {admins}
+             LEFT JOIN {admins} AS {admins} ON {users}.{admin_id}={admins}.{id} AND {admins}.{id} = ?',
+            [1, 3, 1, 0, 37],
+            $select
+        );
+    }
 
     public function testJoinWithComplexWhere(): void
     {
