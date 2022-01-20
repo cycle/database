@@ -1,5 +1,10 @@
 # CHANGELOG
 
+v2.1.2 (20.01.2022)
+-------------------
+- Fix wrong bind parameter order in a select query with join by @roxblnfk (#48)
+- Fix access to unitialized driver property on `ActiveQuery::__debugInfo()` call by @roxblnfk (#46)
+
 v2.1.1 (12.01.2022)
 -------------------
 - Fix phpdoc for the `SelectQuery::orderBy` method by @butschster (#45)
