@@ -19,10 +19,12 @@ use Throwable;
 /**
  * QueryBuilder classes generate set of control tokens for query compilers, this is query level
  * abstraction.
+ *
+ * @internal
  */
 abstract class ActiveQuery implements QueryInterface
 {
-    protected DriverInterface $driver;
+    protected ?DriverInterface $driver = null;
     protected ?string $prefix = null;
 
     public function __toString(): string
@@ -101,11 +103,11 @@ abstract class ActiveQuery implements QueryInterface
      */
     protected function fetchIdentifiers(array $identifiers): array
     {
-        if (count($identifiers) === 1 && is_string($identifiers[0])) {
-            return array_map('trim', explode(',', $identifiers[0]));
+        if (\count($identifiers) === 1 && \is_string($identifiers[0])) {
+            return \array_map('trim', \explode(',', $identifiers[0]));
         }
 
-        if (count($identifiers) === 1 && is_array($identifiers[0])) {
+        if (\count($identifiers) === 1 && \is_array($identifiers[0])) {
             return $identifiers[0];
         }
 
