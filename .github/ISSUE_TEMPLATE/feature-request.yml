@@ -1,6 +1,6 @@
 name: Feauture request
 description: 💡 Suggest an idea for this project
-title: "[💡 FEATURE REQUEST]: "
+title: "💡 "
 labels: ["type:feature"]
 assignees:
   - roxblnfk
