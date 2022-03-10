@@ -19,7 +19,7 @@ use Cycle\Database\Driver\CompilerInterface;
  *
  * Example: ...->where('time_created', '>', new SQLFragment("NOW()"));
  */
-class Fragment implements FragmentInterface
+class Fragment implements FragmentInterface, \Stringable
 {
     private string $fragment;
 
