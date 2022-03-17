@@ -22,7 +22,7 @@ use Throwable;
  *
  * @internal
  */
-abstract class ActiveQuery implements QueryInterface
+abstract class ActiveQuery implements QueryInterface, \Stringable
 {
     protected ?DriverInterface $driver = null;
     protected ?string $prefix = null;
