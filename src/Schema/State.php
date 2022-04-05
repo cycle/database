@@ -190,8 +190,17 @@ final class State
 
     /**
      * Drop foreign key from table schema using it's forming column.
+     * @deprecated Since Cycle ORM 2.2, use Cycle\Database\Schema::forgetForeignKey($foreignKey) instead.
      */
     public function forgerForeignKey(AbstractForeignKey $foreignKey): void
+    {
+        $this->forgetForeignKey($foreignKey);
+    }
+
+    /**
+     * Drop foreign key from table schema using it's forming column.
+     */
+    public function forgetForeignKey(AbstractForeignKey $foreignKey): void
     {
         foreach ($this->foreignKeys as $name => $foreignSchema) {
             // todo: need better compare
