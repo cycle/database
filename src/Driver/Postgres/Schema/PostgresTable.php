@@ -73,18 +73,18 @@ class PostgresTable extends AbstractTable
     {
         //Required for constraints fetch
         $tableOID = $this->driver->query(
-            'SELECT oid FROM pg_class WHERE relname = ?',
-            [
-                $this->getName(),
-            ]
+            "SELECT pg_class.oid FROM pg_class
+            JOIN pg_namespace ON pg_namespace.oid = pg_class.relnamespace
+            WHERE pg_class.relname = ? AND pg_namespace.nspname = 'public'",
+            [$this->getName()]
         )->fetchColumn();
 
         $query = $this->driver->query(
-            'SELECT *
-                        FROM information_schema.columns
-                        JOIN pg_type
-                        ON (pg_type.typname = columns.udt_name)
-                        WHERE table_name = ?',
+            "SELECT *
+            FROM information_schema.columns
+            JOIN pg_type
+            ON (pg_type.typname = columns.udt_name)
+            WHERE table_name = ? AND table_schema = 'public'",
             [$this->getName()]
         );
 
@@ -118,16 +118,14 @@ class PostgresTable extends AbstractTable
      */
     protected function fetchIndexes(bool $all = false): array
     {
-        $query = "SELECT * FROM pg_indexes WHERE schemaname = 'public' AND tablename = ?";
+        $query = "SELECT i.indexname, i.indexdef, c.contype FROM pg_indexes i\n" .
+            "LEFT JOIN pg_constraint c ON c.conname = i.indexname " .
+            "AND c.connamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')\n" .
+            "WHERE i.schemaname = 'public' AND tablename = ?";
 
         $result = [];
         foreach ($this->driver->query($query, [$this->getName()]) as $schema) {
-            $conType = $this->driver->query(
-                'SELECT contype FROM pg_constraint WHERE conname = ?',
-                [$schema['indexname']]
-            )->fetchColumn();
-
-            if ($conType === 'p') {
+            if ($schema['contype'] === 'p') {
                 //Skipping primary keys
                 continue;
             }
@@ -154,7 +152,7 @@ class PostgresTable extends AbstractTable
             . "   ON ccu.constraint_name = tc.constraint_name\n"
             . "JOIN information_schema.referential_constraints AS rc\n"
             . "   ON rc.constraint_name = tc.constraint_name\n"
-            . "WHERE constraint_type = 'FOREIGN KEY' AND tc.table_name = ?";
+            . "WHERE constraint_type = 'FOREIGN KEY' AND tc.table_name = ? AND tc.table_schema = 'public'";
 
         $fks = [];
         foreach ($this->driver->query($query, [$this->getName()]) as $schema) {
@@ -186,15 +184,13 @@ class PostgresTable extends AbstractTable
      */
     protected function fetchPrimaryKeys(): array
     {
-        $query = "SELECT * FROM pg_indexes WHERE schemaname = 'public' AND tablename = ?";
+        $query = "SELECT i.indexname, i.indexdef, c.contype FROM pg_indexes i\n" .
+            "LEFT JOIN pg_constraint c ON c.conname = i.indexname " .
+            "AND c.connamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')\n" .
+            "WHERE i.schemaname = 'public' AND tablename = ?";
 
         foreach ($this->driver->query($query, [$this->getName()]) as $schema) {
-            $conType = $this->driver->query(
-                'SELECT contype FROM pg_constraint WHERE conname = ?',
-                [$schema['indexname']]
-            )->fetchColumn();
-
-            if ($conType !== 'p') {
+            if ($schema['contype'] !== 'p') {
                 //Skipping primary keys
                 continue;
             }
