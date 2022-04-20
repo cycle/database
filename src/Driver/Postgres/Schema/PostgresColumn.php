@@ -95,8 +95,8 @@ class PostgresColumn extends AbstractColumn
      * {@inheritdoc}
      */
     protected $reverseMapping = [
-        'primary' => ['serial'],
-        'bigPrimary' => ['bigserial'],
+        'primary' => [],
+        'bigPrimary' => [],
         'enum' => ['enum'],
         'boolean' => ['boolean'],
         'integer' => ['int', 'integer', 'int4'],
