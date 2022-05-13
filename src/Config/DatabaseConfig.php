@@ -14,13 +14,15 @@ namespace Cycle\Database\Config;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Exception\ConfigException;
 use Cycle\Database\NamedInterface;
-use Spiral\Core\InjectableConfig;
+use Spiral\Core\ConfigsInterface;
+use Spiral\Core\Container\InjectableInterface;
 use Spiral\Core\Traits\Config\AliasTrait;
 
-final class DatabaseConfig extends InjectableConfig
+final class DatabaseConfig implements InjectableInterface, \IteratorAggregate, \ArrayAccess
 {
     use AliasTrait;
 
+    public const INJECTOR = ConfigsInterface::class;
     public const CONFIG = 'database';
     public const DEFAULT_DATABASE = 'default';
 
@@ -29,12 +31,22 @@ final class DatabaseConfig extends InjectableConfig
      *
      * @var array
      */
-    protected $config = [
-        'default'     => self::DEFAULT_DATABASE,
-        'aliases'     => [],
-        'databases'   => [],
+    protected array $config = [
+        'default' => self::DEFAULT_DATABASE,
+        'aliases' => [],
+        'databases' => [],
         'connections' => [],
     ];
+
+    /**
+     * At this moment on array based configs can be supported.
+     *
+     * @param array $config
+     */
+    public function __construct(array $config = [])
+    {
+        $this->config = $config;
+    }
 
     /**
      * @return string
@@ -87,9 +99,9 @@ final class DatabaseConfig extends InjectableConfig
     /**
      * @param string $database
      *
+     * @return DatabasePartial
      * @throws ConfigException
      *
-     * @return DatabasePartial
      */
     public function getDatabase(string $database): DatabasePartial
     {
@@ -120,9 +132,9 @@ final class DatabaseConfig extends InjectableConfig
     /**
      * @param string $driver
      *
+     * @return DriverInterface
      * @throws ConfigException
      *
-     * @return DriverInterface
      */
     public function getDriver(string $driver): DriverInterface
     {
@@ -148,5 +160,65 @@ final class DatabaseConfig extends InjectableConfig
                 \get_debug_type($config),
             ])
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toArray(): array
+    {
+        return $this->config;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetExists($offset)
+    {
+        return array_key_exists($offset, $this->config);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetGet($offset)
+    {
+        if (!$this->offsetExists($offset)) {
+            throw new \Spiral\Core\Exception\ConfigException("Undefined configuration key '{$offset}'");
+        }
+
+        return $this->config[$offset];
+    }
+
+    /**
+     *{@inheritdoc}
+     *
+     * @throws ConfigException
+     */
+    public function offsetSet($offset, $value): void
+    {
+        throw new ConfigException(
+            'Unable to change configuration data, configs are treated as immutable by default'
+        );
+    }
+
+    /**
+     *{@inheritdoc}
+     *
+     * @throws ConfigException
+     */
+    public function offsetUnset($offset): void
+    {
+        throw new ConfigException(
+            'Unable to change configuration data, configs are treated as immutable by default'
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->config);
     }
 }
