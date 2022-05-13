@@ -27,28 +27,18 @@ final class DatabaseConfig implements InjectableInterface, \IteratorAggregate, \
     public const DEFAULT_DATABASE = 'default';
 
     /**
-     * @internal
-     *
-     * @var array
-     */
-    private array $config = [
-        'default' => self::DEFAULT_DATABASE,
-        'aliases' => [],
-        'databases' => [],
-        'connections' => [],
-    ];
-
-    /**
      * At this moment on array based configs can be supported.
      */
-    public function __construct(array $config = [])
-    {
-        $this->config = $config;
+    public function __construct(
+        private array $config = [
+            'default' => self::DEFAULT_DATABASE,
+            'aliases' => [],
+            'databases' => [],
+            'connections' => [],
+        ]
+    ) {
     }
 
-    /**
-     * @return string
-     */
     public function getDefaultDatabase(): string
     {
         return $this->config['default'] ?? 'default';
@@ -84,22 +74,13 @@ final class DatabaseConfig implements InjectableInterface, \IteratorAggregate, \
         return $result;
     }
 
-    /**
-     * @param string $database
-     *
-     * @return bool
-     */
     public function hasDatabase(string $database): bool
     {
         return isset($this->config['databases'][$database]);
     }
 
     /**
-     * @param string $database
-     *
      * @throws ConfigException
-     *
-     * @return DatabasePartial
      */
     public function getDatabase(string $database): DatabasePartial
     {
@@ -117,22 +98,13 @@ final class DatabaseConfig implements InjectableInterface, \IteratorAggregate, \
         );
     }
 
-    /**
-     * @param string $driver
-     *
-     * @return bool
-     */
     public function hasDriver(string $driver): bool
     {
         return isset($this->config['connections'][$driver]) || isset($this->config['drivers'][$driver]);
     }
 
     /**
-     * @param string $driver
-     *
      * @throws ConfigException
-     *
-     * @return DriverInterface
      */
     public function getDriver(string $driver): DriverInterface
     {
