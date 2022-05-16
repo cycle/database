@@ -32,6 +32,7 @@ use Cycle\Database\Schema\Traits\ElementTrait;
  * @method $this|AbstractColumn boolean()
  * @method $this|AbstractColumn integer()
  * @method $this|AbstractColumn tinyInteger()
+ * @method $this|AbstractColumn smallInteger()
  * @method $this|AbstractColumn bigInteger()
  * @method $this|AbstractColumn text()
  * @method $this|AbstractColumn tinyText()
@@ -95,6 +96,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         //bigInteger
         'integer'     => null,
         'tinyInteger' => null,
+        'smallInteger'=> null,
         'bigInteger'  => null,
 
         //String with specified length (mapped via method)
@@ -140,6 +142,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         'boolean'     => [],
         'integer'     => [],
         'tinyInteger' => [],
+        'smallInteger'=> [],
         'bigInteger'  => [],
         'string'      => [],
         'text'        => [],
@@ -220,7 +223,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      * @internal
      */
     private array $phpMapping = [
-        self::INT   => ['primary', 'bigPrimary', 'integer', 'tinyInteger', 'bigInteger'],
+        self::INT   => ['primary', 'bigPrimary', 'integer', 'tinyInteger', 'smallInteger', 'bigInteger'],
         self::BOOL  => ['boolean'],
         self::FLOAT => ['double', 'float', 'decimal'],
     ];
