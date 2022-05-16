@@ -12,20 +12,20 @@ class InterpolatorTest extends TestCase
 {
     public function testInterpolation(): void
     {
-        $query = 'SELECT * FROM table WHERE name = ? AND id IN(?, ?, ?) AND balance > ?';
+        $query = 'SELECT * FROM table WHERE name = ? AND id IN(?, ?, ?) AND balance > :balance';
 
         $parameters = [
-            new Parameter('Anton'),
+            new Parameter('Anton?'),
             1,
             2,
             3,
-            new Parameter(120),
+            ':balance' => 120,
         ];
 
         $interpolated = Interpolator::interpolate($query, $parameters);
 
         $this->assertSame(
-            'SELECT * FROM table WHERE name = \'Anton\' AND id IN(1, 2, 3) AND balance > 120',
+            'SELECT * FROM table WHERE name = \'Anton?\' AND id IN(1, 2, 3) AND balance > 120',
             $interpolated
         );
     }
@@ -35,7 +35,7 @@ class InterpolatorTest extends TestCase
         $query = 'SELECT * FROM table WHERE name = :name AND registered > :registered';
 
         $parameters = [
-            ':name' => new Parameter('Anton'),
+            'name' => 'Anton',
             ':registered' => new Parameter($date = new \DateTime('now')),
         ];
 

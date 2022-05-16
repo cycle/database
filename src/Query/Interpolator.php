@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Query;
 
-use DateTimeInterface;
 use Cycle\Database\Injection\ParameterInterface;
+use DateTimeInterface;
 
 /**
  * Simple helper class used to interpolate query with given values. To be used for profiling and
@@ -33,22 +33,26 @@ final class Interpolator
             return $query;
         }
 
-        //Let's prepare values so they looks better
-        foreach ($parameters as $index => $parameter) {
-            if (!is_numeric($index)) {
-                $query = str_replace(
-                    [':' . $index, $index],
-                    self::resolveValue($parameter),
-                    $query
-                );
-                continue;
+        $lastPosition = 0;
+        $replaceOnce = static function (
+            string $search,
+            string $replace,
+            string $subject
+        ) use (&$lastPosition): string {
+            $position = strpos($subject, $search, $lastPosition);
+            if ($position !== false) {
+                $subject = substr_replace($subject, $replace, $position, strlen($search));
+                $lastPosition = $position + strlen($replace);
             }
 
-            $query = self::replaceOnce(
-                '?',
-                self::resolveValue($parameter),
-                $query
-            );
+            return $subject;
+        };
+
+        //Let's prepare values so they looks better
+        foreach ($parameters as $index => $parameter) {
+            $mask = is_numeric($index) ? ':' . ltrim($index, ':') : '?';
+
+            $query = $replaceOnce($mask, self::resolveValue($parameter), $query);
         }
 
         return $query;
@@ -92,29 +96,5 @@ final class Interpolator
         }
 
         return '[UNRESOLVED]';
-    }
-
-    /**
-     * Replace search value only once.
-     *
-     * @psalm-param non-empty-string $search
-     * @psalm-param non-empty-string $replace
-     * @psalm-param non-empty-string $subject
-     *
-     * @psalm-return non-empty-string
-     *
-     * @see http://stackoverflow.com/questions/1252693/using-str-replace-so-that-it-only-acts-on-the-first-match
-     */
-    private static function replaceOnce(
-        string $search,
-        string $replace,
-        string $subject
-    ): string {
-        $position = strpos($subject, $search);
-        if ($position !== false) {
-            return substr_replace($subject, $replace, $position, strlen($search));
-        }
-
-        return $subject;
     }
 }
