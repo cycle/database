@@ -30,6 +30,39 @@ class InterpolatorTest extends TestCase
         );
     }
 
+    public function testInterpolationUseNamedParameterTwice(): void
+    {
+        $query = 'SELECT :name as prefix, name FROM table WHERE name LIKE (CONCAT(:name, "%"))';
+
+        $parameters = [
+            ':name' => 'John',
+        ];
+
+        $interpolated = Interpolator::interpolate($query, $parameters);
+
+        $this->assertSame(
+            "SELECT 'John' as prefix, name FROM table WHERE name LIKE (CONCAT('John', '%'))",
+            $interpolated
+        );
+    }
+
+    public function testInterpolationCheckNamedParametersWhenFirstIsPrefixOfSecond(): void
+    {
+        $query = 'SELECT * FROM table WHERE parameter = :parameter AND param = :param';
+
+        $parameters = [
+            'param' => 'foo',
+            'parameter' => 'bar',
+        ];
+
+        $interpolated = Interpolator::interpolate($query, $parameters);
+
+        $this->assertSame(
+            "SELECT * FROM table WHERE parameter = 'foo' AND param = 'bar'",
+            $interpolated
+        );
+    }
+
     public function testDatesInterpolation(): void
     {
         $query = 'SELECT * FROM table WHERE name = :name AND registered > :registered';
