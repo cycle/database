@@ -34,25 +34,11 @@ final class Interpolator
         }
 
         $lastPosition = 0;
-        $replaceOnce = static function (
-            string $search,
-            string $replace,
-            string $subject
-        ) use (&$lastPosition): string {
-            $position = strpos($subject, $search, $lastPosition);
-            if ($position !== false) {
-                $subject = substr_replace($subject, $replace, $position, strlen($search));
-                $lastPosition = $position + strlen($replace);
-            }
-
-            return $subject;
-        };
-
         //Let's prepare values so they looks better
         foreach ($parameters as $index => $parameter) {
-            $mask = is_numeric($index) ? ':' . ltrim($index, ':') : '?';
+            $mask = \is_numeric($index) ? '?' : ':' . \ltrim($index, ':');
 
-            $query = $replaceOnce($mask, self::resolveValue($parameter), $query);
+            $query = self::replaceOnce($mask, self::resolveValue($parameter), $query, $lastPosition);
         }
 
         return $query;
@@ -96,5 +82,38 @@ final class Interpolator
         }
 
         return '[UNRESOLVED]';
+    }
+
+    /**
+     * Replace search value only once.
+     *
+     * @psalm-param non-empty-string $search
+     * @psalm-param non-empty-string $replace
+     * @psalm-param non-empty-string $subject
+     *
+     * @psalm-return non-empty-string
+     *
+     * @see http://stackoverflow.com/questions/1252693/using-str-replace-so-that-it-only-acts-on-the-first-match
+     */
+    private static function replaceOnce(
+        string $search,
+        string $replace,
+        string $subject,
+        ?int &$caret,
+    ): string {
+        $position = \strpos($subject, $search, $caret);
+        if ($position !== false) {
+            $subject = \substr_replace($subject, $replace, $position, \strlen($search));
+            $caret = $position + \strlen($replace);
+        }
+
+        return $subject;
+
+        // $position = strpos($subject, $search);
+        // if ($position !== false) {
+        //     return substr_replace($subject, $replace, $position, strlen($search));
+        // }
+        //
+        // return $subject;
     }
 }
