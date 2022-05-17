@@ -16,10 +16,10 @@ class InterpolatorTest extends TestCase
 
         $parameters = [
             new Parameter('Anton?'),
+            ':balance' => 120,
             1,
             2,
             3,
-            ':balance' => 120,
         ];
 
         $interpolated = Interpolator::interpolate($query, $parameters);
@@ -41,7 +41,7 @@ class InterpolatorTest extends TestCase
         $interpolated = Interpolator::interpolate($query, $parameters);
 
         $this->assertSame(
-            "SELECT 'John' as prefix, name FROM table WHERE name LIKE (CONCAT('John', '%'))",
+            "SELECT 'John' as prefix, name FROM table WHERE name LIKE (CONCAT('John', \"%\"))",
             $interpolated
         );
     }
@@ -58,7 +58,7 @@ class InterpolatorTest extends TestCase
         $interpolated = Interpolator::interpolate($query, $parameters);
 
         $this->assertSame(
-            "SELECT * FROM table WHERE parameter = 'foo' AND param = 'bar'",
+            "SELECT * FROM table WHERE parameter = 'bar' AND param = 'foo'",
             $interpolated
         );
     }
@@ -96,6 +96,23 @@ class InterpolatorTest extends TestCase
             'SELECT * FROM table WHERE name = \'Anton\' AND registered > \''
             . $date->format(\DateTime::ATOM)
             . '\'',
+            $interpolated
+        );
+    }
+
+    public function testInterpolationWrong(): void
+    {
+        $query = 'SELECT * FROM table WHERE name = ? AND balance > :balance';
+
+        $parameters = [
+            new Parameter(':balance'),
+            ':balance' => 120,
+        ];
+
+        $interpolated = Interpolator::interpolate($query, $parameters);
+
+        $this->assertSame(
+            "SELECT * FROM table WHERE name = '120' AND balance > 120",
             $interpolated
         );
     }

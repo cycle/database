@@ -36,9 +36,14 @@ final class Interpolator
         $lastPosition = 0;
         //Let's prepare values so they looks better
         foreach ($parameters as $index => $parameter) {
-            $mask = \is_numeric($index) ? '?' : ':' . \ltrim($index, ':');
+            $value = self::resolveValue($parameter);
 
-            $query = self::replaceOnce($mask, self::resolveValue($parameter), $query, $lastPosition);
+            if (\is_numeric($index)) {
+                $query = self::replaceOnce('?', $value, $query, $lastPosition);
+            } else {
+                $mask = ':' . \ltrim($index, ':');
+                $query = \preg_replace('/' . $mask . '\b/u', $value, $query);
+            }
         }
 
         return $query;
