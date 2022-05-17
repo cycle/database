@@ -102,17 +102,18 @@ class InterpolatorTest extends TestCase
 
     public function testInterpolationWrong(): void
     {
-        $query = 'SELECT * FROM table WHERE name = ? AND balance > :balance';
+        $query = 'SELECT * FROM table WHERE name = :name and param = :param AND balance > ?';
 
         $parameters = [
-            new Parameter(':balance'),
-            ':balance' => 120,
+            ':name' => new Parameter('Bar :param'),
+            ':param' => 'param ?',
+            new Parameter('foo'),
         ];
 
         $interpolated = Interpolator::interpolate($query, $parameters);
 
         $this->assertSame(
-            "SELECT * FROM table WHERE name = '120' AND balance > 120",
+            "SELECT * FROM table WHERE name = 'Bar 'param 'foo''' and param = 'param ?' AND balance > ?",
             $interpolated
         );
     }
