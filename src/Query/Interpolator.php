@@ -108,12 +108,5 @@ final class Interpolator
         }
 
         return $subject;
-
-        // $position = strpos($subject, $search);
-        // if ($position !== false) {
-        //     return substr_replace($subject, $replace, $position, strlen($search));
-        // }
-        //
-        // return $subject;
     }
 }
