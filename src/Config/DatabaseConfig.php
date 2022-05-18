@@ -162,9 +162,6 @@ final class DatabaseConfig implements InjectableInterface, \IteratorAggregate, \
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function toArray(): array
     {
         return $this->config;
