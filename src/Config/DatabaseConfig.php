@@ -99,9 +99,9 @@ final class DatabaseConfig implements InjectableInterface, \IteratorAggregate, \
     /**
      * @param string $database
      *
-     * @return DatabasePartial
      * @throws ConfigException
      *
+     * @return DatabasePartial
      */
     public function getDatabase(string $database): DatabasePartial
     {
@@ -132,9 +132,9 @@ final class DatabaseConfig implements InjectableInterface, \IteratorAggregate, \
     /**
      * @param string $driver
      *
-     * @return DriverInterface
      * @throws ConfigException
      *
+     * @return DriverInterface
      */
     public function getDriver(string $driver): DriverInterface
     {
