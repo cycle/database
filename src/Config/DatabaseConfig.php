@@ -31,7 +31,7 @@ final class DatabaseConfig implements InjectableInterface, \IteratorAggregate, \
      *
      * @var array
      */
-    protected array $config = [
+    private array $config = [
         'default' => self::DEFAULT_DATABASE,
         'aliases' => [],
         'databases' => [],
@@ -40,8 +40,6 @@ final class DatabaseConfig implements InjectableInterface, \IteratorAggregate, \
 
     /**
      * At this moment on array based configs can be supported.
-     *
-     * @param array $config
      */
     public function __construct(array $config = [])
     {
@@ -167,17 +165,11 @@ final class DatabaseConfig implements InjectableInterface, \IteratorAggregate, \
         return $this->config;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function offsetExists($offset)
     {
         return array_key_exists($offset, $this->config);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function offsetGet($offset)
     {
         if (!$this->offsetExists($offset)) {
@@ -188,8 +180,6 @@ final class DatabaseConfig implements InjectableInterface, \IteratorAggregate, \
     }
 
     /**
-     *{@inheritdoc}
-     *
      * @throws ConfigException
      */
     public function offsetSet($offset, $value): void
@@ -200,8 +190,6 @@ final class DatabaseConfig implements InjectableInterface, \IteratorAggregate, \
     }
 
     /**
-     *{@inheritdoc}
-     *
      * @throws ConfigException
      */
     public function offsetUnset($offset): void
@@ -211,9 +199,6 @@ final class DatabaseConfig implements InjectableInterface, \IteratorAggregate, \
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getIterator()
     {
         return new \ArrayIterator($this->config);
