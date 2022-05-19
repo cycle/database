@@ -134,4 +134,32 @@ class InterpolatorTest extends TestCase
             $interpolated
         );
     }
+
+    public function testNamedParameterNotProvided(): void
+    {
+        $query = 'SELECT * FROM table WHERE name = :name';
+
+        $parameters = ['foo'];
+
+        $interpolated = Interpolator::interpolate($query, $parameters);
+
+        $this->assertSame(
+            'SELECT * FROM table WHERE name = :name',
+            $interpolated
+        );
+    }
+
+    public function testUnnamedParameterNotProvided(): void
+    {
+        $query = 'SELECT * FROM table WHERE name = ? OR value > ?';
+
+        $parameters = ['foo' => 'bar'];
+
+        $interpolated = Interpolator::interpolate($query, $parameters);
+
+        $this->assertSame(
+            'SELECT * FROM table WHERE name = ? OR value > ?',
+            $interpolated
+        );
+    }
 }

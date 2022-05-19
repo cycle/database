@@ -42,11 +42,11 @@ final class Interpolator
             $result .= \substr($query, $caret, $pos - $caret);
             $caret = $pos + \strlen($ph);
             // find param
-            if ($ph === '?') {
-                $result .= self::resolveValue(\array_shift($unnamed));
-            } else {
-                $result .= self::resolveValue($named[$ph]);
-            }
+            $result .= match (true) {
+                $ph === '?' && \count($unnamed) > 0 => self::resolveValue(\array_shift($unnamed)),
+                \array_key_exists($ph, $named) => self::resolveValue($named[$ph]),
+                default => $ph,
+            };
         }
         $result .= \substr($query, $caret);
 
