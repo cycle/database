@@ -13,6 +13,7 @@ namespace Cycle\Database\Query;
 
 use Cycle\Database\Injection\ParameterInterface;
 use DateTimeInterface;
+use Stringable;
 
 /**
  * Simple helper class used to interpolate query with given values. To be used for profiling and
@@ -64,7 +65,7 @@ final class Interpolator
             return self::resolveValue($parameter->getValue());
         }
 
-        switch (gettype($parameter)) {
+        switch (\gettype($parameter)) {
             case 'boolean':
                 return $parameter ? 'TRUE' : 'FALSE';
 
@@ -75,14 +76,14 @@ final class Interpolator
                 return 'NULL';
 
             case 'double':
-                return sprintf('%F', $parameter);
+                return \sprintf('%F', $parameter);
 
             case 'string':
-                return "'" . addcslashes($parameter, "'") . "'";
+                return "'" . self::escapeStringValue($parameter, "'") . "'";
 
             case 'object':
-                if (method_exists($parameter, '__toString')) {
-                    return "'" . addcslashes((string)$parameter, "'") . "'";
+                if ($parameter instanceof Stringable) {
+                    return "'" . self::escapeStringValue((string)$parameter, "'") . "'";
                 }
 
                 if ($parameter instanceof DateTimeInterface) {
@@ -93,13 +94,29 @@ final class Interpolator
         return '[UNRESOLVED]';
     }
 
+    private static function escapeStringValue(string $value): string
+    {
+        return \strtr($value, [
+            '\\%' => '\\%',
+            '\\_' => '\\_',
+            \chr(26) => '\\Z',
+            \chr(0) => '\\0',
+            "'" => "\\'",
+            \chr(8) => '\\b',
+            "\n" => '\\n',
+            "\r" => '\\r',
+            "\t" => '\\t',
+            '\\' => '\\\\',
+        ]);
+    }
+
     /**
      * @return array<int, string>
      */
     private static function findParams(string $query): array
     {
         \preg_match_all(
-            '/(?<dq>"(?:\\\\"|[^"])*")|(?<sq>\'[^\']*\')|(?<ph>\\?)|(?<named>:[a-z_]+)/',
+            '/(?<dq>"(?:\\\\\"|[^"])*")|(?<sq>\'(?:\\\\\'|[^\'])*\')|(?<ph>\\?)|(?<named>:[a-z_\\d]+)/',
             $query,
             $placeholders,
             PREG_OFFSET_CAPTURE|PREG_UNMATCHED_AS_NULL
