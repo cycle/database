@@ -106,7 +106,7 @@ class InterpolatorTest extends TestCase
 
         $parameters = [
             'param' => 'foo',
-            42
+            42,
         ];
 
         $interpolated = Interpolator::interpolate($query, $parameters);

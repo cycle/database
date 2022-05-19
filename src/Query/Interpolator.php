@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Query;
 
-use DateTimeInterface;
 use Cycle\Database\Injection\ParameterInterface;
+use DateTimeInterface;
 
 /**
  * Simple helper class used to interpolate query with given values. To be used for profiling and
@@ -33,25 +33,24 @@ final class Interpolator
             return $query;
         }
 
-        //Let's prepare values so they looks better
-        foreach ($parameters as $index => $parameter) {
-            if (!is_numeric($index)) {
-                $query = str_replace(
-                    [':' . $index, $index],
-                    self::resolveValue($parameter),
-                    $query
-                );
-                continue;
+        ['named' => $named, 'unnamed' => $unnamed] = self::normalizeParameters($parameters);
+        $params = self::findParams($query);
+
+        $caret = 0;
+        $result = '';
+        foreach ($params as $pos => $ph) {
+            $result .= \substr($query, $caret, $pos - $caret);
+            $caret = $pos + \strlen($ph);
+            // find param
+            if ($ph === '?') {
+                $result .= self::resolveValue(\array_shift($unnamed));
+            } else {
+                $result .= self::resolveValue($named[$ph]);
             }
-
-            $query = self::replaceOnce(
-                '?',
-                self::resolveValue($parameter),
-                $query
-            );
         }
+        $result .= \substr($query, $caret);
 
-        return $query;
+        return $result;
     }
 
     /**
@@ -59,7 +58,7 @@ final class Interpolator
      *
      * @psalm-return non-empty-string
      */
-    protected static function resolveValue(mixed $parameter): string
+    private static function resolveValue(mixed $parameter): string
     {
         if ($parameter instanceof ParameterInterface) {
             return self::resolveValue($parameter->getValue());
@@ -95,26 +94,41 @@ final class Interpolator
     }
 
     /**
-     * Replace search value only once.
-     *
-     * @psalm-param non-empty-string $search
-     * @psalm-param non-empty-string $replace
-     * @psalm-param non-empty-string $subject
-     *
-     * @psalm-return non-empty-string
-     *
-     * @see http://stackoverflow.com/questions/1252693/using-str-replace-so-that-it-only-acts-on-the-first-match
+     * @return array<int, string>
      */
-    private static function replaceOnce(
-        string $search,
-        string $replace,
-        string $subject
-    ): string {
-        $position = strpos($subject, $search);
-        if ($position !== false) {
-            return substr_replace($subject, $replace, $position, strlen($search));
+    private static function findParams(string $query): array
+    {
+        \preg_match_all(
+            '/(?<dq>"(?:\\\\"|[^"])*")|(?<sq>\'[^\']*\')|(?<ph>\\?)|(?<named>:[a-z_]+)/',
+            $query,
+            $placeholders,
+            PREG_OFFSET_CAPTURE|PREG_UNMATCHED_AS_NULL
+        );
+        $result = [];
+        foreach ([...$placeholders['named'], ...$placeholders['ph']] as $tuple) {
+            if ($tuple[0] === null) {
+                continue;
+            }
+            $result[$tuple[1]] = $tuple[0];
         }
+        \ksort($result);
 
-        return $subject;
+        return $result;
+    }
+
+    /**
+     * @return array{named: array, unnamed: array}
+     */
+    private static function normalizeParameters(iterable $parameters): array
+    {
+        $result = ['named' => [], 'unnamed' => []];
+        foreach ($parameters as $k => $v) {
+            if (\is_int($k)) {
+                $result['unnamed'][$k] = $v;
+            } else {
+                $result['named'][':' . \ltrim($k, ':')] = $v;
+            }
+        }
+        return $result;
     }
 }
