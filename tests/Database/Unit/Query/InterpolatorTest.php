@@ -66,4 +66,72 @@ class InterpolatorTest extends TestCase
             $interpolated
         );
     }
+
+    public function testInterpolationUseNamedParameterTwice(): void
+    {
+        $query = 'SELECT :name as prefix, name FROM table WHERE name LIKE (CONCAT(:name, "%"))';
+
+        $parameters = [
+            ':name' => 'John',
+        ];
+
+        $interpolated = Interpolator::interpolate($query, $parameters);
+
+        $this->assertSame(
+            "SELECT 'John' as prefix, name FROM table WHERE name LIKE (CONCAT('John', \"%\"))",
+            $interpolated
+        );
+    }
+
+    public function testInterpolateNamedParametersWhenFirstIsPrefixOfSecond(): void
+    {
+        $query = 'SELECT * FROM table WHERE parameter = :parameter AND param = :param';
+
+        $parameters = [
+            'param' => 'foo',
+            'parameter' => 'bar',
+        ];
+
+        $interpolated = Interpolator::interpolate($query, $parameters);
+
+        $this->assertSame(
+            "SELECT * FROM table WHERE parameter = 'bar' AND param = 'foo'",
+            $interpolated
+        );
+    }
+
+    public function testInterpolateParametersInStrings(): void
+    {
+        $query = 'SELECT \'?\' as q, "?" as qq FROM table WHERE parameter = (":param",\':param\', :param, ?)';
+
+        $parameters = [
+            'param' => 'foo',
+            42
+        ];
+
+        $interpolated = Interpolator::interpolate($query, $parameters);
+
+        $this->assertSame(
+            'SELECT \'?\' as q, "?" as qq FROM table WHERE parameter = (":param",\':param\', \'foo\', 42)',
+            $interpolated
+        );
+    }
+
+    public function testNestedInterpolation(): void
+    {
+        $query = "SELECT * FROM table WHERE name = ? AND id IN(\"in dq ?\", 'in \n\n sq ?', ?) AND balance > IN(\"in dq :p\", 'in sq :p', :p)";
+
+        $parameters = [
+            42,
+            'foo',
+            ':p' => 'bar',
+        ];
+
+        $interpolated = Interpolator::interpolate($query, $parameters);
+
+        $this->assertSame(
+            "SELECT * FROM table WHERE name = 42 AND id IN(\"in dq ?\", 'in \n\n sq ?', 'foo') AND balance > IN(\"in dq :p\", 'in sq :p', 'bar')",
+            $interpolated
+        );
+    }
 }
