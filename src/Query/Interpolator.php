@@ -70,7 +70,7 @@ final class Interpolator
                 return $parameter ? 'TRUE' : 'FALSE';
 
             case 'integer':
-                return (string)($parameter + 0);
+                return (string)$parameter;
 
             case 'NULL':
                 return 'NULL';

@@ -7,6 +7,7 @@ namespace Cycle\Database\Tests\Unit\Query;
 use PHPUnit\Framework\TestCase;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\Interpolator;
+use stdClass;
 
 class InterpolatorTest extends TestCase
 {
@@ -184,6 +185,20 @@ class InterpolatorTest extends TestCase
 
         $this->assertSame(
             "SELECT * FROM table WHERE name = 'foo'",
+            $interpolated
+        );
+    }
+
+    public function testNotStringableObjectInterpolation(): void
+    {
+        $query = 'SELECT * FROM table WHERE name = :name';
+
+        $parameters = ['name' => new stdClass('foo')];
+
+        $interpolated = Interpolator::interpolate($query, $parameters);
+
+        $this->assertSame(
+            'SELECT * FROM table WHERE name = [UNRESOLVED]',
             $interpolated
         );
     }
