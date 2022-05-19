@@ -52,7 +52,7 @@ final class DatabaseConfig implements InjectableInterface, \IteratorAggregate, \
     public function getDatabases(): array
     {
         $result = [];
-        foreach (array_keys($this->config['databases'] ?? []) as $database) {
+        foreach (\array_keys($this->config['databases'] ?? []) as $database) {
             $result[$database] = $this->getDatabase($database);
         }
 
@@ -67,7 +67,7 @@ final class DatabaseConfig implements InjectableInterface, \IteratorAggregate, \
     public function getDrivers(): array
     {
         $result = [];
-        foreach (array_keys($this->config['connections'] ?? $this->config['drivers'] ?? []) as $driver) {
+        foreach (\array_keys($this->config['connections'] ?? $this->config['drivers'] ?? []) as $driver) {
             $result[$driver] = $this->getDriver($driver);
         }
 
@@ -139,7 +139,7 @@ final class DatabaseConfig implements InjectableInterface, \IteratorAggregate, \
 
     public function offsetExists($offset)
     {
-        return array_key_exists($offset, $this->config);
+        return \array_key_exists($offset, $this->config);
     }
 
     public function offsetGet($offset)
