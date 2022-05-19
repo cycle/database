@@ -1,25 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="tests/bootstrap.php"
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
          backupGlobals="false"
          backupStaticAttributes="false"
-         colors="true"
-         verbose="false"
+         colors="true" verbose="false"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false"
-         stopOnError="false">
-
+         stopOnError="false"
+>
+    <coverage>
+        <include>
+            <directory>src/</directory>
+        </include>
+    </coverage>
     <testsuites>
         <testsuite name="Cycle DBAL">
             <directory>./tests/</directory>
         </testsuite>
+        <testsuite name="Unit">
+            <directory>./tests/Database/Unit</directory>
+        </testsuite>
     </testsuites>
-
-    <filter>
-        <whitelist>
-            <directory>src/</directory>
-        </whitelist>
-    </filter>
 </phpunit>

@@ -1,0 +1,19 @@
+{
+    "source": {
+        "directories": [
+            "src"
+        ],
+        "excludes": [
+            ".github",
+            "resources"
+        ]
+    },
+    "timeout": 10,
+    "logs": {
+        "text": "php:\/\/stderr"
+    },
+    "mutators": {
+        "@default": true,
+        "@function_signature": false
+    }
+}
