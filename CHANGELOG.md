@@ -1,5 +1,9 @@
 # CHANGELOG
 
+v2.1.3 (20.05.2022)
+-------------------
+- Fix query interpolation by @roxblnfk (#60)
+
 v2.1.2 (20.01.2022)
 -------------------
 - Fix wrong bind parameter order in a select query with join by @roxblnfk (#48)
