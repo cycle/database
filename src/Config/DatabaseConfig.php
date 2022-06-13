@@ -24,14 +24,14 @@ final class DatabaseConfig extends InjectableConfig
     public const CONFIG = 'database';
     public const DEFAULT_DATABASE = 'default';
 
-    public function __construct()
+    public function __construct(array $config)
     {
-        parent::__construct([
+        parent::__construct(\array_merge([
             'default' => self::DEFAULT_DATABASE,
             'aliases' => [],
             'databases' => [],
             'connections' => [],
-        ]);
+        ], $config));
     }
 
     public function getDefaultDatabase(): string
