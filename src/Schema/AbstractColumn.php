@@ -202,6 +202,11 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     protected array $enumValues = [];
 
     /**
+     * Database Engine specific attributes.
+     */
+    protected array $attributes = [];
+
+    /**
      * Abstract type aliases (for consistency).
      */
     private array $aliases = [
@@ -340,6 +345,17 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
                 ? false : (bool) $this->defaultValue,
             default => (string)$this->defaultValue
         };
+    }
+
+    public function setAttributes(array $attributes): self
+    {
+        $this->attributes = $attributes;
+        return $this;
+    }
+
+    public function getAttributes(): array
+    {
+        return $this->attributes;
     }
 
     /**
@@ -559,7 +575,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         return $this;
     }
 
-    public function sqlStatement(DriverInterface $driver): string
+    protected function sqlStatementParts(DriverInterface $driver): array
     {
         $statement = [$driver->identifier($this->name), $this->type];
 
@@ -580,7 +596,12 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
             $statement[] = "DEFAULT {$this->quoteDefault($driver)}";
         }
 
-        return implode(' ', $statement);
+        return $statement;
+    }
+
+    public function sqlStatement(DriverInterface $driver): string
+    {
+        return implode(' ', $this->sqlStatementParts($driver));
     }
 
     public function compare(self $initial): bool

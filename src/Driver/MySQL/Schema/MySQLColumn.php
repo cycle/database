@@ -28,6 +28,8 @@ class MySQLColumn extends AbstractColumn
      */
     public const DATETIME_NOW = 'CURRENT_TIMESTAMP';
 
+    protected const ENGINE_INTEGER_TYPES = ['tinyint', 'smallint', 'mediumint', 'int', 'bigint'];
+
     protected array $mapping = [
         //Primary sequences
         'primary'     => [
@@ -140,14 +142,21 @@ class MySQLColumn extends AbstractColumn
             $this->defaultValue = null;
         }
 
-        $statement = parent::sqlStatement($driver);
+        $statementParts = parent::sqlStatementParts($driver);
+
+        if (in_array($this->type, self::ENGINE_INTEGER_TYPES)) {
+            $attr = array_filter(array_intersect_key($this->attributes, ['unsigned' => false, 'zerofill' => false]));
+            if ($attr) {
+                array_splice($statementParts, 3, 0, array_keys($attr));
+            }
+        }
 
         $this->defaultValue = $defaultValue;
         if ($this->autoIncrement) {
-            return "{$statement} AUTO_INCREMENT";
+            $statementParts[] = 'AUTO_INCREMENT';
         }
 
-        return $statement;
+        return implode(' ', $statementParts);
     }
 
     /**
@@ -164,7 +173,7 @@ class MySQLColumn extends AbstractColumn
 
         if (
             !preg_match(
-                '/^(?P<type>[a-z]+)(?:\((?P<options>[^\)]+)\))?/',
+                '/^(?P<type>[a-z]+)(?:\((?P<options>[^\)]+)\))?(?: (?P<attr>[a-z ]+))?/',
                 $column->type,
                 $matches
             )
@@ -184,6 +193,19 @@ class MySQLColumn extends AbstractColumn
                 $column->scale = (int)$options[1];
             } else {
                 $column->size = (int)$options[0];
+            }
+        }
+
+        if (!empty($matches['attr'])) {
+            if (in_array($column->type, self::ENGINE_INTEGER_TYPES)) {
+                $intAttr = array_map('trim', explode(' ', $matches['attr']));
+                if (in_array('unsigned', $intAttr)) {
+                    $column->attributes['unsigned'] = true;
+                }
+                if (in_array('zerofill', $intAttr)) {
+                    $column->attributes['zerofill'] = true;
+                }
+                unset($intAttr);
             }
         }
 
@@ -225,6 +247,25 @@ class MySQLColumn extends AbstractColumn
         }
 
         return $column;
+    }
+
+    public function compare(AbstractColumn $initial): bool
+    {
+        assert($initial instanceof self);
+        if (!parent::compare($initial)) {
+            return false;
+        }
+
+        if (in_array($this->type, self::ENGINE_INTEGER_TYPES)) {
+            $attr = ['unsigned' => false, 'zerofill' => false];
+            foreach ($attr as $a => $def) {
+                if (($this->attributes[$a] ?? $def) !== ($initial->attributes[$a] ?? $def)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     /**
