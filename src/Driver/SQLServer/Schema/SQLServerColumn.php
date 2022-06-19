@@ -53,6 +53,7 @@ class SQLServerColumn extends AbstractColumn
         //bigInteger
         'integer'     => 'int',
         'tinyInteger' => 'tinyint',
+        'smallInteger'=> 'smallint',
         'bigInteger'  => 'bigint',
 
         //String with specified length (mapped via method)
@@ -92,7 +93,8 @@ class SQLServerColumn extends AbstractColumn
         'enum'        => ['enum'],
         'boolean'     => ['bit'],
         'integer'     => ['int'],
-        'tinyInteger' => ['tinyint', 'smallint'],
+        'tinyInteger' => ['tinyint'],
+        'smallInteger'=> ['smallint'],
         'bigInteger'  => ['bigint'],
         'text'        => [['type' => 'varchar', 'size' => 0]],
         'string'      => ['varchar', 'char'],

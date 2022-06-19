@@ -196,6 +196,19 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
+    public function testSmallInteger(): void
+    {
+        $schema = $this->schema('table');
+        $this->assertFalse($schema->exists());
+
+        $column = $schema->smallInteger('target');
+
+        $schema->save();
+        $schema = $this->schema('table');
+        $this->assertTrue($schema->exists());
+        $this->assertTrue($schema->column('target')->compare($column));
+    }
+
     public function testText(): void
     {
         $schema = $this->schema('table');

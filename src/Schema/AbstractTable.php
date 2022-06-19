@@ -35,6 +35,7 @@ use Cycle\Database\TableInterface;
  * @method AbstractColumn boolean($column)
  * @method AbstractColumn integer($column)
  * @method AbstractColumn tinyInteger($column)
+ * @method AbstractColumn smallInteger($column)
  * @method AbstractColumn bigInteger($column)
  * @method AbstractColumn text($column)
  * @method AbstractColumn tinyText($column)
