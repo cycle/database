@@ -19,15 +19,20 @@ class CustomOptionsTest extends CommonClass
     /**
      * @dataProvider dataUnsignedAndZerofillAttributes
      */
-    public function testUnsignedAndZerofillAttributes(string $type, string $columnName, array $attribute = [], array $expectedAttributes = []): void
-    {
-        $schema = $this->schema(uniqid("{$type}_{$columnName}"));
-        $schema->primary('id');
-        $schema->{$type}($columnName)->setAttributes($attribute);
+    public function testUnsignedAndZerofillAttributes(
+        string $type,
+        string $columnName,
+        array $attributes = [],
+        array $expectedAttributes = []
+    ): void {
+        $schema = $this->schema(\uniqid("{$type}_{$columnName}"));
+        \call_user_func_array([$schema, $type], \array_merge([$columnName], $attributes));
         $schema->save();
 
         self::assertInstanceOf(MySQLColumn::class, $column = $this->fetchSchema($schema)->column($columnName));
-        self::assertEquals($expectedAttributes, $column->getAttributes());
+        foreach ($expectedAttributes as $k => $v) {
+            $this->assertSame($v, $column->{'get' . \ucwords($k)}());
+        }
     }
 
     public function dataUnsignedAndZerofillAttributes(): iterable
@@ -36,7 +41,9 @@ class CustomOptionsTest extends CommonClass
             'tinyInteger',
             'smallInteger',
             'integer',
-            'bigInteger'
+            'bigInteger',
+            'primary',
+            'bigPrimary',
         ];
         $attr = [
             '_u' => [
