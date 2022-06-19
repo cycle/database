@@ -1,5 +1,13 @@
 # CHANGELOG
 
+v2.2.0 (in progress)
+-------------------
+- Fix typo in the `\Cycle\Database\Schema\State::forgerForeignKey` method (#53)
+- Add supporting for smallint column type (#58)
+- Fix compatibility with Spiral Framework 3 packages:
+  - Remove overriding of the `$config` property in the `DatabaseConfig` class (#64)
+  - Update `composer.json` dependencies
+
 v2.1.3 (20.05.2022)
 -------------------
 - Fix query interpolation by @roxblnfk (#60)
