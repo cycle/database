@@ -53,7 +53,7 @@ class MySQLColumn extends AbstractColumn
         //bigInteger
         'integer'     => ['type' => 'int', 'size' => 11],
         'tinyInteger' => ['type' => 'tinyint', 'size' => 4],
-        'smallInteger'=> ['type' => 'smallint', 'size' => 2],
+        'smallInteger'=> ['type' => 'smallint', 'size' => 6],
         'bigInteger'  => ['type' => 'bigint', 'size' => 20],
 
         //String with specified length (mapped via method)
@@ -189,7 +189,7 @@ class MySQLColumn extends AbstractColumn
             }
         }
 
-        // since 8.0 database does not provide size for some of the columns
+        // since 8.0 database does not provide size for some columns
         if ($column->size === 0) {
             switch ($column->type) {
                 case 'int':
@@ -199,12 +199,10 @@ class MySQLColumn extends AbstractColumn
                     $column->size = 20;
                     break;
                 case 'tinyint':
-                    if ($column->size !== 1) {
-                        $column->size = 4;
-                    }
+                    $column->size = 4;
                     break;
                 case 'smallint':
-                    $column->size = 2;
+                    $column->size = 6;
                     break;
             }
         }
