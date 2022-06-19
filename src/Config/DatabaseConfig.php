@@ -24,21 +24,16 @@ final class DatabaseConfig extends InjectableConfig
     public const CONFIG = 'database';
     public const DEFAULT_DATABASE = 'default';
 
-    /**
-     * @internal
-     *
-     * @var array
-     */
-    protected $config = [
-        'default'     => self::DEFAULT_DATABASE,
-        'aliases'     => [],
-        'databases'   => [],
-        'connections' => [],
-    ];
+    public function __construct(array $config)
+    {
+        parent::__construct(\array_merge([
+            'default' => self::DEFAULT_DATABASE,
+            'aliases' => [],
+            'databases' => [],
+            'connections' => [],
+        ], $config));
+    }
 
-    /**
-     * @return string
-     */
     public function getDefaultDatabase(): string
     {
         return $this->config['default'] ?? 'default';
@@ -52,7 +47,7 @@ final class DatabaseConfig extends InjectableConfig
     public function getDatabases(): array
     {
         $result = [];
-        foreach (array_keys($this->config['databases'] ?? []) as $database) {
+        foreach (\array_keys($this->config['databases'] ?? []) as $database) {
             $result[$database] = $this->getDatabase($database);
         }
 
@@ -67,29 +62,20 @@ final class DatabaseConfig extends InjectableConfig
     public function getDrivers(): array
     {
         $result = [];
-        foreach (array_keys($this->config['connections'] ?? $this->config['drivers'] ?? []) as $driver) {
+        foreach (\array_keys($this->config['connections'] ?? $this->config['drivers'] ?? []) as $driver) {
             $result[$driver] = $this->getDriver($driver);
         }
 
         return $result;
     }
 
-    /**
-     * @param string $database
-     *
-     * @return bool
-     */
     public function hasDatabase(string $database): bool
     {
         return isset($this->config['databases'][$database]);
     }
 
     /**
-     * @param string $database
-     *
      * @throws ConfigException
-     *
-     * @return DatabasePartial
      */
     public function getDatabase(string $database): DatabasePartial
     {
@@ -107,22 +93,13 @@ final class DatabaseConfig extends InjectableConfig
         );
     }
 
-    /**
-     * @param string $driver
-     *
-     * @return bool
-     */
     public function hasDriver(string $driver): bool
     {
         return isset($this->config['connections'][$driver]) || isset($this->config['drivers'][$driver]);
     }
 
     /**
-     * @param string $driver
-     *
      * @throws ConfigException
-     *
-     * @return DriverInterface
      */
     public function getDriver(string $driver): DriverInterface
     {
