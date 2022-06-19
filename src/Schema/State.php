@@ -190,7 +190,7 @@ final class State
 
     /**
      * Drop foreign key from table schema using it's forming column.
-     * @deprecated Since cycle/database 2.2, use {@see forgetForeignKey()} instead.
+     * @deprecated Since cycle/database 2.2.0, use {@see forgetForeignKey()} instead.
      */
     public function forgerForeignKey(AbstractForeignKey $foreignKey): void
     {
@@ -199,6 +199,7 @@ final class State
 
     /**
      * Drop foreign key from table schema using it's forming column.
+     * @since 2.2.0
      */
     public function forgetForeignKey(AbstractForeignKey $foreignKey): void
     {
