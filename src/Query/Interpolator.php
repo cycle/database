@@ -14,8 +14,6 @@ namespace Cycle\Database\Query;
 use BackedEnum;
 use Cycle\Database\Injection\ParameterInterface;
 use DateTimeInterface;
-use IntBackedEnum;
-use PDO;
 use Stringable;
 
 /**
