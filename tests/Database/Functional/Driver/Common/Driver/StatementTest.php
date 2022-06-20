@@ -350,6 +350,9 @@ abstract class StatementTest extends BaseTest
         );
     }
 
+    /**
+     * @requires PHP >= 8.1
+     */
     public function testIntegerEnumInQuery(): void
     {
         $this->fillData();
@@ -362,6 +365,9 @@ abstract class StatementTest extends BaseTest
         );
     }
 
+    /**
+     * @requires PHP >= 8.1
+     */
     public function testStringEnumInQuery(): void
     {
         $this->fillData();
@@ -374,6 +380,9 @@ abstract class StatementTest extends BaseTest
         );
     }
 
+    /**
+     * @requires PHP >= 8.1
+     */
     public function testUntypedEnumInQuery(): void
     {
         $this->fillData();

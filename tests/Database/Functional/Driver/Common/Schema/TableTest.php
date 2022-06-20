@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Functional\Driver\Common\Schema;
 
+use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Injection\Expression;
 use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\Table;
 use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 use Cycle\Database\Tests\Stub\FooBarEnum;
 use Cycle\Database\Tests\Stub\IntegerEnum;
+use Cycle\Database\Tests\Stub\UntypedEnum;
 
 abstract class TableTest extends BaseTest
 {
@@ -189,7 +191,10 @@ abstract class TableTest extends BaseTest
         );
     }
 
-    public function testInsertOneRowEnumValues(): void
+    /**
+     * @requires PHP >= 8.1
+     */
+    public function testInsertTypedEnum(): void
     {
         $table = $this->database->table('table');
 
@@ -209,6 +214,25 @@ abstract class TableTest extends BaseTest
                 ['id' => 1, 'name' => FooBarEnum::FOO->value, 'value' => IntegerEnum::HUNDRED->value],
             ],
             $table->fetchAll()
+        );
+    }
+
+    /**
+     * @requires PHP >= 8.1
+     */
+    public function testInsertTypelessEnum(): void
+    {
+        $table = $this->database->table('table');
+
+        $this->assertSame(0, $table->count());
+
+        $this->expectException(StatementException::class);
+
+        $table->insertOne(
+            [
+                'name' => 'Leo',
+                'value' => UntypedEnum::FOO,
+            ]
         );
     }
 
