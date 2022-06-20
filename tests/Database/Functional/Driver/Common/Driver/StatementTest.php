@@ -44,12 +44,6 @@ abstract class StatementTest extends BaseTest
                 ]
             );
         }
-        $table->insertOne(
-            [
-                'name' => 'foo',
-                'value' => 100500,
-            ]
-        );
     }
 
     public function testInstance(): void
@@ -370,7 +364,14 @@ abstract class StatementTest extends BaseTest
      */
     public function testStringEnumInQuery(): void
     {
-        $this->fillData();
+        $table = $this->database->table('sample_table');
+
+        $table->insertOne(
+            [
+                'name' => 'foo',
+                'value' => 100500,
+            ]
+        );
 
         $this->assertSame(
             1,
