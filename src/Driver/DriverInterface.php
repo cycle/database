@@ -137,12 +137,11 @@ interface DriverInterface
     /**
      * Quote value.
      *
-     * @param mixed $value
      * @param int $type Parameter type.
      *
      * @psalm-return non-empty-string
      */
-    public function quote($value, int $type = PDO::PARAM_STR): string;
+    public function quote(mixed $value, int $type = PDO::PARAM_STR): string;
 
     /**
      * Wraps PDO query method with custom representation class.
