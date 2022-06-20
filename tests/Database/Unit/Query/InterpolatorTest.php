@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Unit\Query;
 
-use Cycle\Database\Tests\Unit\Stub\FooBarEnum;
-use Cycle\Database\Tests\Unit\Stub\IntegerEnum;
-use Cycle\Database\Tests\Unit\Stub\UntypedEnum;
-use PHPUnit\Framework\TestCase;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\Interpolator;
+use Cycle\Database\Tests\Stub\FooBarEnum;
+use Cycle\Database\Tests\Stub\IntegerEnum;
+use Cycle\Database\Tests\Stub\UntypedEnum;
+use PHPUnit\Framework\TestCase;
 use stdClass;
 
 class InterpolatorTest extends TestCase

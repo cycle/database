@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cycle\Database\Tests\Unit\Stub;
+namespace Cycle\Database\Tests\Stub;
 
 enum UntypedEnum
 {

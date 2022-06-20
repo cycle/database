@@ -8,6 +8,8 @@ use Cycle\Database\Injection\Expression;
 use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\Table;
 use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
+use Cycle\Database\Tests\Stub\FooBarEnum;
+use Cycle\Database\Tests\Stub\IntegerEnum;
 
 abstract class TableTest extends BaseTest
 {
@@ -182,6 +184,29 @@ abstract class TableTest extends BaseTest
         $this->assertEquals(
             [
                 ['id' => 1, 'name' => 'Anton', 'value' => 10],
+            ],
+            $table->fetchAll()
+        );
+    }
+
+    public function testInsertOneRowEnumValues(): void
+    {
+        $table = $this->database->table('table');
+
+        $this->assertSame(0, $table->count());
+
+        $id = $table->insertOne(
+            [
+                'name' => FooBarEnum::FOO,
+                'value' => IntegerEnum::HUNDRED,
+            ]
+        );
+
+        $this->assertNotNull($id);
+
+        $this->assertEquals(
+            [
+                ['id' => 1, 'name' => FooBarEnum::FOO->value, 'value' => IntegerEnum::HUNDRED->value],
             ],
             $table->fetchAll()
         );
