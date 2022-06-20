@@ -68,7 +68,7 @@ class InterpolatorTest extends TestCase
         $interpolated = Interpolator::interpolate($query, $parameters);
 
         $this->assertSame(
-            "SELECT * FROM table WHERE enum = [UNRESOLVED]",
+            'SELECT * FROM table WHERE enum = [UNRESOLVED]',
             $interpolated
         );
     }
