@@ -68,7 +68,7 @@ final class Interpolator
 
         /** @since PHP 8.1 */
         if ($parameter instanceof BackedEnum) {
-            return (string)$parameter->value;
+            $parameter = $parameter->value;
         }
 
         switch (\gettype($parameter)) {

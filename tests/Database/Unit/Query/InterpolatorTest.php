@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Unit\Query;
 
+use Cycle\Database\Tests\Unit\Stub\FooBarEnum;
+use Cycle\Database\Tests\Unit\Stub\IntegerEnum;
+use Cycle\Database\Tests\Unit\Stub\UntypedEnum;
 use PHPUnit\Framework\TestCase;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\Interpolator;
@@ -27,6 +30,45 @@ class InterpolatorTest extends TestCase
 
         $this->assertSame(
             'SELECT * FROM table WHERE name = \'Anton\' AND id IN(1, 2, 3) AND balance > 120',
+            $interpolated
+        );
+    }
+
+    /**
+     * @requires PHP >= 8.1
+     */
+    public function testEnumInterpolation(): void
+    {
+        $query = 'SELECT * FROM table WHERE enums = :str OR enumi = :int';
+
+        $parameters = [
+            ':str' => FooBarEnum::BAR,
+            ':int' => IntegerEnum::ANSWER,
+        ];
+
+        $interpolated = Interpolator::interpolate($query, $parameters);
+
+        $this->assertSame(
+            "SELECT * FROM table WHERE enums = 'bar' OR enumi = 42",
+            $interpolated
+        );
+    }
+
+    /**
+     * @requires PHP >= 8.1
+     */
+    public function testUntypedEnumInterpolation(): void
+    {
+        $query = 'SELECT * FROM table WHERE enum = :enum';
+
+        $parameters = [
+            ':enum' => UntypedEnum::BAR,
+        ];
+
+        $interpolated = Interpolator::interpolate($query, $parameters);
+
+        $this->assertSame(
+            "SELECT * FROM table WHERE enum = [UNRESOLVED]",
             $interpolated
         );
     }
