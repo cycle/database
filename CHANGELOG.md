@@ -9,7 +9,7 @@ v2.2.0 (23.06.2022)
 - Add supporting for smallint column type by @gam6itko (#58)
 - Fix typo in the `\Cycle\Database\Schema\State::forgerForeignKey` method by @BeMySlaveDarlin (#53)
 - Fix compatibility with Spiral Framework 3 packages:
-  - Remove overriding of the `$config` property in the `DatabaseConfig` by @roxblnfk class (#64)
+  - Remove overriding of the `$config` property in the `DatabaseConfig` class by @roxblnfk (#64)
   - Update `composer.json` dependencies
 
 v2.1.3 (20.05.2022)
