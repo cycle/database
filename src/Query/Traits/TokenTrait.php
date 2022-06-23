@@ -100,12 +100,12 @@ trait TokenTrait
             case 3:
                 [$name, $operator, $value] = $params;
 
-                if (is_string($operator)) {
-                    $operator = strtoupper($operator);
+                if (\is_string($operator)) {
+                    $operator = \strtoupper($operator);
                     if ($operator === 'BETWEEN' || $operator === 'NOT BETWEEN') {
                         throw new BuilderException('Between statements expects exactly 2 values');
                     }
-                } elseif (is_scalar($operator)) {
+                } elseif (\is_scalar($operator)) {
                     $operator = (string)$operator;
                 }
 
@@ -117,11 +117,11 @@ trait TokenTrait
                 break;
             case 4:
                 [$name, $operator] = $params;
-                if (!is_string($operator)) {
+                if (!\is_string($operator)) {
                     throw new BuilderException('Invalid operator type, string expected');
                 }
 
-                $operator = strtoupper($operator);
+                $operator = \strtoupper($operator);
                 if ($operator !== 'BETWEEN' && $operator !== 'NOT BETWEEN') {
                     throw new BuilderException(
                         'Only "BETWEEN" or "NOT BETWEEN" can define second comparision value'

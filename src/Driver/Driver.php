@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver;
 
+use BackedEnum;
 use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Config\PDOConnectionConfig;
 use Cycle\Database\Config\ProvidesSourceString;
@@ -25,6 +26,7 @@ use Cycle\Database\StatementInterface;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
+use IntBackedEnum;
 use PDO;
 use PDOStatement;
 use Psr\Log\LoggerAwareInterface;
@@ -225,8 +227,13 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     /**
      * @psalm-return non-empty-string
      */
-    public function quote($value, int $type = PDO::PARAM_STR): string
+    public function quote(mixed $value, int $type = PDO::PARAM_STR): string
     {
+        /** @since PHP 8.1 */
+        if ($value instanceof BackedEnum) {
+            $value = (string)$value->value;
+        }
+
         if ($value instanceof DateTimeInterface) {
             $value = $this->formatDatetime($value);
         }
@@ -489,7 +496,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     {
         $index = 0;
         foreach ($parameters as $name => $parameter) {
-            if (is_string($name)) {
+            if (\is_string($name)) {
                 $index = $name;
             } else {
                 $index++;
@@ -500,6 +507,12 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
             if ($parameter instanceof ParameterInterface) {
                 $type = $parameter->getType();
                 $parameter = $parameter->getValue();
+            }
+
+            /** @since PHP 8.1 */
+            if ($parameter instanceof BackedEnum) {
+                $type = $parameter instanceof IntBackedEnum ? PDO::PARAM_INT : PDO::PARAM_STR;
+                $parameter = $parameter->value;
             }
 
             if ($parameter instanceof DateTimeInterface) {
@@ -534,6 +547,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
      * Convert PDO exception into query or integrity exception.
      *
      * @param Throwable $exception
+     *
      * @psalm-param non-empty-string $query
      */
     abstract protected function mapException(
@@ -602,7 +616,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     {
         $connection = $this->config->connection;
 
-        if (! $connection instanceof PDOConnectionConfig) {
+        if (!$connection instanceof PDOConnectionConfig) {
             throw new \InvalidArgumentException(
                 'Could not establish PDO connection using non-PDO configuration'
             );

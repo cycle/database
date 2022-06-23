@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\SQLServer;
 
+use BackedEnum;
 use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Config\SQLServerDriverConfig;
 use Cycle\Database\Driver\Driver;
@@ -18,6 +19,8 @@ use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Injection\ParameterInterface;
 use Cycle\Database\Query\QueryBuilder;
+use IntBackedEnum;
+use PDO;
 
 class SQLServerDriver extends Driver
 {
@@ -58,6 +61,12 @@ class SQLServerDriver extends Driver
             if ($parameter instanceof ParameterInterface) {
                 $type = $parameter->getType();
                 $parameter = $parameter->getValue();
+            }
+
+            /** @since PHP 8.1 */
+            if ($parameter instanceof BackedEnum) {
+                $type = $parameter instanceof IntBackedEnum ? PDO::PARAM_INT : PDO::PARAM_STR;
+                $parameter = $parameter->value;
             }
 
             if ($parameter instanceof \DateTimeInterface) {
