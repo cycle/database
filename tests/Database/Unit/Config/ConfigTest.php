@@ -15,7 +15,7 @@ use Cycle\Database\Exception\ConfigException;
 
 class ConfigTest extends TestCase
 {
-     public function testMakeDatabaseWithoutConfig(): void
+    public function testMakeDatabaseWithoutConfig(): void
     {
         $config = new DatabaseConfig();
         $this->assertInstanceOf(DatabaseConfig::class, $config);
