@@ -1,7 +1,11 @@
 # CHANGELOG
 
-v2.2.1 (in progress)
+v2.2.2 (in progress)
 -------------------
+
+v2.2.1 (02.07.2022)
+-------------------
+- Hotfix: make the `$config` parameter of the `DatabaseConfig` constructor optional again by @roxblnfk
 
 v2.2.0 (23.06.2022)
 -------------------
