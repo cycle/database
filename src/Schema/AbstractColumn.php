@@ -205,6 +205,13 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     protected array $enumValues = [];
 
     /**
+     * Database Engine specific attributes.
+     *
+     * @var array<string, mixed>
+     */
+    protected array $attributes = [];
+
+    /**
      * Abstract type aliases (for consistency).
      */
     private array $aliases = [
@@ -584,7 +591,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
             $statement[] = "DEFAULT {$this->quoteDefault($driver)}";
         }
 
-        return implode(' ', $statement);
+        return \implode(' ', $statement);
     }
 
     public function compare(self $initial): bool
