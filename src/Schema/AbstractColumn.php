@@ -32,26 +32,26 @@ class_exists(SpiralAbstractColumn::class);
  *
  * Shortcuts for various column types:
  *
- * @method AbstractColumn|$this primary()
- * @method AbstractColumn|$this bigPrimary()
- * @method AbstractColumn|$this boolean()
- * @method AbstractColumn|$this integer()
- * @method AbstractColumn|$this tinyInteger()
- * @method AbstractColumn|$this bigInteger()
- * @method AbstractColumn|$this text()
- * @method AbstractColumn|$this tinyText()
- * @method AbstractColumn|$this longText()
- * @method AbstractColumn|$this double()
- * @method AbstractColumn|$this float()
- * @method AbstractColumn|$this datetime()
- * @method AbstractColumn|$this date()
- * @method AbstractColumn|$this time()
- * @method AbstractColumn|$this timestamp()
- * @method AbstractColumn|$this binary()
- * @method AbstractColumn|$this tinyBinary()
- * @method AbstractColumn|$this longBinary()
- * @method AbstractColumn|$this json()
- * @method AbstractColumn|$this uuid()
+ * @method $this|AbstractColumn primary()
+ * @method $this|AbstractColumn bigPrimary()
+ * @method $this|AbstractColumn boolean()
+ * @method $this|AbstractColumn integer()
+ * @method $this|AbstractColumn tinyInteger()
+ * @method $this|AbstractColumn bigInteger()
+ * @method $this|AbstractColumn text()
+ * @method $this|AbstractColumn tinyText()
+ * @method $this|AbstractColumn longText()
+ * @method $this|AbstractColumn double()
+ * @method $this|AbstractColumn float()
+ * @method $this|AbstractColumn datetime()
+ * @method $this|AbstractColumn date()
+ * @method $this|AbstractColumn time()
+ * @method $this|AbstractColumn timestamp()
+ * @method $this|AbstractColumn binary()
+ * @method $this|AbstractColumn tinyBinary()
+ * @method $this|AbstractColumn longBinary()
+ * @method $this|AbstractColumn json()
+ * @method $this|AbstractColumn uuid()
  */
 abstract class AbstractColumn implements ColumnInterface, ElementInterface
 {
@@ -89,49 +89,49 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      */
     protected $mapping = [
         //Primary sequences
-        'primary'     => null,
-        'bigPrimary'  => null,
+        'primary' => null,
+        'bigPrimary' => null,
 
         //Enum type (mapped via method)
-        'enum'        => null,
+        'enum' => null,
 
         //Logical types
-        'boolean'     => null,
+        'boolean' => null,
 
         //Integer types (size can always be changed with size method), longInteger has method alias
         //bigInteger
-        'integer'     => null,
+        'integer' => null,
         'tinyInteger' => null,
-        'bigInteger'  => null,
+        'bigInteger' => null,
 
         //String with specified length (mapped via method)
-        'string'      => null,
+        'string' => null,
 
         //Generic types
-        'text'        => null,
-        'tinyText'    => null,
-        'longText'    => null,
+        'text' => null,
+        'tinyText' => null,
+        'longText' => null,
 
         //Real types
-        'double'      => null,
-        'float'       => null,
+        'double' => null,
+        'float' => null,
 
         //Decimal type (mapped via method)
-        'decimal'     => null,
+        'decimal' => null,
 
         //Date and Time types
-        'datetime'    => null,
-        'date'        => null,
-        'time'        => null,
-        'timestamp'   => null,
+        'datetime' => null,
+        'date' => null,
+        'time' => null,
+        'timestamp' => null,
 
         //Binary types
-        'binary'      => null,
-        'tinyBinary'  => null,
-        'longBinary'  => null,
+        'binary' => null,
+        'tinyBinary' => null,
+        'longBinary' => null,
 
         //Additional types
-        'json'        => null,
+        'json' => null,
     ];
 
     /**
@@ -143,28 +143,28 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      * @var array
      */
     protected $reverseMapping = [
-        'primary'     => [],
-        'bigPrimary'  => [],
-        'enum'        => [],
-        'boolean'     => [],
-        'integer'     => [],
+        'primary' => [],
+        'bigPrimary' => [],
+        'enum' => [],
+        'boolean' => [],
+        'integer' => [],
         'tinyInteger' => [],
-        'bigInteger'  => [],
-        'string'      => [],
-        'text'        => [],
-        'tinyText'    => [],
-        'longText'    => [],
-        'double'      => [],
-        'float'       => [],
-        'decimal'     => [],
-        'datetime'    => [],
-        'date'        => [],
-        'time'        => [],
-        'timestamp'   => [],
-        'binary'      => [],
-        'tinyBinary'  => [],
-        'longBinary'  => [],
-        'json'        => [],
+        'bigInteger' => [],
+        'string' => [],
+        'text' => [],
+        'tinyText' => [],
+        'longText' => [],
+        'double' => [],
+        'float' => [],
+        'decimal' => [],
+        'datetime' => [],
+        'date' => [],
+        'time' => [],
+        'timestamp' => [],
+        'binary' => [],
+        'tinyBinary' => [],
+        'longBinary' => [],
+        'json' => [],
     ];
 
     /**
@@ -235,12 +235,12 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      * @var array
      */
     private $aliases = [
-        'int'            => 'integer',
-        'bigint'         => 'bigInteger',
-        'incremental'    => 'primary',
+        'int' => 'integer',
+        'bigint' => 'bigInteger',
+        'incremental' => 'primary',
         'bigIncremental' => 'bigPrimary',
-        'bool'           => 'boolean',
-        'blob'           => 'binary',
+        'bool' => 'boolean',
+        'blob' => 'binary',
     ];
 
     /**
@@ -252,8 +252,8 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      * @var array
      */
     private $phpMapping = [
-        self::INT   => ['primary', 'bigPrimary', 'integer', 'tinyInteger', 'bigInteger'],
-        self::BOOL  => ['boolean'],
+        self::INT => ['primary', 'bigPrimary', 'integer', 'tinyInteger', 'bigInteger'],
+        self::BOOL => ['boolean'],
         self::FLOAT => ['double', 'float', 'decimal'],
     ];
 
@@ -274,9 +274,10 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      *
      * @param string $type Abstract type.
      * @param array  $arguments Not used.
+     *
      * @return self
      */
-    public function __call(string $type, array $arguments = []): AbstractColumn
+    public function __call(string $type, array $arguments = []): self
     {
         return $this->type($type);
     }
@@ -300,8 +301,8 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
             'name' => $this->name,
             'type' => [
                 'database' => $this->type,
-                'schema'   => $this->getAbstractType(),
-                'php'      => $this->getType(),
+                'schema' => $this->getAbstractType(),
+                'php' => $this->getType(),
             ],
         ];
 
@@ -453,6 +454,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      * declaration process. Value will become null after the schema fetched from database.
      *
      * @return string|null
+     *
      * @internal
      */
     public function getDeclaredType(): ?string
@@ -507,12 +509,14 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      * cross type conversions and etc. Try do not change column type without a reason.
      *
      * @param string $abstract Abstract or virtual type declared in mapping.
-     * @return self|$this
      *
      * @throws SchemaException
+     *
+     * @return $this|self
+     *
      * @todo Support native database types (simply bypass abstractType)!
      */
-    public function type(string $abstract): AbstractColumn
+    public function type(string $abstract): self
     {
         if (isset($this->aliases[$abstract])) {
             //Make recursive
@@ -549,9 +553,10 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      * Set column nullable/not nullable.
      *
      * @param bool $nullable
-     * @return self|$this
+     *
+     * @return $this|self
      */
-    public function nullable(bool $nullable = true): AbstractColumn
+    public function nullable(bool $nullable = true): self
     {
         $this->nullable = $nullable;
 
@@ -563,9 +568,10 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      * Use Database::TIMESTAMP_NOW to use driver specific NOW() function.
      *
      * @param mixed $value
-     * @return self|$this
+     *
+     * @return $this|self
      */
-    public function defaultValue($value): AbstractColumn
+    public function defaultValue($value): self
     {
         //Forcing driver specific values
         if ($value === self::DATETIME_NOW) {
@@ -585,10 +591,11 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      * $table->status->enum(['active', 'disabled']);
      * $table->status->enum('active', 'disabled');
      *
-     * @param string|array $values Enum values (array or comma separated). String values only.
+     * @param array|string $values Enum values (array or comma separated). String values only.
+     *
      * @return self
      */
-    public function enum($values): AbstractColumn
+    public function enum($values): self
     {
         $this->type('enum');
         $this->enumValues = array_map(
@@ -610,11 +617,12 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      * @link http://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address
      *
      * @param int $size Max string length.
-     * @return self|$this
      *
      * @throws SchemaException
+     *
+     * @return $this|self
      */
-    public function string(int $size = 255): AbstractColumn
+    public function string(int $size = 255): self
     {
         $this->type('string');
 
@@ -634,11 +642,12 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      *
      * @param int $precision
      * @param int $scale
-     * @return self|$this
      *
      * @throws SchemaException
+     *
+     * @return $this|self
      */
-    public function decimal(int $precision, int $scale = 0): AbstractColumn
+    public function decimal(int $precision, int $scale = 0): self
     {
         $this->type('decimal');
 
@@ -681,6 +690,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
 
     /**
      * @param AbstractColumn $initial
+     *
      * @return bool
      */
     public function compare(SpiralAbstractColumn $initial): bool
@@ -727,6 +737,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      * Get database specific enum type definition options.
      *
      * @param DriverInterface $driver
+     *
      * @return string
      */
     protected function quoteEnum(SpiralDriverInterface $driver): string
@@ -747,6 +758,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      * Must return driver specific default value.
      *
      * @param DriverInterface $driver
+     *
      * @return string
      */
     protected function quoteDefault(SpiralDriverInterface $driver): string
@@ -784,9 +796,10 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      *
      * @param string $type
      * @param string $value
-     * @return string|FragmentInterface|\DateTime
      *
      * @throws DefaultValueException
+     *
+     * @return \DateTime|FragmentInterface|string
      */
     protected function formatDatetime(string $type, $value)
     {

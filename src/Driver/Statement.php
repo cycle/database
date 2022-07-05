@@ -74,6 +74,7 @@ final class Statement implements StatementInterface
 
     /**
      * @param int $mode
+     *
      * @return array
      */
     public function fetchAll(int $mode = self::FETCH_ASSOC): array

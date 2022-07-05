@@ -20,9 +20,10 @@ interface DatabaseProviderInterface
      * Get Database associated with a given database alias or automatically created one.
      *
      * @param string|null $database
-     * @return DatabaseInterface
      *
      * @throws DBALException
+     *
+     * @return DatabaseInterface
      */
     public function database(string $database = null): DatabaseInterface;
 }

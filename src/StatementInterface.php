@@ -37,6 +37,7 @@ interface StatementInterface extends \IteratorAggregate
      * Must return the next row of a result set.
      *
      * @param int $mode
+     *
      * @return mixed
      * @psalm-suppress MissingReturnType
      */
@@ -46,6 +47,7 @@ interface StatementInterface extends \IteratorAggregate
      * Must return a single column from the next row of a result set.
      *
      * @param int $columnNumber Optional column number.
+     *
      * @return mixed
      */
     public function fetchColumn(int $columnNumber = null);
@@ -54,6 +56,7 @@ interface StatementInterface extends \IteratorAggregate
      * Fetch all rows.
      *
      * @param int $mode Fetch mode.
+     *
      * @return array
      */
     public function fetchAll(int $mode = self::FETCH_ASSOC): array;

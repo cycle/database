@@ -178,7 +178,7 @@ class SQLServerHandler extends Handler
             "sp_rename ?, ?, 'COLUMN'",
             [
                 $table->getName() . '.' . $initial->getName(),
-                $column->getName()
+                $column->getName(),
             ]
         );
     }

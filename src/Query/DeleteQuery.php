@@ -44,9 +44,10 @@ class DeleteQuery extends ActiveQuery
      * Change target table.
      *
      * @param string $into Table name without prefix.
+     *
      * @return self
      */
-    public function from(string $into): DeleteQuery
+    public function from(string $into): self
     {
         $this->table = $into;
 
@@ -81,7 +82,7 @@ class DeleteQuery extends ActiveQuery
     {
         return [
             'table' => $this->table,
-            'where' => $this->whereTokens
+            'where' => $this->whereTokens,
         ];
     }
 }

@@ -18,7 +18,7 @@ use Spiral\Database\ForeignKeyInterface as SpiralForeignKeyInterface;
  */
 interface ForeignKeyInterface
 {
-    public const CASCADE   = 'CASCADE';
+    public const CASCADE = 'CASCADE';
     public const NO_ACTION = 'NO ACTION';
 
     /**

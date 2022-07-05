@@ -27,9 +27,10 @@ trait HavingTrait
      * Simple HAVING condition with various set of arguments.
      *
      * @param mixed ...$args [(column, value), (column, operator, value)]
-     * @return self|$this
      *
      * @throws BuilderException
+     *
+     * @return $this|self
      */
     public function having(...$args): self
     {
@@ -47,9 +48,10 @@ trait HavingTrait
      * Simple AND HAVING condition with various set of arguments.
      *
      * @param mixed ...$args [(column, value), (column, operator, value)]
-     * @return self|$this
      *
      * @throws BuilderException
+     *
+     * @return $this|self
      */
     public function andHaving(...$args): self
     {
@@ -68,9 +70,9 @@ trait HavingTrait
      *
      * @param mixed ...$args [(column, value), (column, operator, value)]
      *
-     * @return self|$this
-     *
      * @throws BuilderException
+     *
+     * @return $this|self
      */
     public function orHaving(...$args): self
     {

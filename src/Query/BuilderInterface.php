@@ -24,7 +24,8 @@ interface BuilderInterface
 {
     /**
      * @param DriverInterface $driver
-     * @return BuilderInterface|$this
+     *
+     * @return $this|BuilderInterface
      */
     public function withDriver(SpiralDriverInterface $driver): self;
 
@@ -33,6 +34,7 @@ interface BuilderInterface
      *
      * @param string      $prefix
      * @param string|null $table
+     *
      * @return InsertQuery
      */
     public function insertQuery(
@@ -46,6 +48,7 @@ interface BuilderInterface
      * @param string $prefix
      * @param array  $from
      * @param array  $columns
+     *
      * @return SelectQuery
      */
     public function selectQuery(
@@ -58,6 +61,7 @@ interface BuilderInterface
      * @param string      $prefix
      * @param string|null $from
      * @param array       $where
+     *
      * @return DeleteQuery
      */
     public function deleteQuery(
@@ -73,6 +77,7 @@ interface BuilderInterface
      * @param string|null $table
      * @param array       $where
      * @param array       $values
+     *
      * @return UpdateQuery
      */
     public function updateQuery(

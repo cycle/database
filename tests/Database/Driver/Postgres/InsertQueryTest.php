@@ -46,7 +46,7 @@ class InsertQueryTest extends \Cycle\Database\Tests\InsertQueryTest
     {
         $insert = $this->database->insert()->into('target_table')->values(
             [
-                'name' => 'Anton'
+                'name' => 'Anton',
             ]
         );
 
@@ -55,7 +55,6 @@ class InsertQueryTest extends \Cycle\Database\Tests\InsertQueryTest
             $insert
         );
     }
-
 
     public function testSimpleInsertWithStatesValues(): void
     {

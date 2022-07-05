@@ -95,7 +95,7 @@ trait TokenTrait
                 // AND|OR [name] = [valueA]
                 $tokens[] = [
                     $boolean,
-                    [$params[0], '=', $wrapper($params[1])]
+                    [$params[0], '=', $wrapper($params[1])],
                 ];
                 break;
             case 3:
@@ -113,7 +113,7 @@ trait TokenTrait
                 // AND|OR [name] [valueA: OPERATION] [valueA]
                 $tokens[] = [
                     $boolean,
-                    [$name, $operator, $wrapper($value)]
+                    [$name, $operator, $wrapper($value)],
                 ];
                 break;
             case 4:
@@ -136,8 +136,8 @@ trait TokenTrait
                         $name,
                         strtoupper($operator),
                         $wrapper($params[2]),
-                        $wrapper($params[3])
-                    ]
+                        $wrapper($params[3]),
+                    ],
                 ];
                 break;
             default:
@@ -187,7 +187,7 @@ trait TokenTrait
             if (!is_array($value)) {
                 $tokens[] = [
                     $boolean,
-                    [$key, '=', $wrapper($value)]
+                    [$key, '=', $wrapper($value)],
                 ];
                 continue;
             }
@@ -218,6 +218,7 @@ trait TokenTrait
      * @param array    $where       Operations associated with identifier.
      * @param array    $tokens      Array to aggregate compiled tokens. Reference.
      * @param callable $wrapper     Callback or closure used to wrap/collect every potential parameter.
+     *
      * @return array
      */
     private function pushCondition(string $innerJoiner, string $key, $where, &$tokens, callable $wrapper): array
@@ -232,7 +233,7 @@ trait TokenTrait
                 // AND|OR [name] [OPERATION] [nestedValue]
                 $tokens[] = [
                     $innerJoiner,
-                    [$key, $operation, $wrapper($value)]
+                    [$key, $operation, $wrapper($value)],
                 ];
                 continue;
             }

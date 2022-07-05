@@ -32,6 +32,7 @@ class PostgresCompiler extends Compiler implements CachingCompilerInterface
      * @param QueryParameters $params
      * @param Quoter          $q
      * @param array           $tokens
+     *
      * @return string
      */
     protected function insertQuery(SpiralQueryParameters $params, SpiralQuoter $q, array $tokens): string
@@ -74,6 +75,7 @@ class PostgresCompiler extends Compiler implements CachingCompilerInterface
      * @param Quoter          $q
      * @param int|null        $limit
      * @param int|null        $offset
+     *
      * @return string
      */
     protected function limit(SpiralQueryParameters $params, SpiralQuoter $q, int $limit = null, int $offset = null): string

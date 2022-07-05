@@ -62,8 +62,8 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * Table states.
      */
-    public const STATUS_NEW              = 0;
-    public const STATUS_EXISTS           = 1;
+    public const STATUS_NEW = 0;
+    public const STATUS_EXISTS = 1;
     public const STATUS_DECLARED_DROPPED = 2;
 
     /**
@@ -77,6 +77,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * Initial table state.
      *
      * @internal
+     *
      * @var State
      */
     protected $initial;
@@ -85,6 +86,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * Currently defined table state.
      *
      * @internal
+     *
      * @var State
      */
     protected $current;
@@ -133,6 +135,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * Shortcut for column() method.
      *
      * @param string $column
+     *
      * @return AbstractColumn
      */
     public function __get(string $column)
@@ -150,6 +153,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      *
      * @param string $type
      * @param array  $arguments Type specific parameters.
+     *
      * @return AbstractColumn
      */
     public function __call(string $type, array $arguments)
@@ -183,11 +187,11 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     public function __debugInfo()
     {
         return [
-            'status'      => $this->status,
-            'name'        => $this->getName(),
+            'status' => $this->status,
+            'name' => $this->getName(),
             'primaryKeys' => $this->getPrimaryKeys(),
-            'columns'     => array_values($this->getColumns()),
-            'indexes'     => array_values($this->getIndexes()),
+            'columns' => array_values($this->getColumns()),
+            'indexes' => array_values($this->getIndexes()),
             'foreignKeys' => array_values($this->getForeignKeys()),
         ];
     }
@@ -243,6 +247,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * Sets table name. Use this function in combination with save to rename table.
      *
      * @param string $name
+     *
      * @return string Prefixed table name.
      */
     public function setName(string $name): string
@@ -291,9 +296,10 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * database might support compound indexes.
      *
      * @param array $columns
+     *
      * @return self
      */
-    public function setPrimaryKeys(array $columns): AbstractTable
+    public function setPrimaryKeys(array $columns): self
     {
         //Originally i were forcing an exception when primary key were changed, now we should
         //force it when table will be synced
@@ -388,6 +394,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * $table->column('name')->string();
      *
      * @param string $name
+     *
      * @return AbstractColumn
      */
     public function column(string $name): AbstractColumn
@@ -419,10 +426,11 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * $table->index(['key', 'key2']);
      *
      * @param array $columns List of index columns.
-     * @return AbstractIndex
      *
      * @throws SchemaException
      * @throws DriverException
+     *
+     * @return AbstractIndex
      */
     public function index(array $columns): AbstractIndex
     {
@@ -481,9 +489,10 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * name.
      *
      * @param array $columns
-     * @return AbstractForeignKey
      *
      * @throws SchemaException
+     *
+     * @return AbstractForeignKey
      */
     public function foreignKey(array $columns): AbstractForeignKey
     {
@@ -520,11 +529,12 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      *
      * @param string $column
      * @param string $name New column name.
-     * @return self
      *
      * @throws SchemaException
+     *
+     * @return self
      */
-    public function renameColumn(string $column, string $name): AbstractTable
+    public function renameColumn(string $column, string $name): self
     {
         if (!$this->hasColumn($column)) {
             throw new SchemaException(
@@ -543,11 +553,12 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      *
      * @param array  $columns Index forming columns.
      * @param string $name    New index name.
-     * @return self
      *
      * @throws SchemaException
+     *
+     * @return self
      */
-    public function renameIndex(array $columns, string $name): AbstractTable
+    public function renameIndex(array $columns, string $name): self
     {
         if (!$this->hasIndex($columns)) {
             throw new SchemaException(
@@ -565,11 +576,12 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * Drop column by it's name.
      *
      * @param string $column
-     * @return self
      *
      * @throws SchemaException
+     *
+     * @return self
      */
-    public function dropColumn(string $column): AbstractTable
+    public function dropColumn(string $column): self
     {
         $schema = $this->current->findColumn($column);
         if ($schema === null) {
@@ -588,11 +600,12 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * Drop index by it's forming columns.
      *
      * @param array $columns
-     * @return self
      *
      * @throws SchemaException
+     *
+     * @return self
      */
-    public function dropIndex(array $columns): AbstractTable
+    public function dropIndex(array $columns): self
     {
         $schema = $this->current->findIndex($columns);
         if ($schema === null) {
@@ -611,11 +624,12 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * Drop foreign key by it's name.
      *
      * @param array $columns
-     * @return self
      *
      * @throws SchemaException
+     *
+     * @return self
      */
-    public function dropForeignKey(array $columns): AbstractTable
+    public function dropForeignKey(array $columns): self
     {
         $schema = $this->current->findForeignKey($columns);
         if ($schema === null) {
@@ -647,9 +661,9 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      *
      * @param State $state Use null to flush table schema.
      *
-     * @return self|$this
+     * @return $this|self
      */
-    public function setState(SpiralState $state = null): AbstractTable
+    public function setState(SpiralState $state = null): self
     {
         $this->current = new State($this->initial->getName());
 
@@ -664,9 +678,9 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * Reset table state to it initial form.
      *
-     * @return self|$this
+     * @return $this|self
      */
-    public function resetState(): AbstractTable
+    public function resetState(): self
     {
         $this->setState($this->initial);
 
@@ -751,9 +765,10 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * copy in order to prevent cross modifications.
      *
      * @param bool $withForeignKeys
+     *
      * @return AbstractTable
      */
-    protected function normalizeSchema(bool $withForeignKeys = true): AbstractTable
+    protected function normalizeSchema(bool $withForeignKeys = true): self
     {
         // To make sure that no pre-sync modifications will be reflected on current table
         $target = clone $this;

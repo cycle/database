@@ -55,7 +55,7 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
      * @param string $method
      * @param array  $arguments
      *
-     * @return SelectQuery|mixed
+     * @return mixed|SelectQuery
      */
     public function __call($method, array $arguments)
     {
@@ -124,9 +124,10 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
      * $table->insertOne(["name" => "Wolfy-J", "balance" => 10]);
      *
      * @param array $rowset
-     * @return int|string|null
      *
      * @throws BuilderException
+     *
+     * @return int|string|null
      */
     public function insertOne(array $rowset = [])
     {
@@ -266,6 +267,7 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
      * Check if table have specified column.
      *
      * @param string $name Column name.
+     *
      * @return bool
      */
     public function hasColumn(string $name): bool
@@ -287,6 +289,7 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
      * Check if table has index related to set of provided columns. Columns order does matter!
      *
      * @param array $columns
+     *
      * @return bool
      */
     public function hasIndex(array $columns = []): bool
@@ -308,6 +311,7 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
      * Check if table has foreign key related to table column.
      *
      * @param array $columns Column names.
+     *
      * @return bool
      */
     public function hasForeignKey(array $columns): bool

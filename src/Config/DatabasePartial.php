@@ -24,7 +24,7 @@ final class DatabasePartial
     /** @var string */
     private $driver;
 
-    /** @var null|string */
+    /** @var string|null */
     private $readDriver;
 
     /**
@@ -70,7 +70,7 @@ final class DatabasePartial
     }
 
     /**
-     * @return null|string
+     * @return string|null
      */
     public function getReadDriver(): ?string
     {

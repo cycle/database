@@ -27,6 +27,7 @@ interface CachingCompilerInterface extends CompilerInterface
      *
      * @param QueryParameters $params
      * @param array           $tokens
+     *
      * @return string
      */
     public function hashLimit(SpiralQueryParameters $params, array $tokens): string;

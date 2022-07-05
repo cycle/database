@@ -68,7 +68,7 @@ class FragmentTest extends TestCase
         $this->assertSame(
             [
                 'expression' => 'some sql',
-                'parameters' => []
+                'parameters' => [],
             ],
             $exp->getTokens()
         );
@@ -79,7 +79,7 @@ class FragmentTest extends TestCase
         $this->assertSame(
             [
                 'fragment' => 'some sql',
-                'parameters' => []
+                'parameters' => [],
             ],
             $f->getTokens()
         );

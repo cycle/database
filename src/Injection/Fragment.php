@@ -54,9 +54,10 @@ class Fragment implements FragmentInterface
 
     /**
      * @param array $an_array
+     *
      * @return Fragment
      */
-    public static function __set_state(array $an_array): Fragment
+    public static function __set_state(array $an_array): self
     {
         return new self(
             $an_array['fragment'] ?? $an_array['statement'],
@@ -78,8 +79,8 @@ class Fragment implements FragmentInterface
     public function getTokens(): array
     {
         return [
-            'fragment'   => $this->fragment,
-            'parameters' => $this->parameters
+            'fragment' => $this->fragment,
+            'parameters' => $this->parameters,
         ];
     }
 }

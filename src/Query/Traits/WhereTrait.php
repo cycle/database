@@ -27,9 +27,10 @@ trait WhereTrait
      * Simple WHERE condition with various set of arguments.
      *
      * @param mixed ...$args [(column, value), (column, operator, value)]
-     * @return self|$this
      *
      * @throws BuilderException
+     *
+     * @return $this|self
      */
     public function where(...$args): self
     {
@@ -47,9 +48,10 @@ trait WhereTrait
      * Simple AND WHERE condition with various set of arguments.
      *
      * @param mixed ...$args [(column, value), (column, operator, value)]
-     * @return self|$this
      *
      * @throws BuilderException
+     *
+     * @return $this|self
      */
     public function andWhere(...$args): self
     {
@@ -67,9 +69,10 @@ trait WhereTrait
      * Simple OR WHERE condition with various set of arguments.
      *
      * @param mixed ...$args [(column, value), (column, operator, value)]
-     * @return self|$this
      *
      * @throws BuilderException
+     *
+     * @return $this|self
      */
     public function orWhere(...$args): self
     {
@@ -91,6 +94,7 @@ trait WhereTrait
      * @param array    $tokens     Array to aggregate compiled tokens. Reference.
      * @param callable $wrapper    Callback or closure used to wrap/collect every potential
      *                             parameter.
+     *
      * @throws BuilderException
      */
     abstract protected function registerToken(

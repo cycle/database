@@ -25,15 +25,15 @@ use Cycle\Database\Exception\DBALException;
 class ManagerTest extends TestCase
 {
     public const DEFAULT_OPTIONS = [
-        'default'     => 'default',
-        'databases'   => [
+        'default' => 'default',
+        'databases' => [
             'default' => [
                 'prefix' => 'prefix_',
-                'read'   => 'read',
-                'write'  => 'write'
-            ]
+                'read' => 'read',
+                'write' => 'write',
+            ],
         ],
-        'connections' => []
+        'connections' => [],
     ];
 
     public function testAddDatabase(): void
@@ -189,25 +189,25 @@ class ManagerTest extends TestCase
         $dbal = new DatabaseManager(
             new DatabaseConfig(
                 [
-                    'default'     => 'default',
-                    'databases'   => [
+                    'default' => 'default',
+                    'databases' => [
                         'default' => [
-                            'driver' => 'default'
+                            'driver' => 'default',
                         ],
-                        'test'    => [
-                            'driver' => 'default'
+                        'test' => [
+                            'driver' => 'default',
                         ],
                     ],
                     'connections' => [
                         'default' => [
-                            'driver'  => SQLiteDriver::class,
+                            'driver' => SQLiteDriver::class,
                             'options' => [
                                 'connection' => 'sqlite::memory:',
-                                'username'   => 'sqlite',
-                                'password'   => ''
-                            ]
-                        ]
-                    ]
+                                'username' => 'sqlite',
+                                'password' => '',
+                            ],
+                        ],
+                    ],
                 ]
             )
         );
@@ -221,25 +221,25 @@ class ManagerTest extends TestCase
         $dbal = new DatabaseManager(
             new DatabaseConfig(
                 [
-                    'default'     => 'default',
-                    'databases'   => [
+                    'default' => 'default',
+                    'databases' => [
                         'default' => [
-                            'driver' => 'default'
+                            'driver' => 'default',
                         ],
-                        'test'    => [
-                            'driver' => 'default'
+                        'test' => [
+                            'driver' => 'default',
                         ],
                     ],
                     'connections' => [
                         'default' => [
-                            'driver'  => SQLiteDriver::class,
+                            'driver' => SQLiteDriver::class,
                             'options' => [
                                 'connection' => 'sqlite::memory:',
-                                'username'   => 'sqlite',
-                                'password'   => ''
-                            ]
-                        ]
-                    ]
+                                'username' => 'sqlite',
+                                'password' => '',
+                            ],
+                        ],
+                    ],
                 ]
             )
         );
@@ -252,23 +252,23 @@ class ManagerTest extends TestCase
         $dbal = new DatabaseManager(
             new DatabaseConfig(
                 [
-                    'default'     => 'default',
-                    'databases'   => [
+                    'default' => 'default',
+                    'databases' => [
                         'default' => [
-                            'driver' => 'default'
+                            'driver' => 'default',
                         ],
-                        'test'    => [
-                            'driver' => 'default'
+                        'test' => [
+                            'driver' => 'default',
                         ],
                     ],
                     'connections' => [
                         'default' => [
-                            'driver'     => SQLiteDriver::class,
+                            'driver' => SQLiteDriver::class,
                             'connection' => 'sqlite::memory:',
-                            'username'   => 'sqlite',
-                            'password'   => ''
-                        ]
-                    ]
+                            'username' => 'sqlite',
+                            'password' => '',
+                        ],
+                    ],
                 ]
             )
         );
@@ -287,8 +287,8 @@ class ManagerTest extends TestCase
         $dbal = new DatabaseManager(
             new DatabaseConfig([
                 'connections' => [
-                    'default' => new Container\Autowire('unknown')
-                ]
+                    'default' => new Container\Autowire('unknown'),
+                ],
             ])
         );
 

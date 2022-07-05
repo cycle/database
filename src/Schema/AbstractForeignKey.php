@@ -127,9 +127,10 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
      * column one.
      *
      * @param array $columns
+     *
      * @return self
      */
-    public function columns(array $columns): AbstractForeignKey
+    public function columns(array $columns): self
     {
         $this->columns = $columns;
 
@@ -152,7 +153,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
         string $table,
         array $columns = ['id'],
         bool $forcePrefix = true
-    ): AbstractForeignKey {
+    ): self {
         $this->foreignTable = ($forcePrefix ? $this->tablePrefix : '') . $table;
         $this->foreignKeys = $columns;
 
@@ -163,9 +164,10 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
      * Set foreign key delete behaviour.
      *
      * @param string $rule Possible values: NO ACTION, CASCADE, etc (driver specific).
+     *
      * @return self
      */
-    public function onDelete(string $rule = self::NO_ACTION): AbstractForeignKey
+    public function onDelete(string $rule = self::NO_ACTION): self
     {
         $this->deleteRule = strtoupper($rule);
 
@@ -176,9 +178,10 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
      * Set foreign key update behaviour.
      *
      * @param string $rule Possible values: NO ACTION, CASCADE, etc (driver specific).
+     *
      * @return self
      */
-    public function onUpdate(string $rule = self::NO_ACTION): AbstractForeignKey
+    public function onUpdate(string $rule = self::NO_ACTION): self
     {
         $this->updateRule = strtoupper($rule);
 
@@ -189,6 +192,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
      * Foreign key creation syntax.
      *
      * @param DriverInterface $driver
+     *
      * @return string
      */
     public function sqlStatement(SpiralDriverInterface $driver): string
@@ -211,6 +215,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
 
     /**
      * @param AbstractForeignKey $initial
+     *
      * @return bool
      */
     public function compare(SpiralAbstractForeignKey $initial): bool
@@ -222,6 +227,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
     /**
      * @param DriverInterface $driver
      * @param array           $columns
+     *
      * @return string
      */
     protected function packColumns(SpiralDriverInterface $driver, array $columns): string

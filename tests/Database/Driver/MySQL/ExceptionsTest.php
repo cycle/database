@@ -29,7 +29,7 @@ class ExceptionsTest extends \Cycle\Database\Tests\ExceptionsTest
 
         // Prepare connection to generate "Packets out of order. Expected 1 received 0. Packet size=145"
         // at the next query response
-        $this->database->query("SET SESSION wait_timeout=1")->fetch();
+        $this->database->query('SET SESSION wait_timeout=1')->fetch();
         sleep(1);
 
         try {

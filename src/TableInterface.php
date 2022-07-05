@@ -44,6 +44,7 @@ interface TableInterface
      * Check if table have specified column.
      *
      * @param string $name Column name.
+     *
      * @return bool
      */
     public function hasColumn(string $name): bool;
@@ -59,6 +60,7 @@ interface TableInterface
      * Check if table has index related to set of provided columns. Columns order does matter!
      *
      * @param array $columns
+     *
      * @return bool
      */
     public function hasIndex(array $columns = []): bool;
@@ -74,6 +76,7 @@ interface TableInterface
      * Check if table has foreign key related to table column.
      *
      * @param array $columns Column names.
+     *
      * @return bool
      */
     public function hasForeignKey(array $columns): bool;

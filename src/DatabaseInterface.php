@@ -28,7 +28,7 @@ interface DatabaseInterface
 {
     // Driver types
     public const WRITE = 0;
-    public const READ  = 1;
+    public const READ = 1;
 
     /**
      * @return string
@@ -45,6 +45,7 @@ interface DatabaseInterface
 
     /**
      * @param int $type
+     *
      * @return DriverInterface
      */
     public function getDriver(int $type = self::WRITE): DriverInterface;
@@ -54,7 +55,8 @@ interface DatabaseInterface
      *
      * @param string $prefix
      * @param bool   $add
-     * @return self|$this
+     *
+     * @return $this|self
      */
     public function withPrefix(string $prefix, bool $add = true): self;
 
@@ -67,6 +69,7 @@ interface DatabaseInterface
      * Check if table exists.
      *
      * @param string $name
+     *
      * @return bool
      */
     public function hasTable(string $name): bool;
@@ -80,6 +83,7 @@ interface DatabaseInterface
 
     /**
      * @param string $name
+     *
      * @return TableInterface
      */
     public function table(string $name): TableInterface;
@@ -89,9 +93,10 @@ interface DatabaseInterface
      *
      * @param string $query
      * @param array  $parameters Parameters to be binded into query.
-     * @return int
      *
      * @throws StatementException
+     *
+     * @return int
      */
     public function execute(string $query, array $parameters = []): int;
 
@@ -100,9 +105,10 @@ interface DatabaseInterface
      *
      * @param string $query
      * @param array  $parameters Parameters to be binded into query.
-     * @return StatementInterface
      *
      * @throws StatementException
+     *
+     * @return StatementInterface
      */
     public function query(string $query, array $parameters = []): StatementInterface;
 
@@ -110,6 +116,7 @@ interface DatabaseInterface
      * Get instance of InsertBuilder associated with current Database.
      *
      * @param string $table Table where values should be inserted to.
+     *
      * @return InsertQuery
      */
     public function insert(string $table = ''): InsertQuery;
@@ -120,6 +127,7 @@ interface DatabaseInterface
      * @param string $table  Table where rows should be updated in.
      * @param array  $values Initial set of columns to update associated with their values.
      * @param array  $where  Initial set of where rules specified as array.
+     *
      * @return UpdateQuery
      */
     public function update(string $table = '', array $values = [], array $where = []): UpdateQuery;
@@ -129,6 +137,7 @@ interface DatabaseInterface
      *
      * @param string $table Table where rows should be deleted from.
      * @param array  $where Initial set of where rules specified as array.
+     *
      * @return DeleteQuery
      */
     public function delete(string $table = '', array $where = []): DeleteQuery;
@@ -137,6 +146,7 @@ interface DatabaseInterface
      * Get instance of SelectBuilder associated with current Database.
      *
      * @param array|string $columns Columns to select.
+     *
      * @return SelectQuery
      */
     public function select($columns = '*'): SelectQuery;
@@ -146,11 +156,13 @@ interface DatabaseInterface
      * function must receive only one argument - DatabaseInterface instance.
      *
      * @link http://en.wikipedia.org/wiki/Database_transaction
+     *
      * @param callable $callback
      * @param string   $isolationLevel
-     * @return mixed
      *
      * @throws \Throwable
+     *
+     * @return mixed
      */
     public function transaction(callable $callback, string $isolationLevel = null);
 
@@ -158,7 +170,9 @@ interface DatabaseInterface
      * Start database transaction.
      *
      * @link http://en.wikipedia.org/wiki/Database_transaction
+     *
      * @param string $isolationLevel
+     *
      * @return bool
      */
     public function begin(string $isolationLevel = null): bool;

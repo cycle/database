@@ -108,9 +108,10 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
      * Declare index type and behaviour to unique/non-unique state.
      *
      * @param bool $unique
+     *
      * @return self
      */
-    public function unique(bool $unique = true): AbstractIndex
+    public function unique(bool $unique = true): self
     {
         $this->type = $unique ? self::UNIQUE : self::NORMAL;
 
@@ -125,10 +126,11 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
      * $index->columns('key', 'key2');
      * $index->columns(['key', 'key2']);
      *
-     * @param string|array $columns Columns array or comma separated list of parameters.
+     * @param array|string $columns Columns array or comma separated list of parameters.
+     *
      * @return self
      */
-    public function columns($columns): AbstractIndex
+    public function columns($columns): self
     {
         if (!is_array($columns)) {
             $columns = func_get_args();
@@ -146,9 +148,10 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
      * $index->sort(['key2' => 'DESC']);
      *
      * @param array $sort Associative array of columns to sort order.
+     *
      * @return self
      */
-    public function sort(array $sort): AbstractIndex
+    public function sort(array $sort): self
     {
         $this->sort = $sort;
 
@@ -160,6 +163,7 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
      *
      * @param DriverInterface $driver
      * @param bool            $includeTable Include table ON statement (not required for inline index creation).
+     *
      * @return string
      */
     public function sqlStatement(SpiralDriverInterface $driver, bool $includeTable = true): string
@@ -191,13 +195,13 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
 
     /**
      * @param AbstractIndex $initial
+     *
      * @return bool
      */
     public function compare(SpiralAbstractIndex $initial): bool
     {
         return $this == clone $initial;
     }
-
 
     /**
      * Parse column name and order from column expression
@@ -216,18 +220,19 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
         if (substr($column, -4) === ' ASC') {
             return [
                 substr($column, 0, strlen($column) - 4),
-                'ASC'
+                'ASC',
             ];
-        } elseif (substr($column, -5) === ' DESC') {
+        }
+        if (substr($column, -5) === ' DESC') {
             return [
                 substr($column, 0, strlen($column) - 5),
-                'DESC'
+                'DESC',
             ];
         }
 
         return [
             $column,
-            null
+            null,
         ];
     }
 }

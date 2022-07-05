@@ -62,15 +62,16 @@ abstract class ActiveQuery implements QueryInterface
 
         return [
             'queryString' => Interpolator::interpolate($queryString, $parameters->getParameters()),
-            'parameters'  => $parameters->getParameters(),
-            'driver'      => $this->driver
+            'parameters' => $parameters->getParameters(),
+            'driver' => $this->driver,
         ];
     }
 
     /**
      * @param DriverInterface $driver
      * @param string|null     $prefix
-     * @return QueryInterface|$this
+     *
+     * @return $this|QueryInterface
      */
     public function withDriver(SpiralDriverInterface $driver, string $prefix = null): QueryInterface
     {
@@ -101,6 +102,7 @@ abstract class ActiveQuery implements QueryInterface
      * Generate SQL query, must have associated driver instance.
      *
      * @param QueryParameters|null $parameters
+     *
      * @return string
      */
     public function sqlStatement(SpiralQueryParameters $parameters = null): string
@@ -119,10 +121,10 @@ abstract class ActiveQuery implements QueryInterface
     /**
      * Compile and run query.
      *
-     * @return mixed
-     *
      * @throws BuilderException
      * @throws StatementException
+     *
+     * @return mixed
      */
     abstract public function run();
 

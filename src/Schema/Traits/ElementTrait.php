@@ -39,7 +39,8 @@ trait ElementTrait
      * Set element name.
      *
      * @param string $name
-     * @return self|$this
+     *
+     * @return $this|self
      */
     public function setName(string $name): self
     {
@@ -62,6 +63,7 @@ trait ElementTrait
      * Element creation/definition syntax (specific to parent driver).
      *
      * @param DriverInterface $driver
+     *
      * @return string
      */
     abstract public function sqlStatement(SpiralDriverInterface $driver): string;

@@ -135,9 +135,10 @@ class MySQLHandler extends Handler
      * Get statement needed to create table.
      *
      * @param AbstractTable $table
-     * @return string
      *
      * @throws SchemaException
+     *
+     * @return string
      */
     protected function createStatement(SpiralAbstractTable $table)
     {

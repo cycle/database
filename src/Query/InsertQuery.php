@@ -41,9 +41,10 @@ class InsertQuery extends ActiveQuery
      * Set target insertion table.
      *
      * @param string $into
+     *
      * @return self
      */
-    public function into(string $into): InsertQuery
+    public function into(string $into): self
     {
         $this->table = $into;
 
@@ -60,9 +61,10 @@ class InsertQuery extends ActiveQuery
      * $insert->columns("name, email");
      *
      * @param array|string $columns
+     *
      * @return self
      */
-    public function columns(...$columns): InsertQuery
+    public function columns(...$columns): self
     {
         $this->columns = $this->fetchIdentifiers($columns);
 
@@ -92,9 +94,10 @@ class InsertQuery extends ActiveQuery
      * ]);
      *
      * @param mixed $rowsets
+     *
      * @return self
      */
-    public function values($rowsets): InsertQuery
+    public function values($rowsets): self
     {
         if (!is_array($rowsets)) {
             return $this->values(func_get_args());
@@ -159,9 +162,9 @@ class InsertQuery extends ActiveQuery
     public function getTokens(): array
     {
         return [
-            'table'   => $this->table,
+            'table' => $this->table,
             'columns' => $this->columns,
-            'values'  => $this->values
+            'values' => $this->values,
         ];
     }
 }

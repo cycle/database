@@ -20,6 +20,7 @@ class MySQLForeignKey extends AbstractForeignKey
      * @param string $table
      * @param string $tablePrefix
      * @param array  $schema
+     *
      * @return MySQLForeignKey
      */
     public static function createInstance(string $table, string $tablePrefix, array $schema): self

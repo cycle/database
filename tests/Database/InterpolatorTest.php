@@ -43,7 +43,7 @@ class InterpolatorTest extends TestCase
         $query = 'SELECT * FROM table WHERE name = :name AND registered > :registered';
 
         $parameters = [
-            ':name'       => new Parameter('Anton'),
+            ':name' => new Parameter('Anton'),
             ':registered' => new Parameter($date = new \DateTime('now')),
         ];
 
@@ -61,7 +61,7 @@ class InterpolatorTest extends TestCase
         $query = 'SELECT * FROM table WHERE name = :name AND registered > :registered';
 
         $parameters = [
-            ':name'       => new Parameter('Anton'),
+            ':name' => new Parameter('Anton'),
             ':registered' => new Parameter($date = new \DateTimeImmutable('now')),
         ];
 

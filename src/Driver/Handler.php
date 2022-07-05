@@ -43,6 +43,7 @@ abstract class Handler implements HandlerInterface
 
     /**
      * @param DriverInterface $driver
+     *
      * @return HandlerInterface
      */
     public function withDriver(SpiralDriverInterface $driver): HandlerInterface
@@ -275,9 +276,10 @@ abstract class Handler implements HandlerInterface
      *
      * @param string $statement
      * @param array  $parameters
-     * @return int
      *
      * @throws HandlerException
+     *
+     * @return int
      */
     protected function run(string $statement, array $parameters = []): int
     {
@@ -291,7 +293,8 @@ abstract class Handler implements HandlerInterface
     /**
      * Create element identifier.
      *
-     * @param ElementInterface|AbstractTable|string $element
+     * @param AbstractTable|ElementInterface|string $element
+     *
      * @return string
      */
     protected function identify($element): string

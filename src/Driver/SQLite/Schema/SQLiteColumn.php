@@ -38,80 +38,80 @@ class SQLiteColumn extends AbstractColumn
      */
     protected $mapping = [
         //Primary sequences
-        'primary'     => [
-            'type'       => 'integer',
+        'primary' => [
+            'type' => 'integer',
             'primaryKey' => true,
-            'nullable'   => false,
+            'nullable' => false,
         ],
-        'bigPrimary'  => [
-            'type'       => 'integer',
+        'bigPrimary' => [
+            'type' => 'integer',
             'primaryKey' => true,
-            'nullable'   => false,
+            'nullable' => false,
         ],
 
         //Enum type (mapped via method)
-        'enum'        => 'enum',
+        'enum' => 'enum',
 
         //Logical types
-        'boolean'     => 'integer',
+        'boolean' => 'integer',
 
         //Integer types (size can always be changed with size method), longInteger has method alias
         //bigInteger
-        'integer'     => 'integer',
+        'integer' => 'integer',
         'tinyInteger' => 'tinyint',
-        'bigInteger'  => 'bigint',
+        'bigInteger' => 'bigint',
 
         //String with specified length (mapped via method)
-        'string'      => 'text',
+        'string' => 'text',
 
         //Generic types
-        'text'        => 'text',
-        'tinyText'    => 'text',
-        'longText'    => 'text',
+        'text' => 'text',
+        'tinyText' => 'text',
+        'longText' => 'text',
 
         //Real types
-        'double'      => 'double',
-        'float'       => 'real',
+        'double' => 'double',
+        'float' => 'real',
 
         //Decimal type (mapped via method)
-        'decimal'     => 'numeric',
+        'decimal' => 'numeric',
 
         //Date and Time types
-        'datetime'    => 'datetime',
-        'date'        => 'date',
-        'time'        => 'time',
-        'timestamp'   => 'timestamp',
+        'datetime' => 'datetime',
+        'date' => 'date',
+        'time' => 'time',
+        'timestamp' => 'timestamp',
 
         //Binary types
-        'binary'      => 'blob',
-        'tinyBinary'  => 'blob',
-        'longBinary'  => 'blob',
+        'binary' => 'blob',
+        'tinyBinary' => 'blob',
+        'longBinary' => 'blob',
 
         //Additional types
-        'json'        => 'text',
-        'uuid'        => ['type' => 'varchar', 'size' => 36],
+        'json' => 'text',
+        'uuid' => ['type' => 'varchar', 'size' => 36],
     ];
 
     /**
      * {@inheritdoc}
      */
     protected $reverseMapping = [
-        'primary'     => [['type' => 'integer', 'primaryKey' => true]],
-        'enum'        => ['enum'],
-        'boolean'     => ['boolean'],
-        'integer'     => ['int', 'integer', 'smallint', 'mediumint'],
+        'primary' => [['type' => 'integer', 'primaryKey' => true]],
+        'enum' => ['enum'],
+        'boolean' => ['boolean'],
+        'integer' => ['int', 'integer', 'smallint', 'mediumint'],
         'tinyInteger' => ['tinyint'],
-        'bigInteger'  => ['bigint'],
-        'text'        => ['text', 'string'],
-        'double'      => ['double'],
-        'float'       => ['real'],
-        'decimal'     => ['numeric'],
-        'datetime'    => ['datetime'],
-        'date'        => ['date'],
-        'time'        => ['time'],
-        'timestamp'   => ['timestamp'],
-        'binary'      => ['blob'],
-        'string'      => ['varchar']
+        'bigInteger' => ['bigint'],
+        'text' => ['text', 'string'],
+        'double' => ['double'],
+        'float' => ['real'],
+        'decimal' => ['numeric'],
+        'datetime' => ['datetime'],
+        'date' => ['date'],
+        'time' => ['time'],
+        'timestamp' => ['timestamp'],
+        'binary' => ['blob'],
+        'string' => ['varchar'],
     ];
 
     /**
@@ -160,6 +160,7 @@ class SQLiteColumn extends AbstractColumn
      * @param string        $table
      * @param array         $schema
      * @param \DateTimeZone $timezone
+     *
      * @return SQLiteColumn
      */
     public static function createInstance(

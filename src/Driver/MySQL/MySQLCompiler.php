@@ -32,6 +32,7 @@ class MySQLCompiler extends Compiler implements CachingCompilerInterface
      * @param QueryParameters $params
      * @param Quoter          $q
      * @param array           $tokens
+     *
      * @return string
      */
     protected function insertQuery(SpiralQueryParameters $params, SpiralQuoter $q, array $tokens): string

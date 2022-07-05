@@ -73,7 +73,7 @@ abstract class UpdateQueryTest extends BaseTest
         $this->assertSameParameters(
             [
                 'Anton',
-                1
+                1,
             ],
             $update
         );
@@ -88,13 +88,13 @@ abstract class UpdateQueryTest extends BaseTest
 
         $lastID = $this->database->insert('demo')->values(
             [
-                'value' => 'abc'
+                'value' => 'abc',
             ]
         )->run();
 
         $updated = $this->database->update('demo')->values(
             [
-                'value' => 'cde'
+                'value' => 'cde',
             ]
         )->where('id', $lastID)->run();
 
@@ -119,7 +119,7 @@ abstract class UpdateQueryTest extends BaseTest
 
         $lastID = $this->database->insert('demo')->values(
             [
-                'value' => null
+                'value' => null,
             ]
         )->run();
 
@@ -134,7 +134,7 @@ abstract class UpdateQueryTest extends BaseTest
 
         $updated = $this->database->update('demo')->values(
             [
-                'value' => 'abc'
+                'value' => 'abc',
             ]
         )->where('id', $lastID)->run();
 
@@ -159,13 +159,13 @@ abstract class UpdateQueryTest extends BaseTest
 
         $lastID = $this->database->insert('demo')->values(
             [
-                'value' => 'abc'
+                'value' => 'abc',
             ]
         )->run();
 
         $updated = $this->database->update('demo')->values(
             [
-                'value' => null
+                'value' => null,
             ]
         )->where('id', $lastID)->run();
 

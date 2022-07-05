@@ -35,7 +35,7 @@ class PostgresColumn extends AbstractColumn
         'userType',
         'timezone',
         'constrained',
-        'constrainName'
+        'constrainName',
     ];
 
     /**
@@ -43,77 +43,77 @@ class PostgresColumn extends AbstractColumn
      */
     protected $mapping = [
         //Primary sequences
-        'primary'     => ['type' => 'serial', 'autoIncrement' => true, 'nullable' => false],
-        'bigPrimary'  => ['type' => 'bigserial', 'autoIncrement' => true, 'nullable' => false],
+        'primary' => ['type' => 'serial', 'autoIncrement' => true, 'nullable' => false],
+        'bigPrimary' => ['type' => 'bigserial', 'autoIncrement' => true, 'nullable' => false],
 
         //Enum type (mapped via method)
-        'enum'        => 'enum',
+        'enum' => 'enum',
 
         //Logical types
-        'boolean'     => 'boolean',
+        'boolean' => 'boolean',
 
         //Integer types (size can always be changed with size method), longInteger has method alias
         //bigInteger
-        'integer'     => 'integer',
+        'integer' => 'integer',
         'tinyInteger' => 'smallint',
-        'bigInteger'  => 'bigint',
+        'bigInteger' => 'bigint',
 
         //String with specified length (mapped via method)
-        'string'      => 'character varying',
+        'string' => 'character varying',
 
         //Generic types
-        'text'        => 'text',
-        'tinyText'    => 'text',
-        'longText'    => 'text',
+        'text' => 'text',
+        'tinyText' => 'text',
+        'longText' => 'text',
 
         //Real types
-        'double'      => 'double precision',
-        'float'       => 'real',
+        'double' => 'double precision',
+        'float' => 'real',
 
         //Decimal type (mapped via method)
-        'decimal'     => 'numeric',
+        'decimal' => 'numeric',
 
         //Date and Time types
-        'datetime'    => 'timestamp without time zone',
-        'date'        => 'date',
-        'time'        => 'time without time zone',
-        'timestamp'   => 'timestamp without time zone',
+        'datetime' => 'timestamp without time zone',
+        'date' => 'date',
+        'time' => 'time without time zone',
+        'timestamp' => 'timestamp without time zone',
         'timestamptz' => 'timestamp with time zone',
 
         //Binary types
-        'binary'      => 'bytea',
-        'tinyBinary'  => 'bytea',
-        'longBinary'  => 'bytea',
+        'binary' => 'bytea',
+        'tinyBinary' => 'bytea',
+        'longBinary' => 'bytea',
 
         //Additional types
-        'json'        => 'text',
-        'jsonb'       => 'jsonb',
-        'uuid'        => 'uuid'
+        'json' => 'text',
+        'jsonb' => 'jsonb',
+        'uuid' => 'uuid',
     ];
 
     /**
      * {@inheritdoc}
      */
     protected $reverseMapping = [
-        'primary'     => ['serial'],
-        'bigPrimary'  => ['bigserial'],
-        'enum'        => ['enum'],
-        'boolean'     => ['boolean'],
-        'integer'     => ['int', 'integer', 'int4'],
+        'primary' => ['serial'],
+        'bigPrimary' => ['bigserial'],
+        'enum' => ['enum'],
+        'boolean' => ['boolean'],
+        'integer' => ['int', 'integer', 'int4'],
         'tinyInteger' => ['smallint'],
-        'bigInteger'  => ['bigint', 'int8'],
-        'string'      => ['character varying', 'character'],
-        'text'        => ['text'],
-        'double'      => ['double precision'],
-        'float'       => ['real', 'money'],
-        'decimal'     => ['numeric'],
-        'date'        => ['date'],
-        'time'        => ['time', 'time with time zone', 'time without time zone'],
-        'timestamp'   => ['timestamp', 'timestamp without time zone'],
+        'bigInteger' => ['bigint', 'int8'],
+        'string' => ['character varying', 'character'],
+        'text' => ['text'],
+        'double' => ['double precision'],
+        'float' => ['real', 'money'],
+        'decimal' => ['numeric'],
+        'date' => ['date'],
+        'time' => ['time', 'time with time zone', 'time without time zone'],
+        'timestamp' => ['timestamp', 'timestamp without time zone'],
         'timestamptz' => ['timestamp with time zone'],
-        'binary'      => ['bytea'],
-        'json'        => ['json'],
-        'jsonb'       => ['jsonb']
+        'binary' => ['bytea'],
+        'json' => ['json'],
+        'jsonb' => ['jsonb'],
     ];
 
     /**
@@ -238,6 +238,7 @@ class PostgresColumn extends AbstractColumn
      *
      * @param DriverInterface $driver
      * @param AbstractColumn  $initial
+     *
      * @return array
      */
     public function alterOperations(SpiralDriverInterface $driver, SpiralAbstractColumn $initial): array
@@ -313,6 +314,7 @@ class PostgresColumn extends AbstractColumn
      * @param string          $table  Table name.
      * @param array           $schema
      * @param DriverInterface $driver Postgres columns are bit more complex.
+     *
      * @return PostgresColumn
      */
     public static function createInstance(
@@ -377,15 +379,15 @@ class PostgresColumn extends AbstractColumn
             return true;
         }
 
-        if (
+        return (bool) (
             in_array($this->getAbstractType(), ['primary', 'bigPrimary'])
             && $initial->getDefaultValue() != $this->getDefaultValue()
-        ) {
+        )
             //PG adds default values to primary keys
-            return true;
-        }
 
-        return false;
+
+
+         ;
     }
 
     /**
@@ -452,7 +454,7 @@ class PostgresColumn extends AbstractColumn
     private static function resolveConstrains(
         DriverInterface $driver,
         array $schema,
-        PostgresColumn $column
+        self $column
     ): void {
         $query = "SELECT conname, pg_get_constraintdef(oid) as consrc FROM pg_constraint
         WHERE conrelid = ? AND contype = 'c' AND conkey = ?";
@@ -491,7 +493,7 @@ class PostgresColumn extends AbstractColumn
      * @param DriverInterface $driver
      * @param PostgresColumn  $column
      */
-    private static function resolveEnum(DriverInterface $driver, PostgresColumn $column): void
+    private static function resolveEnum(DriverInterface $driver, self $column): void
     {
         $range = $driver->query('SELECT enum_range(NULL::' . $column->type . ')')->fetchColumn(0);
 

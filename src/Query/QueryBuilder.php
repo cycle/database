@@ -67,6 +67,7 @@ final class QueryBuilder implements BuilderInterface
 
     /**
      * @param DriverInterface $driver
+     *
      * @return BuilderInterface
      */
     public function withDriver(SpiralDriverInterface $driver): BuilderInterface
@@ -82,6 +83,7 @@ final class QueryBuilder implements BuilderInterface
      *
      * @param string      $prefix
      * @param string|null $table
+     *
      * @return InsertQuery
      */
     public function insertQuery(
@@ -103,6 +105,7 @@ final class QueryBuilder implements BuilderInterface
      * @param string $prefix
      * @param array  $from
      * @param array  $columns
+     *
      * @return SelectQuery
      */
     public function selectQuery(
@@ -123,6 +126,7 @@ final class QueryBuilder implements BuilderInterface
      * @param string      $prefix
      * @param string|null $from
      * @param array       $where
+     *
      * @return DeleteQuery
      */
     public function deleteQuery(
@@ -146,6 +150,7 @@ final class QueryBuilder implements BuilderInterface
      * @param string|null $table
      * @param array       $where
      * @param array       $values
+     *
      * @return UpdateQuery
      */
     public function updateQuery(
@@ -166,7 +171,7 @@ final class QueryBuilder implements BuilderInterface
     /**
      * @return QueryBuilder
      */
-    public static function defaultBuilder(): QueryBuilder
+    public static function defaultBuilder(): self
     {
         return new self(
             new SelectQuery(),

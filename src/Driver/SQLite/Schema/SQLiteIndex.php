@@ -24,6 +24,7 @@ class SQLiteIndex extends AbstractIndex
      * @param array  $schema
      * @param array  $columns
      * @param array  $fallbackColumns
+     *
      * @return SQLiteIndex
      */
     public static function createInstance(
@@ -38,9 +39,9 @@ class SQLiteIndex extends AbstractIndex
         if ($columns !== []) {
             foreach ($columns as $column) {
                 // We only need key columns
-                if (intval($column['cid']) > -1) {
+                if ((int) ($column['cid']) > -1) {
                     $index->columns[] = $column['name'];
-                    if (intval($column['desc']) === 1) {
+                    if ((int) ($column['desc']) === 1) {
                         $index->sort[$column['name']] = 'DESC';
                     }
                 }

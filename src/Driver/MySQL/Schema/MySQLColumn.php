@@ -36,87 +36,87 @@ class MySQLColumn extends AbstractColumn
      */
     protected $mapping = [
         //Primary sequences
-        'primary'     => [
-            'type'          => 'int',
-            'size'          => 11,
+        'primary' => [
+            'type' => 'int',
+            'size' => 11,
             'autoIncrement' => true,
-            'nullable'      => false,
+            'nullable' => false,
         ],
-        'bigPrimary'  => [
-            'type'          => 'bigint',
-            'size'          => 20,
+        'bigPrimary' => [
+            'type' => 'bigint',
+            'size' => 20,
             'autoIncrement' => true,
-            'nullable'      => false,
+            'nullable' => false,
         ],
 
         //Enum type (mapped via method)
-        'enum'        => 'enum',
+        'enum' => 'enum',
 
         //Logical types
-        'boolean'     => ['type' => 'tinyint', 'size' => 1],
+        'boolean' => ['type' => 'tinyint', 'size' => 1],
 
         //Integer types (size can always be changed with size method), longInteger has method alias
         //bigInteger
-        'integer'     => ['type' => 'int', 'size' => 11],
+        'integer' => ['type' => 'int', 'size' => 11],
         'tinyInteger' => ['type' => 'tinyint', 'size' => 4],
-        'bigInteger'  => ['type' => 'bigint', 'size' => 20],
+        'bigInteger' => ['type' => 'bigint', 'size' => 20],
 
         //String with specified length (mapped via method)
-        'string'      => ['type' => 'varchar', 'size' => 255],
+        'string' => ['type' => 'varchar', 'size' => 255],
 
         //Generic types
-        'text'        => 'text',
-        'tinyText'    => 'tinytext',
-        'longText'    => 'longtext',
+        'text' => 'text',
+        'tinyText' => 'tinytext',
+        'longText' => 'longtext',
 
         //Real types
-        'double'      => 'double',
-        'float'       => 'float',
+        'double' => 'double',
+        'float' => 'float',
 
         //Decimal type (mapped via method)
-        'decimal'     => 'decimal',
+        'decimal' => 'decimal',
 
         //Date and Time types
-        'datetime'    => 'datetime',
-        'date'        => 'date',
-        'time'        => 'time',
-        'timestamp'   => ['type' => 'timestamp', 'defaultValue' => null],
+        'datetime' => 'datetime',
+        'date' => 'date',
+        'time' => 'time',
+        'timestamp' => ['type' => 'timestamp', 'defaultValue' => null],
 
         //Binary types
-        'binary'      => 'blob',
-        'tinyBinary'  => 'tinyblob',
-        'longBinary'  => 'longblob',
+        'binary' => 'blob',
+        'tinyBinary' => 'tinyblob',
+        'longBinary' => 'longblob',
 
         //Additional types
-        'json'        => 'text',
-        'uuid'        => ['type' => 'varchar', 'size' => 36],
+        'json' => 'text',
+        'uuid' => ['type' => 'varchar', 'size' => 36],
     ];
 
     /**
      * {@inheritdoc}
      */
     protected $reverseMapping = [
-        'primary'     => [['type' => 'int', 'autoIncrement' => true]],
-        'bigPrimary'  => ['serial', ['type' => 'bigint', 'autoIncrement' => true]],
-        'enum'        => ['enum'],
-        'boolean'     => ['bool', 'boolean', ['type' => 'tinyint', 'size' => 1]],
-        'integer'     => ['int', 'integer', 'smallint', 'mediumint'],
+        'primary' => [['type' => 'int', 'autoIncrement' => true]],
+        'bigPrimary' => ['serial', ['type' => 'bigint', 'autoIncrement' => true]],
+        'enum' => ['enum'],
+        'boolean' => ['bool', 'boolean', ['type' => 'tinyint', 'size' => 1]],
+        'integer' => ['int', 'integer', 'smallint', 'mediumint'],
         'tinyInteger' => ['tinyint'],
-        'bigInteger'  => ['bigint'],
-        'string'      => ['varchar', 'char'],
-        'text'        => ['text', 'mediumtext'],
-        'tinyText'    => ['tinytext'],
-        'longText'    => ['longtext'],
-        'double'      => ['double'],
-        'float'       => ['float', 'real'],
-        'decimal'     => ['decimal'],
-        'datetime'    => ['datetime'],
-        'date'        => ['date'],
-        'time'        => ['time'],
-        'timestamp'   => ['timestamp'],
-        'binary'      => ['blob', 'binary', 'varbinary'],
-        'tinyBinary'  => ['tinyblob'],
-        'longBinary'  => ['longblob'],
+        'bigInteger' => ['bigint'],
+        'string' => ['varchar', 'char'],
+        'text' => ['text', 'mediumtext'],
+        'tinyText' => ['tinytext'],
+        'longText' => ['longtext'],
+        'double' => ['double'],
+        'float' => ['float', 'real'],
+        'decimal' => ['decimal'],
+        'datetime' => ['datetime'],
+        'date' => ['date'],
+        'time' => ['time'],
+        'timestamp' => ['timestamp'],
+        'binary' => ['blob', 'binary', 'varbinary'],
+        'tinyBinary' => ['tinyblob'],
+        'longBinary' => ['longblob'],
     ];
 
     /**
@@ -167,6 +167,7 @@ class MySQLColumn extends AbstractColumn
      * @param string        $table
      * @param array         $schema
      * @param \DateTimeZone $timezone
+     *
      * @return MySQLColumn
      */
     public static function createInstance(
@@ -256,9 +257,10 @@ class MySQLColumn extends AbstractColumn
      *
      * @param string $type
      * @param string $value
-     * @return string|FragmentInterface|\DateTime
      *
      * @throws DefaultValueException
+     *
+     * @return \DateTime|FragmentInterface|string
      */
     protected function formatDatetime(string $type, $value)
     {
