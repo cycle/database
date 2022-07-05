@@ -11,9 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Query;
 
-use DateTimeInterface;
 use Cycle\Database\Injection\ParameterInterface;
-use Spiral\Database\Query\Interpolator as SpiralInterpolator;
+use DateTimeInterface;
 
 /**
  * Simple helper class used to interpolate query with given values. To be used for profiling and
@@ -24,9 +23,9 @@ final class Interpolator
     /**
      * Injects parameters into statement. For debug purposes only.
      *
-     * @param string   $query
-     * @param iterable $parameters
-     * @return string
+     * @psalm-param non-empty-string $query
+     *
+     * @psalm-return non-empty-string
      */
     public static function interpolate(string $query, iterable $parameters = []): string
     {
@@ -34,58 +33,58 @@ final class Interpolator
             return $query;
         }
 
-        //Let's prepare values so they looks better
-        foreach ($parameters as $index => $parameter) {
-            if (!is_numeric($index)) {
-                $query = str_replace(
-                    [':' . $index, $index],
-                    self::resolveValue($parameter),
-                    $query
-                );
-                continue;
+        ['named' => $named, 'unnamed' => $unnamed] = self::normalizeParameters($parameters);
+        $params = self::findParams($query);
+
+        $caret = 0;
+        $result = '';
+        foreach ($params as $pos => $ph) {
+            $result .= \substr($query, $caret, $pos - $caret);
+            $caret = $pos + \strlen($ph);
+            // find param
+            if ($ph === '?' && \count($unnamed) > 0) {
+                $result .= self::resolveValue(\array_shift($unnamed));
+            } elseif (\array_key_exists($ph, $named)) {
+                $result .= self::resolveValue($named[$ph]);
+            } else {
+                $result .= $ph;
             }
-
-            $query = self::replaceOnce(
-                '?',
-                self::resolveValue($parameter),
-                $query
-            );
         }
+        $result .= \substr($query, $caret);
 
-        return $query;
+        return $result;
     }
 
     /**
      * Get parameter value.
      *
-     * @param mixed $parameter
-     * @return string
+     * @psalm-return non-empty-string
      */
-    protected static function resolveValue($parameter): string
+    private static function resolveValue($parameter): string
     {
         if ($parameter instanceof ParameterInterface) {
             return self::resolveValue($parameter->getValue());
         }
 
-        switch (gettype($parameter)) {
+        switch (\gettype($parameter)) {
             case 'boolean':
                 return $parameter ? 'TRUE' : 'FALSE';
 
             case 'integer':
-                return (string)($parameter + 0);
+                return (string)$parameter;
 
             case 'NULL':
                 return 'NULL';
 
             case 'double':
-                return sprintf('%F', $parameter);
+                return \sprintf('%F', $parameter);
 
             case 'string':
-                return "'" . addcslashes($parameter, "'") . "'";
+                return "'" . self::escapeStringValue($parameter) . "'";
 
             case 'object':
-                if (method_exists($parameter, '__toString')) {
-                    return "'" . addcslashes((string)$parameter, "'") . "'";
+                if (\method_exists($parameter, '__toString')) {
+                    return "'" . self::escapeStringValue((string)$parameter) . "'";
                 }
 
                 if ($parameter instanceof DateTimeInterface) {
@@ -96,27 +95,59 @@ final class Interpolator
         return '[UNRESOLVED]';
     }
 
+    private static function escapeStringValue(string $value): string
+    {
+        return \strtr($value, [
+            '\\%' => '\\%',
+            '\\_' => '\\_',
+            \chr(26) => '\\Z',
+            \chr(0) => '\\0',
+            "'" => "\\'",
+            \chr(8) => '\\b',
+            "\n" => '\\n',
+            "\r" => '\\r',
+            "\t" => '\\t',
+            '\\' => '\\\\',
+        ]);
+    }
+
     /**
-     * Replace search value only once.
-     *
-     * @see http://stackoverflow.com/questions/1252693/using-str-replace-so-that-it-only-acts-on-the-first-match
-     *
-     * @param string $search
-     * @param string $replace
-     * @param string $subject
-     * @return string
+     * @return array<int, string>
      */
-    private static function replaceOnce(
-        string $search,
-        string $replace,
-        string $subject
-    ): string {
-        $position = strpos($subject, $search);
-        if ($position !== false) {
-            return substr_replace($subject, $replace, $position, strlen($search));
+    private static function findParams(string $query): array
+    {
+        \preg_match_all(
+            '/(?<dq>"(?:\\\\\"|[^"])*")|(?<sq>\'(?:\\\\\'|[^\'])*\')|(?<ph>\\?)|(?<named>:[a-z_\\d]+)/',
+            $query,
+            $placeholders,
+            PREG_OFFSET_CAPTURE | PREG_UNMATCHED_AS_NULL
+        );
+        $result = [];
+        foreach (\array_merge($placeholders['named'], $placeholders['ph']) as $tuple) {
+            if ($tuple[0] === null) {
+                continue;
+            }
+            $result[$tuple[1]] = $tuple[0];
+        }
+        \ksort($result);
+
+        return $result;
+    }
+
+    /**
+     * @return array{named: array, unnamed: array}
+     */
+    private static function normalizeParameters(iterable $parameters): array
+    {
+        $result = ['named' => [], 'unnamed' => []];
+        foreach ($parameters as $k => $v) {
+            if (\is_int($k)) {
+                $result['unnamed'][$k] = $v;
+            } else {
+                $result['named'][':' . \ltrim($k, ':')] = $v;
+            }
         }
 
-        return $subject;
+        return $result;
     }
 }
-\class_alias(Interpolator::class, SpiralInterpolator::class, false);
