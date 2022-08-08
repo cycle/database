@@ -1,7 +1,8 @@
 # CHANGELOG
 
-v2.2.2 (in progress)
+v2.3.0 (in progress)
 -------------------
+- Add supporting for array values in the `IN` operator by @roxblnfk
 
 v2.2.1 (02.07.2022)
 -------------------
