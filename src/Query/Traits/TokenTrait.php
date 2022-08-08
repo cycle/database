@@ -15,6 +15,7 @@ use Closure;
 use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Exception\BuilderException;
 use Cycle\Database\Injection\FragmentInterface;
+use Cycle\Database\Injection\Parameter;
 
 trait TokenTrait
 {
@@ -104,6 +105,8 @@ trait TokenTrait
                     $operator = \strtoupper($operator);
                     if ($operator === 'BETWEEN' || $operator === 'NOT BETWEEN') {
                         throw new BuilderException('Between statements expects exactly 2 values');
+                    } elseif ($operator === 'IN' && \is_array($value)) {
+                        $value = new Parameter($value);
                     }
                 } elseif (\is_scalar($operator)) {
                     $operator = (string)$operator;
