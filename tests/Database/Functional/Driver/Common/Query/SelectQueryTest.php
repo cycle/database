@@ -336,10 +336,10 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     {
         $this->expectException(BuilderException::class);
 
-        $select = $this->database->select()->distinct()
-                                 ->from(['users'])
-                                 ->where('name', 'Anton')
-                                 ->orWhere('id', 'in', [1, 2, 3]);
+        $this->database->select()->distinct()
+            ->from(['users'])
+            ->where('name', 'Anton')
+            ->orWhere('id', 'like', [1, 2, 3]);
     }
 
     public function testSelectWithWhereOrWhereAndWhere(): void
@@ -1867,14 +1867,37 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
-    public function testBadArrayParameter(): void
+    public function testInOperatorWithArrayParameter(): void
     {
-        $this->expectException(BuilderException::class);
-        $this->expectExceptionMessage('Arrays must be wrapped with Parameter instance');
-
-        $this->database->select()
+        $select = $this->database->select()
                        ->from(['users'])
                        ->where('status', 'IN', ['active', 'blocked']);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE {status} IN (?, ?)',
+            $select
+        );
+    }
+
+    public function testInOperatorWithBadArrayParameter(): void
+    {
+        $select = $this->database->select()
+                       ->from(['users'])
+                       ->where('status', 'IN', [['foo'], ['active', 'blocked']]);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE {status} IN (?, ?)',
+            $select
+        );
+
+        // Database doesn't validate parameter values in the array
+        $this->assertSameParameters(
+            [
+                ['foo'],
+                ['active', 'blocked'],
+            ],
+            $select
+        );
     }
 
     public function testBadArrayParameterInShortWhere(): void
