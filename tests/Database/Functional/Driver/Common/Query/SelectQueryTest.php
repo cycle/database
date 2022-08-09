@@ -1871,10 +1871,11 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     {
         $select = $this->database->select()
                        ->from(['users'])
-                       ->where('status', 'IN', ['active', 'blocked']);
+                       ->where('status', 'IN', ['active', 'blocked'])
+                       ->andWhere('age', 'not in', [1, 2, 3]);
 
         $this->assertSameQuery(
-            'SELECT * FROM {users} WHERE {status} IN (?, ?)',
+            'SELECT * FROM {users} WHERE {status} IN (?, ?) AND {age} NOT IN (?, ?, ?)',
             $select
         );
     }

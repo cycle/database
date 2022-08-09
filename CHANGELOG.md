@@ -2,7 +2,7 @@
 
 v2.3.0 (in progress)
 -------------------
-- Add supporting for array values in the `IN` operator by @roxblnfk (#69)
+- Add supporting for array values in the `IN` and `NOT IN` operators by @roxblnfk (#69, #70)
 
 v2.2.1 (02.07.2022)
 -------------------
