@@ -106,7 +106,7 @@ trait TokenTrait
                     if ($operator === 'BETWEEN' || $operator === 'NOT BETWEEN') {
                         throw new BuilderException('Between statements expects exactly 2 values');
                     }
-                    if ($operator === 'IN' && \is_array($value)) {
+                    if (\is_array($value) && \in_array($operator, ['IN', 'NOT IN'], true)) {
                         $value = new Parameter($value);
                     }
                 } elseif (\is_scalar($operator)) {
