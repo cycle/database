@@ -1910,7 +1910,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                        ->from(['users'])
                        ->where(
                            [
-                               'status' => ['IN' => ['active', 'blocked']],
+                               'status' => ['LIKE' => ['active', 'blocked']],
                            ]
                        );
     }
