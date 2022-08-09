@@ -1961,6 +1961,26 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    public function testInAndNotInWithArrayInShortWhere(): void
+    {
+        $status = ['active', 'blocked'];
+        $name = ['bar', 'foo', 'baz'];
+
+        $select = $this->database->select()
+            ->from(['users'])
+            ->where(
+                [
+                    'status' => ['IN' => $status],
+                    'name' => ['NOT IN' => $name],
+                ],
+            );
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE ({status} IN (?, ?) AND {name} NOT IN (?, ?, ?))',
+            $select,
+        );
+    }
+
     public function testDirectIsNull(): void
     {
         $select = $this->database->select()->from(['users'])

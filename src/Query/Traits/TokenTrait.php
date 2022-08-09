@@ -241,6 +241,9 @@ trait TokenTrait
             $operation = strtoupper($operation);
             if ($operation !== 'BETWEEN' && $operation !== 'NOT BETWEEN') {
                 // AND|OR [name] [OPERATION] [nestedValue]
+                if (\is_array($value) && \in_array($operation, ['IN', 'NOT IN'], true)) {
+                    $value = new Parameter($value);
+                }
                 $tokens[] = [
                     $innerJoiner,
                     [$key, $operation, $wrapper($value)],
