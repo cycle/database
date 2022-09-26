@@ -108,7 +108,6 @@ trait TestDriverTrait
 
     protected function mapException(\Throwable $exception, string $query): StatementException
     {
-        var_dump($exception::class);
         if ($exception instanceof ConnectionException) {
             return $exception;
         }
