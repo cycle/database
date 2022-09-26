@@ -91,6 +91,9 @@ $drivers = [
 ];
 
 $db = getenv('DB') ?: null;
+if ($db !== null) {
+    $db = [$db, "$db-mock"];
+}
 Database\Tests\Functional\Driver\Common\BaseTest::$config = [
     'debug' => getenv('DB_DEBUG') ?: false,
 ] + (
