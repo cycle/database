@@ -636,7 +636,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
      *
      * @throws DriverException
      */
-    protected function getPDO(): PDO|PdoWrapper
+    protected function getPDO(): PDO|PdoInterface
     {
         if ($this->pdo === null) {
             $this->connect();

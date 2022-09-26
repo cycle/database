@@ -17,7 +17,7 @@ use PDOStatement;
 /**
  * You can use the class to avoid the PDO for any reasons. For example, to create a PDO Mock in tests.
  */
-interface PdoWrapper
+interface PdoInterface
 {
     public function prepare(string $query, array $options = []): PDOStatement|false;
 

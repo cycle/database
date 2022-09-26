@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Stub\Driver;
 
-use Cycle\Database\Driver\PdoWrapper;
+use Cycle\Database\Driver\PdoInterface;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Exception\StatementException\ConnectionException;
 use Exception;
@@ -16,11 +16,11 @@ trait TestDriverTrait
     public int $disconnectCalls = 0;
     public int $exceptionOnTransactionBegin = 0;
 
-    protected function getPDO(): PdoWrapper
+    protected function getPDO(): PdoInterface
     {
         $pdo = parent::getPDO();
 
-        return new class ($pdo, $this->exceptionOnTransactionBegin) implements PdoWrapper {
+        return new class ($pdo, $this->exceptionOnTransactionBegin) implements PdoInterface {
             private PDO $pdo;
             private int $exceptionOnTransactionBegin;
 
