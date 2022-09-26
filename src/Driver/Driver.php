@@ -323,6 +323,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
                     $this->disconnect();
 
                     try {
+                        $this->transactionLevel = 1;
                         return $this->getPDO()->beginTransaction();
                     } catch (Throwable $e) {
                         $this->transactionLevel = 0;

@@ -1,7 +1,8 @@
 # CHANGELOG
 
-v2.2.2 (in progress)
+v2.2.2 (27.09.2022)
 -------------------
+- Fix transaction level changing on disconnect when transaction is staring by @roxblnfk (#76)
 
 v2.2.1 (02.07.2022)
 -------------------
