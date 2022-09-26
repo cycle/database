@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cycle\Database\Tests\Stub\Driver;
 
 use Cycle\Database\Driver\PdoWrapper;
@@ -18,11 +20,12 @@ trait TestDriverTrait
     {
         $pdo = parent::getPDO();
 
-        return new class($pdo, $this->exceptionOnTransactionBegin) implements PdoWrapper {
+        return new class ($pdo, $this->exceptionOnTransactionBegin) implements PdoWrapper {
             private PDO $pdo;
             private int $exceptionOnTransactionBegin;
 
-            public function __construct(PDO $pdo, int &$exceptionOnTransactionBegin) {
+            public function __construct(PDO $pdo, int &$exceptionOnTransactionBegin)
+            {
                 $this->pdo = $pdo;
                 $this->exceptionOnTransactionBegin = &$exceptionOnTransactionBegin;
             }
