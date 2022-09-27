@@ -162,6 +162,7 @@ class PostgresDriver extends Driver
                     $this->disconnect();
 
                     try {
+                        $this->transactionLevel = 1;
                         return $this->getPDO()->beginTransaction();
                     } catch (Throwable $e) {
                         $this->transactionLevel = 0;
