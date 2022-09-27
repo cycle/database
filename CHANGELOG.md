@@ -4,6 +4,10 @@ v2.3.0 (in progress)
 -------------------
 - Add supporting for array values in the `IN` and `NOT IN` operators by @roxblnfk (#69, #70, #71)
 
+v2.2.2 (27.09.2022)
+-------------------
+- Fix transaction level changing on disconnect when transaction is staring by @roxblnfk (#76)
+
 v2.2.1 (02.07.2022)
 -------------------
 - Hotfix: make the `$config` parameter of the `DatabaseConfig` constructor optional again by @roxblnfk
