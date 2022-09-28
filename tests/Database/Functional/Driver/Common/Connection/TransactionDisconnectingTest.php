@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cycle\Database\Tests\Functional\Driver\Common\Query;
+namespace Cycle\Database\Tests\Functional\Driver\Common\Connection;
 
 use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
