@@ -51,7 +51,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     protected HandlerInterface $schemaHandler;
     protected BuilderInterface $queryBuilder;
 
-    /** @var PDOStatement[] */
+    /** @var PDOStatement[]|PDOStatementInterface[] */
     protected array $queryCache = [];
     private ?string $name = null;
 
@@ -476,7 +476,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     /**
      * @psalm-param non-empty-string $query
      */
-    protected function prepare(string $query): PDOStatement
+    protected function prepare(string $query): PDOStatement|PDOStatementInterface
     {
         if ($this->config->queryCache && isset($this->queryCache[$query])) {
             return $this->queryCache[$query];
@@ -493,8 +493,10 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     /**
      * Bind parameters into statement.
      */
-    protected function bindParameters(PDOStatement $statement, iterable $parameters): PDOStatement
-    {
+    protected function bindParameters(
+        PDOStatement|PDOStatementInterface $statement,
+        iterable $parameters,
+    ): PDOStatement|PDOStatementInterface {
         $index = 0;
         foreach ($parameters as $name => $parameter) {
             if (\is_string($name)) {
@@ -613,7 +615,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     /**
      * Create instance of configured PDO class.
      */
-    protected function createPDO(): PDO
+    protected function createPDO(): PDO|PDOInterface
     {
         $connection = $this->config->connection;
 
@@ -636,7 +638,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
      *
      * @throws DriverException
      */
-    protected function getPDO(): PDO|PdoInterface
+    protected function getPDO(): PDO|PDOInterface
     {
         if ($this->pdo === null) {
             $this->connect();
@@ -649,9 +651,8 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
      * Creating a context for logging
      *
      * @param float $queryStart Query start time
-     * @param PDOStatement|null $statement Statement
      */
-    protected function defineLoggerContext(float $queryStart, ?PDOStatement $statement): array
+    protected function defineLoggerContext(float $queryStart, PDOStatement|PDOStatementInterface|null $statement): array
     {
         $context = [
             'elapsed' => microtime(true) - $queryStart,

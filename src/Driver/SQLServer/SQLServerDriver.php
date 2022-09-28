@@ -15,6 +15,7 @@ use BackedEnum;
 use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Config\SQLServerDriverConfig;
 use Cycle\Database\Driver\Driver;
+use Cycle\Database\Driver\PDOStatementInterface;
 use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Injection\ParameterInterface;
@@ -39,14 +40,11 @@ class SQLServerDriver extends Driver
 
     /**
      * Bind parameters into statement. SQLServer need encoding to be specified for binary parameters.
-     *
-     * @param \PDOStatement $statement
-     * @param array        $parameters
-     *
-     * @return \PDOStatement
      */
-    protected function bindParameters(\PDOStatement $statement, iterable $parameters): \PDOStatement
-    {
+    protected function bindParameters(
+        \PDOStatement|PDOStatementInterface $statement,
+        iterable $parameters,
+    ): \PDOStatement|PDOStatementInterface {
         $index = 0;
 
         foreach ($parameters as $name => $parameter) {

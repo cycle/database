@@ -24,7 +24,7 @@ use Cycle\Database\StatementInterface;
 final class Statement implements StatementInterface, \IteratorAggregate
 {
     public function __construct(
-        private PDOStatement $pdoStatement
+        private PDOStatement|PDOStatementInterface $pdoStatement
     ) {
         $this->pdoStatement->setFetchMode(self::FETCH_ASSOC);
     }
@@ -34,7 +34,7 @@ final class Statement implements StatementInterface, \IteratorAggregate
         return $this->pdoStatement->queryString;
     }
 
-    public function getPDOStatement(): PDOStatement
+    public function getPDOStatement(): PDOStatement|PDOStatementInterface
     {
         return $this->pdoStatement;
     }

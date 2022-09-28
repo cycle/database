@@ -16,10 +16,12 @@ use PDOStatement;
 
 /**
  * You can use the class to avoid the PDO for any reasons. For example, to create a PDO Mock in tests.
+ *
+ * @see PDO
  */
-interface PdoInterface
+interface PDOInterface
 {
-    public function prepare(string $query, array $options = []): PDOStatement|false;
+    public function prepare(string $query, array $options = []): PDOStatement|PDOStatementInterface|false;
 
     public function beginTransaction(): bool;
 
