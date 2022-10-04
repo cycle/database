@@ -146,7 +146,7 @@ class SQLServerDriver extends Driver
 
         if (
             \str_contains($message, '0800')
-            || \str_contains($message, '080P')
+            || \str_contains($message, '080p')
             || \str_contains($message, 'connection')
         ) {
             return new StatementException\ConnectionException($exception, $query);

@@ -33,7 +33,11 @@ interface PDOInterface
 
     public function exec(string $statement): int|false;
 
-    public function query($statement, $mode = PDO::ATTR_DEFAULT_FETCH_MODE, ...$fetch_mode_args);
+    public function query(
+        $statement,
+        $mode = PDO::ATTR_DEFAULT_FETCH_MODE,
+        ...$fetch_mode_args
+    ): PDOStatement|PDOStatementInterface|false;
 
     public function lastInsertId(?string $name = null): string|false;
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Stub\Driver;
 
+use Closure;
 use Cycle\Database\Driver\PDOStatementInterface;
 use JetBrains\PhpStorm\ArrayShape;
 use PDO;
@@ -13,10 +14,16 @@ use Traversable;
 class TestPDOStatement implements PDOStatementInterface
 {
     private \PDOStatement $statement;
+    /** @var null|Closure(\PDOStatement $pdo, ?array $params): bool */
+    private ?Closure $queryCallback;
 
-    public function __construct(\PDOStatement $statement)
+    /**
+     * @param null|Closure(\PDOStatement $pdo, ?array $params): bool $queryCallback
+     */
+    public function __construct(\PDOStatement $statement, ?Closure $queryCallback = null)
     {
         $this->statement = $statement;
+        $this->queryCallback = $queryCallback;
     }
 
     public function getIterator(): Traversable
@@ -26,7 +33,9 @@ class TestPDOStatement implements PDOStatementInterface
 
     public function execute(?array $params = null): bool
     {
-        return $this->statement->execute(...\func_get_args());
+        return $this->queryCallback !== null
+            ? ($this->queryCallback)($this->statement, $params)
+            : $this->statement->execute(...\func_get_args());
     }
 
     public function fetch(

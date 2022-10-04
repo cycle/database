@@ -236,7 +236,7 @@ class PostgresDriver extends Driver
             str_contains($message, 'eof detected')
             || str_contains($message, 'broken pipe')
             || str_contains($message, '0800')
-            || str_contains($message, '080P')
+            || str_contains($message, '080p')
             || str_contains($message, 'connection')
         ) {
             return new StatementException\ConnectionException($exception, $query);

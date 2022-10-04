@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Stub\Driver;
 
+use Closure;
 use Cycle\Database\Driver\PDOInterface;
 use Cycle\Database\Driver\PDOStatementInterface;
 use Cycle\Database\Exception\StatementException\ConnectionException;
@@ -15,11 +16,17 @@ class TestPDO implements PDOInterface
 {
     private PDO $pdo;
     private int $exceptionOnTransactionBegin;
+    /** @var null|Closure(\PDOStatement $pdo, ?array $params): bool */
+    private ?Closure $queryCallback;
 
-    public function __construct(PDO $pdo, int &$exceptionOnTransactionBegin)
+    /**
+     * @param null|Closure(\PDOStatement $pdo, ?array $params): bool $queryCallback
+     */
+    public function __construct(PDO $pdo, int &$exceptionOnTransactionBegin, ?Closure $queryCallback)
     {
         $this->pdo = $pdo;
         $this->exceptionOnTransactionBegin = &$exceptionOnTransactionBegin;
+        $this->queryCallback = $queryCallback;
     }
 
     public function __call(string $name, array $arguments): mixed
@@ -39,10 +46,7 @@ class TestPDO implements PDOInterface
     public function prepare(string $query, array $options = []): PDOStatementInterface|false
     {
         $statement = $this->pdo->prepare(...\func_get_args());
-        if ($statement === false) {
-            return false;
-        }
-        return new TestPDOStatement($statement);
+        return $this->prepareStatement($statement);
     }
 
     public function commit(): bool
@@ -65,9 +69,10 @@ class TestPDO implements PDOInterface
         return $this->pdo->{__FUNCTION__}(...\func_get_args());
     }
 
-    public function query($statement, $mode = PDO::ATTR_DEFAULT_FETCH_MODE, ...$fetch_mode_args)
+    public function query($statement, $mode = PDO::ATTR_DEFAULT_FETCH_MODE, ...$fetch_mode_args): TestPDOStatement|false
     {
-        return $this->pdo->{__FUNCTION__}(...\func_get_args());
+        $statement = $this->pdo->query(...\func_get_args());
+        return $this->prepareStatement($statement);
     }
 
     public function lastInsertId(?string $name = null): string|false
@@ -98,5 +103,13 @@ class TestPDO implements PDOInterface
     public function quote(string $string, int $type = PDO::PARAM_STR): string|false
     {
         return $this->pdo->{__FUNCTION__}(...\func_get_args());
+    }
+
+    private function prepareStatement(PDOStatement|false $statement): TestPDOStatement|false
+    {
+        return $statement === false ? false : new TestPDOStatement(
+            statement: $statement,
+            queryCallback: $this->queryCallback
+        );
     }
 }
