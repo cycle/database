@@ -7,8 +7,6 @@ namespace Cycle\Database\Tests\Functional\Driver\SQLite\Connection;
 // phpcs:ignore
 use Cycle\Database\Exception\StatementException\ConnectionException;
 use Cycle\Database\Tests\Functional\Driver\Common\Connection\ConnectionExceptionTest as CommonClass;
-use Exception;
-use RuntimeException;
 
 /**
  * @group driver

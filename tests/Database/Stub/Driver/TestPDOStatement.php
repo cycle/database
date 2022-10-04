@@ -66,7 +66,7 @@ class TestPDOStatement implements PDOStatementInterface
         return $this->statement->bindColumn(...\func_get_args());
     }
 
-    public function bindValue(int|string $param, mixed $value, int $type = PDO::PARAM_STR,): bool
+    public function bindValue(int|string $param, mixed $value, int $type = PDO::PARAM_STR): bool
     {
         return $this->statement->bindValue(...\func_get_args());
     }
@@ -96,10 +96,11 @@ class TestPDOStatement implements PDOStatementInterface
         return $this->statement->errorCode(...\func_get_args());
     }
 
-    #[ArrayShape([0 => 'string', 1 => 'int', 2 => 'string'])] public function errorInfo(): array
-    {
-        return $this->statement->errorInfo(...\func_get_args());
-    }
+    #[ArrayShape([0 => 'string', 1 => 'int', 2 => 'string'])]
+ public function errorInfo(): array
+ {
+     return $this->statement->errorInfo(...\func_get_args());
+ }
 
     public function setAttribute(int $attribute, mixed $value): bool
     {

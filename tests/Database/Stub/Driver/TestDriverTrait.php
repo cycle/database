@@ -8,8 +8,6 @@ use Closure;
 use Cycle\Database\Driver\PDOInterface;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Exception\StatementException\ConnectionException;
-use PDO;
-use PDOStatement;
 
 trait TestDriverTrait
 {
