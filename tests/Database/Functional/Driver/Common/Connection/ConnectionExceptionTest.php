@@ -14,6 +14,9 @@ use Exception;
 use PDOStatement;
 use RuntimeException;
 
+/**
+ * @runInSeparateProcess
+ */
 abstract class ConnectionExceptionTest extends BaseConnectionTest
 {
     /**
@@ -45,7 +48,11 @@ abstract class ConnectionExceptionTest extends BaseConnectionTest
 
         $this->expectException(ConnectionException::class);
 
-        $driver->query('SELECT 42')->fetchColumn(0);
+        try {
+            $driver->query('SELECT 42')->fetchColumn(0);
+        } finally {
+            $driver->rollbackTransaction();
+        }
     }
 
     /**

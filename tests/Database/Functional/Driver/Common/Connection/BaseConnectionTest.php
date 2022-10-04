@@ -23,8 +23,13 @@ abstract class BaseConnectionTest extends BaseTest
         $schema->integer('value');
         $schema->save();
 
+    }
+
+    public function tearDown(): void
+    {
         $driver = $this->getDriver();
         $driver->setDefaults();
+        parent::tearDown();
     }
 
     public function schema(string $table): AbstractTable
