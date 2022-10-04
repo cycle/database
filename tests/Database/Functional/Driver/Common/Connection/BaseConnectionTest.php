@@ -22,7 +22,6 @@ abstract class BaseConnectionTest extends BaseTest
         $schema->text('name');
         $schema->integer('value');
         $schema->save();
-
     }
 
     public function tearDown(): void
