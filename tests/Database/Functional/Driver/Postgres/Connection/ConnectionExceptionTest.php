@@ -28,7 +28,7 @@ class ConnectionExceptionTest extends CommonClass
             [new Exception('080P')],
             [new Exception('Bad connection')],
             /** Case from {@link https://github.com/cycle/database/issues/75} */
-            [new Exception("server closed the connection unexpectedly")],
+            [new Exception('server closed the connection unexpectedly')],
         ];
     }
 }
