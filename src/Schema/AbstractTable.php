@@ -444,9 +444,6 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         //Adding to current schema
         $this->current->registerForeignKey($foreign);
 
-        //Let's ensure index existence to performance and compatibility reasons
-        $this->index($columns);
-
         return $foreign;
     }
 
