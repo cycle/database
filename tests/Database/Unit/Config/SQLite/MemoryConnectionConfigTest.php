@@ -22,7 +22,7 @@ final class MemoryConnectionConfigTest extends TestCase
         /** @var MemoryConnectionConfig $recoveredConfig */
         eval('$recoveredConfig = ' . $exported . ';');
 
-        $this->assertSame("sqlite::memory:", $recoveredConfig->getDsn());
+        $this->assertSame('sqlite::memory:', $recoveredConfig->getDsn());
         $this->assertSame(':memory:', $recoveredConfig->getSourceString());
         $this->assertArrayHasKey($testOptionKey, $recoveredConfig->getOptions());
         $this->assertSame($testOptionValue, $recoveredConfig->getOptions()[$testOptionKey]);

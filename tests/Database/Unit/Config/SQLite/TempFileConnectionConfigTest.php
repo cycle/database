@@ -22,7 +22,7 @@ final class TempFileConnectionConfigTest extends TestCase
         /** @var TempFileConnectionConfig $recoveredConfig */
         eval('$recoveredConfig = ' . $exported . ';');
 
-        $this->assertSame("sqlite:", $recoveredConfig->getDsn());
+        $this->assertSame('sqlite:', $recoveredConfig->getDsn());
         $this->assertSame('', $recoveredConfig->getSourceString());
         $this->assertArrayHasKey($testOptionKey, $recoveredConfig->getOptions());
         $this->assertSame($testOptionValue, $recoveredConfig->getOptions()[$testOptionKey]);

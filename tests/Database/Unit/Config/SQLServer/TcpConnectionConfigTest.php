@@ -41,7 +41,7 @@ final class TcpConnectionConfigTest extends TestCase
 
         $this->assertSame(
             sprintf(
-                "sqlsrv:APP=%s;ConnectionPooling=%s;Database=%s;Encrypt=%s;Failover_Partner=%s;LoginTimeout=%s;MultipleActiveResultSets=%s;QuotedId=%s;Server=%s,%s;TraceFile=%s;TraceOn=%s;TransactionIsolation=%s;TrustServerCertificate=%s;WSID=%s",
+                'sqlsrv:APP=%s;ConnectionPooling=%s;Database=%s;Encrypt=%s;Failover_Partner=%s;LoginTimeout=%s;MultipleActiveResultSets=%s;QuotedId=%s;Server=%s,%s;TraceFile=%s;TraceOn=%s;TransactionIsolation=%s;TrustServerCertificate=%s;WSID=%s',
                 $app,
                 (int) $pooling,
                 $database,

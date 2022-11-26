@@ -6,9 +6,7 @@ namespace Cycle\Database\Tests\Unit\Config;
 
 use Cycle\Database\Config\SQLite\DsnConnectionConfig;
 use Cycle\Database\Config\SQLiteDriverConfig;
-use Cycle\Database\Config\SQLServerDriverConfig;
 use Cycle\Database\Driver\SQLite\SQLiteDriver;
-use Cycle\Database\Driver\SQLServer\SQLServerDriver;
 use PHPUnit\Framework\TestCase;
 
 final class SQLiteDriverConfigTest extends TestCase
