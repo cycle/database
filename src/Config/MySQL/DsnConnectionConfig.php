@@ -61,4 +61,14 @@ class DsnConnectionConfig extends ConnectionConfig implements ProvidesSourceStri
     {
         return $this->dsn;
     }
+
+    public static function __set_state(array $an_array): object
+    {
+        return new self(
+            dsn: $an_array['dsn'],
+            user: $an_array['user'],
+            password: $an_array['password'],
+            options: $an_array['options'],
+        );
+    }
 }
