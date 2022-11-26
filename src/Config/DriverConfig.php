@@ -42,4 +42,17 @@ abstract class DriverConfig
         public bool $readonly = false,
     ) {
     }
+
+    public static function __set_state(array $an_array): object
+    {
+        return new static(
+            connection: $an_array['connection'],
+            driver: $an_array['driver'],
+            reconnect: $an_array['reconnect'],
+            timezone: $an_array['timezone'],
+            queryCache: $an_array['queryCache'],
+            readonlySchema: $an_array['readonlySchema'],
+            readonly: $an_array['readonly'],
+        );
+    }
 }

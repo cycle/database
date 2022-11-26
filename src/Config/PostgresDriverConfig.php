@@ -86,4 +86,12 @@ class PostgresDriverConfig extends DriverConfig
         // Remove schema duplications
         return \array_values(\array_unique($schema));
     }
+
+    public static function __set_state(array $an_array): object
+    {
+        $config = parent::__set_state($an_array);
+        $config->schema = $an_array['schema'];
+
+        return $config;
+    }
 }
