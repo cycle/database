@@ -46,6 +46,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
      * @var non-empty-string (Typehint required for overriding behaviour)
      */
     protected const DATETIME = 'Y-m-d H:i:s';
+    protected const DATETIME_MICROSECONDS = 'Y-m-d H:i:s.u';
     protected ?\PDO $pdo = null;
     protected int $transactionLevel = 0;
     protected HandlerInterface $schemaHandler;
@@ -543,7 +544,19 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
             throw new DriverException($e->getMessage(), (int)$e->getCode(), $e);
         }
 
-        return $datetime->setTimestamp($value->getTimestamp())->format(static::DATETIME);
+        return $datetime
+            ->setDate(
+                (int) $value->format('Y'),
+                (int) $value->format('n'),
+                (int) $value->format('j'),
+            )
+            ->setTime(
+                (int) $value->format('G'),
+                (int) $value->format('i'),
+                (int) $value->format('s'),
+                (int) $value->format('u'),
+            )
+            ->format($this->config->datetimeWithMicroseconds ? self::DATETIME_MICROSECONDS : self::DATETIME);
     }
 
     /**

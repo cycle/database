@@ -11,11 +11,6 @@ use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
 abstract class AlterColumnTest extends BaseTest
 {
-    public function schema(string $table): AbstractTable
-    {
-        return $this->database->table($table)->getSchema();
-    }
-
     public function sampleSchema(string $table): AbstractTable
     {
         $schema = $this->schema($table);

@@ -4,6 +4,8 @@ v2.3.0 (in progress)
 -------------------
 - Add supporting for array values in the `IN` and `NOT IN` operators by @roxblnfk (#69, #70, #71)
 - Add `PdoInterface` as possible return type of the `Driver::getPDO()` method by @roxblnfk (#76)
+- Add parameter `datetimeWithMicroseconds` to all driver configs to store the DateTime string with microseconds in the 
+  database by @msmakouz (#84)
 
 v2.2.2 (27.09.2022)
 -------------------

@@ -5,16 +5,10 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Functional\Driver\Common\Query;
 
 use Cycle\Database\Query\UpdateQuery;
-use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
 abstract class UpdateQueryTest extends BaseTest
 {
-    public function schema(string $table): AbstractTable
-    {
-        return $this->db()->table($table)->getSchema();
-    }
-
     public function testQueryInstance(): void
     {
         $this->assertInstanceOf(UpdateQuery::class, $this->database->update());

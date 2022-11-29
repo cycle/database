@@ -88,6 +88,10 @@ abstract class BaseTest extends TestCase
         if (isset($options['readonly']) && $options['readonly'] === true) {
             $config->readonly = true;
         }
+
+        if (isset($options['datetimeWithMicroseconds']) && $options['datetimeWithMicroseconds'] === true) {
+            $config->datetimeWithMicroseconds = true;
+        }
     }
 
     /**
@@ -233,5 +237,12 @@ abstract class BaseTest extends TestCase
         }
 
         $this->assertEquals($parameters, $builderParameters);
+    }
+
+    protected function schema(string $table, string $prefix = '', array $driverConfig = []): AbstractTable
+    {
+        return $this->db('default', $prefix, $driverConfig)
+            ->table($table)
+            ->getSchema();
     }
 }

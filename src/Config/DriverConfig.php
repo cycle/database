@@ -31,6 +31,7 @@ abstract class DriverConfig
      * @param bool $queryCache Enables query caching
      * @param bool $readonlySchema Disable schema modifications
      * @param bool $readonly Disable write expressions
+     * @param bool $datetimeWithMicroseconds Store datetime string with microseconds
      */
     public function __construct(
         public ConnectionConfig $connection,
@@ -40,6 +41,7 @@ abstract class DriverConfig
         public bool $queryCache = true,
         public bool $readonlySchema = false,
         public bool $readonly = false,
+        public bool $datetimeWithMicroseconds = false,
     ) {
     }
 }

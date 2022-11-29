@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Functional\Driver\Common\Connection;
 
-use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 use Cycle\Database\Tests\Stub\Driver\MSSQLWrapDriver;
 use Cycle\Database\Tests\Stub\Driver\MysqlWrapDriver;
@@ -29,11 +28,6 @@ abstract class BaseConnectionTest extends BaseTest
         $driver = $this->getDriver();
         $driver->setDefaults();
         parent::tearDown();
-    }
-
-    public function schema(string $table): AbstractTable
-    {
-        return $this->database->table($table)->getSchema();
     }
 
     protected function getDriver(): SQLiteWrapDriver|MysqlWrapDriver|PostgresWrapDriver|MSSQLWrapDriver

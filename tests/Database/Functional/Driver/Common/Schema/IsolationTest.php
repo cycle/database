@@ -5,21 +5,13 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Functional\Driver\Common\Schema;
 
 use Cycle\Database\Driver\Handler;
-use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
 abstract class IsolationTest extends BaseTest
 {
-    public function schema(string $prefix, string $table): AbstractTable
-    {
-        return $this->db('default', $prefix)
-            ->table($table)
-            ->getSchema();
-    }
-
     public function testGetPrefix(): void
     {
-        $schema = $this->schema('prefix_', 'table');
+        $schema = $this->schema('table', 'prefix_');
         $this->assertFalse($schema->exists());
 
         $this->assertSame('prefix_', $schema->getPrefix());
@@ -28,12 +20,12 @@ abstract class IsolationTest extends BaseTest
         $schema->primary('id');
         $schema->save(Handler::DO_ALL);
 
-        $this->assertTrue($this->schema('prefix_', 'table')->exists());
+        $this->assertTrue($this->schema('table', 'prefix_')->exists());
     }
 
     public function testChangeNameBeforeSave(): void
     {
-        $schema = $this->schema('prefix_', 'table');
+        $schema = $this->schema('table', 'prefix_');
         $this->assertFalse($schema->exists());
 
         $this->assertSame('prefix_', $schema->getPrefix());
@@ -45,36 +37,36 @@ abstract class IsolationTest extends BaseTest
         $schema->primary('id');
         $schema->save(Handler::DO_ALL);
 
-        $this->assertTrue($this->schema('prefix_new_', 'name')->exists());
-        $this->assertTrue($this->schema('prefix_', 'new_name')->exists());
+        $this->assertTrue($this->schema('name', 'prefix_new_')->exists());
+        $this->assertTrue($this->schema('new_name', 'prefix_')->exists());
     }
 
     public function testRename(): void
     {
-        $schema = $this->schema('prefix_', 'table');
+        $schema = $this->schema( 'table', 'prefix_');
         $this->assertFalse($schema->exists());
 
         $schema->primary('id');
         $schema->save(Handler::DO_ALL);
 
-        $this->assertTrue($this->schema('prefix_', 'table')->exists());
+        $this->assertTrue($this->schema('table', 'prefix_')->exists());
 
         $schema->setName('abc');
         $schema->save(Handler::DO_ALL);
 
-        $this->assertFalse($this->schema('prefix_', 'table')->exists());
-        $this->assertTrue($this->schema('prefix_', 'abc')->exists());
+        $this->assertFalse($this->schema('table', 'prefix_')->exists());
+        $this->assertTrue($this->schema('abc', 'prefix_')->exists());
     }
 
     public function testCreateAndMakeReferenceInSelfScope(): void
     {
-        $schema = $this->schema('prefix_', 'a');
+        $schema = $this->schema('a', 'prefix_');
         $this->assertFalse($schema->exists());
 
         $schema->primary('id');
         $schema->save(Handler::DO_ALL);
 
-        $schema = $this->schema('prefix_', 'b');
+        $schema = $this->schema('b', 'prefix_');
         $this->assertFalse($schema->exists());
 
         $schema->primary('id');
@@ -86,10 +78,10 @@ abstract class IsolationTest extends BaseTest
 
         $schema->save(Handler::DO_ALL);
 
-        $this->assertTrue($this->schema('prefix_', 'a')->exists());
-        $this->assertTrue($this->schema('prefix_', 'b')->exists());
+        $this->assertTrue($this->schema('a', 'prefix_')->exists());
+        $this->assertTrue($this->schema('b', 'prefix_')->exists());
 
-        $foreign = $this->schema('prefix_', 'b')->foreignKey(['to_a']);
+        $foreign = $this->schema('b', 'prefix_')->foreignKey(['to_a']);
 
         $this->assertSame('prefix_a', $foreign->getForeignTable());
     }

@@ -33,6 +33,7 @@ class SQLiteDriverConfig extends DriverConfig
         bool $queryCache = true,
         bool $readonlySchema = false,
         bool $readonly = false,
+        bool $datetimeWithMicroseconds = false,
     ) {
         /** @psalm-suppress ArgumentTypeCoercion */
         parent::__construct(
@@ -43,6 +44,7 @@ class SQLiteDriverConfig extends DriverConfig
             queryCache: $queryCache,
             readonlySchema: $readonlySchema,
             readonly: $readonly,
+            datetimeWithMicroseconds: $datetimeWithMicroseconds,
         );
     }
 }
