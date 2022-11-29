@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Driver\Postgres\Schema;
 
 use Cycle\Database\Driver\DriverInterface;
+use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Schema\AbstractColumn;
 
@@ -345,6 +346,19 @@ class PostgresColumn extends AbstractColumn
 
 
          ;
+    }
+
+    public function datetime(int $size = 0): self
+    {
+        $this->type('datetime');
+
+        if ($size !== 0) {
+            ($size < 0 || $size > 6) && throw new SchemaException('Invalid datetime length value');
+
+            $this->type = str_replace('timestamp', "timestamp ({$size})", $this->type);
+        }
+
+        return $this;
     }
 
     /**
