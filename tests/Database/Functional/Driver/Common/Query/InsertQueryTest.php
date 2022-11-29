@@ -91,7 +91,7 @@ abstract class InsertQueryTest extends BaseTest
     {
         $schema = $this->schema(table: 'with_microseconds', driverConfig: ['datetimeWithMicroseconds' => true]);
         $schema->primary('id');
-        $schema->datetime('datetime');
+        $schema->datetime('datetime', 6);
         $schema->save();
 
         $expected = new \DateTimeImmutable();

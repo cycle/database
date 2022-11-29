@@ -6,6 +6,7 @@ v2.3.0 (in progress)
 - Add `PdoInterface` as possible return type of the `Driver::getPDO()` method by @roxblnfk (#76)
 - Add parameter `datetimeWithMicroseconds` to all driver configs to store the DateTime string with microseconds in the 
   database by @msmakouz (#86)
+- Add ability to define `size` in the `datetime` column by @msmakouz (#86)
 
 v2.2.2 (27.09.2022)
 -------------------
