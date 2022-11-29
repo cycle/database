@@ -18,13 +18,13 @@ class IsolationTest extends CommonClass
 
     public function testCreateAndMakeReferenceInSelfScope(): void
     {
-        $schema = $this->schema('prefix_', 'a');
+        $schema = $this->schema('a', 'prefix_');
         $this->assertFalse($schema->exists());
 
         $schema->primary('id');
         $schema->save(Handler::DO_ALL);
 
-        $schema = $this->schema('prefix_', 'b');
+        $schema = $this->schema('b', 'prefix_');
         $this->assertFalse($schema->exists());
 
         $schema->primary('id');
@@ -36,10 +36,10 @@ class IsolationTest extends CommonClass
 
         $schema->save(Handler::DO_ALL);
 
-        $this->assertTrue($this->schema('prefix_', 'a')->exists());
-        $this->assertTrue($this->schema('prefix_', 'b')->exists());
+        $this->assertTrue($this->schema('a', 'prefix_')->exists());
+        $this->assertTrue($this->schema('b', 'prefix_')->exists());
 
-        $foreign = $this->schema('prefix_', 'b')->foreignKey(['to_a']);
+        $foreign = $this->schema('b', 'prefix_')->foreignKey(['to_a']);
 
         $this->assertSame('prefix_a', $foreign->getForeignTable());
     }
