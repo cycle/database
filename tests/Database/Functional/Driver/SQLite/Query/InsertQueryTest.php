@@ -44,4 +44,48 @@ UNION ALL SELECT ?, ?',
             $insert
         );
     }
+
+    public function testInsertMicroseconds(): void
+    {
+        $schema = $this->schema(table: 'with_microseconds', driverConfig: ['datetimeWithMicroseconds' => true]);
+        $schema->primary('id');
+        $schema->datetime('datetime', 6);
+        $schema->save();
+
+        $expected = new \DateTimeImmutable();
+
+        $id = $this->db(driverConfig: ['datetimeWithMicroseconds' => true])->insert('with_microseconds')->values([
+            'datetime' => $expected,
+        ])->run();
+
+        $result = $this->db(driverConfig: ['datetimeWithMicroseconds' => true])->select('datetime')
+            ->from('with_microseconds')
+            ->where('id', $id)
+            ->run()
+            ->fetch();
+
+        $this->assertSame($expected->format('Y-m-d H:i:s.u'), $result['datetime']);
+    }
+
+    public function testInsertDatetimeWithoutMicroseconds(): void
+    {
+        $schema = $this->schema('without_microseconds');
+        $schema->primary('id');
+        $schema->datetime('datetime');
+        $schema->save();
+
+        $expected = new \DateTimeImmutable();
+
+        $id = $this->database->insert('without_microseconds')->values([
+            'datetime' => $expected,
+        ])->run();
+
+        $result = $this->database->select('datetime')
+            ->from('without_microseconds')
+            ->where('id', $id)
+            ->run()
+            ->fetch();
+
+        $this->assertSame($expected->format('Y-m-d H:i:s'), $result['datetime']);
+    }
 }
