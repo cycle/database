@@ -43,7 +43,7 @@ abstract class IsolationTest extends BaseTest
 
     public function testRename(): void
     {
-        $schema = $this->schema( 'table', 'prefix_');
+        $schema = $this->schema('table', 'prefix_');
         $this->assertFalse($schema->exists());
 
         $schema->primary('id');
