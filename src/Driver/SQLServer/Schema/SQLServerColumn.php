@@ -159,6 +159,14 @@ class SQLServerColumn extends AbstractColumn
         return $this;
     }
 
+    // SQLServer doesn't support sizing for datetime
+    public function datetime(int $size = 0): self
+    {
+        $this->type('datetime');
+
+        return $this;
+    }
+
     /**
      * @param bool $withEnum When true enum constrain will be included into definition. Set to false
      *                       if you want to create constrain separately.
