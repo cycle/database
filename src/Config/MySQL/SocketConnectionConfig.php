@@ -61,9 +61,4 @@ class SocketConnectionConfig extends ConnectionConfig implements ProvidesSourceS
 
         return \sprintf('%s:%s', $this->getName(), $this->dsn($config));
     }
-
-    public static function __set_state(array $state): self
-    {
-        return new self(...$state);
-    }
 }
