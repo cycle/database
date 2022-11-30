@@ -49,11 +49,8 @@ class FileConnectionConfig extends ConnectionConfig implements ProvidesSourceStr
         return $this->database;
     }
 
-    public static function __set_state(array $an_array): object
+    public static function __set_state(array $state): self
     {
-        return new self(
-            database: $an_array['database'],
-            options: $an_array['options'],
-        );
+        return new self(...$state);
     }
 }

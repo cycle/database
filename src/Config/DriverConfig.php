@@ -43,16 +43,8 @@ abstract class DriverConfig
     ) {
     }
 
-    public static function __set_state(array $an_array): object
+    public static function __set_state(array $state): static
     {
-        return new static(
-            connection: $an_array['connection'],
-            driver: $an_array['driver'],
-            reconnect: $an_array['reconnect'],
-            timezone: $an_array['timezone'],
-            queryCache: $an_array['queryCache'],
-            readonlySchema: $an_array['readonlySchema'],
-            readonly: $an_array['readonly'],
-        );
+        return new static(...$state);
     }
 }

@@ -69,15 +69,8 @@ class TcpConnectionConfig extends ConnectionConfig implements ProvidesSourceStri
         return \sprintf('%s:%s', $this->getName(), $this->dsn($config));
     }
 
-    public static function __set_state(array $an_array): object
+    public static function __set_state(array $state): self
     {
-        return new self(
-            database: $an_array['database'],
-            host: $an_array['host'],
-            port: $an_array['port'],
-            user: $an_array['user'],
-            password: $an_array['password'],
-            options: $an_array['options'],
-        );
+        return new self(...$state);
     }
 }
