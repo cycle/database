@@ -119,8 +119,8 @@ trait TableAssertions
     protected function compareColumns(AbstractColumn $a, AbstractColumn $b): void
     {
         $this->assertSame(
-            \strtolower($a->getInternalType()),
-            \strtolower($b->getInternalType()),
+            $a->getInternalType(),
+            $b->getInternalType(),
             "Column {$a} type has been changed"
         );
 
