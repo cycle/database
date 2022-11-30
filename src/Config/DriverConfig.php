@@ -43,8 +43,8 @@ abstract class DriverConfig
     ) {
     }
 
-    public static function __set_state(array $state): static
+    public static function __set_state(array $properties): static
     {
-        return new static(...$state);
+        return new static(...$properties);
     }
 }
