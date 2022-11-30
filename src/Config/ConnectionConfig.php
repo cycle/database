@@ -86,11 +86,9 @@ abstract class ConnectionConfig
 
         $arguments = [];
         foreach ($ref->getConstructor()?->getParameters() ?? [] as $parameter) {
-            if (\array_key_exists($parameter->getName(), $properties)) {
-                $arguments[$parameter->getName()] = $properties[$parameter->getName()];
-            } else {
-                $arguments[$parameter->getName()] = $parameter->getDefaultValue();
-            }
+            $arguments[$parameter->getName()] = \array_key_exists($parameter->getName(), $properties)
+                ? $properties[$parameter->getName()]
+                : $parameter->getDefaultValue();
         }
 
         return new static(...$arguments);
