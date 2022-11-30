@@ -158,7 +158,7 @@ class SQLiteColumn extends AbstractColumn
         $column = new self($table, $schema['name'], $timezone);
 
         $column->nullable = !$schema['notnull'];
-        $column->type = $schema['type'];
+        $column->type = \strtolower($schema['type']);
 
         if ((bool)$schema['pk'] && $column->type === 'integer') {
             $column->primaryKey = true;
