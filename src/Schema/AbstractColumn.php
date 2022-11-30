@@ -618,6 +618,10 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
 
                 continue;
             }
+            if ($name === 'type') {
+                $value = \strtolower($value);
+                $dbColumnVars[$name] = \strtolower($dbColumnVars[$name]);
+            }
 
             if ($value !== $dbColumnVars[$name]) {
                 $difference[] = $name;
