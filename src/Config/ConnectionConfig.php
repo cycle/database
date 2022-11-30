@@ -77,13 +77,20 @@ abstract class ConnectionConfig
         return $this->toArray();
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public static function __set_state(array $properties): static
     {
         $ref = new \ReflectionClass(static::class);
 
         $arguments = [];
         foreach ($ref->getConstructor()?->getParameters() ?? [] as $parameter) {
-            $arguments[$parameter->getName()] = $properties[$parameter->getName()];
+            if (\array_key_exists($parameter->getName(), $properties)) {
+                $arguments[$parameter->getName()] = $properties[$parameter->getName()];
+            } else {
+                $arguments[$parameter->getName()] = $parameter->getDefaultValue();
+            }
         }
 
         return new static(...$arguments);
