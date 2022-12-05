@@ -35,6 +35,7 @@ abstract class DriverTest extends BaseTest
         $driver = $this->database->getDriver();
 
         $ref = new \ReflectionMethod($driver, 'formatDatetime');
+        $ref->setAccessible(true);
 
         $formatted = $ref->invokeArgs($driver, [$original]);
         $objectFromFormatted = new \DateTimeImmutable($formatted, $driver->getTimezone());
