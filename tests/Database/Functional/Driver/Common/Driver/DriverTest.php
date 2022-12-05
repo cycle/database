@@ -26,4 +26,31 @@ abstract class DriverTest extends BaseTest
         $this->database->rollback();
         $this->assertSame(0, $this->database->getDriver()->getTransactionLevel());
     }
+
+    /**
+     * @dataProvider datetimeDataProvider
+     */
+    public function testFormatDatetime(\DateTimeInterface $original): void
+    {
+        $driver = $this->database->getDriver();
+
+        $ref = new \ReflectionMethod($driver, 'formatDatetime');
+
+        $formatted = $ref->invokeArgs($driver, [$original]);
+        $objectFromFormatted = new \DateTimeImmutable($formatted, $driver->getTimezone());
+
+        // changed time in the new tz
+        $this->assertSame('2000-01-22 16:23:45', $formatted);
+
+        // timestamp not changed
+        $this->assertSame($original->getTimestamp(), $objectFromFormatted->getTimestamp());
+    }
+
+    public function datetimeDataProvider(): \Traversable
+    {
+        yield [new \DateTimeImmutable('2000-01-23T01:23:45.678+09:00')];
+        yield [new \DateTime('2000-01-23T01:23:45.678+09:00')];
+        yield [new class('2000-01-23T01:23:45.678+09:00') extends \DateTimeImmutable {}];
+        yield [new class('2000-01-23T01:23:45.678+09:00') extends \DateTime {}];
+    }
 }

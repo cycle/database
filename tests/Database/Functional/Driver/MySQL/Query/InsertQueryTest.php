@@ -54,7 +54,7 @@ class InsertQueryTest extends CommonClass
             ->run()
             ->fetch();
 
-        $this->assertSame($expected->format('Y-m-d H:i:s.u'), $result['datetime']);
+        $this->assertStringContainsString('.', $result['datetime']);
     }
 
     public function testInsertDatetimeWithoutMicroseconds(): void

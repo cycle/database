@@ -26,7 +26,6 @@ use Cycle\Database\StatementInterface;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
-use IntBackedEnum;
 use PDO;
 use PDOStatement;
 use Psr\Log\LoggerAwareInterface;
@@ -515,7 +514,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
 
             /** @since PHP 8.1 */
             if ($parameter instanceof BackedEnum) {
-                $type = $parameter instanceof IntBackedEnum ? PDO::PARAM_INT : PDO::PARAM_STR;
+                $type = PDO::PARAM_STR;
                 $parameter = $parameter->value;
             }
 
@@ -539,24 +538,17 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     protected function formatDatetime(DateTimeInterface $value): string
     {
         try {
-            $datetime = new DateTimeImmutable('now', $this->getTimezone());
+            if ($value instanceof \DateTimeImmutable || $value instanceof \DateTime) {
+                $value = $value->setTimezone($this->getTimezone());
+            } else {
+                $datetime = new DateTimeImmutable('now', $this->getTimezone());
+                $value = $datetime->setTimestamp($value->getTimestamp());
+            }
         } catch (Throwable $e) {
             throw new DriverException($e->getMessage(), (int)$e->getCode(), $e);
         }
 
-        return $datetime
-            ->setDate(
-                (int) $value->format('Y'),
-                (int) $value->format('n'),
-                (int) $value->format('j'),
-            )
-            ->setTime(
-                (int) $value->format('G'),
-                (int) $value->format('i'),
-                (int) $value->format('s'),
-                (int) $value->format('u'),
-            )
-            ->format($this->config->datetimeWithMicroseconds ? self::DATETIME_MICROSECONDS : self::DATETIME);
+        return $value->format($this->config->datetimeWithMicroseconds ? self::DATETIME_MICROSECONDS : self::DATETIME);
     }
 
     /**
