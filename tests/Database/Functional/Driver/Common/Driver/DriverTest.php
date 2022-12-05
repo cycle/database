@@ -50,7 +50,7 @@ abstract class DriverTest extends BaseTest
     {
         yield [new \DateTimeImmutable('2000-01-23T01:23:45.678+09:00')];
         yield [new \DateTime('2000-01-23T01:23:45.678+09:00')];
-        yield [new class('2000-01-23T01:23:45.678+09:00') extends \DateTimeImmutable {}];
-        yield [new class('2000-01-23T01:23:45.678+09:00') extends \DateTime {}];
+        yield [new class ('2000-01-23T01:23:45.678+09:00') extends \DateTimeImmutable {}];
+        yield [new class ('2000-01-23T01:23:45.678+09:00') extends \DateTime {}];
     }
 }
