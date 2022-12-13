@@ -167,6 +167,9 @@ class InsertQueryTest extends CommonClass
             ->run()
             ->fetch();
 
-        $this->assertSame($expected->format('Y-m-d H:i:s'), $result['datetime']);
+        $this->assertSame(
+            $expected->setTimezone($this->database->getDriver()->getTimezone())->format('Y-m-d H:i:s'),
+            $result['datetime']
+        );
     }
 }

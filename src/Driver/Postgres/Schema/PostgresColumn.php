@@ -18,6 +18,9 @@ use Cycle\Database\Schema\AbstractColumn;
 
 class PostgresColumn extends AbstractColumn
 {
+    private const WITH_TIMEZONE = 'with time zone';
+    private const WITHOUT_TIMEZONE = 'without time zone';
+
     /**
      * Default timestamp expression (driver specific).
      */
@@ -67,11 +70,11 @@ class PostgresColumn extends AbstractColumn
         'decimal'     => 'numeric',
 
         //Date and Time types
-        'datetime'    => 'timestamp without time zone',
+        'datetime'    => 'timestamp',
         'date'        => 'date',
-        'time'        => 'time without time zone',
-        'timestamp'   => 'timestamp without time zone',
-        'timestamptz' => 'timestamp with time zone',
+        'time'        => 'time',
+        'timestamp'   => 'timestamp',
+        'timestamptz' => 'timestamp',
 
         //Binary types
         'binary'      => 'bytea',
@@ -121,6 +124,8 @@ class PostgresColumn extends AbstractColumn
      * Name of enum constraint associated with field.
      */
     protected string $constrainName = '';
+
+    protected bool $withTimezone = false;
 
     public function getConstraints(): array
     {
@@ -182,24 +187,47 @@ class PostgresColumn extends AbstractColumn
      */
     public function sqlStatement(DriverInterface $driver): string
     {
-        $statement = parent::sqlStatement($driver);
+        $statement = [$driver->identifier($this->name), $this->type];
 
-        if ($this->getAbstractType() !== 'enum') {
-            //Nothing special
-            return $statement;
+        if ($this->getAbstractType() === 'enum') {
+            //Enum specific column options
+            if (!empty($enumDefinition = $this->quoteEnum($driver))) {
+                $statement[] = $enumDefinition;
+            }
+        } elseif (!empty($this->precision)) {
+            $statement[] = "({$this->precision}, {$this->scale})";
+        } elseif (!empty($this->size) || $this->type === 'timestamp' || $this->type === 'time') {
+            $statement[] = "({$this->size})";
         }
+
+        if ($this->type === 'timestamp' || $this->type === 'time') {
+            $statement[] = $this->withTimezone ? self::WITH_TIMEZONE : self::WITHOUT_TIMEZONE;
+        }
+
+        $statement[] = $this->nullable ? 'NULL' : 'NOT NULL';
+
+        if ($this->defaultValue !== null) {
+            $statement[] = "DEFAULT {$this->quoteDefault($driver)}";
+        }
+
+        $statement = \implode(' ', $statement);
 
         //We have add constraint for enum type
-        $enumValues = [];
-        foreach ($this->enumValues as $value) {
-            $enumValues[] = $driver->quote($value);
+        if ($this->getAbstractType() === 'enum') {
+            $enumValues = [];
+            foreach ($this->enumValues as $value) {
+                $enumValues[] = $driver->quote($value);
+            }
+
+            $constrain = $driver->identifier($this->enumConstraint());
+            $column = $driver->identifier($this->getName());
+            $values = \implode(', ', $enumValues);
+
+            return "{$statement} CONSTRAINT {$constrain} CHECK ($column IN ({$values}))";
         }
 
-        $constrain = $driver->identifier($this->enumConstraint());
-        $column = $driver->identifier($this->getName());
-        $values = implode(', ', $enumValues);
-
-        return "{$statement} CONSTRAINT {$constrain} CHECK ($column IN ({$values}))";
+        //Nothing special
+        return $statement;
     }
 
     /**
@@ -285,7 +313,13 @@ class PostgresColumn extends AbstractColumn
     ): self {
         $column = new self($table, $schema['column_name'], $driver->getTimezone());
 
-        $column->type = $schema['data_type'];
+        $column->type = match (true) {
+            $schema['typname'] === 'timestamp' => 'timestamp',
+            $schema['typname'] === 'date' => 'date',
+            $schema['typname'] === 'time' => 'time',
+            default => $schema['data_type']
+        };
+
         $column->defaultValue = $schema['column_default'];
         $column->nullable = $schema['is_nullable'] === 'YES';
 
@@ -321,6 +355,10 @@ class PostgresColumn extends AbstractColumn
             self::resolveEnum($driver, $column);
         }
 
+        if ($column->type === 'timestamp' || $column->type === 'time') {
+            $column->size = (int) $schema['datetime_precision'];
+        }
+
         if (!empty($column->size) && str_contains($column->type, 'char')) {
             //Potential enum with manually created constraint (check in)
             self::resolveConstrains($driver, $schema, $column);
@@ -348,15 +386,13 @@ class PostgresColumn extends AbstractColumn
          ;
     }
 
-    public function datetime(int $size = 0): self
+    public function timestamp(int $size = 0): self
     {
-        $this->type('datetime');
+        $this->type('timestamp');
 
-        if ($size !== 0) {
-            ($size < 0 || $size > 6) && throw new SchemaException('Invalid datetime length value');
+        ($size < 0 || $size > 6) && throw new SchemaException('Invalid timestamp length value');
 
-            $this->type = str_replace('timestamp', "timestamp ({$size})", $this->type);
-        }
+        $this->size = $size;
 
         return $this;
     }

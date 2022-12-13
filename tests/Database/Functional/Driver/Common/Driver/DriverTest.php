@@ -30,21 +30,26 @@ abstract class DriverTest extends BaseTest
     /**
      * @dataProvider datetimeDataProvider
      */
-    public function testFormatDatetime(\DateTimeInterface $original): void
+    public function testFormatDatetime(\DateTimeInterface $value): void
     {
+        $original = clone $value;
+
         $driver = $this->database->getDriver();
 
         $ref = new \ReflectionMethod($driver, 'formatDatetime');
         $ref->setAccessible(true);
 
-        $formatted = $ref->invokeArgs($driver, [$original]);
+        $formatted = $ref->invokeArgs($driver, [$value]);
         $objectFromFormatted = new \DateTimeImmutable($formatted, $driver->getTimezone());
 
         // changed time in the new tz
         $this->assertSame('2000-01-22 16:23:45', $formatted);
 
         // timestamp not changed
-        $this->assertSame($original->getTimestamp(), $objectFromFormatted->getTimestamp());
+        $this->assertSame($value->getTimestamp(), $objectFromFormatted->getTimestamp());
+
+        // original timezone object not mutated
+        $this->assertEquals($original->getTimezone(), $value->getTimezone());
     }
 
     public function datetimeDataProvider(): \Traversable

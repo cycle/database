@@ -58,7 +58,7 @@ class AlterColumnTest extends CommonClass
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
 
-        $schema->datetime('datetime', -1);
+        $schema->datetime('other_datetime', -1);
         $schema->save();
     }
 
@@ -68,7 +68,7 @@ class AlterColumnTest extends CommonClass
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
 
-        $schema->datetime('datetime', 7);
+        $schema->datetime('other_datetime', 7);
         $schema->save();
     }
 
@@ -77,12 +77,12 @@ class AlterColumnTest extends CommonClass
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
 
-        $this->assertSame(0, $this->fetchSchema($schema)->column('datetime')->getSize());
+        $this->assertSame(0, $this->fetchSchema($schema)->column('other_datetime')->getSize());
 
-        $schema->datetime->string(6);
+        $schema->other_datetime->datetime(6);
         $schema->save();
 
         $this->assertSameAsInDB($schema);
-        $this->assertSame(6, $this->fetchSchema($schema)->column('datetime')->getSize());
+        $this->assertSame(6, $this->fetchSchema($schema)->column('other_datetime')->getSize());
     }
 }

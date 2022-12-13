@@ -538,17 +538,19 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     protected function formatDatetime(DateTimeInterface $value): string
     {
         try {
-            if ($value instanceof \DateTimeImmutable || $value instanceof \DateTime) {
-                $value = $value->setTimezone($this->getTimezone());
-            } else {
-                $datetime = new DateTimeImmutable('now', $this->getTimezone());
-                $value = $datetime->setTimestamp($value->getTimestamp());
-            }
+            $datetime = match (true) {
+                $value instanceof \DateTimeImmutable => $value->setTimezone($this->getTimezone()),
+                $value instanceof \DateTime => DateTimeImmutable::createFromMutable($value)
+                    ->setTimezone($this->getTimezone()),
+                default => (new DateTimeImmutable('now', $this->getTimezone()))->setTimestamp($value->getTimestamp())
+            };
         } catch (Throwable $e) {
             throw new DriverException($e->getMessage(), (int)$e->getCode(), $e);
         }
 
-        return $value->format($this->config->datetimeWithMicroseconds ? self::DATETIME_MICROSECONDS : self::DATETIME);
+        return $datetime->format(
+            $this->config->datetimeWithMicroseconds ? self::DATETIME_MICROSECONDS : self::DATETIME
+        );
     }
 
     /**
