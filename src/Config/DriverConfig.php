@@ -23,7 +23,7 @@ use Cycle\Database\Driver\DriverInterface;
 abstract class DriverConfig
 {
     protected array $defaultOptions = [
-        'datetimeWithMicroseconds' => false
+        'datetimeWithMicroseconds' => false,
     ];
 
     public array $options = [];
