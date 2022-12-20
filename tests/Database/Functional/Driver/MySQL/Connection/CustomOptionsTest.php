@@ -53,11 +53,11 @@ class CustomOptionsTest extends CommonClass
             '_z' => [
                 ['zerofill' => true],
                 // If you specify ZEROFILL for a numeric column, MySQL automatically adds the UNSIGNED attribute.
-                ['unsigned' => true, 'zerofill' => true]
+                ['unsigned' => true, 'zerofill' => true],
             ],
             '_uz' => [
                 ['unsigned' => true, 'zerofill' => true],
-                ['unsigned' => true, 'zerofill' => true]
+                ['unsigned' => true, 'zerofill' => true],
             ],
         ];
 

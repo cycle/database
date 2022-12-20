@@ -278,11 +278,11 @@ class MySQLColumn extends AbstractColumn
     public function compare(AbstractColumn $initial): bool
     {
         assert($initial instanceof self);
-        if (!parent::compare($initial)) {
-            return false;
-        }
+        return ! (!parent::compare($initial))
 
-        return true;
+
+
+         ;
     }
 
     public function isUnsigned(): bool
