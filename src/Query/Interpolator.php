@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Query;
 
+use BackedEnum;
 use Cycle\Database\Injection\ParameterInterface;
 use DateTimeInterface;
 use Stringable;
@@ -63,6 +64,11 @@ final class Interpolator
     {
         if ($parameter instanceof ParameterInterface) {
             return self::resolveValue($parameter->getValue());
+        }
+
+        /** @since PHP 8.1 */
+        if ($parameter instanceof BackedEnum) {
+            $parameter = $parameter->value;
         }
 
         switch (\gettype($parameter)) {

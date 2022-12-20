@@ -69,7 +69,7 @@ trait JoinTrait
      * another, no parametric on conditions allowed here).
      *
      * @param ActiveQuery|string $type    Join type. Allowed values, LEFT, RIGHT, INNER and etc.
-     * @param string             $outer   Joined table name (without prefix), may include AS statement.
+     * @param ActiveQuery|string $outer   Joined table name (without prefix), may include AS statement.
      * @param string             $alias   Joined table or query alias.
      * @param mixed              $on      Simplified on definition linking table names (no
      *                                    parameters allowed) or closure.
@@ -78,7 +78,7 @@ trait JoinTrait
      */
     public function join(
         ActiveQuery|string $type,
-        string|ActiveQuery $outer,
+        ActiveQuery|string $outer,
         string $alias = null,
         mixed $on = null
     ): self {

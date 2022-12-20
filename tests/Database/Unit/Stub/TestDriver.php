@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cycle\Database\Tests\Unit\Driver;
+namespace Cycle\Database\Tests\Unit\Stub;
 
 use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Driver\Driver;

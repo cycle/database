@@ -1,6 +1,10 @@
 on:
-  - pull_request
-  - push
+  push:
+    branches:
+      - master
+      - '*.*'
+      - '*.*.*'
+  pull_request: null
 
 name: ci-pgsql
 

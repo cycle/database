@@ -129,7 +129,7 @@ class MySQLColumn extends AbstractColumn
         'mediumtext',
         'tinytext',
         'longtext',
-        'blog',
+        'blob',
         'tinyblob',
         'longblob',
     ];

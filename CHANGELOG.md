@@ -1,11 +1,25 @@
 # CHANGELOG
 
-v2.2.0 (in progress)
+v2.3.0 (in progress)
 -------------------
-- Fix typo in the `\Cycle\Database\Schema\State::forgerForeignKey` method (#53)
-- Add supporting for smallint column type (#58)
+- Add supporting for array values in the `IN` and `NOT IN` operators by @roxblnfk (#69, #70, #71)
+- Add `PdoInterface` as possible return type of the `Driver::getPDO()` method by @roxblnfk (#76)
+
+v2.2.2 (27.09.2022)
+-------------------
+- Fix transaction level changing on disconnect when transaction is starting by @roxblnfk (#76)
+
+v2.2.1 (02.07.2022)
+-------------------
+- Hotfix: make the `$config` parameter of the `DatabaseConfig` constructor optional again by @roxblnfk
+
+v2.2.0 (23.06.2022)
+-------------------
+- Add supporting for PHP 8.1 Enumerations by @roxblnfk (#67)
+- Add supporting for smallint column type by @gam6itko (#58)
+- Fix typo in the `\Cycle\Database\Schema\State::forgerForeignKey` method by @BeMySlaveDarlin (#53)
 - Fix compatibility with Spiral Framework 3 packages:
-  - Remove overriding of the `$config` property in the `DatabaseConfig` class (#64)
+  - Remove overriding of the `$config` property in the `DatabaseConfig` class by @roxblnfk (#64)
   - Update `composer.json` dependencies
 
 v2.1.3 (20.05.2022)

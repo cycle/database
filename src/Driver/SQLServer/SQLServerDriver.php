@@ -11,13 +11,17 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\SQLServer;
 
+use BackedEnum;
 use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Config\SQLServerDriverConfig;
 use Cycle\Database\Driver\Driver;
+use Cycle\Database\Driver\PDOStatementInterface;
 use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Injection\ParameterInterface;
 use Cycle\Database\Query\QueryBuilder;
+use IntBackedEnum;
+use PDO;
 
 class SQLServerDriver extends Driver
 {
@@ -36,14 +40,11 @@ class SQLServerDriver extends Driver
 
     /**
      * Bind parameters into statement. SQLServer need encoding to be specified for binary parameters.
-     *
-     * @param \PDOStatement $statement
-     * @param array        $parameters
-     *
-     * @return \PDOStatement
      */
-    protected function bindParameters(\PDOStatement $statement, iterable $parameters): \PDOStatement
-    {
+    protected function bindParameters(
+        \PDOStatement|PDOStatementInterface $statement,
+        iterable $parameters,
+    ): \PDOStatement|PDOStatementInterface {
         $index = 0;
 
         foreach ($parameters as $name => $parameter) {
@@ -58,6 +59,12 @@ class SQLServerDriver extends Driver
             if ($parameter instanceof ParameterInterface) {
                 $type = $parameter->getType();
                 $parameter = $parameter->getValue();
+            }
+
+            /** @since PHP 8.1 */
+            if ($parameter instanceof BackedEnum) {
+                $type = $parameter instanceof IntBackedEnum ? PDO::PARAM_INT : PDO::PARAM_STR;
+                $parameter = $parameter->value;
             }
 
             if ($parameter instanceof \DateTimeInterface) {
@@ -139,7 +146,7 @@ class SQLServerDriver extends Driver
 
         if (
             \str_contains($message, '0800')
-            || \str_contains($message, '080P')
+            || \str_contains($message, '080p')
             || \str_contains($message, 'connection')
         ) {
             return new StatementException\ConnectionException($exception, $query);
