@@ -15,6 +15,7 @@ use Closure;
 use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Exception\BuilderException;
 use Cycle\Database\Injection\FragmentInterface;
+use Cycle\Database\Injection\Parameter;
 
 trait TokenTrait
 {
@@ -100,12 +101,15 @@ trait TokenTrait
             case 3:
                 [$name, $operator, $value] = $params;
 
-                if (is_string($operator)) {
-                    $operator = strtoupper($operator);
+                if (\is_string($operator)) {
+                    $operator = \strtoupper($operator);
                     if ($operator === 'BETWEEN' || $operator === 'NOT BETWEEN') {
                         throw new BuilderException('Between statements expects exactly 2 values');
                     }
-                } elseif (is_scalar($operator)) {
+                    if (\is_array($value) && \in_array($operator, ['IN', 'NOT IN'], true)) {
+                        $value = new Parameter($value);
+                    }
+                } elseif (\is_scalar($operator)) {
                     $operator = (string)$operator;
                 }
 
@@ -117,11 +121,11 @@ trait TokenTrait
                 break;
             case 4:
                 [$name, $operator] = $params;
-                if (!is_string($operator)) {
+                if (!\is_string($operator)) {
                     throw new BuilderException('Invalid operator type, string expected');
                 }
 
-                $operator = strtoupper($operator);
+                $operator = \strtoupper($operator);
                 if ($operator !== 'BETWEEN' && $operator !== 'NOT BETWEEN') {
                     throw new BuilderException(
                         'Only "BETWEEN" or "NOT BETWEEN" can define second comparision value'
@@ -237,6 +241,9 @@ trait TokenTrait
             $operation = strtoupper($operation);
             if ($operation !== 'BETWEEN' && $operation !== 'NOT BETWEEN') {
                 // AND|OR [name] [OPERATION] [nestedValue]
+                if (\is_array($value) && \in_array($operation, ['IN', 'NOT IN'], true)) {
+                    $value = new Parameter($value);
+                }
                 $tokens[] = [
                     $innerJoiner,
                     [$key, $operation, $wrapper($value)],

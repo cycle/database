@@ -14,6 +14,7 @@ namespace Cycle\Database\Driver\Postgres;
 use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Config\PostgresDriverConfig;
 use Cycle\Database\Driver\Driver;
+use Cycle\Database\Driver\PDOInterface;
 use Cycle\Database\Driver\Postgres\Query\PostgresInsertQuery;
 use Cycle\Database\Driver\Postgres\Query\PostgresSelectQuery;
 use Cycle\Database\Exception\DriverException;
@@ -162,6 +163,7 @@ class PostgresDriver extends Driver
                     $this->disconnect();
 
                     try {
+                        $this->transactionLevel = 1;
                         return $this->getPDO()->beginTransaction();
                     } catch (Throwable $e) {
                         $this->transactionLevel = 0;
@@ -205,7 +207,7 @@ class PostgresDriver extends Driver
     /**
      * {@inheritdoc}
      */
-    protected function createPDO(): \PDO
+    protected function createPDO(): \PDO|PDOInterface
     {
         // Cycle is purely UTF-8
         $pdo = parent::createPDO();
@@ -234,7 +236,7 @@ class PostgresDriver extends Driver
             str_contains($message, 'eof detected')
             || str_contains($message, 'broken pipe')
             || str_contains($message, '0800')
-            || str_contains($message, '080P')
+            || str_contains($message, '080p')
             || str_contains($message, 'connection')
         ) {
             return new StatementException\ConnectionException($exception, $query);

@@ -9,6 +9,7 @@ use Cycle\Database\Driver\Driver;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\HandlerInterface;
 use Cycle\Database\Query\BuilderInterface;
+use Cycle\Database\Tests\Unit\Stub\TestDriver;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -26,7 +27,7 @@ class AbstractDriverTest extends TestCase
         $this->driver = TestDriver::create(new SQLiteDriverConfig());
     }
 
-    public function testLoggerShouldBeSet()
+    public function testLoggerShouldBeSet(): void
     {
         $logger = m::mock(LoggerInterface::class);
         $logger->shouldReceive('debug')
@@ -36,14 +37,14 @@ class AbstractDriverTest extends TestCase
         $this->driver->lastInsertID();
     }
 
-    public function testGetNotSetNameShouldThrowAnException()
+    public function testGetNotSetNameShouldThrowAnException(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectErrorMessage('Driver name is not defined.');
         $this->driver->getName();
     }
 
-    public function testWithName()
+    public function testWithName(): void
     {
         $handler = m::mock(HandlerInterface::class);
         $builder = m::mock(BuilderInterface::class);
@@ -66,7 +67,7 @@ class AbstractDriverTest extends TestCase
         $this->checkImmutability($driver, $newDriver);
     }
 
-    public function testClone()
+    public function testClone(): void
     {
         $handler = m::mock(HandlerInterface::class);
         $builder = m::mock(BuilderInterface::class);

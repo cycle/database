@@ -336,10 +336,10 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     {
         $this->expectException(BuilderException::class);
 
-        $select = $this->database->select()->distinct()
-                                 ->from(['users'])
-                                 ->where('name', 'Anton')
-                                 ->orWhere('id', 'in', [1, 2, 3]);
+        $this->database->select()->distinct()
+            ->from(['users'])
+            ->where('name', 'Anton')
+            ->orWhere('id', 'like', [1, 2, 3]);
     }
 
     public function testSelectWithWhereOrWhereAndWhere(): void
@@ -1867,14 +1867,38 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
-    public function testBadArrayParameter(): void
+    public function testInOperatorWithArrayParameter(): void
     {
-        $this->expectException(BuilderException::class);
-        $this->expectExceptionMessage('Arrays must be wrapped with Parameter instance');
-
-        $this->database->select()
+        $select = $this->database->select()
                        ->from(['users'])
-                       ->where('status', 'IN', ['active', 'blocked']);
+                       ->where('status', 'IN', ['active', 'blocked'])
+                       ->andWhere('age', 'not in', [1, 2, 3]);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE {status} IN (?, ?) AND {age} NOT IN (?, ?, ?)',
+            $select
+        );
+    }
+
+    public function testInOperatorWithBadArrayParameter(): void
+    {
+        $select = $this->database->select()
+                       ->from(['users'])
+                       ->where('status', 'IN', [['foo'], ['active', 'blocked']]);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE {status} IN (?, ?)',
+            $select
+        );
+
+        // Database doesn't validate parameter values in the array
+        $this->assertSameParameters(
+            [
+                ['foo'],
+                ['active', 'blocked'],
+            ],
+            $select
+        );
     }
 
     public function testBadArrayParameterInShortWhere(): void
@@ -1886,7 +1910,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                        ->from(['users'])
                        ->where(
                            [
-                               'status' => ['IN' => ['active', 'blocked']],
+                               'status' => ['LIKE' => ['active', 'blocked']],
                            ]
                        );
     }
@@ -1934,6 +1958,26 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {status} IN (?)',
             $select
+        );
+    }
+
+    public function testInAndNotInWithArrayInShortWhere(): void
+    {
+        $status = ['active', 'blocked'];
+        $name = ['bar', 'foo', 'baz'];
+
+        $select = $this->database->select()
+            ->from(['users'])
+            ->where(
+                [
+                    'status' => ['IN' => $status],
+                    'name' => ['NOT IN' => $name],
+                ],
+            );
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE ({status} IN (?, ?) AND {name} NOT IN (?, ?, ?))',
+            $select,
         );
     }
 

@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Functional\Driver\Common\Driver;
 
+use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\StatementInterface;
 use Cycle\Database\Table;
 use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
+use Cycle\Database\Tests\Stub\FooBarEnum;
+use Cycle\Database\Tests\Stub\IntegerEnum;
+use Cycle\Database\Tests\Stub\UntypedEnum;
 use Spiral\Pagination\Paginator;
 
 abstract class StatementTest extends BaseTest
@@ -340,11 +344,62 @@ abstract class StatementTest extends BaseTest
         );
     }
 
+    /**
+     * @requires PHP >= 8.1
+     */
+    public function testIntegerEnumInQuery(): void
+    {
+        $this->fillData();
+
+        $this->assertSame(
+            1,
+            $this->database->sample_table->select()
+                ->where('value', '=', IntegerEnum::TEN)
+                ->count()
+        );
+    }
+
+    /**
+     * @requires PHP >= 8.1
+     */
+    public function testStringEnumInQuery(): void
+    {
+        $table = $this->database->table('sample_table');
+
+        $table->insertOne(
+            [
+                'name' => 'foo',
+                'value' => 100500,
+            ]
+        );
+
+        $this->assertSame(
+            1,
+            $this->database->sample_table->select()
+                ->where('name', '=', FooBarEnum::FOO)
+                ->count()
+        );
+    }
+
+    /**
+     * @requires PHP >= 8.1
+     */
+    public function testUntypedEnumInQuery(): void
+    {
+        $this->fillData();
+
+        $this->expectException(StatementException::class);
+
+        $this->database->sample_table->select()
+            ->where('value', '=', UntypedEnum::FOO)
+            ->count();
+    }
+
     public function testNativeParametersError(): void
     {
         $this->fillData();
 
-        $this->expectException(\Cycle\Database\Exception\StatementException::class);
+        $this->expectException(StatementException::class);
 
         $this->database->query(
             'SELECT * FROM sample_table WHERE id = :id',

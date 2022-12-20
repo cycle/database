@@ -53,6 +53,7 @@ class SQLiteColumn extends AbstractColumn
         //bigInteger
         'integer'     => 'integer',
         'tinyInteger' => 'tinyint',
+        'smallInteger'=> 'smallint',
         'bigInteger'  => 'bigint',
 
         //String with specified length (mapped via method)
@@ -90,8 +91,9 @@ class SQLiteColumn extends AbstractColumn
         'primary'     => [['type' => 'integer', 'primaryKey' => true]],
         'enum'        => ['enum'],
         'boolean'     => ['boolean'],
-        'integer'     => ['int', 'integer', 'smallint', 'mediumint'],
+        'integer'     => ['int', 'integer', 'mediumint'],
         'tinyInteger' => ['tinyint'],
+        'smallInteger'=> ['smallint'],
         'bigInteger'  => ['bigint'],
         'text'        => ['text', 'string'],
         'double'      => ['double'],
@@ -156,7 +158,7 @@ class SQLiteColumn extends AbstractColumn
         $column = new self($table, $schema['name'], $timezone);
 
         $column->nullable = !$schema['notnull'];
-        $column->type = $schema['type'];
+        $column->type = \strtolower($schema['type']);
 
         if ((bool)$schema['pk'] && $column->type === 'integer') {
             $column->primaryKey = true;

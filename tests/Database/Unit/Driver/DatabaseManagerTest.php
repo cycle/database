@@ -10,6 +10,7 @@ use Cycle\Database\DatabaseManager;
 use Cycle\Database\Driver\Driver;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\LoggerFactoryInterface;
+use Cycle\Database\Tests\Unit\Stub\TestDriver;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;

@@ -42,4 +42,9 @@ abstract class DriverConfig
         public bool $readonly = false,
     ) {
     }
+
+    public static function __set_state(array $properties): static
+    {
+        return new static(...$properties);
+    }
 }

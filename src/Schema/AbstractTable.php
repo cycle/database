@@ -35,6 +35,7 @@ use Cycle\Database\TableInterface;
  * @method AbstractColumn boolean($column)
  * @method AbstractColumn integer($column)
  * @method AbstractColumn tinyInteger($column)
+ * @method AbstractColumn smallInteger($column)
  * @method AbstractColumn bigInteger($column)
  * @method AbstractColumn text($column)
  * @method AbstractColumn tinyText($column)
@@ -539,7 +540,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         }
 
         //Dropping foreign from current schema
-        $this->current->forgerForeignKey($schema);
+        $this->current->forgetForeignKey($schema);
 
         return $this;
     }
@@ -675,7 +676,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         // declare all FKs dropped on tables scheduled for removal
         if ($this->status === self::STATUS_DECLARED_DROPPED) {
             foreach ($target->getForeignKeys() as $fk) {
-                $target->current->forgerForeignKey($fk);
+                $target->current->forgetForeignKey($fk);
             }
         }
 
@@ -692,7 +693,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
 
             foreach ($target->getForeignKeys() as $foreign) {
                 if ($column->getName() === $foreign->getColumns()) {
-                    $target->current->forgerForeignKey($foreign);
+                    $target->current->forgetForeignKey($foreign);
                 }
             }
         }
@@ -742,7 +743,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         if (!$withForeignKeys) {
             foreach ($this->getComparator()->addedForeignKeys() as $foreign) {
                 //Excluding from creation
-                $target->current->forgerForeignKey($foreign);
+                $target->current->forgetForeignKey($foreign);
             }
         }
 

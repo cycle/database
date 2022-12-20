@@ -47,6 +47,7 @@ class PostgresColumn extends AbstractColumn
         //bigInteger
         'integer'     => 'integer',
         'tinyInteger' => 'smallint',
+        'smallInteger'=> 'smallint',
         'bigInteger'  => 'bigint',
 
         //String with specified length (mapped via method)
@@ -89,6 +90,7 @@ class PostgresColumn extends AbstractColumn
         'boolean'     => ['boolean'],
         'integer'     => ['int', 'integer', 'int4'],
         'tinyInteger' => ['smallint'],
+        'smallInteger'=> ['smallint'],
         'bigInteger'  => ['bigint', 'int8'],
         'string'      => ['character varying', 'character'],
         'text'        => ['text'],

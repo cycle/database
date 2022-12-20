@@ -55,6 +55,7 @@ class MySQLColumn extends AbstractColumn
         //bigInteger
         'integer'     => ['type' => 'int', 'size' => 11],
         'tinyInteger' => ['type' => 'tinyint', 'size' => 4],
+        'smallInteger'=> ['type' => 'smallint', 'size' => 6],
         'bigInteger'  => ['type' => 'bigint', 'size' => 20],
 
         //String with specified length (mapped via method)
@@ -93,8 +94,9 @@ class MySQLColumn extends AbstractColumn
         'bigPrimary'  => ['serial', ['type' => 'bigint', 'autoIncrement' => true]],
         'enum'        => ['enum'],
         'boolean'     => ['bool', 'boolean', ['type' => 'tinyint', 'size' => 1]],
-        'integer'     => ['int', 'integer', 'smallint', 'mediumint'],
+        'integer'     => ['int', 'integer', 'mediumint'],
         'tinyInteger' => ['tinyint'],
+        'smallInteger'=> ['smallint'],
         'bigInteger'  => ['bigint'],
         'string'      => ['varchar', 'char'],
         'text'        => ['text', 'mediumtext'],
@@ -120,7 +122,7 @@ class MySQLColumn extends AbstractColumn
         'mediumtext',
         'tinytext',
         'longtext',
-        'blog',
+        'blob',
         'tinyblob',
         'longblob',
     ];
@@ -219,11 +221,14 @@ class MySQLColumn extends AbstractColumn
                     $column->size = 20;
                     break;
                 case 'tinyint':
-                    if ($column->size !== 1) {
-                        $column->size = 4;
-                    }
+                    $column->size = 4;
+                    break;
+                case 'smallint':
+                    $column->size = 6;
+                    break;
             }
         }
+
 
         //Fetching enum values
         if ($options !== [] && $column->getAbstractType() === 'enum') {
