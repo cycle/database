@@ -22,6 +22,8 @@ use Cycle\Database\Driver\DriverInterface;
  */
 abstract class DriverConfig
 {
+    use StateTrait;
+
     protected array $defaultOptions = [
         'datetimeWithMicroseconds' => false,
     ];
@@ -52,10 +54,5 @@ abstract class DriverConfig
         array $options = []
     ) {
         $this->options = $options + $this->defaultOptions;
-    }
-
-    public static function __set_state(array $properties): static
-    {
-        return new static(...$properties);
     }
 }
