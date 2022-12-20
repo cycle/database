@@ -53,4 +53,9 @@ abstract class DriverConfig
     ) {
         $this->options = $options + $this->defaultOptions;
     }
+
+    public static function __set_state(array $properties): static
+    {
+        return new static(...$properties);
+    }
 }
