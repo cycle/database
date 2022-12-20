@@ -20,6 +20,13 @@ use Cycle\Database\Schema\AbstractColumn;
 /**
  * Attention! You can use only one timestamp or datetime with DATETIME_NOW setting! Thought, it will
  * work on multiple fields with MySQL 5.6.6+ version.
+ *
+ * @method $this|AbstractColumn primary(int $size, bool $unsigned = false, $zerofill = false)
+ * @method $this|AbstractColumn bigPrimary(int $size, bool $unsigned = false, $zerofill = false)
+ * @method $this|AbstractColumn integer(int $size, bool $unsigned = false, $zerofill = false)
+ * @method $this|AbstractColumn tinyInteger(int $size, bool $unsigned = false, $zerofill = false)
+ * @method $this|AbstractColumn smallInteger(int $size, bool $unsigned = false, $zerofill = false)
+ * @method $this|AbstractColumn bigInteger(int $size, bool $unsigned = false, $zerofill = false)
  */
 class MySQLColumn extends AbstractColumn
 {
@@ -53,10 +60,10 @@ class MySQLColumn extends AbstractColumn
 
         //Integer types (size can always be changed with size method), longInteger has method alias
         //bigInteger
-        'integer'     => ['type' => 'int', 'size' => 11],
-        'tinyInteger' => ['type' => 'tinyint', 'size' => 4],
-        'smallInteger'=> ['type' => 'smallint', 'size' => 6],
-        'bigInteger'  => ['type' => 'bigint', 'size' => 20],
+        'integer'     => ['type' => 'int', 'size' => 11, 'unsigned' => false, 'zerofill' => false],
+        'tinyInteger' => ['type' => 'tinyint', 'size' => 4, 'unsigned' => false, 'zerofill' => false],
+        'smallInteger'=> ['type' => 'smallint', 'size' => 6, 'unsigned' => false, 'zerofill' => false],
+        'bigInteger'  => ['type' => 'bigint', 'size' => 20, 'unsigned' => false, 'zerofill' => false],
 
         //String with specified length (mapped via method)
         'string'      => ['type' => 'varchar', 'size' => 255],
@@ -91,7 +98,7 @@ class MySQLColumn extends AbstractColumn
 
     protected array $reverseMapping = [
         'primary'     => [['type' => 'int', 'autoIncrement' => true]],
-        'bigPrimary'  => ['serial', ['type' => 'bigint', 'autoIncrement' => true]],
+        'bigPrimary'  => ['serial', ['type' => 'bigint', 'size' => 20, 'autoIncrement' => true]],
         'enum'        => ['enum'],
         'boolean'     => ['bool', 'boolean', ['type' => 'tinyint', 'size' => 1]],
         'integer'     => ['int', 'integer', 'mediumint'],
@@ -133,10 +140,32 @@ class MySQLColumn extends AbstractColumn
     protected bool $autoIncrement = false;
 
     /**
+     * Unsigned integer type. Related to {@see ENGINE_INTEGER_TYPES} only.
+     */
+    protected bool $unsigned = false;
+
+    /**
+     * Zerofill option. Related to {@see ENGINE_INTEGER_TYPES} only.
+     */
+    protected bool $zerofill = false;
+
+    public function __call(string $type, array $arguments = []): AbstractColumn
+    {
+        if (\in_array($type, ['primary', 'bigPrimary', 'integer', 'tinyInteger', 'smallInteger', 'bigInteger'], true)) {
+            return $this->type($type)->configureIntegerType(...$arguments);
+        }
+        return parent::__call($type, $arguments);
+    }
+
+    /**
      * @psalm-return non-empty-string
      */
     public function sqlStatement(DriverInterface $driver): string
     {
+        if (\in_array($this->type, self::ENGINE_INTEGER_TYPES, true)) {
+            return $this->sqlStatementInteger($driver);
+        }
+
         $defaultValue = $this->defaultValue;
 
         if (\in_array($this->type, $this->forbiddenDefaults, true)) {
@@ -144,21 +173,14 @@ class MySQLColumn extends AbstractColumn
             $this->defaultValue = null;
         }
 
-        $statementParts = parent::sqlStatementParts($driver);
-
-        if (in_array($this->type, self::ENGINE_INTEGER_TYPES)) {
-            $attr = array_filter(array_intersect_key($this->attributes, ['unsigned' => false, 'zerofill' => false]));
-            if ($attr) {
-                array_splice($statementParts, 3, 0, array_keys($attr));
-            }
-        }
+        $statement = parent::sqlStatement($driver);
 
         $this->defaultValue = $defaultValue;
         if ($this->autoIncrement) {
-            $statementParts[] = 'AUTO_INCREMENT';
+            return "{$statement} AUTO_INCREMENT";
         }
 
-        return implode(' ', $statementParts);
+        return $statement;
     }
 
     /**
@@ -175,7 +197,7 @@ class MySQLColumn extends AbstractColumn
 
         if (
             !preg_match(
-                '/^(?P<type>[a-z]+)(?:\((?P<options>[^\)]+)\))?(?: (?P<attr>[a-z ]+))?/',
+                '/^(?P<type>[a-z]+)(?:\((?P<options>[^)]+)\))?(?: (?P<attr>[a-z ]+))?/',
                 $column->type,
                 $matches
             )
@@ -188,7 +210,7 @@ class MySQLColumn extends AbstractColumn
 
         $options = [];
         if (!empty($matches['options'])) {
-            $options = explode(',', $matches['options']);
+            $options = \explode(',', $matches['options']);
 
             if (count($options) > 1) {
                 $column->precision = (int)$options[0];
@@ -199,13 +221,13 @@ class MySQLColumn extends AbstractColumn
         }
 
         if (!empty($matches['attr'])) {
-            if (in_array($column->type, self::ENGINE_INTEGER_TYPES)) {
+            if (\in_array($column->type, self::ENGINE_INTEGER_TYPES, true)) {
                 $intAttr = array_map('trim', explode(' ', $matches['attr']));
-                if (in_array('unsigned', $intAttr)) {
-                    $column->attributes['unsigned'] = true;
+                if (\in_array('unsigned', $intAttr, true)) {
+                    $column->unsigned = true;
                 }
-                if (in_array('zerofill', $intAttr)) {
-                    $column->attributes['zerofill'] = true;
+                if (\in_array('zerofill', $intAttr, true)) {
+                    $column->zerofill = true;
                 }
                 unset($intAttr);
             }
@@ -231,7 +253,7 @@ class MySQLColumn extends AbstractColumn
 
         //Fetching enum values
         if ($options !== [] && $column->getAbstractType() === 'enum') {
-            $column->enumValues = array_map(static fn ($value) => trim($value, $value[0]), $options);
+            $column->enumValues = \array_map(static fn ($value) => trim($value, $value[0]), $options);
 
             return $column;
         }
@@ -260,16 +282,31 @@ class MySQLColumn extends AbstractColumn
             return false;
         }
 
-        if (in_array($this->type, self::ENGINE_INTEGER_TYPES)) {
-            $attr = ['unsigned' => false, 'zerofill' => false];
-            foreach ($attr as $a => $def) {
-                if (($this->attributes[$a] ?? $def) !== ($initial->attributes[$a] ?? $def)) {
-                    return false;
-                }
-            }
-        }
-
         return true;
+    }
+
+    public function isUnsigned(): bool
+    {
+        return $this->unsigned;
+    }
+
+    public function isZerofill(): bool
+    {
+        return $this->zerofill;
+    }
+
+    public function unsigned(bool $value): static
+    {
+        $this->unsigned = $value;
+
+        return $this;
+    }
+
+    public function zerofill(bool $value): static
+    {
+        $this->zerofill = $value;
+
+        return $this;
     }
 
     /**
@@ -288,5 +325,36 @@ class MySQLColumn extends AbstractColumn
         }
 
         return parent::formatDatetime($type, $value);
+    }
+
+    private function configureIntegerType(
+        ?int $size = null,
+        ?bool $unsigned = null,
+        ?bool $zerofill = null,
+        ?bool $autoIncrement = null,
+        ?bool $nullable = null,
+    ): self {
+        $this->size = $size ?? $this->size;
+        $this->unsigned = $unsigned ?? $this->unsigned;
+        $this->zerofill = $zerofill ?? $this->zerofill;
+        $this->autoIncrement = $autoIncrement ?? $this->autoIncrement;
+        $this->nullable = $nullable ?? $this->nullable;
+
+        return $this;
+    }
+
+    private function sqlStatementInteger(DriverInterface $driver): string
+    {
+        return \sprintf(
+            '%s %s(%s)%s%s%s%s%s',
+            $driver->identifier($this->name),
+            $this->type,
+            $this->size,
+            $this->unsigned ? ' UNSIGNED' : '',
+            $this->zerofill ? ' ZEROFILL' : '',
+            $this->nullable ? ' NULL' : ' NOT NULL',
+            $this->defaultValue !== null ? " DEFAULT {$this->quoteDefault($driver)}" : '',
+            $this->autoIncrement ? ' AUTO_INCREMENT' : ''
+        );
     }
 }

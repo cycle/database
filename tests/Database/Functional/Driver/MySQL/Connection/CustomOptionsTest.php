@@ -19,15 +19,20 @@ class CustomOptionsTest extends CommonClass
     /**
      * @dataProvider dataUnsignedAndZerofillAttributes
      */
-    public function testUnsignedAndZerofillAttributes(string $type, string $columnName, array $attribute = [], array $expectedAttributes = []): void
-    {
-        $schema = $this->schema(uniqid("{$type}_{$columnName}"));
-        $schema->primary('id');
-        $schema->{$type}($columnName)->setAttributes($attribute);
+    public function testUnsignedAndZerofillAttributes(
+        string $type,
+        string $columnName,
+        array $attributes = [],
+        array $expectedAttributes = []
+    ): void {
+        $schema = $this->schema(\uniqid("{$type}_{$columnName}"));
+        \call_user_func_array([$schema, $type], \array_merge([$columnName], $attributes));
         $schema->save();
 
-        self::assertInstanceOf(MySQLColumn::class, $column = $this->fetchSchema($schema)->column($columnName));
-        self::assertEquals($expectedAttributes, $column->getAttributes());
+        $this->assertInstanceOf(MySQLColumn::class, $column = $this->fetchSchema($schema)->column($columnName));
+        foreach ($expectedAttributes as $k => $v) {
+            $this->assertSame($v, $column->{(\is_bool($v) ? 'is' : 'get') . \ucwords($k)}());
+        }
     }
 
     public function dataUnsignedAndZerofillAttributes(): iterable
@@ -36,7 +41,9 @@ class CustomOptionsTest extends CommonClass
             'tinyInteger',
             'smallInteger',
             'integer',
-            'bigInteger'
+            'bigInteger',
+            'primary',
+            'bigPrimary',
         ];
         $attr = [
             '_u' => [
@@ -61,5 +68,27 @@ class CustomOptionsTest extends CommonClass
                 yield "{$t}{$suffix}" => [$t, "{$t}{$suffix}", $options[0], $options[1]];
             }
         }
+    }
+
+    public function testNamedArgumentsToConfigureInteger(): void
+    {
+        $schema = $this->schema('foo');
+        $schema->bigPrimary('id', unsigned: true, zerofill: true);
+        $schema->bigInteger('foo', nullable: true, unsigned: true, zerofill: true, size: 18);
+        $schema->save();
+
+        $this->assertInstanceOf(MySQLColumn::class, $id = $this->fetchSchema($schema)->column('id'));
+        $this->assertInstanceOf(MySQLColumn::class, $foo = $this->fetchSchema($schema)->column('foo'));
+
+        \assert($id instanceof MySQLColumn);
+        \assert($foo instanceof MySQLColumn);
+        $this->assertTrue($id->isZerofill());
+        $this->assertTrue($foo->isZerofill());
+        $this->assertTrue($id->isUnsigned());
+        $this->assertTrue($foo->isUnsigned());
+        $this->assertSame(20, $id->getSize());
+        $this->assertSame(18, $foo->getSize());
+        $this->assertFalse($id->isNullable());
+        $this->assertTrue($foo->isNullable());
     }
 }
