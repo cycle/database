@@ -90,7 +90,7 @@ abstract class BaseTest extends TestCase
         }
 
         if (isset($options['datetimeWithMicroseconds']) && $options['datetimeWithMicroseconds'] === true) {
-            $config->datetimeWithMicroseconds = true;
+            $config->options['datetimeWithMicroseconds'] = true;
         }
     }
 

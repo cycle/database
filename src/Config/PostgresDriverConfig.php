@@ -49,7 +49,7 @@ class PostgresDriverConfig extends DriverConfig
         bool $queryCache = true,
         bool $readonlySchema = false,
         bool $readonly = false,
-        bool $datetimeWithMicroseconds = false,
+        array $options = [],
     ) {
         /** @psalm-suppress ArgumentTypeCoercion */
         parent::__construct(
@@ -60,7 +60,7 @@ class PostgresDriverConfig extends DriverConfig
             queryCache: $queryCache,
             readonlySchema: $readonlySchema,
             readonly: $readonly,
-            datetimeWithMicroseconds: $datetimeWithMicroseconds,
+            options: $options,
         );
 
         $this->schema = $this->bootSchema($schema);

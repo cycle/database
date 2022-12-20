@@ -549,7 +549,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
         }
 
         return $datetime->format(
-            $this->config->datetimeWithMicroseconds ? self::DATETIME_MICROSECONDS : self::DATETIME
+            $this->config->options['datetimeWithMicroseconds'] ? self::DATETIME_MICROSECONDS : self::DATETIME
         );
     }
 

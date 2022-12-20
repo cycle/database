@@ -22,6 +22,12 @@ use Cycle\Database\Driver\DriverInterface;
  */
 abstract class DriverConfig
 {
+    protected array $defaultOptions = [
+        'datetimeWithMicroseconds' => false
+    ];
+
+    public array $options = [];
+
     /**
      * @param T $connection
      * @param class-string<DriverInterface> $driver
@@ -31,7 +37,9 @@ abstract class DriverConfig
      * @param bool $queryCache Enables query caching
      * @param bool $readonlySchema Disable schema modifications
      * @param bool $readonly Disable write expressions
-     * @param bool $datetimeWithMicroseconds Store datetime string with microseconds
+     * @param array{
+     *     datetimeWithMicroseconds?: bool
+     * } $options
      */
     public function __construct(
         public ConnectionConfig $connection,
@@ -41,7 +49,8 @@ abstract class DriverConfig
         public bool $queryCache = true,
         public bool $readonlySchema = false,
         public bool $readonly = false,
-        public bool $datetimeWithMicroseconds = false,
+        array $options = []
     ) {
+        $this->options = $options + $this->defaultOptions;
     }
 }
