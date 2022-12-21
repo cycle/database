@@ -32,6 +32,8 @@ class CustomOptionsTest extends CommonClass
         $this->assertInstanceOf(MySQLColumn::class, $column = $this->fetchSchema($schema)->column($columnName));
         foreach ($expectedAttributes as $k => $v) {
             $this->assertSame($v, $column->{(\is_bool($v) ? 'is' : 'get') . \ucwords($k)}());
+            $this->assertArrayHasKey($k, $column->getAttributes());
+            $this->assertSame($v, $column->getAttributes()[$k]);
         }
     }
 

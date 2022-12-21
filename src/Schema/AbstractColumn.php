@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Schema;
 
+use Cycle\Database\Schema\Attribute\ColumnAttribute;
+use Cycle\Database\Schema\Traits\ColumnAttributesTrait;
 use DateTimeImmutable;
 use Cycle\Database\ColumnInterface;
 use Cycle\Database\Driver\DriverInterface;
@@ -52,6 +54,7 @@ use Cycle\Database\Schema\Traits\ElementTrait;
 abstract class AbstractColumn implements ColumnInterface, ElementInterface
 {
     use ElementTrait;
+    use ColumnAttributesTrait;
 
     /**
      * Default timestamp expression (driver specific).
@@ -176,27 +179,32 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     /**
      * Indicates that column can contain null values.
      */
+    #[ColumnAttribute]
     protected bool $nullable = true;
 
     /**
      * Default column value, may not be applied to some datatypes (for example to primary keys),
      * should follow type size and other options.
      */
+    #[ColumnAttribute]
     protected mixed $defaultValue = null;
 
     /**
      * Column type size, can have different meanings for different datatypes.
      */
+    #[ColumnAttribute]
     protected int $size = 0;
 
     /**
      * Precision of column, applied only for "decimal" type.
      */
+    #[ColumnAttribute(['decimal'])]
     protected int $precision = 0;
 
     /**
      * Scale of column, applied only for "decimal" type.
      */
+    #[ColumnAttribute(['decimal'])]
     protected int $scale = 0;
 
     /**
@@ -244,11 +252,17 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     /**
      * Shortcut for AbstractColumn->type() method.
      *
-     * @psalm-param non-empty-string $type
+     * @psalm-param non-empty-string $name
      */
-    public function __call(string $type, array $arguments = []): self
+    public function __call(string $name, array $arguments = []): self
     {
-        return $this->type($type);
+        if (\count($arguments) === 1 && \key($arguments) === 0 && $this->isAttribute($name)) {
+            $this->fillAttributes([$name => $arguments[0]]);
+            return $this;
+        }
+        $this->type($name);
+        $this->fillAttributes($arguments);
+        return $this;
     }
 
     public function __toString(): string
@@ -374,7 +388,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     {
         $schemaType = $this->getAbstractType();
         foreach ($this->phpMapping as $phpType => $candidates) {
-            if (in_array($schemaType, $candidates, true)) {
+            if (\in_array($schemaType, $candidates, true)) {
                 return $phpType;
             }
         }

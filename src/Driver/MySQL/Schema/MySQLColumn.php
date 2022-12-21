@@ -16,6 +16,7 @@ use Cycle\Database\Exception\DefaultValueException;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Schema\AbstractColumn;
+use Cycle\Database\Schema\Attribute\ColumnAttribute;
 
 /**
  * Attention! You can use only one timestamp or datetime with DATETIME_NOW setting! Thought, it will
@@ -27,6 +28,8 @@ use Cycle\Database\Schema\AbstractColumn;
  * @method $this|AbstractColumn tinyInteger(int $size, bool $unsigned = false, $zerofill = false)
  * @method $this|AbstractColumn smallInteger(int $size, bool $unsigned = false, $zerofill = false)
  * @method $this|AbstractColumn bigInteger(int $size, bool $unsigned = false, $zerofill = false)
+ * @method $this|AbstractColumn unsigned(bool $value)
+ * @method $this|AbstractColumn zerofill(bool $value)
  */
 class MySQLColumn extends AbstractColumn
 {
@@ -137,25 +140,20 @@ class MySQLColumn extends AbstractColumn
     /**
      * Column is auto incremental.
      */
+    #[ColumnAttribute(self::ENGINE_INTEGER_TYPES)]
     protected bool $autoIncrement = false;
 
     /**
      * Unsigned integer type. Related to {@see ENGINE_INTEGER_TYPES} only.
      */
+    #[ColumnAttribute(self::ENGINE_INTEGER_TYPES)]
     protected bool $unsigned = false;
 
     /**
      * Zerofill option. Related to {@see ENGINE_INTEGER_TYPES} only.
      */
+    #[ColumnAttribute(self::ENGINE_INTEGER_TYPES)]
     protected bool $zerofill = false;
-
-    public function __call(string $type, array $arguments = []): AbstractColumn
-    {
-        if (\in_array($type, ['primary', 'bigPrimary', 'integer', 'tinyInteger', 'smallInteger', 'bigInteger'], true)) {
-            return $this->type($type)->configureIntegerType(...$arguments);
-        }
-        return parent::__call($type, $arguments);
-    }
 
     /**
      * @psalm-return non-empty-string
@@ -278,11 +276,7 @@ class MySQLColumn extends AbstractColumn
     public function compare(AbstractColumn $initial): bool
     {
         assert($initial instanceof self);
-        return ! (!parent::compare($initial))
-
-
-
-         ;
+        return ! (!parent::compare($initial));
     }
 
     public function isUnsigned(): bool
@@ -293,20 +287,6 @@ class MySQLColumn extends AbstractColumn
     public function isZerofill(): bool
     {
         return $this->zerofill;
-    }
-
-    public function unsigned(bool $value): static
-    {
-        $this->unsigned = $value;
-
-        return $this;
-    }
-
-    public function zerofill(bool $value): static
-    {
-        $this->zerofill = $value;
-
-        return $this;
     }
 
     /**
@@ -325,22 +305,6 @@ class MySQLColumn extends AbstractColumn
         }
 
         return parent::formatDatetime($type, $value);
-    }
-
-    private function configureIntegerType(
-        ?int $size = null,
-        ?bool $unsigned = null,
-        ?bool $zerofill = null,
-        ?bool $autoIncrement = null,
-        ?bool $nullable = null,
-    ): self {
-        $this->size = $size ?? $this->size;
-        $this->unsigned = $unsigned ?? $this->unsigned;
-        $this->zerofill = $zerofill ?? $this->zerofill;
-        $this->autoIncrement = $autoIncrement ?? $this->autoIncrement;
-        $this->nullable = $nullable ?? $this->nullable;
-
-        return $this;
     }
 
     private function sqlStatementInteger(DriverInterface $driver): string
