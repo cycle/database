@@ -5,16 +5,10 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Functional\Driver\Common\Schema;
 
 use Cycle\Database\Exception\SchemaException;
-use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
 abstract class CreateTableTest extends BaseTest
 {
-    public function schema(string $table): AbstractTable
-    {
-        return $this->database->table($table)->getSchema();
-    }
-
     public function testEmptyTable(): void
     {
         $schema = $this->schema('table');

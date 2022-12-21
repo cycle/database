@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Functional\Driver\Common\Query;
 
 use Cycle\Database\Database;
-use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
 abstract class TransactionsTest extends BaseTest
@@ -19,11 +18,6 @@ abstract class TransactionsTest extends BaseTest
         $schema->text('name');
         $schema->integer('value');
         $schema->save();
-    }
-
-    public function schema(string $table): AbstractTable
-    {
-        return $this->database->table($table)->getSchema();
     }
 
     public function testCommitTransactionInsert(): void

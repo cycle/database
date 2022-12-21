@@ -43,7 +43,7 @@ use Cycle\Database\TableInterface;
  * @method AbstractColumn json($column)
  * @method AbstractColumn double($column)
  * @method AbstractColumn float($column)
- * @method AbstractColumn datetime($column)
+ * @method AbstractColumn datetime($column, $size = 0)
  * @method AbstractColumn date($column)
  * @method AbstractColumn time($column)
  * @method AbstractColumn timestamp($column)

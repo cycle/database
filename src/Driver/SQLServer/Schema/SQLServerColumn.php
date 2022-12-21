@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Driver\SQLServer\Schema;
 
 use Cycle\Database\Driver\DriverInterface;
+use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Schema\AbstractColumn;
 
 class SQLServerColumn extends AbstractColumn
@@ -73,6 +74,7 @@ class SQLServerColumn extends AbstractColumn
 
         //Date and Time types
         'datetime'    => 'datetime',
+        'datetime2'   => 'datetime2',
         'date'        => 'date',
         'time'        => 'time',
         'timestamp'   => 'datetime',
@@ -155,6 +157,17 @@ class SQLServerColumn extends AbstractColumn
         foreach ($this->enumValues as $value) {
             $this->size = max((int)$this->size, strlen($value));
         }
+
+        return $this;
+    }
+
+    public function datetime(int $size = 0): self
+    {
+        ($size < 0 || $size > 7) && throw new SchemaException('Invalid datetime length value');
+
+        $size === 0 ? $this->type('datetime') : $this->type('datetime2');
+
+        $this->size = $size;
 
         return $this;
     }
@@ -286,6 +299,10 @@ class SQLServerColumn extends AbstractColumn
         if ($column->type === 'decimal') {
             $column->precision = (int)$schema['NUMERIC_PRECISION'];
             $column->scale = (int)$schema['NUMERIC_SCALE'];
+        }
+
+        if ($column->type === 'datetime2') {
+            $column->size = (int) $schema['DATETIME_PRECISION'];
         }
 
         //Normalizing default value
