@@ -75,7 +75,7 @@ class CustomOptionsTest extends CommonClass
     public function testNamedArgumentsToConfigureInteger(): void
     {
         $schema = $this->schema('foo');
-        $schema->bigPrimary('id', unsigned: true, zerofill: true);
+        $schema->bigPrimary('id', zerofill: true)->unsigned(true);
         $schema->bigInteger('foo', nullable: true, unsigned: true, zerofill: true, size: 18);
         $schema->save();
 
@@ -92,5 +92,17 @@ class CustomOptionsTest extends CommonClass
         $this->assertSame(18, $foo->getSize());
         $this->assertFalse($id->isNullable());
         $this->assertTrue($foo->isNullable());
+    }
+
+    /**
+     * The `text` have no  the `unsigned` attribute. It will be stored in the additional attributes.
+     */
+    public function testTextWithUnsigned(): void
+    {
+        $schema = $this->schema('foo');
+        $column = $schema->text('text')->unsigned(true);
+
+        $this->assertFalse($column->isUnsigned());
+        $this->assertArrayHasKey('unsigned', $column->getAttributes());
     }
 }

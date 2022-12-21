@@ -256,11 +256,15 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      */
     public function __call(string $name, array $arguments = []): self
     {
-        if (\count($arguments) === 1 && \key($arguments) === 0 && $this->isAttribute($name)) {
-            $this->fillAttributes([$name => $arguments[0]]);
-            return $this;
+        try {
+            $this->type($name);
+        } catch (SchemaException $e) {
+            if (\count($arguments) === 1 && \key($arguments) === 0) {
+                $this->fillAttributes([$name => $arguments[0]]);
+                return $this;
+            }
+            throw $e;
         }
-        $this->type($name);
         $this->fillAttributes($arguments);
         return $this;
     }
