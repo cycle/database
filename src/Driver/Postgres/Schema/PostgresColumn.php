@@ -16,6 +16,10 @@ use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Schema\AbstractColumn;
 
+/**
+ * @method $this timestamptz(int $size = 0)
+ * @method $this timetz()
+ */
 class PostgresColumn extends AbstractColumn
 {
     private const WITH_TIMEZONE = 'with time zone';
@@ -73,8 +77,9 @@ class PostgresColumn extends AbstractColumn
         'datetime'    => 'timestamp',
         'date'        => 'date',
         'time'        => 'time',
+        'timetz'      => ['type' => 'time', 'withTimezone' => true],
         'timestamp'   => 'timestamp',
-        'timestamptz' => 'timestamp',
+        'timestamptz' => ['type' => 'timestamp', 'withTimezone' => true],
 
         //Binary types
         'binary'      => 'bytea',
@@ -102,9 +107,10 @@ class PostgresColumn extends AbstractColumn
         'float'       => ['real', 'money'],
         'decimal'     => ['numeric'],
         'date'        => ['date'],
-        'time'        => ['time', 'time with time zone', 'time without time zone'],
-        'timestamp'   => ['timestamp', 'timestamp without time zone'],
-        'timestamptz' => ['timestamp with time zone'],
+        'time'        => [['type' => 'time', 'withTimezone' => false]],
+        'timetz'      => [['type' => 'time', 'withTimezone' => true]],
+        'timestamp'   => [['type' => 'timestamp', 'withTimezone' => false]],
+        'timestamptz' => [['type' => 'timestamp', 'withTimezone' => true]],
         'binary'      => ['bytea'],
         'json'        => ['json'],
         'jsonb'       => ['jsonb'],
@@ -314,9 +320,9 @@ class PostgresColumn extends AbstractColumn
         $column = new self($table, $schema['column_name'], $driver->getTimezone());
 
         $column->type = match (true) {
-            $schema['typname'] === 'timestamp' => 'timestamp',
+            $schema['typname'] === 'timestamp' || $schema['typname'] === 'timestamptz' => 'timestamp',
             $schema['typname'] === 'date' => 'date',
-            $schema['typname'] === 'time' => 'time',
+            $schema['typname'] === 'time' || $schema['typname'] === 'timetz' => 'time',
             default => $schema['data_type']
         };
 
@@ -357,6 +363,10 @@ class PostgresColumn extends AbstractColumn
 
         if ($column->type === 'timestamp' || $column->type === 'time') {
             $column->size = (int) $schema['datetime_precision'];
+        }
+
+        if ($schema['typname'] === 'timestamptz' || $schema['typname'] === 'timetz') {
+            $column->withTimezone = true;
         }
 
         if (!empty($column->size) && str_contains($column->type, 'char')) {
