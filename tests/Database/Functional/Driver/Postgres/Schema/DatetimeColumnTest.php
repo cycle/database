@@ -26,7 +26,10 @@ class DatetimeColumnTest extends CommonClass
 
         $this->assertSameAsInDB($schema);
 
-        $this->assertTrue((new \ReflectionProperty($column, 'withTimezone'))->getValue($column));
+        $ref = new \ReflectionProperty($column, 'withTimezone');
+        $ref->setAccessible(true);
+
+        $this->assertTrue($ref->getValue($column));
         $this->assertSame('timestamptz', $column->getAbstractType());
     }
 
@@ -40,7 +43,10 @@ class DatetimeColumnTest extends CommonClass
 
         $this->assertSameAsInDB($schema);
 
-        $this->assertTrue((new \ReflectionProperty($column, 'withTimezone'))->getValue($column));
+        $ref = new \ReflectionProperty($column, 'withTimezone');
+        $ref->setAccessible(true);
+
+        $this->assertTrue($ref->getValue($column));
         $this->assertSame('timetz', $column->getAbstractType());
     }
 
@@ -54,7 +60,10 @@ class DatetimeColumnTest extends CommonClass
 
         $this->assertSameAsInDB($schema);
 
-        $this->assertFalse((new \ReflectionProperty($column, 'withTimezone'))->getValue($column));
+        $ref = new \ReflectionProperty($column, 'withTimezone');
+        $ref->setAccessible(true);
+
+        $this->assertFalse($ref->getValue($column));
         $this->assertSame('timestamp', $column->getAbstractType());
     }
 
@@ -68,7 +77,10 @@ class DatetimeColumnTest extends CommonClass
 
         $this->assertSameAsInDB($schema);
 
-        $this->assertFalse((new \ReflectionProperty($column, 'withTimezone'))->getValue($column));
+        $ref = new \ReflectionProperty($column, 'withTimezone');
+        $ref->setAccessible(true);
+
+        $this->assertFalse($ref->getValue($column));
         $this->assertSame('time', $column->getAbstractType());
     }
 }
