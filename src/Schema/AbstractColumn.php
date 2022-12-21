@@ -53,8 +53,8 @@ use Cycle\Database\Schema\Traits\ElementTrait;
  */
 abstract class AbstractColumn implements ColumnInterface, ElementInterface
 {
-    use ElementTrait;
     use ColumnAttributesTrait;
+    use ElementTrait;
 
     /**
      * Default timestamp expression (driver specific).

@@ -17,6 +17,7 @@ trait ColumnAttributesTrait
 {
     /**
      * Additional attributes.
+     *
      * @var array<non-empty-string, mixed>
      */
     protected array $attributes = [];
@@ -38,6 +39,7 @@ trait ColumnAttributesTrait
 
     /**
      * Get all related and additional attributes.
+     *
      * @return array<non-empty-string, mixed>
      */
     public function getAttributes(): array
