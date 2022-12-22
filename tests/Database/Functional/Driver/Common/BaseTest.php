@@ -89,8 +89,8 @@ abstract class BaseTest extends TestCase
             $config->readonly = true;
         }
 
-        if (isset($options['datetimeWithMicroseconds']) && $options['datetimeWithMicroseconds'] === true) {
-            $config->options['datetimeWithMicroseconds'] = true;
+        if (isset($options['withDatetimeMicroseconds']) && $options['withDatetimeMicroseconds'] === true) {
+            $config->options['withDatetimeMicroseconds'] = true;
         }
     }
 

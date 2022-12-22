@@ -25,7 +25,7 @@ abstract class DriverConfig
     use StateTrait;
 
     protected array $defaultOptions = [
-        'datetimeWithMicroseconds' => false,
+        'withDatetimeMicroseconds' => false,
     ];
 
     public array $options = [];
@@ -40,7 +40,7 @@ abstract class DriverConfig
      * @param bool $readonlySchema Disable schema modifications
      * @param bool $readonly Disable write expressions
      * @param array{
-     *     datetimeWithMicroseconds?: bool
+     *     withDatetimeMicroseconds?: bool
      * } $options
      */
     public function __construct(
