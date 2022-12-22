@@ -38,7 +38,7 @@ class MySQLColumn extends AbstractColumn
      */
     public const DATETIME_NOW = 'CURRENT_TIMESTAMP';
 
-    protected const ENGINE_INTEGER_TYPES = ['tinyint', 'smallint', 'mediumint', 'int', 'bigint'];
+    protected const INTEGER_TYPES = ['tinyint', 'smallint', 'mediumint', 'int', 'bigint'];
 
     protected array $mapping = [
         //Primary sequences
@@ -140,19 +140,19 @@ class MySQLColumn extends AbstractColumn
     /**
      * Column is auto incremental.
      */
-    #[ColumnAttribute(self::ENGINE_INTEGER_TYPES)]
+    #[ColumnAttribute(self::INTEGER_TYPES)]
     protected bool $autoIncrement = false;
 
     /**
-     * Unsigned integer type. Related to {@see ENGINE_INTEGER_TYPES} only.
+     * Unsigned integer type. Related to {@see INTEGER_TYPES} only.
      */
-    #[ColumnAttribute(self::ENGINE_INTEGER_TYPES)]
+    #[ColumnAttribute(self::INTEGER_TYPES)]
     protected bool $unsigned = false;
 
     /**
-     * Zerofill option. Related to {@see ENGINE_INTEGER_TYPES} only.
+     * Zerofill option. Related to {@see INTEGER_TYPES} only.
      */
-    #[ColumnAttribute(self::ENGINE_INTEGER_TYPES)]
+    #[ColumnAttribute(self::INTEGER_TYPES)]
     protected bool $zerofill = false;
 
     /**
@@ -160,7 +160,7 @@ class MySQLColumn extends AbstractColumn
      */
     public function sqlStatement(DriverInterface $driver): string
     {
-        if (\in_array($this->type, self::ENGINE_INTEGER_TYPES, true)) {
+        if (\in_array($this->type, self::INTEGER_TYPES, true)) {
             return $this->sqlStatementInteger($driver);
         }
 
@@ -219,7 +219,7 @@ class MySQLColumn extends AbstractColumn
         }
 
         if (!empty($matches['attr'])) {
-            if (\in_array($column->type, self::ENGINE_INTEGER_TYPES, true)) {
+            if (\in_array($column->type, self::INTEGER_TYPES, true)) {
                 $intAttr = array_map('trim', explode(' ', $matches['attr']));
                 if (\in_array('unsigned', $intAttr, true)) {
                     $column->unsigned = true;
