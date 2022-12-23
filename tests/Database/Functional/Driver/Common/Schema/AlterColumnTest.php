@@ -5,17 +5,13 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Functional\Driver\Common\Schema;
 
 use Cycle\Database\Driver\Handler;
+use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
 abstract class AlterColumnTest extends BaseTest
 {
-    public function schema(string $table): AbstractTable
-    {
-        return $this->database->table($table)->getSchema();
-    }
-
     public function sampleSchema(string $table): AbstractTable
     {
         $schema = $this->schema($table);
@@ -38,6 +34,7 @@ abstract class AlterColumnTest extends BaseTest
             $schema->datetime('datetime')->defaultValue('2017-01-01 00:00:00');
             $schema->date('datetime')->nullable(true);
             $schema->time('datetime')->defaultValue('00:00');
+            $schema->datetime('other_datetime')->nullable(true);
 
             $schema->save(Handler::DO_ALL);
         }
@@ -118,7 +115,7 @@ abstract class AlterColumnTest extends BaseTest
 
     public function testColumnSizeException(): void
     {
-        $this->expectException(\Cycle\Database\Exception\SchemaException::class);
+        $this->expectException(SchemaException::class);
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
 
@@ -168,7 +165,7 @@ abstract class AlterColumnTest extends BaseTest
 
     public function testDecimalSizesException(): void
     {
-        $this->expectException(\Cycle\Database\Exception\SchemaException::class);
+        $this->expectException(SchemaException::class);
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
 

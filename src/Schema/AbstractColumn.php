@@ -41,7 +41,6 @@ use Cycle\Database\Schema\Traits\ElementTrait;
  * @method $this|AbstractColumn longText()
  * @method $this|AbstractColumn double()
  * @method $this|AbstractColumn float()
- * @method $this|AbstractColumn datetime()
  * @method $this|AbstractColumn date()
  * @method $this|AbstractColumn time()
  * @method $this|AbstractColumn timestamp()
@@ -558,6 +557,17 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         $this->type('string');
 
         $size < 0 && throw new SchemaException('Invalid string length value');
+
+        $this->size = $size;
+
+        return $this;
+    }
+
+    public function datetime(int $size = 0): self
+    {
+        $this->type('datetime');
+
+        ($size < 0 || $size > 6) && throw new SchemaException('Invalid datetime length value');
 
         $this->size = $size;
 

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Functional\Driver\Common\Driver;
 
 use Cycle\Database\Exception\StatementException;
-use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\StatementInterface;
 use Cycle\Database\Table;
 use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
@@ -25,11 +24,6 @@ abstract class StatementTest extends BaseTest
         $schema->string('name', 64);
         $schema->integer('value');
         $schema->save();
-    }
-
-    public function schema(string $table): AbstractTable
-    {
-        return $this->database->table($table)->getSchema();
     }
 
     public function fillData(Table $table = null): void

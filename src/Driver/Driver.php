@@ -26,7 +26,6 @@ use Cycle\Database\StatementInterface;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
-use IntBackedEnum;
 use PDO;
 use PDOStatement;
 use Psr\Log\LoggerAwareInterface;
@@ -46,6 +45,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
      * @var non-empty-string (Typehint required for overriding behaviour)
      */
     protected const DATETIME = 'Y-m-d H:i:s';
+    protected const DATETIME_MICROSECONDS = 'Y-m-d H:i:s.u';
     protected ?\PDO $pdo = null;
     protected int $transactionLevel = 0;
     protected HandlerInterface $schemaHandler;
@@ -514,7 +514,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
 
             /** @since PHP 8.1 */
             if ($parameter instanceof BackedEnum) {
-                $type = $parameter instanceof IntBackedEnum ? PDO::PARAM_INT : PDO::PARAM_STR;
+                $type = PDO::PARAM_STR;
                 $parameter = $parameter->value;
             }
 
@@ -538,12 +538,19 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     protected function formatDatetime(DateTimeInterface $value): string
     {
         try {
-            $datetime = new DateTimeImmutable('now', $this->getTimezone());
+            $datetime = match (true) {
+                $value instanceof \DateTimeImmutable => $value->setTimezone($this->getTimezone()),
+                $value instanceof \DateTime => DateTimeImmutable::createFromMutable($value)
+                    ->setTimezone($this->getTimezone()),
+                default => (new DateTimeImmutable('now', $this->getTimezone()))->setTimestamp($value->getTimestamp())
+            };
         } catch (Throwable $e) {
             throw new DriverException($e->getMessage(), (int)$e->getCode(), $e);
         }
 
-        return $datetime->setTimestamp($value->getTimestamp())->format(static::DATETIME);
+        return $datetime->format(
+            $this->config->options['withDatetimeMicroseconds'] ? self::DATETIME_MICROSECONDS : self::DATETIME
+        );
     }
 
     /**

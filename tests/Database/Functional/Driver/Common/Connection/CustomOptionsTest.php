@@ -74,9 +74,4 @@ abstract class CustomOptionsTest extends BaseTest
 
         return $schema;
     }
-
-    public function schema(string $table): AbstractTable
-    {
-        return $this->database->table($table)->getSchema();
-    }
 }
