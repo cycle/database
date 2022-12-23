@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Config;
 
-trait StateTrait
+trait RestoreStateTrait
 {
     /**
      * @throws \ReflectionException
@@ -15,8 +15,9 @@ trait StateTrait
 
         $arguments = [];
         foreach ($ref->getConstructor()?->getParameters() ?? [] as $parameter) {
-            $arguments[$parameter->getName()] = \array_key_exists($parameter->getName(), $properties)
-                ? $properties[$parameter->getName()]
+            $name = $parameter->getName();
+            $arguments[$name] = \array_key_exists($name, $properties)
+                ? $properties[$name]
                 : $parameter->getDefaultValue();
         }
 

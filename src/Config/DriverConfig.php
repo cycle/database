@@ -22,7 +22,7 @@ use Cycle\Database\Driver\DriverInterface;
  */
 abstract class DriverConfig
 {
-    use StateTrait;
+    use RestoreStateTrait;
 
     protected array $defaultOptions = [
         'withDatetimeMicroseconds' => false,

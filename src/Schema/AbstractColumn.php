@@ -308,6 +308,10 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
             $column['scale'] = $this->scale;
         }
 
+        if ($this->attributes !== []) {
+            $column['attributes'] = $this->attributes;
+        }
+
         return $column;
     }
 
