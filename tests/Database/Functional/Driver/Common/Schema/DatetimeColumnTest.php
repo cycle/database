@@ -12,11 +12,6 @@ use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 //See MySQL Driver!
 abstract class DatetimeColumnTest extends BaseTest
 {
-    public function schema(string $table): AbstractTable
-    {
-        return $this->database->table($table)->getSchema();
-    }
-
     public function sampleSchema(string $table): AbstractTable
     {
         $schema = $this->schema($table);

@@ -4,17 +4,11 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Functional\Driver\Common\Schema;
 
-use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\Schema\Reflector;
 use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
 abstract class ReflectorTest extends BaseTest
 {
-    public function schema(string $table, string $prefix = ''): AbstractTable
-    {
-        return $this->db('default', $prefix)->table($table)->getSchema();
-    }
-
     public function testCreateNotLinkedTables(): void
     {
         $schemaA = $this->schema('a');

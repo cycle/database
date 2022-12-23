@@ -32,6 +32,7 @@ class SQLServerDriverConfig extends DriverConfig
         bool $queryCache = true,
         bool $readonlySchema = false,
         bool $readonly = false,
+        array $options = [],
     ) {
         /** @psalm-suppress ArgumentTypeCoercion */
         parent::__construct(
@@ -42,6 +43,7 @@ class SQLServerDriverConfig extends DriverConfig
             queryCache: $queryCache,
             readonlySchema: $readonlySchema,
             readonly: $readonly,
+            options: $options,
         );
     }
 }

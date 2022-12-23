@@ -27,11 +27,6 @@ abstract class TableTest extends BaseTest
         $schema->save();
     }
 
-    public function schema(string $table): AbstractTable
-    {
-        return $this->database->table($table)->getSchema();
-    }
-
     public function testGetSchema(): void
     {
         $this->assertIsArray($this->database->getDriver()->__debugInfo());
