@@ -32,7 +32,7 @@ class MySQLDriverConfig extends DriverConfig
         bool $queryCache = true,
         bool $readonlySchema = false,
         bool $readonly = false,
-        array $options = []
+        array $options = [],
     ) {
         /** @psalm-suppress ArgumentTypeCoercion */
         parent::__construct(
