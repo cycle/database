@@ -97,10 +97,11 @@ trait ColumnAttributesTrait
     private function getAttributesMap(): array
     {
         // Use cache to avoid reflection on each call
-        static $map = null;
-        if ($map !== null) {
-            return $map;
+        static $cache = [];
+        if (isset($cache[static::class])) {
+            return $cache[static::class];
         }
+
         $map = [];
         $reflection = new \ReflectionClass(static::class);
         foreach ($reflection->getProperties() as $property) {
@@ -111,6 +112,7 @@ trait ColumnAttributesTrait
 
             $map[$property->getName()] = $attribute->newInstance();
         }
+        $cache[static::class] = $map;
         return $map;
     }
 }
