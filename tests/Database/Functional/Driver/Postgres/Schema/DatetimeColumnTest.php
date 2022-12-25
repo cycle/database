@@ -16,20 +16,35 @@ class DatetimeColumnTest extends CommonClass
 {
     public const DRIVER = 'postgres';
 
+    public function testTimestamptz(): void
+    {
+        $schema = $this->schema('timestamp_tz');
+
+        /** @var PostgresColumn $column */
+        $column = $schema->timestamptz('column_name');
+        $schema->save();
+
+        $this->assertSameAsInDB($schema);
+
+        $savedColumn = $this->schema('timestamp_tz')->getColumns()['column_name'];
+        $this->assertTrue($column->getAttributes()['withTimezone']);
+        $this->assertTrue($savedColumn->getAttributes()['withTimezone']);
+        $this->assertSame('timestamptz', $column->getAbstractType());
+    }
+
     public function testTimestampWithTimezone(): void
     {
         $schema = $this->schema('timestamp_with_tz');
 
         /** @var PostgresColumn $column */
-        $column = $schema->timestamptz('timestamptz');
+        $column = $schema->timestamp('column_name', withTimezone: true);
         $schema->save();
 
         $this->assertSameAsInDB($schema);
 
-        $ref = new \ReflectionProperty($column, 'withTimezone');
-        $ref->setAccessible(true);
-
-        $this->assertTrue($ref->getValue($column));
+        $savedColumn = $this->schema('timestamp_with_tz')->getColumns()['column_name'];
+        $this->assertTrue($column->getAttributes()['withTimezone']);
+        $this->assertTrue($savedColumn->getAttributes()['withTimezone']);
         $this->assertSame('timestamptz', $column->getAbstractType());
     }
 
@@ -38,15 +53,32 @@ class DatetimeColumnTest extends CommonClass
         $schema = $this->schema('time_with_tz');
 
         /** @var PostgresColumn $column */
-        $column = $schema->timetz('timetz');
+        $column = $schema->time('timetz', withTimezone: true);
         $schema->save();
 
         $this->assertSameAsInDB($schema);
 
-        $ref = new \ReflectionProperty($column, 'withTimezone');
-        $ref->setAccessible(true);
+        $savedColumn = $this->schema('time_with_tz')->getColumns()['timetz'];
 
-        $this->assertTrue($ref->getValue($column));
+        $this->assertTrue($column->getAttributes()['withTimezone']);
+        $this->assertTrue($savedColumn->getAttributes()['withTimezone']);
+        $this->assertSame('timetz', $column->getAbstractType());
+    }
+
+    public function testTimetz(): void
+    {
+        $schema = $this->schema('time_tz');
+
+        /** @var PostgresColumn $column */
+        $column = $schema->timetz('column_name');
+        $schema->save();
+
+        $this->assertSameAsInDB($schema);
+
+        $savedColumn = $this->schema('time_tz')->getColumns()['column_name'];
+
+        $this->assertTrue($column->getAttributes()['withTimezone']);
+        $this->assertTrue($savedColumn->getAttributes()['withTimezone']);
         $this->assertSame('timetz', $column->getAbstractType());
     }
 
@@ -60,10 +92,10 @@ class DatetimeColumnTest extends CommonClass
 
         $this->assertSameAsInDB($schema);
 
-        $ref = new \ReflectionProperty($column, 'withTimezone');
-        $ref->setAccessible(true);
+        $savedColumn = $this->schema('timestamp_without_tz')->getColumns()['timestamp'];
 
-        $this->assertFalse($ref->getValue($column));
+        $this->assertFalse($column->getAttributes()['withTimezone']);
+        $this->assertFalse($savedColumn->getAttributes()['withTimezone']);
         $this->assertSame('timestamp', $column->getAbstractType());
     }
 
@@ -77,10 +109,10 @@ class DatetimeColumnTest extends CommonClass
 
         $this->assertSameAsInDB($schema);
 
-        $ref = new \ReflectionProperty($column, 'withTimezone');
-        $ref->setAccessible(true);
+        $savedColumn = $this->schema('time_without_tz')->getColumns()['time'];
 
-        $this->assertFalse($ref->getValue($column));
+        $this->assertFalse($column->getAttributes()['withTimezone']);
+        $this->assertFalse($savedColumn->getAttributes()['withTimezone']);
         $this->assertSame('time', $column->getAbstractType());
     }
 }

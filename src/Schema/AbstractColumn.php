@@ -63,13 +63,14 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     /**
      * Value to be excluded from comparision.
      */
-    public const EXCLUDE_FROM_COMPARE = ['timezone', 'userType'];
+    public const EXCLUDE_FROM_COMPARE = ['timezone', 'userType', 'attributes'];
 
     /**
      * Normalization for time and dates.
      */
     public const DATE_FORMAT = 'Y-m-d';
     public const TIME_FORMAT = 'H:i:s';
+    public const DATETIME_PRECISION = 6;
 
     /**
      * Mapping between abstract type and internal database type with it's options. Multiple abstract
@@ -567,12 +568,14 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         return $this;
     }
 
-    public function datetime(int $size = 0): self
+    public function datetime(int $size = 0, mixed ...$attributes): self
     {
         $this->type('datetime');
+        $this->fillAttributes($attributes);
 
-        ($size < 0 || $size > 6) && throw new SchemaException('Invalid datetime length value');
-
+        ($size < 0 || $size > static::DATETIME_PRECISION) && throw new SchemaException(
+            \sprintf('Invalid %s precision value.', $this->getAbstractType())
+        );
         $this->size = $size;
 
         return $this;
