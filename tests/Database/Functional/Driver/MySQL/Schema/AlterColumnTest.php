@@ -22,7 +22,7 @@ class AlterColumnTest extends CommonClass
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
 
-        $schema->datetime('datetime', -1);
+        $schema->datetime('datetime', size: -1);
         $schema->save();
     }
 

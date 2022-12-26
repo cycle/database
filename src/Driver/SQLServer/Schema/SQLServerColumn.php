@@ -26,6 +26,7 @@ class SQLServerColumn extends AbstractColumn
      * Default timestamp expression (driver specific).
      */
     public const DATETIME_NOW = 'getdate()';
+    public const DATETIME_PRECISION = 7;
 
     /**
      * Private state related values.
@@ -161,12 +162,14 @@ class SQLServerColumn extends AbstractColumn
         return $this;
     }
 
-    public function datetime(int $size = 0): self
+    public function datetime(int $size = 0, mixed ...$attributes): self
     {
-        ($size < 0 || $size > 7) && throw new SchemaException('Invalid datetime length value');
-
         $size === 0 ? $this->type('datetime') : $this->type('datetime2');
+        $this->fillAttributes($attributes);
 
+        ($size < 0 || $size > static::DATETIME_PRECISION) && throw new SchemaException(
+            \sprintf('Invalid %s precision value.', $this->getAbstractType())
+        );
         $this->size = $size;
 
         return $this;

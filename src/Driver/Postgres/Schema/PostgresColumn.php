@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace Cycle\Database\Driver\Postgres\Schema;
 
 use Cycle\Database\Driver\DriverInterface;
-use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Schema\AbstractColumn;
+use Cycle\Database\Schema\Attribute\ColumnAttribute;
 
 /**
  * @method $this timestamptz(int $size = 0)
@@ -29,6 +29,7 @@ class PostgresColumn extends AbstractColumn
      * Default timestamp expression (driver specific).
      */
     public const DATETIME_NOW = 'now()';
+    public const DATETIME_PRECISION = 6;
 
     /**
      * Private state related values.
@@ -38,6 +39,7 @@ class PostgresColumn extends AbstractColumn
         'timezone',
         'constrained',
         'constrainName',
+        'attributes',
     ];
 
     protected array $mapping = [
@@ -131,6 +133,7 @@ class PostgresColumn extends AbstractColumn
      */
     protected string $constrainName = '';
 
+    #[ColumnAttribute(['timestamp', 'time', 'timestamptz', 'timetz'])]
     protected bool $withTimezone = false;
 
     public function getConstraints(): array
@@ -218,7 +221,7 @@ class PostgresColumn extends AbstractColumn
 
         $statement = \implode(' ', $statement);
 
-        //We have add constraint for enum type
+        //We have to add constraint for enum type
         if ($this->getAbstractType() === 'enum') {
             $enumValues = [];
             foreach ($this->enumValues as $value) {
@@ -388,23 +391,7 @@ class PostgresColumn extends AbstractColumn
         return (bool) (
             in_array($this->getAbstractType(), ['primary', 'bigPrimary'])
             && $initial->getDefaultValue() != $this->getDefaultValue()
-        )
-            //PG adds default values to primary keys
-
-
-
-         ;
-    }
-
-    public function timestamp(int $size = 0): self
-    {
-        $this->type('timestamp');
-
-        ($size < 0 || $size > 6) && throw new SchemaException('Invalid timestamp length value');
-
-        $this->size = $size;
-
-        return $this;
+        );
     }
 
     /**

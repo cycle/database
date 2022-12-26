@@ -28,6 +28,7 @@ class SQLiteColumn extends AbstractColumn
         'userType',
         'timezone',
         'size',
+        'attributes',
     ];
 
     protected array $mapping = [

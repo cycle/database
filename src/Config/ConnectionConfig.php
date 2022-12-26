@@ -13,7 +13,7 @@ namespace Cycle\Database\Config;
 
 abstract class ConnectionConfig
 {
-    use StateTrait;
+    use RestoreStateTrait;
 
     /**
      * @var array<non-empty-string>
