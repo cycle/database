@@ -1,13 +1,14 @@
 # CHANGELOG
 
-v2.3.0 (in progress)
+v2.3.0 (27.12.2022)
 -------------------
-- Add supporting for array values in the `IN` and `NOT IN` operators by @roxblnfk (#69, #70, #71)
-- Add `PdoInterface` as possible return type of the `Driver::getPDO()` method by @roxblnfk (#76)
-- Add array parameter `options` to all driver configs to pass additional driver options.
-  To store a DateTime with microseconds, you can pass the `withDatetimeMicroseconds` with value **true**
-  in the new options parameter by @msmakouz (#86)
-- Add ability to define `size` in the `datetime` column by @msmakouz (#86)
+- Add support for array values in the `IN` and `NOT IN` operators by @roxblnfk (#69, #70, #71)
+- Add `PdoInterface` as a possible return type for the `Driver::getPDO()` method by @roxblnfk (#76)
+- Add the `options` array parameter to all driver configs to pass additional driver options.
+  The `withDatetimeMicroseconds` option can be set to `true` to store a `DateTime` with microseconds by @msmakouz (#86)
+- Add a config recovery mechanism via `__set_state()` by @wakebit (#83)
+- Add the ability to define the `size` of a `datetime` column by @msmakouz (#86)
+- Add support for the unsigned and zerofill properties in MySQL Integer types by @roxblnfk (#88)
 
 v2.2.2 (27.09.2022)
 -------------------
