@@ -33,26 +33,45 @@ final class Interpolator
             return $query;
         }
 
-        ['named' => $named, 'unnamed' => $unnamed] = self::normalizeParameters($parameters);
-        $params = self::findParams($query);
+        $named = [];
+        $unnamed = [];
 
-        $caret = 0;
-        $result = '';
-        foreach ($params as $pos => $ph) {
-            $result .= \substr($query, $caret, $pos - $caret);
-            $caret = $pos + \strlen($ph);
-            // find param
-            if ($ph === '?' && \count($unnamed) > 0) {
-                $result .= self::resolveValue(\array_shift($unnamed));
-            } elseif (\array_key_exists($ph, $named)) {
-                $result .= self::resolveValue($named[$ph]);
+        foreach ($parameters as $k => $v) {
+            if (\is_int($k)) {
+                $unnamed[] = $v;
             } else {
-                $result .= $ph;
+                $named[\ltrim($k, ':')] = $v;
             }
         }
-        $result .= \substr($query, $caret);
 
-        return $result;
+        return \preg_replace_callback(
+            '/(?<dq>"(?:\\\\\"|[^"])*")|(?<sq>\'(?:\\\\\'|[^\'])*\')|(?<ph>\\?)|(?<named>:[a-z_\\d]+)/',
+            static function ($match) use (&$named, &$unnamed) {
+                if (isset($match['named']) && '' !== $match['named']) {
+                    $key = \ltrim($match['named'], ':');
+                } elseif (isset($match['ph'])) {
+                    $key = $match['ph'];
+                } else {
+                    return $match[0];
+                }
+
+                if ('?' === $key) {
+                    if (null === \key($unnamed)) {
+                        return $match[0];
+                    }
+
+                    $value = \current($unnamed);
+                    \next($unnamed);
+                } elseif (isset($named[$key]) || \array_key_exists($key, $named)) {
+                    $value = $named[$key];
+                } else {
+                    return $match[0];
+                }
+
+                return self::resolveValue($value);
+            },
+            $query
+        );
     }
 
     /**
@@ -109,45 +128,5 @@ final class Interpolator
             "\t" => '\\t',
             '\\' => '\\\\',
         ]);
-    }
-
-    /**
-     * @return array<int, string>
-     */
-    private static function findParams(string $query): array
-    {
-        \preg_match_all(
-            '/(?<dq>"(?:\\\\\"|[^"])*")|(?<sq>\'(?:\\\\\'|[^\'])*\')|(?<ph>\\?)|(?<named>:[a-z_\\d]+)/',
-            $query,
-            $placeholders,
-            PREG_OFFSET_CAPTURE | PREG_UNMATCHED_AS_NULL
-        );
-        $result = [];
-        foreach (\array_merge($placeholders['named'], $placeholders['ph']) as $tuple) {
-            if ($tuple[0] === null) {
-                continue;
-            }
-            $result[$tuple[1]] = $tuple[0];
-        }
-        \ksort($result);
-
-        return $result;
-    }
-
-    /**
-     * @return array{named: array, unnamed: array}
-     */
-    private static function normalizeParameters(iterable $parameters): array
-    {
-        $result = ['named' => [], 'unnamed' => []];
-        foreach ($parameters as $k => $v) {
-            if (\is_int($k)) {
-                $result['unnamed'][$k] = $v;
-            } else {
-                $result['named'][':' . \ltrim($k, ':')] = $v;
-            }
-        }
-
-        return $result;
     }
 }

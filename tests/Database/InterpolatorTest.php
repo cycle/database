@@ -278,4 +278,39 @@ class InterpolatorTest extends TestCase
             $interpolated
         );
     }
+
+    public function testLargeInterpolation(): void
+    {
+        $query = null;
+        $parameters = null;
+        $expected = null;
+
+        include __DIR__ . '/InterpolatorTest_largeFixture.php';
+
+        if (!\is_string($query) || !\is_array($parameters) || !\is_string($expected)) {
+            $this->markTestSkipped('no test data');
+        }
+
+        $interpolated = Interpolator::interpolate($query, $parameters);
+
+        self::assertSame($expected, $interpolated);
+    }
+
+    public function testNoRecursiveInterpolation(): void
+    {
+        $query = 'SELECT * FROM table WHERE name = :name AND str = ? AND number = :number';
+
+        $parameters = [
+            ':name' => 'Hello?',
+            ':number',
+            ':number' => 42,
+        ];
+
+        $interpolated = Interpolator::interpolate($query, $parameters);
+
+        $this->assertSame(
+            'SELECT * FROM table WHERE name = \'Hello?\' AND str = \':number\' AND number = 42',
+            $interpolated
+        );
+    }
 }
