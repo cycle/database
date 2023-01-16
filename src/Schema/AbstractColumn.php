@@ -300,7 +300,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
             $column['defaultValue'] = $this->getDefaultValue();
         }
 
-        if ($this->getAbstractType() === 'enum') {
+        if (static::isEnum($this)) {
             $column['enumValues'] = $this->enumValues;
         }
 
@@ -602,7 +602,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     {
         $statement = [$driver->identifier($this->name), $this->type];
 
-        if ($this->getAbstractType() === 'enum') {
+        if (static::isEnum($this)) {
             //Enum specific column options
             if (!empty($enumDefinition = $this->quoteEnum($driver))) {
                 $statement[] = $enumDefinition;
@@ -735,5 +735,10 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
             'date' => $datetime->format(static::DATE_FORMAT),
             default => $value
         };
+    }
+
+    protected static function isEnum(self $column): bool
+    {
+        return $column->getAbstractType() === 'enum';
     }
 }

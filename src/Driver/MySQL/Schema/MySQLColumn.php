@@ -58,6 +58,9 @@ class MySQLColumn extends AbstractColumn
         //Enum type (mapped via method)
         'enum'        => 'enum',
 
+        //Set type (mapped via method)
+        'set'         => 'set',
+
         //Logical types
         'boolean'     => ['type' => 'tinyint', 'size' => 1],
 
@@ -103,6 +106,7 @@ class MySQLColumn extends AbstractColumn
         'primary'     => [['type' => 'int', 'autoIncrement' => true]],
         'bigPrimary'  => ['serial', ['type' => 'bigint', 'size' => 20, 'autoIncrement' => true]],
         'enum'        => ['enum'],
+        'set'         => ['set'],
         'boolean'     => ['bool', 'boolean', ['type' => 'tinyint', 'size' => 1]],
         'integer'     => ['int', 'integer', 'mediumint'],
         'tinyInteger' => ['tinyint'],
@@ -249,8 +253,8 @@ class MySQLColumn extends AbstractColumn
             }
         }
 
-        //Fetching enum values
-        if ($options !== [] && $column->getAbstractType() === 'enum') {
+        //Fetching enum and set values
+        if ($options !== [] && static::isEnum($column)) {
             $column->enumValues = \array_map(static fn ($value) => trim($value, $value[0]), $options);
 
             return $column;
@@ -289,6 +293,14 @@ class MySQLColumn extends AbstractColumn
         return $this->zerofill;
     }
 
+    public function set(string|array $values): self
+    {
+        $this->type('set');
+        $this->enumValues = array_map('strval', is_array($values) ? $values : func_get_args());
+
+        return $this;
+    }
+
     /**
      * Ensure that datetime fields are correctly formatted.
      *
@@ -305,6 +317,11 @@ class MySQLColumn extends AbstractColumn
         }
 
         return parent::formatDatetime($type, $value);
+    }
+
+    protected static function isEnum(AbstractColumn $column): bool
+    {
+        return $column->getAbstractType() === 'enum' || $column->getAbstractType() === 'set';
     }
 
     private function sqlStatementInteger(DriverInterface $driver): string
