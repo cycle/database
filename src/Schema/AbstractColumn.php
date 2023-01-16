@@ -737,7 +737,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         };
     }
 
-    protected static function isEnum(AbstractColumn $column): bool
+    protected static function isEnum(self $column): bool
     {
         return $column->getAbstractType() === 'enum';
     }
