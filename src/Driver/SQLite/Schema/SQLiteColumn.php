@@ -240,4 +240,9 @@ class SQLiteColumn extends AbstractColumn
     {
         return '';
     }
+
+    protected static function isEnum(AbstractColumn $column): bool
+    {
+        return false;
+    }
 }
