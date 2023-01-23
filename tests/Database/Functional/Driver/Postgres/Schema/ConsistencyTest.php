@@ -83,4 +83,27 @@ class ConsistencyTest extends CommonClass
             $schema->column('target')->getDefaultValue()
         );
     }
+
+    public function testSmallPrimary(): void
+    {
+        $schema = $this->schema('table');
+        $this->assertFalse($schema->exists());
+
+        $column = $schema->smallPrimary('smallPrimary');
+        $schema->save();
+        $this->assertSameAsInDB($schema);
+
+        $schema = $this->schema('table');
+        $this->assertTrue($schema->exists());
+
+        $this->assertSame(
+            $schema->column('smallPrimary')->getInternalType(),
+            $column->getInternalType()
+        );
+
+        $this->assertInstanceOf(
+            FragmentInterface::class,
+            $schema->column('smallPrimary')->getDefaultValue()
+        );
+    }
 }
