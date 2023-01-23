@@ -56,14 +56,14 @@ class PostgresColumn extends AbstractColumn
         'DAY TO SECOND',
         'HOUR TO MINUTE',
         'HOUR TO SECOND',
-        'MINUTE TO SECOND'
+        'MINUTE TO SECOND',
     ];
 
     private const INTERVALS_WITH_ALLOWED_PRECISION = [
         'SECOND',
         'DAY TO SECOND',
         'HOUR TO SECOND',
-        'MINUTE TO SECOND'
+        'MINUTE TO SECOND',
     ];
 
     protected array $mapping = [
@@ -171,7 +171,7 @@ class PostgresColumn extends AbstractColumn
             'macaddr',
             'macaddr8',
             'tsvector',
-            'tsquery'
+            'tsquery',
         ],
         'text'         => ['text'],
         'double'       => ['double precision'],
@@ -182,7 +182,8 @@ class PostgresColumn extends AbstractColumn
         'timetz'       => [['type' => 'time', 'withTimezone' => true]],
         'timestamp'    => [
             ['type' => 'timestamp', 'withTimezone' => false],
-            ['type' => 'tsrange', 'withTimezone' => false]],
+            ['type' => 'tsrange', 'withTimezone' => false],
+        ],
         'timestamptz'  => [
             ['type' => 'timestamp', 'withTimezone' => true],
             ['type' => 'tstzrange', 'withTimezone' => true],
