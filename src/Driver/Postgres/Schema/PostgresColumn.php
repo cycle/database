@@ -20,6 +20,27 @@ use Cycle\Database\Schema\Attribute\ColumnAttribute;
 /**
  * @method $this timestamptz(int $size = 0)
  * @method $this timetz()
+ * @method $this bitVarying(int $size = 0)
+ * @method $this bit(int $size = 1)
+ * @method $this int4range()
+ * @method $this int8range()
+ * @method $this numrange()
+ * @method $this tsrange()
+ * @method $this tstzrange()
+ * @method $this daterange()
+ * @method $this point()
+ * @method $this line()
+ * @method $this lseg()
+ * @method $this box()
+ * @method $this path()
+ * @method $this polygon()
+ * @method $this circle()
+ * @method $this cidr()
+ * @method $this inet()
+ * @method $this macaddr()
+ * @method $this macaddr8()
+ * @method $this tsvector()
+ * @method $this tsquery()
  */
 class PostgresColumn extends AbstractColumn
 {
@@ -43,7 +64,7 @@ class PostgresColumn extends AbstractColumn
         'attributes',
     ];
 
-    private const INTERVAL_TYPES = [
+    protected const INTERVAL_TYPES = [
         'YEAR',
         'MONTH',
         'DAY',
@@ -59,7 +80,7 @@ class PostgresColumn extends AbstractColumn
         'MINUTE TO SECOND',
     ];
 
-    private const INTERVALS_WITH_ALLOWED_PRECISION = [
+    protected const INTERVALS_WITH_ALLOWED_PRECISION = [
         'SECOND',
         'DAY TO SECOND',
         'HOUR TO SECOND',
