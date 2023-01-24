@@ -74,7 +74,7 @@ class PostgresColumn extends AbstractColumn
         'bigIncremental' => 'bigPrimary',
         'bool'           => 'boolean',
         'blob'           => 'binary',
-        'bitVarying'     => 'bit varying'
+        'bitVarying'     => 'bit varying',
     ];
 
     protected array $mapping = [
