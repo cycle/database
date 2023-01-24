@@ -66,6 +66,17 @@ class PostgresColumn extends AbstractColumn
         'MINUTE TO SECOND',
     ];
 
+    protected array $aliases = [
+        'int'            => 'integer',
+        'smallint'       => 'smallInteger',
+        'bigint'         => 'bigInteger',
+        'incremental'    => 'primary',
+        'bigIncremental' => 'bigPrimary',
+        'bool'           => 'boolean',
+        'blob'           => 'binary',
+        'bitVarying'     => 'bit varying'
+    ];
+
     protected array $mapping = [
         //Primary sequences
         'smallPrimary' => ['type' => 'smallserial', 'autoIncrement' => true, 'nullable' => false],
@@ -115,7 +126,7 @@ class PostgresColumn extends AbstractColumn
         'longBinary'   => 'bytea',
 
         //Bit-string
-        'bit'          => 'bit',
+        'bit'          => ['type' => 'bit', 'size' => 1],
         'bit varying'  => 'bit varying',
 
         //Ranges
@@ -279,22 +290,6 @@ class PostgresColumn extends AbstractColumn
         foreach ($this->enumValues as $value) {
             $this->size = max((int)$this->size, \strlen($value));
         }
-
-        return $this;
-    }
-
-    public function bit(int $size = 1): AbstractColumn
-    {
-        $this->type = 'bit';
-        $this->size = $size;
-
-        return $this;
-    }
-
-    public function bitVarying(int $size = 0): AbstractColumn
-    {
-        $this->type = 'bit varying';
-        $this->size = $size;
 
         return $this;
     }
