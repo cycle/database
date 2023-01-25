@@ -6,6 +6,7 @@ namespace Cycle\Database\Tests\Functional\Driver\Postgres\Schema;
 
 // phpcs:ignore
 use Cycle\Database\Driver\Postgres\Schema\PostgresColumn;
+use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Tests\Functional\Driver\Common\Schema\DatetimeColumnTest as CommonClass;
 
 /**
@@ -114,5 +115,104 @@ class DatetimeColumnTest extends CommonClass
         $this->assertFalse($column->getAttributes()['withTimezone']);
         $this->assertFalse($savedColumn->getAttributes()['withTimezone']);
         $this->assertSame('time', $column->getAbstractType());
+    }
+
+    public function testInterval(): void
+    {
+        $schema = $this->schema('interval');
+
+        $column = $schema->interval('interval');
+        $schema->save();
+
+        $this->assertSameAsInDB($schema);
+
+        $savedColumn = $this->schema('interval')->getColumns()['interval'];
+
+        $this->assertNull($column->getAttributes()['intervalType']);
+        $this->assertNull($savedColumn->getAttributes()['intervalType']);
+        $this->assertSame('interval', $column->getAbstractType());
+        $this->assertSame(6, $column->getSize());
+        $this->assertSame(6, $savedColumn->getSize());
+    }
+
+    public function testIntervalWithType(): void
+    {
+        $schema = $this->schema('interval');
+
+        $column = $schema->interval('interval_with_type', intervalType: 'YEAR TO MONTH');
+        $schema->save();
+
+        $this->assertSameAsInDB($schema);
+
+        $savedColumn = $this->schema('interval')->getColumns()['interval_with_type'];
+
+        $this->assertSame('YEAR TO MONTH', $column->getAttributes()['intervalType']);
+        $this->assertSame('YEAR TO MONTH', $savedColumn->getAttributes()['intervalType']);
+        $this->assertSame('interval', $column->getAbstractType());
+        $this->assertSame(0, $column->getSize());
+    }
+
+    public function testIntervalWithPrecision(): void
+    {
+        $schema = $this->schema('interval');
+
+        $column = $schema->interval('interval_with_size', size: 6);
+        $schema->save();
+
+        $this->assertSameAsInDB($schema);
+
+        $savedColumn = $this->schema('interval')->getColumns()['interval_with_size'];
+
+        $this->assertNull($column->getAttributes()['intervalType']);
+        $this->assertNull($savedColumn->getAttributes()['intervalType']);
+        $this->assertSame('interval', $column->getAbstractType());
+        $this->assertSame(6, $column->getSize());
+        $this->assertSame(6, $savedColumn->getSize());
+    }
+
+    public function testIntervalWithPrecisionAndUnsupportedPrecisionType(): void
+    {
+        $schema = $this->schema('interval');
+
+        $column = $schema->interval('interval_with_size', size: 6, intervalType: 'HOUR TO MINUTE');
+        $schema->save();
+
+        $this->assertSameAsInDB($schema);
+
+        $savedColumn = $this->schema('interval')->getColumns()['interval_with_size'];
+
+        $this->assertSame('HOUR TO MINUTE', $column->getAttributes()['intervalType']);
+        $this->assertSame('HOUR TO MINUTE', $savedColumn->getAttributes()['intervalType']);
+        $this->assertSame('interval', $column->getAbstractType());
+        $this->assertSame(0, $column->getSize());
+        $this->assertSame(0, $savedColumn->getSize());
+    }
+
+    public function testIntervalWithPrecisionAndType(): void
+    {
+        $schema = $this->schema('interval');
+
+        $column = $schema->interval('interval_column', intervalType: 'SECOND', size: 6);
+        $schema->save();
+
+        $this->assertSameAsInDB($schema);
+
+        $savedColumn = $this->schema('interval')->getColumns()['interval_column'];
+
+        $this->assertSame('SECOND', $column->getAttributes()['intervalType']);
+        $this->assertSame('SECOND', $savedColumn->getAttributes()['intervalType']);
+        $this->assertSame('interval', $column->getAbstractType());
+        $this->assertSame(6, $column->getSize());
+        $this->assertSame(6, $savedColumn->getSize());
+    }
+
+    public function testExceptionWithInvalidIntervalType(): void
+    {
+        $schema = $this->schema('interval');
+
+        $schema->interval('interval_column', intervalType: 'foo');
+
+        $this->expectException(SchemaException::class);
+        $schema->save();
     }
 }

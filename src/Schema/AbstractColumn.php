@@ -215,7 +215,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     /**
      * Abstract type aliases (for consistency).
      */
-    private array $aliases = [
+    protected array $aliases = [
         'int'            => 'integer',
         'smallint'       => 'smallInteger',
         'bigint'         => 'bigInteger',

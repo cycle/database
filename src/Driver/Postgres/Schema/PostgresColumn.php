@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Driver\Postgres\Schema;
 
 use Cycle\Database\Driver\DriverInterface;
+use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Schema\Attribute\ColumnAttribute;
@@ -19,6 +20,27 @@ use Cycle\Database\Schema\Attribute\ColumnAttribute;
 /**
  * @method $this timestamptz(int $size = 0)
  * @method $this timetz()
+ * @method $this bitVarying(int $size = 0)
+ * @method $this bit(int $size = 1)
+ * @method $this int4range()
+ * @method $this int8range()
+ * @method $this numrange()
+ * @method $this tsrange()
+ * @method $this tstzrange()
+ * @method $this daterange()
+ * @method $this point()
+ * @method $this line()
+ * @method $this lseg()
+ * @method $this box()
+ * @method $this path()
+ * @method $this polygon()
+ * @method $this circle()
+ * @method $this cidr()
+ * @method $this inet()
+ * @method $this macaddr()
+ * @method $this macaddr8()
+ * @method $this tsvector()
+ * @method $this tsquery()
  */
 class PostgresColumn extends AbstractColumn
 {
@@ -42,80 +64,167 @@ class PostgresColumn extends AbstractColumn
         'attributes',
     ];
 
+    protected const INTERVAL_TYPES = [
+        'YEAR',
+        'MONTH',
+        'DAY',
+        'HOUR',
+        'MINUTE',
+        'SECOND',
+        'YEAR TO MONTH',
+        'DAY TO HOUR',
+        'DAY TO MINUTE',
+        'DAY TO SECOND',
+        'HOUR TO MINUTE',
+        'HOUR TO SECOND',
+        'MINUTE TO SECOND',
+    ];
+
+    protected const INTERVALS_WITH_ALLOWED_PRECISION = [
+        'SECOND',
+        'DAY TO SECOND',
+        'HOUR TO SECOND',
+        'MINUTE TO SECOND',
+    ];
+
+    protected array $aliases = [
+        'int'            => 'integer',
+        'smallint'       => 'smallInteger',
+        'bigint'         => 'bigInteger',
+        'incremental'    => 'primary',
+        'bigIncremental' => 'bigPrimary',
+        'bool'           => 'boolean',
+        'blob'           => 'binary',
+        'bitVarying'     => 'bit varying',
+    ];
+
     protected array $mapping = [
         //Primary sequences
-        'primary'     => ['type' => 'serial', 'autoIncrement' => true, 'nullable' => false],
-        'bigPrimary'  => ['type' => 'bigserial', 'autoIncrement' => true, 'nullable' => false],
+        'smallPrimary' => ['type' => 'smallserial', 'autoIncrement' => true, 'nullable' => false],
+        'primary'      => ['type' => 'serial', 'autoIncrement' => true, 'nullable' => false],
+        'bigPrimary'   => ['type' => 'bigserial', 'autoIncrement' => true, 'nullable' => false],
 
         //Enum type (mapped via method)
-        'enum'        => 'enum',
+        'enum'         => 'enum',
 
         //Logical types
-        'boolean'     => 'boolean',
+        'boolean'      => 'boolean',
 
         //Integer types (size can always be changed with size method), longInteger has method alias
         //bigInteger
-        'integer'     => 'integer',
-        'tinyInteger' => 'smallint',
-        'smallInteger'=> 'smallint',
-        'bigInteger'  => 'bigint',
+        'integer'      => 'integer',
+        'tinyInteger'  => 'smallint',
+        'smallInteger' => 'smallint',
+        'bigInteger'   => 'bigint',
 
         //String with specified length (mapped via method)
-        'string'      => 'character varying',
+        'string'       => 'character varying',
 
         //Generic types
-        'text'        => 'text',
-        'tinyText'    => 'text',
-        'longText'    => 'text',
+        'text'         => 'text',
+        'tinyText'     => 'text',
+        'longText'     => 'text',
 
         //Real types
-        'double'      => 'double precision',
-        'float'       => 'real',
+        'double'       => 'double precision',
+        'float'        => 'real',
 
         //Decimal type (mapped via method)
-        'decimal'     => 'numeric',
+        'decimal'      => 'numeric',
 
         //Date and Time types
-        'datetime'    => 'timestamp',
-        'date'        => 'date',
-        'time'        => 'time',
-        'timetz'      => ['type' => 'time', 'withTimezone' => true],
-        'timestamp'   => 'timestamp',
-        'timestamptz' => ['type' => 'timestamp', 'withTimezone' => true],
+        'datetime'     => 'timestamp',
+        'date'         => 'date',
+        'time'         => 'time',
+        'timetz'       => ['type' => 'time', 'withTimezone' => true],
+        'timestamp'    => 'timestamp',
+        'timestamptz'  => ['type' => 'timestamp', 'withTimezone' => true],
+        'interval'     => 'interval',
 
         //Binary types
-        'binary'      => 'bytea',
-        'tinyBinary'  => 'bytea',
-        'longBinary'  => 'bytea',
+        'binary'       => 'bytea',
+        'tinyBinary'   => 'bytea',
+        'longBinary'   => 'bytea',
+
+        //Bit-string
+        'bit'          => ['type' => 'bit', 'size' => 1],
+        'bit varying'  => 'bit varying',
+
+        //Ranges
+        'int4range'    => 'int4range',
+        'int8range'    => 'int8range',
+        'numrange'     => 'numrange',
+        'tsrange'      => 'tsrange',
+        'tstzrange'    => ['type' => 'tstzrange', 'withTimezone' => true],
+        'daterange'    => 'daterange',
 
         //Additional types
-        'json'        => 'text',
-        'jsonb'       => 'jsonb',
-        'uuid'        => 'uuid',
+        'json'         => 'text',
+        'jsonb'        => 'jsonb',
+        'uuid'         => 'uuid',
+        'point'        => 'point',
+        'line'         => 'line',
+        'lseg'         => 'lseg',
+        'box'          => 'box',
+        'path'         => 'path',
+        'polygon'      => 'polygon',
+        'circle'       => 'circle',
+        'cidr'         => 'cidr',
+        'inet'         => 'inet',
+        'macaddr'      => 'macaddr',
+        'macaddr8'     => 'macaddr8',
+        'tsvector'     => 'tsvector',
+        'tsquery'      => 'tsquery',
     ];
 
     protected array $reverseMapping = [
-        'primary'     => ['serial'],
-        'bigPrimary'  => ['bigserial'],
-        'enum'        => ['enum'],
-        'boolean'     => ['boolean'],
-        'integer'     => ['int', 'integer', 'int4'],
-        'tinyInteger' => ['smallint'],
-        'smallInteger'=> ['smallint'],
-        'bigInteger'  => ['bigint', 'int8'],
-        'string'      => ['character varying', 'character'],
-        'text'        => ['text'],
-        'double'      => ['double precision'],
-        'float'       => ['real', 'money'],
-        'decimal'     => ['numeric'],
-        'date'        => ['date'],
-        'time'        => [['type' => 'time', 'withTimezone' => false]],
-        'timetz'      => [['type' => 'time', 'withTimezone' => true]],
-        'timestamp'   => [['type' => 'timestamp', 'withTimezone' => false]],
-        'timestamptz' => [['type' => 'timestamp', 'withTimezone' => true]],
-        'binary'      => ['bytea'],
-        'json'        => ['json'],
-        'jsonb'       => ['jsonb'],
+        'smallPrimary' => ['smallserial'],
+        'primary'      => ['serial'],
+        'bigPrimary'   => ['bigserial'],
+        'enum'         => ['enum'],
+        'boolean'      => ['boolean'],
+        'integer'      => ['int', 'integer', 'int4', 'int4range'],
+        'tinyInteger'  => ['smallint'],
+        'smallInteger' => ['smallint'],
+        'bigInteger'   => ['bigint', 'int8', 'int8range'],
+        'string'       => [
+            'character varying',
+            'character',
+            'char',
+            'point',
+            'line',
+            'lseg',
+            'box',
+            'path',
+            'polygon',
+            'circle',
+            'cidr',
+            'inet',
+            'macaddr',
+            'macaddr8',
+            'tsvector',
+            'tsquery',
+        ],
+        'text'         => ['text'],
+        'double'       => ['double precision'],
+        'float'        => ['real', 'money'],
+        'decimal'      => ['numeric', 'numrange'],
+        'date'         => ['date', 'daterange'],
+        'time'         => [['type' => 'time', 'withTimezone' => false]],
+        'timetz'       => [['type' => 'time', 'withTimezone' => true]],
+        'timestamp'    => [
+            ['type' => 'timestamp', 'withTimezone' => false],
+            ['type' => 'tsrange', 'withTimezone' => false],
+        ],
+        'timestamptz'  => [
+            ['type' => 'timestamp', 'withTimezone' => true],
+            ['type' => 'tstzrange', 'withTimezone' => true],
+        ],
+        'binary'       => ['bytea'],
+        'json'         => ['json'],
+        'jsonb'        => ['jsonb'],
+        'interval'     => ['interval'],
+        'bit'          => ['bit', 'bit varying'],
     ];
 
     /**
@@ -133,8 +242,11 @@ class PostgresColumn extends AbstractColumn
      */
     protected string $constrainName = '';
 
-    #[ColumnAttribute(['timestamp', 'time', 'timestamptz', 'timetz'])]
+    #[ColumnAttribute(['timestamp', 'time', 'timestamptz', 'timetz', 'tsrange', 'tstzrange'])]
     protected bool $withTimezone = false;
+
+    #[ColumnAttribute(['interval'])]
+    protected ?string $intervalType = null;
 
     public function getConstraints(): array
     {
@@ -153,6 +265,18 @@ class PostgresColumn extends AbstractColumn
     public function getAbstractType(): string
     {
         return !empty($this->enumValues) ? 'enum' : parent::getAbstractType();
+    }
+
+    public function smallPrimary(): AbstractColumn
+    {
+        if (!empty($this->type) && $this->type !== 'smallserial') {
+            //Change type of already existed column (we can't use "serial" alias here)
+            $this->type = 'smallint';
+
+            return $this;
+        }
+
+        return $this->type('smallPrimary');
     }
 
     public function primary(): AbstractColumn
@@ -191,12 +315,35 @@ class PostgresColumn extends AbstractColumn
         return $this;
     }
 
+    public function interval(int $size = 6, ?string $intervalType = null): AbstractColumn
+    {
+        if ($intervalType !== null && !\in_array($intervalType, self::INTERVALS_WITH_ALLOWED_PRECISION, true)) {
+            $size = 0;
+        }
+
+        $this->type = 'interval';
+        $this->size = $size;
+        $this->intervalType = $intervalType;
+
+        return $this;
+    }
+
     /**
      * @psalm-return non-empty-string
      */
     public function sqlStatement(DriverInterface $driver): string
     {
         $statement = [$driver->identifier($this->name), $this->type];
+
+        if ($this->intervalType !== null && $this->getAbstractType() === 'interval') {
+            if (!\in_array($this->intervalType, self::INTERVAL_TYPES, true)) {
+                throw new SchemaException(\sprintf(
+                    'Invalid interval type value. Valid values for interval type: `%s`.',
+                    \implode('`, `', self::INTERVAL_TYPES)
+                ));
+            }
+            $statement[] = $this->intervalType;
+        }
 
         if ($this->getAbstractType() === 'enum') {
             //Enum specific column options
@@ -334,10 +481,14 @@ class PostgresColumn extends AbstractColumn
 
         if (
             \is_string($column->defaultValue)
-            && \in_array($column->type, ['int', 'bigint', 'integer'])
+            && \in_array($column->type, ['int', 'bigint', 'integer', 'smallint'])
             && preg_match('/nextval(.*)/', $column->defaultValue)
         ) {
-            $column->type = ($column->type === 'bigint' ? 'bigserial' : 'serial');
+            $column->type = match (true) {
+                $column->type === 'bigint' => 'bigserial',
+                $column->type === 'smallint' => 'smallserial',
+                default => 'serial'
+            };
             $column->autoIncrement = true;
 
             $column->defaultValue = new Fragment($column->defaultValue);
@@ -364,17 +515,35 @@ class PostgresColumn extends AbstractColumn
             self::resolveEnum($driver, $column);
         }
 
-        if ($column->type === 'timestamp' || $column->type === 'time') {
+        if ($column->type === 'timestamp' || $column->type === 'time' || $column->type === 'interval') {
             $column->size = (int) $schema['datetime_precision'];
         }
 
-        if ($schema['typname'] === 'timestamptz' || $schema['typname'] === 'timetz') {
+        if (
+            $schema['typname'] === 'timestamptz' ||
+            $schema['typname'] === 'timetz' ||
+            $schema['typname'] === 'tstzrange'
+        ) {
             $column->withTimezone = true;
         }
 
         if (!empty($column->size) && str_contains($column->type, 'char')) {
             //Potential enum with manually created constraint (check in)
             self::resolveConstrains($driver, $schema, $column);
+        }
+
+        if ($column->type === 'interval' && \is_string($schema['interval_type'])) {
+            $column->intervalType = \str_replace(\sprintf('(%s)', $column->size), '', $schema['interval_type']);
+            if (!in_array($column->intervalType, self::INTERVALS_WITH_ALLOWED_PRECISION, true)) {
+                $column->size = 0;
+            }
+        }
+
+        if (
+            ($column->type === 'bit' || $column->type === 'bit varying') &&
+            isset($schema['character_maximum_length'])
+        ) {
+            $column->size = (int) $schema['character_maximum_length'];
         }
 
         $column->normalizeDefault();
@@ -389,7 +558,7 @@ class PostgresColumn extends AbstractColumn
         }
 
         return (bool) (
-            in_array($this->getAbstractType(), ['primary', 'bigPrimary'])
+            \in_array($this->getAbstractType(), ['smallPrimary', 'primary', 'bigPrimary'], true)
             && $initial->getDefaultValue() != $this->getDefaultValue()
         );
     }

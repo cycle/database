@@ -32,11 +32,11 @@ abstract class BaseTest extends TestCase
 
     public function setUp(): void
     {
+        $this->database ??= $this->db();
+
         if (self::$config['debug'] ?? false) {
             $this->enableProfiling();
         }
-
-        $this->database ??= $this->db();
     }
 
     public function tearDown(): void
