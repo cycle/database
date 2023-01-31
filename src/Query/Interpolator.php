@@ -56,7 +56,7 @@ final class Interpolator
                 };
 
                 switch (true) {
-                    case '?' === $key: {
+                    case '?' === $key:
                         if (null === \key($unnamed)) {
                             return $match[0];
                         }
@@ -64,10 +64,8 @@ final class Interpolator
                         $value = \current($unnamed);
                         \next($unnamed);
                         return self::resolveValue($value);
-                    }
-                    case isset($named[$key]) || \array_key_exists($key, $named): {
+                    case isset($named[$key]) || \array_key_exists($key, $named):
                         return self::resolveValue($named[$key]);
-                    }
                     default:
                         return $match[0];
                 }
