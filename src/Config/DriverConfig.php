@@ -26,6 +26,7 @@ abstract class DriverConfig
 
     protected array $defaultOptions = [
         'withDatetimeMicroseconds' => false,
+        'enableInterpolationInLogs' => false,
     ];
 
     public array $options = [];
@@ -40,7 +41,8 @@ abstract class DriverConfig
      * @param bool $readonlySchema Disable schema modifications
      * @param bool $readonly Disable write expressions
      * @param array{
-     *     withDatetimeMicroseconds?: bool
+     *     withDatetimeMicroseconds?: bool,
+     *     enableInterpolationInLogs?: bool
      * } $options
      */
     public function __construct(

@@ -8,8 +8,11 @@ use Cycle\Database\Config\SQLiteDriverConfig;
 use Cycle\Database\Driver\Driver;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\HandlerInterface;
+use Cycle\Database\Driver\PDOInterface;
+use Cycle\Database\Driver\PDOStatementInterface;
 use Cycle\Database\Query\BuilderInterface;
 use Cycle\Database\Tests\Unit\Stub\TestDriver;
+use Cycle\Database\Tests\Unit\Stub\TestLogger;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -87,6 +90,64 @@ class AbstractDriverTest extends TestCase
         $newDriver = clone $driver;
 
         $this->checkImmutability($driver, $newDriver);
+    }
+
+    public function testLogsWithDisabledInterpolation(): void
+    {
+        $pdo = $this->createMock(PDOInterface::class);
+        $pdo
+            ->expects($this->once())
+            ->method('prepare')
+            ->willReturn($this->createMock(PDOStatementInterface::class));
+
+        $driver = TestDriver::createWith(
+            new SQLiteDriverConfig(),
+            $this->createMock(HandlerInterface::class),
+            $this->createMock(BuilderInterface::class),
+            $pdo
+        );
+
+        $logger = new TestLogger();
+        $driver->setLogger($logger);
+
+        $driver->query(
+            'SELECT * FROM sample_table WHERE id IN (?, ?, ?) ORDER BY id ASC',
+            [1, 2, 3]
+        );
+
+        $this->assertSame(
+            'SELECT * FROM sample_table WHERE id IN (?, ?, ?) ORDER BY id ASC',
+            $logger->getMessage()
+        );
+    }
+
+    public function testLogsWithEnabledInterpolation(): void
+    {
+        $pdo = $this->createMock(PDOInterface::class);
+        $pdo
+            ->expects($this->once())
+            ->method('prepare')
+            ->willReturn($this->createMock(PDOStatementInterface::class));
+
+        $driver = TestDriver::createWith(
+            new SQLiteDriverConfig(options: ['enableInterpolationInLogs' => true]),
+            $this->createMock(HandlerInterface::class),
+            $this->createMock(BuilderInterface::class),
+            $pdo
+        );
+
+        $logger = new TestLogger();
+        $driver->setLogger($logger);
+
+        $driver->query(
+            'SELECT * FROM sample_table WHERE id IN (?, ?, ?) ORDER BY id ASC',
+            [1, 2, 3]
+        );
+
+        $this->assertSame(
+            'SELECT * FROM sample_table WHERE id IN (1, 2, 3) ORDER BY id ASC',
+            $logger->getMessage()
+        );
     }
 
     private function checkImmutability(DriverInterface $driver, DriverInterface $newDriver): void
