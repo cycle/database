@@ -12,7 +12,6 @@ use Cycle\Database\Driver\PDOInterface;
 use Cycle\Database\Driver\PDOStatementInterface;
 use Cycle\Database\Query\BuilderInterface;
 use Cycle\Database\Tests\Unit\Stub\TestDriver;
-use Cycle\Database\Tests\Unit\Stub\TestLogger;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
