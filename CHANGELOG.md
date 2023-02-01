@@ -1,10 +1,12 @@
 # CHANGELOG
 
-v2.4.0 (in progress)
+v2.4.0 (01.02.2023)
 -------------------
 - Add option `logQueryParameters` in the driver `options` to enable interpolation in SQL query logs. 
   Since **v2.4.0**, interpolation in logs is **disabled** by default by @msmakouz (#95)
 - Add PostgreSQL specific data types by @msmakouz (#93)
+- Add MySQL `SET` type support by @msmakouz (#92)
+- Fix Interpolator performance by @msmakouz (#94) thx @hustlahusky
 
 v2.3.0 (27.12.2022)
 -------------------
