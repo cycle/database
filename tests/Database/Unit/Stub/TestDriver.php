@@ -7,14 +7,18 @@ namespace Cycle\Database\Tests\Unit\Stub;
 use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Driver\Driver;
 use Cycle\Database\Driver\HandlerInterface;
+use Cycle\Database\Driver\PDOInterface;
 use Cycle\Database\Driver\SQLite\SQLiteCompiler;
 use Cycle\Database\Driver\SQLite\SQLiteHandler;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Query\BuilderInterface;
 use Cycle\Database\Query\QueryBuilder;
+use PDO;
 
 class TestDriver extends Driver
 {
+    protected ?PDOInterface $pdoMock = null;
+
     protected function mapException(\Throwable $exception, string $query): StatementException
     {
         throw $exception;
@@ -38,13 +42,23 @@ class TestDriver extends Driver
     public static function createWith(
         DriverConfig $config,
         HandlerInterface $handler,
-        BuilderInterface $builder
+        BuilderInterface $builder,
+        ?PDOInterface $pdoMock = null
     ): Driver {
-        return new self(
+        $driver = new self(
             $config,
             $handler,
             new SQLiteCompiler('""'),
             $builder
         );
+
+        $driver->pdoMock = $pdoMock;
+
+        return $driver;
+    }
+
+    protected function getPDO(): PDO|PDOInterface
+    {
+        return $this->pdoMock ?? parent::getPDO();
     }
 }

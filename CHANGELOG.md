@@ -1,5 +1,11 @@
 # CHANGELOG
 
+v2.4.0 (in progress)
+-------------------
+- Add option `logQueryParameters` in the driver `options` to enable interpolation in SQL query logs. 
+  Since **v2.4.0**, interpolation in logs is **disabled** by default by @msmakouz (#95)
+- Add PostgreSQL specific data types by @msmakouz (#93)
+
 v2.3.0 (27.12.2022)
 -------------------
 - Add support for array values in the `IN` and `NOT IN` operators by @roxblnfk (#69, #70, #71)
