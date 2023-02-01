@@ -107,17 +107,16 @@ class AbstractDriverTest extends TestCase
             $pdo
         );
 
-        $logger = new TestLogger();
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger
+            ->expects($this->once())
+            ->method('info')
+            ->with('SELECT * FROM sample_table WHERE id IN (?, ?, ?) ORDER BY id ASC');
         $driver->setLogger($logger);
 
         $driver->query(
             'SELECT * FROM sample_table WHERE id IN (?, ?, ?) ORDER BY id ASC',
             [1, 2, 3]
-        );
-
-        $this->assertSame(
-            'SELECT * FROM sample_table WHERE id IN (?, ?, ?) ORDER BY id ASC',
-            $logger->getMessage()
         );
     }
 
@@ -130,23 +129,22 @@ class AbstractDriverTest extends TestCase
             ->willReturn($this->createMock(PDOStatementInterface::class));
 
         $driver = TestDriver::createWith(
-            new SQLiteDriverConfig(options: ['enableInterpolationInLogs' => true]),
+            new SQLiteDriverConfig(options: ['logQueryParameters' => true]),
             $this->createMock(HandlerInterface::class),
             $this->createMock(BuilderInterface::class),
             $pdo
         );
 
-        $logger = new TestLogger();
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger
+            ->expects($this->once())
+            ->method('info')
+            ->with('SELECT * FROM sample_table WHERE id IN (1, 2, 3) ORDER BY id ASC');
         $driver->setLogger($logger);
 
         $driver->query(
             'SELECT * FROM sample_table WHERE id IN (?, ?, ?) ORDER BY id ASC',
             [1, 2, 3]
-        );
-
-        $this->assertSame(
-            'SELECT * FROM sample_table WHERE id IN (1, 2, 3) ORDER BY id ASC',
-            $logger->getMessage()
         );
     }
 

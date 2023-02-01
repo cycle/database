@@ -2,7 +2,7 @@
 
 v2.4.0 (in progress)
 -------------------
-- Add option `enableInterpolationInLogs` in the driver `options` to enable interpolation in SQL query logs. 
+- Add option `logQueryParameters` in the driver `options` to enable interpolation in SQL query logs. 
   Since **v2.4.0**, interpolation in logs is **disabled** by default by @msmakouz (#95)
 - Add PostgreSQL specific data types by @msmakouz (#93)
 

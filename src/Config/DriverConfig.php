@@ -26,7 +26,7 @@ abstract class DriverConfig
 
     protected array $defaultOptions = [
         'withDatetimeMicroseconds' => false,
-        'enableInterpolationInLogs' => false,
+        'logQueryParameters' => false,
     ];
 
     public array $options = [];
@@ -42,7 +42,7 @@ abstract class DriverConfig
      * @param bool $readonly Disable write expressions
      * @param array{
      *     withDatetimeMicroseconds?: bool,
-     *     enableInterpolationInLogs?: bool
+     *     logQueryParameters?: bool
      * } $options
      */
     public function __construct(
