@@ -75,4 +75,24 @@ class TableTest extends CommonClass
         $data = $table->select('name', 'value')->distinctOn('name')->fetchAll();
         $this->assertCount(3, $data);
     }
+
+    public function testDependencies(): void
+    {
+        $schema = $this->database->table('table2')->getSchema();
+        $schema->primary('id');
+        $schema->text('name');
+        $schema->integer('value');
+        $schema->save();
+
+        $table = $this->database->table('table');
+
+        $this->assertCount(0, $table->getDependencies());
+
+        $schema = $table->getSchema();
+        $schema->integer('external_id');
+        $schema->foreignKey(['external_id'])->references('table2', ['id']);
+        $schema->save();
+
+        $this->assertSame(['public.table2'], $table->getDependencies());
+    }
 }
