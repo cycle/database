@@ -1094,6 +1094,20 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    public function testColumnWithAliasWithoutTableAlias(): void
+    {
+        $select = $this->db('prefixed', 'prefix_')
+            ->select()
+            ->columns(['name as user_name'])
+            ->from('users as u')
+            ->where(['user_name' => 'John']);
+
+        $this->assertSameQuery(
+            'SELECT {name} AS {user_name} FROM {prefix_users} AS {u} WHERE {user_name} = ?',
+            $select
+        );
+    }
+
     public function testMultipleColumns(): void
     {
         $select = $this->database->select()
