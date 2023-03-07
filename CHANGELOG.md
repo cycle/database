@@ -1,5 +1,10 @@
 # CHANGELOG
 
+v2.4.1 (08.03.2023)
+-------------------
+- Fix: add schema to Postgres dependency table names by @msmakouz (#102)
+- Fix: don't add a table prefix when a column is quoting by @msmakouz (#103)
+
 v2.4.0 (01.02.2023)
 -------------------
 - Add option `logQueryParameters` in the driver `options` to enable interpolation in SQL query logs. 

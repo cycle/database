@@ -387,9 +387,15 @@ abstract class SelectWithJoinQueryTest extends BaseTest
             ->onWhere('admins.id', 37);
 
         $this->assertSameQueryWithParameters(
-            'SELECT {users}.{id} AS {memberId}, {users}.{name} AS {name},? as memberType,? as accessType, IF(admins.id, ?, ?) as invited
-             FROM {users}, {admins}
-             LEFT JOIN {admins} AS {admins} ON {users}.{admin_id}={admins}.{id} AND {admins}.{id} = ?',
+            <<<'SQL'
+                SELECT {users}.{id} AS {memberId},
+                    {users}.{name} AS {name},
+                    ? as memberType,
+                    ? as accessType,
+                    IF(admins.id, ?, ?) as invited
+                FROM {users}, {admins}
+                LEFT JOIN {admins} AS {admins} ON {users}.{admin_id}={admins}.{id} AND {admins}.{id} = ?
+                SQL,
             [1, 3, 1, 0, 37],
             $select
         );
