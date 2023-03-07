@@ -66,6 +66,17 @@ class PostgresTable extends AbstractTable
         }
     }
 
+    public function getDependencies(): array
+    {
+        $tables = [];
+        foreach ($this->current->getForeignKeys() as $foreignKey) {
+            [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($foreignKey->getForeignTable());
+            $tables[] = $tableSchema . '.' . $tableName;
+        }
+
+        return $tables;
+    }
+
     protected function fetchColumns(): array
     {
         [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
