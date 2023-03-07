@@ -173,7 +173,7 @@ final class Quoter
         // never create table alias to alias associations
         $quoted = sprintf(
             '%s AS %s',
-            $this->identifier($this->prefix . $identifier),
+            $this->identifier($isTable ? $this->prefix . $identifier : $identifier),
             $this->identifier($alias)
         );
 
