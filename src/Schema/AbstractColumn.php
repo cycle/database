@@ -256,16 +256,16 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      */
     public function __call(string $name, array $arguments = []): self
     {
-        try {
-            $this->type($name);
-        } catch (SchemaException $e) {
-            if (\count($arguments) === 1 && \key($arguments) === 0) {
+        if (\count($arguments) === 1 && \key($arguments) === 0) {
+            if (\array_key_exists($name, $this->getAttributesMap())) {
                 $this->fillAttributes([$name => $arguments[0]]);
                 return $this;
             }
-            throw $e;
         }
+
+        $this->type($name);
         $this->fillAttributes($arguments);
+
         return $this;
     }
 
@@ -461,8 +461,6 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      *
      * @psalm-param non-empty-string $abstract Abstract or virtual type declared in mapping.
      *
-     * @throws SchemaException
-     *
      * @todo Support native database types (simply bypass abstractType)!
      */
     public function type(string $abstract): self
@@ -478,8 +476,6 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
 
             return $this;
         }
-
-        isset($this->mapping[$abstract]) or throw new SchemaException("Undefined abstract/virtual type '{$abstract}'");
 
         // Originally specified type.
         $this->userType = $abstract;
