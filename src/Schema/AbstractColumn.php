@@ -472,6 +472,13 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
             $abstract = $this->aliases[$abstract];
         }
 
+        if (!isset($this->mapping[$abstract]) && !\array_key_exists($abstract, $this->getAttributesMap())) {
+            $this->type = $abstract;
+            $this->userType = $abstract;
+
+            return $this;
+        }
+
         isset($this->mapping[$abstract]) or throw new SchemaException("Undefined abstract/virtual type '{$abstract}'");
 
         // Originally specified type.
@@ -638,6 +645,13 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         foreach ($columnVars as $name => $value) {
             if (\in_array($name, static::EXCLUDE_FROM_COMPARE, true)) {
                 continue;
+            }
+
+            if ($name === 'type') {
+                // user defined type
+                if (!isset($this->mapping[$this->type]) && $this->type === $this->userType) {
+                    continue;
+                }
             }
 
             if ($name === 'defaultValue') {
