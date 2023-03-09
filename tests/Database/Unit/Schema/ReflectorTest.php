@@ -39,7 +39,7 @@ final class ReflectorTest extends TestCase
         $this->reflector = new Reflector();
     }
 
-    public function testMethodBeforeSyncShouldBeCalled(): void
+    public function testMethodsBeforeAndAfterSyncShouldBeCalled(): void
     {
         $handler = $this->createMock(Handler::class);
         $driver = $this->createMock(DriverInterface::class);
@@ -67,7 +67,7 @@ final class ReflectorTest extends TestCase
         $this->reflector->run();
     }
 
-    public function testMethodBeforeSyncShouldNotBeCalledIfNotExists(): void
+    public function testMethodsBeforeAndAfterSyncShouldNotBeCalledIfNotExists(): void
     {
         $handler = $this->createMock(HandlerInterface::class);
         $driver = $this->createMock(DriverInterface::class);
