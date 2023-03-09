@@ -57,6 +57,8 @@ final class Reflector
 
     /**
      * Return sorted stack.
+     *
+     * @return AbstractTable[]
      */
     public function sortedTables(): array
     {
@@ -102,9 +104,24 @@ final class Reflector
             //Drop not-needed indexes
             $this->dropIndexes();
 
+            foreach ($this->sortedTables() as $table) {
+                $handler = $table->getDriver()->getSchemaHandler();
+                if (\method_exists($handler, 'beforeSync')) {
+                    $handler->beforeSync($this->tables);
+                }
+            }
+
             //Other changes [NEW TABLES WILL BE CREATED HERE!]
             foreach ($this->commitChanges() as $table) {
                 $table->save(HandlerInterface::CREATE_FOREIGN_KEYS, true);
+            }
+
+            foreach ($this->sortedTables() as $table) {
+                $handler = $table->getDriver()->getSchemaHandler();
+
+                if (\method_exists($handler, 'afterSync')) {
+                    $handler->afterSync($this->tables);
+                }
             }
         } catch (Throwable $e) {
             $this->rollbackTransaction();

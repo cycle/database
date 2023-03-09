@@ -15,6 +15,8 @@ use PDO;
 use Cycle\Database\Driver\Handler;
 use Cycle\Database\Driver\MySQL\Exception\MySQLException;
 use Cycle\Database\Driver\MySQL\Schema\MySQLTable;
+use Cycle\Database\Exception\HandlerException;
+use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Schema\AbstractForeignKey;
@@ -70,23 +72,10 @@ class MySQLHandler extends Handler
         AbstractColumn $initial,
         AbstractColumn $column
     ): void {
-        $foreignBackup = [];
-        foreach ($table->getForeignKeys() as $foreign) {
-            if ($column->getName() === $foreign->getColumns()) {
-                $foreignBackup[] = $foreign;
-                $this->dropForeignKey($table, $foreign);
-            }
-        }
-
         $this->run(
             "ALTER TABLE {$this->identify($table)}
                     CHANGE {$this->identify($initial)} {$column->sqlStatement($this->driver)}"
         );
-
-        //Restoring FKs
-        foreach ($foreignBackup as $foreign) {
-            $this->createForeignKey($table, $foreign);
-        }
     }
 
     public function dropIndex(AbstractTable $table, AbstractIndex $index): void
@@ -110,6 +99,22 @@ class MySQLHandler extends Handler
         $this->run(
             "ALTER TABLE {$this->identify($table)} DROP FOREIGN KEY {$this->identify($foreignKey)}"
         );
+    }
+
+    public function isForeignKeyExists(AbstractTable $table, AbstractForeignKey $foreignKey): bool
+    {
+        try {
+            $count = $this->driver->query(
+                'SELECT count(`constraint_name`) as count FROM `information_schema`.`key_column_usage`
+                WHERE `constraint_name` = ? AND `table_schema` = ? AND `table_name` = ?',
+                [$foreignKey->getName(), $this->driver->getSource(), $table->getName()]
+            )->fetchAll();
+
+            return $count[0]['count'] === 1;
+
+        } catch (StatementException $e) {
+            throw new HandlerException($e);
+        }
     }
 
     /**
@@ -139,6 +144,34 @@ class MySQLHandler extends Handler
             throw new MySQLException(
                 "Column {$column} of type text/blob can not have non empty default value"
             );
+        }
+    }
+
+    /**
+     * @param AbstractTable[] $tables
+     */
+    public function beforeSync(array $tables): void
+    {
+        foreach ($tables as $table) {
+            foreach ($table->getForeignKeys() as $foreignKey) {
+                if ($this->isForeignKeyExists($table, $foreignKey)) {
+                    $this->dropForeignKey($table, $foreignKey);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param AbstractTable[] $tables
+     */
+    public function afterSync(array $tables): void
+    {
+        foreach ($tables as $table) {
+            foreach ($table->getForeignKeys() as $foreignKey) {
+                if ($table->exists() && !$this->isForeignKeyExists($table, $foreignKey)) {
+                    $this->createForeignKey($table, $foreignKey);
+                }
+            }
         }
     }
 }
