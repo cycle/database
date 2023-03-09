@@ -110,8 +110,7 @@ class MySQLHandler extends Handler
                 [$foreignKey->getName(), $this->driver->getSource(), $table->getName()]
             )->fetchAll();
 
-            return $count[0]['count'] === 1;
-
+            return (int) $count[0]['count'] === 1;
         } catch (StatementException $e) {
             throw new HandlerException($e);
         }

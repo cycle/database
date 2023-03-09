@@ -155,6 +155,7 @@ abstract class Handler implements HandlerInterface
 
     /**
      * This method will be called by Reflector in the run method before the changes are synchronized.
+     *
      * @param AbstractTable[] $tables
      */
     public function beforeSync(array $tables): void
@@ -163,6 +164,7 @@ abstract class Handler implements HandlerInterface
 
     /**
      * This method will be called by Reflector in the run method after the changes are synchronized.
+     *
      * @param AbstractTable[] $tables
      */
     public function afterSync(array $tables): void
