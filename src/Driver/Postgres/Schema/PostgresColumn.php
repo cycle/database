@@ -56,7 +56,7 @@ class PostgresColumn extends AbstractColumn
         'bigPrimary',
         'smallserial',
         'serial',
-        'bigserial'
+        'bigserial',
     ];
 
     /**
@@ -109,7 +109,7 @@ class PostgresColumn extends AbstractColumn
         'blob'           => 'binary',
         'bitVarying'     => 'bit varying',
         'smallSerial'    => 'smallserial',
-        'bigSerial'      => 'bigserial'
+        'bigSerial'      => 'bigserial',
     ];
 
     protected array $mapping = [
