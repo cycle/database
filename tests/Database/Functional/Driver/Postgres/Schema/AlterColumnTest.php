@@ -85,4 +85,18 @@ class AlterColumnTest extends CommonClass
         $this->assertSameAsInDB($schema);
         $this->assertSame(6, $this->fetchSchema($schema)->column('other_datetime')->getSize());
     }
+
+    public function testAddSerialColumn(): void
+    {
+        $schema = $this->sampleSchema('table');
+        $schema->primary('id');
+
+        $schema->save();
+        $this->assertSameAsInDB($schema);
+
+        $schema->serial('foo');
+
+        $schema->save();
+        $this->assertSameAsInDB($schema);
+    }
 }
