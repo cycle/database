@@ -274,6 +274,9 @@ class PostgresColumn extends AbstractColumn
     #[ColumnAttribute(['interval'])]
     protected ?string $intervalType = null;
 
+    /**
+     * Internal field to determine if the serial is PK.
+     */
     protected bool $isPrimary = false;
 
     public function getConstraints(): array
@@ -517,6 +520,7 @@ class PostgresColumn extends AbstractColumn
                 $column->type === 'smallint' => 'smallserial',
                 default => 'serial'
             };
+            $column->autoIncrement = true;
 
             $column->defaultValue = new Fragment($column->defaultValue);
 
