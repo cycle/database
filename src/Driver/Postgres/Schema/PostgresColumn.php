@@ -59,6 +59,8 @@ class PostgresColumn extends AbstractColumn
         'bigserial',
     ];
 
+    protected const INTEGER_TYPES = ['int', 'bigint', 'integer', 'smallint'];
+
     /**
      * Default timestamp expression (driver specific).
      */
@@ -507,7 +509,7 @@ class PostgresColumn extends AbstractColumn
 
         if (
             \is_string($column->defaultValue)
-            && \in_array($column->type, ['int', 'bigint', 'integer', 'smallint'])
+            && \in_array($column->type, self::INTEGER_TYPES)
             && \preg_match('/nextval(.*)/', $column->defaultValue)
         ) {
             $column->type = match (true) {
