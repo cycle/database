@@ -27,7 +27,8 @@ final class SerialColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
 
         $savedColumn = $this->schema('small_serial')->getColumns()['foo'];
-        $this->assertFalse($column->getAttributes()['primary']);
+        $this->assertFalse((new \ReflectionProperty($savedColumn, 'isPrimary'))->getValue($savedColumn));
+        $this->assertFalse((new \ReflectionProperty($column, 'isPrimary'))->getValue($savedColumn));
         $this->assertFalse($savedColumn->isNullable());
         $this->assertSame('smallserial', $column->getAbstractType());
         $this->assertSame('smallserial', $column->getInternalType());
@@ -48,7 +49,8 @@ final class SerialColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
 
         $savedColumn = $this->schema('serial')->getColumns()['foo'];
-        $this->assertFalse($column->getAttributes()['primary']);
+        $this->assertFalse((new \ReflectionProperty($savedColumn, 'isPrimary'))->getValue($savedColumn));
+        $this->assertFalse((new \ReflectionProperty($column, 'isPrimary'))->getValue($savedColumn));
         $this->assertFalse($savedColumn->isNullable());
         $this->assertSame('serial', $column->getAbstractType());
         $this->assertSame('serial', $column->getInternalType());
@@ -66,7 +68,8 @@ final class SerialColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
 
         $savedColumn = $this->schema('big_serial')->getColumns()['foo'];
-        $this->assertFalse($column->getAttributes()['primary']);
+        $this->assertFalse((new \ReflectionProperty($savedColumn, 'isPrimary'))->getValue($savedColumn));
+        $this->assertFalse((new \ReflectionProperty($column, 'isPrimary'))->getValue($savedColumn));
         $this->assertFalse($savedColumn->isNullable());
         $this->assertSame('bigserial', $column->getAbstractType());
         $this->assertSame('bigserial', $column->getInternalType());

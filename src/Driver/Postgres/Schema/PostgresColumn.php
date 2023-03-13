@@ -50,7 +50,7 @@ class PostgresColumn extends AbstractColumn
     private const WITH_TIMEZONE = 'with time zone';
     private const WITHOUT_TIMEZONE = 'without time zone';
 
-    private const TYPES_WITH_NEXTVAL_DEFAULT_VALUE = [
+    private const SERIAL_TYPES = [
         'smallPrimary',
         'primary',
         'bigPrimary',
@@ -114,14 +114,14 @@ class PostgresColumn extends AbstractColumn
 
     protected array $mapping = [
         //Primary sequences
-        'smallPrimary' => ['type' => 'smallserial', 'autoIncrement' => true, 'nullable' => false, 'primary' => true],
-        'primary'      => ['type' => 'serial', 'autoIncrement' => true, 'nullable' => false, 'primary' => true],
-        'bigPrimary'   => ['type' => 'bigserial', 'autoIncrement' => true, 'nullable' => false, 'primary' => true],
+        'smallPrimary' => ['type' => 'smallserial', 'nullable' => false, 'isPrimary' => true],
+        'primary'      => ['type' => 'serial', 'nullable' => false, 'isPrimary' => true],
+        'bigPrimary'   => ['type' => 'bigserial', 'nullable' => false, 'isPrimary' => true],
 
         //Serial
-        'smallserial' => ['type' => 'smallserial', 'autoIncrement' => true, 'nullable' => false],
-        'serial'      => ['type' => 'serial', 'autoIncrement' => true, 'nullable' => false],
-        'bigserial'   => ['type' => 'bigserial', 'autoIncrement' => true, 'nullable' => false],
+        'smallserial' => ['type' => 'smallserial', 'nullable' => false],
+        'serial'      => ['type' => 'serial', 'nullable' => false],
+        'bigserial'   => ['type' => 'bigserial', 'nullable' => false],
 
         //Enum type (mapped via method)
         'enum'         => 'enum',
@@ -197,12 +197,12 @@ class PostgresColumn extends AbstractColumn
     ];
 
     protected array $reverseMapping = [
-        'smallPrimary' => [['type' => 'smallserial', 'primary' => true]],
-        'primary'      => [['type' => 'serial', 'primary' => true]],
-        'bigPrimary'   => [['type' => 'bigserial', 'primary' => true]],
-        'smallserial'  => [['type' => 'smallserial', 'primary' => false]],
-        'serial'       => [['type' => 'serial', 'primary' => false]],
-        'bigserial'    => [['type' => 'bigserial', 'primary' => false]],
+        'smallPrimary' => [['type' => 'smallserial', 'isPrimary' => true]],
+        'primary'      => [['type' => 'serial', 'isPrimary' => true]],
+        'bigPrimary'   => [['type' => 'bigserial', 'isPrimary' => true]],
+        'smallserial'  => [['type' => 'smallserial', 'isPrimary' => false]],
+        'serial'       => [['type' => 'serial', 'isPrimary' => false]],
+        'bigserial'    => [['type' => 'bigserial', 'isPrimary' => false]],
         'enum'         => ['enum'],
         'boolean'      => ['boolean'],
         'integer'      => ['int', 'integer', 'int4', 'int4range'],
@@ -251,6 +251,8 @@ class PostgresColumn extends AbstractColumn
 
     /**
      * Field is auto incremental.
+     *
+     * @deprecated since v2.5.0
      */
     protected bool $autoIncrement = false;
 
@@ -270,8 +272,7 @@ class PostgresColumn extends AbstractColumn
     #[ColumnAttribute(['interval'])]
     protected ?string $intervalType = null;
 
-    #[ColumnAttribute(['smallPrimary', 'primary', 'bigPrimary', 'smallserial', 'serial', 'bigserial'])]
-    protected bool $primary = false;
+    protected bool $isPrimary = false;
 
     public function getConstraints(): array
     {
@@ -514,12 +515,11 @@ class PostgresColumn extends AbstractColumn
                 $column->type === 'smallint' => 'smallserial',
                 default => 'serial'
             };
-            $column->autoIncrement = true;
 
             $column->defaultValue = new Fragment($column->defaultValue);
 
             if ($schema['is_primary']) {
-                $column->primary = true;
+                $column->isPrimary = true;
             }
 
             return $column;
@@ -587,7 +587,7 @@ class PostgresColumn extends AbstractColumn
         }
 
         return (bool) (
-            \in_array($this->getAbstractType(), self::TYPES_WITH_NEXTVAL_DEFAULT_VALUE, true)
+            \in_array($this->getAbstractType(), self::SERIAL_TYPES, true)
             && $initial->getDefaultValue() != $this->getDefaultValue()
         );
     }

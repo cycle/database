@@ -40,15 +40,13 @@ class ConsistencyTest extends CommonClass
         $schema->save();
 
         $schema = $d->getSchema('table');
-
         $this->assertTrue($schema->exists());
-        $this->assertSame($schema->column('target')->getInternalType(), $column->getInternalType());
-        $this->assertTrue($schema->column('target')->getAttributes()['primary']);
-        $this->assertTrue($column->getAttributes()['primary']);
-        $this->assertInstanceOf(
-            FragmentInterface::class,
-            $schema->column('target')->getDefaultValue()
-        );
+
+        $savedColumn = $schema->getColumns()['target'];
+        $this->assertSame($savedColumn->getInternalType(), $column->getInternalType());
+        $this->assertTrue((new \ReflectionProperty($savedColumn, 'isPrimary'))->getValue($savedColumn));
+        $this->assertTrue((new \ReflectionProperty($column, 'isPrimary'))->getValue($column));
+        $this->assertInstanceOf(FragmentInterface::class, $savedColumn->getDefaultValue());
         $this->assertSame('target', $d->getPrimaryKey('', 'table'));
     }
 
@@ -73,16 +71,11 @@ class ConsistencyTest extends CommonClass
         $schema = $this->schema('table');
         $this->assertTrue($schema->exists());
 
-        $this->assertSame(
-            $schema->column('target')->getInternalType(),
-            $column->getInternalType()
-        );
-        $this->assertTrue($schema->column('target')->getAttributes()['primary']);
-        $this->assertTrue($column->getAttributes()['primary']);
-        $this->assertInstanceOf(
-            FragmentInterface::class,
-            $schema->column('target')->getDefaultValue()
-        );
+        $savedColumn = $schema->getColumns()['target'];
+        $this->assertSame($savedColumn->getInternalType(), $column->getInternalType());
+        $this->assertTrue((new \ReflectionProperty($savedColumn, 'isPrimary'))->getValue($savedColumn));
+        $this->assertTrue((new \ReflectionProperty($column, 'isPrimary'))->getValue($column));
+        $this->assertInstanceOf(FragmentInterface::class, $savedColumn->getDefaultValue());
     }
 
     public function testSmallPrimary(): void
@@ -97,15 +90,10 @@ class ConsistencyTest extends CommonClass
         $schema = $this->schema('table');
         $this->assertTrue($schema->exists());
 
-        $this->assertSame(
-            $schema->column('smallPrimary')->getInternalType(),
-            $column->getInternalType()
-        );
-        $this->assertTrue($schema->column('smallPrimary')->getAttributes()['primary']);
-        $this->assertTrue($column->getAttributes()['primary']);
-        $this->assertInstanceOf(
-            FragmentInterface::class,
-            $schema->column('smallPrimary')->getDefaultValue()
-        );
+        $savedColumn = $schema->getColumns()['smallPrimary'];
+        $this->assertSame($savedColumn->getInternalType(), $column->getInternalType());
+        $this->assertTrue((new \ReflectionProperty($savedColumn, 'isPrimary'))->getValue($savedColumn));
+        $this->assertTrue((new \ReflectionProperty($column, 'isPrimary'))->getValue($column));
+        $this->assertInstanceOf(FragmentInterface::class, $savedColumn->getDefaultValue());
     }
 }
