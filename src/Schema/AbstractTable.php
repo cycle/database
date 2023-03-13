@@ -82,6 +82,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
 
     /**
      * @param DriverInterface $driver Parent driver.
+     *
      * @psalm-param non-empty-string $name Table name, must include table prefix.
      *
      * @param string $prefix Database specific table prefix. Required for table renames.
@@ -204,6 +205,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * Sets table name. Use this function in combination with save to rename table.
      *
      * @psalm-param non-empty-string $name
+     *
      * @psalm-return non-empty-string Prefixed table name.
      */
     public function setName(string $name): string
@@ -474,6 +476,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * Rename index (only if index exists).
      *
      * @param array $columns Index forming columns.
+     *
      * @psalm-param non-empty-string $name New index name.
      *
      * @throws SchemaException

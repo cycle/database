@@ -52,6 +52,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
      * @psalm-param non-empty-string $table
      *
      * @param string $tablePrefix
+     *
      * @psalm-param non-empty-string $name
      */
     public function __construct(

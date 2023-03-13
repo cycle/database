@@ -28,6 +28,7 @@ class PostgresDriverConfig extends DriverConfig
 
     /**
      * @var non-empty-array<non-empty-string>
+     *
      * @psalm-readonly-allow-private-mutation
      */
     public array $schema;

@@ -16,6 +16,7 @@ use Cycle\Database\Config\PDOConnectionConfig;
 
 /**
  * @psalm-type IsolationLevelType = \PDO::SQLSRV_TXN_*
+ *
  * @psalm-import-type PDOFlag from PDOConnectionConfig
  */
 class TcpConnectionConfig extends ConnectionConfig implements ProvidesSourceString
