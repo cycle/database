@@ -42,13 +42,11 @@ class ConsistencyTest extends CommonClass
         $schema = $d->getSchema('table');
         $this->assertTrue($schema->exists());
 
-        $this->assertSame($schema->column('target')->getInternalType(), $column->getInternalType());
-
-        $this->assertInstanceOf(
-            FragmentInterface::class,
-            $schema->column('target')->getDefaultValue()
-        );
-
+        $savedColumn = $schema->getColumns()['target'];
+        $this->assertSame($savedColumn->getInternalType(), $column->getInternalType());
+        $this->assertTrue($this->getPrivatePropertyValue($savedColumn, 'isPrimary'));
+        $this->assertTrue($this->getPrivatePropertyValue($column, 'isPrimary'));
+        $this->assertInstanceOf(FragmentInterface::class, $savedColumn->getDefaultValue());
         $this->assertSame('target', $d->getPrimaryKey('', 'table'));
     }
 
@@ -73,15 +71,11 @@ class ConsistencyTest extends CommonClass
         $schema = $this->schema('table');
         $this->assertTrue($schema->exists());
 
-        $this->assertSame(
-            $schema->column('target')->getInternalType(),
-            $column->getInternalType()
-        );
-
-        $this->assertInstanceOf(
-            FragmentInterface::class,
-            $schema->column('target')->getDefaultValue()
-        );
+        $savedColumn = $schema->getColumns()['target'];
+        $this->assertSame($savedColumn->getInternalType(), $column->getInternalType());
+        $this->assertTrue($this->getPrivatePropertyValue($savedColumn, 'isPrimary'));
+        $this->assertTrue($this->getPrivatePropertyValue($column, 'isPrimary'));
+        $this->assertInstanceOf(FragmentInterface::class, $savedColumn->getDefaultValue());
     }
 
     public function testSmallPrimary(): void
@@ -96,14 +90,10 @@ class ConsistencyTest extends CommonClass
         $schema = $this->schema('table');
         $this->assertTrue($schema->exists());
 
-        $this->assertSame(
-            $schema->column('smallPrimary')->getInternalType(),
-            $column->getInternalType()
-        );
-
-        $this->assertInstanceOf(
-            FragmentInterface::class,
-            $schema->column('smallPrimary')->getDefaultValue()
-        );
+        $savedColumn = $schema->getColumns()['smallPrimary'];
+        $this->assertSame($savedColumn->getInternalType(), $column->getInternalType());
+        $this->assertTrue($this->getPrivatePropertyValue($savedColumn, 'isPrimary'));
+        $this->assertTrue($this->getPrivatePropertyValue($column, 'isPrimary'));
+        $this->assertInstanceOf(FragmentInterface::class, $savedColumn->getDefaultValue());
     }
 }

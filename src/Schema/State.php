@@ -114,7 +114,7 @@ final class State
         $primaryColumns = [];
         foreach ($this->getColumns() as $column) {
             $type = $column->getAbstractType();
-            if ($type === 'primary' || $type === 'bigPrimary') {
+            if ($type === 'smallPrimary' || $type === 'primary' || $type === 'bigPrimary') {
                 if (!\in_array($column->getName(), $this->primaryKeys, true)) {
                     //Only columns not listed as primary keys already
                     $primaryColumns[] = $column->getName();

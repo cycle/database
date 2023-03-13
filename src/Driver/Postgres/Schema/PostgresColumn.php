@@ -41,11 +41,25 @@ use Cycle\Database\Schema\Attribute\ColumnAttribute;
  * @method $this macaddr8()
  * @method $this tsvector()
  * @method $this tsquery()
+ * @method $this smallSerial()
+ * @method $this serial()
+ * @method $this bigSerial()
  */
 class PostgresColumn extends AbstractColumn
 {
     private const WITH_TIMEZONE = 'with time zone';
     private const WITHOUT_TIMEZONE = 'without time zone';
+
+    private const SERIAL_TYPES = [
+        'smallPrimary',
+        'primary',
+        'bigPrimary',
+        'smallserial',
+        'serial',
+        'bigserial',
+    ];
+
+    protected const INTEGER_TYPES = ['int', 'bigint', 'integer', 'smallint'];
 
     /**
      * Default timestamp expression (driver specific).
@@ -96,13 +110,20 @@ class PostgresColumn extends AbstractColumn
         'bool'           => 'boolean',
         'blob'           => 'binary',
         'bitVarying'     => 'bit varying',
+        'smallSerial'    => 'smallserial',
+        'bigSerial'      => 'bigserial',
     ];
 
     protected array $mapping = [
         //Primary sequences
-        'smallPrimary' => ['type' => 'smallserial', 'autoIncrement' => true, 'nullable' => false],
-        'primary'      => ['type' => 'serial', 'autoIncrement' => true, 'nullable' => false],
-        'bigPrimary'   => ['type' => 'bigserial', 'autoIncrement' => true, 'nullable' => false],
+        'smallPrimary' => ['type' => 'smallserial', 'nullable' => false, 'isPrimary' => true],
+        'primary'      => ['type' => 'serial', 'nullable' => false, 'isPrimary' => true],
+        'bigPrimary'   => ['type' => 'bigserial', 'nullable' => false, 'isPrimary' => true],
+
+        //Serial
+        'smallserial' => ['type' => 'smallserial', 'nullable' => false],
+        'serial'      => ['type' => 'serial', 'nullable' => false],
+        'bigserial'   => ['type' => 'bigserial', 'nullable' => false],
 
         //Enum type (mapped via method)
         'enum'         => 'enum',
@@ -178,9 +199,12 @@ class PostgresColumn extends AbstractColumn
     ];
 
     protected array $reverseMapping = [
-        'smallPrimary' => ['smallserial'],
-        'primary'      => ['serial'],
-        'bigPrimary'   => ['bigserial'],
+        'smallPrimary' => [['type' => 'smallserial', 'isPrimary' => true]],
+        'primary'      => [['type' => 'serial', 'isPrimary' => true]],
+        'bigPrimary'   => [['type' => 'bigserial', 'isPrimary' => true]],
+        'smallserial'  => [['type' => 'smallserial', 'isPrimary' => false]],
+        'serial'       => [['type' => 'serial', 'isPrimary' => false]],
+        'bigserial'    => [['type' => 'bigserial', 'isPrimary' => false]],
         'enum'         => ['enum'],
         'boolean'      => ['boolean'],
         'integer'      => ['int', 'integer', 'int4', 'int4range'],
@@ -229,6 +253,8 @@ class PostgresColumn extends AbstractColumn
 
     /**
      * Field is auto incremental.
+     *
+     * @deprecated since v2.5.0
      */
     protected bool $autoIncrement = false;
 
@@ -247,6 +273,11 @@ class PostgresColumn extends AbstractColumn
 
     #[ColumnAttribute(['interval'])]
     protected ?string $intervalType = null;
+
+    /**
+     * Internal field to determine if the serial is PK.
+     */
+    protected bool $isPrimary = false;
 
     public function getConstraints(): array
     {
@@ -481,8 +512,8 @@ class PostgresColumn extends AbstractColumn
 
         if (
             \is_string($column->defaultValue)
-            && \in_array($column->type, ['int', 'bigint', 'integer', 'smallint'])
-            && preg_match('/nextval(.*)/', $column->defaultValue)
+            && \in_array($column->type, self::INTEGER_TYPES)
+            && \preg_match('/nextval(.*)/', $column->defaultValue)
         ) {
             $column->type = match (true) {
                 $column->type === 'bigint' => 'bigserial',
@@ -492,6 +523,10 @@ class PostgresColumn extends AbstractColumn
             $column->autoIncrement = true;
 
             $column->defaultValue = new Fragment($column->defaultValue);
+
+            if ($schema['is_primary']) {
+                $column->isPrimary = true;
+            }
 
             return $column;
         }
@@ -558,7 +593,7 @@ class PostgresColumn extends AbstractColumn
         }
 
         return (bool) (
-            \in_array($this->getAbstractType(), ['smallPrimary', 'primary', 'bigPrimary'], true)
+            \in_array($this->getAbstractType(), self::SERIAL_TYPES, true)
             && $initial->getDefaultValue() != $this->getDefaultValue()
         );
     }
