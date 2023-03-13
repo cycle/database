@@ -44,8 +44,8 @@ class ConsistencyTest extends CommonClass
 
         $savedColumn = $schema->getColumns()['target'];
         $this->assertSame($savedColumn->getInternalType(), $column->getInternalType());
-        $this->assertTrue((new \ReflectionProperty($savedColumn, 'isPrimary'))->getValue($savedColumn));
-        $this->assertTrue((new \ReflectionProperty($column, 'isPrimary'))->getValue($column));
+        $this->assertTrue($this->getPrivatePropertyValue($savedColumn, 'isPrimary'));
+        $this->assertTrue($this->getPrivatePropertyValue($column, 'isPrimary'));
         $this->assertInstanceOf(FragmentInterface::class, $savedColumn->getDefaultValue());
         $this->assertSame('target', $d->getPrimaryKey('', 'table'));
     }
@@ -73,8 +73,8 @@ class ConsistencyTest extends CommonClass
 
         $savedColumn = $schema->getColumns()['target'];
         $this->assertSame($savedColumn->getInternalType(), $column->getInternalType());
-        $this->assertTrue((new \ReflectionProperty($savedColumn, 'isPrimary'))->getValue($savedColumn));
-        $this->assertTrue((new \ReflectionProperty($column, 'isPrimary'))->getValue($column));
+        $this->assertTrue($this->getPrivatePropertyValue($savedColumn, 'isPrimary'));
+        $this->assertTrue($this->getPrivatePropertyValue($column, 'isPrimary'));
         $this->assertInstanceOf(FragmentInterface::class, $savedColumn->getDefaultValue());
     }
 
@@ -92,8 +92,8 @@ class ConsistencyTest extends CommonClass
 
         $savedColumn = $schema->getColumns()['smallPrimary'];
         $this->assertSame($savedColumn->getInternalType(), $column->getInternalType());
-        $this->assertTrue((new \ReflectionProperty($savedColumn, 'isPrimary'))->getValue($savedColumn));
-        $this->assertTrue((new \ReflectionProperty($column, 'isPrimary'))->getValue($column));
+        $this->assertTrue($this->getPrivatePropertyValue($savedColumn, 'isPrimary'));
+        $this->assertTrue($this->getPrivatePropertyValue($column, 'isPrimary'));
         $this->assertInstanceOf(FragmentInterface::class, $savedColumn->getDefaultValue());
     }
 }
