@@ -256,6 +256,13 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      */
     public function __call(string $name, array $arguments = []): self
     {
+        if (isset($this->aliases[$name]) || isset($this->mapping[$name])) {
+            $this->type($name);
+        }
+
+        // The type must be set before the attributes are filled.
+        !empty($this->type) or throw new SchemaException("Undefined abstract/virtual type");
+
         if (\count($arguments) === 1 && \key($arguments) === 0) {
             if (\array_key_exists($name, $this->getAttributesMap())) {
                 $this->fillAttributes([$name => $arguments[0]]);
@@ -263,7 +270,6 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
             }
         }
 
-        $this->type($name);
         $this->fillAttributes($arguments);
 
         return $this;
@@ -470,7 +476,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
             $abstract = $this->aliases[$abstract];
         }
 
-        if (!isset($this->mapping[$abstract]) && !\array_key_exists($abstract, $this->getAttributesMap())) {
+        if (!isset($this->mapping[$abstract])) {
             $this->type = $abstract;
             $this->userType = $abstract;
 

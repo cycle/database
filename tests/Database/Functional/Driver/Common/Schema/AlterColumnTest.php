@@ -474,7 +474,7 @@ abstract class AlterColumnTest extends BaseTest
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
 
-        $schema->ltree('ltree_column');
+        $schema->type('ltree_column', 'ltree');
 
         $column = $schema->column('ltree_column');
 
@@ -489,7 +489,7 @@ abstract class AlterColumnTest extends BaseTest
         $schema = $this->sampleSchema('table');
         $this->assertTrue($schema->exists());
 
-        $schema->ltree('ltree_column');
+        $schema->type('ltree_column', 'ltree');
 
         $column = $schema->column('ltree_column');
 
@@ -497,5 +497,14 @@ abstract class AlterColumnTest extends BaseTest
         $column2->type('other');
 
         $this->assertTrue($column2->compare($column));
+    }
+
+    public function testShortcutExceptionIfColumnTypeIsNotExists(): void
+    {
+        $schema = $this->sampleSchema('table');
+        $this->assertTrue($schema->exists());
+
+        $this->expectException(SchemaException::class);
+        $schema->ltree('ltree_column');
     }
 }
