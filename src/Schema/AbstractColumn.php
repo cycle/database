@@ -261,7 +261,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         }
 
         // The type must be set before the attributes are filled.
-        !empty($this->type) or throw new SchemaException("Undefined abstract/virtual type");
+        !empty($this->type) or throw new SchemaException('Undefined abstract/virtual type');
 
         if (\count($arguments) === 1 && \key($arguments) === 0) {
             if (\array_key_exists($name, $this->getAttributesMap())) {
