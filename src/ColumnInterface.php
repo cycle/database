@@ -26,6 +26,8 @@ interface ColumnInterface
 
     /**
      * Get element name (unquoted).
+     *
+     * @return non-empty-string
      */
     public function getName(): string;
 

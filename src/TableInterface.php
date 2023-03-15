@@ -26,7 +26,7 @@ interface TableInterface
     /**
      * Store specific table name (with included prefix and without schema).
      *
-     * @return string
+     * @return non-empty-string
      */
     public function getName(): string;
 
@@ -41,7 +41,7 @@ interface TableInterface
      * Array of columns dedicated to primary index. Attention, this methods will ALWAYS return
      * array, even if there is only one primary key.
      *
-     * @return array
+     * @return list<non-empty-string>
      */
     public function getPrimaryKeys(): array;
 
