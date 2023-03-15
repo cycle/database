@@ -28,7 +28,7 @@ interface TableInterface
      *
      * @return string
      *
-     * @psalm-return non-empty-string
+     * @return non-empty-string
      */
     public function getName(): string;
 
@@ -43,9 +43,7 @@ interface TableInterface
      * Array of columns dedicated to primary index. Attention, this methods will ALWAYS return
      * array, even if there is only one primary key.
      *
-     * @return string[]
-     *
-     * @psalm-return list<non-empty-string>
+     * @return list<non-empty-string>
      */
     public function getPrimaryKeys(): array;
 
