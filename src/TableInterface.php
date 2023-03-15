@@ -27,6 +27,8 @@ interface TableInterface
      * Store specific table name (with included prefix and without schema).
      *
      * @return string
+     *
+     * @psalm-return non-empty-string
      */
     public function getName(): string;
 
