@@ -108,6 +108,10 @@ final class State
 
     /**
      * Method combines primary keys with primary keys automatically calculated based on registered columns.
+     *
+     * @return string[]
+     *
+     * @psalm-return list<non-empty-string>
      */
     public function getPrimaryKeys(): array
     {

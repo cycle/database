@@ -41,7 +41,9 @@ interface TableInterface
      * Array of columns dedicated to primary index. Attention, this methods will ALWAYS return
      * array, even if there is only one primary key.
      *
-     * @return array
+     * @return string[]
+     *
+     * @psalm-return list<non-empty-string>
      */
     public function getPrimaryKeys(): array;
 
