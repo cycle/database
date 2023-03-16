@@ -19,7 +19,7 @@ class TcpConnectionConfig extends ConnectionConfig implements ProvidesSourceStri
 
     /**
      * @param non-empty-string $host
-     * @param non-empty-string|positive-int $port
+     * @param numeric-string|positive-int $port
      * @param non-empty-string $database
      * @param non-empty-string|null $charset
      * @param non-empty-string|null $user
