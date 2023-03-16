@@ -26,7 +26,7 @@ class TcpConnectionConfig extends ConnectionConfig implements ProvidesSourceStri
     /**
      * @param non-empty-string $database The name of the database.
      * @param non-empty-string $host Database connection host.
-     * @param positive-int|non-empty-string|null $port Database connection port.
+     * @param non-empty-string|positive-int|null $port Database connection port.
      * @param non-empty-string|null $app The application name used in tracing.
      * @param bool|null $pooling Specifies whether the connection is assigned from a
      *        connection pool ({@see true}) or not ({@see false}).
