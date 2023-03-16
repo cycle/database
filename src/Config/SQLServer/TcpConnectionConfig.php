@@ -21,10 +21,12 @@ use Cycle\Database\Config\PDOConnectionConfig;
  */
 class TcpConnectionConfig extends ConnectionConfig implements ProvidesSourceString
 {
+    public ?int $port = null;
+
     /**
      * @param non-empty-string $database The name of the database.
      * @param non-empty-string $host Database connection host.
-     * @param positive-int|null $port Database connection port.
+     * @param positive-int|non-empty-string|null $port Database connection port.
      * @param non-empty-string|null $app The application name used in tracing.
      * @param bool|null $pooling Specifies whether the connection is assigned from a
      *        connection pool ({@see true}) or not ({@see false}).
@@ -56,7 +58,7 @@ class TcpConnectionConfig extends ConnectionConfig implements ProvidesSourceStri
     public function __construct(
         public string $database,
         public string $host = 'localhost',
-        public ?int $port = null,
+        int|string|null $port = null,
         public ?string $app = null,
         public ?bool $pooling = null,
         public ?bool $encrypt = null,
@@ -73,6 +75,8 @@ class TcpConnectionConfig extends ConnectionConfig implements ProvidesSourceStri
         ?string $password = null,
         array $options = []
     ) {
+        $this->port = $port !== null ? (int) $port : null;
+
         parent::__construct($user, $password, $options);
     }
 

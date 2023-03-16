@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Unit\Config\MySQL;
 
 use Cycle\Database\Config\MySQL\TcpConnectionConfig;
-use PHPUnit\Framework\TestCase;
+use Cycle\Database\Tests\Unit\Config\BaseConfigTest;
 
-final class TcpConnectionConfigTest extends TestCase
+final class TcpConnectionConfigTest extends BaseConfigTest
 {
     public function testSetState(): void
     {
@@ -34,5 +34,18 @@ final class TcpConnectionConfigTest extends TestCase
         $this->assertSame($password, $recoveredConfig->getPassword());
         $this->assertArrayHasKey($testOptionKey, $recoveredConfig->getOptions());
         $this->assertSame($testOptionValue, $recoveredConfig->getOptions()[$testOptionKey]);
+    }
+
+    /**
+     * @dataProvider portDataProvider
+     */
+    public function testPort(int|string $port, int $expected): void
+    {
+        $config = new TcpConnectionConfig(
+            database: 'database',
+            port: $port
+        );
+
+        $this->assertSame($expected, $config->port);
     }
 }
