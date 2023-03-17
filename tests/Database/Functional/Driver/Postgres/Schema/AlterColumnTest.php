@@ -85,4 +85,22 @@ class AlterColumnTest extends CommonClass
         $this->assertSameAsInDB($schema);
         $this->assertSame(6, $this->fetchSchema($schema)->column('other_datetime')->getSize());
     }
+
+    public function testAddCustomColumnTypeWithOptions(): void
+    {
+        $schema = $this->sampleSchema('table');
+        $this->assertTrue($schema->exists());
+
+        $schema->type('vector_column', 'vector(3)');
+        $column = $schema->column('vector_column');
+
+        $this->assertSame('vector(3)', $column->getDeclaredType());
+        $this->assertSame('vector(3)', $column->getInternalType());
+        $this->assertSame('string', $column->getType());
+        $this->assertSame('unknown', $column->getAbstractType());
+        $this->assertSame(
+            '"vector_column" vector(3) NULL',
+            $schema->column('vector_column')->sqlStatement($this->database->getDriver())
+        );
+    }
 }
