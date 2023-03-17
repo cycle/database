@@ -21,6 +21,9 @@ use Cycle\Database\Config\PDOConnectionConfig;
  */
 class TcpConnectionConfig extends ConnectionConfig implements ProvidesSourceString
 {
+    /**
+     * @var ?positive-int
+     */
     public ?int $port = null;
 
     /**

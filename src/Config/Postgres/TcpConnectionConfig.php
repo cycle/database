@@ -15,6 +15,9 @@ use Cycle\Database\Config\ProvidesSourceString;
 
 class TcpConnectionConfig extends ConnectionConfig implements ProvidesSourceString
 {
+    /**
+     * @var positive-int
+     */
     public int $port;
 
     /**
