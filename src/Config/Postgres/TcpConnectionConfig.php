@@ -16,9 +16,14 @@ use Cycle\Database\Config\ProvidesSourceString;
 class TcpConnectionConfig extends ConnectionConfig implements ProvidesSourceString
 {
     /**
+     * @var positive-int
+     */
+    public int $port;
+
+    /**
      * @param non-empty-string $database
      * @param non-empty-string $host
-     * @param positive-int $port
+     * @param numeric-string|positive-int $port
      * @param non-empty-string|null $user
      * @param non-empty-string|null $password
      * @param array $options
@@ -26,11 +31,13 @@ class TcpConnectionConfig extends ConnectionConfig implements ProvidesSourceStri
     public function __construct(
         public string $database,
         public string $host = 'localhost',
-        public int $port = 5432,
+        int|string $port = 5432,
         ?string $user = null,
         ?string $password = null,
         array $options = []
     ) {
+        $this->port = (int) $port;
+
         parent::__construct($user, $password, $options);
     }
 
