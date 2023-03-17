@@ -68,14 +68,14 @@ class InsertQuery extends ActiveQuery
      *      "balance" => 10
      * ]);
      * $insert->columns("name", "balance")->values([
-     *     [
-     *         "name" => "Wolfy-J",
-     *         "balance" => 10
-     *     ],
-     *     [
-     *         "name" => "Ben",
-     *         "balance" => 20
-     *     ]
+     *  [
+     *      "name" => "Wolfy-J",
+     *      "balance" => 10
+     *  ],
+     *  [
+     *      "name" => "Ben",
+     *      "balance" => 20
+     *  ]
      * ]);
      */
     public function values(mixed $rowsets): self
