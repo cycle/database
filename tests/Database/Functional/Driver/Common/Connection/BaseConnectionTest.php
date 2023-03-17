@@ -36,7 +36,8 @@ abstract class BaseConnectionTest extends BaseTest
         \assert(
             $driver instanceof SQLiteWrapDriver
             || $driver instanceof MysqlWrapDriver
-            || $driver instanceof PostgresWrapDriver,
+            || $driver instanceof PostgresWrapDriver
+            || $driver instanceof MSSQLWrapDriver,
         );
         return $driver;
     }

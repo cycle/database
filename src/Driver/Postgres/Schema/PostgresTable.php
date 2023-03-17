@@ -102,6 +102,22 @@ class PostgresTable extends AbstractTable
             [$tableSchema, $tableName]
         );
 
+        $primaryKeys = \array_column($this->driver->query(
+            'SELECT key_column_usage.column_name
+                FROM information_schema.table_constraints
+                JOIN information_schema.key_column_usage
+                    ON (
+                            key_column_usage.table_name = table_constraints.table_name AND
+                            key_column_usage.table_schema = table_constraints.table_schema AND
+                            key_column_usage.constraint_name = table_constraints.constraint_name
+                        )
+                WHERE table_constraints.constraint_type = \'PRIMARY KEY\' AND
+                      key_column_usage.ordinal_position IS NOT NULL AND
+                      table_constraints.table_schema = ? AND
+                      table_constraints.table_name = ?',
+            [$tableSchema, $tableName]
+        )->fetchAll(), 'column_name');
+
         $result = [];
         foreach ($query->fetchAll() as $schema) {
             $name = $schema['column_name'];
@@ -116,6 +132,8 @@ class PostgresTable extends AbstractTable
                 //Column is sequential
                 $this->sequences[$name] = $matches[1];
             }
+
+            $schema['is_primary'] = \in_array($schema['column_name'], $primaryKeys, true);
 
             $result[] = PostgresColumn::createInstance(
                 $tableSchema . '.' . $tableName,

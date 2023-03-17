@@ -108,13 +108,15 @@ final class State
 
     /**
      * Method combines primary keys with primary keys automatically calculated based on registered columns.
+     *
+     * @return list<non-empty-string>
      */
     public function getPrimaryKeys(): array
     {
         $primaryColumns = [];
         foreach ($this->getColumns() as $column) {
             $type = $column->getAbstractType();
-            if ($type === 'primary' || $type === 'bigPrimary') {
+            if ($type === 'smallPrimary' || $type === 'primary' || $type === 'bigPrimary') {
                 if (!\in_array($column->getName(), $this->primaryKeys, true)) {
                     //Only columns not listed as primary keys already
                     $primaryColumns[] = $column->getName();

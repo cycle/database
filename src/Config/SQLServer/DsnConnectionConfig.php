@@ -23,6 +23,7 @@ class DsnConnectionConfig extends ConnectionConfig implements ProvidesSourceStri
 
     /**
      * @var non-empty-string
+     *
      * @psalm-allow-private-mutation
      */
     public string $dsn;

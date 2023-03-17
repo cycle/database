@@ -31,6 +31,7 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
 {
     /**
      * @param DatabaseInterface $database Parent DBAL database.
+     *
      * @psalm-param non-empty-string $name Table name without prefix.
      */
     public function __construct(

@@ -245,4 +245,12 @@ abstract class BaseTest extends TestCase
             ->table($table)
             ->getSchema();
     }
+
+    protected function getPrivatePropertyValue(object $object, string $property): mixed
+    {
+        $ref = new \ReflectionProperty($object, $property);
+        $ref->setAccessible(true);
+
+        return $ref->getValue($object);
+    }
 }
