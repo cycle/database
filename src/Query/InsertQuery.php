@@ -61,11 +61,21 @@ class InsertQuery extends ActiveQuery
      * (method parameters, array of values, array or rowsets). Columns names will be automatically
      * fetched (if not already specified) from first provided rowset based on rowset keys.
      *
-     * Example:
+     * Examples:
      * $insert->columns("name", "balance")->values("Wolfy-J", 10);
      * $insert->values([
      *      "name" => "Wolfy-J",
      *      "balance" => 10
+     * ]);
+     * $insert->columns("name", "balance")->values([
+     *     [
+     *         "name" => "Wolfy-J",
+     *         "balance" => 10
+     *     ],
+     *     [
+     *         "name" => "Ben",
+     *         "balance" => 20
+     *     ]
      * ]);
      */
     public function values(mixed $rowsets): self
