@@ -468,4 +468,43 @@ abstract class AlterColumnTest extends BaseTest
 
         $this->assertSameAsInDB($schema);
     }
+
+    public function testAddCustomColumnType(): void
+    {
+        $schema = $this->sampleSchema('table');
+        $this->assertTrue($schema->exists());
+
+        $schema->type('ltree_column', 'ltree');
+
+        $column = $schema->column('ltree_column');
+
+        $this->assertSame('ltree', $column->getDeclaredType());
+        $this->assertSame('ltree', $column->getInternalType());
+        $this->assertSame('string', $column->getType());
+        $this->assertSame('unknown', $column->getAbstractType());
+    }
+
+    public function testCompareShouldIgnoreCustomColumnType(): void
+    {
+        $schema = $this->sampleSchema('table');
+        $this->assertTrue($schema->exists());
+
+        $schema->type('ltree_column', 'ltree');
+
+        $column = $schema->column('ltree_column');
+
+        $column2 = clone $column;
+        $column2->type('other');
+
+        $this->assertTrue($column2->compare($column));
+    }
+
+    public function testShortcutExceptionIfColumnTypeIsNotExists(): void
+    {
+        $schema = $this->sampleSchema('table');
+        $this->assertTrue($schema->exists());
+
+        $this->expectException(SchemaException::class);
+        $schema->ltree('ltree_column');
+    }
 }

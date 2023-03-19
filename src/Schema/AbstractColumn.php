@@ -256,16 +256,22 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      */
     public function __call(string $name, array $arguments = []): self
     {
-        try {
+        if (isset($this->aliases[$name]) || isset($this->mapping[$name])) {
             $this->type($name);
-        } catch (SchemaException $e) {
-            if (\count($arguments) === 1 && \key($arguments) === 0) {
+        }
+
+        // The type must be set before the attributes are filled.
+        !empty($this->type) or throw new SchemaException('Undefined abstract/virtual type');
+
+        if (\count($arguments) === 1 && \key($arguments) === 0) {
+            if (\array_key_exists($name, $this->getAttributesMap())) {
                 $this->fillAttributes([$name => $arguments[0]]);
                 return $this;
             }
-            throw $e;
         }
+
         $this->fillAttributes($arguments);
+
         return $this;
     }
 
@@ -461,8 +467,6 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      *
      * @psalm-param non-empty-string $abstract Abstract or virtual type declared in mapping.
      *
-     * @throws SchemaException
-     *
      * @todo Support native database types (simply bypass abstractType)!
      */
     public function type(string $abstract): self
@@ -472,7 +476,12 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
             $abstract = $this->aliases[$abstract];
         }
 
-        isset($this->mapping[$abstract]) or throw new SchemaException("Undefined abstract/virtual type '{$abstract}'");
+        if (!isset($this->mapping[$abstract])) {
+            $this->type = $abstract;
+            $this->userType = $abstract;
+
+            return $this;
+        }
 
         // Originally specified type.
         $this->userType = $abstract;
@@ -638,6 +647,13 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         foreach ($columnVars as $name => $value) {
             if (\in_array($name, static::EXCLUDE_FROM_COMPARE, true)) {
                 continue;
+            }
+
+            if ($name === 'type') {
+                // user defined type
+                if (!isset($this->mapping[$this->type]) && $this->type === $this->userType) {
+                    continue;
+                }
             }
 
             if ($name === 'defaultValue') {
