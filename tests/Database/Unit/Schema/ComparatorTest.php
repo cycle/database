@@ -84,7 +84,7 @@ final class ComparatorTest extends TestCase
         $current->registerColumn((new SQLiteColumn('c', 'd'))->defaultValue('baz'));
         yield [
             [[(new SQLiteColumn('c', 'd'))->defaultValue('baz'), new SQLiteColumn('c', 'd')]],
-            $current
+            $current,
         ];
     }
 
