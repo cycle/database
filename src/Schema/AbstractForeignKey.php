@@ -49,6 +49,11 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
     protected string $updateRule = self::NO_ACTION;
 
     /**
+     * Create an index or not.
+     */
+    protected bool $createIndex = true;
+
+    /**
      * @psalm-param non-empty-string $table
      *
      * @param string $tablePrefix
@@ -146,6 +151,16 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
         $this->updateRule = strtoupper($rule);
 
         return $this;
+    }
+
+    public function withoutIndex(): void
+    {
+        $this->createIndex = false;
+    }
+
+    public function shouldCreateIndex(): bool
+    {
+        return $this->createIndex;
     }
 
     /**

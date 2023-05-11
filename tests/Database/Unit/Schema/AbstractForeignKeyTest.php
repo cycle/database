@@ -1,0 +1,35 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Cycle\Database\Tests\Unit\Schema;
+
+use Cycle\Database\Driver\MySQL\Schema\MySQLForeignKey;
+use Cycle\Database\Schema\AbstractForeignKey;
+use PHPUnit\Framework\TestCase;
+
+final class AbstractForeignKeyTest extends TestCase
+{
+    public function testDefaultCreateIndex(): void
+    {
+        $fk = new class ('foo', 'bar', 'baz') extends AbstractForeignKey {};
+
+        $this->assertTrue($fk->shouldCreateIndex());
+    }
+
+    public function testWithoutIndex(): void
+    {
+        $fk = new class ('foo', 'bar', 'baz') extends AbstractForeignKey {};
+        $fk->withoutIndex();
+
+        $this->assertFalse($fk->shouldCreateIndex());
+    }
+
+    public function testMySQLShouldAlwaysCreateIndex(): void
+    {
+        $fk = new MySQLForeignKey('foo', 'bar', 'baz');
+        $fk->withoutIndex();
+
+        $this->assertTrue($fk->shouldCreateIndex());
+    }
+}

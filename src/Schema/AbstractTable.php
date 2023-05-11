@@ -447,9 +447,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         $this->current->registerForeignKey($foreign);
 
         //Let's ensure index existence to performance and compatibility reasons
-        if ($indexCreate) {
-            $this->index($columns);
-        }
+        $indexCreate ? $this->index($columns) : $foreign->withoutIndex();
 
         return $foreign;
     }
