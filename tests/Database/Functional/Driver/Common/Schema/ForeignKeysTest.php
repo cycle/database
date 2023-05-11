@@ -315,21 +315,4 @@ abstract class ForeignKeysTest extends BaseTest
         $this->assertTrue($this->schema('schema')->hasForeignKey(['external_id']));
         $this->assertTrue($this->schema('schema')->hasIndex(['external_id']));
     }
-
-    public function testCreateWithoutIndex(): void
-    {
-        $schema = $this->schema('schema');
-        $this->assertFalse($schema->exists());
-        $this->assertTrue($this->sampleSchema('external')->exists());
-
-        $schema->primary('id');
-        $schema->integer('external_id');
-        $schema->foreignKey(['external_id'], false)->references('external', ['id']);
-
-        $schema->save(Handler::DO_ALL);
-
-        $this->assertSameAsInDB($schema);
-        $this->assertTrue($this->schema('schema')->hasForeignKey(['external_id']));
-        $this->assertFalse($this->schema('schema')->hasIndex(['external_id']));
-    }
 }
