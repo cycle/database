@@ -422,7 +422,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      *
      * @throws SchemaException
      */
-    public function foreignKey(array $columns): AbstractForeignKey
+    public function foreignKey(array $columns, bool $indexCreate = true): AbstractForeignKey
     {
         foreach ($columns as $column) {
             $this->hasColumn($column) or throw new SchemaException(
@@ -447,7 +447,9 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         $this->current->registerForeignKey($foreign);
 
         //Let's ensure index existence to performance and compatibility reasons
-        $this->index($columns);
+        if ($indexCreate) {
+            $this->index($columns);
+        }
 
         return $foreign;
     }
