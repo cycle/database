@@ -188,8 +188,13 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
 
     public function compare(self $initial): bool
     {
+        // exclude `createIndex` from comparing
+        $current = clone $this;
+        $initial = clone $initial;
+        unset($current->createIndex, $initial->createIndex);
+
         // soft compare
-        return $this == clone $initial;
+        return $current == $initial;
     }
 
     /**
