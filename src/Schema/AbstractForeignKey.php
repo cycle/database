@@ -23,6 +23,8 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
 {
     use ElementTrait;
 
+    protected const EXCLUDE_FROM_COMPARE = ['index'];
+
     /**
      * Local column name (key name).
      */
@@ -47,6 +49,11 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
      * Action on foreign column value update.
      */
     protected string $updateRule = self::NO_ACTION;
+
+    /**
+     * Create an index or not.
+     */
+    protected bool $index = true;
 
     /**
      * @psalm-param non-empty-string $table
@@ -148,6 +155,18 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
         return $this;
     }
 
+    public function setIndex(bool $index = true): static
+    {
+        $this->index = $index;
+
+        return $this;
+    }
+
+    public function hasIndex(): bool
+    {
+        return $this->index;
+    }
+
     /**
      * Foreign key creation syntax.
      *
@@ -173,8 +192,15 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
 
     public function compare(self $initial): bool
     {
-        // soft compare
-        return $this == clone $initial;
+        foreach ($this as $name => $value) {
+            if (\in_array($name, static::EXCLUDE_FROM_COMPARE, true)) {
+                continue;
+            }
+            if ($value !== $initial->$name) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
