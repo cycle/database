@@ -18,15 +18,15 @@ final class AbstractColumnTest extends TestCase
 
     public function testReadOnlyFalseByDefault(): void
     {
-        $this->assertFalse($this->column->isReadOnly());
+        $this->assertFalse($this->column->isReadonlySchema());
     }
 
     public function testReadOnly(): void
     {
-        $this->assertFalse($this->column->isReadOnly());
+        $this->assertFalse($this->column->isReadonlySchema());
 
-        $this->column->setAttributes(['readOnly' => true]);
+        $this->column->setAttributes(['readonlySchema' => true]);
 
-        $this->assertTrue($this->column->isReadOnly());
+        $this->assertTrue($this->column->isReadonlySchema());
     }
 }
