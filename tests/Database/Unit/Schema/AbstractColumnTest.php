@@ -16,12 +16,12 @@ final class AbstractColumnTest extends TestCase
         $this->column = new class ('foo', 'bar') extends AbstractColumn {};
     }
 
-    public function testReadOnlyFalseByDefault(): void
+    public function testReadonlySchemaFalseByDefault(): void
     {
         $this->assertFalse($this->column->isReadonlySchema());
     }
 
-    public function testReadOnly(): void
+    public function testReadonlySchema(): void
     {
         $this->assertFalse($this->column->isReadonlySchema());
 
