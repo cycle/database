@@ -66,7 +66,7 @@ final class Comparator implements ComparatorInterface
 
         $initialColumns = $this->initial->getColumns();
         foreach ($this->current->getColumns() as $name => $column) {
-            if (!isset($initialColumns[$name])) {
+            if (!isset($initialColumns[$name]) && !$column->isReadonlySchema()) {
                 $difference[] = $column;
             }
         }
@@ -83,7 +83,7 @@ final class Comparator implements ComparatorInterface
 
         $currentColumns = $this->current->getColumns();
         foreach ($this->initial->getColumns() as $name => $column) {
-            if (!isset($currentColumns[$name])) {
+            if (!isset($currentColumns[$name]) && !$column->isReadonlySchema()) {
                 $difference[] = $column;
             }
         }
@@ -105,7 +105,7 @@ final class Comparator implements ComparatorInterface
                 continue;
             }
 
-            if (!$column->compare($initialColumns[$name])) {
+            if (!$column->compare($initialColumns[$name]) && !$column->isReadonlySchema()) {
                 $difference[] = [$column, $initialColumns[$name]];
             }
         }

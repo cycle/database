@@ -61,7 +61,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     public const DATETIME_NOW = 'CURRENT_TIMESTAMP';
 
     /**
-     * Value to be excluded from comparision.
+     * Value to be excluded from comparison.
      */
     public const EXCLUDE_FROM_COMPARE = ['timezone', 'userType', 'attributes'];
 
@@ -133,7 +133,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     ];
 
     /**
-     * Reverse mapping is responsible for generating abstact type based on database type and it's
+     * Reverse mapping is responsible for generating abstract type based on database type and it's
      * options. Multiple database types can be mapped into one abstract type.
      *
      * @internal
@@ -676,6 +676,11 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         }
 
         return empty($difference);
+    }
+
+    public function isReadonlySchema(): bool
+    {
+        return $this->getAttributes()['readonlySchema'] ?? false;
     }
 
     /**
