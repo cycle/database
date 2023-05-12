@@ -58,7 +58,7 @@ class InsertQuery extends ActiveQuery
 
     /**
      * Set insertion rowset values or multiple rowsets. Values can be provided in multiple forms
-     * (method parameters, array of values, array or rowsets). Columns names will be automatically
+     * (method parameters, array of values, array of rowsets). Columns names will be automatically
      * fetched (if not already specified) from first provided rowset based on rowset keys.
      *
      * Examples:
