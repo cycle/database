@@ -36,7 +36,7 @@ class MySQLForeignKey extends AbstractForeignKey
         return $reference;
     }
 
-    public function shouldCreateIndex(): bool
+    public function hasIndex(): bool
     {
         return true;
     }

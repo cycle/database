@@ -14,22 +14,22 @@ final class AbstractForeignKeyTest extends TestCase
     {
         $fk = new class ('foo', 'bar', 'baz') extends AbstractForeignKey {};
 
-        $this->assertTrue($fk->shouldCreateIndex());
+        $this->assertTrue($fk->hasIndex());
     }
 
     public function testWithoutIndex(): void
     {
         $fk = new class ('foo', 'bar', 'baz') extends AbstractForeignKey {};
-        $fk->withoutIndex();
+        $fk->setIndex(false);
 
-        $this->assertFalse($fk->shouldCreateIndex());
+        $this->assertFalse($fk->hasIndex());
     }
 
     public function testMySQLShouldAlwaysCreateIndex(): void
     {
         $fk = new MySQLForeignKey('foo', 'bar', 'baz');
-        $fk->withoutIndex();
+        $fk->setIndex(false);
 
-        $this->assertTrue($fk->shouldCreateIndex());
+        $this->assertTrue($fk->hasIndex());
     }
 }
