@@ -78,6 +78,19 @@ class InsertQueryTest extends CommonClass
         );
     }
 
+    public function testInsertMultipleRowsAsArray(): void
+    {
+        $insert = $this->database->insert()->into('table')->values([
+            ['name' => 'Anton', 'balance' => 100],
+            ['name' => 'John', 'balance' => 200],
+        ]);
+
+        $this->assertSameQuery(
+            'INSERT INTO {table} ({name}, {balance}) VALUES (?, ?), (?, ?)',
+            $insert
+        );
+    }
+
     public function testCustomReturning(): void
     {
         $insert = $this->database->insert()->into('table')
@@ -107,7 +120,7 @@ class InsertQueryTest extends CommonClass
     public function testCustomReturningShouldContainColumns(): void
     {
         $this->expectException(BuilderException::class);
-        $this->expectErrorMessage('RETURNING clause should contain at least 1 column.');
+        $this->expectExceptionMessage('RETURNING clause should contain at least 1 column.');
 
         $this->database->insert()->into('table')
             ->columns('name', 'balance')
@@ -118,7 +131,7 @@ class InsertQueryTest extends CommonClass
     public function testCustomReturningSupportsOnlySingleColumn(): void
     {
         $this->expectException(BuilderException::class);
-        $this->expectErrorMessage('Postgres driver supports only single column returning at this moment.');
+        $this->expectExceptionMessage('Postgres driver supports only single column returning at this moment.');
 
         $this->database->insert()->into('table')
             ->columns('name', 'balance')
