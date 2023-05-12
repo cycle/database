@@ -78,19 +78,6 @@ class InsertQueryTest extends CommonClass
         );
     }
 
-    public function testInsertMultipleRowsAsArray(): void
-    {
-        $insert = $this->database->insert()->into('table')->values([
-            ['name' => 'Anton', 'balance' => 100],
-            ['name' => 'John', 'balance' => 200],
-        ]);
-
-        $this->assertSameQuery(
-            'INSERT INTO {table} ({name}, {balance}) VALUES (?, ?), (?, ?)',
-            $insert
-        );
-    }
-
     public function testCustomReturning(): void
     {
         $insert = $this->database->insert()->into('table')
