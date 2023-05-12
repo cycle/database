@@ -23,6 +23,8 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
 {
     use ElementTrait;
 
+    protected const EXCLUDE_FROM_COMPARE = ['createIndex'];
+
     /**
      * Local column name (key name).
      */
@@ -188,13 +190,23 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
 
     public function compare(self $initial): bool
     {
-        // exclude `createIndex` from comparing
-        $current = clone $this;
-        $initial = clone $initial;
-        unset($current->createIndex, $initial->createIndex);
-
         // soft compare
-        return $current == $initial;
+        if ($this == clone $initial) {
+            return true;
+        }
+        $initialVars = \get_object_vars($initial);
+
+        foreach (\get_object_vars($this) as $name => $value) {
+            if (\in_array($name, static::EXCLUDE_FROM_COMPARE, true)) {
+                continue;
+            }
+
+            if ($value !== $initialVars[$name]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
