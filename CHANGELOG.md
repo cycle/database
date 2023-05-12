@@ -1,5 +1,16 @@
 # CHANGELOG
 
+v2.5.0 (12.05.2023)
+-------------------
+- Add ability to use non-primary serial column by @msmakouz (#106)
+- Add ability to configure DB port passing a string by @msmakouz (#109)
+- Add ability to define a custom type column by @msmakouz (#104)
+- Add the ability to define `readonlySchema` for columns by @msmakouz (#116)
+- Add `AbstractForeignKey::$index` property to enable/disable index creation by @msmakouz (#119)
+- Fix inserting an array of rowsets without calling the columns method by @msmakouz (#120)
+- Improve types for `TableInterface` and `ColumnInterface` by @vjik (#108)
+- Fix typos by @arogachev (#110, #111)
+
 v2.4.1 (08.03.2023)
 -------------------
 - Fix: add schema to Postgres dependency table names by @msmakouz (#102)
