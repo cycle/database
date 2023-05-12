@@ -29,6 +29,20 @@ UNION ALL SELECT ?, ?',
         );
     }
 
+    public function testInsertMultipleRowsAsArray(): void
+    {
+        $insert = $this->database->insert()->into('table')->values([
+            ['name' => 'Anton', 'balance' => 100],
+            ['name' => 'John', 'balance' => 200],
+        ]);
+
+        $this->assertSameQuery(
+            'INSERT INTO {table} ({name}, {balance}) SELECT ? AS {name}, ? AS {balance}
+UNION ALL SELECT ?, ?',
+            $insert
+        );
+    }
+
     public function testSimpleInsertMultipleRows2(): void
     {
         $insert = $this->database->insert()->into('table')

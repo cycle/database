@@ -98,6 +98,10 @@ class InsertQuery extends ActiveQuery
 
             $this->values[] = new Parameter(array_values($rowsets));
         } else {
+            if ($this->columns === []) {
+                $this->columns = \array_keys($rowsets[\key($rowsets)]);
+            }
+
             foreach ($rowsets as $values) {
                 $this->values[] = new Parameter(array_values($values));
             }

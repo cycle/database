@@ -68,7 +68,7 @@ class CreateTableWithSchema extends TestCase
     public function testCreatesTableForNotDefinedSchemaShouldThrowAnException(): void
     {
         $this->expectException(DriverException::class);
-        $this->expectErrorMessage('Schema `schema3` has not been defined.');
+        $this->expectExceptionMessage('Schema `schema3` has not been defined.');
         $driver = $this->getDriver(['schema2', 'schema1']);
         $this->createTable($driver, 'schema3.test1');
     }

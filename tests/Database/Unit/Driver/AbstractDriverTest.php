@@ -42,7 +42,7 @@ class AbstractDriverTest extends TestCase
     public function testGetNotSetNameShouldThrowAnException(): void
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectErrorMessage('Driver name is not defined.');
+        $this->expectExceptionMessage('Driver name is not defined.');
         $this->driver->getName();
     }
 
