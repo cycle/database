@@ -27,7 +27,7 @@ final class ComparatorTest extends TestCase
     public function testAlteredColumns(array $expected, State $current): void
     {
         $initial = new State('');
-        $initial->registerColumn((new SQLiteColumn('a', 'b'))->setAttributes(['readOnly' => true]));
+        $initial->registerColumn((new SQLiteColumn('a', 'b'))->setAttributes(['readonlySchema' => true]));
         $initial->registerColumn(new SQLiteColumn('c', 'd'));
 
         $comparator = new Comparator($initial, $current);
@@ -41,7 +41,7 @@ final class ComparatorTest extends TestCase
     public function testDroppedColumns(array $expected, State $current): void
     {
         $initial = new State('');
-        $initial->registerColumn((new SQLiteColumn('a', 'b'))->setAttributes(['readOnly' => true]));
+        $initial->registerColumn((new SQLiteColumn('a', 'b'))->setAttributes(['readonlySchema' => true]));
         $initial->registerColumn(new SQLiteColumn('c', 'd'));
 
         $comparator = new Comparator($initial, $current);
@@ -58,11 +58,11 @@ final class ComparatorTest extends TestCase
         yield [[new SQLiteColumn('foo', 'bar')], $current];
 
         $current = new State('');
-        $current->registerColumn((new SQLiteColumn('foo', 'bar'))->setAttributes(['readOnly' => true]));
+        $current->registerColumn((new SQLiteColumn('foo', 'bar'))->setAttributes(['readonlySchema' => true]));
         yield [[], $current];
 
         $current = new State('');
-        $current->registerColumn((new SQLiteColumn('foo', 'bar'))->setAttributes(['readOnly' => true]));
+        $current->registerColumn((new SQLiteColumn('foo', 'bar'))->setAttributes(['readonlySchema' => true]));
         $current->registerColumn(new SQLiteColumn('baz', 'some'));
         yield [[new SQLiteColumn('baz', 'some')], $current];
     }
@@ -70,17 +70,17 @@ final class ComparatorTest extends TestCase
     public static function alteredColumnsDataProvider(): \Traversable
     {
         $current = new State('');
-        $current->registerColumn((new SQLiteColumn('a', 'b'))->setAttributes(['readOnly' => true]));
+        $current->registerColumn((new SQLiteColumn('a', 'b'))->setAttributes(['readonlySchema' => true]));
         $current->registerColumn(new SQLiteColumn('c', 'd'));
         yield [[], $current];
 
         $current = new State('');
-        $current->registerColumn((new SQLiteColumn('changed', 'changed'))->setAttributes(['readOnly' => true]));
+        $current->registerColumn((new SQLiteColumn('changed', 'changed'))->setAttributes(['readonlySchema' => true]));
         $current->registerColumn(new SQLiteColumn('c', 'd'));
         yield [[], $current];
 
         $current = new State('');
-        $current->registerColumn((new SQLiteColumn('a', 'b'))->setAttributes(['readOnly' => true]));
+        $current->registerColumn((new SQLiteColumn('a', 'b'))->setAttributes(['readonlySchema' => true]));
         $current->registerColumn((new SQLiteColumn('c', 'd'))->defaultValue('baz'));
         yield [
             [[(new SQLiteColumn('c', 'd'))->defaultValue('baz'), new SQLiteColumn('c', 'd')]],
@@ -91,7 +91,7 @@ final class ComparatorTest extends TestCase
     public static function droppedColumnsDataProvider(): \Traversable
     {
         $current = new State('');
-        $current->registerColumn((new SQLiteColumn('a', 'b'))->setAttributes(['readOnly' => true]));
+        $current->registerColumn((new SQLiteColumn('a', 'b'))->setAttributes(['readonlySchema' => true]));
         $current->registerColumn(new SQLiteColumn('c', 'd'));
         yield [[], $current];
 
@@ -100,7 +100,7 @@ final class ComparatorTest extends TestCase
         yield [[], $current];
 
         $current = new State('');
-        $current->registerColumn((new SQLiteColumn('a', 'b'))->setAttributes(['readOnly' => true]));
+        $current->registerColumn((new SQLiteColumn('a', 'b'))->setAttributes(['readonlySchema' => true]));
         yield [[new SQLiteColumn('c', 'd')], $current];
     }
 }

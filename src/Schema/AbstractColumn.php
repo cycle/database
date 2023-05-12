@@ -208,12 +208,6 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     protected int $scale = 0;
 
     /**
-     * Indicates that column is readonly. Readonly columns are excluded from comparison.
-     */
-    #[ColumnAttribute]
-    protected bool $readOnly = false;
-
-    /**
      * List of allowed enum values.
      */
     protected array $enumValues = [];
@@ -684,9 +678,9 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         return empty($difference);
     }
 
-    public function isReadOnly(): bool
+    public function isReadonlySchema(): bool
     {
-        return $this->readOnly;
+        return $this->getAttributes()['readonlySchema'] ?? false;
     }
 
     /**
