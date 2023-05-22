@@ -302,6 +302,48 @@ abstract class DefaultValueTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
+    public function testJsonDefaultValueEmpty(): void
+    {
+        $schema = $this->schema('table');
+        $this->assertFalse($schema->exists());
+
+        //This WILL fail in MySQL!
+        $column = $schema->json('target')->defaultValue('');
+
+        $schema->save();
+        $schema = $this->schema('table');
+        $this->assertTrue($schema->exists());
+        $this->assertTrue($schema->column('target')->compare($column));
+    }
+
+    public function testJsonDefaultValueNull(): void
+    {
+        $schema = $this->schema('table');
+        $this->assertFalse($schema->exists());
+
+        $column = $schema->json('target')->defaultValue(null);
+
+        $schema->save();
+        $schema = $this->schema('table');
+        $this->assertTrue($schema->exists());
+        $this->assertTrue($schema->column('target')->compare($column));
+        $this->assertNull($schema->column('target')->getDefaultValue());
+    }
+
+    public function testJsonDefaultValueString(): void
+    {
+        $schema = $this->schema('table');
+        $this->assertFalse($schema->exists());
+
+        //This WILL fail in MySQL!
+        $column = $schema->json('target')->defaultValue('non empty');
+
+        $schema->save();
+        $schema = $this->schema('table');
+        $this->assertTrue($schema->exists());
+        $this->assertTrue($schema->column('target')->compare($column));
+    }
+
     public function testEnumDefaultValueNull(): void
     {
         $schema = $this->schema('table');

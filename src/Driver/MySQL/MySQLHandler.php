@@ -133,11 +133,11 @@ class MySQLHandler extends Handler
             $column->getDefaultValue() !== null
             && \in_array(
                 $column->getAbstractType(),
-                ['text', 'tinyText', 'longText', 'blob', 'tinyBlob', 'longBlob']
+                ['text', 'tinyText', 'longText', 'blob', 'tinyBlob', 'longBlob', 'json']
             )
         ) {
             throw new MySQLException(
-                "Column {$column} of type text/blob can not have non empty default value"
+                "Column {$column} of type text/blob/json can not have non empty default value"
             );
         }
     }
