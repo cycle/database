@@ -1,5 +1,9 @@
 # CHANGELOG
 
+v2.5.1 (09.06.2023)
+-------------------
+- Fix drastic increase of insert statements on pg driver with complex primary keys by @wolfy-j (#122)
+
 v2.5.0 (12.05.2023)
 -------------------
 - Add ability to use non-primary serial column by @msmakouz (#106)
