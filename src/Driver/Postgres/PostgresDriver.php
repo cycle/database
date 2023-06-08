@@ -98,7 +98,7 @@ class PostgresDriver extends Driver
     public function getPrimaryKey(string $prefix, string $table): ?string
     {
         $name = $prefix . $table;
-        if (!array_key_exists($name, $this->primaryKeys)) {
+        if (array_key_exists($name, $this->primaryKeys)) {
             return $this->primaryKeys[$name];
         }
 
