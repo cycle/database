@@ -172,6 +172,7 @@ trait TokenTrait
                 continue;
             }
 
+            $key = (string)$key;
             $token = strtoupper($key);
 
             // Grouping identifier (@OR, @AND), MongoDB like style
