@@ -20,6 +20,7 @@ class DriverTest extends CommonClass
         $db = $this->db(driverConfig: ['schema' => ['custom']]);
 
         $ref = new \ReflectionProperty($db->getDriver(), 'searchPath');
+        $ref->setAccessible(true);
 
         $this->assertSame(['custom'], $ref->getValue($db->getDriver()));
 
