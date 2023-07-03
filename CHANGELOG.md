@@ -1,5 +1,9 @@
 # CHANGELOG
 
+v2.5.2 (03.07.2023)
+-------------------
+- Fix Postgres schema restoring after reconnect by @msmakouz in (#126)
+
 v2.5.1 (09.06.2023)
 -------------------
 - Fix drastic increase of insert statements on pg driver with complex primary keys by @wolfy-j (#122)
