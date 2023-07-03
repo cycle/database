@@ -14,4 +14,18 @@ use Cycle\Database\Tests\Functional\Driver\Common\Driver\DriverTest as CommonCla
 class DriverTest extends CommonClass
 {
     public const DRIVER = 'postgres';
+
+    public function testSchemaPathAfterReconnect(): void
+    {
+        $db = $this->db(driverConfig: ['schema' => ['custom']]);
+
+        $ref = new \ReflectionProperty($db->getDriver(), 'searchPath');
+
+        $this->assertSame(['custom'], $ref->getValue($db->getDriver()));
+
+        $db->getDriver()->disconnect();
+        $db->getDriver()->connect();
+
+        $this->assertSame(['custom'], $ref->getValue($db->getDriver()));
+    }
 }

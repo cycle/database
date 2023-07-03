@@ -45,8 +45,6 @@ abstract class BaseTest extends TestCase
     }
 
     /**
-     * @param array{readonly: bool} $driverConfig
-     *
      * @return DriverInterface
      */
     private function getDriver(array $driverConfig = [], array $connectionConfig = []): DriverInterface
@@ -84,18 +82,15 @@ abstract class BaseTest extends TestCase
 
     private function applyDriverOptions(DriverConfig $config, array $options): void
     {
-        // Add readonly options support
-        if (isset($options['readonly']) && $options['readonly'] === true) {
-            $config->readonly = true;
-        }
-
-        if (isset($options['withDatetimeMicroseconds']) && $options['withDatetimeMicroseconds'] === true) {
-            $config->options['withDatetimeMicroseconds'] = true;
+        foreach ($options as $key => $value) {
+            if ($key === 'options') {
+                $value += $config->options;
+            }
+            $config->$key = $value;
         }
     }
 
     /**
-     * @param array{readonly: bool} $driverConfig
      * @param array $connectionConfig
      *
      * @return Database

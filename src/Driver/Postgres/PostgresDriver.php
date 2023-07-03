@@ -216,13 +216,8 @@ class PostgresDriver extends Driver
         // TODO Should be moved into driver settings.
         $pdo->exec("SET NAMES 'UTF-8'");
 
-        // TODO May be redundant?
-        //      Search schemas list can not be empty.
-        if ($this->searchPath !== []) {
-            $schema = '"' . implode('", "', $this->searchPath) . '"';
-            $pdo->exec("SET search_path TO {$schema}");
-            $this->searchPath = [];
-        }
+        $schema = '"' . implode('", "', $this->searchPath) . '"';
+        $pdo->exec("SET search_path TO {$schema}");
 
         return $pdo;
     }
