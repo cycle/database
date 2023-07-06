@@ -31,4 +31,18 @@ class ConsistencyTest extends CommonClass
         $this->assertSame(['a', 'b', 'value'], $column->getEnumValues());
         $this->assertSame(['a', 'b', 'value'], $schema->column('target')->getEnumValues());
     }
+
+    public function testSmallPrimary(): void
+    {
+        $schema = $this->schema('table');
+        $this->assertFalse($schema->exists());
+
+        $column = $schema->smallInteger('target');
+
+        $schema->save();
+        $schema = $this->schema('table');
+        $this->assertTrue($schema->exists());
+        $this->assertTrue($schema->column('target')->compare($column));
+        $this->assertNotSame($column, $schema->column('target'));
+    }
 }

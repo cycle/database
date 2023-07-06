@@ -30,6 +30,7 @@ use Cycle\Database\Schema\Traits\ElementTrait;
  * Shortcuts for various column types:
  *
  * @method $this|AbstractColumn primary()
+ * @method $this|AbstractColumn smallPrimary()
  * @method $this|AbstractColumn bigPrimary()
  * @method $this|AbstractColumn boolean()
  * @method $this|AbstractColumn integer()
@@ -87,6 +88,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     protected array $mapping = [
         //Primary sequences
         'primary'     => null,
+        'smallPrimary'  => null,
         'bigPrimary'  => null,
 
         //Enum type (mapped via method)
@@ -140,6 +142,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      */
     protected array $reverseMapping = [
         'primary'     => [],
+        'smallPrimary'  => [],
         'bigPrimary'  => [],
         'enum'        => [],
         'boolean'     => [],
@@ -220,6 +223,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         'smallint'       => 'smallInteger',
         'bigint'         => 'bigInteger',
         'incremental'    => 'primary',
+        'smallIncremental' => 'smallPrimary',
         'bigIncremental' => 'bigPrimary',
         'bool'           => 'boolean',
         'blob'           => 'binary',
@@ -232,7 +236,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      * @internal
      */
     private array $phpMapping = [
-        self::INT   => ['primary', 'bigPrimary', 'integer', 'tinyInteger', 'smallInteger', 'bigInteger'],
+        self::INT   => ['primary', 'smallPrimary', 'bigPrimary', 'integer', 'tinyInteger', 'smallInteger', 'bigInteger'],
         self::BOOL  => ['boolean'],
         self::FLOAT => ['double', 'float', 'decimal'],
     ];

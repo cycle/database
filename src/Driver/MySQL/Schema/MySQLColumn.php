@@ -23,6 +23,7 @@ use Cycle\Database\Schema\Attribute\ColumnAttribute;
  * work on multiple fields with MySQL 5.6.6+ version.
  *
  * @method $this|AbstractColumn primary(int $size, bool $unsigned = false, $zerofill = false)
+ * @method $this|AbstractColumn smallPrimary(int $size, bool $unsigned = false, $zerofill = false)
  * @method $this|AbstractColumn bigPrimary(int $size, bool $unsigned = false, $zerofill = false)
  * @method $this|AbstractColumn integer(int $size, bool $unsigned = false, $zerofill = false)
  * @method $this|AbstractColumn tinyInteger(int $size, bool $unsigned = false, $zerofill = false)
@@ -45,6 +46,12 @@ class MySQLColumn extends AbstractColumn
         'primary'     => [
             'type'          => 'int',
             'size'          => 11,
+            'autoIncrement' => true,
+            'nullable'      => false,
+        ],
+        'smallPrimary'  => [
+            'type'          => 'smallint',
+            'size'          => 6,
             'autoIncrement' => true,
             'nullable'      => false,
         ],
