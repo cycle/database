@@ -43,5 +43,6 @@ class ConsistencyTest extends CommonClass
         $schema = $this->schema('table');
         $this->assertTrue($schema->exists());
         $this->assertTrue($schema->column('target')->compare($column));
+        $this->assertNotSame($column, $schema->column('target'));
     }
 }
