@@ -38,12 +38,12 @@ class ForeignKeysTest extends CommonClass
         $schema = $this->schema('schema');
         $schema->getDriver()->getSchemaHandler()->enableForeignKeyConstraints();
         $result = $schema->getDriver()->query('PRAGMA foreign_keys')->fetch();
-        $this->assertSame(1, $result['foreign_keys']);
+        $this->assertSame(1, (int) $result['foreign_keys']);
 
         $schema->getDriver()->getSchemaHandler()->disableForeignKeyConstraints();
         $result = $schema->getDriver()->query('PRAGMA foreign_keys')->fetch();
 
-        $this->assertSame(0, $result['foreign_keys']);
+        $this->assertSame(0, (int) $result['foreign_keys']);
     }
 
     public function testEnableForeignKeyConstraints(): void
@@ -51,11 +51,11 @@ class ForeignKeysTest extends CommonClass
         $schema = $this->schema('schema');
 
         $result = $schema->getDriver()->query('PRAGMA foreign_keys')->fetch();
-        $this->assertSame(0, $result['foreign_keys']);
+        $this->assertSame(0, (int) $result['foreign_keys']);
 
         $schema->getDriver()->getSchemaHandler()->enableForeignKeyConstraints();
         $result = $schema->getDriver()->query('PRAGMA foreign_keys')->fetch();
 
-        $this->assertSame(1, $result['foreign_keys']);
+        $this->assertSame(1, (int) $result['foreign_keys']);
     }
 }
