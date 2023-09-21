@@ -18,18 +18,27 @@ class ForeignKeysTest extends CommonClass
     public function testDisableForeignKeyConstraints(): void
     {
         $schema = $this->schema('schema');
+
+        $result = $schema->getDriver()->query('SELECT @@foreign_key_checks;')->fetch();
+        $this->assertSame(1, (int) $result['@@foreign_key_checks']);
+
         $schema->getDriver()->getSchemaHandler()->disableForeignKeyConstraints();
         $result = $schema->getDriver()->query('SELECT @@foreign_key_checks;')->fetch();
 
-        $this->assertSame(0, $result['@@foreign_key_checks']);
+        $this->assertSame(0, (int) $result['@@foreign_key_checks']);
     }
 
     public function testEnableForeignKeyConstraints(): void
     {
         $schema = $this->schema('schema');
+
+        $schema->getDriver()->getSchemaHandler()->disableForeignKeyConstraints();
+        $result = $schema->getDriver()->query('SELECT @@foreign_key_checks;')->fetch();
+        $this->assertSame(0, (int) $result['@@foreign_key_checks']);
+
         $schema->getDriver()->getSchemaHandler()->enableForeignKeyConstraints();
         $result = $schema->getDriver()->query('SELECT @@foreign_key_checks;')->fetch();
 
-        $this->assertSame(1, $result['@@foreign_key_checks']);
+        $this->assertSame(1, (int) $result['@@foreign_key_checks']);
     }
 }
