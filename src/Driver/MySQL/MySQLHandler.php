@@ -112,6 +112,16 @@ class MySQLHandler extends Handler
         );
     }
 
+    public function enableForeignKeyConstraints(): void
+    {
+        $this->run('SET FOREIGN_KEY_CHECKS=1;');
+    }
+
+    public function disableForeignKeyConstraints(): void
+    {
+        $this->run('SET FOREIGN_KEY_CHECKS=0;');
+    }
+
     /**
      * Get statement needed to create table.
      *

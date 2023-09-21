@@ -247,4 +247,18 @@ interface HandlerInterface
      * @throws HandlerException
      */
     public function dropConstrain(AbstractTable $table, string $constraint): void;
+
+    /**
+     * Enable foreign key constraints.
+     *
+     * Will be added in version 3.0.0.
+     */
+    // public function enableForeignKeyConstraints(): void;
+
+    /**
+     * Disable foreign key constraints.
+     *
+     * Will be added in version 3.0.0.
+     */
+    // public function disableForeignKeyConstraints(): void;
 }

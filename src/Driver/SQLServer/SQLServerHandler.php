@@ -148,6 +148,20 @@ class SQLServerHandler extends Handler
         $this->run("DROP INDEX {$this->identify($index)} ON {$this->identify($table)}");
     }
 
+    public function enableForeignKeyConstraints(): void
+    {
+        foreach ($this->getTableNames() as $table) {
+            $this->run("ALTER TABLE {$this->identify($table)} WITH CHECK CHECK CONSTRAINT ALL");
+        }
+    }
+
+    public function disableForeignKeyConstraints(): void
+    {
+        foreach ($this->getTableNames() as $table) {
+            $this->run("ALTER TABLE {$this->identify($table)} NOCHECK CONSTRAINT ALL");
+        }
+    }
+
     private function renameColumn(
         AbstractTable $table,
         AbstractColumn $initial,

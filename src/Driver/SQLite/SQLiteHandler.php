@@ -142,6 +142,16 @@ class SQLiteHandler extends Handler
         //Not supported
     }
 
+    public function enableForeignKeyConstraints(): void
+    {
+        $this->run('PRAGMA foreign_keys = ON;');
+    }
+
+    public function disableForeignKeyConstraints(): void
+    {
+        $this->run('PRAGMA foreign_keys = OFF;');
+    }
+
     /**
      * Temporary table based on parent.
      */

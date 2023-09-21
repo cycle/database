@@ -126,6 +126,16 @@ class PostgresHandler extends Handler
         $this->run($query);
     }
 
+    public function enableForeignKeyConstraints(): void
+    {
+        $this->run('SET CONSTRAINTS ALL IMMEDIATE;');
+    }
+
+    public function disableForeignKeyConstraints(): void
+    {
+        $this->run('SET CONSTRAINTS ALL DEFERRED;');
+    }
+
     /**
      * @psalm-param non-empty-string $statement
      */
