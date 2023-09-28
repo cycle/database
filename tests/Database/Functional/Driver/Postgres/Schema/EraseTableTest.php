@@ -89,4 +89,56 @@ class EraseTableTest extends TestCase
         $driver->getSchemaHandler()->eraseTable($table);
         $this->assertSame(0, $driver->getQueryBuilder()->selectQuery('', ['schema1.table_to_erase'])->count());
     }
+
+    public function testEraseTableWithoutRestartIdentity(): void
+    {
+        $driver = $this->getDriver();
+
+        $table = $this->createTable($driver, 'table_to_erase');
+        $table->primary('id');
+        $table->string('name');
+        $table->save();
+
+        $driver
+            ->getQueryBuilder()
+            ->insertQuery('', 'table_to_erase')
+            ->columns('name')->values(['foo'])
+            ->run();
+
+        $driver->getSchemaHandler()->eraseTable($table);
+
+        $result = $driver
+            ->getQueryBuilder()
+            ->insertQuery('', 'table_to_erase')
+            ->columns('name')->values(['foo'])
+            ->run();
+
+        $this->assertSame(2, (int) $result);
+    }
+
+    public function testEraseTableWithRestartIdentity(): void
+    {
+        $driver = $this->getDriver();
+
+        $table = $this->createTable($driver, 'table_to_erase');
+        $table->primary('id');
+        $table->string('name');
+        $table->save();
+
+        $driver
+            ->getQueryBuilder()
+            ->insertQuery('', 'table_to_erase')
+            ->columns('name')->values(['foo'])
+            ->run();
+
+        $driver->getSchemaHandler()->eraseTable($table, true);
+
+        $result = $driver
+            ->getQueryBuilder()
+            ->insertQuery('', 'table_to_erase')
+            ->columns('name')->values(['foo'])
+            ->run();
+
+        $this->assertSame(1, (int) $result);
+    }
 }

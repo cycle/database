@@ -71,11 +71,15 @@ class PostgresHandler extends Handler
         return (bool)$this->driver->query($query, [$schema, $name])->fetchColumn();
     }
 
-    public function eraseTable(AbstractTable $table): void
+    public function eraseTable(AbstractTable $table, bool $restartIdentity = false): void
     {
-        $this->driver->execute(
-            "TRUNCATE TABLE {$this->driver->identifier($table->getFullName())}"
-        );
+        $query = "TRUNCATE TABLE {$this->driver->identifier($table->getFullName())}";
+
+        if ($restartIdentity) {
+            $query .= ' RESTART IDENTITY CASCADE';
+        }
+
+        $this->driver->execute($query);
     }
 
     /**
