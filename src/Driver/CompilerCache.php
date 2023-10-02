@@ -159,10 +159,10 @@ final class CompilerCache implements CompilerInterface
             if ($join['outer'] instanceof SelectQuery) {
                 $hash .= $join['outer']->getPrefix() === null ? '' : 'p_' . $join['outer']->getPrefix();
                 $hash .= $this->hashSelectQuery($params, $join['outer']->getTokens());
-                continue;
+            } else {
+                $hash .= $join['outer'];
             }
 
-            $hash .= $join['outer'];
             $hash .= 'on' . $this->hashWhere($params, $join['on']);
         }
 

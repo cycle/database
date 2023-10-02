@@ -167,16 +167,14 @@ abstract class Compiler implements CompilerInterface
         foreach ($tokens['from'] as $table) {
             $tables[] = $this->name($params, $q, $table, true);
         }
-        foreach ($tokens['join'] as $join) {
-            $this->name($params, $q, $join['outer'], true);
-        }
+        $joins = $this->joins($params, $q, $tokens['join']);
 
         return sprintf(
             "SELECT%s %s\nFROM %s%s%s%s%s%s%s%s%s",
             $this->optional(' ', $this->distinct($params, $q, $tokens['distinct'])),
             $this->columns($params, $q, $tokens['columns']),
             \implode(', ', $tables),
-            $this->optional(' ', $this->joins($params, $q, $tokens['join']), ' '),
+            $this->optional(' ', $joins, ' '),
             $this->optional("\nWHERE", $this->where($params, $q, $tokens['where'])),
             $this->optional("\nGROUP BY", $this->groupBy($params, $q, $tokens['groupBy']), ' '),
             $this->optional("\nHAVING", $this->where($params, $q, $tokens['having'])),
