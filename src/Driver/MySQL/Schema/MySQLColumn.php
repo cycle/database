@@ -105,7 +105,7 @@ class MySQLColumn extends AbstractColumn
         'longBinary'  => 'longblob',
 
         //Additional types
-        'json'        => 'text',
+        'json'        => 'json',
         'uuid'        => ['type' => 'varchar', 'size' => 36],
     ];
 
@@ -133,6 +133,7 @@ class MySQLColumn extends AbstractColumn
         'binary'      => ['blob', 'binary', 'varbinary'],
         'tinyBinary'  => ['tinyblob'],
         'longBinary'  => ['longblob'],
+        'json'        => ['json'],
     ];
 
     /**
@@ -146,6 +147,7 @@ class MySQLColumn extends AbstractColumn
         'blob',
         'tinyblob',
         'longblob',
+        'json',
     ];
 
     /**
