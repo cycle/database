@@ -13,7 +13,7 @@ trait TestDriverTrait
 {
     public int $disconnectCalls = 0;
     public int $exceptionOnTransactionBegin = 0;
-    /** @var null|Closure(\PDOStatement $pdo, ?array $params): bool */
+    /** @var Closure(\PDOStatement $pdo, ?array $params): bool|null */
     public ?Closure $queryCallback = null;
 
     protected function getPDO(): PDOInterface

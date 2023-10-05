@@ -14,11 +14,11 @@ use Traversable;
 class TestPDOStatement implements PDOStatementInterface
 {
     private \PDOStatement $statement;
-    /** @var null|Closure(\PDOStatement $pdo, ?array $params): bool */
+    /** @var Closure(\PDOStatement $pdo, ?array $params): bool|null */
     private ?Closure $queryCallback;
 
     /**
-     * @param null|Closure(\PDOStatement $pdo, ?array $params): bool $queryCallback
+     * @param Closure(\PDOStatement $pdo, ?array $params): bool|null $queryCallback
      */
     public function __construct(\PDOStatement $statement, ?Closure $queryCallback = null)
     {
@@ -97,10 +97,10 @@ class TestPDOStatement implements PDOStatementInterface
     }
 
     #[ArrayShape([0 => 'string', 1 => 'int', 2 => 'string'])]
- public function errorInfo(): array
- {
-     return $this->statement->errorInfo(...\func_get_args());
- }
+    public function errorInfo(): array
+    {
+        return $this->statement->errorInfo(...\func_get_args());
+    }
 
     public function setAttribute(int $attribute, mixed $value): bool
     {

@@ -16,11 +16,11 @@ class TestPDO implements PDOInterface
 {
     private PDO $pdo;
     private int $exceptionOnTransactionBegin;
-    /** @var null|Closure(\PDOStatement $pdo, ?array $params): bool */
+    /** @var Closure(\PDOStatement $pdo, ?array $params): bool|null */
     private ?Closure $queryCallback;
 
     /**
-     * @param null|Closure(\PDOStatement $pdo, ?array $params): bool $queryCallback
+     * @param Closure(\PDOStatement $pdo, ?array $params): bool|null $queryCallback
      */
     public function __construct(PDO $pdo, int &$exceptionOnTransactionBegin, ?Closure $queryCallback)
     {
