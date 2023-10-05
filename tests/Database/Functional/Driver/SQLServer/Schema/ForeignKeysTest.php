@@ -32,4 +32,42 @@ class ForeignKeysTest extends CommonClass
         $this->assertTrue($this->schema('schema')->hasForeignKey(['external_id']));
         $this->assertFalse($this->schema('schema')->hasIndex(['external_id']));
     }
+
+    public function testDisableForeignKeyConstraints(): void
+    {
+        $schema = $this->schema('schema');
+        $this->sampleSchema('external');
+
+        $schema->primary('id');
+        $schema->integer('external_id');
+        $schema->foreignKey(['external_id'])->references('external', ['id']);
+        $schema->save(Handler::DO_ALL);
+
+        $result = $schema->getDriver()->query('select * from sys.foreign_keys')->fetch();
+        $this->assertSame(0, (int) $result['is_disabled']);
+
+        $schema->getDriver()->getSchemaHandler()->disableForeignKeyConstraints();
+        $result = $schema->getDriver()->query('select * from sys.foreign_keys')->fetch();
+        $this->assertSame(1, (int) $result['is_disabled']);
+    }
+
+    public function testEnableForeignKeyConstraints(): void
+    {
+        $schema = $this->schema('schema');
+        $this->sampleSchema('external');
+
+        $schema->primary('id');
+        $schema->integer('external_id');
+        $schema->foreignKey(['external_id'])->references('external', ['id']);
+        $schema->save(Handler::DO_ALL);
+
+        $schema->getDriver()->getSchemaHandler()->disableForeignKeyConstraints();
+        $result = $schema->getDriver()->query('select * from sys.foreign_keys')->fetch();
+        $this->assertSame(1, (int) $result['is_disabled']);
+        $schema->save(Handler::DO_ALL);
+
+        $schema->getDriver()->getSchemaHandler()->enableForeignKeyConstraints();
+        $result = $schema->getDriver()->query('select * from sys.foreign_keys')->fetch();
+        $this->assertSame(0, (int) $result['is_disabled']);
+    }
 }

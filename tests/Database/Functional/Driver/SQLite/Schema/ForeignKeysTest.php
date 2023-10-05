@@ -32,4 +32,30 @@ class ForeignKeysTest extends CommonClass
         $this->assertTrue($this->schema('schema')->hasForeignKey(['external_id']));
         $this->assertFalse($this->schema('schema')->hasIndex(['external_id']));
     }
+
+    public function testDisableForeignKeyConstraints(): void
+    {
+        $schema = $this->schema('schema');
+        $schema->getDriver()->getSchemaHandler()->enableForeignKeyConstraints();
+        $result = $schema->getDriver()->query('PRAGMA foreign_keys')->fetch();
+        $this->assertSame(1, (int) $result['foreign_keys']);
+
+        $schema->getDriver()->getSchemaHandler()->disableForeignKeyConstraints();
+        $result = $schema->getDriver()->query('PRAGMA foreign_keys')->fetch();
+
+        $this->assertSame(0, (int) $result['foreign_keys']);
+    }
+
+    public function testEnableForeignKeyConstraints(): void
+    {
+        $schema = $this->schema('schema');
+
+        $result = $schema->getDriver()->query('PRAGMA foreign_keys')->fetch();
+        $this->assertSame(0, (int) $result['foreign_keys']);
+
+        $schema->getDriver()->getSchemaHandler()->enableForeignKeyConstraints();
+        $result = $schema->getDriver()->query('PRAGMA foreign_keys')->fetch();
+
+        $this->assertSame(1, (int) $result['foreign_keys']);
+    }
 }
