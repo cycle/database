@@ -130,7 +130,7 @@ class SQLServerCompiler extends Compiler
             $tables[] = $this->name($params, $q, $table, true);
         }
         foreach ($tokens['join'] as $join) {
-            $this->name($params, $q, $join['outer'], true);
+            $this->nameWithAlias(new QueryParameters(), $q, $join['outer'], $join['alias'], true);
         }
 
         return sprintf(

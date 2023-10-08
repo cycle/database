@@ -167,14 +167,16 @@ abstract class Compiler implements CompilerInterface
         foreach ($tokens['from'] as $table) {
             $tables[] = $this->name($params, $q, $table, true);
         }
-        $joins = $this->joins($params, $q, $tokens['join']);
+        foreach ($tokens['join'] as $join) {
+            $this->nameWithAlias(new QueryParameters(), $q, $join['outer'], $join['alias'], true);
+        }
 
         return sprintf(
             "SELECT%s %s\nFROM %s%s%s%s%s%s%s%s%s",
             $this->optional(' ', $this->distinct($params, $q, $tokens['distinct'])),
             $this->columns($params, $q, $tokens['columns']),
             \implode(', ', $tables),
-            $this->optional(' ', $joins, ' '),
+            $this->optional(' ', $this->joins($params, $q, $tokens['join']), ' '),
             $this->optional("\nWHERE", $this->where($params, $q, $tokens['where'])),
             $this->optional("\nGROUP BY", $this->groupBy($params, $q, $tokens['groupBy']), ' '),
             $this->optional("\nHAVING", $this->where($params, $q, $tokens['having'])),
@@ -197,14 +199,8 @@ abstract class Compiler implements CompilerInterface
             $statement .= sprintf(
                 "\n%s JOIN %s",
                 $join['type'],
-                $this->name($params, $q, $join['outer'], true)
+                $this->nameWithAlias($params, $q, $join['outer'], $join['alias'], true)
             );
-
-            if ($join['alias'] !== null) {
-                $q->registerAlias($join['alias'], (string)$join['outer']);
-
-                $statement .= ' AS ' . $this->name($params, $q, $join['alias']);
-            }
 
             $statement .= $this->optional(
                 "\n    ON",
@@ -324,6 +320,27 @@ abstract class Compiler implements CompilerInterface
         }
 
         return $q->quote($name, $table);
+    }
+
+    /**
+     * @psalm-return non-empty-string
+     */
+    protected function nameWithAlias(
+        QueryParameters $params,
+        Quoter $q,
+        $name,
+        ?string $alias = null,
+        bool $table = false,
+    ): string {
+        $quotedName = $this->name($params, $q, $name, $table);
+
+        if ($alias !== null) {
+            $q->registerAlias($alias, (string) $name);
+
+            $quotedName .= ' AS ' . $this->name($params, $q, $alias);
+        }
+
+        return $quotedName;
     }
 
     /**
