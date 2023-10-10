@@ -598,21 +598,6 @@ class PostgresColumn extends AbstractColumn
         );
     }
 
-    public function defaultValue(mixed $value): self
-    {
-        if ($this->type !== 'json' && $this->type !== 'jsonb') {
-            return parent::defaultValue($value);
-        }
-
-        if (\is_array($value)) {
-            $value = \json_encode($value, JSON_THROW_ON_ERROR);
-        }
-
-        $this->defaultValue = $value;
-
-        return $this;
-    }
-
     /**
      * @psalm-return non-empty-string
      */

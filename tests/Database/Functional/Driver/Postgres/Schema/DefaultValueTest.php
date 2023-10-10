@@ -46,17 +46,4 @@ class DefaultValueTest extends CommonClass
         $this->assertTrue($schema->exists());
         $this->assertTrue($schema->column('target')->compare($column));
     }
-
-    public function testJsonDefaultValueArray(): void
-    {
-        $schema = $this->schema('table');
-        $this->assertFalse($schema->exists());
-
-        $column = $schema->json('target')->defaultValue(['foo' => 'bar', 'baz' => 100.5]);
-
-        $schema->save();
-        $schema = $this->schema('table');
-        $this->assertTrue($schema->exists());
-        $this->assertTrue($schema->column('target')->compare($column));
-    }
 }
