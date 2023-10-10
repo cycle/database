@@ -180,7 +180,7 @@ class PostgresColumn extends AbstractColumn
         'daterange'    => 'daterange',
 
         //Additional types
-        'json'         => 'text',
+        'json'         => 'json',
         'jsonb'        => 'jsonb',
         'uuid'         => 'uuid',
         'point'        => 'point',
