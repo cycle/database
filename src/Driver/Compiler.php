@@ -168,7 +168,7 @@ abstract class Compiler implements CompilerInterface
             $tables[] = $this->name($params, $q, $table, true);
         }
         foreach ($tokens['join'] as $join) {
-            $this->name($params, $q, $join['outer'], true);
+            $this->nameWithAlias(new QueryParameters(), $q, $join['outer'], $join['alias'], true);
         }
 
         return sprintf(
@@ -199,14 +199,8 @@ abstract class Compiler implements CompilerInterface
             $statement .= sprintf(
                 "\n%s JOIN %s",
                 $join['type'],
-                $this->name($params, $q, $join['outer'], true)
+                $this->nameWithAlias($params, $q, $join['outer'], $join['alias'], true)
             );
-
-            if ($join['alias'] !== null) {
-                $q->registerAlias($join['alias'], (string)$join['outer']);
-
-                $statement .= ' AS ' . $this->name($params, $q, $join['alias']);
-            }
 
             $statement .= $this->optional(
                 "\n    ON",
@@ -326,6 +320,27 @@ abstract class Compiler implements CompilerInterface
         }
 
         return $q->quote($name, $table);
+    }
+
+    /**
+     * @psalm-return non-empty-string
+     */
+    protected function nameWithAlias(
+        QueryParameters $params,
+        Quoter $q,
+        $name,
+        ?string $alias = null,
+        bool $table = false,
+    ): string {
+        $quotedName = $this->name($params, $q, $name, $table);
+
+        if ($alias !== null) {
+            $q->registerAlias($alias, (string) $name);
+
+            $quotedName .= ' AS ' . $this->name($params, $q, $alias);
+        }
+
+        return $quotedName;
     }
 
     /**

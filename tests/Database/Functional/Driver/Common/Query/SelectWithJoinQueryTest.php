@@ -631,4 +631,32 @@ abstract class SelectWithJoinQueryTest extends BaseTest
             $select
         );
     }
+
+    public function testJoinQueryWithParameters(): void
+    {
+        $subSelect = $this->db('prefixed', 'prefix_')->select()
+            ->from('posts AS p')
+            ->where('p.feed', 'news');
+
+        $select = $this->db('prefixed', 'prefix_')->select()
+            ->columns('u.id, u.name, p.feed, p.title')
+            ->from(['users as u'])
+            ->innerJoin($subSelect, 'p')
+            ->on('p.user_id', 'u.id')
+            ->onWhere('p.channel', 'internal')
+            ->where('u.status', 'active');
+
+        $this->assertSameQueryWithParameters(
+            'SELECT {u}.{id}, {u}.{name}, {p}.{feed}, {p}.{title}
+                FROM {prefix_users} AS {u}
+                INNER JOIN (
+                  SELECT *
+                  FROM {prefix_posts} AS {p}
+                  WHERE {p}.{feed} = ?
+                ) AS {p} ON {p}.{user_id} = {u}.{id} AND {p}.{channel} = ?
+              WHERE {u}.{status} = ?',
+            ['news', 'internal', 'active'],
+            $select,
+        );
+    }
 }
