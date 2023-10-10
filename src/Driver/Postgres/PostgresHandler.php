@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Driver\Postgres;
 
 use Cycle\Database\Driver\Handler;
+use Cycle\Database\Driver\Postgres\Exception\PostgresException;
 use Cycle\Database\Driver\Postgres\Schema\PostgresColumn;
 use Cycle\Database\Driver\Postgres\Schema\PostgresTable;
 use Cycle\Database\Exception\SchemaException;
@@ -151,6 +152,22 @@ class PostgresHandler extends Handler
         }
 
         return parent::run($statement, $parameters);
+    }
+
+    /**
+     * @throws PostgresException
+     */
+    protected function assertValid(AbstractColumn $column): void
+    {
+        if ($column->getDefaultValue() !== null && \in_array($column->getAbstractType(), ['json', 'jsonb'])) {
+            try {
+                \json_decode($column->getDefaultValue(), true, 512, JSON_THROW_ON_ERROR);
+            } catch (\Throwable) {
+                throw new PostgresException(
+                    \sprintf('Column `%s` of type json/jsonb has an invalid default json value.', $column),
+                );
+            }
+        }
     }
 
     private function renameColumn(
