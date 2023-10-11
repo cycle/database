@@ -113,7 +113,6 @@ class SelectQueryTest extends CommonClass
         );
     }
 
-
     public function testJsonWhere(): void
     {
         $select = $this->database

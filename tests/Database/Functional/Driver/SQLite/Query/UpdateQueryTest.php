@@ -15,7 +15,6 @@ class UpdateQueryTest extends CommonClass
 {
     public const DRIVER = 'sqlite';
 
-
     public function testUpdateWithJsonWhere(): void
     {
         $select = $this->database
