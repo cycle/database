@@ -76,4 +76,65 @@ class PostgresCompiler extends Compiler implements CachingCompilerInterface
 
         return trim($statement);
     }
+
+    /**
+     * @param non-empty-string $value
+     *
+     * @return non-empty-string
+     */
+    protected function wrapJsonSelector(string $value, Quoter $quoter): string
+    {
+        $path = \explode(self::JSON_DELIMITER, $value);
+        $field = $quoter->quote(\array_shift($path));
+        $wrappedPath = $this->wrapJsonPathAttributes($path);
+        $attribute = \array_pop($wrappedPath);
+
+        if (!empty($wrappedPath)) {
+            return $field . self::JSON_DELIMITER . \implode(self::JSON_DELIMITER, $wrappedPath) . '->>' . $attribute;
+        }
+
+        return $field . '->>' . $attribute;
+    }
+
+    /**
+     * @param array<non-empty-string> $path
+     * @param non-empty-string $quote
+     *
+     * @return array<non-empty-string>
+     */
+    protected function wrapJsonPathAttributes(array $path, string $quote = "'"): array
+    {
+        $result = [];
+        foreach ($path as $pathAttribute) {
+            $parsedAttributes = $this->parseJsonPathArrayKeys($pathAttribute);
+            foreach ($parsedAttributes as $attribute) {
+                $result[] = \filter_var($attribute, FILTER_VALIDATE_INT) !== false
+                    ? $attribute
+                    : $quote . $attribute . $quote;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param non-empty-string $attribute
+     *
+     * @return array<non-empty-string>
+     */
+    protected function parseJsonPathArrayKeys(string $attribute): array
+    {
+        if (\preg_match('/(\[[^\]]+\])+$/', $attribute, $parts)) {
+            $key = \substr($attribute, 0, \strpos($attribute, $parts[0]));
+
+            \preg_match_all('/\[([^\]]+)\]/', $parts[0], $matches);
+            $keys = $matches[1];
+
+            $cleanKeys = \array_values(\array_filter($keys, static fn ($key) => $key !== ''));
+
+            return \array_merge([$key], $cleanKeys);
+        }
+
+        return [$attribute];
+    }
 }
