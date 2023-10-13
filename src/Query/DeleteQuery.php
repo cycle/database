@@ -21,6 +21,12 @@ use Cycle\Database\Query\Traits\WhereTrait;
  * @method DeleteQuery whereJson(string $column, mixed $value)
  * @method DeleteQuery andWhereJson(string $column, mixed $value)
  * @method DeleteQuery orWhereJson(string $column, mixed $value)
+ * @method DeleteQuery whereJsonContains(string $column, mixed $value)
+ * @method DeleteQuery andWhereJsonContains(string $column, mixed $value)
+ * @method DeleteQuery orWhereJsonContains(string $column, mixed $value)
+ * @method DeleteQuery whereJsonDoesntContain(string $column, mixed $value)
+ * @method DeleteQuery andWhereJsonDoesntContain(string $column, mixed $value)
+ * @method DeleteQuery orWhereJsonDoesntContain(string $column, mixed $value)
  */
 class DeleteQuery extends ActiveQuery
 {

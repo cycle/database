@@ -13,6 +13,7 @@ namespace Cycle\Database\Driver\MySQL\Query\Traits;
 
 use Cycle\Database\Driver\MySQL\Injection\CompileJson;
 use Cycle\Database\Driver\MySQL\Injection\CompileJsonContains;
+use Cycle\Database\Driver\MySQL\Injection\CompileJsonDoesntContain;
 
 /**
  * @internal
@@ -79,7 +80,78 @@ trait WhereJsonTrait
     {
         $this->registerToken(
             'AND',
-            [new CompileJsonContains($column), $value],
+            [new CompileJsonContains($column, $value)],
+            $this->whereTokens,
+            $this->whereWrapper()
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param non-empty-string $column
+     *
+     * @return $this|self
+     */
+    public function andWhereJsonContains(string $column, mixed $value): self
+    {
+        return $this->whereJsonContains($column, $value);
+    }
+
+    /**
+     * @param non-empty-string $column
+     *
+     * @return $this|self
+     */
+    public function orWhereJsonContains(string $column, mixed $value): self
+    {
+        $this->registerToken(
+            'OR',
+            [new CompileJsonContains($column, $value)],
+            $this->whereTokens,
+            $this->whereWrapper()
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param non-empty-string $column
+     *
+     * @return $this|self
+     */
+    public function whereJsonDoesntContain(string $column, mixed $value): self
+    {
+        $this->registerToken(
+            'AND',
+            [new CompileJsonDoesntContain($column, $value)],
+            $this->whereTokens,
+            $this->whereWrapper()
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param non-empty-string $column
+     *
+     * @return $this|self
+     */
+    public function andWhereJsonDoesntContain(string $column, mixed $value): self
+    {
+        return $this->whereJsonDoesntContain($column, $value);
+    }
+
+    /**
+     * @param non-empty-string $column
+     *
+     * @return $this|self
+     */
+    public function orWhereJsonDoesntContain(string $column, mixed $value): self
+    {
+        $this->registerToken(
+            'OR',
+            [new CompileJsonDoesntContain($column, $value)],
             $this->whereTokens,
             $this->whereWrapper()
         );

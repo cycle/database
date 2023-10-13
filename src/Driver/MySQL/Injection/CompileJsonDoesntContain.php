@@ -14,7 +14,7 @@ namespace Cycle\Database\Driver\MySQL\Injection;
 use Cycle\Database\Driver\Quoter;
 use Cycle\Database\Injection\JsonExpression;
 
-class CompileJson extends JsonExpression
+class CompileJsonDoesntContain extends JsonExpression
 {
     protected function compile(string $statement): string
     {
@@ -24,6 +24,6 @@ class CompileJson extends JsonExpression
         $field = $quoter->quote($parts[0]);
         $path = \count($parts) > 1 ? ', ' . $this->wrapPath($parts[1]) : '';
 
-        return 'json_unquote(json_extract(' . $field . $path . '))';
+        return 'NOT json_contains(' . $field . ', ?' . $path . ')';
     }
 }

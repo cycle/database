@@ -11,14 +11,17 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\Postgres\Injection;
 
+use Cycle\Database\Driver\Quoter;
 use Cycle\Database\Injection\JsonExpression;
 
 class CompileJson extends JsonExpression
 {
     protected function compile(string $statement): string
     {
+        $quoter = new Quoter('', '""');
+
         $path = \explode('->', $statement);
-        $field = $this->quoter->quote(\array_shift($path));
+        $field = $quoter->quote(\array_shift($path));
         $wrappedPath = $this->wrapJsonPathAttributes($path);
         $attribute = \array_pop($wrappedPath);
 

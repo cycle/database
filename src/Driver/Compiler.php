@@ -13,7 +13,6 @@ namespace Cycle\Database\Driver;
 
 use Cycle\Database\Exception\CompilerException;
 use Cycle\Database\Injection\FragmentInterface;
-use Cycle\Database\Injection\JsonExpressionInterface;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Injection\ParameterInterface;
 use Cycle\Database\Query\QueryParameters;
@@ -81,10 +80,6 @@ abstract class Compiler implements CompilerInterface
         FragmentInterface $fragment,
         bool $nestedQuery = true
     ): string {
-        if ($fragment instanceof JsonExpressionInterface) {
-            $fragment->setQuoter($q);
-        }
-
         $tokens = $fragment->getTokens();
 
         switch ($fragment->getType()) {

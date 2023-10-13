@@ -112,4 +112,176 @@ class SelectQueryTest extends CommonClass
         );
         $this->assertSameParameters(['+1234567890'], $select);
     }
+
+    public function testSelectWithWhereJsonContains(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonContains('settings->languages', 'en');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE json_contains({settings}, ?, '$.\"languages\"')",
+            $select
+        );
+        $this->assertSameParameters(['en'], $select);
+    }
+
+    public function testSelectWithAndWhereJsonContains(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->where('id', 1)
+            ->andWhereJsonContains('settings->languages', 'en');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE {id} = ? AND json_contains({settings}, ?, '$.\"languages\"')",
+            $select
+        );
+        $this->assertSameParameters([1, 'en'], $select);
+    }
+
+    public function testSelectWithOrWhereJsonContains(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->where('id', 1)
+            ->orWhereJsonContains('settings->languages', 'en');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE {id} = ? OR json_contains({settings}, ?, '$.\"languages\"')",
+            $select
+        );
+        $this->assertSameParameters([1, 'en'], $select);
+    }
+
+    public function testSelectWithWhereJsonContainsNested(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonContains('settings->phones->work', '+1234567890');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE json_contains({settings}, ?, '$.\"phones\".\"work\"')",
+            $select
+        );
+        $this->assertSameParameters(['+1234567890'], $select);
+    }
+
+    public function testSelectWithWhereJsonContainsArray(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonContains('settings->phones[1]', '+1234567890');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE json_contains({settings}, ?, '$.\"phones\"[1]')",
+            $select
+        );
+        $this->assertSameParameters(['+1234567890'], $select);
+    }
+
+    public function testSelectWithWhereJsonContainsNestedArray(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonContains('settings->phones[1]->numbers[3]', '+1234567890');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE json_contains({settings}, ?, '$.\"phones\"[1].\"numbers\"[3]')",
+            $select
+        );
+        $this->assertSameParameters(['+1234567890'], $select);
+    }
+
+    public function testSelectWithWhereJsonDoesntContain(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonDoesntContain('settings->languages', 'en');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE NOT json_contains({settings}, ?, '$.\"languages\"')",
+            $select
+        );
+        $this->assertSameParameters(['en'], $select);
+    }
+
+    public function testSelectWithAndWhereJsonDoesntContain(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->where('id', 1)
+            ->andWhereJsonDoesntContain('settings->languages', 'en');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE {id} = ? AND NOT json_contains({settings}, ?, '$.\"languages\"')",
+            $select
+        );
+        $this->assertSameParameters([1, 'en'], $select);
+    }
+
+    public function testSelectWithOrWhereJsonDoesntContain(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->where('id', 1)
+            ->orWhereJsonDoesntContain('settings->languages', 'en');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE {id} = ? OR NOT json_contains({settings}, ?, '$.\"languages\"')",
+            $select
+        );
+        $this->assertSameParameters([1, 'en'], $select);
+    }
+
+    public function testSelectWithWhereJsonDoesntContainNested(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonDoesntContain('settings->phones->work', '+1234567890');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE NOT json_contains({settings}, ?, '$.\"phones\".\"work\"')",
+            $select
+        );
+        $this->assertSameParameters(['+1234567890'], $select);
+    }
+
+    public function testSelectWithWhereJsonDoesntContainArray(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonDoesntContain('settings->phones[1]', '+1234567890');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE NOT json_contains({settings}, ?, '$.\"phones\"[1]')",
+            $select
+        );
+        $this->assertSameParameters(['+1234567890'], $select);
+    }
+
+    public function testSelectWithWhereJsonDoesntContainNestedArray(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonDoesntContain('settings->phones[1]->numbers[3]', '+1234567890');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE NOT json_contains({settings}, ?, '$.\"phones\"[1].\"numbers\"[3]')",
+            $select
+        );
+        $this->assertSameParameters(['+1234567890'], $select);
+    }
 }

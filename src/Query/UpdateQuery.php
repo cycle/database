@@ -21,6 +21,12 @@ use Cycle\Database\Query\Traits\WhereTrait;
  * @method UpdateQuery whereJson(string $column, mixed $value)
  * @method UpdateQuery andWhereJson(string $column, mixed $value)
  * @method UpdateQuery orWhereJson(string $column, mixed $value)
+ * @method UpdateQuery whereJsonContains(string $column, mixed $value)
+ * @method UpdateQuery andWhereJsonContains(string $column, mixed $value)
+ * @method UpdateQuery orWhereJsonContains(string $column, mixed $value)
+ * @method UpdateQuery whereJsonDoesntContain(string $column, mixed $value)
+ * @method UpdateQuery andWhereJsonDoesntContain(string $column, mixed $value)
+ * @method UpdateQuery orWhereJsonDoesntContain(string $column, mixed $value)
  */
 class UpdateQuery extends ActiveQuery
 {

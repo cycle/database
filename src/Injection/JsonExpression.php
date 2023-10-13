@@ -12,12 +12,9 @@ declare(strict_types=1);
 namespace Cycle\Database\Injection;
 
 use Cycle\Database\Driver\CompilerInterface;
-use Cycle\Database\Driver\Quoter;
 
-abstract class JsonExpression implements JsonExpressionInterface
+abstract class JsonExpression implements FragmentInterface
 {
-    protected Quoter $quoter;
-
     protected string $expression;
 
     /**
@@ -30,7 +27,7 @@ abstract class JsonExpression implements JsonExpressionInterface
      */
     public function __construct(string $statement, mixed ...$parameters)
     {
-        $this->expression = $statement;
+        $this->expression = $this->compile($statement);
 
         foreach ($parameters as $parameter) {
             if ($parameter instanceof ParameterInterface) {
@@ -62,14 +59,9 @@ abstract class JsonExpression implements JsonExpressionInterface
     public function getTokens(): array
     {
         return [
-            'expression' => $this->compile($this->expression),
+            'expression' => $this->expression,
             'parameters' => $this->parameters,
         ];
-    }
-
-    public function setQuoter(Quoter $quoter): void
-    {
-        $this->quoter = $quoter;
     }
 
     abstract protected function compile(string $statement): string;

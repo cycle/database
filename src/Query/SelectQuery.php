@@ -31,6 +31,12 @@ use Throwable;
  * @method SelectQuery whereJson(string $column, mixed $value)
  * @method SelectQuery andWhereJson(string $column, mixed $value)
  * @method SelectQuery orWhereJson(string $column, mixed $value)
+ * @method SelectQuery whereJsonContains(string $column, mixed $value)
+ * @method SelectQuery andWhereJsonContains(string $column, mixed $value)
+ * @method SelectQuery orWhereJsonContains(string $column, mixed $value)
+ * @method SelectQuery whereJsonDoesntContain(string $column, mixed $value)
+ * @method SelectQuery andWhereJsonDoesntContain(string $column, mixed $value)
+ * @method SelectQuery orWhereJsonDoesntContain(string $column, mixed $value)
  */
 class SelectQuery extends ActiveQuery implements
     Countable,
