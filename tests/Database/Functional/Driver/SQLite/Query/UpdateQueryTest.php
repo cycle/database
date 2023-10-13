@@ -20,7 +20,7 @@ class UpdateQueryTest extends CommonClass
         $select = $this->database
             ->update('table')
             ->values(['some' => 'value'])
-            ->where('settings->theme', 'dark');
+            ->whereJson('settings->theme', 'dark');
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE json_extract({settings}, '$.\"theme\"') = ?",
@@ -34,7 +34,7 @@ class UpdateQueryTest extends CommonClass
         $select = $this->database
             ->update('table')
             ->values(['some' => 'value'])
-            ->where('settings->phone->work', '+1234567890');
+            ->whereJson('settings->phone->work', '+1234567890');
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE json_extract({settings}, '$.\"phone\".\"work\"') = ?",
@@ -48,10 +48,10 @@ class UpdateQueryTest extends CommonClass
         $select = $this->database
             ->update('table')
             ->values(['some' => 'value'])
-            ->where('settings->phones[1]', '+1234567890');
+            ->whereJson('settings->phones[1]', '+1234567890');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE json_unquote(json_extract({settings}, '$.\"phones\"[1]')) = ?",
+            "UPDATE {table} SET {some} = ? WHERE json_extract({settings}, '$.\"phones\"[1]') = ?",
             $select
         );
         $this->assertSameParameters(['value', '+1234567890'], $select);
@@ -62,7 +62,7 @@ class UpdateQueryTest extends CommonClass
         $select = $this->database
             ->update('table')
             ->values(['some' => 'value'])
-            ->where('settings->phones[1]->numbers[3]', '+1234567890');
+            ->whereJson('settings->phones[1]->numbers[3]', '+1234567890');
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE json_extract({settings}, '$.\"phones\"[1].\"numbers\"[3]') = ?",

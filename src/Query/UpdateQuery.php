@@ -17,6 +17,10 @@ use Cycle\Database\Query\Traits\WhereTrait;
 
 /**
  * Update statement builder.
+ *
+ * @method UpdateQuery whereJson(mixed ...$args)
+ * @method UpdateQuery andWhereJson(mixed ...$args)
+ * @method UpdateQuery orWhereJson(mixed ...$args)
  */
 class UpdateQuery extends ActiveQuery
 {

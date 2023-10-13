@@ -15,13 +15,13 @@ use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Config\PostgresDriverConfig;
 use Cycle\Database\Driver\Driver;
 use Cycle\Database\Driver\PDOInterface;
+use Cycle\Database\Driver\Postgres\Query\PostgresDeleteQuery;
 use Cycle\Database\Driver\Postgres\Query\PostgresInsertQuery;
 use Cycle\Database\Driver\Postgres\Query\PostgresSelectQuery;
+use Cycle\Database\Driver\Postgres\Query\PostgresUpdateQuery;
 use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\StatementException;
-use Cycle\Database\Query\DeleteQuery;
 use Cycle\Database\Query\QueryBuilder;
-use Cycle\Database\Query\UpdateQuery;
 use Throwable;
 
 /**
@@ -274,8 +274,8 @@ class PostgresDriver extends Driver
             new QueryBuilder(
                 new PostgresSelectQuery(),
                 new PostgresInsertQuery(),
-                new UpdateQuery(),
-                new DeleteQuery()
+                new PostgresUpdateQuery(),
+                new PostgresDeleteQuery()
             )
         );
 

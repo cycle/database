@@ -23,6 +23,7 @@ interface CompilerInterface
     public const SELECT_QUERY = 5;
     public const UPDATE_QUERY = 6;
     public const DELETE_QUERY = 7;
+    public const JSON_EXPRESSION = 8;
 
     public const TOKEN_AND = '@AND';
     public const TOKEN_OR = '@OR';

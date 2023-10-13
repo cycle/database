@@ -106,7 +106,7 @@ trait WhereTrait
      * Applied to every potential parameter while where tokens generation. Used to prepare and
      * collect where parameters.
      */
-    private function whereWrapper(): Closure
+    protected function whereWrapper(): Closure
     {
         return static function ($parameter) {
             \is_array($parameter) and throw new BuilderException('Arrays must be wrapped with Parameter instance.');

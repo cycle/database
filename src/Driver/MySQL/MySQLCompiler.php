@@ -69,18 +69,4 @@ class MySQLCompiler extends Compiler implements CachingCompilerInterface
 
         return trim($statement);
     }
-
-    /**
-     * @param non-empty-string $value
-     *
-     * @return non-empty-string
-     */
-    protected function wrapJsonSelector(string $value, Quoter $quoter): string
-    {
-        $parts = \explode(self::JSON_DELIMITER, $value, 2);
-        $field = $quoter->quote($parts[0]);
-        $path = \count($parts) > 1 ? ', ' . $this->wrapJsonPath($parts[1]) : '';
-
-        return 'json_unquote(json_extract(' . $field . $path . '))';
-    }
 }

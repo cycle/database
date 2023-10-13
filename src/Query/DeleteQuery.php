@@ -17,6 +17,10 @@ use Cycle\Database\Query\Traits\WhereTrait;
 
 /**
  * Update statement builder.
+ *
+ * @method DeleteQuery whereJson(mixed ...$args)
+ * @method DeleteQuery andWhereJson(mixed ...$args)
+ * @method DeleteQuery orWhereJson(mixed ...$args)
  */
 class DeleteQuery extends ActiveQuery
 {

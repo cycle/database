@@ -19,7 +19,7 @@ class DeleteQueryTest extends CommonClass
     {
         $select = $this->database
             ->delete('table')
-            ->where('settings->theme', 'dark');
+            ->whereJson('settings->theme', 'dark');
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE json_unquote(json_extract({settings}, '$.\"theme\"')) = ?",
@@ -32,7 +32,7 @@ class DeleteQueryTest extends CommonClass
     {
         $select = $this->database
             ->delete('table')
-            ->where('settings->phone->work', '+1234567890');
+            ->whereJson('settings->phone->work', '+1234567890');
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE json_unquote(json_extract({settings}, '$.\"phone\".\"work\"')) = ?",
@@ -45,7 +45,7 @@ class DeleteQueryTest extends CommonClass
     {
         $select = $this->database
             ->delete('table')
-            ->where('settings->phones[1]', '+1234567890');
+            ->whereJson('settings->phones[1]', '+1234567890');
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE json_unquote(json_extract({settings}, '$.\"phones\"[1]')) = ?",
@@ -58,7 +58,7 @@ class DeleteQueryTest extends CommonClass
     {
         $select = $this->database
             ->delete('table')
-            ->where('settings->phones[1]->numbers[3]', '+1234567890');
+            ->whereJson('settings->phones[1]->numbers[3]', '+1234567890');
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE json_unquote(json_extract({settings}, '$.\"phones\"[1].\"numbers\"[3]')) = ?",

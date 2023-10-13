@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace Cycle\Database\Driver;
 
 use Cycle\Database\Exception\CompilerException;
-use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Injection\FragmentInterface;
+use Cycle\Database\Injection\JsonExpressionInterface;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Injection\ParameterInterface;
 use Cycle\Database\Query\QueryParameters;
@@ -81,6 +81,10 @@ abstract class Compiler implements CompilerInterface
         FragmentInterface $fragment,
         bool $nestedQuery = true
     ): string {
+        if ($fragment instanceof JsonExpressionInterface) {
+            $fragment->setQuoter($q);
+        }
+
         $tokens = $fragment->getTokens();
 
         switch ($fragment->getType()) {
@@ -97,6 +101,13 @@ abstract class Compiler implements CompilerInterface
                 }
 
                 return $q->quote($tokens['expression']);
+
+            case self::JSON_EXPRESSION:
+                foreach ($tokens['parameters'] as $param) {
+                    $params->push($param);
+                }
+
+                return $tokens['expression'];
 
             case self::INSERT_QUERY:
                 return $this->insertQuery($params, $q, $tokens);
@@ -320,10 +331,6 @@ abstract class Compiler implements CompilerInterface
             return $this->value($params, $q, $name);
         }
 
-        if (!$table && $this->isJsonSelector($name)) {
-            return $this->wrapJsonSelector($name, $q);
-        }
-
         return $q->quote($name, $table);
     }
 
@@ -518,56 +525,5 @@ abstract class Compiler implements CompilerInterface
         }
 
         return $prefix . $expression . $postfix;
-    }
-
-    protected function isJsonSelector(string $value): bool
-    {
-        return \str_contains($value, self::JSON_DELIMITER);
-    }
-
-    /**
-     * @param non-empty-string $value
-     *
-     * @return non-empty-string
-     */
-    protected function wrapJsonSelector(string $value, Quoter $quoter): string
-    {
-        throw new DriverException('This database engine does not support JSON operations.');
-    }
-
-    /**
-     * @param non-empty-string $value
-     * @param non-empty-string $delimiter
-     *
-     * @return non-empty-string
-     */
-    protected function wrapJsonPath(string $value, string $delimiter = self::JSON_DELIMITER): string
-    {
-        $value = \preg_replace("/([\\\\]+)?\\'/", "''", $value);
-
-        $segments = \explode($delimiter, $value);
-        $jsonPath = \implode('.', \array_map(fn ($segment): string => $this->wrapJsonPathSegment($segment), $segments));
-
-        return "'$" . (\str_starts_with($jsonPath, '[') ? '' : '.') . $jsonPath . "'";
-    }
-
-    /**
-     * @param non-empty-string $segment
-     *
-     * @return non-empty-string
-     */
-    protected function wrapJsonPathSegment(string $segment): string
-    {
-        if (\preg_match('/(\[[^\]]+\])+$/', $segment, $parts)) {
-            $key = \substr($segment, 0, \strpos($segment, $parts[0]));
-
-            if (!empty($key)) {
-                return '"' . $key . '"' . $parts[0];
-            }
-
-            return $parts[0];
-        }
-
-        return '"' . $segment . '"';
     }
 }

@@ -32,7 +32,7 @@ class SelectQueryTest extends CommonClass
         $select = $this->database
             ->select()
             ->from('table')
-            ->where('settings->theme', 'dark');
+            ->whereJson('settings->theme', 'dark');
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE json_unquote(json_extract({settings}, '$.\"theme\"')) = ?",
@@ -46,7 +46,7 @@ class SelectQueryTest extends CommonClass
         $select = $this->database
             ->select()
             ->from('table')
-            ->where('settings->phone->work', '+1234567890');
+            ->whereJson('settings->phone->work', '+1234567890');
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE json_unquote(json_extract({settings}, '$.\"phone\".\"work\"')) = ?",
@@ -60,7 +60,7 @@ class SelectQueryTest extends CommonClass
         $select = $this->database
             ->select()
             ->from('table')
-            ->where('settings->phones[1]', '+1234567890');
+            ->whereJson('settings->phones[1]', '+1234567890');
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE json_unquote(json_extract({settings}, '$.\"phones\"[1]')) = ?",
@@ -74,7 +74,7 @@ class SelectQueryTest extends CommonClass
         $select = $this->database
             ->select()
             ->from('table')
-            ->where('settings->phones[1]->numbers[3]', '+1234567890');
+            ->whereJson('settings->phones[1]->numbers[3]', '+1234567890');
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE json_unquote(json_extract({settings}, '$.\"phones\"[1].\"numbers\"[3]')) = ?",

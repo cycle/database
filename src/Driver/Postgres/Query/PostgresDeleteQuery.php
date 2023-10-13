@@ -12,20 +12,9 @@ declare(strict_types=1);
 namespace Cycle\Database\Driver\Postgres\Query;
 
 use Cycle\Database\Driver\Postgres\Query\Traits\WhereJsonTrait;
-use Cycle\Database\Injection\FragmentInterface;
-use Cycle\Database\Query\SelectQuery;
+use Cycle\Database\Query\DeleteQuery;
 
-class PostgresSelectQuery extends SelectQuery
+class PostgresDeleteQuery extends DeleteQuery
 {
     use WhereJsonTrait;
-
-    /**
-     * Apply distinct ON to the query.
-     */
-    public function distinctOn(FragmentInterface|string $distinctOn): SelectQuery
-    {
-        $this->distinct = ['on' => $distinctOn];
-
-        return $this;
-    }
 }

@@ -14,7 +14,11 @@ namespace Cycle\Database\Driver\SQLite;
 use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Config\SQLiteDriverConfig;
 use Cycle\Database\Driver\Driver;
+use Cycle\Database\Driver\SQLite\Query\SQLiteDeleteQuery;
+use Cycle\Database\Driver\SQLite\Query\SQLiteSelectQuery;
+use Cycle\Database\Driver\SQLite\Query\SQLiteUpdateQuery;
 use Cycle\Database\Exception\StatementException;
+use Cycle\Database\Query\InsertQuery;
 use Cycle\Database\Query\QueryBuilder;
 
 class SQLiteDriver extends Driver
@@ -56,7 +60,12 @@ class SQLiteDriver extends Driver
             $config,
             new SQLiteHandler(),
             new SQLiteCompiler('""'),
-            QueryBuilder::defaultBuilder()
+            new QueryBuilder(
+                new SQLiteSelectQuery(),
+                new InsertQuery(),
+                new SQLiteUpdateQuery(),
+                new SQLiteDeleteQuery()
+            )
         );
     }
 }

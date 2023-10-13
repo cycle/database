@@ -27,6 +27,10 @@ use Throwable;
 
 /**
  * Builds select sql statements.
+ *
+ * @method SelectQuery whereJson(mixed ...$args)
+ * @method SelectQuery andWhereJson(mixed ...$args)
+ * @method SelectQuery orWhereJson(mixed ...$args)
  */
 class SelectQuery extends ActiveQuery implements
     Countable,
