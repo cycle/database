@@ -15,7 +15,7 @@ class UpdateQueryTest extends CommonClass
 {
     public const DRIVER = 'mysql';
 
-    public function testUpdateWithJsonWhere(): void
+    public function testUpdateWithWhereJson(): void
     {
         $select = $this->database
             ->update('table')
@@ -29,7 +29,37 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', 'dark'], $select);
     }
 
-    public function testUpdateWithNestedJsonWhere(): void
+    public function testUpdateWithAndWhereJson(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->where('id', 1)
+            ->andWhereJson('settings->theme', 'dark');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? AND json_unquote(json_extract({settings}, '$.\"theme\"')) = ?",
+            $select
+        );
+        $this->assertSameParameters(['value', 1, 'dark'], $select);
+    }
+
+    public function testUpdateWithOrWhereJson(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->where('id', 1)
+            ->orWhereJson('settings->theme', 'dark');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? OR json_unquote(json_extract({settings}, '$.\"theme\"')) = ?",
+            $select
+        );
+        $this->assertSameParameters(['value', 1, 'dark'], $select);
+    }
+
+    public function testUpdateWithWhereJsonNested(): void
     {
         $select = $this->database
             ->update('table')
@@ -43,7 +73,7 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', '+1234567890'], $select);
     }
 
-    public function testUpdateWithArrayJsonWhere(): void
+    public function testUpdateWithWhereJsonArray(): void
     {
         $select = $this->database
             ->update('table')
@@ -57,7 +87,7 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', '+1234567890'], $select);
     }
 
-    public function testUpdateWithNestedArrayJsonWhere(): void
+    public function testUpdateWithWhereJsonNestedArray(): void
     {
         $select = $this->database
             ->update('table')

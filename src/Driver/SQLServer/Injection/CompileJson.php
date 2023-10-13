@@ -21,6 +21,6 @@ class CompileJson extends JsonExpression
         $field = $this->quoter->quote($parts[0]);
         $path = \count($parts) > 1 ? ', ' . $this->wrapPath($parts[1]) : '';
 
-        return 'json_unquote(json_extract(' . $field . $path . '))';
+        return 'json_value(' . $field . $path . ')';
     }
 }

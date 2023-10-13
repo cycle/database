@@ -15,7 +15,7 @@ class SelectQueryTest extends CommonClass
 {
     public const DRIVER = 'postgres';
 
-    public function testJsonWhere(): void
+    public function testSelectWithWhereJson(): void
     {
         $select = $this->database
             ->select()
@@ -26,7 +26,31 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters(['dark'], $select);
     }
 
-    public function testNestedJsonWhere(): void
+    public function testSelectWithAndWhereJson(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->where('id', 1)
+            ->andWhereJson('settings->theme', 'dark');
+
+        $this->assertSameQuery("SELECT * FROM {table} WHERE {id} = ? AND {settings}->>'theme' = ?", $select);
+        $this->assertSameParameters([1, 'dark'], $select);
+    }
+
+    public function testSelectWithOrWhereJson(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->where('id', 1)
+            ->orWhereJson('settings->theme', 'dark');
+
+        $this->assertSameQuery("SELECT * FROM {table} WHERE {id} = ? OR {settings}->>'theme' = ?", $select);
+        $this->assertSameParameters([1, 'dark'], $select);
+    }
+
+    public function testSelectWithWhereJsonNested(): void
     {
         $select = $this->database
             ->select()
@@ -37,7 +61,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters(['+1234567890'], $select);
     }
 
-    public function testArrayJsonWhere(): void
+    public function testSelectWithWhereJsonArray(): void
     {
         $select = $this->database
             ->select()
@@ -48,7 +72,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters(['+1234567890'], $select);
     }
 
-    public function testNestedArrayJsonWhere(): void
+    public function testSelectWithWhereJsonNestedArray(): void
     {
         $select = $this->database
             ->select()

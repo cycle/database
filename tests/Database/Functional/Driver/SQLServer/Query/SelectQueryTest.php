@@ -113,7 +113,7 @@ class SelectQueryTest extends CommonClass
         );
     }
 
-    public function testJsonWhere(): void
+    public function testSelectWithWhereJson(): void
     {
         $select = $this->database
             ->select()
@@ -121,13 +121,43 @@ class SelectQueryTest extends CommonClass
             ->whereJson('settings->theme', 'dark');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE json_unquote(json_extract({settings}, '$.\"theme\"')) = ?",
+            "SELECT * FROM {table} WHERE json_value({settings}, '$.\"theme\"') = ?",
             $select
         );
         $this->assertSameParameters(['dark'], $select);
     }
 
-    public function testNestedJsonWhere(): void
+    public function testSelectWithAndWhereJson(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->where('id', 1)
+            ->andWhereJson('settings->theme', 'dark');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE {id} = ? AND json_value({settings}, '$.\"theme\"') = ?",
+            $select
+        );
+        $this->assertSameParameters([1, 'dark'], $select);
+    }
+
+    public function testSelectWithOrWhereJson(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->where('id', 1)
+            ->orWhereJson('settings->theme', 'dark');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE {id} = ? OR json_value({settings}, '$.\"theme\"') = ?",
+            $select
+        );
+        $this->assertSameParameters([1, 'dark'], $select);
+    }
+
+    public function testSelectWithWhereJsonNested(): void
     {
         $select = $this->database
             ->select()
@@ -135,13 +165,13 @@ class SelectQueryTest extends CommonClass
             ->whereJson('settings->phone->work', '+1234567890');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE json_unquote(json_extract({settings}, '$.\"phone\".\"work\"')) = ?",
+            "SELECT * FROM {table} WHERE json_value({settings}, '$.\"phone\".\"work\"') = ?",
             $select
         );
         $this->assertSameParameters(['+1234567890'], $select);
     }
 
-    public function testArrayJsonWhere(): void
+    public function testSelectWithWhereJsonArray(): void
     {
         $select = $this->database
             ->select()
@@ -149,13 +179,13 @@ class SelectQueryTest extends CommonClass
             ->whereJson('settings->phones[1]', '+1234567890');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE json_unquote(json_extract({settings}, '$.\"phones\"[1]')) = ?",
+            "SELECT * FROM {table} WHERE json_value({settings}, '$.\"phones\"[1]') = ?",
             $select
         );
         $this->assertSameParameters(['+1234567890'], $select);
     }
 
-    public function testNestedArrayJsonWhere(): void
+    public function testSelectWithWhereJsonNestedArray(): void
     {
         $select = $this->database
             ->select()
@@ -163,7 +193,7 @@ class SelectQueryTest extends CommonClass
             ->whereJson('settings->phones[1]->numbers[3]', '+1234567890');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE json_unquote(json_extract({settings}, '$.\"phones\"[1].\"numbers\"[3]')) = ?",
+            "SELECT * FROM {table} WHERE json_value({settings}, '$.\"phones\"[1].\"numbers\"[3]') = ?",
             $select
         );
         $this->assertSameParameters(['+1234567890'], $select);

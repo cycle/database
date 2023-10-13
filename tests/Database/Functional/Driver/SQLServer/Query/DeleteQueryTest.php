@@ -15,53 +15,81 @@ class DeleteQueryTest extends CommonClass
 {
     public const DRIVER = 'sqlserver';
 
-    public function testDeleteWithJsonWhere(): void
+    public function testDeleteWithWhereJson(): void
     {
         $select = $this->database
             ->delete('table')
             ->whereJson('settings->theme', 'dark');
 
         $this->assertSameQuery(
-            "DELETE FROM {table} WHERE json_unquote(json_extract({settings}, '$.\"theme\"')) = ?",
+            "DELETE FROM {table} WHERE json_value({settings}, '$.\"theme\"') = ?",
             $select
         );
         $this->assertSameParameters(['dark'], $select);
     }
 
-    public function testDeleteWithNestedJsonWhere(): void
+    public function testDeleteWithAndWhereJson(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->where('id', 1)
+            ->andWhereJson('settings->theme', 'dark');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE {id} = ? AND json_value({settings}, '$.\"theme\"') = ?",
+            $select
+        );
+        $this->assertSameParameters([1, 'dark'], $select);
+    }
+
+    public function testDeleteWithOrWhereJson(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->where('id', 1)
+            ->orWhereJson('settings->theme', 'dark');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE {id} = ? OR json_value({settings}, '$.\"theme\"') = ?",
+            $select
+        );
+        $this->assertSameParameters([1, 'dark'], $select);
+    }
+
+    public function testDeleteWithWhereJsonNested(): void
     {
         $select = $this->database
             ->delete('table')
             ->whereJson('settings->phone->work', '+1234567890');
 
         $this->assertSameQuery(
-            "DELETE FROM {table} WHERE json_unquote(json_extract({settings}, '$.\"phone\".\"work\"')) = ?",
+            "DELETE FROM {table} WHERE json_value({settings}, '$.\"phone\".\"work\"') = ?",
             $select
         );
         $this->assertSameParameters(['+1234567890'], $select);
     }
 
-    public function testDeleteWithArrayJsonWhere(): void
+    public function testDeleteWithWhereJsonArray(): void
     {
         $select = $this->database
             ->delete('table')
             ->whereJson('settings->phones[1]', '+1234567890');
 
         $this->assertSameQuery(
-            "DELETE FROM {table} WHERE json_unquote(json_extract({settings}, '$.\"phones\"[1]')) = ?",
+            "DELETE FROM {table} WHERE json_value({settings}, '$.\"phones\"[1]') = ?",
             $select
         );
         $this->assertSameParameters(['+1234567890'], $select);
     }
 
-    public function testDeleteWithNestedArrayJsonWhere(): void
+    public function testDeleteWithWhereJsonNestedArray(): void
     {
         $select = $this->database
             ->delete('table')
             ->whereJson('settings->phones[1]->numbers[3]', '+1234567890');
 
         $this->assertSameQuery(
-            "DELETE FROM {table} WHERE json_unquote(json_extract({settings}, '$.\"phones\"[1].\"numbers\"[3]')) = ?",
+            "DELETE FROM {table} WHERE json_value({settings}, '$.\"phones\"[1].\"numbers\"[3]') = ?",
             $select
         );
         $this->assertSameParameters(['+1234567890'], $select);

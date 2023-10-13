@@ -15,7 +15,7 @@ class DeleteQueryTest extends CommonClass
 {
     public const DRIVER = 'mysql';
 
-    public function testDeleteWithJsonWhere(): void
+    public function testDeleteWithWhereJson(): void
     {
         $select = $this->database
             ->delete('table')
@@ -28,7 +28,35 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters(['dark'], $select);
     }
 
-    public function testDeleteWithNestedJsonWhere(): void
+    public function testDeleteWithAndWhereJson(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->where('id', 1)
+            ->andWhereJson('settings->theme', 'dark');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE {id} = ? AND json_unquote(json_extract({settings}, '$.\"theme\"')) = ?",
+            $select
+        );
+        $this->assertSameParameters([1, 'dark'], $select);
+    }
+
+    public function testDeleteWithOrWhereJson(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->where('id', 1)
+            ->orWhereJson('settings->theme', 'dark');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE {id} = ? OR json_unquote(json_extract({settings}, '$.\"theme\"')) = ?",
+            $select
+        );
+        $this->assertSameParameters([1, 'dark'], $select);
+    }
+
+    public function testDeleteWithWhereJsonNested(): void
     {
         $select = $this->database
             ->delete('table')
@@ -41,7 +69,7 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters(['+1234567890'], $select);
     }
 
-    public function testDeleteWithArrayJsonWhere(): void
+    public function testDeleteWithWhereJsonArray(): void
     {
         $select = $this->database
             ->delete('table')
@@ -54,7 +82,7 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters(['+1234567890'], $select);
     }
 
-    public function testDeleteWithNestedArrayJsonWhere(): void
+    public function testDeleteWithWhereJsonNestedArray(): void
     {
         $select = $this->database
             ->delete('table')
