@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Driver\MySQL\Query\Traits;
 
 use Cycle\Database\Driver\MySQL\Injection\CompileJson;
+use Cycle\Database\Driver\MySQL\Injection\CompileJsonContains;
 
 /**
  * @internal
@@ -19,15 +20,15 @@ use Cycle\Database\Driver\MySQL\Injection\CompileJson;
 trait WhereJsonTrait
 {
     /**
-     * @param mixed ...$args [(column, value), (column, operator, value)]
+     * @param non-empty-string $column
      *
      * @return $this|self
      */
-    public function whereJson(mixed ...$args): self
+    public function whereJson(string $column, mixed $value): self
     {
         $this->registerToken(
             'AND',
-            \array_merge([new CompileJson(\array_shift($args))], $args),
+            [new CompileJson($column), $value],
             $this->whereTokens,
             $this->whereWrapper()
         );
@@ -36,15 +37,15 @@ trait WhereJsonTrait
     }
 
     /**
-     * @param mixed ...$args [(column, value), (column, operator, value)]
+     * @param non-empty-string $column
      *
      * @return $this|self
      */
-    public function andWhereJson(mixed ...$args): self
+    public function andWhereJson(string $column, mixed $value): self
     {
         $this->registerToken(
             'AND',
-            \array_merge([new CompileJson(\array_shift($args))], $args),
+            [new CompileJson($column), $value],
             $this->whereTokens,
             $this->whereWrapper()
         );
@@ -53,15 +54,32 @@ trait WhereJsonTrait
     }
 
     /**
-     * @param mixed ...$args [(column, value), (column, operator, value)]
+     * @param non-empty-string $column
      *
      * @return $this|self
      */
-    public function orWhereJson(mixed ...$args): self
+    public function orWhereJson(string $column, mixed $value): self
     {
         $this->registerToken(
             'OR',
-            \array_merge([new CompileJson(\array_shift($args))], $args),
+            [new CompileJson($column), $value],
+            $this->whereTokens,
+            $this->whereWrapper()
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param non-empty-string $column
+     *
+     * @return $this|self
+     */
+    public function whereJsonContains(string $column, mixed $value): self
+    {
+        $this->registerToken(
+            'AND',
+            [new CompileJsonContains($column), $value],
             $this->whereTokens,
             $this->whereWrapper()
         );
