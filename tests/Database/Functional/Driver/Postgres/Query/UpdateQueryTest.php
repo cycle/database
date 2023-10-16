@@ -88,4 +88,176 @@ class UpdateQueryTest extends CommonClass
         );
         $this->assertSameParameters(['value', '+1234567890'], $select);
     }
+
+    public function testUpdateWithWhereJsonContains(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonContains('settings->languages', 'en');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE ({settings}->'languages')::jsonb @> ?",
+            $select
+        );
+        $this->assertSameParameters(['value', json_encode('en')], $select);
+    }
+
+    public function testUpdateWithAndWhereJsonContains(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->where('id', 1)
+            ->andWhereJsonContains('settings->languages', 'en');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? AND ({settings}->'languages')::jsonb @> ?",
+            $select
+        );
+        $this->assertSameParameters(['value', 1, json_encode('en')], $select);
+    }
+
+    public function testUpdateWithOrWhereJsonContains(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->where('id', 1)
+            ->orWhereJsonContains('settings->languages', 'en');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? OR ({settings}->'languages')::jsonb @> ?",
+            $select
+        );
+        $this->assertSameParameters(['value', 1, json_encode('en')], $select);
+    }
+
+    public function testUpdateWithWhereJsonContainsNested(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonContains('settings->phones->work', '+1234567890');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE({settings}->'phones'->'work')::jsonb @> ?",
+            $select
+        );
+        $this->assertSameParameters(['value', json_encode('+1234567890')], $select);
+    }
+
+    public function testUpdateWithWhereJsonContainsArray(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonContains('settings->phones[1]', '+1234567890');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE ({settings}->'phones'->1)::jsonb @> ?",
+            $select
+        );
+        $this->assertSameParameters(['value', json_encode('+1234567890')], $select);
+    }
+
+    public function testUpdateWithWhereJsonContainsNestedArray(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonContains('settings->phones[1]->numbers[3]', '+1234567890');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE ({settings}->'phones'->1->'numbers'->3)::jsonb @> ?",
+            $select
+        );
+        $this->assertSameParameters(['value', json_encode('+1234567890')], $select);
+    }
+
+    public function testUpdateWithWhereJsonDoesntContain(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonDoesntContain('settings->languages', 'en');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE NOT ({settings}->'languages')::jsonb @> ?",
+            $select
+        );
+        $this->assertSameParameters(['value', json_encode('en')], $select);
+    }
+
+    public function testUpdateWithAndWhereJsonDoesntContain(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->where('id', 1)
+            ->andWhereJsonDoesntContain('settings->languages', 'en');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? AND NOT ({settings}->'languages')::jsonb @> ?",
+            $select
+        );
+        $this->assertSameParameters(['value', 1, json_encode('en')], $select);
+    }
+
+    public function testUpdateWithOrWhereJsonDoesntContain(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->where('id', 1)
+            ->orWhereJsonDoesntContain('settings->languages', 'en');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? OR NOT({settings}->'languages')::jsonb @> ?",
+            $select
+        );
+        $this->assertSameParameters(['value', 1, json_encode('en')], $select);
+    }
+
+    public function testUpdateWithWhereJsonDoesntContainNested(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonDoesntContain('settings->phones->work', '+1234567890');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE NOT ({settings}->'phones'->'work')::jsonb @> ?",
+            $select
+        );
+        $this->assertSameParameters(['value', json_encode('+1234567890')], $select);
+    }
+
+    public function testUpdateWithWhereJsonDoesntContainArray(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonDoesntContain('settings->phones[1]', '+1234567890');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE NOT ({settings}->'phones'->1)::jsonb @> ?",
+            $select
+        );
+        $this->assertSameParameters(['value', json_encode('+1234567890')], $select);
+    }
+
+    public function testUpdateWithWhereJsonDoesntContainNestedArray(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonDoesntContain('settings->phones[1]->numbers[3]', '+1234567890');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE NOT ({settings}->'phones'->1->'numbers'->3)::jsonb @> ?",
+            $select
+        );
+        $this->assertSameParameters(['value', json_encode('+1234567890')], $select);
+    }
 }

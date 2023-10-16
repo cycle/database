@@ -94,4 +94,164 @@ class DeleteQueryTest extends CommonClass
         );
         $this->assertSameParameters(['+1234567890'], $select);
     }
+
+    public function testDeleteWithWhereJsonContains(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->whereJsonContains('settings->languages', 'en');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE ? IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
+            $select
+        );
+        $this->assertSameParameters(['en'], $select);
+    }
+
+    public function testDeleteWithAndWhereJsonContains(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->where('id', 1)
+            ->andWhereJsonContains('settings->languages', 'en');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE {id} = ? AND ? IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
+            $select
+        );
+        $this->assertSameParameters([1, 'en'], $select);
+    }
+
+    public function testDeleteWithOrWhereJsonContains(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->where('id', 1)
+            ->orWhereJsonContains('settings->languages', 'en');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE {id} = ? OR ? IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
+            $select
+        );
+        $this->assertSameParameters([1, 'en'], $select);
+    }
+
+    public function testDeleteWithWhereJsonContainsNested(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->whereJsonContains('settings->phones->work', '+1234567890');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE ? IN (SELECT [value] FROM openjson({settings}, '$.\"phones\".\"work\"'))",
+            $select
+        );
+        $this->assertSameParameters(['+1234567890'], $select);
+    }
+
+    public function testDeleteWithWhereJsonContainsArray(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->whereJsonContains('settings->phones[1]', '+1234567890');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE ? IN (SELECT [value] FROM openjson({settings}, '$.\"phones\"[1]'))",
+            $select
+        );
+        $this->assertSameParameters(['+1234567890'], $select);
+    }
+
+    public function testDeleteWithWhereJsonContainsNestedArray(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->whereJsonContains('settings->phones[1]->numbers[3]', '+1234567890');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE ? IN (SELECT [value] FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"[3]'))",
+            $select
+        );
+        $this->assertSameParameters(['+1234567890'], $select);
+    }
+
+    public function testDeleteWithWhereJsonDoesntContain(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->whereJsonDoesntContain('settings->languages', 'en');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE ? NOT IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
+            $select
+        );
+        $this->assertSameParameters(['en'], $select);
+    }
+
+    public function testDeleteWithAndWhereJsonDoesntContain(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->where('id', 1)
+            ->andWhereJsonDoesntContain('settings->languages', 'en');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE {id} = ? AND ? NOT IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
+            $select
+        );
+        $this->assertSameParameters([1, 'en'], $select);
+    }
+
+    public function testDeleteWithOrWhereJsonDoesntContain(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->where('id', 1)
+            ->orWhereJsonDoesntContain('settings->languages', 'en');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE {id} = ? OR ? NOT IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
+            $select
+        );
+        $this->assertSameParameters([1, 'en'], $select);
+    }
+
+    public function testDeleteWithWhereJsonDoesntContainNested(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->whereJsonDoesntContain('settings->phones->work', '+1234567890');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE ? NOT IN (SELECT [value] FROM openjson({settings}, '$.\"phones\".\"work\"'))",
+            $select
+        );
+        $this->assertSameParameters(['+1234567890'], $select);
+    }
+
+    public function testDeleteWithWhereJsonDoesntContainArray(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->whereJsonDoesntContain('settings->phones[1]', '+1234567890');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE ? NOT IN (SELECT [value] FROM openjson({settings}, '$.\"phones\"[1]'))",
+            $select
+        );
+        $this->assertSameParameters(['+1234567890'], $select);
+    }
+
+    public function testDeleteWithWhereJsonDoesntContainNestedArray(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->whereJsonDoesntContain('settings->phones[1]->numbers[3]', '+1234567890');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE ? NOT IN (SELECT [value] FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"[3]'))",
+            $select
+        );
+        $this->assertSameParameters(['+1234567890'], $select);
+    }
 }

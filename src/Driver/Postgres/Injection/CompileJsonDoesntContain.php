@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-namespace Cycle\Database\Driver\MySQL\Injection;
+namespace Cycle\Database\Driver\Postgres\Injection;
 
 class CompileJsonDoesntContain extends CompileJsonContains
 {

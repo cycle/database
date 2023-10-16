@@ -9,17 +9,15 @@
 
 declare(strict_types=1);
 
-namespace Cycle\Database\Driver\MySQL\Injection;
+namespace Cycle\Database\Driver\SQLServer\Injection;
 
-class CompileJsonDoesntContain extends CompileJsonContains
+class CompileJsonDoesntContain extends SQLServerJsonExpression
 {
-    /**
-     * @param non-empty-string $statement
-     *
-     * @return non-empty-string
-     */
     protected function compile(string $statement): string
     {
-        return 'NOT ' . parent::compile($statement);
+        return \sprintf(
+            '? NOT IN (SELECT [value] FROM openjson(%s))',
+            $this->getField($statement) . $this->getPath($statement)
+        );
     }
 }

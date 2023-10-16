@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Driver\SQLite\Query\Traits;
 
 use Cycle\Database\Driver\SQLite\Injection\CompileJson;
+use Cycle\Database\Exception\DriverException;
 
 /**
  * @internal
@@ -67,5 +68,65 @@ trait WhereJsonTrait
         );
 
         return $this;
+    }
+
+    /**
+     * @param non-empty-string $column
+     *
+     * @return $this|self
+     */
+    public function whereJsonContains(string $column, mixed $value): self
+    {
+        throw new DriverException('This database engine does not support JSON contains operations.');
+    }
+
+    /**
+     * @param non-empty-string $column
+     *
+     * @return $this|self
+     */
+    public function andWhereJsonContains(string $column, mixed $value): self
+    {
+        throw new DriverException('This database engine does not support JSON contains operations.');
+    }
+
+    /**
+     * @param non-empty-string $column
+     *
+     * @return $this|self
+     */
+    public function orWhereJsonContains(string $column, mixed $value): self
+    {
+        throw new DriverException('This database engine does not support JSON contains operations.');
+    }
+
+    /**
+     * @param non-empty-string $column
+     *
+     * @return $this|self
+     */
+    public function whereJsonDoesntContain(string $column, mixed $value): self
+    {
+        throw new DriverException('This database engine does not support JSON contains operations.');
+    }
+
+    /**
+     * @param non-empty-string $column
+     *
+     * @return $this|self
+     */
+    public function andWhereJsonDoesntContain(string $column, mixed $value): self
+    {
+        throw new DriverException('This database engine does not support JSON contains operations.');
+    }
+
+    /**
+     * @param non-empty-string $column
+     *
+     * @return $this|self
+     */
+    public function orWhereJsonDoesntContain(string $column, mixed $value): self
+    {
+        throw new DriverException('This database engine does not support JSON contains operations.');
     }
 }

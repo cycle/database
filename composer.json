@@ -11,7 +11,8 @@
         "ext-pdo": "*",
         "psr/log": "1 - 3",
         "spiral/core": "^2.8 || ^3.0",
-        "spiral/pagination": "^2.8 || ^3.0"
+        "spiral/pagination": "^2.8 || ^3.0",
+        "symfony/polyfill-php83": "^1.28"
     },
     "autoload": {
         "files": [

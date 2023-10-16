@@ -112,7 +112,7 @@ class UpdateQueryTest extends CommonClass
             "UPDATE {table} SET {some} = ? WHERE json_contains({settings}, ?, '$.\"languages\"')",
             $select
         );
-        $this->assertSameParameters(['value', 'en'], $select);
+        $this->assertSameParameters(['value', json_encode('en')], $select);
     }
 
     public function testUpdateWithAndWhereJsonContains(): void
@@ -127,7 +127,7 @@ class UpdateQueryTest extends CommonClass
             "UPDATE {table} SET {some} = ? WHERE {id} = ? AND json_contains({settings}, ?, '$.\"languages\"')",
             $select
         );
-        $this->assertSameParameters(['value', 1, 'en'], $select);
+        $this->assertSameParameters(['value', 1, json_encode('en')], $select);
     }
 
     public function testUpdateWithOrWhereJsonContains(): void
@@ -142,7 +142,7 @@ class UpdateQueryTest extends CommonClass
             "UPDATE {table} SET {some} = ? WHERE {id} = ? OR json_contains({settings}, ?, '$.\"languages\"')",
             $select
         );
-        $this->assertSameParameters(['value', 1, 'en'], $select);
+        $this->assertSameParameters(['value', 1, json_encode('en')], $select);
     }
 
     public function testUpdateWithWhereJsonContainsNested(): void
@@ -156,7 +156,7 @@ class UpdateQueryTest extends CommonClass
             "UPDATE {table} SET {some} = ? WHERE json_contains({settings}, ?, '$.\"phones\".\"work\"')",
             $select
         );
-        $this->assertSameParameters(['value', '+1234567890'], $select);
+        $this->assertSameParameters(['value', json_encode('+1234567890')], $select);
     }
 
     public function testUpdateWithWhereJsonContainsArray(): void
@@ -170,7 +170,7 @@ class UpdateQueryTest extends CommonClass
             "UPDATE {table} SET {some} = ? WHERE json_contains({settings}, ?, '$.\"phones\"[1]')",
             $select
         );
-        $this->assertSameParameters(['value', '+1234567890'], $select);
+        $this->assertSameParameters(['value', json_encode('+1234567890')], $select);
     }
 
     public function testUpdateWithWhereJsonContainsNestedArray(): void
@@ -184,7 +184,7 @@ class UpdateQueryTest extends CommonClass
             "UPDATE {table} SET {some} = ? WHERE json_contains({settings}, ?, '$.\"phones\"[1].\"numbers\"[3]')",
             $select
         );
-        $this->assertSameParameters(['value', '+1234567890'], $select);
+        $this->assertSameParameters(['value', json_encode('+1234567890')], $select);
     }
 
     public function testUpdateWithWhereJsonDoesntContain(): void
@@ -198,7 +198,7 @@ class UpdateQueryTest extends CommonClass
             "UPDATE {table} SET {some} = ? WHERE NOT json_contains({settings}, ?, '$.\"languages\"')",
             $select
         );
-        $this->assertSameParameters(['value', 'en'], $select);
+        $this->assertSameParameters(['value', json_encode('en')], $select);
     }
 
     public function testUpdateWithAndWhereJsonDoesntContain(): void
@@ -213,7 +213,7 @@ class UpdateQueryTest extends CommonClass
             "UPDATE {table} SET {some} = ? WHERE {id} = ? AND NOT json_contains({settings}, ?, '$.\"languages\"')",
             $select
         );
-        $this->assertSameParameters(['value', 1, 'en'], $select);
+        $this->assertSameParameters(['value', 1, json_encode('en')], $select);
     }
 
     public function testUpdateWithOrWhereJsonDoesntContain(): void
@@ -228,7 +228,7 @@ class UpdateQueryTest extends CommonClass
             "UPDATE {table} SET {some} = ? WHERE {id} = ? OR NOT json_contains({settings}, ?, '$.\"languages\"')",
             $select
         );
-        $this->assertSameParameters(['value', 1, 'en'], $select);
+        $this->assertSameParameters(['value', 1, json_encode('en')], $select);
     }
 
     public function testUpdateWithWhereJsonDoesntContainNested(): void
@@ -242,7 +242,7 @@ class UpdateQueryTest extends CommonClass
             "UPDATE {table} SET {some} = ? WHERE NOT json_contains({settings}, ?, '$.\"phones\".\"work\"')",
             $select
         );
-        $this->assertSameParameters(['value', '+1234567890'], $select);
+        $this->assertSameParameters(['value', json_encode('+1234567890')], $select);
     }
 
     public function testUpdateWithWhereJsonDoesntContainArray(): void
@@ -256,7 +256,7 @@ class UpdateQueryTest extends CommonClass
             "UPDATE {table} SET {some} = ? WHERE NOT json_contains({settings}, ?, '$.\"phones\"[1]')",
             $select
         );
-        $this->assertSameParameters(['value', '+1234567890'], $select);
+        $this->assertSameParameters(['value', json_encode('+1234567890')], $select);
     }
 
     public function testUpdateWithWhereJsonDoesntContainNestedArray(): void
@@ -270,6 +270,6 @@ class UpdateQueryTest extends CommonClass
             "UPDATE {table} SET {some} = ? WHERE NOT json_contains({settings}, ?, '$.\"phones\"[1].\"numbers\"[3]')",
             $select
         );
-        $this->assertSameParameters(['value', '+1234567890'], $select);
+        $this->assertSameParameters(['value', json_encode('+1234567890')], $select);
     }
 }

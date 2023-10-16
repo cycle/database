@@ -11,19 +11,15 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\MySQL\Injection;
 
-use Cycle\Database\Driver\Quoter;
-use Cycle\Database\Injection\JsonExpression;
-
-class CompileJsonContains extends JsonExpression
+class CompileJsonContains extends MySQLJsonExpression
 {
+    /**
+     * @param non-empty-string $statement
+     *
+     * @return non-empty-string
+     */
     protected function compile(string $statement): string
     {
-        $quoter = new Quoter('', '``');
-
-        $parts = \explode('->', $statement, 2);
-        $field = $quoter->quote($parts[0]);
-        $path = \count($parts) > 1 ? ', ' . $this->wrapPath($parts[1]) : '';
-
-        return 'json_contains(' . $field . ', ?' . $path . ')';
+        return 'json_contains(' . $this->getField($statement) . ', ?' . $this->getPath($statement) . ')';
     }
 }

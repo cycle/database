@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\SQLServer\Query\Traits;
 
+use Cycle\Database\Driver\SQLServer\Injection\CompileJsonContains;
+use Cycle\Database\Driver\SQLServer\Injection\CompileJsonDoesntContain;
 use Cycle\Database\Driver\SQLServer\Injection\CompileJson;
 
 /**
@@ -62,6 +64,94 @@ trait WhereJsonTrait
         $this->registerToken(
             'OR',
             [new CompileJson($column), $value],
+            $this->whereTokens,
+            $this->whereWrapper()
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param non-empty-string $column
+     *
+     * @return $this|self
+     */
+    public function whereJsonContains(string $column, mixed $value): self
+    {
+        $this->registerToken(
+            'AND',
+            [new CompileJsonContains($column, $value)],
+            $this->whereTokens,
+            $this->whereWrapper()
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param non-empty-string $column
+     *
+     * @return $this|self
+     */
+    public function andWhereJsonContains(string $column, mixed $value): self
+    {
+        return $this->whereJsonContains($column, $value);
+    }
+
+    /**
+     * @param non-empty-string $column
+     *
+     * @return $this|self
+     */
+    public function orWhereJsonContains(string $column, mixed $value): self
+    {
+        $this->registerToken(
+            'OR',
+            [new CompileJsonContains($column, $value)],
+            $this->whereTokens,
+            $this->whereWrapper()
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param non-empty-string $column
+     *
+     * @return $this|self
+     */
+    public function whereJsonDoesntContain(string $column, mixed $value): self
+    {
+        $this->registerToken(
+            'AND',
+            [new CompileJsonDoesntContain($column, $value)],
+            $this->whereTokens,
+            $this->whereWrapper()
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param non-empty-string $column
+     *
+     * @return $this|self
+     */
+    public function andWhereJsonDoesntContain(string $column, mixed $value): self
+    {
+        return $this->whereJsonDoesntContain($column, $value);
+    }
+
+    /**
+     * @param non-empty-string $column
+     *
+     * @return $this|self
+     */
+    public function orWhereJsonDoesntContain(string $column, mixed $value): self
+    {
+        $this->registerToken(
+            'OR',
+            [new CompileJsonDoesntContain($column, $value)],
             $this->whereTokens,
             $this->whereWrapper()
         );

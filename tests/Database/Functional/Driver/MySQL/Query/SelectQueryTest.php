@@ -124,7 +124,7 @@ class SelectQueryTest extends CommonClass
             "SELECT * FROM {table} WHERE json_contains({settings}, ?, '$.\"languages\"')",
             $select
         );
-        $this->assertSameParameters(['en'], $select);
+        $this->assertSameParameters([json_encode('en')], $select);
     }
 
     public function testSelectWithAndWhereJsonContains(): void
@@ -139,7 +139,7 @@ class SelectQueryTest extends CommonClass
             "SELECT * FROM {table} WHERE {id} = ? AND json_contains({settings}, ?, '$.\"languages\"')",
             $select
         );
-        $this->assertSameParameters([1, 'en'], $select);
+        $this->assertSameParameters([1, json_encode('en')], $select);
     }
 
     public function testSelectWithOrWhereJsonContains(): void
@@ -154,7 +154,7 @@ class SelectQueryTest extends CommonClass
             "SELECT * FROM {table} WHERE {id} = ? OR json_contains({settings}, ?, '$.\"languages\"')",
             $select
         );
-        $this->assertSameParameters([1, 'en'], $select);
+        $this->assertSameParameters([1, json_encode('en')], $select);
     }
 
     public function testSelectWithWhereJsonContainsNested(): void
@@ -168,7 +168,7 @@ class SelectQueryTest extends CommonClass
             "SELECT * FROM {table} WHERE json_contains({settings}, ?, '$.\"phones\".\"work\"')",
             $select
         );
-        $this->assertSameParameters(['+1234567890'], $select);
+        $this->assertSameParameters([json_encode('+1234567890')], $select);
     }
 
     public function testSelectWithWhereJsonContainsArray(): void
@@ -182,7 +182,7 @@ class SelectQueryTest extends CommonClass
             "SELECT * FROM {table} WHERE json_contains({settings}, ?, '$.\"phones\"[1]')",
             $select
         );
-        $this->assertSameParameters(['+1234567890'], $select);
+        $this->assertSameParameters([json_encode('+1234567890')], $select);
     }
 
     public function testSelectWithWhereJsonContainsNestedArray(): void
@@ -196,7 +196,7 @@ class SelectQueryTest extends CommonClass
             "SELECT * FROM {table} WHERE json_contains({settings}, ?, '$.\"phones\"[1].\"numbers\"[3]')",
             $select
         );
-        $this->assertSameParameters(['+1234567890'], $select);
+        $this->assertSameParameters([json_encode('+1234567890')], $select);
     }
 
     public function testSelectWithWhereJsonDoesntContain(): void
@@ -210,7 +210,7 @@ class SelectQueryTest extends CommonClass
             "SELECT * FROM {table} WHERE NOT json_contains({settings}, ?, '$.\"languages\"')",
             $select
         );
-        $this->assertSameParameters(['en'], $select);
+        $this->assertSameParameters([json_encode('en')], $select);
     }
 
     public function testSelectWithAndWhereJsonDoesntContain(): void
@@ -225,7 +225,7 @@ class SelectQueryTest extends CommonClass
             "SELECT * FROM {table} WHERE {id} = ? AND NOT json_contains({settings}, ?, '$.\"languages\"')",
             $select
         );
-        $this->assertSameParameters([1, 'en'], $select);
+        $this->assertSameParameters([1, json_encode('en')], $select);
     }
 
     public function testSelectWithOrWhereJsonDoesntContain(): void
@@ -240,7 +240,7 @@ class SelectQueryTest extends CommonClass
             "SELECT * FROM {table} WHERE {id} = ? OR NOT json_contains({settings}, ?, '$.\"languages\"')",
             $select
         );
-        $this->assertSameParameters([1, 'en'], $select);
+        $this->assertSameParameters([1, json_encode('en')], $select);
     }
 
     public function testSelectWithWhereJsonDoesntContainNested(): void
@@ -254,7 +254,7 @@ class SelectQueryTest extends CommonClass
             "SELECT * FROM {table} WHERE NOT json_contains({settings}, ?, '$.\"phones\".\"work\"')",
             $select
         );
-        $this->assertSameParameters(['+1234567890'], $select);
+        $this->assertSameParameters([json_encode('+1234567890')], $select);
     }
 
     public function testSelectWithWhereJsonDoesntContainArray(): void
@@ -268,7 +268,7 @@ class SelectQueryTest extends CommonClass
             "SELECT * FROM {table} WHERE NOT json_contains({settings}, ?, '$.\"phones\"[1]')",
             $select
         );
-        $this->assertSameParameters(['+1234567890'], $select);
+        $this->assertSameParameters([json_encode('+1234567890')], $select);
     }
 
     public function testSelectWithWhereJsonDoesntContainNestedArray(): void
@@ -282,6 +282,6 @@ class SelectQueryTest extends CommonClass
             "SELECT * FROM {table} WHERE NOT json_contains({settings}, ?, '$.\"phones\"[1].\"numbers\"[3]')",
             $select
         );
-        $this->assertSameParameters(['+1234567890'], $select);
+        $this->assertSameParameters([json_encode('+1234567890')], $select);
     }
 }

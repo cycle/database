@@ -105,7 +105,7 @@ class DeleteQueryTest extends CommonClass
             "DELETE FROM {table} WHERE json_contains({settings}, ?, '$.\"languages\"')",
             $select
         );
-        $this->assertSameParameters(['en'], $select);
+        $this->assertSameParameters([json_encode('en')], $select);
     }
 
     public function testDeleteWithAndWhereJsonContains(): void
@@ -119,7 +119,7 @@ class DeleteQueryTest extends CommonClass
             "DELETE FROM {table} WHERE {id} = ? AND json_contains({settings}, ?, '$.\"languages\"')",
             $select
         );
-        $this->assertSameParameters([1, 'en'], $select);
+        $this->assertSameParameters([1, json_encode('en')], $select);
     }
 
     public function testDeleteWithOrWhereJsonContains(): void
@@ -133,7 +133,7 @@ class DeleteQueryTest extends CommonClass
             "DELETE FROM {table} WHERE {id} = ? OR json_contains({settings}, ?, '$.\"languages\"')",
             $select
         );
-        $this->assertSameParameters([1, 'en'], $select);
+        $this->assertSameParameters([1, json_encode('en')], $select);
     }
 
     public function testDeleteWithWhereJsonContainsNested(): void
@@ -146,7 +146,7 @@ class DeleteQueryTest extends CommonClass
             "DELETE FROM {table} WHERE json_contains({settings}, ?, '$.\"phones\".\"work\"')",
             $select
         );
-        $this->assertSameParameters(['+1234567890'], $select);
+        $this->assertSameParameters([json_encode('+1234567890')], $select);
     }
 
     public function testDeleteWithWhereJsonContainsArray(): void
@@ -159,7 +159,7 @@ class DeleteQueryTest extends CommonClass
             "DELETE FROM {table} WHERE json_contains({settings}, ?, '$.\"phones\"[1]')",
             $select
         );
-        $this->assertSameParameters(['+1234567890'], $select);
+        $this->assertSameParameters([json_encode('+1234567890')], $select);
     }
 
     public function testDeleteWithWhereJsonContainsNestedArray(): void
@@ -172,7 +172,7 @@ class DeleteQueryTest extends CommonClass
             "DELETE FROM {table} WHERE json_contains({settings}, ?, '$.\"phones\"[1].\"numbers\"[3]')",
             $select
         );
-        $this->assertSameParameters(['+1234567890'], $select);
+        $this->assertSameParameters([json_encode('+1234567890')], $select);
     }
 
     public function testDeleteWithWhereJsonDoesntContain(): void
@@ -185,7 +185,7 @@ class DeleteQueryTest extends CommonClass
             "DELETE FROM {table} WHERE NOT json_contains({settings}, ?, '$.\"languages\"')",
             $select
         );
-        $this->assertSameParameters(['en'], $select);
+        $this->assertSameParameters([json_encode('en')], $select);
     }
 
     public function testDeleteWithAndWhereJsonDoesntContain(): void
@@ -199,7 +199,7 @@ class DeleteQueryTest extends CommonClass
             "DELETE FROM {table} WHERE {id} = ? AND NOT json_contains({settings}, ?, '$.\"languages\"')",
             $select
         );
-        $this->assertSameParameters([1, 'en'], $select);
+        $this->assertSameParameters([1, json_encode('en')], $select);
     }
 
     public function testDeleteWithOrWhereJsonDoesntContain(): void
@@ -213,7 +213,7 @@ class DeleteQueryTest extends CommonClass
             "DELETE FROM {table} WHERE {id} = ? OR NOT json_contains({settings}, ?, '$.\"languages\"')",
             $select
         );
-        $this->assertSameParameters([1, 'en'], $select);
+        $this->assertSameParameters([1, json_encode('en')], $select);
     }
 
     public function testDeleteWithWhereJsonDoesntContainNested(): void
@@ -226,7 +226,7 @@ class DeleteQueryTest extends CommonClass
             "DELETE FROM {table} WHERE NOT json_contains({settings}, ?, '$.\"phones\".\"work\"')",
             $select
         );
-        $this->assertSameParameters(['+1234567890'], $select);
+        $this->assertSameParameters([json_encode('+1234567890')], $select);
     }
 
     public function testDeleteWithWhereJsonDoesntContainArray(): void
@@ -239,7 +239,7 @@ class DeleteQueryTest extends CommonClass
             "DELETE FROM {table} WHERE NOT json_contains({settings}, ?, '$.\"phones\"[1]')",
             $select
         );
-        $this->assertSameParameters(['+1234567890'], $select);
+        $this->assertSameParameters([json_encode('+1234567890')], $select);
     }
 
     public function testDeleteWithWhereJsonDoesntContainNestedArray(): void
@@ -252,6 +252,6 @@ class DeleteQueryTest extends CommonClass
             "DELETE FROM {table} WHERE NOT json_contains({settings}, ?, '$.\"phones\"[1].\"numbers\"[3]')",
             $select
         );
-        $this->assertSameParameters(['+1234567890'], $select);
+        $this->assertSameParameters([json_encode('+1234567890')], $select);
     }
 }

@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\Postgres\Injection;
 
-class CompileJson extends PostgresJsonExpression
+class CompileJsonContains extends PostgresJsonExpression
 {
     /**
      * @param non-empty-string $statement
@@ -22,11 +22,12 @@ class CompileJson extends PostgresJsonExpression
     {
         $wrappedPath = $this->getWrappedPath($statement);
         $attribute = \array_pop($wrappedPath);
+        $field = $this->getField($statement);
 
         if (!empty($wrappedPath)) {
-            return $this->getField($statement) . '->' . \implode('->', $wrappedPath) . '->>' . $attribute;
+            return '(' . $field . '->' . \implode('->', $wrappedPath) . '->' . $attribute . ')::jsonb @> ?';
         }
 
-        return $this->getField($statement) . '->>' . $attribute;
+        return '(' . $field . '->' . $attribute . ')::jsonb @> ?';
     }
 }
