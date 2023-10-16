@@ -27,7 +27,6 @@ abstract class PostgresJsonExpression extends JsonExpression
         return $this->quoter->quote(\array_shift($path));
     }
 
-
     /**
      * @param non-empty-string $statement
      *
