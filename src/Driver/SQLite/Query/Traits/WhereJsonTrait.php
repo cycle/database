@@ -44,12 +44,7 @@ trait WhereJsonTrait
      */
     public function andWhereJson(string $column, mixed $value): self
     {
-        $this->registerToken(
-            'AND',
-            [new CompileJson($column), $value],
-            $this->whereTokens,
-            $this->whereWrapper()
-        );
+        $this->whereJson($column, $value);
 
         return $this;
     }
