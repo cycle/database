@@ -44,9 +44,7 @@ trait WhereJsonTrait
      */
     public function andWhereJson(string $column, mixed $value): self
     {
-        $this->whereJson($column, $value);
-
-        return $this;
+        return $this->whereJson($column, $value);
     }
 
     /**
