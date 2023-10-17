@@ -15,7 +15,7 @@ class CompileJsonLength extends PostgresJsonExpression
 {
     /**
      * @param non-empty-string $statement
-     * @param positive-int|0 $length
+     * @param 0|positive-int $length
      * @param non-empty-string $operator
      */
     public function __construct(
