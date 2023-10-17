@@ -11,9 +11,10 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\SQLServer\Query\Traits;
 
+use Cycle\Database\Driver\SQLServer\Injection\CompileJson;
 use Cycle\Database\Driver\SQLServer\Injection\CompileJsonContains;
 use Cycle\Database\Driver\SQLServer\Injection\CompileJsonDoesntContain;
-use Cycle\Database\Driver\SQLServer\Injection\CompileJson;
+use Cycle\Database\Driver\SQLServer\Injection\CompileJsonLength;
 
 /**
  * @internal
@@ -152,6 +153,56 @@ trait WhereJsonTrait
         $this->registerToken(
             'OR',
             [new CompileJsonDoesntContain($column, $value)],
+            $this->whereTokens,
+            $this->whereWrapper()
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param non-empty-string $column
+     * @param positive-int|0 $length
+     * @param non-empty-string $operator
+     *
+     * @return $this|self
+     */
+    public function whereJsonLength(string $column, int $length, string $operator = '='): self
+    {
+        $this->registerToken(
+            'AND',
+            [new CompileJsonLength($column, $length, $operator)],
+            $this->whereTokens,
+            $this->whereWrapper()
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param non-empty-string $column
+     * @param positive-int|0 $length
+     * @param non-empty-string $operator
+     *
+     * @return $this|self
+     */
+    public function andWhereJsonLength(string $column, int $length, string $operator = '='): self
+    {
+        return $this->whereJsonLength($column, $length, $operator);
+    }
+
+    /**
+     * @param non-empty-string $column
+     * @param positive-int|0 $length
+     * @param non-empty-string $operator
+     *
+     * @return $this|self
+     */
+    public function orWhereJsonLength(string $column, int $length, string $operator = '='): self
+    {
+        $this->registerToken(
+            'OR',
+            [new CompileJsonLength($column, $length, $operator)],
             $this->whereTokens,
             $this->whereWrapper()
         );

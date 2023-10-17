@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Driver\SQLite\Query\Traits;
 
 use Cycle\Database\Driver\SQLite\Injection\CompileJson;
+use Cycle\Database\Driver\SQLite\Injection\CompileJsonLength;
 use Cycle\Database\Exception\DriverException;
 
 /**
@@ -128,5 +129,55 @@ trait WhereJsonTrait
     public function orWhereJsonDoesntContain(string $column, mixed $value): self
     {
         throw new DriverException('This database engine does not support JSON contains operations.');
+    }
+
+    /**
+     * @param non-empty-string $column
+     * @param positive-int|0 $length
+     * @param non-empty-string $operator
+     *
+     * @return $this|self
+     */
+    public function whereJsonLength(string $column, int $length, string $operator = '='): self
+    {
+        $this->registerToken(
+            'AND',
+            [new CompileJsonLength($column, $length, $operator)],
+            $this->whereTokens,
+            $this->whereWrapper()
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param non-empty-string $column
+     * @param positive-int|0 $length
+     * @param non-empty-string $operator
+     *
+     * @return $this|self
+     */
+    public function andWhereJsonLength(string $column, int $length, string $operator = '='): self
+    {
+        return $this->whereJsonLength($column, $length, $operator);
+    }
+
+    /**
+     * @param non-empty-string $column
+     * @param positive-int|0 $length
+     * @param non-empty-string $operator
+     *
+     * @return $this|self
+     */
+    public function orWhereJsonLength(string $column, int $length, string $operator = '='): self
+    {
+        $this->registerToken(
+            'OR',
+            [new CompileJsonLength($column, $length, $operator)],
+            $this->whereTokens,
+            $this->whereWrapper()
+        );
+
+        return $this;
     }
 }

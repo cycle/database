@@ -272,4 +272,104 @@ class UpdateQueryTest extends CommonClass
         );
         $this->assertSameParameters(['value', json_encode('+1234567890')], $select);
     }
+
+    public function testUpdateWithWhereJsonLength(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonLength('settings->languages', 1);
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE json_length({settings}, '$.\"languages\"') = ?",
+            $select
+        );
+        $this->assertSameParameters(['value', 1], $select);
+    }
+
+    public function testUpdateWithWhereJsonLengthAndCustomOperator(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonLength('settings->languages', 1, '>=');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE json_length({settings}, '$.\"languages\"') >= ?",
+            $select
+        );
+        $this->assertSameParameters(['value', 1], $select);
+    }
+
+    public function testUpdateWithAndJsonLength(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->where('id', 1)
+            ->andWhereJsonLength('settings->languages', 3);
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? AND json_length({settings}, '$.\"languages\"') = ?",
+            $select
+        );
+        $this->assertSameParameters(['value', 1, 3], $select);
+    }
+
+    public function testUpdateWithOrWhereJsonJsonLength(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->where('id', 1)
+            ->orWhereJsonLength('settings->languages', 4);
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? OR json_length({settings}, '$.\"languages\"') = ?",
+            $select
+        );
+        $this->assertSameParameters(['value', 1, 4], $select);
+    }
+
+    public function testUpdateWithWhereJsonLengthNested(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonLength('settings->personal->languages', 1);
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE json_length({settings}, '$.\"personal\".\"languages\"') = ?",
+            $select
+        );
+        $this->assertSameParameters(['value', 1], $select);
+    }
+
+    public function testUpdateWithWhereJsonLengthArray(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonLength('settings->phones[1]', 2);
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE json_length({settings}, '$.\"phones\"[1]') = ?",
+            $select
+        );
+        $this->assertSameParameters(['value', 2], $select);
+    }
+
+    public function testUpdateWithWhereJsonLengthNestedArray(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonLength('settings->phones[1]->numbers[3]', 5);
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE json_length({settings}, '$.\"phones\"[1].\"numbers\"[3]') = ?",
+            $select
+        );
+        $this->assertSameParameters(['value', 5], $select);
+    }
 }

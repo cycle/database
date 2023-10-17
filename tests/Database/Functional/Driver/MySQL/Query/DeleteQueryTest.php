@@ -254,4 +254,97 @@ class DeleteQueryTest extends CommonClass
         );
         $this->assertSameParameters([json_encode('+1234567890')], $select);
     }
+
+    public function testDeleteWithWhereJsonLength(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->whereJsonLength('settings->languages', 1);
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE json_length({settings}, '$.\"languages\"') = ?",
+            $select
+        );
+        $this->assertSameParameters([1], $select);
+    }
+
+    public function testDeleteWithWhereJsonLengthAndCustomOperator(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->whereJsonLength('settings->languages', 1, '>=');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE json_length({settings}, '$.\"languages\"') >= ?",
+            $select
+        );
+        $this->assertSameParameters([1], $select);
+    }
+
+    public function testDeleteWithAndJsonLength(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->where('id', 1)
+            ->andWhereJsonLength('settings->languages', 3);
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE {id} = ? AND json_length({settings}, '$.\"languages\"') = ?",
+            $select
+        );
+        $this->assertSameParameters([1, 3], $select);
+    }
+
+    public function testDeleteWithOrWhereJsonJsonLength(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->where('id', 1)
+            ->orWhereJsonLength('settings->languages', 4);
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE {id} = ? OR json_length({settings}, '$.\"languages\"') = ?",
+            $select
+        );
+        $this->assertSameParameters([1, 4], $select);
+    }
+
+    public function testDeleteWithWhereJsonLengthNested(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->whereJsonLength('settings->personal->languages', 1);
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE json_length({settings}, '$.\"personal\".\"languages\"') = ?",
+            $select
+        );
+        $this->assertSameParameters([1], $select);
+    }
+
+    public function testDeleteWithWhereJsonLengthArray(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->whereJsonLength('settings->phones[1]', 2);
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE json_length({settings}, '$.\"phones\"[1]') = ?",
+            $select
+        );
+        $this->assertSameParameters([2], $select);
+    }
+
+    public function testDeleteWithWhereJsonLengthNestedArray(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->whereJsonLength('settings->phones[1]->numbers[3]', 5);
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE json_length({settings}, '$.\"phones\"[1].\"numbers\"[3]') = ?",
+            $select
+        );
+        $this->assertSameParameters([5], $select);
+    }
 }

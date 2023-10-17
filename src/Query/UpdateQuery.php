@@ -27,6 +27,9 @@ use Cycle\Database\Query\Traits\WhereTrait;
  * @method UpdateQuery whereJsonDoesntContain(string $column, mixed $value)
  * @method UpdateQuery andWhereJsonDoesntContain(string $column, mixed $value)
  * @method UpdateQuery orWhereJsonDoesntContain(string $column, mixed $value)
+ * @method UpdateQuery whereJsonLength(string $column, int $length, string $operator = '=')
+ * @method UpdateQuery andWhereJsonLength(string $column, int $length, string $operator = '=')
+ * @method UpdateQuery orWhereJsonLength(string $column, int $length, string $operator = '=')
  */
 class UpdateQuery extends ActiveQuery
 {
