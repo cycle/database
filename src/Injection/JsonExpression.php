@@ -106,6 +106,27 @@ abstract class JsonExpression implements FragmentInterface
         return '"' . $segment . '"';
     }
 
+    /**
+     * @param non-empty-string $attribute
+     *
+     * @return array<non-empty-string>
+     */
+    protected function parseJsonPathArrayKeys(string $attribute): array
+    {
+        if (\preg_match('/(\[[^\]]+\])+$/', $attribute, $parts)) {
+            $key = \substr($attribute, 0, \strpos($attribute, $parts[0]));
+
+            \preg_match_all('/\[([^\]]+)\]/', $parts[0], $matches);
+            $keys = $matches[1];
+
+            $cleanKeys = \array_values(\array_filter($keys, static fn ($key) => $key !== ''));
+
+            return \array_merge([$key], $cleanKeys);
+        }
+
+        return [$attribute];
+    }
+
     protected function getQuotes(): string
     {
         return '""';

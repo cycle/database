@@ -13,6 +13,7 @@ namespace Cycle\Database\Driver\Postgres\Query\Traits;
 
 use Cycle\Database\Driver\Postgres\Injection\CompileJson;
 use Cycle\Database\Driver\Postgres\Injection\CompileJsonContains;
+use Cycle\Database\Driver\Postgres\Injection\CompileJsonContainsKey;
 use Cycle\Database\Driver\Postgres\Injection\CompileJsonDoesntContain;
 use Cycle\Database\Driver\Postgres\Injection\CompileJsonLength;
 
@@ -146,6 +147,50 @@ trait WhereJsonTrait
         $this->registerToken(
             'OR',
             [new CompileJsonDoesntContain($column, json_validate($value) ? $value : \json_encode($value))],
+            $this->whereTokens,
+            $this->whereWrapper()
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param non-empty-string $column
+     *
+     * @return $this|self
+     */
+    public function whereJsonContainsKey(string $column): self
+    {
+        $this->registerToken(
+            'AND',
+            [new CompileJsonContainsKey($column)],
+            $this->whereTokens,
+            $this->whereWrapper()
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param non-empty-string $column
+     *
+     * @return $this|self
+     */
+    public function andWhereJsonContainsKey(string $column): self
+    {
+        return $this->whereJsonContainsKey($column);
+    }
+
+    /**
+     * @param non-empty-string $column
+     *
+     * @return $this|self
+     */
+    public function orWhereJsonContainsKey(string $column): self
+    {
+        $this->registerToken(
+            'OR',
+            [new CompileJsonContainsKey($column)],
             $this->whereTokens,
             $this->whereWrapper()
         );

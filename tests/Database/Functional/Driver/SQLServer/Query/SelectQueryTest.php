@@ -371,6 +371,86 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters(['+1234567890'], $select);
     }
 
+    public function testSelectWithWhereJsonContainsKey(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonContainsKey('settings->languages');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE 'languages' IN (SELECT [key] FROM openjson({settings}))",
+            $select
+        );
+    }
+
+    public function testSelectWithAndWhereJsonContainsKey(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->where('id', 1)
+            ->andWhereJsonContainsKey('settings->languages');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE {id} = ? AND 'languages' IN (SELECT [key] FROM openjson({settings}))",
+            $select
+        );
+    }
+
+    public function testSelectWithOrWhereJsonContainsKey(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->where('id', 1)
+            ->orWhereJsonContainsKey('settings->languages');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE {id} = ? OR 'languages' IN (SELECT [key] FROM openjson({settings}))",
+            $select
+        );
+    }
+
+    public function testSelectWithWhereJsonContainsKeyNested(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonContainsKey('settings->phones->work');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE 'work' IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"'))",
+            $select
+        );
+    }
+
+    public function testSelectWithWhereJsonContainsKeyArray(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonContainsKey('settings->phones[1]');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE 1 IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"'))",
+            $select
+        );
+    }
+
+    public function testSelectWithWhereJsonContainsKeyNestedArray(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonContainsKey('settings->phones[1]->numbers[3]');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE 3 IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"'))",
+            $select
+        );
+    }
+
     public function testSelectWithWhereJsonLength(): void
     {
         $select = $this->database

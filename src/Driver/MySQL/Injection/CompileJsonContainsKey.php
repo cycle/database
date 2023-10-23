@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\MySQL\Injection;
 
-class CompileJsonContains extends MySQLJsonExpression
+class CompileJsonContainsKey extends MySQLJsonExpression
 {
     /**
      * @param non-empty-string $statement
@@ -20,6 +20,10 @@ class CompileJsonContains extends MySQLJsonExpression
      */
     protected function compile(string $statement): string
     {
-        return \sprintf('json_contains(%s, ?%s)', $this->getField($statement), $this->getPath($statement));
+        return \sprintf(
+            'IFNULL(json_contains_path(%s, \'one\'%s), 0)',
+            $this->getField($statement),
+            $this->getPath($statement)
+        );
     }
 }

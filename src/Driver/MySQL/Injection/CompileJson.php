@@ -20,6 +20,6 @@ class CompileJson extends MySQLJsonExpression
      */
     protected function compile(string $statement): string
     {
-        return 'json_unquote(json_extract(' . $this->getField($statement) . $this->getPath($statement) . '))';
+        return \sprintf('json_unquote(json_extract(%s%s))', $this->getField($statement), $this->getPath($statement));
     }
 }

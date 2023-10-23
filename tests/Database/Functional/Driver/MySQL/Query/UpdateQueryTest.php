@@ -301,6 +301,86 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', 1], $select);
     }
 
+    public function testUpdateWithWhereJsonContainsKey(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonContainsKey('settings->languages');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE IFNULL(json_contains_path({settings}, 'one', '$.\"languages\"'), 0)",
+            $select
+        );
+    }
+
+    public function testUpdateWithAndWhereJsonContainsKey(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->where('id', 1)
+            ->andWhereJsonContainsKey('settings->languages');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? AND IFNULL(json_contains_path({settings}, 'one', '$.\"languages\"'), 0)",
+            $select
+        );
+    }
+
+    public function testUpdateWithOrWhereJsonContainsKey(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->where('id', 1)
+            ->orWhereJsonContainsKey('settings->languages');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? OR IFNULL(json_contains_path({settings}, 'one', '$.\"languages\"'), 0)",
+            $select
+        );
+    }
+
+    public function testUpdateWithWhereJsonContainsKeyNested(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonContainsKey('settings->phones->work');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE IFNULL(json_contains_path({settings}, 'one', '$.\"phones\".\"work\"'), 0)",
+            $select
+        );
+    }
+
+    public function testUpdateWithWhereJsonContainsKeyArray(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonContainsKey('settings->phones[1]');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE IFNULL(json_contains_path({settings}, 'one', '$.\"phones\"[1]'), 0)",
+            $select
+        );
+    }
+
+    public function testUpdateWithWhereJsonContainsKeyNestedArray(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonContainsKey('settings->phones[1]->numbers[3]');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE IFNULL(json_contains_path({settings}, 'one', '$.\"phones\"[1].\"numbers\"[3]'), 0)",
+            $select
+        );
+    }
+
     public function testUpdateWithAndJsonLength(): void
     {
         $select = $this->database

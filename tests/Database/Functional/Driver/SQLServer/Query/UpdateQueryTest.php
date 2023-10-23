@@ -273,6 +273,86 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', '+1234567890'], $select);
     }
 
+    public function testUpdateWithWhereJsonContainsKey(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonContainsKey('settings->languages');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE 'languages' IN (SELECT [key] FROM openjson({settings}))",
+            $select
+        );
+    }
+
+    public function testUpdateWithAndWhereJsonContainsKey(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->where('id', 1)
+            ->andWhereJsonContainsKey('settings->languages');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? AND 'languages' IN (SELECT [key] FROM openjson({settings}))",
+            $select
+        );
+    }
+
+    public function testUpdateWithOrWhereJsonContainsKey(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->where('id', 1)
+            ->orWhereJsonContainsKey('settings->languages');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? OR 'languages' IN (SELECT [key] FROM openjson({settings}))",
+            $select
+        );
+    }
+
+    public function testUpdateWithWhereJsonContainsKeyNested(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonContainsKey('settings->phones->work');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE 'work' IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"'))",
+            $select
+        );
+    }
+
+    public function testUpdateWithWhereJsonContainsKeyArray(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonContainsKey('settings->phones[1]');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE 1 IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"'))",
+            $select
+        );
+    }
+
+    public function testUpdateWithWhereJsonContainsKeyNestedArray(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonContainsKey('settings->phones[1]->numbers[3]');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE 3 IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"'))",
+            $select
+        );
+    }
+
     public function testUpdateWithWhereJsonLength(): void
     {
         $select = $this->database
@@ -281,7 +361,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonLength('settings->languages', 1);
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some}= ? WHERE(SELECT count(*) FROM openjson({settings}, '$.\"languages\"')) = ?",
+            "UPDATE {table} SET {some}= ? WHERE (SELECT count(*) FROM openjson({settings}, '$.\"languages\"')) = ?",
             $select
         );
         $this->assertSameParameters(['value', 1], $select);
@@ -295,7 +375,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonLength('settings->languages', 1, '>=');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE(SELECT count(*) FROM openjson({settings}, '$.\"languages\"')) >= ?",
+            "UPDATE {table} SET {some} = ? WHERE (SELECT count(*) FROM openjson({settings}, '$.\"languages\"')) >= ?",
             $select
         );
         $this->assertSameParameters(['value', 1], $select);
@@ -310,7 +390,7 @@ class UpdateQueryTest extends CommonClass
             ->andWhereJsonLength('settings->languages', 3);
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE {id} = ? AND(SELECT count(*) FROM openjson({settings}, '$.\"languages\"')) = ?",
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? AND (SELECT count(*) FROM openjson({settings}, '$.\"languages\"')) = ?",
             $select
         );
         $this->assertSameParameters(['value', 1, 3], $select);

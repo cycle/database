@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Driver\SQLite\Query\Traits;
 
 use Cycle\Database\Driver\SQLite\Injection\CompileJson;
+use Cycle\Database\Driver\SQLite\Injection\CompileJsonContainsKey;
 use Cycle\Database\Driver\SQLite\Injection\CompileJsonLength;
 use Cycle\Database\Exception\DriverException;
 
@@ -122,6 +123,50 @@ trait WhereJsonTrait
     public function orWhereJsonDoesntContain(string $column, mixed $value): self
     {
         throw new DriverException('This database engine does not support JSON contains operations.');
+    }
+
+    /**
+     * @param non-empty-string $column
+     *
+     * @return $this|self
+     */
+    public function whereJsonContainsKey(string $column): self
+    {
+        $this->registerToken(
+            'AND',
+            [new CompileJsonContainsKey($column)],
+            $this->whereTokens,
+            $this->whereWrapper()
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param non-empty-string $column
+     *
+     * @return $this|self
+     */
+    public function andWhereJsonContainsKey(string $column): self
+    {
+        return $this->whereJsonContainsKey($column);
+    }
+
+    /**
+     * @param non-empty-string $column
+     *
+     * @return $this|self
+     */
+    public function orWhereJsonContainsKey(string $column): self
+    {
+        $this->registerToken(
+            'OR',
+            [new CompileJsonContainsKey($column)],
+            $this->whereTokens,
+            $this->whereWrapper()
+        );
+
+        return $this;
     }
 
     /**

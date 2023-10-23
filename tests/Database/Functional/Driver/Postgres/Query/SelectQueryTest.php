@@ -255,6 +255,88 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters([json_encode('+1234567890')], $select);
     }
 
+    public function testSelectWithWhereJsonContainsKey(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonContainsKey('settings->languages');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE coalesce(({settings})::jsonb ?? 'languages', false)",
+            $select
+        );
+    }
+
+    public function testSelectWithAndWhereJsonContainsKey(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->where('id', 1)
+            ->andWhereJsonContainsKey('settings->languages');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE {id} = ? AND coalesce(({settings})::jsonb ?? 'languages', false)",
+            $select
+        );
+    }
+
+    public function testSelectWithOrWhereJsonContainsKey(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->where('id', 1)
+            ->orWhereJsonContainsKey('settings->languages');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE {id} = ? OR coalesce(({settings})::jsonb ?? 'languages', false)",
+            $select
+        );
+    }
+
+    public function testSelectWithWhereJsonContainsKeyNested(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonContainsKey('settings->phones->work');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE coalesce(({settings}->'phones')::jsonb ?? 'work', false)",
+            $select
+        );
+    }
+
+    public function testSelectWithWhereJsonContainsKeyArray(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonContainsKey('settings->phones[1]');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE CASE WHEN jsonb_typeof(({settings}->'phones')::jsonb) = 'array'
+                    THEN jsonb_array_length(({settings}->'phones')::jsonb) >= 2 ELSE false END",
+            $select
+        );
+    }
+
+    public function testSelectWithWhereJsonContainsKeyNestedArray(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonContainsKey('settings->phones[1]->numbers[3]');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE CASE WHEN jsonb_typeof(({settings}->'phones'->1->'numbers')::jsonb) = 'array'
+                    THEN jsonb_array_length(({settings}->'phones'->1->'numbers')::jsonb) >= 4 ELSE false END",
+            $select
+        );
+    }
+
     public function testSelectWithWhereJsonLength(): void
     {
         $select = $this->database

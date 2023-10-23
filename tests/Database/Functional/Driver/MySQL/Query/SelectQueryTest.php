@@ -285,6 +285,86 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters([json_encode('+1234567890')], $select);
     }
 
+    public function testSelectWithWhereJsonContainsKey(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonContainsKey('settings->languages');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE IFNULL(json_contains_path({settings}, 'one', '$.\"languages\"'), 0)",
+            $select
+        );
+    }
+
+    public function testSelectWithAndWhereJsonContainsKey(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->where('id', 1)
+            ->andWhereJsonContainsKey('settings->languages');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE {id} = ? AND IFNULL(json_contains_path({settings}, 'one', '$.\"languages\"'), 0)",
+            $select
+        );
+    }
+
+    public function testSelectWithOrWhereJsonContainsKey(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->where('id', 1)
+            ->orWhereJsonContainsKey('settings->languages');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE {id} = ? OR IFNULL(json_contains_path({settings}, 'one','$.\"languages\"'), 0)",
+            $select
+        );
+    }
+
+    public function testSelectWithWhereJsonContainsKeyNested(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonContainsKey('settings->phones->work');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE IFNULL(json_contains_path({settings}, 'one', '$.\"phones\".\"work\"'), 0)",
+            $select
+        );
+    }
+
+    public function testSelectWithWhereJsonContainsKeyArray(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonContainsKey('settings->phones[1]');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE IFNULL(json_contains_path({settings}, 'one', '$.\"phones\"[1]'), 0)",
+            $select
+        );
+    }
+
+    public function testSelectWithWhereJsonContainsKeyNestedArray(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonContainsKey('settings->phones[1]->numbers[3]');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE IFNULL(json_contains_path({settings}, 'one', '$.\"phones\"[1].\"numbers\"[3]'), 0)",
+            $select
+        );
+    }
+
     public function testSelectWithWhereJsonLength(): void
     {
         $select = $this->database

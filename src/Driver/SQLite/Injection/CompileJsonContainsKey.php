@@ -9,9 +9,9 @@
 
 declare(strict_types=1);
 
-namespace Cycle\Database\Driver\MySQL\Injection;
+namespace Cycle\Database\Driver\SQLite\Injection;
 
-class CompileJsonContains extends MySQLJsonExpression
+class CompileJsonContainsKey extends SQLiteJsonExpression
 {
     /**
      * @param non-empty-string $statement
@@ -20,6 +20,6 @@ class CompileJsonContains extends MySQLJsonExpression
      */
     protected function compile(string $statement): string
     {
-        return \sprintf('json_contains(%s, ?%s)', $this->getField($statement), $this->getPath($statement));
+        return \sprintf('json_type(%s%s) IS NOT null', $this->getField($statement), $this->getPath($statement));
     }
 }

@@ -255,6 +255,80 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters([json_encode('+1234567890')], $select);
     }
 
+    public function testDeleteWithWhereJsonContainsKey(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->whereJsonContainsKey('settings->languages');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE IFNULL(json_contains_path({settings}, 'one' ,'$.\"languages\"'),0)",
+            $select
+        );
+    }
+
+    public function testDeleteWithAndWhereJsonContainsKey(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->where('id', 1)
+            ->andWhereJsonContainsKey('settings->languages');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE {id} = ? AND IFNULL(json_contains_path({settings}, 'one', '$.\"languages\"'), 0)",
+            $select
+        );
+    }
+
+    public function testDeleteWithOrWhereJsonContainsKey(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->where('id', 1)
+            ->orWhereJsonContainsKey('settings->languages');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE {id} = ? OR IFNULL(json_contains_path({settings}, 'one', '$.\"languages\"'), 0)",
+            $select
+        );
+    }
+
+    public function testDeleteWithWhereJsonContainsKeyNested(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->whereJsonContainsKey('settings->phones->work');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE IFNULL(json_contains_path({settings}, 'one', '$.\"phones\".\"work\"'), 0)",
+            $select
+        );
+    }
+
+    public function testDeleteWithWhereJsonContainsKeyArray(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->whereJsonContainsKey('settings->phones[1]');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE IFNULL(json_contains_path({settings}, 'one', '$.\"phones\"[1]'), 0)",
+            $select
+        );
+    }
+
+    public function testDeleteWithWhereJsonContainsKeyNestedArray(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->whereJsonContainsKey('settings->phones[1]->numbers[3]');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE IFNULL(json_contains_path({settings}, 'one', '$.\"phones\"[1].\"numbers\"[3]'), 0)",
+            $select
+        );
+    }
+
     public function testDeleteWithWhereJsonLength(): void
     {
         $select = $this->database
