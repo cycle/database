@@ -337,6 +337,88 @@ class SelectQueryTest extends CommonClass
         );
     }
 
+    public function testSelectWithWhereJsonDoesntContainKey(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonDoesntContainKey('settings->languages');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE NOT coalesce(({settings})::jsonb ?? 'languages', false)",
+            $select
+        );
+    }
+
+    public function testSelectWithAndWhereJsonDoesntContainKey(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->where('id', 1)
+            ->andWhereJsonDoesntContainKey('settings->languages');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE {id} = ? AND NOT coalesce(({settings})::jsonb ?? 'languages', false)",
+            $select
+        );
+    }
+
+    public function testSelectWithOrWhereJsonDoesntContainKey(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->where('id', 1)
+            ->orWhereJsonDoesntContainKey('settings->languages');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE {id} = ? OR NOT coalesce(({settings})::jsonb ?? 'languages', false)",
+            $select
+        );
+    }
+
+    public function testSelectWithWhereJsonDoesntContainKeyNested(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonDoesntContainKey('settings->phones->work');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE NOT coalesce(({settings}->'phones')::jsonb ?? 'work', false)",
+            $select
+        );
+    }
+
+    public function testSelectWithWhereJsonDoesntContainKeyArray(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonDoesntContainKey('settings->phones[1]');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE NOT CASE WHEN jsonb_typeof(({settings}->'phones')::jsonb) = 'array'
+                THEN jsonb_array_length(({settings}->'phones')::jsonb) >= 2 ELSE false END",
+            $select
+        );
+    }
+
+    public function testSelectWithWhereJsonDoesntContainKeyNestedArray(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonDoesntContainKey('settings->phones[1]->numbers[3]');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE NOT CASE WHEN jsonb_typeof(({settings}->'phones'->1->'numbers')::jsonb) = 'array'
+                THEN jsonb_array_length(({settings}->'phones'->1->'numbers')::jsonb) >= 4 ELSE false END",
+            $select
+        );
+    }
+
     public function testSelectWithWhereJsonLength(): void
     {
         $select = $this->database

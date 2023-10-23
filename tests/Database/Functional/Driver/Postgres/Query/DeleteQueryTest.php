@@ -315,6 +315,82 @@ class DeleteQueryTest extends CommonClass
         );
     }
 
+    public function testDeleteWithWhereJsonDoesntContainKey(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->whereJsonDoesntContainKey('settings->languages');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE NOT coalesce(({settings})::jsonb ?? 'languages', false)",
+            $select
+        );
+    }
+
+    public function testDeleteWithAndWhereJsonDoesntContainKey(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->where('id', 1)
+            ->andWhereJsonDoesntContainKey('settings->languages');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE {id} = ? AND NOT coalesce(({settings})::jsonb ?? 'languages', false)",
+            $select
+        );
+    }
+
+    public function testDeleteWithOrWhereJsonDoesntContainKey(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->where('id', 1)
+            ->orWhereJsonDoesntContainKey('settings->languages');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE {id} = ? OR NOT coalesce(({settings})::jsonb ?? 'languages', false)",
+            $select
+        );
+    }
+
+    public function testDeleteWithWhereJsonDoesntContainKeyNested(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->whereJsonDoesntContainKey('settings->phones->work');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE NOT coalesce(({settings}->'phones')::jsonb ?? 'work', false)",
+            $select
+        );
+    }
+
+    public function testDeleteWithWhereJsonDoesntContainKeyArray(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->whereJsonDoesntContainKey('settings->phones[1]');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE NOT CASE WHEN jsonb_typeof(({settings}->'phones')::jsonb) = 'array'
+                THEN jsonb_array_length(({settings}->'phones')::jsonb) >= 2 ELSE false END",
+            $select
+        );
+    }
+
+    public function testDeleteWithWhereJsonDoesntContainKeyNestedArray(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->whereJsonDoesntContainKey('settings->phones[1]->numbers[3]');
+
+        $this->assertSameQuery(
+            "DELETE FROM {table} WHERE NOT CASE WHEN jsonb_typeof(({settings}->'phones'->1->'numbers')::jsonb) = 'array'
+                THEN jsonb_array_length(({settings}->'phones'->1->'numbers')::jsonb) >= 4 ELSE false END",
+            $select
+        );
+    }
+
     public function testDeleteWithWhereJsonLength(): void
     {
         $select = $this->database

@@ -353,6 +353,86 @@ class UpdateQueryTest extends CommonClass
         );
     }
 
+    public function testUpdateWithWhereJsonDoesntContainKey(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonDoesntContainKey('settings->languages');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE NOT 'languages' IN (SELECT [key] FROM openjson({settings}))",
+            $select
+        );
+    }
+
+    public function testUpdateWithAndWhereJsonDoesntContainKey(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->where('id', 1)
+            ->andWhereJsonDoesntContainKey('settings->languages');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE{id} = ? AND NOT 'languages' IN (SELECT [key] FROM openjson({settings}))",
+            $select
+        );
+    }
+
+    public function testUpdateWithOrWhereJsonDoesntContainKey(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->where('id', 1)
+            ->orWhereJsonDoesntContainKey('settings->languages');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? OR NOT 'languages' IN (SELECT [key] FROM openjson({settings}))",
+            $select
+        );
+    }
+
+    public function testUpdateWithWhereJsonDoesntContainKeyNested(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonDoesntContainKey('settings->phones->work');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE NOT 'work' IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"'))",
+            $select
+        );
+    }
+
+    public function testUpdateWithWhereJsonDoesntContainKeyArray(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonDoesntContainKey('settings->phones[1]');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE NOT 1 IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"'))",
+            $select
+        );
+    }
+
+    public function testUpdateWithWhereJsonDoesntContainKeyNestedArray(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonDoesntContainKey('settings->phones[1]->numbers[3]');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE NOT 3 IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"'))",
+            $select
+        );
+    }
+
     public function testUpdateWithWhereJsonLength(): void
     {
         $select = $this->database

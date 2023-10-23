@@ -365,6 +365,86 @@ class SelectQueryTest extends CommonClass
         );
     }
 
+    public function testSelectWithWhereJsonDoesntContainKey(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonDoesntContainKey('settings->languages');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE NOT IFNULL(json_contains_path({settings}, 'one', '$.\"languages\"'), 0)",
+            $select
+        );
+    }
+
+    public function testSelectWithAndWhereJsonDoesntContainKey(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->where('id', 1)
+            ->andWhereJsonDoesntContainKey('settings->languages');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE {id} = ? AND NOT IFNULL(json_contains_path({settings}, 'one', '$.\"languages\"'), 0)",
+            $select
+        );
+    }
+
+    public function testSelectWithOrWhereJsonDoesntContainKey(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->where('id', 1)
+            ->orWhereJsonDoesntContainKey('settings->languages');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE {id} = ? OR NOT IFNULL(json_contains_path({settings}, 'one', '$.\"languages\"'), 0)",
+            $select
+        );
+    }
+
+    public function testSelectWithWhereJsonDoesntContainKeyNested(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonDoesntContainKey('settings->phones->work');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE NOT IFNULL(json_contains_path({settings}, 'one', '$.\"phones\".\"work\"'), 0)",
+            $select
+        );
+    }
+
+    public function testSelectWithWhereJsonDoesntContainKeyArray(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonDoesntContainKey('settings->phones[1]');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE NOT IFNULL(json_contains_path({settings}, 'one', '$.\"phones\"[1]'), 0)",
+            $select
+        );
+    }
+
+    public function testSelectWithWhereJsonDoesntContainKeyNestedArray(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonDoesntContainKey('settings->phones[1]->numbers[3]');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} WHERE NOT IFNULL(json_contains_path({settings}, 'one', '$.\"phones\"[1].\"numbers\"[3]'), 0)",
+            $select
+        );
+    }
+
     public function testSelectWithWhereJsonLength(): void
     {
         $select = $this->database

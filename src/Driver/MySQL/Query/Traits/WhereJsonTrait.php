@@ -15,6 +15,7 @@ use Cycle\Database\Driver\MySQL\Injection\CompileJson;
 use Cycle\Database\Driver\MySQL\Injection\CompileJsonContains;
 use Cycle\Database\Driver\MySQL\Injection\CompileJsonContainsKey;
 use Cycle\Database\Driver\MySQL\Injection\CompileJsonDoesntContain;
+use Cycle\Database\Driver\MySQL\Injection\CompileJsonDoesntContainKey;
 use Cycle\Database\Driver\MySQL\Injection\CompileJsonLength;
 
 /**
@@ -191,6 +192,50 @@ trait WhereJsonTrait
         $this->registerToken(
             'OR',
             [new CompileJsonContainsKey($column)],
+            $this->whereTokens,
+            $this->whereWrapper()
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param non-empty-string $column
+     *
+     * @return $this|self
+     */
+    public function whereJsonDoesntContainKey(string $column): self
+    {
+        $this->registerToken(
+            'AND',
+            [new CompileJsonDoesntContainKey($column)],
+            $this->whereTokens,
+            $this->whereWrapper()
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param non-empty-string $column
+     *
+     * @return $this|self
+     */
+    public function andWhereJsonDoesntContainKey(string $column): self
+    {
+        return $this->whereJsonDoesntContainKey($column);
+    }
+
+    /**
+     * @param non-empty-string $column
+     *
+     * @return $this|self
+     */
+    public function orWhereJsonDoesntContainKey(string $column): self
+    {
+        $this->registerToken(
+            'OR',
+            [new CompileJsonDoesntContainKey($column)],
             $this->whereTokens,
             $this->whereWrapper()
         );

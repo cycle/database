@@ -343,6 +343,88 @@ class UpdateQueryTest extends CommonClass
         );
     }
 
+    public function testUpdateWithWhereJsonDoesntContainKey(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonDoesntContainKey('settings->languages');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE NOT coalesce(({settings})::jsonb ?? 'languages', false)",
+            $select
+        );
+    }
+
+    public function testUpdateWithAndWhereJsonDoesntContainKey(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->where('id', 1)
+            ->andWhereJsonDoesntContainKey('settings->languages');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? AND NOT coalesce(({settings})::jsonb ?? 'languages', false)",
+            $select
+        );
+    }
+
+    public function testUpdateWithOrWhereJsonDoesntContainKey(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->where('id', 1)
+            ->orWhereJsonDoesntContainKey('settings->languages');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? OR NOT coalesce(({settings})::jsonb ?? 'languages', false)",
+            $select
+        );
+    }
+
+    public function testUpdateWithWhereJsonDoesntContainKeyNested(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonDoesntContainKey('settings->phones->work');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE NOT coalesce(({settings}->'phones')::jsonb ?? 'work', false)",
+            $select
+        );
+    }
+
+    public function testUpdateWithWhereJsonDoesntContainKeyArray(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonDoesntContainKey('settings->phones[1]');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE NOT CASE WHEN jsonb_typeof(({settings}->'phones')::jsonb) = 'array'
+                    THEN jsonb_array_length(({settings}->'phones')::jsonb) >= 2 ELSE false END",
+            $select
+        );
+    }
+
+    public function testUpdateWithWhereJsonDoesntContainKeyNestedArray(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonDoesntContainKey('settings->phones[1]->numbers[3]');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE NOT CASE WHEN jsonb_typeof(({settings}->'phones'->1->'numbers')::jsonb) = 'array'
+                THEN jsonb_array_length(({settings}->'phones'->1->'numbers')::jsonb) >= 4 ELSE false END",
+            $select
+        );
+    }
+
     public function testUpdateWithWhereJsonLength(): void
     {
         $select = $this->database

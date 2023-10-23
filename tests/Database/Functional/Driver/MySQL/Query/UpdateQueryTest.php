@@ -273,34 +273,6 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', json_encode('+1234567890')], $select);
     }
 
-    public function testUpdateWithWhereJsonLength(): void
-    {
-        $select = $this->database
-            ->update('table')
-            ->values(['some' => 'value'])
-            ->whereJsonLength('settings->languages', 1);
-
-        $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE json_length({settings}, '$.\"languages\"') = ?",
-            $select
-        );
-        $this->assertSameParameters(['value', 1], $select);
-    }
-
-    public function testUpdateWithWhereJsonLengthAndCustomOperator(): void
-    {
-        $select = $this->database
-            ->update('table')
-            ->values(['some' => 'value'])
-            ->whereJsonLength('settings->languages', 1, '>=');
-
-        $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE json_length({settings}, '$.\"languages\"') >= ?",
-            $select
-        );
-        $this->assertSameParameters(['value', 1], $select);
-    }
-
     public function testUpdateWithWhereJsonContainsKey(): void
     {
         $select = $this->database
@@ -379,6 +351,114 @@ class UpdateQueryTest extends CommonClass
             "UPDATE {table} SET {some} = ? WHERE IFNULL(json_contains_path({settings}, 'one', '$.\"phones\"[1].\"numbers\"[3]'), 0)",
             $select
         );
+    }
+
+    public function testUpdateWithWhereJsonDoesntContainKey(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonDoesntContainKey('settings->languages');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE NOT IFNULL(json_contains_path({settings}, 'one', '$.\"languages\"'), 0)",
+            $select
+        );
+    }
+
+    public function testUpdateWithAndWhereJsonDoesntContainKey(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->where('id', 1)
+            ->andWhereJsonDoesntContainKey('settings->languages');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? AND NOT IFNULL(json_contains_path({settings}, 'one', '$.\"languages\"'), 0)",
+            $select
+        );
+    }
+
+    public function testUpdateWithOrWhereJsonDoesntContainKey(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->where('id', 1)
+            ->orWhereJsonDoesntContainKey('settings->languages');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? OR NOT IFNULL(json_contains_path({settings}, 'one', '$.\"languages\"'), 0)",
+            $select
+        );
+    }
+
+    public function testUpdateWithWhereJsonDoesntContainKeyNested(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonDoesntContainKey('settings->phones->work');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE NOT IFNULL(json_contains_path({settings}, 'one', '$.\"phones\".\"work\"'), 0)",
+            $select
+        );
+    }
+
+    public function testUpdateWithWhereJsonDoesntContainKeyArray(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonDoesntContainKey('settings->phones[1]');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE NOT IFNULL(json_contains_path({settings}, 'one', '$.\"phones\"[1]'), 0)",
+            $select
+        );
+    }
+
+    public function testUpdateWithWhereJsonDoesntContainKeyNestedArray(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonDoesntContainKey('settings->phones[1]->numbers[3]');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE NOT IFNULL(json_contains_path({settings}, 'one', '$.\"phones\"[1].\"numbers\"[3]'), 0)",
+            $select
+        );
+    }
+
+    public function testUpdateWithWhereJsonLength(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonLength('settings->languages', 1);
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE json_length({settings}, '$.\"languages\"') = ?",
+            $select
+        );
+        $this->assertSameParameters(['value', 1], $select);
+    }
+
+    public function testUpdateWithWhereJsonLengthAndCustomOperator(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonLength('settings->languages', 1, '>=');
+
+        $this->assertSameQuery(
+            "UPDATE {table} SET {some} = ? WHERE json_length({settings}, '$.\"languages\"') >= ?",
+            $select
+        );
+        $this->assertSameParameters(['value', 1], $select);
     }
 
     public function testUpdateWithAndJsonLength(): void
