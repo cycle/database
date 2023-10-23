@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\Postgres\Query\Traits;
 
+use Cycle\Database\Driver\Jsoner;
 use Cycle\Database\Driver\Postgres\Injection\CompileJson;
 use Cycle\Database\Driver\Postgres\Injection\CompileJsonContains;
 use Cycle\Database\Driver\Postgres\Injection\CompileJsonContainsKey;
@@ -76,7 +77,7 @@ trait WhereJsonTrait
     {
         $this->registerToken(
             'AND',
-            [new CompileJsonContains($column, json_validate($value) ? $value : \json_encode($value))],
+            [new CompileJsonContains($column, Jsoner::toJson($value))],
             $this->whereTokens,
             $this->whereWrapper()
         );
@@ -103,7 +104,7 @@ trait WhereJsonTrait
     {
         $this->registerToken(
             'OR',
-            [new CompileJsonContains($column, json_validate($value) ? $value : \json_encode($value))],
+            [new CompileJsonContains($column, Jsoner::toJson($value))],
             $this->whereTokens,
             $this->whereWrapper()
         );
@@ -120,7 +121,7 @@ trait WhereJsonTrait
     {
         $this->registerToken(
             'AND',
-            [new CompileJsonDoesntContain($column, json_validate($value) ? $value : \json_encode($value))],
+            [new CompileJsonDoesntContain($column, Jsoner::toJson($value))],
             $this->whereTokens,
             $this->whereWrapper()
         );
@@ -147,7 +148,7 @@ trait WhereJsonTrait
     {
         $this->registerToken(
             'OR',
-            [new CompileJsonDoesntContain($column, json_validate($value) ? $value : \json_encode($value))],
+            [new CompileJsonDoesntContain($column, Jsoner::toJson($value))],
             $this->whereTokens,
             $this->whereWrapper()
         );
@@ -245,7 +246,7 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     * @param 0|positive-int $length
+     * @param int<0, max> $length
      * @param non-empty-string $operator
      *
      * @return $this|self
@@ -264,7 +265,7 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     * @param 0|positive-int $length
+     * @param int<0, max> $length
      * @param non-empty-string $operator
      *
      * @return $this|self
@@ -276,7 +277,7 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     * @param 0|positive-int $length
+     * @param int<0, max> $length
      * @param non-empty-string $operator
      *
      * @return $this|self

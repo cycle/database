@@ -216,7 +216,7 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     * @param 0|positive-int $length
+     * @param int<0, max> $length
      * @param non-empty-string $operator
      *
      * @return $this|self
@@ -235,7 +235,7 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     * @param 0|positive-int $length
+     * @param int<0, max> $length
      * @param non-empty-string $operator
      *
      * @return $this|self
@@ -247,7 +247,7 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     * @param 0|positive-int $length
+     * @param int<0, max> $length
      * @param non-empty-string $operator
      *
      * @return $this|self
