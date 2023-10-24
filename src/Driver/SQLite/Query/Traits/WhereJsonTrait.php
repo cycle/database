@@ -27,7 +27,7 @@ trait WhereJsonTrait
     /**
      * @param non-empty-string $column
      */
-    public function whereJson(string $column, mixed $value): self
+    public function whereJson(string $column, mixed $value): static
     {
         $this->registerToken(
             'AND',
@@ -42,7 +42,7 @@ trait WhereJsonTrait
     /**
      * @param non-empty-string $column
      */
-    public function andWhereJson(string $column, mixed $value): self
+    public function andWhereJson(string $column, mixed $value): static
     {
         return $this->whereJson($column, $value);
     }
@@ -50,7 +50,7 @@ trait WhereJsonTrait
     /**
      * @param non-empty-string $column
      */
-    public function orWhereJson(string $column, mixed $value): self
+    public function orWhereJson(string $column, mixed $value): static
     {
         $this->registerToken(
             'OR',
@@ -67,7 +67,7 @@ trait WhereJsonTrait
      * @param bool $encode Encode the value into JSON.
      * @param bool $validate Checking the value that it is valid JSON.
      */
-    public function whereJsonContains(string $column, mixed $value, bool $encode = true, bool $validate = true): self
+    public function whereJsonContains(string $column, mixed $value, bool $encode = true, bool $validate = true): static
     {
         throw new DriverException('This database engine does not support JSON contains operations.');
     }
@@ -77,8 +77,12 @@ trait WhereJsonTrait
      * @param bool $encode Encode the value into JSON.
      * @param bool $validate Checking the value that it is valid JSON.
      */
-    public function andWhereJsonContains(string $column, mixed $value, bool $encode = true, bool $validate = true): self
-    {
+    public function andWhereJsonContains(
+        string $column,
+        mixed $value,
+        bool $encode = true,
+        bool $validate = true
+    ): static {
         throw new DriverException('This database engine does not support JSON contains operations.');
     }
 
@@ -87,8 +91,12 @@ trait WhereJsonTrait
      * @param bool $encode Encode the value into JSON.
      * @param bool $validate Checking the value that it is valid JSON.
      */
-    public function orWhereJsonContains(string $column, mixed $value, bool $encode = true, bool $validate = true): self
-    {
+    public function orWhereJsonContains(
+        string $column,
+        mixed $value,
+        bool $encode = true,
+        bool $validate = true
+    ): static {
         throw new DriverException('This database engine does not support JSON contains operations.');
     }
 
@@ -102,7 +110,7 @@ trait WhereJsonTrait
         mixed $value,
         bool $encode = true,
         bool $validate = true
-    ): self {
+    ): static {
         throw new DriverException('This database engine does not support JSON contains operations.');
     }
 
@@ -116,7 +124,7 @@ trait WhereJsonTrait
         mixed $value,
         bool $encode = true,
         bool $validate = true
-    ): self {
+    ): static {
         throw new DriverException('This database engine does not support JSON contains operations.');
     }
 
@@ -130,14 +138,14 @@ trait WhereJsonTrait
         mixed $value,
         bool $encode = true,
         bool $validate = true
-    ): self {
+    ): static {
         throw new DriverException('This database engine does not support JSON contains operations.');
     }
 
     /**
      * @param non-empty-string $column
      */
-    public function whereJsonContainsKey(string $column): self
+    public function whereJsonContainsKey(string $column): static
     {
         $this->registerToken(
             'AND',
@@ -152,7 +160,7 @@ trait WhereJsonTrait
     /**
      * @param non-empty-string $column
      */
-    public function andWhereJsonContainsKey(string $column): self
+    public function andWhereJsonContainsKey(string $column): static
     {
         return $this->whereJsonContainsKey($column);
     }
@@ -160,7 +168,7 @@ trait WhereJsonTrait
     /**
      * @param non-empty-string $column
      */
-    public function orWhereJsonContainsKey(string $column): self
+    public function orWhereJsonContainsKey(string $column): static
     {
         $this->registerToken(
             'OR',
@@ -175,7 +183,7 @@ trait WhereJsonTrait
     /**
      * @param non-empty-string $column
      */
-    public function whereJsonDoesntContainKey(string $column): self
+    public function whereJsonDoesntContainKey(string $column): static
     {
         $this->registerToken(
             'AND',
@@ -190,7 +198,7 @@ trait WhereJsonTrait
     /**
      * @param non-empty-string $column
      */
-    public function andWhereJsonDoesntContainKey(string $column): self
+    public function andWhereJsonDoesntContainKey(string $column): static
     {
         return $this->whereJsonDoesntContainKey($column);
     }
@@ -198,7 +206,7 @@ trait WhereJsonTrait
     /**
      * @param non-empty-string $column
      */
-    public function orWhereJsonDoesntContainKey(string $column): self
+    public function orWhereJsonDoesntContainKey(string $column): static
     {
         $this->registerToken(
             'OR',
@@ -215,7 +223,7 @@ trait WhereJsonTrait
      * @param int<0, max> $length
      * @param non-empty-string $operator
      */
-    public function whereJsonLength(string $column, int $length, string $operator = '='): self
+    public function whereJsonLength(string $column, int $length, string $operator = '='): static
     {
         $this->registerToken(
             'AND',
@@ -232,7 +240,7 @@ trait WhereJsonTrait
      * @param int<0, max> $length
      * @param non-empty-string $operator
      */
-    public function andWhereJsonLength(string $column, int $length, string $operator = '='): self
+    public function andWhereJsonLength(string $column, int $length, string $operator = '='): static
     {
         return $this->whereJsonLength($column, $length, $operator);
     }
@@ -242,7 +250,7 @@ trait WhereJsonTrait
      * @param int<0, max> $length
      * @param non-empty-string $operator
      */
-    public function orWhereJsonLength(string $column, int $length, string $operator = '='): self
+    public function orWhereJsonLength(string $column, int $length, string $operator = '='): static
     {
         $this->registerToken(
             'OR',
