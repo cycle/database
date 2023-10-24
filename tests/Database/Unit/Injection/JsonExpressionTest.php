@@ -137,8 +137,7 @@ final class JsonExpressionTest extends TestCase
 
     private function createExpression(): JsonExpression
     {
-        return new class extends JsonExpression
-        {
+        return new class () extends JsonExpression {
             public function __construct()
             {
             }
