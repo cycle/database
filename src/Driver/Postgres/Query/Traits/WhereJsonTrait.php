@@ -66,12 +66,14 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
+     * @param bool $encode Encode the value into JSON.
+     * @param bool $validate Checking the value that it is valid JSON.
      */
     public function whereJsonContains(string $column, mixed $value, bool $encode = true, bool $validate = true): self
     {
         $this->registerToken(
             'AND',
-            [new CompileJsonContains($column, Jsoner::toJson($value))],
+            [new CompileJsonContains($column, Jsoner::toJson($value, $encode, $validate))],
             $this->whereTokens,
             $this->whereWrapper()
         );
@@ -81,20 +83,24 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
+     * @param bool $encode Encode the value into JSON.
+     * @param bool $validate Checking the value that it is valid JSON.
      */
-    public function andWhereJsonContains(string $column, mixed $value): self
+    public function andWhereJsonContains(string $column, mixed $value, bool $encode = true, bool $validate = true): self
     {
-        return $this->whereJsonContains($column, $value);
+        return $this->whereJsonContains($column, $value, $encode, $validate);
     }
 
     /**
      * @param non-empty-string $column
+     * @param bool $encode Encode the value into JSON.
+     * @param bool $validate Checking the value that it is valid JSON.
      */
-    public function orWhereJsonContains(string $column, mixed $value): self
+    public function orWhereJsonContains(string $column, mixed $value, bool $encode = true, bool $validate = true): self
     {
         $this->registerToken(
             'OR',
-            [new CompileJsonContains($column, Jsoner::toJson($value))],
+            [new CompileJsonContains($column, Jsoner::toJson($value, $encode, $validate))],
             $this->whereTokens,
             $this->whereWrapper()
         );
@@ -104,12 +110,18 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
+     * @param bool $encode Encode the value into JSON.
+     * @param bool $validate Checking the value that it is valid JSON.
      */
-    public function whereJsonDoesntContain(string $column, mixed $value): self
-    {
+    public function whereJsonDoesntContain(
+        string $column,
+        mixed $value,
+        bool $encode = true,
+        bool $validate = true
+    ): self {
         $this->registerToken(
             'AND',
-            [new CompileJsonDoesntContain($column, Jsoner::toJson($value))],
+            [new CompileJsonDoesntContain($column, Jsoner::toJson($value, $encode, $validate))],
             $this->whereTokens,
             $this->whereWrapper()
         );
@@ -119,20 +131,32 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
+     * @param bool $encode Encode the value into JSON.
+     * @param bool $validate Checking the value that it is valid JSON.
      */
-    public function andWhereJsonDoesntContain(string $column, mixed $value): self
-    {
-        return $this->whereJsonDoesntContain($column, $value);
+    public function andWhereJsonDoesntContain(
+        string $column,
+        mixed $value,
+        bool $encode = true,
+        bool $validate = true
+    ): self {
+        return $this->whereJsonDoesntContain($column, $value, $encode, $validate);
     }
 
     /**
      * @param non-empty-string $column
+     * @param bool $encode Encode the value into JSON.
+     * @param bool $validate Checking the value that it is valid JSON.
      */
-    public function orWhereJsonDoesntContain(string $column, mixed $value): self
-    {
+    public function orWhereJsonDoesntContain(
+        string $column,
+        mixed $value,
+        bool $encode = true,
+        bool $validate = true
+    ): self {
         $this->registerToken(
             'OR',
-            [new CompileJsonDoesntContain($column, Jsoner::toJson($value))],
+            [new CompileJsonDoesntContain($column, Jsoner::toJson($value, $encode, $validate))],
             $this->whereTokens,
             $this->whereWrapper()
         );

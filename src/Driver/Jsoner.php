@@ -11,22 +11,31 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver;
 
+use Cycle\Database\Exception\DriverException;
+
 /**
  * Helper that allows to convert any value to JSON.
- *
- * @deprecated it's a draft
  */
 final class Jsoner
 {
     /**
-     * @param bool $notEncodeValidJson Validate if $value is already JSON and return it as is.
+     * @param bool $encode Encode the value into JSON.
+     * @param bool $validate Checking the value that it is valid JSON.
      *
      * @throws \JsonException
      */
-    public static function toJson(mixed $value, bool $notEncodeValidJson = true): string
+    public static function toJson(mixed $value, bool $encode = true, bool $validate = true): string
     {
-        return $notEncodeValidJson && \is_string($value) && \json_validate($value)
-            ? $value
-            : \json_encode($value, \JSON_UNESCAPED_UNICODE|\JSON_THROW_ON_ERROR);
+        if (!$encode && $validate && \is_string($value) && !json_validate($value)) {
+            throw new DriverException('Invalid JSON value.');
+        }
+
+        if ($encode && !$validate) {
+            $value = \json_encode($value, \JSON_UNESCAPED_UNICODE|\JSON_THROW_ON_ERROR);
+        }
+
+        return $encode && $validate && (!\is_string($value) || !json_validate($value))
+            ? \json_encode($value, \JSON_UNESCAPED_UNICODE|\JSON_THROW_ON_ERROR)
+            : $value;
     }
 }

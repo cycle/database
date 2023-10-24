@@ -20,13 +20,13 @@ use Cycle\Database\Driver\SQLServer\Injection\CompileJsonLength;
 
 /**
  * @internal
+ *
+ * @psalm-internal Cycle\Database\Driver\SQLServer
  */
 trait WhereJsonTrait
 {
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function whereJson(string $column, mixed $value): self
     {
@@ -42,8 +42,6 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function andWhereJson(string $column, mixed $value): self
     {
@@ -52,8 +50,6 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function orWhereJson(string $column, mixed $value): self
     {
@@ -69,8 +65,6 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function whereJsonContains(string $column, mixed $value): self
     {
@@ -86,8 +80,6 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function andWhereJsonContains(string $column, mixed $value): self
     {
@@ -96,8 +88,6 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function orWhereJsonContains(string $column, mixed $value): self
     {
@@ -113,8 +103,6 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function whereJsonDoesntContain(string $column, mixed $value): self
     {
@@ -130,8 +118,6 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function andWhereJsonDoesntContain(string $column, mixed $value): self
     {
