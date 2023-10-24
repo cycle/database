@@ -140,8 +140,6 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function orWhereJsonDoesntContain(string $column, mixed $value): self
     {
@@ -157,8 +155,6 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function whereJsonContainsKey(string $column): self
     {
@@ -174,8 +170,6 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function andWhereJsonContainsKey(string $column): self
     {
@@ -184,8 +178,6 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function orWhereJsonContainsKey(string $column): self
     {
@@ -201,8 +193,6 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function whereJsonDoesntContainKey(string $column): self
     {
@@ -228,8 +218,6 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function orWhereJsonDoesntContainKey(string $column): self
     {
@@ -247,8 +235,6 @@ trait WhereJsonTrait
      * @param non-empty-string $column
      * @param int<0, max> $length
      * @param non-empty-string $operator
-     *
-     * @return $this|self
      */
     public function whereJsonLength(string $column, int $length, string $operator = '='): self
     {
@@ -266,8 +252,6 @@ trait WhereJsonTrait
      * @param non-empty-string $column
      * @param int<0, max> $length
      * @param non-empty-string $operator
-     *
-     * @return $this|self
      */
     public function andWhereJsonLength(string $column, int $length, string $operator = '='): self
     {
@@ -278,8 +262,6 @@ trait WhereJsonTrait
      * @param non-empty-string $column
      * @param int<0, max> $length
      * @param non-empty-string $operator
-     *
-     * @return $this|self
      */
     public function orWhereJsonLength(string $column, int $length, string $operator = '='): self
     {

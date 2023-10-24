@@ -21,13 +21,12 @@ use Cycle\Database\Driver\Postgres\Injection\CompileJsonLength;
 
 /**
  * @internal
+ * @psalm-internal Cycle\Database\Driver\Postgres
  */
 trait WhereJsonTrait
 {
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function whereJson(string $column, mixed $value): self
     {
@@ -43,8 +42,6 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function andWhereJson(string $column, mixed $value): self
     {
@@ -53,8 +50,6 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function orWhereJson(string $column, mixed $value): self
     {
@@ -70,10 +65,8 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
-    public function whereJsonContains(string $column, mixed $value): self
+    public function whereJsonContains(string $column, mixed $value, bool $encode = true, bool $validate = true): self
     {
         $this->registerToken(
             'AND',
@@ -87,8 +80,6 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function andWhereJsonContains(string $column, mixed $value): self
     {
@@ -97,8 +88,6 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function orWhereJsonContains(string $column, mixed $value): self
     {
@@ -114,8 +103,6 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function whereJsonDoesntContain(string $column, mixed $value): self
     {
@@ -131,8 +118,6 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function andWhereJsonDoesntContain(string $column, mixed $value): self
     {
@@ -141,8 +126,6 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function orWhereJsonDoesntContain(string $column, mixed $value): self
     {
@@ -158,8 +141,6 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function whereJsonContainsKey(string $column): self
     {
@@ -175,8 +156,6 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function andWhereJsonContainsKey(string $column): self
     {
@@ -185,8 +164,6 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function orWhereJsonContainsKey(string $column): self
     {
@@ -202,8 +179,6 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function whereJsonDoesntContainKey(string $column): self
     {
@@ -219,8 +194,6 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function andWhereJsonDoesntContainKey(string $column): self
     {
@@ -229,8 +202,6 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     *
-     * @return $this|self
      */
     public function orWhereJsonDoesntContainKey(string $column): self
     {
@@ -248,8 +219,6 @@ trait WhereJsonTrait
      * @param non-empty-string $column
      * @param int<0, max> $length
      * @param non-empty-string $operator
-     *
-     * @return $this|self
      */
     public function whereJsonLength(string $column, int $length, string $operator = '='): self
     {
@@ -267,8 +236,6 @@ trait WhereJsonTrait
      * @param non-empty-string $column
      * @param int<0, max> $length
      * @param non-empty-string $operator
-     *
-     * @return $this|self
      */
     public function andWhereJsonLength(string $column, int $length, string $operator = '='): self
     {
@@ -279,8 +246,6 @@ trait WhereJsonTrait
      * @param non-empty-string $column
      * @param int<0, max> $length
      * @param non-empty-string $operator
-     *
-     * @return $this|self
      */
     public function orWhereJsonLength(string $column, int $length, string $operator = '='): self
     {
