@@ -39,7 +39,7 @@ abstract class PostgresJsonExpression extends JsonExpression
 
         $result = [];
         foreach ($path as $pathAttribute) {
-            $parsedAttributes = $this->parseJsonPathArrayKeys($pathAttribute);
+            $parsedAttributes = $this->parseArraySyntax($pathAttribute);
             foreach ($parsedAttributes as $attribute) {
                 $result[] = \filter_var($attribute, FILTER_VALIDATE_INT) !== false
                     ? $attribute

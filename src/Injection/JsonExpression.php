@@ -13,6 +13,7 @@ namespace Cycle\Database\Injection;
 
 use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Driver\Quoter;
+use Cycle\Database\Exception\DriverException;
 
 abstract class JsonExpression implements FragmentInterface
 {
@@ -71,6 +72,8 @@ abstract class JsonExpression implements FragmentInterface
     abstract protected function compile(string $statement): string;
 
     /**
+     * Transforms a string like "options->languages" into a correct path like $."options"."languages".
+     *
      * @param non-empty-string $value
      * @param non-empty-string $delimiter
      *
@@ -81,9 +84,47 @@ abstract class JsonExpression implements FragmentInterface
         $value = \preg_replace("/([\\\\]+)?\\'/", "''", $value);
 
         $segments = \explode($delimiter, $value);
-        $jsonPath = \implode('.', \array_map(fn ($segment): string => $this->wrapJsonPathSegment($segment), $segments));
+        $path = \implode('.', \array_map(fn (string $segment): string => $this->wrapPathSegment($segment), $segments));
 
-        return "'$" . (\str_starts_with($jsonPath, '[') ? '' : '.') . $jsonPath . "'";
+        return "'$" . (\str_starts_with($path, '[') ? '' : '.') . $path . "'";
+    }
+
+    /**
+     * Parses a string with array access syntax (e.g., "field[array-key]") and extracts the field name and key.
+     *
+     * @param non-empty-string $path
+     *
+     * @return array<non-empty-string>
+     */
+    protected function parseArraySyntax(string $path): array
+    {
+        if (\preg_match('/(\[[^\]]+\])+$/', $path, $parts)) {
+            $parsed = [\trim(\substr($path, 0, \strpos($path, $parts[0])))];
+
+            \preg_match_all('/\[([^\]]+)\]/', $parts[0], $matches);
+
+            foreach ($matches[1] as $key) {
+                if (\trim($key) === '') {
+                    throw new DriverException('Invalid JSON array path syntax. Array key must not be empty.');
+                }
+                $parsed[] = $key;
+            }
+
+            return $parsed;
+        }
+
+        if (\str_contains($path, '[') && \str_contains($path, ']')) {
+            throw new DriverException(
+                'Unable to parse array path syntax. Array key must be wrapped in square brackets.'
+            );
+        }
+
+        return [$path];
+    }
+
+    protected function getQuotes(): string
+    {
+        return '""';
     }
 
     /**
@@ -91,44 +132,14 @@ abstract class JsonExpression implements FragmentInterface
      *
      * @return non-empty-string
      */
-    protected function wrapJsonPathSegment(string $segment): string
+    private function wrapPathSegment(string $segment): string
     {
-        if (\preg_match('/(\[[^\]]+\])+$/', $segment, $parts)) {
-            $key = \substr($segment, 0, \strpos($segment, $parts[0]));
+        $parts = $this->parseArraySyntax($segment);
 
-            if (!empty($key)) {
-                return '"' . $key . '"' . $parts[0];
-            }
-
-            return $parts[0];
+        if (isset($parts[1])) {
+            return \sprintf('"%s"[%s]', $parts[0], $parts[1]);
         }
 
-        return '"' . $segment . '"';
-    }
-
-    /**
-     * @param non-empty-string $attribute
-     *
-     * @return array<non-empty-string>
-     */
-    protected function parseJsonPathArrayKeys(string $attribute): array
-    {
-        if (\preg_match('/(\[[^\]]+\])+$/', $attribute, $parts)) {
-            $key = \substr($attribute, 0, \strpos($attribute, $parts[0]));
-
-            \preg_match_all('/\[([^\]]+)\]/', $parts[0], $matches);
-            $keys = $matches[1];
-
-            $cleanKeys = \array_values(\array_filter($keys, static fn ($key) => $key !== ''));
-
-            return \array_merge([$key], $cleanKeys);
-        }
-
-        return [$attribute];
-    }
-
-    protected function getQuotes(): string
-    {
-        return '""';
+        return \sprintf('"%s"', $segment);
     }
 }

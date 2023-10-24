@@ -21,7 +21,7 @@ class CompileJsonContainsKey extends SQLServerJsonExpression
     protected function compile(string $statement): string
     {
         $path = \explode('->', $statement);
-        $key = $this->parseJsonPathArrayKeys(\array_pop($path));
+        $key = $this->parseArraySyntax(\array_pop($path));
 
         if (\count($key) === 1) {
             return \sprintf(
