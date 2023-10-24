@@ -21,6 +21,7 @@ use Cycle\Database\Driver\Postgres\Injection\CompileJsonLength;
 
 /**
  * @internal
+ *
  * @psalm-internal Cycle\Database\Driver\Postgres
  */
 trait WhereJsonTrait
