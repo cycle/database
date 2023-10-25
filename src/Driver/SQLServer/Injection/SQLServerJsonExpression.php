@@ -22,28 +22,4 @@ abstract class SQLServerJsonExpression extends JsonExpression
     {
         return '[]';
     }
-
-    /**
-     * @param non-empty-string $statement
-     *
-     * @return non-empty-string
-     */
-    protected function getField(string $statement): string
-    {
-        $parts = \explode('->', $statement, 2);
-
-        return $this->quoter->quote($parts[0]);
-    }
-
-    /**
-     * @param non-empty-string $statement
-     *
-     * @return non-empty-string
-     */
-    protected function getPath(string $statement): string
-    {
-        $parts = \explode('->', $statement, 2);
-
-        return \count($parts) > 1 ? ', ' . $this->wrapPath($parts[1]) : '';
-    }
 }

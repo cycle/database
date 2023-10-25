@@ -11,7 +11,9 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\SQLite\Injection;
 
-class CompileJson extends SQLiteJsonExpression
+use Cycle\Database\Injection\JsonExpression;
+
+class CompileJson extends JsonExpression
 {
     protected function compile(string $statement): string
     {

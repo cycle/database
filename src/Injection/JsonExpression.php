@@ -72,21 +72,27 @@ abstract class JsonExpression implements FragmentInterface
     abstract protected function compile(string $statement): string;
 
     /**
-     * Transforms a string like "options->languages" into a correct path like $."options"."languages".
-     *
-     * @param non-empty-string $value
-     * @param non-empty-string $delimiter
+     * @param non-empty-string $statement
      *
      * @return non-empty-string
      */
-    public function wrapPath(string $value, string $delimiter = '->'): string
+    protected function getField(string $statement): string
     {
-        $value = \preg_replace("/([\\\\]+)?\\'/", "''", $value);
+        $parts = \explode('->', $statement, 2);
 
-        $segments = \explode($delimiter, $value);
-        $path = \implode('.', \array_map(fn (string $segment): string => $this->wrapPathSegment($segment), $segments));
+        return $this->quoter->quote($parts[0]);
+    }
 
-        return "'$" . (\str_starts_with($path, '[') ? '' : '.') . $path . "'";
+    /**
+     * @param non-empty-string $statement
+     *
+     * @return non-empty-string
+     */
+    protected function getPath(string $statement): string
+    {
+        $parts = \explode('->', $statement, 2);
+
+        return \count($parts) > 1 ? ', ' . $this->wrapPath($parts[1]) : '';
     }
 
     /**
@@ -125,6 +131,24 @@ abstract class JsonExpression implements FragmentInterface
     protected function getQuotes(): string
     {
         return '""';
+    }
+
+    /**
+     * Transforms a string like "options->languages" into a correct path like $."options"."languages".
+     *
+     * @param non-empty-string $value
+     * @param non-empty-string $delimiter
+     *
+     * @return non-empty-string
+     */
+    private function wrapPath(string $value, string $delimiter = '->'): string
+    {
+        $value = \preg_replace("/([\\\\]+)?\\'/", "''", $value);
+
+        $segments = \explode($delimiter, $value);
+        $path = \implode('.', \array_map(fn (string $segment): string => $this->wrapPathSegment($segment), $segments));
+
+        return "'$" . (\str_starts_with($path, '[') ? '' : '.') . $path . "'";
     }
 
     /**

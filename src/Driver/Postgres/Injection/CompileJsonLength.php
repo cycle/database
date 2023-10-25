@@ -33,14 +33,14 @@ class CompileJsonLength extends PostgresJsonExpression
      */
     protected function compile(string $statement): string
     {
-        $wrappedPath = $this->getWrappedPath($statement);
-        $attribute = \array_pop($wrappedPath);
+        $path = $this->getPath($statement);
+        $attribute = $this->getAttribute($statement);
         $field = $this->getField($statement);
 
-        $column = !empty($wrappedPath)
-            ? $field . '->' . \implode('->', $wrappedPath) . '->' . $attribute
-            : $field . '->' . $attribute;
+        $fullPath = !empty($path)
+            ? \sprintf('%s->%s->%s', $field, $path, $attribute)
+            : \sprintf('%s->%s', $field, $attribute);
 
-        return \sprintf('jsonb_array_length((%s)::jsonb) %s ?', $column, $this->operator);
+        return \sprintf('jsonb_array_length((%s)::jsonb) %s ?', $fullPath, $this->operator);
     }
 }

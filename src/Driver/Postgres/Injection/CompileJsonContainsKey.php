@@ -20,20 +20,20 @@ class CompileJsonContainsKey extends PostgresJsonExpression
      */
     protected function compile(string $statement): string
     {
-        $wrappedPath = $this->getWrappedPath($statement);
-        $attribute = \array_pop($wrappedPath);
-        $path = $this->getField($statement);
-        if ($wrappedPath !== []) {
-            $path .= '->' . \implode('->', $wrappedPath);
+        $path = $this->getPath($statement);
+        $attribute = $this->getAttribute($statement);
+        $fullPath = $this->getField($statement);
+        if (!empty($path)) {
+            $fullPath .= '->' . $path;
         }
 
         if (!\filter_var($attribute, FILTER_VALIDATE_INT)) {
-            return \sprintf('coalesce((%s)::jsonb ?? %s, false)', $path, $attribute);
+            return \sprintf('coalesce((%s)::jsonb ?? %s, false)', $fullPath, $attribute);
         }
 
         return \vsprintf('CASE WHEN %s THEN %s ELSE false END', [
-            \sprintf('jsonb_typeof((%s)::jsonb) = \'array\'', $path),
-            \sprintf('jsonb_array_length((%s)::jsonb) >= %s', $path, $attribute + 1),
+            \sprintf('jsonb_typeof((%s)::jsonb) = \'array\'', $fullPath),
+            \sprintf('jsonb_array_length((%s)::jsonb) >= %s', $fullPath, $attribute + 1),
         ]);
     }
 }

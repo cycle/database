@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Unit\Injection;
 
 use Cycle\Database\Driver\CompilerInterface;
+use Cycle\Database\Driver\Quoter;
 use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Injection\JsonExpression;
 use PHPUnit\Framework\TestCase;
@@ -37,6 +38,30 @@ final class JsonExpressionTest extends TestCase
     }
 
     /**
+     * @dataProvider pathDataProvider
+     */
+    public function testGetPath(string $statement, string $expected): void
+    {
+        $expression = $this->createExpression();
+        $ref = new \ReflectionMethod($expression, 'getPath');
+        $ref->setAccessible(true);
+
+        $this->assertSame($expected, $ref->invoke($expression, $statement));
+    }
+
+    /**
+     * @dataProvider fieldDataProvider
+     */
+    public function testGetField(string $statement): void
+    {
+        $expression = $this->createExpression();
+        $ref = new \ReflectionMethod($expression, 'getField');
+        $ref->setAccessible(true);
+
+        $this->assertSame('"options"', $ref->invoke($expression, $statement));
+    }
+
+    /**
      * @dataProvider wrapPathSegmentDataProvider
      */
     public function testWrapPathSegment(string $segment, string $expected): void
@@ -54,8 +79,10 @@ final class JsonExpressionTest extends TestCase
     public function testWrapPath(string $value, string $expected): void
     {
         $expression = $this->createExpression();
+        $ref = new \ReflectionMethod($expression, 'wrapPath');
+        $ref->setAccessible(true);
 
-        $this->assertSame(\sprintf("'%s'", $expected), $expression->wrapPath($value));
+        $this->assertSame(\sprintf("'%s'", $expected), $ref->invoke($expression, $value));
     }
 
     public function testDefaultQuotes(): void
@@ -142,11 +169,26 @@ final class JsonExpressionTest extends TestCase
         yield ['options->languages[fr]', '$."options"."languages"[fr]'];
     }
 
+    public static function pathDataProvider(): \Traversable
+    {
+        yield ['options', ''];
+        yield ['options->languages', ', \'$."languages"\''];
+        yield ['options->languages->fr', ', \'$."languages"."fr"\''];
+    }
+
+    public static function fieldDataProvider(): \Traversable
+    {
+        yield ['options'];
+        yield ['options->languages'];
+        yield ['options->languages->fr'];
+    }
+
     private function createExpression(): JsonExpression
     {
         return new class () extends JsonExpression {
             public function __construct()
             {
+                $this->quoter = new Quoter('', $this->getQuotes());
             }
 
             protected function compile(string $statement): string

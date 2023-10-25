@@ -20,14 +20,14 @@ class CompileJsonContains extends PostgresJsonExpression
      */
     protected function compile(string $statement): string
     {
-        $wrappedPath = $this->getWrappedPath($statement);
-        $attribute = \array_pop($wrappedPath);
+        $path = $this->getPath($statement);
         $field = $this->getField($statement);
+        $attribute = $this->getAttribute($statement);
 
-        if (!empty($wrappedPath)) {
-            return '(' . $field . '->' . \implode('->', $wrappedPath) . '->' . $attribute . ')::jsonb @> ?';
+        if (!empty($path)) {
+            return \sprintf('(%s->%s->%s)::jsonb @> ?', $field, $path, $attribute);
         }
 
-        return '(' . $field . '->' . $attribute . ')::jsonb @> ?';
+        return \sprintf('(%s->%s)::jsonb @> ?', $field, $attribute);
     }
 }

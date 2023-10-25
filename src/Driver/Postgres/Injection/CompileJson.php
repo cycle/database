@@ -20,13 +20,12 @@ class CompileJson extends PostgresJsonExpression
      */
     protected function compile(string $statement): string
     {
-        $wrappedPath = $this->getWrappedPath($statement);
-        $attribute = \array_pop($wrappedPath);
+        $path = $this->getPath($statement);
 
-        if (!empty($wrappedPath)) {
-            return $this->getField($statement) . '->' . \implode('->', $wrappedPath) . '->>' . $attribute;
+        if (!empty($path)) {
+            return \sprintf('%s->%s->>%s', $this->getField($statement), $path, $this->getAttribute($statement));
         }
 
-        return $this->getField($statement) . '->>' . $attribute;
+        return \sprintf('%s->>%s', $this->getField($statement), $this->getAttribute($statement));
     }
 }

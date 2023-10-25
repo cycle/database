@@ -11,7 +11,9 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\SQLite\Injection;
 
-class CompileJsonLength extends SQLiteJsonExpression
+use Cycle\Database\Injection\JsonExpression;
+
+class CompileJsonLength extends JsonExpression
 {
     /**
      * @param non-empty-string $statement
