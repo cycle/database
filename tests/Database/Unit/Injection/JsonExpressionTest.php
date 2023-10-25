@@ -18,6 +18,7 @@ final class JsonExpressionTest extends TestCase
     {
         $expression = $this->createExpression();
         $ref = new \ReflectionMethod($expression, 'parseArraySyntax');
+        $ref->setAccessible(true);
 
         $this->assertSame($ref->invoke($expression, $path), $expected);
     }
@@ -29,6 +30,7 @@ final class JsonExpressionTest extends TestCase
     {
         $expression = $this->createExpression();
         $ref = new \ReflectionMethod($expression, 'parseArraySyntax');
+        $ref->setAccessible(true);
 
         $this->expectException(DriverException::class);
         $ref->invoke($expression, $path);
@@ -41,6 +43,7 @@ final class JsonExpressionTest extends TestCase
     {
         $expression = $this->createExpression();
         $ref = new \ReflectionMethod($expression, 'wrapPathSegment');
+        $ref->setAccessible(true);
 
         $this->assertSame($expected, $ref->invoke($expression, $segment));
     }
@@ -59,6 +62,7 @@ final class JsonExpressionTest extends TestCase
     {
         $expression = $this->createExpression();
         $ref = new \ReflectionMethod($expression, 'getQuotes');
+        $ref->setAccessible(true);
 
         $this->assertSame('""', $ref->invoke($expression));
     }
@@ -68,9 +72,11 @@ final class JsonExpressionTest extends TestCase
         $expression = $this->createExpression();
 
         $refExpression = new \ReflectionProperty($expression, 'expression');
+        $refExpression->setAccessible(true);
         $refExpression->setValue($expression, 'foo');
 
         $refParameters = new \ReflectionProperty($expression, 'parameters');
+        $refParameters->setAccessible(true);
         $refParameters->setValue($expression, ['bar']);
 
 
@@ -90,8 +96,9 @@ final class JsonExpressionTest extends TestCase
     public function testToString(): void
     {
         $expression = $this->createExpression();
-        $refExpression = new \ReflectionProperty($expression, 'expression');
-        $refExpression->setValue($expression, 'foo');
+        $ref = new \ReflectionProperty($expression, 'expression');
+        $ref->setAccessible(true);
+        $ref->setValue($expression, 'foo');
 
         $this->assertSame('exp:foo', (string) $expression);
     }
