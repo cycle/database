@@ -65,8 +65,10 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
+     * @param bool $encode Encode the value into JSON. It is not used in this driver.
+     * @param bool $validate Checking the value that it is valid JSON. It is not used in this driver.
      */
-    public function whereJsonContains(string $column, mixed $value): static
+    public function whereJsonContains(string $column, mixed $value, bool $encode = true, bool $validate = true): static
     {
         $this->registerToken(
             'AND',
@@ -80,17 +82,29 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
+     * @param bool $encode Encode the value into JSON. It is not used in this driver.
+     * @param bool $validate Checking the value that it is valid JSON. It is not used in this driver.
      */
-    public function andWhereJsonContains(string $column, mixed $value): static
-    {
+    public function andWhereJsonContains(
+        string $column,
+        mixed $value,
+        bool $encode = true,
+        bool $validate = true
+    ): static {
         return $this->whereJsonContains($column, $value);
     }
 
     /**
      * @param non-empty-string $column
+     * @param bool $encode Encode the value into JSON. It is not used in this driver.
+     * @param bool $validate Checking the value that it is valid JSON. It is not used in this driver.
      */
-    public function orWhereJsonContains(string $column, mixed $value): static
-    {
+    public function orWhereJsonContains(
+        string $column,
+        mixed $value,
+        bool $encode = true,
+        bool $validate = true
+    ): static {
         $this->registerToken(
             'OR',
             [new CompileJsonContains($column, $value)],
@@ -103,9 +117,15 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
+     * @param bool $encode Encode the value into JSON. It is not used in this driver.
+     * @param bool $validate Checking the value that it is valid JSON. It is not used in this driver.
      */
-    public function whereJsonDoesntContain(string $column, mixed $value): static
-    {
+    public function whereJsonDoesntContain(
+        string $column,
+        mixed $value,
+        bool $encode = true,
+        bool $validate = true
+    ): static {
         $this->registerToken(
             'AND',
             [new CompileJsonDoesntContain($column, $value)],
@@ -118,17 +138,29 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
+     * @param bool $encode Encode the value into JSON. It is not used in this driver.
+     * @param bool $validate Checking the value that it is valid JSON. It is not used in this driver.
      */
-    public function andWhereJsonDoesntContain(string $column, mixed $value): static
-    {
+    public function andWhereJsonDoesntContain(
+        string $column,
+        mixed $value,
+        bool $encode = true,
+        bool $validate = true
+    ): static {
         return $this->whereJsonDoesntContain($column, $value);
     }
 
     /**
      * @param non-empty-string $column
+     * @param bool $encode Encode the value into JSON. It is not used in this driver.
+     * @param bool $validate Checking the value that it is valid JSON. It is not used in this driver.
      */
-    public function orWhereJsonDoesntContain(string $column, mixed $value): static
-    {
+    public function orWhereJsonDoesntContain(
+        string $column,
+        mixed $value,
+        bool $encode = true,
+        bool $validate = true
+    ): static {
         $this->registerToken(
             'OR',
             [new CompileJsonDoesntContain($column, $value)],

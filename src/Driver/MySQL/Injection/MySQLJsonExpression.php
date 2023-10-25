@@ -21,6 +21,8 @@ abstract class MySQLJsonExpression extends JsonExpression
     }
 
     /**
+     * Returns the compiled quoted path without the field name.
+     *
      * @param non-empty-string $statement
      *
      * @return non-empty-string
@@ -33,6 +35,8 @@ abstract class MySQLJsonExpression extends JsonExpression
     }
 
     /**
+     * Returns the quoted field name.
+     *
      * @param non-empty-string $statement
      *
      * @return non-empty-string
