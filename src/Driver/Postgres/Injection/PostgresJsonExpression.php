@@ -37,7 +37,7 @@ abstract class PostgresJsonExpression extends JsonExpression
      *
      * @param non-empty-string $statement
      *
-     * @return non-empty-string|int
+     * @return int|non-empty-string
      */
     protected function getAttribute(string $statement): string|int
     {
