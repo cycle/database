@@ -15,9 +15,6 @@ use Cycle\Database\Injection\JsonExpression;
 
 abstract class SQLServerJsonExpression extends JsonExpression
 {
-    /**
-     * @return non-empty-string
-     */
     protected function getQuotes(): string
     {
         return '[]';

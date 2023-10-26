@@ -13,11 +13,6 @@ namespace Cycle\Database\Driver\SQLServer\Injection;
 
 class CompileJsonContainsKey extends SQLServerJsonExpression
 {
-    /**
-     * @param non-empty-string $statement
-     *
-     * @return non-empty-string
-     */
     protected function compile(string $statement): string
     {
         $path = \explode('->', $statement);

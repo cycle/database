@@ -26,11 +26,6 @@ class CompileJsonLength extends MySQLJsonExpression
         parent::__construct($statement, $length);
     }
 
-    /**
-     * @param non-empty-string $statement
-     *
-     * @return non-empty-string
-     */
     protected function compile(string $statement): string
     {
         return \sprintf(

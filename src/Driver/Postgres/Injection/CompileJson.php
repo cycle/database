@@ -13,11 +13,6 @@ namespace Cycle\Database\Driver\Postgres\Injection;
 
 class CompileJson extends PostgresJsonExpression
 {
-    /**
-     * @param non-empty-string $statement
-     *
-     * @return non-empty-string
-     */
     protected function compile(string $statement): string
     {
         $path = $this->getPath($statement);

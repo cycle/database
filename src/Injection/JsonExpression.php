@@ -69,6 +69,11 @@ abstract class JsonExpression implements FragmentInterface
         ];
     }
 
+    /**
+     * @param non-empty-string $statement
+     *
+     * @return non-empty-string
+     */
     abstract protected function compile(string $statement): string;
 
     /**
@@ -128,6 +133,9 @@ abstract class JsonExpression implements FragmentInterface
         return [$path];
     }
 
+    /**
+     * @return non-empty-string
+     */
     protected function getQuotes(): string
     {
         return '""';
@@ -143,7 +151,7 @@ abstract class JsonExpression implements FragmentInterface
      */
     private function wrapPath(string $value, string $delimiter = '->'): string
     {
-        $value = \preg_replace("/([\\\\]+)?\\'/", "''", $value);
+        $value = \preg_replace("/(\\+)?'/", "''", $value);
 
         $segments = \explode($delimiter, $value);
         $path = \implode('.', \array_map(fn (string $segment): string => $this->wrapPathSegment($segment), $segments));

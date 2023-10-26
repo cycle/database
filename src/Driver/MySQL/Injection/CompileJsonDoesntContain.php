@@ -13,11 +13,6 @@ namespace Cycle\Database\Driver\MySQL\Injection;
 
 class CompileJsonDoesntContain extends CompileJsonContains
 {
-    /**
-     * @param non-empty-string $statement
-     *
-     * @return non-empty-string
-     */
     protected function compile(string $statement): string
     {
         return 'NOT ' . parent::compile($statement);

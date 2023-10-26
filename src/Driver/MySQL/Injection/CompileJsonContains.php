@@ -13,11 +13,6 @@ namespace Cycle\Database\Driver\MySQL\Injection;
 
 class CompileJsonContains extends MySQLJsonExpression
 {
-    /**
-     * @param non-empty-string $statement
-     *
-     * @return non-empty-string
-     */
     protected function compile(string $statement): string
     {
         return \sprintf('json_contains(%s, ?%s)', $this->getField($statement), $this->getPath($statement));

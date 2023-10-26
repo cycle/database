@@ -15,11 +15,6 @@ use Cycle\Database\Injection\JsonExpression;
 
 class CompileJsonContainsKey extends JsonExpression
 {
-    /**
-     * @param non-empty-string $statement
-     *
-     * @return non-empty-string
-     */
     protected function compile(string $statement): string
     {
         return \sprintf('json_type(%s%s) IS NOT null', $this->getField($statement), $this->getPath($statement));
