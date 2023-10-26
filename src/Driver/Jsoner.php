@@ -11,31 +11,31 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver;
 
-use Cycle\Database\Exception\DriverException;
+use Cycle\Database\Exception\BuilderException;
 
 /**
- * Helper that allows to convert any value to JSON.
+ * Helper that can be used to convert values into JSON strings and validate them.
  */
 final class Jsoner
 {
     /**
      * @param bool $encode Encode the value into JSON.
-     * @param bool $validate Checking the value that it is valid JSON.
+     * @param bool $validate Check that $value is a valid JSON string if the $encode parameter is false.
      *
-     * @throws \JsonException
+     * @throws \JsonException|BuilderException
      */
     public static function toJson(mixed $value, bool $encode = true, bool $validate = true): string
     {
-        if (!$encode && $validate && \is_string($value) && !json_validate($value)) {
-            throw new DriverException('Invalid JSON value.');
+        if ($encode) {
+            return \json_encode($value, \JSON_UNESCAPED_UNICODE|\JSON_THROW_ON_ERROR);
         }
 
-        if ($encode && !$validate) {
-            $value = \json_encode($value, \JSON_UNESCAPED_UNICODE|\JSON_THROW_ON_ERROR);
+        $result = (string)$value;
+
+        if ($validate && !\json_validate($result)) {
+            throw new BuilderException('Invalid JSON value.');
         }
 
-        return $encode && $validate && (!\is_string($value) || !json_validate($value))
-            ? \json_encode($value, \JSON_UNESCAPED_UNICODE|\JSON_THROW_ON_ERROR)
-            : $value;
+        return $result;
     }
 }

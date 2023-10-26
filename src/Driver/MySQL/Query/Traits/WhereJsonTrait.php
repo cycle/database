@@ -44,14 +44,6 @@ trait WhereJsonTrait
     /**
      * @param non-empty-string $column
      */
-    public function andWhereJson(string $column, mixed $value): static
-    {
-        return $this->whereJson($column, $value);
-    }
-
-    /**
-     * @param non-empty-string $column
-     */
     public function orWhereJson(string $column, mixed $value): static
     {
         $this->registerToken(
@@ -67,7 +59,7 @@ trait WhereJsonTrait
     /**
      * @param non-empty-string $column
      * @param bool $encode Encode the value into JSON.
-     * @param bool $validate Checking the value that it is valid JSON.
+     * @param bool $validate Check that $value is a valid JSON string if the $encode parameter is false.
      */
     public function whereJsonContains(string $column, mixed $value, bool $encode = true, bool $validate = true): static
     {
@@ -84,21 +76,7 @@ trait WhereJsonTrait
     /**
      * @param non-empty-string $column
      * @param bool $encode Encode the value into JSON.
-     * @param bool $validate Checking the value that it is valid JSON.
-     */
-    public function andWhereJsonContains(
-        string $column,
-        mixed $value,
-        bool $encode = true,
-        bool $validate = true
-    ): static {
-        return $this->whereJsonContains($column, $value, $encode, $validate);
-    }
-
-    /**
-     * @param non-empty-string $column
-     * @param bool $encode Encode the value into JSON.
-     * @param bool $validate Checking the value that it is valid JSON.
+     * @param bool $validate Check that $value is a valid JSON string if the $encode parameter is false.
      */
     public function orWhereJsonContains(
         string $column,
@@ -119,7 +97,7 @@ trait WhereJsonTrait
     /**
      * @param non-empty-string $column
      * @param bool $encode Encode the value into JSON.
-     * @param bool $validate Checking the value that it is valid JSON.
+     * @param bool $validate Check that $value is a valid JSON string if the $encode parameter is false.
      */
     public function whereJsonDoesntContain(
         string $column,
@@ -140,21 +118,7 @@ trait WhereJsonTrait
     /**
      * @param non-empty-string $column
      * @param bool $encode Encode the value into JSON.
-     * @param bool $validate Checking the value that it is valid JSON.
-     */
-    public function andWhereJsonDoesntContain(
-        string $column,
-        mixed $value,
-        bool $encode = true,
-        bool $validate = true
-    ): static {
-        return $this->whereJsonDoesntContain($column, $value, $encode, $validate);
-    }
-
-    /**
-     * @param non-empty-string $column
-     * @param bool $encode Encode the value into JSON.
-     * @param bool $validate Checking the value that it is valid JSON.
+     * @param bool $validate Check that $value is a valid JSON string if the $encode parameter is false.
      */
     public function orWhereJsonDoesntContain(
         string $column,
@@ -190,14 +154,6 @@ trait WhereJsonTrait
     /**
      * @param non-empty-string $column
      */
-    public function andWhereJsonContainsKey(string $column): static
-    {
-        return $this->whereJsonContainsKey($column);
-    }
-
-    /**
-     * @param non-empty-string $column
-     */
     public function orWhereJsonContainsKey(string $column): static
     {
         $this->registerToken(
@@ -223,14 +179,6 @@ trait WhereJsonTrait
         );
 
         return $this;
-    }
-
-    /**
-     * @param non-empty-string $column
-     */
-    public function andWhereJsonDoesntContainKey(string $column): static
-    {
-        return $this->whereJsonDoesntContainKey($column);
     }
 
     /**
@@ -263,16 +211,6 @@ trait WhereJsonTrait
         );
 
         return $this;
-    }
-
-    /**
-     * @param non-empty-string $column
-     * @param int<0, max> $length
-     * @param non-empty-string $operator
-     */
-    public function andWhereJsonLength(string $column, int $length, string $operator = '='): static
-    {
-        return $this->whereJsonLength($column, $length, $operator);
     }
 
     /**
