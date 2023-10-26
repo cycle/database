@@ -46,7 +46,7 @@ final class JsonerTest extends TestCase
 
         // Stringable object will be converted to string if 'encode' is set to 'false'
         yield [
-            new class implements \Stringable {
+            new class () implements \Stringable {
                 public function __toString(): string
                 {
                     return 'foo';
@@ -59,7 +59,7 @@ final class JsonerTest extends TestCase
 
         // JsonSerializable object will be converted to JSON string correctly if 'encode' is set to 'true'
         yield [
-            new class implements \JsonSerializable {
+            new class () implements \JsonSerializable {
                 public function jsonSerialize()
                 {
                     return ['foo' => 'bar'];
