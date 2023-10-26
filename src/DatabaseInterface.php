@@ -149,4 +149,9 @@ interface DatabaseInterface
      * Rollback the active database transaction.
      */
     public function rollback(): bool;
+
+    /**
+     *  Will be added in next major release.
+     */
+    // public function withoutCache(): self;
 }
