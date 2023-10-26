@@ -20,19 +20,8 @@ class UpdateQueryTest extends CommonClass
         $select = $this->database
             ->update('table')
             ->values(['some' => 'value'])
-            ->whereJson('settings->theme', 'dark');
-
-        $this->assertSameQuery("UPDATE {table} SET {some} = ? WHERE {settings}->>'theme' = ?", $select);
-        $this->assertSameParameters(['value', 'dark'], $select);
-    }
-
-    public function testUpdateWithAndWhereJson(): void
-    {
-        $select = $this->database
-            ->update('table')
-            ->values(['some' => 'value'])
             ->where('id', 1)
-            ->andWhereJson('settings->theme', 'dark');
+            ->whereJson('settings->theme', 'dark');
 
         $this->assertSameQuery("UPDATE {table} SET {some} = ? WHERE {id} = ? AND {settings}->>'theme' = ?", $select);
         $this->assertSameParameters(['value', 1, 'dark'], $select);
@@ -94,22 +83,8 @@ class UpdateQueryTest extends CommonClass
         $select = $this->database
             ->update('table')
             ->values(['some' => 'value'])
-            ->whereJsonContains('settings->languages', 'en');
-
-        $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE ({settings}->'languages')::jsonb @> ?",
-            $select
-        );
-        $this->assertSameParameters(['value', json_encode('en')], $select);
-    }
-
-    public function testUpdateWithAndWhereJsonContains(): void
-    {
-        $select = $this->database
-            ->update('table')
-            ->values(['some' => 'value'])
             ->where('id', 1)
-            ->andWhereJsonContains('settings->languages', 'en');
+            ->whereJsonContains('settings->languages', 'en');
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE {id} = ? AND ({settings}->'languages')::jsonb @> ?",
@@ -180,22 +155,8 @@ class UpdateQueryTest extends CommonClass
         $select = $this->database
             ->update('table')
             ->values(['some' => 'value'])
-            ->whereJsonDoesntContain('settings->languages', 'en');
-
-        $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE NOT ({settings}->'languages')::jsonb @> ?",
-            $select
-        );
-        $this->assertSameParameters(['value', json_encode('en')], $select);
-    }
-
-    public function testUpdateWithAndWhereJsonDoesntContain(): void
-    {
-        $select = $this->database
-            ->update('table')
-            ->values(['some' => 'value'])
             ->where('id', 1)
-            ->andWhereJsonDoesntContain('settings->languages', 'en');
+            ->whereJsonDoesntContain('settings->languages', 'en');
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE {id} = ? AND NOT ({settings}->'languages')::jsonb @> ?",
@@ -266,21 +227,8 @@ class UpdateQueryTest extends CommonClass
         $select = $this->database
             ->update('table')
             ->values(['some' => 'value'])
-            ->whereJsonContainsKey('settings->languages');
-
-        $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE coalesce(({settings})::jsonb ?? 'languages', false)",
-            $select
-        );
-    }
-
-    public function testUpdateWithAndWhereJsonContainsKey(): void
-    {
-        $select = $this->database
-            ->update('table')
-            ->values(['some' => 'value'])
             ->where('id', 1)
-            ->andWhereJsonContainsKey('settings->languages');
+            ->whereJsonContainsKey('settings->languages');
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE {id} = ? AND coalesce(({settings})::jsonb ?? 'languages', false)",
@@ -348,21 +296,8 @@ class UpdateQueryTest extends CommonClass
         $select = $this->database
             ->update('table')
             ->values(['some' => 'value'])
-            ->whereJsonDoesntContainKey('settings->languages');
-
-        $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE NOT coalesce(({settings})::jsonb ?? 'languages', false)",
-            $select
-        );
-    }
-
-    public function testUpdateWithAndWhereJsonDoesntContainKey(): void
-    {
-        $select = $this->database
-            ->update('table')
-            ->values(['some' => 'value'])
             ->where('id', 1)
-            ->andWhereJsonDoesntContainKey('settings->languages');
+            ->whereJsonDoesntContainKey('settings->languages');
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE {id} = ? AND NOT coalesce(({settings})::jsonb ?? 'languages', false)",
@@ -425,20 +360,6 @@ class UpdateQueryTest extends CommonClass
         );
     }
 
-    public function testUpdateWithWhereJsonLength(): void
-    {
-        $select = $this->database
-            ->update('table')
-            ->values(['some' => 'value'])
-            ->whereJsonLength('settings->languages', 1);
-
-        $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE jsonb_array_length(({settings}->'languages')::jsonb) = ?",
-            $select
-        );
-        $this->assertSameParameters(['value', 1], $select);
-    }
-
     public function testUpdateWithWhereJsonLengthAndCustomOperator(): void
     {
         $select = $this->database
@@ -453,13 +374,13 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', 1], $select);
     }
 
-    public function testUpdateWithAndJsonLength(): void
+    public function testUpdateWithWhereJsonLength(): void
     {
         $select = $this->database
             ->update('table')
             ->values(['some' => 'value'])
             ->where('id', 1)
-            ->andWhereJsonLength('settings->languages', 3);
+            ->whereJsonLength('settings->languages', 3);
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE {id} = ? AND jsonb_array_length(({settings}->'languages')::jsonb) = ?",

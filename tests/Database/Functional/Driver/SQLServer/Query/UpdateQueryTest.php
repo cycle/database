@@ -20,22 +20,8 @@ class UpdateQueryTest extends CommonClass
         $select = $this->database
             ->update('table')
             ->values(['some' => 'value'])
-            ->whereJson('settings->theme', 'dark');
-
-        $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE json_value({settings}, '$.\"theme\"') = ?",
-            $select
-        );
-        $this->assertSameParameters(['value', 'dark'], $select);
-    }
-
-    public function testUpdateWithAndWhereJson(): void
-    {
-        $select = $this->database
-            ->update('table')
-            ->values(['some' => 'value'])
             ->where('id', 1)
-            ->andWhereJson('settings->theme', 'dark');
+            ->whereJson('settings->theme', 'dark');
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE {id} = ? AND json_value({settings}, '$.\"theme\"') = ?",
@@ -106,22 +92,8 @@ class UpdateQueryTest extends CommonClass
         $select = $this->database
             ->update('table')
             ->values(['some' => 'value'])
-            ->whereJsonContains('settings->languages', 'en');
-
-        $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE ? IN (SELECT [value] FROM openjson({settings},'$.\"languages\"'))",
-            $select
-        );
-        $this->assertSameParameters(['value', 'en'], $select);
-    }
-
-    public function testUpdateWithAndWhereJsonContains(): void
-    {
-        $select = $this->database
-            ->update('table')
-            ->values(['some' => 'value'])
             ->where('id', 1)
-            ->andWhereJsonContains('settings->languages', 'en');
+            ->whereJsonContains('settings->languages', 'en');
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE {id} = ? AND ? IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
@@ -192,22 +164,8 @@ class UpdateQueryTest extends CommonClass
         $select = $this->database
             ->update('table')
             ->values(['some' => 'value'])
-            ->whereJsonDoesntContain('settings->languages', 'en');
-
-        $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE ? NOT IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
-            $select
-        );
-        $this->assertSameParameters(['value', 'en'], $select);
-    }
-
-    public function testUpdateWithAndWhereJsonDoesntContain(): void
-    {
-        $select = $this->database
-            ->update('table')
-            ->values(['some' => 'value'])
             ->where('id', 1)
-            ->andWhereJsonDoesntContain('settings->languages', 'en');
+            ->whereJsonDoesntContain('settings->languages', 'en');
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE {id} = ? AND ? NOT IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
@@ -278,21 +236,8 @@ class UpdateQueryTest extends CommonClass
         $select = $this->database
             ->update('table')
             ->values(['some' => 'value'])
-            ->whereJsonContainsKey('settings->languages');
-
-        $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE 'languages' IN (SELECT [key] FROM openjson({settings}))",
-            $select
-        );
-    }
-
-    public function testUpdateWithAndWhereJsonContainsKey(): void
-    {
-        $select = $this->database
-            ->update('table')
-            ->values(['some' => 'value'])
             ->where('id', 1)
-            ->andWhereJsonContainsKey('settings->languages');
+            ->whereJsonContainsKey('settings->languages');
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE {id} = ? AND 'languages' IN (SELECT [key] FROM openjson({settings}))",
@@ -358,21 +303,8 @@ class UpdateQueryTest extends CommonClass
         $select = $this->database
             ->update('table')
             ->values(['some' => 'value'])
-            ->whereJsonDoesntContainKey('settings->languages');
-
-        $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE NOT 'languages' IN (SELECT [key] FROM openjson({settings}))",
-            $select
-        );
-    }
-
-    public function testUpdateWithAndWhereJsonDoesntContainKey(): void
-    {
-        $select = $this->database
-            ->update('table')
-            ->values(['some' => 'value'])
             ->where('id', 1)
-            ->andWhereJsonDoesntContainKey('settings->languages');
+            ->whereJsonDoesntContainKey('settings->languages');
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE{id} = ? AND NOT 'languages' IN (SELECT [key] FROM openjson({settings}))",
@@ -433,20 +365,6 @@ class UpdateQueryTest extends CommonClass
         );
     }
 
-    public function testUpdateWithWhereJsonLength(): void
-    {
-        $select = $this->database
-            ->update('table')
-            ->values(['some' => 'value'])
-            ->whereJsonLength('settings->languages', 1);
-
-        $this->assertSameQuery(
-            "UPDATE {table} SET {some}= ? WHERE (SELECT count(*) FROM openjson({settings}, '$.\"languages\"')) = ?",
-            $select
-        );
-        $this->assertSameParameters(['value', 1], $select);
-    }
-
     public function testUpdateWithWhereJsonLengthAndCustomOperator(): void
     {
         $select = $this->database
@@ -461,13 +379,13 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', 1], $select);
     }
 
-    public function testUpdateWithAndJsonLength(): void
+    public function testUpdateWithWhereJsonLength(): void
     {
         $select = $this->database
             ->update('table')
             ->values(['some' => 'value'])
             ->where('id', 1)
-            ->andWhereJsonLength('settings->languages', 3);
+            ->whereJsonLength('settings->languages', 3);
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE {id} = ? AND (SELECT count(*) FROM openjson({settings}, '$.\"languages\"')) = ?",

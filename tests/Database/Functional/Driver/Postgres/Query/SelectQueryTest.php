@@ -26,18 +26,6 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters(['dark'], $select);
     }
 
-    public function testSelectWithAndWhereJson(): void
-    {
-        $select = $this->database
-            ->select()
-            ->from('table')
-            ->where('id', 1)
-            ->andWhereJson('settings->theme', 'dark');
-
-        $this->assertSameQuery("SELECT * FROM {table} WHERE {id} = ? AND {settings}->>'theme' = ?", $select);
-        $this->assertSameParameters([1, 'dark'], $select);
-    }
-
     public function testSelectWithOrWhereJson(): void
     {
         $select = $this->database
@@ -95,21 +83,6 @@ class SelectQueryTest extends CommonClass
             $select
         );
         $this->assertSameParameters([json_encode('en')], $select);
-    }
-
-    public function testSelectWithAndWhereJsonContains(): void
-    {
-        $select = $this->database
-            ->select()
-            ->from('table')
-            ->where('id', 1)
-            ->andWhereJsonContains('settings->languages', 'en');
-
-        $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE {id} = ? AND ({settings}->'languages')::jsonb @> ?",
-            $select
-        );
-        $this->assertSameParameters([1, json_encode('en')], $select);
     }
 
     public function testSelectWithOrWhereJsonContains(): void
@@ -183,21 +156,6 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters([json_encode('en')], $select);
     }
 
-    public function testSelectWithAndWhereJsonDoesntContain(): void
-    {
-        $select = $this->database
-            ->select()
-            ->from('table')
-            ->where('id', 1)
-            ->andWhereJsonDoesntContain('settings->languages', 'en');
-
-        $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE {id} = ? AND NOT({settings}->'languages')::jsonb @> ?",
-            $select
-        );
-        $this->assertSameParameters([1, json_encode('en')], $select);
-    }
-
     public function testSelectWithOrWhereJsonDoesntContain(): void
     {
         $select = $this->database
@@ -264,20 +222,6 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE coalesce(({settings})::jsonb ?? 'languages', false)",
-            $select
-        );
-    }
-
-    public function testSelectWithAndWhereJsonContainsKey(): void
-    {
-        $select = $this->database
-            ->select()
-            ->from('table')
-            ->where('id', 1)
-            ->andWhereJsonContainsKey('settings->languages');
-
-        $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE {id} = ? AND coalesce(({settings})::jsonb ?? 'languages', false)",
             $select
         );
     }
@@ -350,20 +294,6 @@ class SelectQueryTest extends CommonClass
         );
     }
 
-    public function testSelectWithAndWhereJsonDoesntContainKey(): void
-    {
-        $select = $this->database
-            ->select()
-            ->from('table')
-            ->where('id', 1)
-            ->andWhereJsonDoesntContainKey('settings->languages');
-
-        $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE {id} = ? AND NOT coalesce(({settings})::jsonb ?? 'languages', false)",
-            $select
-        );
-    }
-
     public function testSelectWithOrWhereJsonDoesntContainKey(): void
     {
         $select = $this->database
@@ -419,20 +349,6 @@ class SelectQueryTest extends CommonClass
         );
     }
 
-    public function testSelectWithWhereJsonLength(): void
-    {
-        $select = $this->database
-            ->select()
-            ->from('table')
-            ->whereJsonLength('settings->languages', 1);
-
-        $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE jsonb_array_length(({settings}->'languages')::jsonb) = ?",
-            $select
-        );
-        $this->assertSameParameters([1], $select);
-    }
-
     public function testSelectWithWhereJsonLengthAndCustomOperator(): void
     {
         $select = $this->database
@@ -447,13 +363,13 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters([1], $select);
     }
 
-    public function testSelectWithAndJsonLength(): void
+    public function testSelectWithJsonLength(): void
     {
         $select = $this->database
             ->select()
             ->from('table')
             ->where('id', 1)
-            ->andWhereJsonLength('settings->languages', 3);
+            ->whereJsonLength('settings->languages', 3);
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE {id} = ? AND jsonb_array_length(({settings}->'languages')::jsonb) = ?",

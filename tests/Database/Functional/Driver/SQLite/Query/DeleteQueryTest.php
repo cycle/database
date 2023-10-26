@@ -28,20 +28,6 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters(['dark'], $select);
     }
 
-    public function testDeleteWithAndWhereJson(): void
-    {
-        $select = $this->database
-            ->delete('table')
-            ->where('id', 1)
-            ->andWhereJson('settings->theme', 'dark');
-
-        $this->assertSameQuery(
-            "DELETE FROM {table} WHERE {id} = ? AND json_extract({settings}, '$.\"theme\"') = ?",
-            $select
-        );
-        $this->assertSameParameters([1, 'dark'], $select);
-    }
-
     public function testDeleteWithOrWhereJson(): void
     {
         $select = $this->database
@@ -107,19 +93,6 @@ class DeleteQueryTest extends CommonClass
         );
     }
 
-    public function testDeleteWithAndWhereJsonContainsKey(): void
-    {
-        $select = $this->database
-            ->delete('table')
-            ->where('id', 1)
-            ->andWhereJsonContainsKey('settings->languages');
-
-        $this->assertSameQuery(
-            "DELETE FROM {table} WHERE {id} = ? AND json_type({settings}, '$.\"languages\"') IS NOT null",
-            $select
-        );
-    }
-
     public function testDeleteWithOrWhereJsonContainsKey(): void
     {
         $select = $this->database
@@ -181,19 +154,6 @@ class DeleteQueryTest extends CommonClass
         );
     }
 
-    public function testDeleteWithAndWhereJsonDoesntContainKey(): void
-    {
-        $select = $this->database
-            ->delete('table')
-            ->where('id', 1)
-            ->andWhereJsonDoesntContainKey('settings->languages');
-
-        $this->assertSameQuery(
-            "DELETE FROM {table} WHERE {id} = ? AND NOT json_type({settings}, '$.\"languages\"') IS NOT null",
-            $select
-        );
-    }
-
     public function testDeleteWithOrWhereJsonDoesntContainKey(): void
     {
         $select = $this->database
@@ -243,19 +203,6 @@ class DeleteQueryTest extends CommonClass
         );
     }
 
-    public function testDeleteWithWhereJsonLength(): void
-    {
-        $select = $this->database
-            ->delete('table')
-            ->whereJsonLength('settings->languages', 1);
-
-        $this->assertSameQuery(
-            "DELETE FROM {table} WHERE json_array_length({settings}, '$.\"languages\"') = ?",
-            $select
-        );
-        $this->assertSameParameters([1], $select);
-    }
-
     public function testDeleteWithWhereJsonLengthAndCustomOperator(): void
     {
         $select = $this->database
@@ -269,12 +216,12 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters([1], $select);
     }
 
-    public function testDeleteWithAndJsonLength(): void
+    public function testDeleteWithJsonLength(): void
     {
         $select = $this->database
             ->delete('table')
             ->where('id', 1)
-            ->andWhereJsonLength('settings->languages', 3);
+            ->whereJsonLength('settings->languages', 3);
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE {id} = ? AND json_array_length({settings}, '$.\"languages\"') = ?",

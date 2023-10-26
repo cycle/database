@@ -118,22 +118,8 @@ class SelectQueryTest extends CommonClass
         $select = $this->database
             ->select()
             ->from('table')
-            ->whereJson('settings->theme', 'dark');
-
-        $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE json_value({settings}, '$.\"theme\"') = ?",
-            $select
-        );
-        $this->assertSameParameters(['dark'], $select);
-    }
-
-    public function testSelectWithAndWhereJson(): void
-    {
-        $select = $this->database
-            ->select()
-            ->from('table')
             ->where('id', 1)
-            ->andWhereJson('settings->theme', 'dark');
+            ->whereJson('settings->theme', 'dark');
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE {id} = ? AND json_value({settings}, '$.\"theme\"') = ?",
@@ -204,22 +190,8 @@ class SelectQueryTest extends CommonClass
         $select = $this->database
             ->select()
             ->from('table')
-            ->whereJsonContains('settings->languages', 'en');
-
-        $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE ? IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
-            $select
-        );
-        $this->assertSameParameters(['en'], $select);
-    }
-
-    public function testSelectWithAndWhereJsonContains(): void
-    {
-        $select = $this->database
-            ->select()
-            ->from('table')
             ->where('id', 1)
-            ->andWhereJsonContains('settings->languages', 'en');
+            ->whereJsonContains('settings->languages', 'en');
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE {id} = ? AND ? IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
@@ -290,22 +262,8 @@ class SelectQueryTest extends CommonClass
         $select = $this->database
             ->select()
             ->from('table')
-            ->whereJsonDoesntContain('settings->languages', 'en');
-
-        $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE ? NOT IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
-            $select
-        );
-        $this->assertSameParameters(['en'], $select);
-    }
-
-    public function testSelectWithAndWhereJsonDoesntContain(): void
-    {
-        $select = $this->database
-            ->select()
-            ->from('table')
             ->where('id', 1)
-            ->andWhereJsonDoesntContain('settings->languages', 'en');
+            ->whereJsonDoesntContain('settings->languages', 'en');
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE {id} = ? AND ? NOT IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
@@ -376,21 +334,8 @@ class SelectQueryTest extends CommonClass
         $select = $this->database
             ->select()
             ->from('table')
-            ->whereJsonContainsKey('settings->languages');
-
-        $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE 'languages' IN (SELECT [key] FROM openjson({settings}))",
-            $select
-        );
-    }
-
-    public function testSelectWithAndWhereJsonContainsKey(): void
-    {
-        $select = $this->database
-            ->select()
-            ->from('table')
             ->where('id', 1)
-            ->andWhereJsonContainsKey('settings->languages');
+            ->whereJsonContainsKey('settings->languages');
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE {id} = ? AND 'languages' IN (SELECT [key] FROM openjson({settings}))",
@@ -456,21 +401,8 @@ class SelectQueryTest extends CommonClass
         $select = $this->database
             ->select()
             ->from('table')
-            ->whereJsonDoesntContainKey('settings->languages');
-
-        $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE NOT 'languages' IN (SELECT [key] FROM openjson({settings}))",
-            $select
-        );
-    }
-
-    public function testSelectWithAndWhereJsonDoesntContainKey(): void
-    {
-        $select = $this->database
-            ->select()
-            ->from('table')
             ->where('id', 1)
-            ->andWhereJsonDoesntContainKey('settings->languages');
+            ->whereJsonDoesntContainKey('settings->languages');
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE {id} = ? AND NOT 'languages' IN (SELECT [key] FROM openjson({settings}))",
@@ -531,20 +463,6 @@ class SelectQueryTest extends CommonClass
         );
     }
 
-    public function testSelectWithWhereJsonLength(): void
-    {
-        $select = $this->database
-            ->select()
-            ->from('table')
-            ->whereJsonLength('settings->languages', 1);
-
-        $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE (SELECT count(*) FROM openjson({settings}, '$.\"languages\"')) = ?",
-            $select
-        );
-        $this->assertSameParameters([1], $select);
-    }
-
     public function testSelectWithWhereJsonLengthAndCustomOperator(): void
     {
         $select = $this->database
@@ -559,13 +477,13 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters([1], $select);
     }
 
-    public function testSelectWithAndJsonLength(): void
+    public function testSelectWithWhereJsonLength(): void
     {
         $select = $this->database
             ->select()
             ->from('table')
             ->where('id', 1)
-            ->andWhereJsonLength('settings->languages', 3);
+            ->whereJsonLength('settings->languages', 3);
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE {id} = ? AND (SELECT count(*) FROM openjson({settings}, '$.\"languages\"')) = ?",

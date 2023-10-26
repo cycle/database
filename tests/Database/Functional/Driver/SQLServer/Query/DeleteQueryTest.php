@@ -19,21 +19,8 @@ class DeleteQueryTest extends CommonClass
     {
         $select = $this->database
             ->delete('table')
-            ->whereJson('settings->theme', 'dark');
-
-        $this->assertSameQuery(
-            "DELETE FROM {table} WHERE json_value({settings}, '$.\"theme\"') = ?",
-            $select
-        );
-        $this->assertSameParameters(['dark'], $select);
-    }
-
-    public function testDeleteWithAndWhereJson(): void
-    {
-        $select = $this->database
-            ->delete('table')
             ->where('id', 1)
-            ->andWhereJson('settings->theme', 'dark');
+            ->whereJson('settings->theme', 'dark');
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE {id} = ? AND json_value({settings}, '$.\"theme\"') = ?",
@@ -99,21 +86,8 @@ class DeleteQueryTest extends CommonClass
     {
         $select = $this->database
             ->delete('table')
-            ->whereJsonContains('settings->languages', 'en');
-
-        $this->assertSameQuery(
-            "DELETE FROM {table} WHERE ? IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
-            $select
-        );
-        $this->assertSameParameters(['en'], $select);
-    }
-
-    public function testDeleteWithAndWhereJsonContains(): void
-    {
-        $select = $this->database
-            ->delete('table')
             ->where('id', 1)
-            ->andWhereJsonContains('settings->languages', 'en');
+            ->whereJsonContains('settings->languages', 'en');
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE {id} = ? AND ? IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
@@ -179,21 +153,8 @@ class DeleteQueryTest extends CommonClass
     {
         $select = $this->database
             ->delete('table')
-            ->whereJsonDoesntContain('settings->languages', 'en');
-
-        $this->assertSameQuery(
-            "DELETE FROM {table} WHERE ? NOT IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
-            $select
-        );
-        $this->assertSameParameters(['en'], $select);
-    }
-
-    public function testDeleteWithAndWhereJsonDoesntContain(): void
-    {
-        $select = $this->database
-            ->delete('table')
             ->where('id', 1)
-            ->andWhereJsonDoesntContain('settings->languages', 'en');
+            ->whereJsonDoesntContain('settings->languages', 'en');
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE {id} = ? AND ? NOT IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
@@ -259,20 +220,8 @@ class DeleteQueryTest extends CommonClass
     {
         $select = $this->database
             ->delete('table')
-            ->whereJsonContainsKey('settings->languages');
-
-        $this->assertSameQuery(
-            "DELETE FROM {table} WHERE 'languages' IN (SELECT [key] FROM openjson({settings}))",
-            $select
-        );
-    }
-
-    public function testDeleteWithAndWhereJsonContainsKey(): void
-    {
-        $select = $this->database
-            ->delete('table')
             ->where('id', 1)
-            ->andWhereJsonContainsKey('settings->languages');
+            ->whereJsonContainsKey('settings->languages');
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE {id} = ? AND 'languages' IN (SELECT [key] FROM openjson({settings}))",
@@ -333,20 +282,8 @@ class DeleteQueryTest extends CommonClass
     {
         $select = $this->database
             ->delete('table')
-            ->whereJsonDoesntContainKey('settings->languages');
-
-        $this->assertSameQuery(
-            "DELETE FROM {table} WHERE NOT 'languages' IN (SELECT [key] FROM openjson({settings}))",
-            $select
-        );
-    }
-
-    public function testDeleteWithAndWhereJsonDoesntContainKey(): void
-    {
-        $select = $this->database
-            ->delete('table')
             ->where('id', 1)
-            ->andWhereJsonDoesntContainKey('settings->languages');
+            ->whereJsonDoesntContainKey('settings->languages');
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE {id} = ? AND NOT 'languages' IN (SELECT [key] FROM openjson({settings}))",
@@ -403,19 +340,6 @@ class DeleteQueryTest extends CommonClass
         );
     }
 
-    public function testDeleteWithWhereJsonLength(): void
-    {
-        $select = $this->database
-            ->delete('table')
-            ->whereJsonLength('settings->languages', 1);
-
-        $this->assertSameQuery(
-            "DELETE FROM {table} WHERE (SELECT count(*) FROM openjson({settings}, '$.\"languages\"')) = ?",
-            $select
-        );
-        $this->assertSameParameters([1], $select);
-    }
-
     public function testDeleteWithWhereJsonLengthAndCustomOperator(): void
     {
         $select = $this->database
@@ -429,12 +353,12 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters([1], $select);
     }
 
-    public function testDeleteWithAndJsonLength(): void
+    public function testDeleteWithWhereJsonLength(): void
     {
         $select = $this->database
             ->delete('table')
             ->where('id', 1)
-            ->andWhereJsonLength('settings->languages', 3);
+            ->whereJsonLength('settings->languages', 3);
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE {id} = ? AND (SELECT count(*) FROM openjson({settings}, '$.\"languages\"')) = ?",
