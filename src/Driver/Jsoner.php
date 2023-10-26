@@ -22,7 +22,7 @@ final class Jsoner
      * @param bool $encode Encode the value into JSON.
      * @param bool $validate Check that $value is a valid JSON string if the $encode parameter is false.
      *
-     * @throws \JsonException|BuilderException
+     * @throws BuilderException|\JsonException
      */
     public static function toJson(mixed $value, bool $encode = true, bool $validate = true): string
     {
