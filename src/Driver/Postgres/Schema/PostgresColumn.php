@@ -607,6 +607,11 @@ class PostgresColumn extends AbstractColumn
         return '(' . $this->size . ')';
     }
 
+    protected static function isJson(AbstractColumn $column): bool
+    {
+        return $column->getAbstractType() === 'json' || $column->getAbstractType() === 'jsonb';
+    }
+
     /**
      * Get/generate name for enum constraint.
      */
