@@ -13,36 +13,27 @@ namespace Cycle\Database\Query;
 
 use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Query\Traits\TokenTrait;
+use Cycle\Database\Query\Traits\WhereJsonTrait;
 use Cycle\Database\Query\Traits\WhereTrait;
 
 /**
  * Update statement builder.
  *
- * @method $this whereJson(string $column, mixed $value)
- * @method $this orWhereJson(string $column, mixed $value)
- * @method $this whereJsonContains(string $column, mixed $value, bool $encode = true, bool $validate = true)
- * @method $this orWhereJsonContains(string $column, mixed $value, bool $encode = true, bool $validate = true)
- * @method $this whereJsonDoesntContain(string $column, mixed $value, bool $encode = true, bool $validate = true)
- * @method $this orWhereJsonDoesntContain(string $column, mixed $value, bool $encode = true, bool $validate = true)
- * @method $this whereJsonContainsKey(string $column)
- * @method $this orWhereJsonContainsKey(string $column)
- * @method $this whereJsonDoesntContainKey(string $column)
- * @method $this orWhereJsonDoesntContainKey(string $column)
- * @method $this whereJsonLength(string $column, int $length, string $operator = '=')
- * @method $this orWhereJsonLength(string $column, int $length, string $operator = '=')
+ * @internal
  */
 class DeleteQuery extends ActiveQuery
 {
     use TokenTrait;
+    use WhereJsonTrait;
     use WhereTrait;
 
     protected string $table = '';
 
     /**
-     * @param string $table Associated table name.
+     * @param non-empty-string|null $table Associated table name.
      * @param array  $where Initial set of where rules specified as array.
      */
-    public function __construct(string $table = null, array $where = [])
+    public function __construct(?string $table = null, array $where = [])
     {
         $this->table = $table ?? '';
 

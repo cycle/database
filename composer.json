@@ -48,11 +48,6 @@
             "infection/extension-installer": true
         }
     },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "2.5.x-dev"
-        }
-    },
     "minimum-stability": "dev",
     "prefer-stable": true
 }

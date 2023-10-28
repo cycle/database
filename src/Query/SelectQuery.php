@@ -14,6 +14,7 @@ namespace Cycle\Database\Query;
 use Countable;
 use Cycle\Database\Injection\Expression;
 use Cycle\Database\Injection\Fragment;
+use Cycle\Database\Query\Traits\WhereJsonTrait;
 use IteratorAggregate;
 use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Injection\FragmentInterface;
@@ -28,18 +29,7 @@ use Throwable;
 /**
  * Builds select sql statements.
  *
- * @method $this whereJson(string $column, mixed $value)
- * @method $this orWhereJson(string $column, mixed $value)
- * @method $this whereJsonContains(string $column, mixed $value, bool $encode = true, bool $validate = true)
- * @method $this orWhereJsonContains(string $column, mixed $value, bool $encode = true, bool $validate = true)
- * @method $this whereJsonDoesntContain(string $column, mixed $value, bool $encode = true, bool $validate = true)
- * @method $this orWhereJsonDoesntContain(string $column, mixed $value, bool $encode = true, bool $validate = true)
- * @method $this whereJsonContainsKey(string $column)
- * @method $this orWhereJsonContainsKey(string $column)
- * @method $this whereJsonDoesntContainKey(string $column)
- * @method $this orWhereJsonDoesntContainKey(string $column)
- * @method $this whereJsonLength(string $column, int $length, string $operator = '=')
- * @method $this orWhereJsonLength(string $column, int $length, string $operator = '=')
+ * @internal
  */
 class SelectQuery extends ActiveQuery implements
     Countable,
@@ -49,6 +39,7 @@ class SelectQuery extends ActiveQuery implements
     use HavingTrait;
     use JoinTrait;
     use TokenTrait;
+    use WhereJsonTrait;
     use WhereTrait;
 
     // sort directions
