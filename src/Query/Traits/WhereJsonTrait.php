@@ -16,31 +16,31 @@ use Cycle\Database\Exception\BuilderException;
 trait WhereJsonTrait
 {
     /**
-     * @param non-empty-string $column
+     * @param non-empty-string $path
      */
-    public function whereJson(string $column, mixed $value): static
+    public function whereJson(string $path, mixed $value): static
     {
-        $this->registerWhereJsonToken('AND', $column, $value, __FUNCTION__);
+        $this->registerWhereJsonToken('AND', $path, $value, __FUNCTION__);
         return $this;
     }
 
     /**
-     * @param non-empty-string $column
+     * @param non-empty-string $path
      */
-    public function orWhereJson(string $column, mixed $value): static
+    public function orWhereJson(string $path, mixed $value): static
     {
-        $this->registerWhereJsonToken('OR', $column, $value, __FUNCTION__);
+        $this->registerWhereJsonToken('OR', $path, $value, __FUNCTION__);
         return $this;
     }
 
     /**
-     * @param non-empty-string $column
+     * @param non-empty-string $path
      * @param bool $encode Encode the value into JSON.
      * @param bool $validate Check that $value is a valid JSON string if the $encode parameter is false.
      */
-    public function whereJsonContains(string $column, mixed $value, bool $encode = true, bool $validate = true): static
+    public function whereJsonContains(string $path, mixed $value, bool $encode = true, bool $validate = true): static
     {
-        $this->registerWhereJsonToken('AND', $column, $value, __FUNCTION__, [
+        $this->registerWhereJsonToken('AND', $path, $value, __FUNCTION__, [
             'encode' => $encode,
             'validate' => $validate,
         ]);
@@ -48,13 +48,13 @@ trait WhereJsonTrait
     }
 
     /**
-     * @param non-empty-string $column
+     * @param non-empty-string $path
      * @param bool $encode Encode the value into JSON.
      * @param bool $validate Check that $value is a valid JSON string if the $encode parameter is false.
      */
-    public function orWhereJsonContains(string $column, mixed $value, bool $encode = true, bool $validate = true): static
+    public function orWhereJsonContains(string $path, mixed $value, bool $encode = true, bool $validate = true): static
     {
-        $this->registerWhereJsonToken('OR', $column, $value, __FUNCTION__, [
+        $this->registerWhereJsonToken('OR', $path, $value, __FUNCTION__, [
             'encode' => $encode,
             'validate' => $validate,
         ]);
@@ -62,13 +62,13 @@ trait WhereJsonTrait
     }
 
     /**
-     * @param non-empty-string $column
+     * @param non-empty-string $path
      * @param bool $encode Encode the value into JSON.
      * @param bool $validate Check that $value is a valid JSON string if the $encode parameter is false.
      */
-    public function whereJsonDoesntContain(string $column, mixed $value, bool $encode = true, bool $validate = true): static
+    public function whereJsonDoesntContain(string $path, mixed $value, bool $encode = true, bool $validate = true): static
     {
-        $this->registerWhereJsonToken('AND', $column, $value, __FUNCTION__, [
+        $this->registerWhereJsonToken('AND', $path, $value, __FUNCTION__, [
             'encode' => $encode,
             'validate' => $validate,
         ]);
@@ -76,13 +76,13 @@ trait WhereJsonTrait
     }
 
     /**
-     * @param non-empty-string $column
+     * @param non-empty-string $path
      * @param bool $encode Encode the value into JSON. Encode the value into JSON.
      * @param bool $validate Check that $value is a valid JSON string if the $encode parameter is false. Check that $value is a valid JSON string if the $encode parameter is false.
      */
-    public function orWhereJsonDoesntContain(string $column, mixed $value, bool $encode = true, bool $validate = true): static
+    public function orWhereJsonDoesntContain(string $path, mixed $value, bool $encode = true, bool $validate = true): static
     {
-        $this->registerWhereJsonToken('OR', $column, $value, __FUNCTION__, [
+        $this->registerWhereJsonToken('OR', $path, $value, __FUNCTION__, [
             'encode' => $encode,
             'validate' => $validate,
         ]);
@@ -90,90 +90,88 @@ trait WhereJsonTrait
     }
 
     /**
-     * @param non-empty-string $column
+     * @param non-empty-string $path
      */
-    public function whereJsonContainsKey(string $column): static
+    public function whereJsonContainsKey(string $path): static
     {
-        $this->registerWhereJsonToken('AND', $column, null, __FUNCTION__);
+        $this->registerWhereJsonToken('AND', $path, null, __FUNCTION__);
         return $this;
     }
 
     /**
-     * @param non-empty-string $column
+     * @param non-empty-string $path
      */
-    public function orWhereJsonContainsKey(string $column): static
+    public function orWhereJsonContainsKey(string $path): static
     {
-        $this->registerWhereJsonToken('OR', $column, null, __FUNCTION__);
+        $this->registerWhereJsonToken('OR', $path, null, __FUNCTION__);
         return $this;
     }
 
     /**
-     * @param non-empty-string $column
-     *
-     * @return $this
+     * @param non-empty-string $path
      */
-    public function whereJsonDoesntContainKey(string $column): static
+    public function whereJsonDoesntContainKey(string $path): static
     {
-        $this->registerWhereJsonToken('AND', $column, null, __FUNCTION__);
+        $this->registerWhereJsonToken('AND', $path, null, __FUNCTION__);
         return $this;
     }
 
     /**
-     * @param non-empty-string $column
+     * @param non-empty-string $path
      */
-    public function orWhereJsonDoesntContainKey(string $column): static
+    public function orWhereJsonDoesntContainKey(string $path): static
     {
-        $this->registerWhereJsonToken('OR', $column, null, __FUNCTION__);
+        $this->registerWhereJsonToken('OR', $path, null, __FUNCTION__);
         return $this;
     }
 
     /**
-     * @param non-empty-string $column
+     * @param non-empty-string $path
      * @param "<"|"<="|"="|">"|">=" $operator Comparison operator.
      */
-    public function whereJsonLength(string $column, int $length, string $operator = '='): static
+    public function whereJsonLength(string $path, int $length, string $operator = '='): static
     {
-        $this->registerWhereJsonToken('AND', $column, $length, __FUNCTION__, ['operator' => $operator]);
+        $this->registerWhereJsonToken('AND', $path, $length, __FUNCTION__, ['operator' => $operator]);
         return $this;
     }
 
     /**
-     * @param non-empty-string $column
+     * @param non-empty-string $path
      * @param "<"|"<="|"="|">"|">=" $operator Comparison operator.
      */
-    public function orWhereJsonLength(string $column, int $length, string $operator = '='): static
+    public function orWhereJsonLength(string $path, int $length, string $operator = '='): static
     {
-        $this->registerWhereJsonToken('OR', $column, $length, __FUNCTION__, ['operator' => $operator]);
+        $this->registerWhereJsonToken('OR', $path, $length, __FUNCTION__, ['operator' => $operator]);
         return $this;
     }
 
     /**
      * @param "AND"|"OR" $operator Boolean joiner (AND | OR).
-     * @param non-empty-string $column
+     * @param non-empty-string $path
      * @param non-empty-string $method
      */
     private function registerWhereJsonToken(
         string $operator,
-        string $column,
+        string $path,
         mixed $value,
         string $method,
         array $params = [],
     ): void {
         $this->registerToken(
             $operator,
-            $this->buildJsonInjection($column, $value, $method, $params),
+            $this->buildJsonInjection($path, $value, $method, $params),
             $this->whereTokens,
             $this->whereWrapper(),
         );
     }
 
     /**
-     * @param non-empty-string $column
+     * @param non-empty-string $path
      * @param non-empty-string $method
      * @param array<non-empty-string, mixed> $params
      */
     protected function buildJsonInjection(
-        string $column,
+        string $path,
         mixed $value,
         string $method,
         array $params,
