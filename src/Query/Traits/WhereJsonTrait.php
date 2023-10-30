@@ -16,6 +16,9 @@ use Cycle\Database\Exception\BuilderException;
 trait WhereJsonTrait
 {
     /**
+     * Select records where the JSON value at the specified path is equal to the passed value.
+     * Example: $select->whereJson('options->notifications->type', 'sms')
+     *
      * @param non-empty-string $path
      */
     public function whereJson(string $path, mixed $value): static
@@ -25,6 +28,9 @@ trait WhereJsonTrait
     }
 
     /**
+     * Similar to the whereJson method, but uses the OR operator to combine with other conditions.
+     * Example: $select->orWhereJson('options->notifications->type', 'sms')
+     *
      * @param non-empty-string $path
      */
     public function orWhereJson(string $path, mixed $value): static
@@ -34,6 +40,10 @@ trait WhereJsonTrait
     }
 
     /**
+     * Select records where the JSON array contains the passed value.
+     * The passed value can be an array, which will be encoded into JSON.
+     * Example: $select->whereJsonContains('settings->languages', 'en')
+     *
      * @param non-empty-string $path
      * @param bool $encode Encode the value into JSON.
      * @param bool $validate Check that $value is a valid JSON string if the $encode parameter is false.
@@ -48,6 +58,9 @@ trait WhereJsonTrait
     }
 
     /**
+     * Similar to the whereJsonContains method, but uses the OR operator to combine with other conditions.
+     * Example: $select->orWhereJsonContains('settings->languages', 'en')
+     *
      * @param non-empty-string $path
      * @param bool $encode Encode the value into JSON.
      * @param bool $validate Check that $value is a valid JSON string if the $encode parameter is false.
@@ -62,6 +75,10 @@ trait WhereJsonTrait
     }
 
     /**
+     * Select records where the JSON array doesn't contain the passed value.
+     * The passed value can be an array, which will be encoded into JSON.
+     * Example: $select->whereJsonDoesntContain('settings->languages', 'en')
+     *
      * @param non-empty-string $path
      * @param bool $encode Encode the value into JSON.
      * @param bool $validate Check that $value is a valid JSON string if the $encode parameter is false.
@@ -76,6 +93,9 @@ trait WhereJsonTrait
     }
 
     /**
+     * Similar to the whereJsonDoesntContain method, but uses the OR operator to combine with other conditions.
+     * Example: $select->orWhereJsonDoesntContain('settings->languages', 'en')
+     *
      * @param non-empty-string $path
      * @param bool $encode Encode the value into JSON. Encode the value into JSON.
      * @param bool $validate Check that $value is a valid JSON string if the $encode parameter is false. Check that $value is a valid JSON string if the $encode parameter is false.
@@ -90,6 +110,9 @@ trait WhereJsonTrait
     }
 
     /**
+     * Select records where the JSON contains the passed path.
+     * Example: $select->whereJsonContainsKey('options->languages->de')
+     *
      * @param non-empty-string $path
      */
     public function whereJsonContainsKey(string $path): static
@@ -99,6 +122,9 @@ trait WhereJsonTrait
     }
 
     /**
+     * Similar to the whereJsonContainsKey method, but uses the OR operator to combine with other conditions.
+     * Example: $select->orWhereJsonContainsKey('options->languages->de')
+     *
      * @param non-empty-string $path
      */
     public function orWhereJsonContainsKey(string $path): static
@@ -108,6 +134,9 @@ trait WhereJsonTrait
     }
 
     /**
+     * Select records where the JSON doesn't contain the passed path.
+     * Example: $select->whereJsonDoesntContainKey('options->languages->de')
+     *
      * @param non-empty-string $path
      */
     public function whereJsonDoesntContainKey(string $path): static
@@ -117,6 +146,9 @@ trait WhereJsonTrait
     }
 
     /**
+     * Similar to the whereJsonDoesntContainKey method, but uses the OR operator to combine with other conditions.
+     * Example: $select->orWhereJsonDoesntContainKey('options->languages->de')
+     *
      * @param non-empty-string $path
      */
     public function orWhereJsonDoesntContainKey(string $path): static
@@ -126,6 +158,9 @@ trait WhereJsonTrait
     }
 
     /**
+     * Select JSON arrays by their length.
+     * Example: $select->whereJsonLength('journal->errors', 1, '>=')
+     *
      * @param non-empty-string $path
      * @param "<"|"<="|"="|">"|">=" $operator Comparison operator.
      */
@@ -136,6 +171,9 @@ trait WhereJsonTrait
     }
 
     /**
+     * Similar to the whereJsonLength method, but uses the OR operator to combine with other conditions.
+     * Example: $select->orWhereJsonLength('journal->errors', 1, '>=')
+     *
      * @param non-empty-string $path
      * @param "<"|"<="|"="|">"|">=" $operator Comparison operator.
      */
