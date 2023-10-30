@@ -527,7 +527,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     {
         $this->defaultValue = match (true) {
             $value === self::DATETIME_NOW => static::DATETIME_NOW,
-            static::isJson($this) && \is_array($value) => \json_encode($value, \JSON_THROW_ON_ERROR),
+            static::isJson($this) === true && \is_array($value) => \json_encode($value, \JSON_THROW_ON_ERROR),
             default => $value
         };
 
@@ -766,7 +766,12 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         return $column->getAbstractType() === 'enum';
     }
 
-    protected static function isJson(self $column): bool
+    /**
+     * Checks if the column is JSON or no.
+     *
+     * Returns null if it's impossible to explicitly define the JSON type.
+     */
+    protected static function isJson(self $column): ?bool
     {
         return $column->getAbstractType() === 'json';
     }

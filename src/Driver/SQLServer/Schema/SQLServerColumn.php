@@ -387,6 +387,14 @@ class SQLServerColumn extends AbstractColumn
     }
 
     /**
+     * In SQL Server, we cannot determine if a column has a JSON type.
+     */
+    protected static function isJson(AbstractColumn $column): ?bool
+    {
+        return null;
+    }
+
+    /**
      * In SQLServer we can emulate enums similar way as in Postgres via column constrain.
      *
      * @psalm-return non-empty-string

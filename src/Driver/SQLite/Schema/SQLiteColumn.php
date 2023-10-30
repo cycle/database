@@ -256,4 +256,12 @@ class SQLiteColumn extends AbstractColumn
     {
         return false;
     }
+
+    /**
+     * In SQLite, we cannot determine if a column has a JSON type.
+     */
+    protected static function isJson(AbstractColumn $column): ?bool
+    {
+        return null;
+    }
 }
