@@ -219,12 +219,9 @@ final class Database implements DatabaseInterface
         }
 
         if ($this->driver instanceof Driver) {
-            if ($database->readDriver === $database->driver) {
-                $database->readDriver = $database->readDriver->withoutCache();
-                $database->driver = $database->readDriver;
-            } else {
-                $database->driver = $database->driver->withoutCache();
-            }
+            $database->driver = $database->readDriver === $database->driver
+                ? ($database->readDriver = $database->driver->withoutCache())
+                : $database->driver->withoutCache();
 
             return $database;
         }

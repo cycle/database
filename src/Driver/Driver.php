@@ -101,6 +101,11 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
 
     public function withoutCache(): static
     {
+        if ($this->useCache === false) {
+            // Cache already disabled
+            return $this;
+        }
+
         $driver = clone $this;
         $driver->useCache = false;
 

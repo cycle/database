@@ -167,6 +167,22 @@ class AbstractDriverTest extends TestCase
         $this->assertFalse($ref->getValue($driver->withoutCache()));
     }
 
+    public function testWithoutCacheTwice(): void
+    {
+        $driver = TestDriver::create(new SQLiteDriverConfig(queryCache: true));
+
+        $ncDriver = $driver->withoutCache();
+
+        $this->assertSame($ncDriver, $ncDriver->withoutCache());
+    }
+
+    public function testWithoutCacheOnWithoutCacheInitially(): void
+    {
+        $driver = TestDriver::create(new SQLiteDriverConfig(queryCache: false));
+
+        $this->assertSame($driver, $driver->withoutCache());
+    }
+
     public function testPdoNotClonedAfterCacheDisabled(): void
     {
         $ref = new \ReflectionMethod(Driver::class, 'getPDO');
