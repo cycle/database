@@ -375,11 +375,9 @@ class SQLServerColumn extends AbstractColumn
         return $this->defaultConstraint;
     }
 
-    /**
-     * In SQL Server, we cannot determine if a column has a JSON type.
-     */
     protected static function isJson(AbstractColumn $column): ?bool
     {
+        // In SQL Server, we cannot determine if a column has a JSON type.
         return $column->getAbstractType() === 'text' ? null : false;
     }
 
