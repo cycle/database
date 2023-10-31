@@ -525,12 +525,14 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      */
     public function defaultValue(mixed $value): self
     {
-        //Forcing driver specific values
-        if ($value === self::DATETIME_NOW) {
-            $value = static::DATETIME_NOW;
-        }
-
-        $this->defaultValue = $value;
+        $this->defaultValue = match (true) {
+            $value === self::DATETIME_NOW => static::DATETIME_NOW,
+            static::isJson($this) !== false && \is_array($value) => \json_encode(
+                $value,
+                \JSON_UNESCAPED_UNICODE|\JSON_THROW_ON_ERROR,
+            ),
+            default => $value
+        };
 
         return $this;
     }
@@ -765,5 +767,15 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     protected static function isEnum(self $column): bool
     {
         return $column->getAbstractType() === 'enum';
+    }
+
+    /**
+     * Checks if the column is JSON or no.
+     *
+     * Returns null if it's impossible to explicitly define the JSON type.
+     */
+    protected static function isJson(self $column): ?bool
+    {
+        return $column->getAbstractType() === 'json';
     }
 }

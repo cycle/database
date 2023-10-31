@@ -344,6 +344,19 @@ abstract class DefaultValueTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
+    public function testJsonDefaultValueArray(): void
+    {
+        $schema = $this->schema('table');
+        $this->assertFalse($schema->exists());
+
+        $column = $schema->json('target')->defaultValue(['foo' => 'bar', 'baz' => 100.0]);
+
+        $schema->save();
+        $schema = $this->schema('table');
+        $this->assertTrue($schema->exists());
+        $this->assertTrue($schema->column('target')->compare($column));
+    }
+
     public function testEnumDefaultValueNull(): void
     {
         $schema = $this->schema('table');
