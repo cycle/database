@@ -36,6 +36,13 @@ class DefaultValueTest extends CommonClass
         parent::testJsonDefaultValueString();
     }
 
+    public function testJsonDefaultValueArray(): void
+    {
+        $this->expectException(\Cycle\Database\Driver\MySQL\Exception\MySQLException::class);
+        $this->expectExceptionMessage('Column table.target of type text/blob/json can not have non empty default value');
+        parent::testJsonDefaultValueArray();
+    }
+
     public function testJsonDefaultValueEmpty(): void
     {
         $this->expectException(\Cycle\Database\Driver\MySQL\Exception\MySQLException::class);
