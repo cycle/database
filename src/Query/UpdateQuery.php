@@ -13,14 +13,18 @@ namespace Cycle\Database\Query;
 
 use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Query\Traits\TokenTrait;
+use Cycle\Database\Query\Traits\WhereJsonTrait;
 use Cycle\Database\Query\Traits\WhereTrait;
 
 /**
  * Update statement builder.
+ *
+ * @internal
  */
 class UpdateQuery extends ActiveQuery
 {
     use TokenTrait;
+    use WhereJsonTrait;
     use WhereTrait;
 
     protected string $table = '';

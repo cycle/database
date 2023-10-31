@@ -97,6 +97,13 @@ abstract class Compiler implements CompilerInterface
 
                 return $q->quote($tokens['expression']);
 
+            case self::JSON_EXPRESSION:
+                foreach ($tokens['parameters'] as $param) {
+                    $params->push($param);
+                }
+
+                return $tokens['expression'];
+
             case self::INSERT_QUERY:
                 return $this->insertQuery($params, $q, $tokens);
 

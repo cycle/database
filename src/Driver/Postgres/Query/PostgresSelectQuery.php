@@ -11,11 +11,14 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\Postgres\Query;
 
+use Cycle\Database\Driver\Postgres\Query\Traits\WhereJsonTrait;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Query\SelectQuery;
 
 class PostgresSelectQuery extends SelectQuery
 {
+    use WhereJsonTrait;
+
     /**
      * Apply distinct ON to the query.
      */

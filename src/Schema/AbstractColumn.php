@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Schema;
 
+use Cycle\Database\Driver\Jsoner;
 use Cycle\Database\Schema\Attribute\ColumnAttribute;
 use Cycle\Database\Schema\Traits\ColumnAttributesTrait;
 use DateTimeImmutable;
@@ -521,16 +522,14 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
 
     /**
      * Change column default value (can be forbidden for some column types).
-     * Use Database::TIMESTAMP_NOW to use driver specific NOW() function.
+     * Use {@see AbstractColumn::DATETIME_NOW} to use driver specific NOW() function.
+     * Column with JSON type can be set to default value of array type.
      */
     public function defaultValue(mixed $value): self
     {
         $this->defaultValue = match (true) {
             $value === self::DATETIME_NOW => static::DATETIME_NOW,
-            static::isJson($this) !== false && \is_array($value) => \json_encode(
-                $value,
-                \JSON_UNESCAPED_UNICODE|\JSON_THROW_ON_ERROR,
-            ),
+            static::isJson($this) !== false && \is_array($value) => Jsoner::toJson($value),
             default => $value
         };
 

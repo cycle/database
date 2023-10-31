@@ -13,23 +13,27 @@ namespace Cycle\Database\Query;
 
 use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Query\Traits\TokenTrait;
+use Cycle\Database\Query\Traits\WhereJsonTrait;
 use Cycle\Database\Query\Traits\WhereTrait;
 
 /**
  * Update statement builder.
+ *
+ * @internal
  */
 class DeleteQuery extends ActiveQuery
 {
     use TokenTrait;
+    use WhereJsonTrait;
     use WhereTrait;
 
     protected string $table = '';
 
     /**
-     * @param string $table Associated table name.
+     * @param non-empty-string|null $table Associated table name.
      * @param array  $where Initial set of where rules specified as array.
      */
-    public function __construct(string $table = null, array $where = [])
+    public function __construct(?string $table = null, array $where = [])
     {
         $this->table = $table ?? '';
 

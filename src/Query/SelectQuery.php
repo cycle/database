@@ -14,6 +14,7 @@ namespace Cycle\Database\Query;
 use Countable;
 use Cycle\Database\Injection\Expression;
 use Cycle\Database\Injection\Fragment;
+use Cycle\Database\Query\Traits\WhereJsonTrait;
 use IteratorAggregate;
 use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Injection\FragmentInterface;
@@ -27,6 +28,8 @@ use Throwable;
 
 /**
  * Builds select sql statements.
+ *
+ * @internal
  */
 class SelectQuery extends ActiveQuery implements
     Countable,
@@ -36,6 +39,7 @@ class SelectQuery extends ActiveQuery implements
     use HavingTrait;
     use JoinTrait;
     use TokenTrait;
+    use WhereJsonTrait;
     use WhereTrait;
 
     // sort directions

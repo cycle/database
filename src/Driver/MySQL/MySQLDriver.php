@@ -14,7 +14,11 @@ namespace Cycle\Database\Driver\MySQL;
 use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Config\MySQLDriverConfig;
 use Cycle\Database\Driver\Driver;
+use Cycle\Database\Driver\MySQL\Query\MySQLDeleteQuery;
+use Cycle\Database\Driver\MySQL\Query\MySQLSelectQuery;
+use Cycle\Database\Driver\MySQL\Query\MySQLUpdateQuery;
 use Cycle\Database\Exception\StatementException;
+use Cycle\Database\Query\InsertQuery;
 use Cycle\Database\Query\QueryBuilder;
 
 /**
@@ -76,7 +80,12 @@ class MySQLDriver extends Driver
             $config,
             new MySQLHandler(),
             new MySQLCompiler('``'),
-            QueryBuilder::defaultBuilder()
+            new QueryBuilder(
+                new MySQLSelectQuery(),
+                new InsertQuery(),
+                new MySQLUpdateQuery(),
+                new MySQLDeleteQuery()
+            )
         );
     }
 }

@@ -14,6 +14,7 @@ namespace Cycle\Database\Driver;
 use Cycle\Database\Injection\Expression;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Injection\FragmentInterface;
+use Cycle\Database\Injection\JsonExpression;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Injection\ParameterInterface;
 use Cycle\Database\Query\QueryInterface;
@@ -213,7 +214,11 @@ final class CompilerCache implements CompilerInterface
             }
 
             if ($context instanceof FragmentInterface) {
-                if ($context instanceof Expression || $context instanceof Fragment) {
+                if (
+                    $context instanceof Expression ||
+                    $context instanceof Fragment ||
+                    $context instanceof JsonExpression
+                ) {
                     foreach ($context->getTokens()['parameters'] as $param) {
                         $params->push($param);
                     }

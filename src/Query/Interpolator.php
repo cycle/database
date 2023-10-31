@@ -25,9 +25,9 @@ final class Interpolator
     /**
      * Injects parameters into statement. For debug purposes only.
      *
-     * @psalm-param non-empty-string $query
+     * @param non-empty-string $query
      *
-     * @psalm-return non-empty-string
+     * @return non-empty-string
      */
     public static function interpolate(string $query, iterable $parameters = []): string
     {
