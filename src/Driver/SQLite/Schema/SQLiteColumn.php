@@ -236,17 +236,6 @@ class SQLiteColumn extends AbstractColumn
         return $column;
     }
 
-    public function defaultValue(mixed $value): self
-    {
-        if (\is_array($value) && $this->getAbstractType() === 'text') {
-            $this->defaultValue = \json_encode($value, \JSON_THROW_ON_ERROR);
-
-            return $this;
-        }
-
-        return parent::defaultValue($value);
-    }
-
     protected function quoteEnum(DriverInterface $driver): string
     {
         return '';
@@ -262,6 +251,6 @@ class SQLiteColumn extends AbstractColumn
      */
     protected static function isJson(AbstractColumn $column): ?bool
     {
-        return null;
+        return $column->getAbstractType() === 'text' ? null : false;
     }
 }

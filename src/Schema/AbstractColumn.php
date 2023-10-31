@@ -527,7 +527,10 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     {
         $this->defaultValue = match (true) {
             $value === self::DATETIME_NOW => static::DATETIME_NOW,
-            static::isJson($this) === true && \is_array($value) => \json_encode($value, \JSON_THROW_ON_ERROR),
+            static::isJson($this) !== false && \is_array($value) => \json_encode(
+                $value,
+                \JSON_UNESCAPED_UNICODE|\JSON_THROW_ON_ERROR,
+            ),
             default => $value
         };
 
