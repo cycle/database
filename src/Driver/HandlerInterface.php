@@ -19,6 +19,9 @@ use Cycle\Database\Schema\AbstractTable;
 
 /**
  * Manages database schema.
+ *
+ * @method void enableForeignKeyConstraints() Enable foreign key constraints. Will be added the next major release.
+ * @method void disableForeignKeyConstraints() Disable foreign key constraints. Will be added the next major release.
  */
 interface HandlerInterface
 {
@@ -247,18 +250,4 @@ interface HandlerInterface
      * @throws HandlerException
      */
     public function dropConstrain(AbstractTable $table, string $constraint): void;
-
-    /**
-     * Enable foreign key constraints.
-     *
-     * Will be added in version 3.0.0.
-     */
-    // public function enableForeignKeyConstraints(): void;
-
-    /**
-     * Disable foreign key constraints.
-     *
-     * Will be added in version 3.0.0.
-     */
-    // public function disableForeignKeyConstraints(): void;
 }
