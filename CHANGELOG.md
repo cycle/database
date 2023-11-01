@@ -1,5 +1,21 @@
 # CHANGELOG
 
+v2.6.0 (02.11.2023)
+-------------------
+- Fix incorrect parameters processing for JOIN subqueries by @smelesh (#133)
+- MySQL driver:
+  - Add the type `smallInteger` by @gam6itko (#128)
+  - Change mapping of the JSON type from `text` to `json` by @romanpravda (#121)
+- Postgres driver:
+  - Add the `restartIdentity` parameter to the `eraseTable` method by @msmakouz (#132)
+  - Change mapping of the JSON type from `text` to `json` by @msmakouz (#134)
+- All the drivers: 
+  - Add `enableForeignKeyConstraints` and `disableForeignKeyConstraints` methods in Driver Handlers by @msmakouz (#130)
+  - Add an ability to disable the query cache before query using `withoutCache()` by @msmakouz and @roxblnfk (#137)
+- JSON support:
+  - Add methods to work with JSON columns by @msmakouz and @roxblnfk (#135)
+  - Add an ability to set JSON default value as an array by @msmakouz and @roxblnfk (#138)
+
 v2.5.2 (03.07.2023)
 -------------------
 - Fix Postgres schema restoring after reconnect by @msmakouz in (#126)
