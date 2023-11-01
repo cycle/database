@@ -147,6 +147,56 @@ class AbstractDriverTest extends TestCase
         );
     }
 
+    public function testUseCacheFromConfig(): void
+    {
+        $ref = new \ReflectionProperty(Driver::class, 'useCache');
+        $ref->setAccessible(true);
+
+        $this->assertTrue($ref->getValue(TestDriver::create(new SQLiteDriverConfig(queryCache: true))));
+        $this->assertFalse($ref->getValue(TestDriver::create(new SQLiteDriverConfig(queryCache: false))));
+    }
+
+    public function testWithoutCache(): void
+    {
+        $ref = new \ReflectionProperty(Driver::class, 'useCache');
+        $ref->setAccessible(true);
+
+        $driver = TestDriver::create(new SQLiteDriverConfig(queryCache: true));
+
+        $this->assertTrue($ref->getValue($driver));
+        $this->assertFalse($ref->getValue($driver->withoutCache()));
+    }
+
+    public function testWithoutCacheTwice(): void
+    {
+        $driver = TestDriver::create(new SQLiteDriverConfig(queryCache: true));
+
+        $ncDriver = $driver->withoutCache();
+
+        $this->assertSame($ncDriver, $ncDriver->withoutCache());
+    }
+
+    public function testWithoutCacheOnWithoutCacheInitially(): void
+    {
+        $driver = TestDriver::create(new SQLiteDriverConfig(queryCache: false));
+
+        $this->assertSame($driver, $driver->withoutCache());
+    }
+
+    public function testPdoNotClonedAfterCacheDisabled(): void
+    {
+        $ref = new \ReflectionMethod(Driver::class, 'getPDO');
+        $ref->setAccessible(true);
+
+        $driver = TestDriver::create(new SQLiteDriverConfig(queryCache: true));
+        $oldPDO = $ref->invoke($driver);
+
+        $driver = $driver->withoutCache();
+        $newPDO = $ref->invoke($driver);
+
+        $this->assertSame($oldPDO, $newPDO);
+    }
+
     private function checkImmutability(DriverInterface $driver, DriverInterface $newDriver): void
     {
         // Immutability

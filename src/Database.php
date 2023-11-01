@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database;
 
+use Cycle\Database\Driver\Driver;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Query\DeleteQuery;
 use Cycle\Database\Query\InsertQuery;
@@ -207,5 +208,24 @@ final class Database implements DatabaseInterface
     public function rollback(): bool
     {
         return $this->getDriver(self::WRITE)->rollbackTransaction();
+    }
+
+    public function withoutCache(): self
+    {
+        $database = clone $this;
+
+        if ($this->readDriver instanceof Driver && $database->readDriver !== $database->driver) {
+            $database->readDriver = $database->readDriver->withoutCache();
+        }
+
+        if ($this->driver instanceof Driver) {
+            $database->driver = $database->readDriver === $database->driver
+                ? ($database->readDriver = $database->driver->withoutCache())
+                : $database->driver->withoutCache();
+
+            return $database;
+        }
+
+        return $this;
     }
 }

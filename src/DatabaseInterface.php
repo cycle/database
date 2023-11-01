@@ -22,6 +22,9 @@ use Cycle\Database\Query\UpdateQuery;
  * DatabaseInterface is high level abstraction used to represent single database. You must always
  * check database type using getType() method before writing plain SQL for execute and query methods
  * (unless you are locking your module/application to one database).
+ *
+ * @method DatabaseInterface withoutCache() Get a new Database instance without query cache or the same instance
+ *         if no cache is used. Will be added the next major release.
  */
 interface DatabaseInterface
 {
@@ -96,6 +99,8 @@ interface DatabaseInterface
      * Get instance of InsertBuilder associated with current Database.
      *
      * @param string $table Table where values should be inserted to.
+     *
+     * @see self::withoutCache() May be useful to disable query cache for batch inserts.
      */
     public function insert(string $table = ''): InsertQuery;
 

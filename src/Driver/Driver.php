@@ -54,6 +54,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     /** @var PDOStatement[]|PDOStatementInterface[] */
     protected array $queryCache = [];
     private ?string $name = null;
+    private bool $useCache = true;
 
     protected function __construct(
         protected DriverConfig $config,
@@ -61,10 +62,12 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
         protected CompilerInterface $queryCompiler,
         BuilderInterface $queryBuilder
     ) {
+        $this->useCache = $this->config->queryCache;
+
         $this->schemaHandler = $schemaHandler->withDriver($this);
         $this->queryBuilder = $queryBuilder->withDriver($this);
 
-        if ($this->config->queryCache && $queryCompiler instanceof CachingCompilerInterface) {
+        if ($this->useCache && $queryCompiler instanceof CachingCompilerInterface) {
             $this->queryCompiler = new CompilerCache($queryCompiler);
         }
 
@@ -94,6 +97,19 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     public function isReadonly(): bool
     {
         return $this->config->readonly;
+    }
+
+    public function withoutCache(): static
+    {
+        if ($this->useCache === false) {
+            // Cache already disabled
+            return $this;
+        }
+
+        $driver = clone $this;
+        $driver->useCache = false;
+
+        return $driver;
     }
 
     /**
@@ -480,12 +496,12 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
      */
     protected function prepare(string $query): PDOStatement|PDOStatementInterface
     {
-        if ($this->config->queryCache && isset($this->queryCache[$query])) {
+        if ($this->useCache && isset($this->queryCache[$query])) {
             return $this->queryCache[$query];
         }
 
         $statement = $this->getPDO()->prepare($query);
-        if ($this->config->queryCache) {
+        if ($this->useCache) {
             $this->queryCache[$query] = $statement;
         }
 
