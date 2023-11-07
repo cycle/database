@@ -28,8 +28,6 @@ use Throwable;
 
 /**
  * Builds select sql statements.
- *
- * @internal
  */
 class SelectQuery extends ActiveQuery implements
     Countable,
