@@ -18,8 +18,6 @@ use Cycle\Database\Query\Traits\WhereTrait;
 
 /**
  * Update statement builder.
- *
- * @internal
  */
 class UpdateQuery extends ActiveQuery
 {
