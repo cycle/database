@@ -141,6 +141,17 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters([json_encode('+1234567890')], $select);
     }
 
+    public function testSelectWithWhereJsonContainsSinglePath(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonContains('settings', []);
+
+        $this->assertSameQuery("SELECT * FROM {table} WHERE json_contains({settings}, ?)", $select);
+        $this->assertSameParameters([json_encode([])], $select);
+    }
+
     public function testSelectWithWhereJsonContainsArray(): void
     {
         $select = $this->database
@@ -210,6 +221,17 @@ class SelectQueryTest extends CommonClass
             $select
         );
         $this->assertSameParameters([json_encode('+1234567890')], $select);
+    }
+
+    public function testSelectWithWhereJsonDoesntContainSinglePath(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->whereJsonDoesntContain('settings', []);
+
+        $this->assertSameQuery("SELECT * FROM {table} WHERE NOT json_contains({settings}, ?)", $select);
+        $this->assertSameParameters([json_encode([])], $select);
     }
 
     public function testSelectWithWhereJsonDoesntContainArray(): void

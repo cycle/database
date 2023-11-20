@@ -116,10 +116,21 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonContains('settings->phones->work', '+1234567890');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE({settings}->'phones'->'work')::jsonb @> ?",
+            "UPDATE {table} SET {some} = ? WHERE ({settings}->'phones'->'work')::jsonb @> ?",
             $select
         );
         $this->assertSameParameters(['value', json_encode('+1234567890')], $select);
+    }
+
+    public function testUpdateWithWhereJsonContainsSinglePath(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonContains('settings', []);
+
+        $this->assertSameQuery("UPDATE {table} SET {some} = ? WHERE ({settings})::jsonb @> ?", $select);
+        $this->assertSameParameters(['value', json_encode([])], $select);
     }
 
     public function testUpdateWithWhereJsonContainsArray(): void
@@ -192,6 +203,17 @@ class UpdateQueryTest extends CommonClass
             $select
         );
         $this->assertSameParameters(['value', json_encode('+1234567890')], $select);
+    }
+
+    public function testUpdateWithWhereJsonDoesntContainSinglePath(): void
+    {
+        $select = $this->database
+            ->update('table')
+            ->values(['some' => 'value'])
+            ->whereJsonDoesntContain('settings', []);
+
+        $this->assertSameQuery("UPDATE {table} SET {some} = ? WHERE NOT ({settings})::jsonb @> ?", $select);
+        $this->assertSameParameters(['value', json_encode([])], $select);
     }
 
     public function testUpdateWithWhereJsonDoesntContainArray(): void

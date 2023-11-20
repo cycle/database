@@ -111,6 +111,16 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters([json_encode('+1234567890')], $select);
     }
 
+    public function testDeleteWithWhereJsonContainsSinglePath(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->whereJsonContains('settings', []);
+
+        $this->assertSameQuery("DELETE FROM {table} WHERE ({settings})::jsonb @> ?", $select);
+        $this->assertSameParameters([json_encode([])], $select);
+    }
+
     public function testDeleteWithWhereJsonContainsArray(): void
     {
         $select = $this->database
@@ -176,6 +186,16 @@ class DeleteQueryTest extends CommonClass
             $select
         );
         $this->assertSameParameters([json_encode('+1234567890')], $select);
+    }
+
+    public function testDeleteWithWhereJsonDoesntContainSinglePath(): void
+    {
+        $select = $this->database
+            ->delete('table')
+            ->whereJsonDoesntContain('settings', []);
+
+        $this->assertSameQuery("DELETE FROM {table} WHERE NOT ({settings})::jsonb @> ?", $select);
+        $this->assertSameParameters([json_encode([])], $select);
     }
 
     public function testDeleteWithWhereJsonDoesntContainArray(): void
