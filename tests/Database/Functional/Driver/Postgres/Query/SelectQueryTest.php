@@ -121,7 +121,7 @@ class SelectQueryTest extends CommonClass
             ->from('table')
             ->whereJsonContains('settings', []);
 
-        $this->assertSameQuery("SELECT * FROM {table} WHERE ({settings})::jsonb @> ?", $select);
+        $this->assertSameQuery('SELECT * FROM {table} WHERE ({settings})::jsonb @> ?', $select);
         $this->assertSameParameters([json_encode([])], $select);
     }
 
@@ -203,7 +203,7 @@ class SelectQueryTest extends CommonClass
             ->from('table')
             ->whereJsonDoesntContain('settings', []);
 
-        $this->assertSameQuery("SELECT * FROM {table} WHERE NOT ({settings})::jsonb @> ?", $select);
+        $this->assertSameQuery('SELECT * FROM {table} WHERE NOT ({settings})::jsonb @> ?', $select);
         $this->assertSameParameters([json_encode('+1234567890')], $select);
     }
 

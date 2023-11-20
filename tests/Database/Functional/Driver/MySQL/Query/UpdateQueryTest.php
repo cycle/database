@@ -136,7 +136,7 @@ class UpdateQueryTest extends CommonClass
             ->values(['some' => 'value'])
             ->whereJsonContains('settings', []);
 
-        $this->assertSameQuery("UPDATE {table} SET {some} = ? WHERE json_contains({settings}, ?)", $select);
+        $this->assertSameQuery('UPDATE {table} SET {some} = ? WHERE json_contains({settings}, ?)', $select);
         $this->assertSameParameters(['value', json_encode([])], $select);
     }
 
@@ -218,7 +218,7 @@ class UpdateQueryTest extends CommonClass
             ->values(['some' => 'value'])
             ->whereJsonDoesntContain('settings', []);
 
-        $this->assertSameQuery("UPDATE {table} SET {some} = ? WHERE NOT json_contains({settings}, ?)", $select);
+        $this->assertSameQuery('UPDATE {table} SET {some} = ? WHERE NOT json_contains({settings}, ?)', $select);
         $this->assertSameParameters(['value', json_encode([])], $select);
     }
 

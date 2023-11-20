@@ -117,7 +117,7 @@ class DeleteQueryTest extends CommonClass
             ->delete('table')
             ->whereJsonContains('settings', []);
 
-        $this->assertSameQuery("DELETE FROM {table} WHERE ({settings})::jsonb @> ?", $select);
+        $this->assertSameQuery('DELETE FROM {table} WHERE ({settings})::jsonb @> ?', $select);
         $this->assertSameParameters([json_encode([])], $select);
     }
 
@@ -194,7 +194,7 @@ class DeleteQueryTest extends CommonClass
             ->delete('table')
             ->whereJsonDoesntContain('settings', []);
 
-        $this->assertSameQuery("DELETE FROM {table} WHERE NOT ({settings})::jsonb @> ?", $select);
+        $this->assertSameQuery('DELETE FROM {table} WHERE NOT ({settings})::jsonb @> ?', $select);
         $this->assertSameParameters([json_encode([])], $select);
     }
 
