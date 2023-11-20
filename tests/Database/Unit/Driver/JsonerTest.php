@@ -60,7 +60,7 @@ final class JsonerTest extends TestCase
         // JsonSerializable object will be converted to JSON string correctly if 'encode' is set to 'true'
         yield [
             new class () implements \JsonSerializable {
-                public function jsonSerialize()
+                public function jsonSerialize(): array
                 {
                     return ['foo' => 'bar'];
                 }
