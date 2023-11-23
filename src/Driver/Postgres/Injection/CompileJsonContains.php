@@ -17,7 +17,11 @@ class CompileJsonContains extends PostgresJsonExpression
     {
         $path = $this->getPath($statement);
         $field = $this->getField($statement);
-        $attribute = $this->getAttribute($statement);
+        $attribute = $this->findAttribute($statement);
+
+        if (empty($attribute)) {
+            return \sprintf('(%s)::jsonb @> ?', $field);
+        }
 
         if (!empty($path)) {
             return \sprintf('(%s->%s->%s)::jsonb @> ?', $field, $path, $attribute);

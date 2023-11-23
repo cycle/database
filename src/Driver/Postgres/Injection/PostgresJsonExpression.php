@@ -41,9 +41,26 @@ abstract class PostgresJsonExpression extends JsonExpression
      */
     protected function getAttribute(string $statement): string|int
     {
+        $attribute = $this->findAttribute($statement);
+        if ($attribute === null) {
+            throw new DriverException('Invalid statement. Unable to extract attribute.');
+        }
+
+        return $attribute;
+    }
+
+    /**
+     * Returns the attribute (last part of the full path). Returns null if the attribute is not found.
+     *
+     * @param non-empty-string $statement
+     *
+     * @return int|non-empty-string|null
+     */
+    protected function findAttribute(string $statement): string|int|null
+    {
         $path = $this->getPathArray($statement);
         if ($path === []) {
-            throw new DriverException('Invalid statement. Unable to extract attribute.');
+            return null;
         }
 
         $attribute = \array_pop($path);
