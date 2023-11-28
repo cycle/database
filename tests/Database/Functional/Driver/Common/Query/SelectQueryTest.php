@@ -2174,7 +2174,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             ->where('uuid', new Fragment('UUID_TO_BIN(?)', '12345678-1234-1234-1234-123456789012'))
             ->andWhere('uuid', 'IN', [
                 new Fragment('UUID_TO_BIN(?)', '12345678-1234-1234-1234-123456789013'),
-                new Fragment('UUID_TO_BIN(?)', '12345678-1234-1234-1234-123456789014')
+                new Fragment('UUID_TO_BIN(?)', '12345678-1234-1234-1234-123456789014'),
             ]);
 
         $this->assertSameQuery(
