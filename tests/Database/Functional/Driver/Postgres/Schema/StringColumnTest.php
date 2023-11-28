@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Functional\Driver\Postgres\Schema;
 
 // phpcs:ignore
-use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
+use Cycle\Database\Tests\Functional\Driver\Common\Schema\StringColumnTest as CommonClass;
 
 /**
  * @group driver
  * @group driver-postgres
  */
-final class StringColumnTest extends BaseTest
+final class StringColumnTest extends CommonClass
 {
     public const DRIVER = 'postgres';
 

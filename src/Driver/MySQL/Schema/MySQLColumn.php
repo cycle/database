@@ -13,6 +13,7 @@ namespace Cycle\Database\Driver\MySQL\Schema;
 
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Exception\DefaultValueException;
+use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Schema\AbstractColumn;
@@ -149,6 +150,9 @@ class MySQLColumn extends AbstractColumn
         'longblob',
         'json',
     ];
+
+    #[ColumnAttribute(['string', 'varbinary'])]
+    protected int $size = 0;
 
     /**
      * Column is auto incremental.
@@ -306,6 +310,34 @@ class MySQLColumn extends AbstractColumn
     {
         $this->type('set');
         $this->enumValues = array_map('strval', is_array($values) ? $values : func_get_args());
+
+        return $this;
+    }
+
+    /**
+     * @param positive-int|0 $size
+     */
+    public function varbinary(int $size = 255): self
+    {
+        $this->type('varbinary');
+
+        $size < 0 && throw new SchemaException('Invalid varbinary size value');
+
+        $this->size = $size;
+
+        return $this;
+    }
+
+    /**
+     * @param positive-int|0 $size
+     */
+    public function binary(int $size = 0): self
+    {
+        if ($size > 0) {
+            return $this->varbinary($size);
+        }
+
+        $this->type('blob');
 
         return $this;
     }
