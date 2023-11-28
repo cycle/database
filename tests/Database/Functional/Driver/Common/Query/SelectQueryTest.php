@@ -2165,4 +2165,30 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             $select
         );
     }
+
+    public function testFragmentInWhereInClause(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->where('uuid', new Fragment('UUID_TO_BIN(?)', '12345678-1234-1234-1234-123456789012'))
+            ->andWhere('uuid', 'IN', [
+                new Fragment('UUID_TO_BIN(?)', '12345678-1234-1234-1234-123456789013'),
+                new Fragment('UUID_TO_BIN(?)', '12345678-1234-1234-1234-123456789014')
+            ]);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE {uuid} = UUID_TO_BIN (?) AND {uuid} IN (UUID_TO_BIN (?), UUID_TO_BIN (?))',
+            $select
+        );
+
+        $this->assertSameParameters(
+            [
+                '12345678-1234-1234-1234-123456789012',
+                '12345678-1234-1234-1234-123456789013',
+                '12345678-1234-1234-1234-123456789014',
+            ],
+            $select
+        );
+    }
 }

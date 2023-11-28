@@ -316,11 +316,26 @@ final class CompilerCache implements CompilerInterface
             return 'N';
         }
 
-        $params->push($param);
-
         if ($param->isArray()) {
+            $simpleParams = [];
+            foreach ($param->getValue() as $value) {
+                if ($value instanceof FragmentInterface) {
+                    foreach ($value->getTokens()['parameters'] as $fragmentParam) {
+                        $params->push($fragmentParam);
+                    }
+                } else {
+                    $simpleParams[] = $value;
+                }
+            }
+
+            if ($simpleParams !== []) {
+                $params->push(new Parameter($simpleParams));
+            }
+
             return 'A' . count($param->getValue());
         }
+
+        $params->push($param);
 
         return '?';
     }
