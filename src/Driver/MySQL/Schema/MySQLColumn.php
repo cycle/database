@@ -315,7 +315,7 @@ class MySQLColumn extends AbstractColumn
     }
 
     /**
-     * @param 0|positive-int $size
+     * @param int<0, max> $size
      */
     public function varbinary(int $size = 255): self
     {
@@ -329,7 +329,7 @@ class MySQLColumn extends AbstractColumn
     }
 
     /**
-     * @param 0|positive-int $size
+     * @param int<0, max> $size
      */
     public function binary(int $size = 0): self
     {
