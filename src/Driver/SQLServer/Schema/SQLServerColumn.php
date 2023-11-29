@@ -120,7 +120,7 @@ class SQLServerColumn extends AbstractColumn
         'binary'      => ['varbinary'],
     ];
 
-    #[ColumnAttribute(['string', 'datetime2', 'varbinary'])]
+    #[ColumnAttribute(['varchar', 'datetime2', 'varbinary'])]
     protected int $size = 0;
 
     /**

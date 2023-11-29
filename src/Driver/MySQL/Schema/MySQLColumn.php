@@ -40,6 +40,8 @@ class MySQLColumn extends AbstractColumn
      */
     public const DATETIME_NOW = 'CURRENT_TIMESTAMP';
 
+    public const EXCLUDE_FROM_COMPARE = ['size', 'timezone', 'userType', 'attributes'];
+
     protected const INTEGER_TYPES = ['tinyint', 'smallint', 'mediumint', 'int', 'bigint'];
 
     protected array $mapping = [
@@ -151,7 +153,7 @@ class MySQLColumn extends AbstractColumn
         'json',
     ];
 
-    #[ColumnAttribute(['string', 'varbinary'])]
+    #[ColumnAttribute(['int', 'tinyint', 'smallint', 'bigint', 'varchar', 'varbinary'])]
     protected int $size = 0;
 
     /**
@@ -292,8 +294,13 @@ class MySQLColumn extends AbstractColumn
 
     public function compare(AbstractColumn $initial): bool
     {
-        assert($initial instanceof self);
-        return ! (!parent::compare($initial));
+        $result = parent::compare($initial);
+
+        if ($this->type === 'varchar' || $this->type === 'varbinary') {
+            return $result && $this->size === $initial->size;
+        }
+
+        return $result;
     }
 
     public function isUnsigned(): bool

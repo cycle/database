@@ -14,4 +14,9 @@ use Cycle\Database\Tests\Functional\Driver\Common\Schema\JsonColumnTest as Commo
 class JsonColumnTest extends CommonClass
 {
     public const DRIVER = 'sqlserver';
+
+    public function testColumnSizeIsIgnored(): void
+    {
+        $this->markTestSkipped('SQLServer stores JSON as `varchar` and its length can be changed.');
+    }
 }
