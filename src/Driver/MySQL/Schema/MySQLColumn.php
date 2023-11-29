@@ -329,6 +329,9 @@ class MySQLColumn extends AbstractColumn
     }
 
     /**
+     * If a size is provided, a varbinary column of the specified size will be created.
+     * Otherwise, a blob type column will be created.
+     *
      * @param int<0, max> $size
      */
     public function binary(int $size = 0): self
