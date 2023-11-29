@@ -475,7 +475,7 @@ abstract class Compiler implements CompilerInterface
 
         $placeholder = '?';
         if ($value->isArray()) {
-            return $this->compileArrayCondition($value->getValue(), $params, $q, $operator === 'IN');
+            return $this->arrayToInOperator($params, $q, $value->getValue(), $operator === 'IN');
         }
 
         if ($value->isNull()) {
@@ -517,7 +517,7 @@ abstract class Compiler implements CompilerInterface
         return $prefix . $expression . $postfix;
     }
 
-    private function compileArrayCondition(array $values, QueryParameters $params, Quoter $q, bool $in): string
+    private function arrayToInOperator(QueryParameters $params, Quoter $q, array $values, bool $in): string
     {
         $operator = $in ? 'IN' : 'NOT IN';
 
@@ -534,6 +534,6 @@ abstract class Compiler implements CompilerInterface
             $params->push(new Parameter($simpleParams));
         }
 
-        return \sprintf('%s (%s)', $operator, \implode(', ', $placeholders));
+        return \sprintf('%s(%s)', $operator, \implode(',', $placeholders));
     }
 }
