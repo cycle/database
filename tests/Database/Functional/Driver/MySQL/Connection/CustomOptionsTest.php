@@ -76,7 +76,7 @@ class CustomOptionsTest extends CommonClass
     {
         $schema = $this->schema('foo');
         $schema->bigPrimary('id', zerofill: true)->unsigned(true);
-        $schema->bigInteger('foo', nullable: true, unsigned: true, zerofill: true);
+        $schema->bigInteger('foo', nullable: true, unsigned: true, zerofill: true, size: 18);
         $schema->save();
 
         $this->assertInstanceOf(MySQLColumn::class, $id = $this->fetchSchema($schema)->column('id'));
@@ -89,6 +89,7 @@ class CustomOptionsTest extends CommonClass
         $this->assertTrue($id->isUnsigned());
         $this->assertTrue($foo->isUnsigned());
         $this->assertSame(20, $id->getSize());
+        $this->assertSame(18, $foo->getSize());
         $this->assertFalse($id->isNullable());
         $this->assertTrue($foo->isNullable());
     }
