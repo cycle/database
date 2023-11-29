@@ -153,7 +153,9 @@ class MySQLColumn extends AbstractColumn
         'json',
     ];
 
-    #[ColumnAttribute(['int', 'tinyint', 'smallint', 'bigint', 'varchar', 'varbinary'])]
+    #[ColumnAttribute(
+        ['int', 'tinyint', 'smallint', 'bigint', 'varchar', 'varbinary', 'time', 'datetime', 'timestamp']
+    )]
     protected int $size = 0;
 
     /**
