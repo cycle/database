@@ -2166,6 +2166,62 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    public function testWhereInWithoutSpecifiedOperator(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->where(
+                'uuid',
+                new Parameter(['12345678-1234-1234-1234-123456789012', '12345678-1234-1234-1234-123456789013'])
+            );
+
+        $this->assertSameQuery('SELECT * FROM {users} WHERE {uuid} IN (?, ?)', $select);
+
+        $this->assertSameParameters(
+            ['12345678-1234-1234-1234-123456789012', '12345678-1234-1234-1234-123456789013'],
+            $select,
+        );
+    }
+
+    public function testWhereInWithEqualSpecifiedOperator(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->where(
+                'uuid',
+                '=',
+                new Parameter(['12345678-1234-1234-1234-123456789012', '12345678-1234-1234-1234-123456789013'])
+            );
+
+        $this->assertSameQuery('SELECT * FROM {users} WHERE {uuid} IN (?, ?)', $select);
+
+        $this->assertSameParameters(
+            ['12345678-1234-1234-1234-123456789012', '12345678-1234-1234-1234-123456789013'],
+            $select,
+        );
+    }
+
+    public function testWhereInWithNotEqualSpecifiedOperator(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->where(
+                'uuid',
+                '!=',
+                new Parameter(['12345678-1234-1234-1234-123456789012', '12345678-1234-1234-1234-123456789013'])
+            );
+
+        $this->assertSameQuery('SELECT * FROM {users} WHERE {uuid} NOT IN (?, ?)', $select);
+
+        $this->assertSameParameters(
+            ['12345678-1234-1234-1234-123456789012', '12345678-1234-1234-1234-123456789013'],
+            $select,
+        );
+    }
+
     public function testFragmentInWhereInClause(): void
     {
         $select = $this->database
