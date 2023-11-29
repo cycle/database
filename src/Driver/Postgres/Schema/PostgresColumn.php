@@ -259,7 +259,7 @@ class PostgresColumn extends AbstractColumn
         'time',
         'timetz',
         'timestamp',
-        'timestamptz'
+        'timestamptz',
     ])]
     protected int $size = 0;
 
