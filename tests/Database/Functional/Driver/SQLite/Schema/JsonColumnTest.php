@@ -14,4 +14,9 @@ use Cycle\Database\Tests\Functional\Driver\Common\Schema\JsonColumnTest as Commo
 class JsonColumnTest extends CommonClass
 {
     public const DRIVER = 'sqlite';
+
+    public function testColumnSizeIsIgnored(): void
+    {
+        $this->markTestSkipped('SQLite stores JSON as `text` and its length can be changed.');
+    }
 }
