@@ -13,6 +13,7 @@ namespace Cycle\Database\Driver\MySQL\Schema;
 
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Exception\DefaultValueException;
+use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Schema\AbstractColumn;
@@ -38,6 +39,8 @@ class MySQLColumn extends AbstractColumn
      * Default timestamp expression (driver specific).
      */
     public const DATETIME_NOW = 'CURRENT_TIMESTAMP';
+
+    public const EXCLUDE_FROM_COMPARE = ['size', 'timezone', 'userType', 'attributes'];
 
     protected const INTEGER_TYPES = ['tinyint', 'smallint', 'mediumint', 'int', 'bigint'];
 
@@ -149,6 +152,11 @@ class MySQLColumn extends AbstractColumn
         'longblob',
         'json',
     ];
+
+    #[ColumnAttribute(
+        ['int', 'tinyint', 'smallint', 'bigint', 'varchar', 'varbinary', 'time', 'datetime', 'timestamp']
+    )]
+    protected int $size = 0;
 
     /**
      * Column is auto incremental.
@@ -288,8 +296,13 @@ class MySQLColumn extends AbstractColumn
 
     public function compare(AbstractColumn $initial): bool
     {
-        assert($initial instanceof self);
-        return ! (!parent::compare($initial));
+        $result = parent::compare($initial);
+
+        if ($this->type === 'varchar' || $this->type === 'varbinary') {
+            return $result && $this->size === $initial->size;
+        }
+
+        return $result;
     }
 
     public function isUnsigned(): bool
@@ -306,6 +319,37 @@ class MySQLColumn extends AbstractColumn
     {
         $this->type('set');
         $this->enumValues = array_map('strval', is_array($values) ? $values : func_get_args());
+
+        return $this;
+    }
+
+    /**
+     * @param int<0, max> $size
+     */
+    public function varbinary(int $size = 255): self
+    {
+        $this->type('varbinary');
+
+        $size < 0 && throw new SchemaException('Invalid varbinary size value');
+
+        $this->size = $size;
+
+        return $this;
+    }
+
+    /**
+     * If a size is provided, a varbinary column of the specified size will be created.
+     * Otherwise, a blob type column will be created.
+     *
+     * @param int<0, max> $size
+     */
+    public function binary(int $size = 0): self
+    {
+        if ($size > 0) {
+            return $this->varbinary($size);
+        }
+
+        $this->type('blob');
 
         return $this;
     }

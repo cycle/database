@@ -251,6 +251,18 @@ class PostgresColumn extends AbstractColumn
         'bit'          => ['bit', 'bit varying'],
     ];
 
+    #[ColumnAttribute([
+        'character varying',
+        'bit',
+        'bit varying',
+        'datetime',
+        'time',
+        'timetz',
+        'timestamp',
+        'timestamptz',
+    ])]
+    protected int $size = 0;
+
     /**
      * Field is auto incremental.
      *

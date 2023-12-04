@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Functional\Driver\Postgres\Schema;
 
 // phpcs:ignore
+use Cycle\Database\Driver\Handler;
 use Cycle\Database\Driver\Postgres\Schema\PostgresColumn;
 use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Tests\Functional\Driver\Common\Schema\DatetimeColumnTest as CommonClass;
@@ -31,6 +32,7 @@ class DatetimeColumnTest extends CommonClass
         $this->assertTrue($column->getAttributes()['withTimezone']);
         $this->assertTrue($savedColumn->getAttributes()['withTimezone']);
         $this->assertSame('timestamptz', $column->getAbstractType());
+        $this->assertSame(0, $column->getSize());
     }
 
     public function testTimestampWithTimezone(): void
@@ -81,6 +83,7 @@ class DatetimeColumnTest extends CommonClass
         $this->assertTrue($column->getAttributes()['withTimezone']);
         $this->assertTrue($savedColumn->getAttributes()['withTimezone']);
         $this->assertSame('timetz', $column->getAbstractType());
+        $this->assertSame(0, $column->getSize());
     }
 
     public function testTimestampWithoutTimezone(): void
@@ -98,6 +101,7 @@ class DatetimeColumnTest extends CommonClass
         $this->assertFalse($column->getAttributes()['withTimezone']);
         $this->assertFalse($savedColumn->getAttributes()['withTimezone']);
         $this->assertSame('timestamp', $column->getAbstractType());
+        $this->assertSame(0, $column->getSize());
     }
 
     public function testTimeWithoutTimezone(): void
@@ -214,5 +218,103 @@ class DatetimeColumnTest extends CommonClass
 
         $this->expectException(SchemaException::class);
         $schema->save();
+    }
+
+    public function testDatetime(): void
+    {
+        $schema = $this->schema('table');
+
+        $schema->primary('id');
+        $schema->datetime('datetime_data');
+        $schema->save(Handler::DO_ALL);
+
+        $this->assertSameAsInDB($schema);
+
+        $this->assertSame('timestamp', $schema->column('datetime_data')->getInternalType());
+        $this->assertSame(0, $schema->column('datetime_data')->getSize());
+    }
+
+    public function testDatetimeWithSize(): void
+    {
+        $schema = $this->schema('table');
+
+        $schema->primary('id');
+        $schema->datetime('datetime_data', 6);
+        $schema->save(Handler::DO_ALL);
+
+        $this->assertSameAsInDB($schema);
+
+        $this->assertSame('timestamp', $schema->column('datetime_data')->getInternalType());
+        $this->assertSame(6, $schema->column('datetime_data')->getSize());
+    }
+
+    public function testTime(): void
+    {
+        $schema = $this->schema('table');
+
+        $schema->primary('id');
+        $schema->time('time_data');
+        $schema->save(Handler::DO_ALL);
+
+        $this->assertSameAsInDB($schema);
+
+        $this->assertSame('time', $schema->column('time_data')->getInternalType());
+        $this->assertSame(0, $schema->column('time_data')->getSize());
+    }
+
+    public function testTimeWithSize(): void
+    {
+        $schema = $this->schema('table');
+
+        $schema->primary('id');
+        $schema->time('time_data', size: 6);
+        $schema->save(Handler::DO_ALL);
+
+        $this->assertSameAsInDB($schema);
+
+        $this->assertSame('time', $schema->column('time_data')->getInternalType());
+        $this->assertSame(6, $schema->column('time_data')->getSize());
+    }
+
+    public function testTimeTzWithSize(): void
+    {
+        $schema = $this->schema('table');
+
+        $schema->primary('id');
+        $schema->timetz('time_data', size: 6);
+        $schema->save(Handler::DO_ALL);
+
+        $this->assertSameAsInDB($schema);
+
+        $this->assertSame('time', $schema->column('time_data')->getInternalType());
+        $this->assertSame(6, $schema->column('time_data')->getSize());
+    }
+
+    public function testTimestampWithSize(): void
+    {
+        $schema = $this->schema('table');
+
+        $schema->primary('id');
+        $schema->timestamp('timestamp_data', size: 6);
+        $schema->save(Handler::DO_ALL);
+
+        $this->assertSameAsInDB($schema);
+
+        $this->assertSame('timestamp', $schema->column('timestamp_data')->getInternalType());
+        $this->assertSame(6, $schema->column('timestamp_data')->getSize());
+    }
+
+    public function testTimestampTzWithSize(): void
+    {
+        $schema = $this->schema('table');
+
+        $schema->primary('id');
+        $schema->timestamptz('timestamp_data', size: 6);
+        $schema->save(Handler::DO_ALL);
+
+        $this->assertSameAsInDB($schema);
+
+        $this->assertSame('timestamp', $schema->column('timestamp_data')->getInternalType());
+        $this->assertSame(6, $schema->column('timestamp_data')->getSize());
     }
 }

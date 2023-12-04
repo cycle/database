@@ -14,6 +14,7 @@ namespace Cycle\Database\Driver\SQLServer\Schema;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Schema\AbstractColumn;
+use Cycle\Database\Schema\Attribute\ColumnAttribute;
 
 class SQLServerColumn extends AbstractColumn
 {
@@ -38,6 +39,15 @@ class SQLServerColumn extends AbstractColumn
         'defaultConstraint',
         'constrainedEnum',
         'enumConstraint',
+        'attributes',
+    ];
+
+    protected array $aliases = [
+        'int'       => 'integer',
+        'smallint'  => 'smallInteger',
+        'bigint'    => 'bigInteger',
+        'bool'      => 'boolean',
+        'varbinary' => 'binary',
     ];
 
     protected array $mapping = [
@@ -109,6 +119,9 @@ class SQLServerColumn extends AbstractColumn
         'time'        => ['time'],
         'binary'      => ['varbinary'],
     ];
+
+    #[ColumnAttribute(['varchar', 'datetime2', 'varbinary'])]
+    protected int $size = 0;
 
     /**
      * Field is table identity.

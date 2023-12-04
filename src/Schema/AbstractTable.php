@@ -668,7 +668,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     }
 
     /**
-     * Ensure that no wrong indexes left in table. This method will create AbstracTable
+     * Ensure that no wrong indexes left in table. This method will create AbstractTable
      * copy in order to prevent cross modifications.
      */
     protected function normalizeSchema(bool $withForeignKeys = true): self
