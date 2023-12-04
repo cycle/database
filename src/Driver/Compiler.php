@@ -475,15 +475,14 @@ abstract class Compiler implements CompilerInterface
 
         $placeholder = '?';
         if ($value->isArray()) {
-            if ($operator === '=') {
-                $operator = 'IN';
-            } elseif ($operator === '!=') {
-                $operator = 'NOT IN';
-            }
+            return $this->arrayToInOperator($params, $q, $value->getValue(), match (\strtoupper($operator)) {
+                'IN', '=' => true,
+                'NOT IN', '!=' => false,
+                default => throw CompilerException\UnexpectedOperatorException::sequence($operator),
+            });
+        }
 
-            $placeholder = '(' . rtrim(str_repeat('? ,', count($value->getValue())), ', ') . ')';
-            $params->push($value);
-        } elseif ($value->isNull()) {
+        if ($value->isNull()) {
             if ($operator === '=') {
                 $operator = 'IS';
             } elseif ($operator === '!=') {
@@ -520,5 +519,25 @@ abstract class Compiler implements CompilerInterface
         }
 
         return $prefix . $expression . $postfix;
+    }
+
+    private function arrayToInOperator(QueryParameters $params, Quoter $q, array $values, bool $in): string
+    {
+        $operator = $in ? 'IN' : 'NOT IN';
+
+        $placeholders = $simpleParams = [];
+        foreach ($values as $value) {
+            if ($value instanceof FragmentInterface) {
+                $placeholders[] = $this->fragment($params, $q, $value);
+            } else {
+                $placeholders[] = '?';
+                $simpleParams[] = $value;
+            }
+        }
+        if ($simpleParams !== []) {
+            $params->push(new Parameter($simpleParams));
+        }
+
+        return \sprintf('%s(%s)', $operator, \implode(',', $placeholders));
     }
 }

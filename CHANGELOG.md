@@ -1,5 +1,11 @@
 # CHANGELOG
 
+v2.7.0 (04.12.2023)
+-------------------
+- Add `varbinary` support in MySQL; optimize `size` attribute by @msmakouz (#146)
+- Add the ability to use WHERE IN and WHERE NOT IN with array values
+  The value sequence may contain `FragmentInterface` objets by @msmakouz and @roxblnfk (#147)
+
 v2.6.0 (02.11.2023)
 -------------------
 - Fix incorrect parameters processing for JOIN subqueries by @smelesh (#133)

@@ -13,9 +13,8 @@ namespace Cycle\Database\Query\Traits;
 
 use Closure;
 use Cycle\Database\Exception\BuilderException;
-use Cycle\Database\Injection\FragmentInterface;
-use Cycle\Database\Injection\Parameter;
-use Cycle\Database\Injection\ParameterInterface;
+use Cycle\Database\Injection\FragmentInterface as Fragment;
+use Cycle\Database\Injection\ParameterInterface as Parameter;
 
 trait WhereTrait
 {
@@ -108,12 +107,8 @@ trait WhereTrait
      */
     protected function whereWrapper(): Closure
     {
-        return static function ($parameter) {
-            \is_array($parameter) and throw new BuilderException('Arrays must be wrapped with Parameter instance.');
-
-            return !$parameter instanceof ParameterInterface && !$parameter instanceof FragmentInterface
-                ? new Parameter($parameter)
-                : $parameter;
-        };
+        return static fn ($parameter) => $parameter instanceof Parameter || $parameter instanceof Fragment
+            ? $parameter
+            : new \Cycle\Database\Injection\Parameter($parameter);
     }
 }
