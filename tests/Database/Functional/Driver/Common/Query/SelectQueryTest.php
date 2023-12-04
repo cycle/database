@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Functional\Driver\Common\Query;
 
 use Cycle\Database\Exception\BuilderException;
+use Cycle\Database\Exception\CompilerException\UnexpectedOperatorException;
 use Cycle\Database\Injection\Expression;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Injection\Parameter;
@@ -334,12 +335,13 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testSelectInvalidArrayArgument(): void
     {
-        $this->expectException(BuilderException::class);
+        $this->expectException(UnexpectedOperatorException::class);
 
         $this->database->select()->distinct()
             ->from(['users'])
             ->where('name', 'Anton')
-            ->orWhere('id', 'like', [1, 2, 3]);
+            ->orWhere('id', 'like', [1, 2, 3])
+            ->sqlStatement();
     }
 
     public function testSelectWithWhereOrWhereAndWhere(): void
@@ -1917,16 +1919,16 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testBadArrayParameterInShortWhere(): void
     {
-        $this->expectException(BuilderException::class);
-        $this->expectExceptionMessage('Arrays must be wrapped with Parameter instance');
+        $this->expectException(UnexpectedOperatorException::class);
 
-        $this->database->select()
-                       ->from(['users'])
-                       ->where(
-                           [
-                               'status' => ['LIKE' => ['active', 'blocked']],
-                           ]
-                       );
+        $this->database
+            ->select()
+            ->from(['users'])
+            ->where(
+                [
+                    'status' => ['LIKE' => ['active', 'blocked']],
+                ]
+            )->sqlStatement();
     }
 
     public function testGoodArrayParameter(): void
@@ -2193,12 +2195,21 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 'uuid',
                 '=',
                 new Parameter(['12345678-1234-1234-1234-123456789012', '12345678-1234-1234-1234-123456789013'])
+            )->orWhere(
+                'uuid',
+                '=',
+                ['23456789-1234-1234-1234-123456789012', '23456789-1234-1234-1234-123456789013']
             );
 
-        $this->assertSameQuery('SELECT * FROM {users} WHERE {uuid} IN (?, ?)', $select);
+        $this->assertSameQuery('SELECT * FROM {users} WHERE {uuid} IN (?, ?) OR {uuid} IN (?, ?)', $select);
 
         $this->assertSameParameters(
-            ['12345678-1234-1234-1234-123456789012', '12345678-1234-1234-1234-123456789013'],
+            [
+                '12345678-1234-1234-1234-123456789012',
+                '12345678-1234-1234-1234-123456789013',
+                '23456789-1234-1234-1234-123456789012',
+                '23456789-1234-1234-1234-123456789013',
+            ],
             $select,
         );
     }
@@ -2212,12 +2223,21 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 'uuid',
                 '!=',
                 new Parameter(['12345678-1234-1234-1234-123456789012', '12345678-1234-1234-1234-123456789013'])
+            )->orWhere(
+                'uuid',
+                '!=',
+                ['23456789-1234-1234-1234-123456789012', '23456789-1234-1234-1234-123456789013']
             );
 
-        $this->assertSameQuery('SELECT * FROM {users} WHERE {uuid} NOT IN (?, ?)', $select);
+        $this->assertSameQuery('SELECT * FROM {users} WHERE {uuid} NOT IN (?, ?) OR {uuid} NOT IN (?, ?)', $select);
 
         $this->assertSameParameters(
-            ['12345678-1234-1234-1234-123456789012', '12345678-1234-1234-1234-123456789013'],
+            [
+                '12345678-1234-1234-1234-123456789012',
+                '12345678-1234-1234-1234-123456789013',
+                '23456789-1234-1234-1234-123456789012',
+                '23456789-1234-1234-1234-123456789013',
+            ],
             $select,
         );
     }

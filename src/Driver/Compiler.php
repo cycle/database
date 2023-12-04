@@ -475,7 +475,11 @@ abstract class Compiler implements CompilerInterface
 
         $placeholder = '?';
         if ($value->isArray()) {
-            return $this->arrayToInOperator($params, $q, $value->getValue(), $operator === 'IN' || $operator === '=');
+            return $this->arrayToInOperator($params, $q, $value->getValue(), match (\strtoupper($operator)) {
+                'IN', '=' => true,
+                'NOT IN', '!=' => false,
+                default => throw CompilerException\UnexpectedOperatorException::sequence($operator),
+            });
         }
 
         if ($value->isNull()) {
