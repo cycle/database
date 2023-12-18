@@ -6,7 +6,7 @@ namespace Cycle\Database\Tests\Functional\Driver\MySQL\Schema;
 
 // phpcs:ignore
 use Cycle\Database\Driver\Handler;
-use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
+use Cycle\Database\Tests\Functional\Driver\Common\Schema\NumberColumnTest as BaseTest;
 
 /**
  * @group driver
