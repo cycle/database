@@ -13,6 +13,7 @@ namespace Cycle\Database\Driver\SQLite\Schema;
 
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Schema\AbstractColumn;
+use Cycle\Database\Schema\Attribute\ColumnAttribute;
 
 class SQLiteColumn extends AbstractColumn
 {
@@ -112,6 +113,12 @@ class SQLiteColumn extends AbstractColumn
      * Indication that column is primary key.
      */
     protected bool $primaryKey = false;
+
+    #[ColumnAttribute(['numeric'])]
+    protected int $precision = 0;
+
+    #[ColumnAttribute(['numeric'])]
+    protected int $scale = 0;
 
     /**
      * DBMS specific reverse mapping must map database specific type into limited set of abstract

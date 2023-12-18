@@ -286,6 +286,12 @@ class PostgresColumn extends AbstractColumn
     #[ColumnAttribute(['interval'])]
     protected ?string $intervalType = null;
 
+    #[ColumnAttribute(['numeric'])]
+    protected int $precision = 0;
+
+    #[ColumnAttribute(['numeric'])]
+    protected int $scale = 0;
+
     /**
      * Internal field to determine if the serial is PK.
      */
