@@ -19,6 +19,17 @@ abstract class StringColumnTest extends BaseTest
         $this->assertSame(255, $column->getSize());
     }
 
+    public function testStringDefaultSizeViaMagicMethod(): void
+    {
+        $schema = $this->schema('table');
+
+        $column = $schema->column('column')->__call('string');
+        $schema->save();
+        $this->assertSameAsInDB($schema);
+
+        $this->assertSame(255, $column->getSize());
+    }
+
     public function testStringSize(): void
     {
         $schema = $this->schema('table');

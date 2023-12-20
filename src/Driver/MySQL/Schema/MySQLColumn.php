@@ -106,6 +106,7 @@ class MySQLColumn extends AbstractColumn
         'binary'      => 'blob',
         'tinyBinary'  => 'tinyblob',
         'longBinary'  => 'longblob',
+        'varbinary'   => ['type' => 'varbinary', 'size' => 255],
 
         //Additional types
         'json'        => 'json',

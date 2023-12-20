@@ -57,6 +57,20 @@ final class BinaryColumnTest extends BaseTest
         $this->assertSame(255, $schema->column('binary_data')->getSize());
     }
 
+    public function testVarbinaryDefaultSizeViaMagicMethod(): void
+    {
+        $schema = $this->schema('table');
+
+        $schema->primary('id');
+        $schema->column('binary_data')->__call('varbinary');
+        $schema->save(Handler::DO_ALL);
+
+        $this->assertSameAsInDB($schema);
+
+        $this->assertSame('varbinary', $schema->column('binary_data')->getInternalType());
+        $this->assertSame(255, $schema->column('binary_data')->getSize());
+    }
+
     public function testVarbinaryWithSize(): void
     {
         $schema = $this->schema('table');

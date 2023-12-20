@@ -59,7 +59,7 @@ class SQLiteColumn extends AbstractColumn
         'bigInteger'  => 'bigint',
 
         //String with specified length (mapped via method)
-        'string'      => 'text',
+        'string'      => ['type' => 'text', 'size' => 255],
 
         //Generic types
         'text'        => 'text',

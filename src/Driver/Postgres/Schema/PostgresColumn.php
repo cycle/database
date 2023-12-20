@@ -139,7 +139,7 @@ class PostgresColumn extends AbstractColumn
         'bigInteger'   => 'bigint',
 
         //String with specified length (mapped via method)
-        'string'       => 'character varying',
+        'string'       => ['type' => 'character varying', 'size' => 255],
 
         //Generic types
         'text'         => 'text',
