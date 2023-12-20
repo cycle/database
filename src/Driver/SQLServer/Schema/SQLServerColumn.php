@@ -69,7 +69,7 @@ class SQLServerColumn extends AbstractColumn
         'bigInteger'  => 'bigint',
 
         //String with specified length (mapped via method)
-        'string'      => 'varchar',
+        'string'      => ['type' => 'varchar', 'size' => 255],
 
         //Generic types
         'text'        => ['type' => 'varchar', 'size' => 0],
