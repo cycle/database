@@ -136,7 +136,7 @@ final class Quoter
     private function expression(string $identifier): string
     {
         return preg_replace_callback(
-            '/([a-z][0-9_a-z\.]*\(?)/i',
+            '/([_a-z][0-9_a-z\.]*\(?)/i',
             function ($match) {
                 $identifier = $match[1];
 
