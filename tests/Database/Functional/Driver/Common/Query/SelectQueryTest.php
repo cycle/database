@@ -2280,7 +2280,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             ->on('SC3271.ID', '=', '_1SCONST2.OBJID');
 
         $this->assertSameQuery(
-            'SELECT * FROM {users} LEFT JOIN {_1SCONST} _1SCONST2([NOLOCK]) ON {SC3271}.{ID} = {_1SCONST2}.{OBJID}',
+            'SELECT * FROM {users} LEFT JOIN {_1SCONST} _1SCONST2({NOLOCK}) ON {SC3271}.{ID} = {_1SCONST2}.{OBJID}',
             $select
         );
     }
