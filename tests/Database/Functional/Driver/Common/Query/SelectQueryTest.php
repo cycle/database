@@ -2267,4 +2267,21 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             $select
         );
     }
+
+    /**
+     * Issue https://github.com/cycle/database/issues/49
+     */
+    public function testLeftJoinQuoting(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->leftJoin('_1SCONST _1SCONST2(NOLOCK)')
+            ->on('SC3271.ID', '=', '_1SCONST2.OBJID');
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} LEFT JOIN {_1SCONST} _1SCONST2([NOLOCK]) ON {SC3271}.{ID} = {_1SCONST2}.{OBJID}',
+            $select
+        );
+    }
 }
