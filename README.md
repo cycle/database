@@ -31,8 +31,8 @@ Make sure that your server is configured with following PHP version and extensio
 
 To install the component:
 
-```
-$ composer require cycle/database
+```bash
+composer require cycle/database
 ```
 
 ## Example

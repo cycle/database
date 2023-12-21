@@ -2,10 +2,42 @@
     "name": "cycle/database",
     "type": "library",
     "description": "DBAL, schema introspection, migration and pagination",
+    "keywords": ["dbal", "database", "mysql", "mssql", "sqlite", "postgresql", "orm", "sql", "query-builder"],
     "license": "MIT",
     "conflict": {
         "spiral/database": "*"
     },
+    "homepage": "https://cycle-orm.dev",
+    "support": {
+        "issues": "https://github.com/cycle/database/issues",
+        "source": "https://github.com/cycle/database",
+        "docs": "https://cycle-orm.dev/docs",
+        "chat": "https://discord.gg/TFeEmCs"
+    },
+    "funding": [
+        {
+            "type": "github",
+            "url": "https://github.com/sponsors/roadrunner-server"
+        }
+    ],
+    "authors": [
+        {
+            "name": "Anton Titov (wolfy-j)",
+            "email": "wolfy-j@spiralscout.com"
+        },
+        {
+            "name": "Aleksei Gagarin (roxblnfk)",
+            "email": "alexey.gagarin@spiralscout.com"
+        },
+        {
+            "name": "Maksim Smakouz (msmakouz)",
+            "email": "maksim.smakouz@spiralscout.com"
+        },
+        {
+            "name": "Pavel Butchnev (butschster)",
+            "email": "pavel.buchnev@spiralscout.com"
+        }
+    ],
     "require": {
         "php": ">=8.0",
         "ext-pdo": "*",
@@ -27,8 +59,8 @@
         "infection/infection": "^0.26.10",
         "mockery/mockery": "^1.5",
         "phpunit/phpunit": "^9.5",
-        "spiral/tokenizer": "^2.13",
-        "vimeo/psalm": "^4.23"
+        "spiral/tokenizer": "^2.14 | ^3.0",
+        "vimeo/psalm": "^5.18"
     },
     "autoload-dev": {
         "psr-4": {

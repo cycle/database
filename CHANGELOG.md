@@ -1,5 +1,11 @@
 # CHANGELOG
 
+v2.7.1 (22.12.2023)
+-------------------
+- Fix setting `precision` and `scale` through attributes by @msmakouz (#148)
+- Fix quoting with an underscore at the beginning by @msmakouz (#151)
+- Fix behavior of the `Column::type()` method by adding default size to column type mappings by @msmakouz (#150)
+
 v2.7.0 (04.12.2023)
 -------------------
 - Add `varbinary` support in MySQL; optimize `size` attribute by @msmakouz (#146)
