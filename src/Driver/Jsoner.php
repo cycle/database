@@ -27,7 +27,7 @@ final class Jsoner
     public static function toJson(mixed $value, bool $encode = true, bool $validate = true): string
     {
         if ($encode) {
-            return \json_encode($value, \JSON_UNESCAPED_UNICODE|\JSON_THROW_ON_ERROR);
+            return \json_encode($value, \JSON_UNESCAPED_UNICODE | \JSON_THROW_ON_ERROR);
         }
 
         $result = (string)$value;

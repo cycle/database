@@ -51,7 +51,7 @@ abstract class BaseTest extends TestCase
     {
         $hash = \hash('crc32', static::DRIVER . ':' . \json_encode($driverConfig) . \json_encode($connectionConfig));
 
-        if (! isset(self::$memoizedDrivers[$hash])) {
+        if (!isset(self::$memoizedDrivers[$hash])) {
             $config = clone self::$config[static::DRIVER];
             assert($config instanceof DriverConfig);
 
