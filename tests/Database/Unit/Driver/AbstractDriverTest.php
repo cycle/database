@@ -147,6 +147,36 @@ class AbstractDriverTest extends TestCase
         );
     }
 
+    public function testLogsWithEnabledInterpolationAndWithDatetimeMicroseconds(): void
+    {
+        $pdo = $this->createMock(PDOInterface::class);
+        $pdo
+            ->expects($this->once())
+            ->method('prepare')
+            ->willReturn($this->createMock(PDOStatementInterface::class));
+
+        $driver = TestDriver::createWith(
+            new SQLiteDriverConfig(options: ['logQueryParameters' => true, 'withDatetimeMicroseconds' => true]),
+            $this->createMock(HandlerInterface::class),
+            $this->createMock(BuilderInterface::class),
+            $pdo
+        );
+
+        $date = new \DateTime('now');
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger
+            ->expects($this->once())
+            ->method('info')
+            ->with(\sprintf(
+                'SELECT * FROM sample_table WHERE name = \'%s\' AND registered > \'%s\'',
+                'John Doe',
+                $date->format('Y-m-d H:i:s.u')
+            ));
+        $driver->setLogger($logger);
+
+        $driver->query('SELECT * FROM sample_table WHERE name = ? AND registered > ?', ['John Doe', $date]);
+    }
+
     public function testUseCacheFromConfig(): void
     {
         $ref = new \ReflectionProperty(Driver::class, 'useCache');
