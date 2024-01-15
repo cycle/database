@@ -51,7 +51,7 @@ final class Interpolator
 
         return \preg_replace_callback(
             '/(?<dq>"(?:\\\\\"|[^"])*")|(?<sq>\'(?:\\\\\'|[^\'])*\')|(?<ph>\\?)|(?<named>:[a-z_\\d]+)/',
-            static function ($match) use (&$named, &$unnamed, $options): string {
+            static function ($match) use (&$named, &$unnamed, $options) {
                 $key = match (true) {
                     isset($match['named']) && '' !== $match['named'] => \ltrim($match['named'], ':'),
                     isset($match['ph']) => $match['ph'],
