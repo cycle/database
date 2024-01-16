@@ -22,6 +22,9 @@ use Stringable;
  */
 final class Interpolator
 {
+    private const DEFAULT_DATETIME_FORMAT = DateTimeInterface::ATOM;
+    private const DATETIME_WITH_MICROSECONDS_FORMAT = 'Y-m-d H:i:s.u';
+
     /**
      * Injects parameters into statement. For debug purposes only.
      *
@@ -29,7 +32,7 @@ final class Interpolator
      *
      * @return non-empty-string
      */
-    public static function interpolate(string $query, iterable $parameters = []): string
+    public static function interpolate(string $query, iterable $parameters = [], array $options = []): string
     {
         if ($parameters === []) {
             return $query;
@@ -48,7 +51,7 @@ final class Interpolator
 
         return \preg_replace_callback(
             '/(?<dq>"(?:\\\\\"|[^"])*")|(?<sq>\'(?:\\\\\'|[^\'])*\')|(?<ph>\\?)|(?<named>:[a-z_\\d]+)/',
-            static function ($match) use (&$named, &$unnamed) {
+            static function ($match) use (&$named, &$unnamed, $options) {
                 $key = match (true) {
                     isset($match['named']) && '' !== $match['named'] => \ltrim($match['named'], ':'),
                     isset($match['ph']) => $match['ph'],
@@ -63,9 +66,9 @@ final class Interpolator
 
                         $value = \current($unnamed);
                         \next($unnamed);
-                        return self::resolveValue($value);
+                        return self::resolveValue($value, $options);
                     case isset($named[$key]) || \array_key_exists($key, $named):
-                        return self::resolveValue($named[$key]);
+                        return self::resolveValue($named[$key], $options);
                     default:
                         return $match[0];
                 }
@@ -79,10 +82,10 @@ final class Interpolator
      *
      * @psalm-return non-empty-string
      */
-    private static function resolveValue(mixed $parameter): string
+    private static function resolveValue(mixed $parameter, array $options): string
     {
         if ($parameter instanceof ParameterInterface) {
-            return self::resolveValue($parameter->getValue());
+            return self::resolveValue($parameter->getValue(), $options);
         }
 
         /** @since PHP 8.1 */
@@ -112,7 +115,11 @@ final class Interpolator
                 }
 
                 if ($parameter instanceof DateTimeInterface) {
-                    return "'" . $parameter->format(DateTimeInterface::ATOM) . "'";
+                    $format = $options['withDatetimeMicroseconds'] ?? false
+                        ? self::DATETIME_WITH_MICROSECONDS_FORMAT
+                        : self::DEFAULT_DATETIME_FORMAT;
+
+                    return "'" . $parameter->format($format) . "'";
                 }
         }
 

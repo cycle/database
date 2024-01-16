@@ -477,7 +477,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
         } finally {
             if ($this->logger !== null) {
                 $queryString = $this->config->options['logQueryParameters']
-                    ? Interpolator::interpolate($query, $parameters)
+                    ? Interpolator::interpolate($query, $parameters, $this->config->options)
                     : $query;
                 $context = $this->defineLoggerContext($queryStart, $statement ?? null);
 

@@ -55,7 +55,7 @@ class SQLiteColumn extends AbstractColumn
         //bigInteger
         'integer'     => 'integer',
         'tinyInteger' => 'tinyint',
-        'smallInteger'=> 'smallint',
+        'smallInteger' => 'smallint',
         'bigInteger'  => 'bigint',
 
         //String with specified length (mapped via method)
@@ -95,7 +95,7 @@ class SQLiteColumn extends AbstractColumn
         'boolean'     => ['boolean'],
         'integer'     => ['int', 'integer', 'mediumint'],
         'tinyInteger' => ['tinyint'],
-        'smallInteger'=> ['smallint'],
+        'smallInteger' => ['smallint'],
         'bigInteger'  => ['bigint'],
         'text'        => ['text', 'string'],
         'double'      => ['double'],

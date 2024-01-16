@@ -161,7 +161,7 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
 
         if ($driverObject instanceof LoggerAwareInterface) {
             $logger = $this->getLoggerForDriver($driverObject);
-            if (! $logger instanceof NullLogger) {
+            if (!$logger instanceof NullLogger) {
                 $driverObject->setLogger($logger);
             }
         }
@@ -200,7 +200,7 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
 
     private function getLoggerForDriver(DriverInterface $driver): LoggerInterface
     {
-        if (! $this->loggerFactory) {
+        if (!$this->loggerFactory) {
             return $this->logger ??= new NullLogger();
         }
 

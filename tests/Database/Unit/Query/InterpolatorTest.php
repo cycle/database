@@ -91,6 +91,24 @@ class InterpolatorTest extends TestCase
         );
     }
 
+    public function testDatesWithMicrosecondsInterpolation(): void
+    {
+        $query = 'SELECT * FROM table WHERE name = :name AND registered > :registered';
+
+        $parameters = [
+            ':name' => new Parameter('John Doe'),
+            ':registered' => new Parameter($date = new \DateTime('now')),
+        ];
+
+        $interpolated = Interpolator::interpolate($query, $parameters, ['withDatetimeMicroseconds' => true]);
+
+        $this->assertSame(
+            'SELECT * FROM table WHERE name = \'John Doe\' AND registered > \''
+            . $date->format('Y-m-d H:i:s.u') . '\'',
+            $interpolated
+        );
+    }
+
     public function testDateInterpolationWithDateTimeImmutable(): void
     {
         $query = 'SELECT * FROM table WHERE name = :name AND registered > :registered';
