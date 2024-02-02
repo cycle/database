@@ -20,6 +20,7 @@ use Cycle\Database\Query\ReturningInterface;
 use Cycle\Database\Query\InsertQuery;
 use Cycle\Database\Query\QueryInterface;
 use Cycle\Database\Query\QueryParameters;
+use Cycle\Database\StatementInterface;
 use Throwable;
 
 /**
@@ -30,7 +31,11 @@ class PostgresInsertQuery extends InsertQuery implements ReturningInterface
     /** @var PostgresDriver|null */
     protected ?DriverInterface $driver = null;
 
+    /** @deprecated */
     protected ?string $returning = null;
+
+    /** @var list<FragmentInterface|non-empty-string> */
+    protected array $returningColumns = [];
 
     public function withDriver(DriverInterface $driver, string $prefix = null): QueryInterface
     {
@@ -48,13 +53,9 @@ class PostgresInsertQuery extends InsertQuery implements ReturningInterface
     {
         $columns === [] and throw new BuilderException('RETURNING clause should contain at least 1 column.');
 
-        if (count($columns) > 1) {
-            throw new BuilderException(
-                'Postgres driver supports only single column returning at this moment.'
-            );
-        }
+        $this->returning = \count($columns) === 1 ? \reset($columns) : null;
 
-        $this->returning = (string)$columns[0];
+        $this->returningColumns = \array_values($columns);
 
         return $this;
     }
@@ -69,6 +70,15 @@ class PostgresInsertQuery extends InsertQuery implements ReturningInterface
         $result = $this->driver->query($queryString, $params->getParameters());
 
         try {
+            if ($this->returningColumns !== []) {
+                if (\count($this->returningColumns) === 1) {
+                    return $result->fetchColumn();
+                }
+
+                return $result->fetch(StatementInterface::FETCH_ASSOC);
+            }
+
+            // Return PK if no RETURNING clause is set
             if ($this->getPrimaryKey() !== null) {
                 return $result->fetchColumn();
             }
@@ -83,7 +93,7 @@ class PostgresInsertQuery extends InsertQuery implements ReturningInterface
     {
         return [
             'table' => $this->table,
-            'return' => $this->getPrimaryKey(),
+            'return' => $this->returningColumns,
             'columns' => $this->columns,
             'values' => $this->values,
         ];
@@ -91,15 +101,10 @@ class PostgresInsertQuery extends InsertQuery implements ReturningInterface
 
     private function getPrimaryKey(): ?string
     {
-        $primaryKey = $this->returning;
-        if ($primaryKey === null && $this->driver !== null && $this->table !== null) {
-            try {
-                $primaryKey = $this->driver->getPrimaryKey($this->prefix, $this->table);
-            } catch (Throwable) {
-                return null;
-            }
+        try {
+            return $this->driver?->getPrimaryKey($this->prefix, $this->table);
+        } catch (Throwable) {
+            return null;
         }
-
-        return $primaryKey;
     }
 }

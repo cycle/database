@@ -29,14 +29,14 @@ class PostgresCompiler extends Compiler implements CachingCompilerInterface
     {
         $result = parent::insertQuery($params, $q, $tokens);
 
-        if ($tokens['return'] === null) {
+        if (empty($tokens['return'])) {
             return $result;
         }
 
-        return sprintf(
+        return \sprintf(
             '%s RETURNING %s',
             $result,
-            $this->quoteIdentifier($tokens['return'])
+            \implode(',', \array_map([$this, 'quoteIdentifier'], $tokens['return']))
         );
     }
 
