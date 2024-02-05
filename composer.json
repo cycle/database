@@ -12,12 +12,12 @@
         "issues": "https://github.com/cycle/database/issues",
         "source": "https://github.com/cycle/database",
         "docs": "https://cycle-orm.dev/docs",
-        "chat": "https://discord.gg/TFeEmCs"
+        "chat": "https://discord.gg/spiralphp"
     },
     "funding": [
         {
             "type": "github",
-            "url": "https://github.com/sponsors/roadrunner-server"
+            "url": "https://github.com/sponsors/cycle"
         }
     ],
     "authors": [
