@@ -14,6 +14,7 @@ namespace Cycle\Database\Driver\Postgres;
 use Cycle\Database\Driver\CachingCompilerInterface;
 use Cycle\Database\Driver\Compiler;
 use Cycle\Database\Driver\Quoter;
+use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\QueryParameters;
 
@@ -29,14 +30,19 @@ class PostgresCompiler extends Compiler implements CachingCompilerInterface
     {
         $result = parent::insertQuery($params, $q, $tokens);
 
-        if ($tokens['return'] === null) {
+        if (empty($tokens['return'])) {
             return $result;
         }
 
-        return sprintf(
+        return \sprintf(
             '%s RETURNING %s',
             $result,
-            $this->quoteIdentifier($tokens['return'])
+            \implode(',', \array_map(
+                fn (string|FragmentInterface|null $return) => $return instanceof FragmentInterface
+                    ? (string) $return
+                    : $this->quoteIdentifier($return),
+                $tokens['return']
+            ))
         );
     }
 

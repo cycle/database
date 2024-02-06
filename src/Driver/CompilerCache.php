@@ -89,7 +89,12 @@ final class CompilerCache implements CompilerInterface
      */
     protected function hashInsertQuery(QueryParameters $params, array $tokens): string
     {
-        $hash = 'i_' . $tokens['table'] . implode('_', $tokens['columns']) . '_r' . ($tokens['return'] ?? '');
+        $hash = \sprintf(
+            'i_%s%s_r%s',
+            $tokens['table'],
+            \implode('_', $tokens['columns']),
+            \implode('_', (array)($tokens['return'] ?? []))
+        );
         foreach ($tokens['values'] as $value) {
             if ($value instanceof FragmentInterface) {
                 if ($value instanceof Expression || $value instanceof Fragment) {

@@ -112,8 +112,9 @@ class InsertQuery extends ActiveQuery
 
     /**
      * Run the query and return last insert id.
+     * Returns an assoc array of values if multiple columns were specified as returning columns.
      *
-     * @psalm-return int|non-empty-string|null
+     * @return array<non-empty-string, mixed>|int|non-empty-string|null
      */
     public function run(): mixed
     {
