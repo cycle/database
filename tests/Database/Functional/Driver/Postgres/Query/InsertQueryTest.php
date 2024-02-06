@@ -161,6 +161,31 @@ class InsertQueryTest extends CommonClass
         $this->assertNotFalse(\strtotime($returning['created_at']));
     }
 
+    public function testReturningSingleValueFromDatabase(): void
+    {
+        $schema = $this->schema('returning_value');
+        $schema->primary('id');
+        $schema->string('name');
+        $schema->serial('sort');
+        $schema->save();
+
+        $returning = $this->database
+            ->insert('returning_value')
+            ->values(['name' => 'foo'])
+            ->returning('sort')
+            ->run();
+
+        $this->assertSame(1, $returning);
+
+        $returning = $this->database
+            ->insert('returning_value')
+            ->values(['name' => 'foo'])
+            ->returning(new Fragment('"sort" as "number"'))
+            ->run();
+
+        $this->assertSame(2, $returning);
+    }
+
     public function testCustomReturningShouldContainColumns(): void
     {
         $this->expectException(BuilderException::class);
