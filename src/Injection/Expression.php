@@ -18,7 +18,7 @@ use Cycle\Database\Driver\CompilerInterface;
  * table and column names. This class will quote and prefix every found table name and column while
  * query compilation.
  *
- * Example: new SQLExpression("table.column = table.column + 1");
+ * Example: new Expression("table.column = table.column + 1");
  *
  * I potentially should have an interface for such class.
  */

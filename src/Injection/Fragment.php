@@ -14,10 +14,10 @@ namespace Cycle\Database\Injection;
 use Cycle\Database\Driver\CompilerInterface;
 
 /**
- * Default implementation of SQLFragmentInterface, provides ability to inject custom SQL code into
+ * Default implementation of FragmentInterface, provides ability to inject custom SQL code into
  * query builders. Usually used to mock database specific functions.
  *
- * Example: ...->where('time_created', '>', new SQLFragment("NOW()"));
+ * Example: ...->where('time_created', '>', new Fragment("NOW()"));
  */
 class Fragment implements FragmentInterface, \Stringable
 {
