@@ -53,7 +53,7 @@ class PostgresInsertQuery extends InsertQuery implements ReturningInterface
     {
         $columns === [] and throw new BuilderException('RETURNING clause should contain at least 1 column.');
 
-        $this->returning = \count($columns) === 1 ? \reset($columns) : null;
+        $this->returning = \count($columns) === 1 ? (string) \reset($columns) : null;
 
         $this->returningColumns = \array_values($columns);
 
@@ -93,7 +93,7 @@ class PostgresInsertQuery extends InsertQuery implements ReturningInterface
     {
         return [
             'table' => $this->table,
-            'return' => $this->returningColumns,
+            'return' => $this->returningColumns !== [] ? $this->returningColumns : (array) $this->getPrimaryKey(),
             'columns' => $this->columns,
             'values' => $this->values,
         ];

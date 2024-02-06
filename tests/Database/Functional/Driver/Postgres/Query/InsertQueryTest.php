@@ -115,17 +115,6 @@ class InsertQueryTest extends CommonClass
             ->returning();
     }
 
-    public function testCustomReturningSupportsOnlySingleColumn(): void
-    {
-        $this->expectException(BuilderException::class);
-        $this->expectExceptionMessage('Postgres driver supports only single column returning at this moment.');
-
-        $this->database->insert()->into('table')
-            ->columns('name', 'balance')
-            ->values('Anton', 100)
-            ->returning('name', 'id');
-    }
-
     public function testInsertMicroseconds(): void
     {
         $schema = $this->schema(
