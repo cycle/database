@@ -78,7 +78,7 @@ class MySQLColumn extends AbstractColumn
         //bigInteger
         'integer'     => ['type' => 'int', 'size' => 11, 'unsigned' => false, 'zerofill' => false],
         'tinyInteger' => ['type' => 'tinyint', 'size' => 4, 'unsigned' => false, 'zerofill' => false],
-        'smallInteger'=> ['type' => 'smallint', 'size' => 6, 'unsigned' => false, 'zerofill' => false],
+        'smallInteger' => ['type' => 'smallint', 'size' => 6, 'unsigned' => false, 'zerofill' => false],
         'bigInteger'  => ['type' => 'bigint', 'size' => 20, 'unsigned' => false, 'zerofill' => false],
 
         //String with specified length (mapped via method)
@@ -121,7 +121,7 @@ class MySQLColumn extends AbstractColumn
         'boolean'     => ['bool', 'boolean', ['type' => 'tinyint', 'size' => 1]],
         'integer'     => ['int', 'integer', 'mediumint'],
         'tinyInteger' => ['tinyint'],
-        'smallInteger'=> ['smallint'],
+        'smallInteger' => ['smallint'],
         'bigInteger'  => ['bigint'],
         'string'      => ['varchar', 'char'],
         'text'        => ['text', 'mediumtext'],

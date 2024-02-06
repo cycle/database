@@ -65,7 +65,7 @@ class SQLServerColumn extends AbstractColumn
         //bigInteger
         'integer'     => 'int',
         'tinyInteger' => 'tinyint',
-        'smallInteger'=> 'smallint',
+        'smallInteger' => 'smallint',
         'bigInteger'  => 'bigint',
 
         //String with specified length (mapped via method)
@@ -107,7 +107,7 @@ class SQLServerColumn extends AbstractColumn
         'boolean'     => ['bit'],
         'integer'     => ['int'],
         'tinyInteger' => ['tinyint'],
-        'smallInteger'=> ['smallint'],
+        'smallInteger' => ['smallint'],
         'bigInteger'  => ['bigint'],
         'text'        => [['type' => 'varchar', 'size' => 0]],
         'string'      => ['varchar', 'char'],

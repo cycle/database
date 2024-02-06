@@ -57,7 +57,7 @@ class SQLServerDriver extends Driver
                 $index++;
             }
 
-            $type = \PDO::PARAM_STR;
+            $type = PDO::PARAM_STR;
 
             if ($parameter instanceof ParameterInterface) {
                 $type = $parameter->getType();
@@ -74,14 +74,14 @@ class SQLServerDriver extends Driver
                 $parameter = $this->formatDatetime($parameter);
             }
 
-            if ($type === \PDO::PARAM_LOB) {
+            if ($type === PDO::PARAM_LOB) {
                 /** @psalm-suppress UndefinedConstant */
                 $statement->bindParam(
                     $index,
                     $parameter,
                     $type,
                     0,
-                    \PDO::SQLSRV_ENCODING_BINARY
+                    PDO::SQLSRV_ENCODING_BINARY
                 );
 
                 unset($parameter);
@@ -181,7 +181,7 @@ class SQLServerDriver extends Driver
             )
         );
 
-        if ((int) $driver->getPDO()->getAttribute(\PDO::ATTR_SERVER_VERSION) < 12) {
+        if ((int) $driver->getPDO()->getAttribute(PDO::ATTR_SERVER_VERSION) < 12) {
             throw new DriverException('SQLServer driver supports only 12+ version of SQLServer');
         }
 

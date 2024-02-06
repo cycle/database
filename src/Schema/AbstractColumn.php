@@ -102,7 +102,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         //bigInteger
         'integer'     => null,
         'tinyInteger' => null,
-        'smallInteger'=> null,
+        'smallInteger' => null,
         'bigInteger'  => null,
 
         //String with specified length (mapped via method)
@@ -149,7 +149,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         'boolean'     => [],
         'integer'     => [],
         'tinyInteger' => [],
-        'smallInteger'=> [],
+        'smallInteger' => [],
         'bigInteger'  => [],
         'string'      => [],
         'text'        => [],
