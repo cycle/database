@@ -143,7 +143,7 @@ class InsertQueryTest extends CommonClass
         $returning = $this->database
             ->insert('returning_values')
             ->values(['name' => 'foo'])
-            ->returning( 'sort', 'datetime')
+            ->returning('sort', 'datetime')
             ->run();
 
         $this->assertSame(1, $returning['sort']);
