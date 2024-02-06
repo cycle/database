@@ -32,7 +32,7 @@ class PostgresInsertQuery extends InsertQuery implements ReturningInterface
     protected ?DriverInterface $driver = null;
 
     /** @deprecated */
-    protected ?string $returning = null;
+    protected string|FragmentInterface|null $returning = null;
 
     /** @var list<FragmentInterface|non-empty-string> */
     protected array $returningColumns = [];
@@ -53,7 +53,7 @@ class PostgresInsertQuery extends InsertQuery implements ReturningInterface
     {
         $columns === [] and throw new BuilderException('RETURNING clause should contain at least 1 column.');
 
-        $this->returning = \count($columns) === 1 ? (string) \reset($columns) : null;
+        $this->returning = \count($columns) === 1 ? \reset($columns) : null;
 
         $this->returningColumns = \array_values($columns);
 

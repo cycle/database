@@ -6,6 +6,7 @@ namespace Cycle\Database\Tests\Functional\Driver\Postgres\Query;
 
 // phpcs:ignore
 use Cycle\Database\Driver\Postgres\Query\PostgresInsertQuery;
+use Cycle\Database\Driver\Postgres\Schema\PostgresColumn;
 use Cycle\Database\Exception\BuilderException;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Tests\Functional\Driver\Common\Query\InsertQueryTest as CommonClass;
@@ -91,17 +92,73 @@ class InsertQueryTest extends CommonClass
         );
     }
 
+    public function testCustomMultipleReturning(): void
+    {
+        $insert = $this->database->insert()->into('table')
+            ->columns('name', 'balance')
+            ->values('Anton', 100)
+            ->returning('name', 'created_at');
+
+        $this->assertSameQuery(
+            'INSERT INTO {table} ({name}, {balance}) VALUES (?, ?) RETURNING {name}, {created_at}',
+            $insert
+        );
+    }
+
     public function testCustomReturningWithFragment(): void
     {
         $insert = $this->database->insert()->into('table')
             ->columns('name', 'balance')
             ->values('Anton', 100)
-            ->returning(new Fragment('COUNT(name)'));
+            ->returning(new Fragment('"name" as "full_name"'));
 
         $this->assertSameQuery(
-            'INSERT INTO {table} ({name}, {balance}) VALUES (?, ?) RETURNING {COUNT(name)}',
+            'INSERT INTO {table} ({name}, {balance}) VALUES (?, ?) RETURNING {name} as {full_name}',
             $insert
         );
+    }
+
+    public function testCustomMultipleReturningWithFragment(): void
+    {
+        $insert = $this->database->insert()->into('table')
+            ->columns('name', 'balance')
+            ->values('Anton', 100)
+            ->returning('name', new Fragment('"created_at" as "date"'));
+
+        $this->assertSameQuery(
+            'INSERT INTO {table} ({name}, {balance}) VALUES (?, ?) RETURNING {name}, {created_at} as {date}',
+            $insert
+        );
+    }
+
+    public function testReturningValuesFromDatabase(): void
+    {
+        $schema = $this->schema('returning_values');
+        $schema->primary('id');
+        $schema->string('name');
+        $schema->serial('sort');
+        $schema->datetime('datetime', defaultValue: PostgresColumn::DATETIME_NOW);
+        $schema->save();
+
+        $returning = $this->database
+            ->insert('returning_values')
+            ->values(['name' => 'foo'])
+            ->returning( 'sort', 'datetime')
+            ->run();
+
+        $this->assertSame(1, $returning['sort']);
+        $this->assertIsString($returning['datetime']);
+        $this->assertNotFalse(\strtotime($returning['datetime']));
+
+        $returning = $this->database
+            ->insert('returning_values')
+            ->values(['name' => 'foo'])
+            ->returning('sort', new Fragment('"datetime" as "created_at"'))
+            ->run();
+
+        $this->assertSame(2, $returning['sort']);
+        $this->assertIsString($returning['created_at']);
+        $this->assertNotFalse(\strtotime($returning['created_at']));
     }
 
     public function testCustomReturningShouldContainColumns(): void
