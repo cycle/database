@@ -14,6 +14,7 @@ namespace Cycle\Database\Driver\SQLServer;
 use Cycle\Database\Driver\Compiler;
 use Cycle\Database\Driver\Quoter;
 use Cycle\Database\Injection\Fragment;
+use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\QueryParameters;
 
@@ -27,6 +28,44 @@ class SQLServerCompiler extends Compiler
      * in result set will be increaced by 1!
      */
     public const ROW_NUMBER = '_ROW_NUMBER_';
+
+    /**
+     * @psalm-return non-empty-string
+     */
+    protected function insertQuery(QueryParameters $params, Quoter $q, array $tokens): string
+    {
+        if (empty($tokens['return'])) {
+            return parent::insertQuery($params, $q, $tokens);
+        }
+
+        $values = [];
+        foreach ($tokens['values'] as $value) {
+            $values[] = $this->value($params, $q, $value);
+        }
+
+        $output = \implode(',', \array_map(
+            fn (string|FragmentInterface|null $return) => $return instanceof FragmentInterface
+                ? (string) $return
+                : 'INSERTED.' . $this->quoteIdentifier($return),
+            $tokens['return']
+        ));
+
+        if ($tokens['columns'] === []) {
+            return \sprintf(
+                'INSERT INTO %s OUTPUT %s DEFAULT VALUES',
+                $this->name($params, $q, $tokens['table'], true),
+                $output
+            );
+        }
+
+        return \sprintf(
+            'INSERT INTO %s (%s) OUTPUT %s VALUES %s',
+            $this->name($params, $q, $tokens['table'], true),
+            $this->columns($params, $q, $tokens['columns']),
+            $output,
+            \implode(', ', $values)
+        );
+    }
 
     /**
      * {@inheritdoc}
