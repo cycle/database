@@ -77,11 +77,8 @@ class SQLServerInsertQuery extends InsertQuery implements ReturningInterface
 
     public function getTokens(): array
     {
-        return [
-            'table' => $this->table,
+        return parent::getTokens() + [
             'return' => $this->returningColumns,
-            'columns' => $this->columns,
-            'values' => $this->values,
         ];
     }
 }

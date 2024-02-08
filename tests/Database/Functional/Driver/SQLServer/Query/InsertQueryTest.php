@@ -77,6 +77,16 @@ final class InsertQueryTest extends CommonClass
         );
     }
 
+    public function testReturningWithDefaultValues(): void
+    {
+        $insert = $this->database->insert()->into('table')->values([])->returning('created_at');
+
+        $this->assertSameQuery(
+            'INSERT INTO {table} OUTPUT INSERTED.[created_at] DEFAULT VALUES',
+            $insert
+        );
+    }
+
     public function testReturningValuesFromDatabase(): void
     {
         $schema = $this->schema('returning_values');
@@ -122,6 +132,27 @@ final class InsertQueryTest extends CommonClass
 
         $this->assertIsString($returning);
         $this->assertNotFalse(\strtotime($returning));
+    }
+
+    public function testReturningValuesFromDatabaseWithDefaultValuesInsert(): void
+    {
+        $schema = $this->schema('returning_value');
+        $schema->primary('id');
+        $schema->datetime('created_at', defaultValue: SQLServerColumn::DATETIME_NOW);
+        $schema->datetime('updated_at', defaultValue: SQLServerColumn::DATETIME_NOW);
+        $schema->save();
+
+        $returning = $this->database
+            ->insert('returning_value')
+            ->values([])
+            ->returning('updated_at', new Fragment('INSERTED.[created_at] as [created]'))
+            ->run();
+
+        $this->assertIsString($returning['created']);
+        $this->assertNotFalse(\strtotime($returning['created']));
+
+        $this->assertIsString($returning['updated_at']);
+        $this->assertNotFalse(\strtotime($returning['updated_at']));
     }
 
     public function testCustomReturningShouldContainColumns(): void
