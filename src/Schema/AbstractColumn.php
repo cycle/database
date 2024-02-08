@@ -662,11 +662,18 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
             }
 
             if ($name === 'defaultValue') {
+                $defaultValue = $this->getDefaultValue() instanceof FragmentInterface
+                    ? $this->getDefaultValue()->__toString()
+                    : $this->getDefaultValue();
+                $initialDefaultValue = $initial->getDefaultValue() instanceof FragmentInterface
+                    ? $initial->getDefaultValue()->__toString()
+                    : $initial->getDefaultValue();
+
                 //Default values has to compared using type-casted value
-                if ($this->getDefaultValue() != $initial->getDefaultValue()) {
+                if ($defaultValue != $initialDefaultValue) {
                     $difference[] = $name;
                 } elseif (
-                    $this->getDefaultValue() !== $initial->getDefaultValue()
+                    $defaultValue !== $initialDefaultValue
                     && (!\is_object($this->getDefaultValue()) && !\is_object($initial->getDefaultValue()))
                 ) {
                     $difference[] = $name;
