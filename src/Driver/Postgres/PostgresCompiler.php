@@ -39,7 +39,7 @@ class PostgresCompiler extends Compiler implements CachingCompilerInterface
             $result,
             \implode(',', \array_map(
                 fn (string|FragmentInterface|null $return) => $return instanceof FragmentInterface
-                    ? (string) $return
+                    ? $this->fragment($params, $q, $return)
                     : $this->quoteIdentifier($return),
                 $tokens['return']
             ))
