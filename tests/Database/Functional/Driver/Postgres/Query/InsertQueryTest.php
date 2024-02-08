@@ -118,6 +118,19 @@ class InsertQueryTest extends CommonClass
         );
     }
 
+    public function testCustomReturningWithFragmentWithParameter(): void
+    {
+        $insert = $this->database->insert()->into('table')
+            ->columns('name', 'balance')
+            ->values('John Doe', 100)
+            ->returning(new Fragment('"balance" + 100 as "modified_balance"'));
+
+        $this->assertSameQuery(
+            'INSERT INTO {table} ({name}, {balance}) VALUES (?,?) RETURNING {balance} + 100 as {modified_balance}',
+            $insert
+        );
+    }
+
     public function testCustomMultipleReturningWithFragment(): void
     {
         $insert = $this->database->insert()->into('table')
@@ -184,6 +197,22 @@ class InsertQueryTest extends CommonClass
             ->run();
 
         $this->assertSame(2, $returning);
+    }
+
+    public function testReturningFromDatabaseWithFragmentWithParameter(): void
+    {
+        $schema = $this->schema('returning_value');
+        $schema->primary('id');
+        $schema->integer('some_int');
+        $schema->save();
+
+        $returning = $this->database
+            ->insert('returning_value')
+            ->values(['some_int' => 4])
+            ->returning('some_int', new Fragment('"some_int" + ? as "cnt"', 5))
+            ->run();
+
+        $this->assertSame(9, (int) $returning['cnt']);
     }
 
     public function testCustomReturningShouldContainColumns(): void

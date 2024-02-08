@@ -45,7 +45,7 @@ class SQLServerCompiler extends Compiler
 
         $output = \implode(',', \array_map(
             fn (string|FragmentInterface|null $return) => $return instanceof FragmentInterface
-                ? (string) $return
+                ? $this->fragment($params, $q, $return)
                 : 'INSERTED.' . $this->quoteIdentifier($return),
             $tokens['return']
         ));

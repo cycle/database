@@ -64,6 +64,19 @@ final class InsertQueryTest extends CommonClass
         );
     }
 
+    public function testReturningWithFragmentWithParameter(): void
+    {
+        $insert = $this->database->insert()->into('table')
+            ->columns('name', 'balance')
+            ->values('John Doe', 100)
+            ->returning(new Fragment('INSERTED.[balance] + 100 as [modified_balance]'));
+
+        $this->assertSameQuery(
+            'INSERT INTO {table} ({name}, {balance}) OUTPUT INSERTED.{balance} + 100 as {modified_balance} VALUES (?,?)',
+            $insert
+        );
+    }
+
     public function testMultipleReturningWithFragment(): void
     {
         $insert = $this->database->insert()->into('table')
@@ -82,7 +95,7 @@ final class InsertQueryTest extends CommonClass
         $insert = $this->database->insert()->into('table')->values([])->returning('created_at');
 
         $this->assertSameQuery(
-            'INSERT INTO {table} OUTPUT INSERTED.[created_at] DEFAULT VALUES',
+            'INSERT INTO {table} OUTPUT INSERTED.{created_at} DEFAULT VALUES',
             $insert
         );
     }
@@ -153,6 +166,22 @@ final class InsertQueryTest extends CommonClass
 
         $this->assertIsString($returning['updated_at']);
         $this->assertNotFalse(\strtotime($returning['updated_at']));
+    }
+
+    public function testReturningFromDatabaseWithFragmentWithParameter(): void
+    {
+        $schema = $this->schema('returning_value');
+        $schema->primary('id');
+        $schema->integer('some_int');
+        $schema->save();
+
+        $returning = $this->database
+            ->insert('returning_value')
+            ->values(['some_int' => 4])
+            ->returning('some_int', new Fragment('INSERTED.[some_int] + ? as [cnt]', 5))
+            ->run();
+
+        $this->assertSame(9, (int) $returning['cnt']);
     }
 
     public function testCustomReturningShouldContainColumns(): void
