@@ -6,6 +6,7 @@ namespace Cycle\Database\Tests\Functional\Driver\Common\Schema;
 
 use Cycle\Database\Driver\Handler;
 use Cycle\Database\Exception\SchemaException;
+use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
@@ -467,6 +468,30 @@ abstract class AlterColumnTest extends BaseTest
         $schema->save();
 
         $this->assertSameAsInDB($schema);
+    }
+
+    public function testChangeDefaultValueWithFragment(): void
+    {
+        $schema = $this->schema('table');
+        $this->assertFalse($schema->exists());
+
+        $schema->primary('id');
+        $schema->integer('name')->defaultValue(new Fragment('5'));
+
+        $schema->setPrimaryKeys(['id']);
+        $this->assertSame(['id'], $schema->getPrimaryKeys());
+        $schema->save();
+        $this->assertSameAsInDB($schema);
+        $this->assertSame(5, $this->fetchSchema($schema)->column('name')->getDefaultValue());
+
+        $schema->integer('name')->defaultValue(new Fragment('7'));
+        $schema->save();
+
+        $schema = $this->schema('table');
+        $this->assertTrue($schema->exists());
+
+        $this->assertSameAsInDB($schema);
+        $this->assertSame(7, $this->fetchSchema($schema)->column('name')->getDefaultValue());
     }
 
     public function testAddCustomColumnType(): void
