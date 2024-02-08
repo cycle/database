@@ -1,5 +1,11 @@
 # CHANGELOG
 
+v2.8.0 (08.02.2024)
+-------------------
+- The `withDatetimeMicroseconds` option now affects the interpolator by @msmakouz (#155)
+- Postgres: support for multiple returning columns by @roxblnfk and @msmakouz (#157)
+- MSSQL: support for multiple returning columns  by @msmakouz (#160)
+
 v2.7.1 (22.12.2023)
 -------------------
 - Fix setting `precision` and `scale` through attributes by @msmakouz (#148)
