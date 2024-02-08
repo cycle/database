@@ -17,12 +17,12 @@ use Cycle\Database\Config\SQLServerDriverConfig;
 use Cycle\Database\Driver\Driver;
 use Cycle\Database\Driver\PDOStatementInterface;
 use Cycle\Database\Driver\SQLServer\Query\SQLServerDeleteQuery;
+use Cycle\Database\Driver\SQLServer\Query\SQLServerInsertQuery;
 use Cycle\Database\Driver\SQLServer\Query\SQLServerSelectQuery;
 use Cycle\Database\Driver\SQLServer\Query\SQLServerUpdateQuery;
 use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Injection\ParameterInterface;
-use Cycle\Database\Query\InsertQuery;
 use Cycle\Database\Query\QueryBuilder;
 use PDO;
 
@@ -175,7 +175,7 @@ class SQLServerDriver extends Driver
             new SQLServerCompiler('[]'),
             new QueryBuilder(
                 new SQLServerSelectQuery(),
-                new InsertQuery(),
+                new SQLServerInsertQuery(),
                 new SQLServerUpdateQuery(),
                 new SQLServerDeleteQuery()
             )
