@@ -4,6 +4,8 @@
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
     errorLevel="7"
+    findUnusedBaselineEntry="true"
+    findUnusedCode="false"
     hoistConstants="true"
     resolveFromConfigFile="true"
     findUnusedPsalmSuppress="true"

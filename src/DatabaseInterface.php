@@ -135,6 +135,10 @@ interface DatabaseInterface
      * @link http://en.wikipedia.org/wiki/Database_transaction
      *
      * @throws \Throwable
+     *
+     * @psalm-template CallbackResult
+     * @psalm-param callable():CallbackResult $callback
+     * @psalm-return CallbackResult
      */
     public function transaction(callable $callback, string $isolationLevel = null): mixed;
 
