@@ -135,6 +135,12 @@ interface DatabaseInterface
      * @link http://en.wikipedia.org/wiki/Database_transaction
      *
      * @throws \Throwable
+     *
+     * @template CallbackResult
+     *
+     * @param callable(): CallbackResult $callback
+     *
+     * @preturn CallbackResult
      */
     public function transaction(callable $callback, string $isolationLevel = null): mixed;
 
