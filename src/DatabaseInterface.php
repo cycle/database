@@ -134,11 +134,11 @@ interface DatabaseInterface
      *
      * @link http://en.wikipedia.org/wiki/Database_transaction
      *
-     * @throws \Throwable
-     *
      * @template CallbackResult
      *
      * @param callable(): CallbackResult $callback
+     *
+     * @throws \Throwable
      *
      * @preturn CallbackResult
      */
