@@ -18,6 +18,7 @@ use Cycle\Database\Config\ProvidesSourceString;
 use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\ReadonlyConnectionException;
 use Cycle\Database\Exception\StatementException;
+use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Injection\ParameterInterface;
 use Cycle\Database\NamedInterface;
 use Cycle\Database\Query\BuilderInterface;
@@ -476,10 +477,20 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
             throw $e;
         } finally {
             if ($this->logger !== null) {
-                $queryString = $this->config->options['logQueryParameters']
+                $queryString = $this->config->options['logInterpolatedQueries']
                     ? Interpolator::interpolate($query, $parameters, $this->config->options)
                     : $query;
-                $context = $this->defineLoggerContext($queryStart, $statement ?? null);
+
+                $contextParameters = $this->config->options['logQueryParameters']
+                    ? $parameters
+                    : [];
+
+                $context = $this->defineLoggerContext(
+                    $queryStart,
+                    $this->getType(),
+                    $statement ?? null,
+                    $contextParameters
+                );
 
                 if (isset($e)) {
                     $this->logger->error($queryString, $context);
@@ -676,16 +687,29 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
      * Creating a context for logging
      *
      * @param float $queryStart Query start time
+     * @param string $driver Driver name
+     * @param PDOStatement|PDOStatementInterface|null $statement Statement object
+     * @param Parameter[]|null $parameters Query parameters
      */
-    protected function defineLoggerContext(float $queryStart, PDOStatement|PDOStatementInterface|null $statement): array
+    protected function defineLoggerContext(float $queryStart, string $driver, PDOStatement|PDOStatementInterface|null $statement, ?array $parameters): array
     {
         $context = [
+            'driver' => $driver,
             'elapsed' => microtime(true) - $queryStart,
         ];
         if ($statement !== null) {
             $context['rowCount'] = $statement->rowCount();
         }
 
-        return $context;
+        if ($parameters !== null) {
+            foreach ($parameters as $parameter) {
+                $context['parameters'][] = [
+                    'type' => $parameter->getType(),
+                    'value' => $parameter->getValue()
+                ];
+            }
+        }
+
+        return array_merge($context);
     }
 }
