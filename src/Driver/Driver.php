@@ -705,7 +705,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
             foreach ($parameters as $parameter) {
                 $context['parameters'][] = [
                     'type' => $parameter->getType(),
-                    'value' => $parameter->getValue()
+                    'value' => $parameter->getValue(),
                 ];
             }
         }
