@@ -183,11 +183,7 @@ class AbstractDriverTest extends TestCase
                         return false;
                     }
 
-                    if(!isset($context['driver'])) {
-                        return false;
-                    }
-
-                    return true;
+                    return isset($context['driver']);
                 })
             );
         $driver->setLogger($logger);
