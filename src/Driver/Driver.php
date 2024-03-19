@@ -18,7 +18,6 @@ use Cycle\Database\Config\ProvidesSourceString;
 use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\ReadonlyConnectionException;
 use Cycle\Database\Exception\StatementException;
-use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Injection\ParameterInterface;
 use Cycle\Database\NamedInterface;
 use Cycle\Database\Query\BuilderInterface;

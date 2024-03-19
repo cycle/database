@@ -137,6 +137,7 @@ final class Interpolator
      * Categorizes parameters into named and unnamed.
      *
      * @param iterable $parameters Parameters to categorize.
+     *
      * @return array An associative array with keys 'named' and 'unnamed'.
      */
     private static function categorizeParameters(iterable $parameters): array

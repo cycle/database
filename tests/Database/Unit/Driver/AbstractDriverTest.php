@@ -183,6 +183,10 @@ class AbstractDriverTest extends TestCase
                         return false;
                     }
 
+                    if(!isset($context['driver'])) {
+                        return false;
+                    }
+
                     return true;
                 })
             );
