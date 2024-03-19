@@ -487,7 +487,6 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
 
                 $context = $this->defineLoggerContext(
                     $queryStart,
-                    $this->getType(),
                     $statement ?? null,
                     $contextParameters
                 );
@@ -687,27 +686,23 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
      * Creating a context for logging
      *
      * @param float $queryStart Query start time
-     * @param string $driver Driver name
      * @param PDOStatement|PDOStatementInterface|null $statement Statement object
-     * @param Parameter[]|null $parameters Query parameters
+     * @param iterable|null $parameters Query parameters
+     *
+     * @return array
      */
-    protected function defineLoggerContext(float $queryStart, string $driver, PDOStatement|PDOStatementInterface|null $statement, ?array $parameters): array
+    protected function defineLoggerContext(float $queryStart, PDOStatement|PDOStatementInterface|null $statement, ?iterable $parameters): array
     {
         $context = [
-            'driver' => $driver,
+            'driver' => $this->getType(),
             'elapsed' => microtime(true) - $queryStart,
         ];
         if ($statement !== null) {
             $context['rowCount'] = $statement->rowCount();
         }
 
-        if ($parameters !== null) {
-            foreach ($parameters as $parameter) {
-                $context['parameters'][] = [
-                    'type' => $parameter->getType(),
-                    'value' => $parameter->getValue(),
-                ];
-            }
+        foreach ($parameters as $parameter) {
+            $context['parameters'][] = Interpolator::resolveValue($parameter, $this->config->options);
         }
 
         return $context;
