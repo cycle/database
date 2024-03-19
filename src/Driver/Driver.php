@@ -710,6 +710,6 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
             }
         }
 
-        return array_merge($context);
+        return $context;
     }
 }
