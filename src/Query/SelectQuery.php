@@ -57,7 +57,7 @@ class SelectQuery extends ActiveQuery implements
     private ?int $offset = null;
 
     /**
-     * @param array $from    Initial set of table names.
+     * @param array $from Initial set of table names.
      * @param array $columns Initial set of columns to fetch.
      */
     public function __construct(array $from = [], array $columns = [])
@@ -129,12 +129,21 @@ class SelectQuery extends ActiveQuery implements
      *
      * $select->orderBy([
      *      'id'   => SelectQuery::SORT_DESC,
-     *      'name' => SelectQuery::SORT_ASC
+     *      'name' => SelectQuery::SORT_ASC,
+     *
+     *      // The following options below have the same effect (Direction will be ignored)
+     *      new Fragment('RAND()') => null,
+     *      new Fragment('RAND()')
      * ]);
      *
-     * @param 'ASC'|'DESC' $direction Sorting direction
+     * $select->orderBy('name', SelectQuery::SORT_ASC);
+     *
+     * $select->orderBy(new Fragment('RAND()'), null); // direction will be ignored
+     * $select->orderBy('RAND()', 'ASC NULLS LAST'); // Postgres specific directions are also supported
+     *
+     * @param 'ASC'|'DESC'|null $direction Sorting direction
      */
-    public function orderBy(string|FragmentInterface|array $expression, string $direction = self::SORT_ASC): self
+    public function orderBy(string|FragmentInterface|array $expression, ?string $direction = self::SORT_ASC): self
     {
         if (!\is_array($expression)) {
             $this->addOrder($expression, $direction);
@@ -142,6 +151,12 @@ class SelectQuery extends ActiveQuery implements
         }
 
         foreach ($expression as $nested => $dir) {
+            // support for orderBy(['RAND()']) without passing direction
+            if (\is_int($nested)) {
+                $nested = $dir;
+                $dir = null;
+            }
+
             $this->addOrder($nested, $dir);
         }
 
@@ -243,7 +258,7 @@ class SelectQuery extends ActiveQuery implements
             $result = $callback(
                 $select->offset($offset)->getIterator(),
                 $offset,
-                $count
+                $count,
             );
 
             // stop iteration
@@ -336,27 +351,27 @@ class SelectQuery extends ActiveQuery implements
     {
         return [
             'forUpdate' => $this->forUpdate,
-            'from'      => $this->tables,
-            'join'      => $this->joinTokens,
-            'columns'   => $this->columns,
-            'distinct'  => $this->distinct,
-            'where'     => $this->whereTokens,
-            'having'    => $this->havingTokens,
-            'groupBy'   => $this->groupBy,
-            'orderBy'   => array_values($this->orderBy),
-            'limit'     => $this->limit,
-            'offset'    => $this->offset,
-            'union'     => $this->unionTokens,
+            'from' => $this->tables,
+            'join' => $this->joinTokens,
+            'columns' => $this->columns,
+            'distinct' => $this->distinct,
+            'where' => $this->whereTokens,
+            'having' => $this->havingTokens,
+            'groupBy' => $this->groupBy,
+            'orderBy' => array_values($this->orderBy),
+            'limit' => $this->limit,
+            'offset' => $this->offset,
+            'union' => $this->unionTokens,
         ];
     }
 
     /**
      * @param FragmentInterface|string $field
-     * @param string                   $order Sorting direction, ASC|DESC.
+     * @param string|null $order Sorting direction, ASC|DESC|null.
      *
      * @return $this|self
      */
-    private function addOrder(string|FragmentInterface $field, string $order): self
+    private function addOrder(string|FragmentInterface $field, ?string $order): self
     {
         if (!\is_string($field)) {
             $this->orderBy[] = [$field, $order];

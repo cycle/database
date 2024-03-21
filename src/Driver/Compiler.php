@@ -21,6 +21,8 @@ abstract class Compiler implements CompilerInterface
 {
     private Quoter $quoter;
 
+    protected const ORDER_OPTIONS = ['ASC', 'DESC'];
+
     /**
      * @psalm-param non-empty-string $quotes
      */
@@ -244,10 +246,18 @@ abstract class Compiler implements CompilerInterface
     {
         $result = [];
         foreach ($orderBy as $order) {
+            if ($order[1] === null) {
+                $result[] = $this->name($params, $q, $order[0]);
+                continue;
+            }
+
             $direction = \strtoupper($order[1]);
 
-            \in_array($direction, ['ASC', 'DESC']) or throw new CompilerException(
-                'Invalid sorting direction, only ASC and DESC are allowed'
+            \in_array($direction, static::ORDER_OPTIONS) or throw new CompilerException(
+                \sprintf(
+                    'Invalid sorting direction, only `%s` are allowed',
+                    \implode('`, `', static::ORDER_OPTIONS),
+                ),
             );
 
             $result[] = $this->name($params, $q, $order[0]) . ' ' . $direction;
