@@ -258,7 +258,7 @@ class SelectQuery extends ActiveQuery implements
             $result = $callback(
                 $select->offset($offset)->getIterator(),
                 $offset,
-                $count,
+                $count
             );
 
             // stop iteration
@@ -351,17 +351,17 @@ class SelectQuery extends ActiveQuery implements
     {
         return [
             'forUpdate' => $this->forUpdate,
-            'from' => $this->tables,
-            'join' => $this->joinTokens,
-            'columns' => $this->columns,
-            'distinct' => $this->distinct,
-            'where' => $this->whereTokens,
-            'having' => $this->havingTokens,
-            'groupBy' => $this->groupBy,
-            'orderBy' => array_values($this->orderBy),
-            'limit' => $this->limit,
-            'offset' => $this->offset,
-            'union' => $this->unionTokens,
+            'from'      => $this->tables,
+            'join'      => $this->joinTokens,
+            'columns'   => $this->columns,
+            'distinct'  => $this->distinct,
+            'where'     => $this->whereTokens,
+            'having'    => $this->havingTokens,
+            'groupBy'   => $this->groupBy,
+            'orderBy'   => array_values($this->orderBy),
+            'limit'     => $this->limit,
+            'offset'    => $this->offset,
+            'union'     => $this->unionTokens,
         ];
     }
 

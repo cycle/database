@@ -23,7 +23,8 @@ class SelectQueryTest extends TestCase
             ->orderBy('id', 'DESC')
             ->orderBy('RAND()', null)
             ->orderBy([
-                'RAND()' => null,
+                'FOO()' => null,
+                'COALESCE(name, test)'
             ]);
 
         $this->assertSame(
@@ -54,6 +55,8 @@ class SelectQueryTest extends TestCase
                     ['name', 'ASC'],
                     ['id', 'DESC'],
                     ['RAND()', null],
+                    ['FOO()', null],
+                    ['COALESCE(name, test)', null],
                 ],
                 'limit' => null,
                 'offset' => null,
