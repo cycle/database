@@ -24,7 +24,7 @@ class SelectQueryTest extends TestCase
             ->orderBy('RAND()', null)
             ->orderBy([
                 'FOO()' => null,
-                'COALESCE(name, test)'
+                'COALESCE(name, test)',
             ]);
 
         $this->assertSame(
