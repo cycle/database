@@ -151,7 +151,7 @@ class SelectQuery extends ActiveQuery implements
         }
 
         foreach ($expression as $nested => $dir) {
-            // support for orderBy(['RAND()']) without passing direction
+            // support for orderBy([new Fragment('RAND()')]) without passing direction
             if (\is_int($nested)) {
                 $nested = $dir;
                 $dir = null;
