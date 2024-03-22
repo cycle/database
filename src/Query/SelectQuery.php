@@ -139,7 +139,7 @@ class SelectQuery extends ActiveQuery implements
      * $select->orderBy('name', SelectQuery::SORT_ASC);
      *
      * $select->orderBy(new Fragment('RAND()'), null); // direction will be ignored
-     * $select->orderBy('RAND()', 'ASC NULLS LAST'); // Postgres specific directions are also supported
+     * $select->orderBy(new Fragment('RAND()'), 'ASC NULLS LAST'); // Postgres specific directions are also supported
      *
      * @param 'ASC'|'DESC'|null $direction Sorting direction
      */
