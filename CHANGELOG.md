@@ -1,4 +1,41 @@
-# CHANGELOG
+# Changelog
+
+## [3.0.0](https://github.com/cycle/database/compare/2.9.0...v3.0.0) (2024-03-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* bump minimal php version from 8.0 to 8.1
+
+### Features
+
+* add .env file for local development and testing ([c8c6e57](https://github.com/cycle/database/commit/c8c6e5777fa64e38490564ba3c00b6f4db0c1c47))
+* add googleapis/release-please auto changelog generator configs ([2cbbff8](https://github.com/cycle/database/commit/2cbbff84dc5e14e0badd32b00e095860738002fe))
+* add pre-commit config file ([e963a39](https://github.com/cycle/database/commit/e963a399945c9aa652aee7fd11ba5ad099b29a4e))
+* add self-documenting Makefile and docker-compose for local dev dokerization ([fa62923](https://github.com/cycle/database/commit/fa6292300396c70fe1c36bbd46a000b53adfca7b))
+* add wayofdev/php-cs-fixer and roave/security-advisories ([43b6b87](https://github.com/cycle/database/commit/43b6b87ed55462f53d09d477aa82118b9171c3e9))
+* add yamllint ([397b07a](https://github.com/cycle/database/commit/397b07a180de3be5c844111c4f27d0d38ac0cb64))
+* bump minimal php version from 8.0 to 8.1 ([c3bdc70](https://github.com/cycle/database/commit/c3bdc701dfba6892a0fe6bc421d5869ce320dc2a))
+* remove style-ci dependency ([6e6a07c](https://github.com/cycle/database/commit/6e6a07c83a9365bcaf723a2863890539ab1d63d7))
+
+
+### Bug Fixes
+
+* .editorconfig ([2258e90](https://github.com/cycle/database/commit/2258e90a8a793d41af79d190bb5d235de3c58e5f))
+* production release should not contain development files ([35218e4](https://github.com/cycle/database/commit/35218e4be5ffbe30539b9fb36ab40d00e20b10b0))
+
+
+### Documentation
+
+* mention make commands in CONTRIBUTING.md ([cedd95e](https://github.com/cycle/database/commit/cedd95e94594cdd072e6c5e736727a7271351f22))
+
+
+### Miscellaneous
+
+* move CODE_OF_CONDUCT ([1a01cfb](https://github.com/cycle/database/commit/1a01cfb025b28e89995a9c97be45e6706941b5dd))
+* return back .styleci, as it bloats commits ([8a7014f](https://github.com/cycle/database/commit/8a7014f683d56da2cdfbf29bfac9cabafa27c26b))
+
+## CHANGELOG
 
 v2.9.0 (27.03.2024)
 -------------------
