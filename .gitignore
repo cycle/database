@@ -1,5 +1,4 @@
 .idea/
-.env
 .coveralls.yml
 composer.lock
 vendor/
