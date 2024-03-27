@@ -194,11 +194,10 @@ commit:
 .PHONY: commit
 
 release: ## Create a new release
-	release-please github-release \
+	release-please release-pr \
 		--token=$(GITHUB_TOKEN) \
 		--repo-url=cycle/database \
-		--default-branch=2.x \
 		--target-branch=feat/dx \
-		--config-file=./.github/.release-please-config.json \
-		--manifest-file=./.github/.release-please-manifest.json
+		--config-file=.github/.release-please-config.json \
+		--manifest-file=.github/.release-please-manifest.json
 .PHONE: release
