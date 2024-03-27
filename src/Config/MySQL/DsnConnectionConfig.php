@@ -30,9 +30,9 @@ class DsnConnectionConfig extends ConnectionConfig implements ProvidesSourceStri
 
     /**
      * @param non-empty-string|\Stringable $dsn
-     * @param non-empty-string|null $user
-     * @param non-empty-string|null $password
-     * @param array $options
+     * @param non-empty-string|null        $user
+     * @param non-empty-string|null        $password
+     * @param array                        $options
      */
     public function __construct(
         string|\Stringable $dsn,
@@ -43,7 +43,7 @@ class DsnConnectionConfig extends ConnectionConfig implements ProvidesSourceStri
         parent::__construct($user, $password, $options);
 
         /** @psalm-suppress ArgumentTypeCoercion */
-        $this->dsn = DataSourceName::normalize((string)$dsn, $this->getName());
+        $this->dsn = DataSourceName::normalize((string) $dsn, $this->getName());
     }
 
     /**

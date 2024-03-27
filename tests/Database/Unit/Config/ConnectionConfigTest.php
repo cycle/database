@@ -17,8 +17,8 @@ final class ConnectionConfigTest extends TestCase
         $this->assertSame('localhost', $config->host);
         $this->assertSame(5432, $config->port);
         $this->assertSame([
-            \PDO::ATTR_CASE => \PDO::CASE_NATURAL,
-            \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+            \PDO::ATTR_CASE             => \PDO::CASE_NATURAL,
+            \PDO::ATTR_ERRMODE          => \PDO::ERRMODE_EXCEPTION,
             \PDO::ATTR_EMULATE_PREPARES => false,
         ], $config->options);
         $this->assertNull($config->user);

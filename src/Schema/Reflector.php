@@ -108,6 +108,7 @@ final class Reflector
             }
         } catch (Throwable $e) {
             $this->rollbackTransaction();
+
             throw $e;
         }
 

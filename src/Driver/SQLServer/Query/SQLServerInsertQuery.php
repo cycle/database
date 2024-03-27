@@ -16,10 +16,10 @@ use Cycle\Database\Driver\SQLServer\SQLServerDriver;
 use Cycle\Database\Exception\BuilderException;
 use Cycle\Database\Exception\ReadonlyConnectionException;
 use Cycle\Database\Injection\FragmentInterface;
-use Cycle\Database\Query\QueryParameters;
-use Cycle\Database\Query\ReturningInterface;
 use Cycle\Database\Query\InsertQuery;
 use Cycle\Database\Query\QueryInterface;
+use Cycle\Database\Query\QueryParameters;
+use Cycle\Database\Query\ReturningInterface;
 use Cycle\Database\StatementInterface;
 
 class SQLServerInsertQuery extends InsertQuery implements ReturningInterface
@@ -69,6 +69,7 @@ class SQLServerInsertQuery extends InsertQuery implements ReturningInterface
             if (\count($this->returningColumns) === 1) {
                 return $result->fetchColumn();
             }
+
             return $result->fetch(StatementInterface::FETCH_ASSOC);
         } finally {
             $result->close();

@@ -49,7 +49,7 @@ abstract class BaseTest extends TestCase
      */
     private function getDriver(array $driverConfig = [], array $connectionConfig = []): DriverInterface
     {
-        $hash = \hash('crc32', static::DRIVER . ':' . \json_encode($driverConfig) . \json_encode($connectionConfig));
+        $hash = \hash('crc32', static::DRIVER.':'.\json_encode($driverConfig).\json_encode($connectionConfig));
 
         if (!isset(self::$memoizedDrivers[$hash])) {
             $config = clone self::$config[static::DRIVER];
@@ -77,6 +77,7 @@ abstract class BaseTest extends TestCase
         foreach ($options as $key => $value) {
             $config->$key = $value;
         }
+
         return $config;
     }
 
@@ -138,7 +139,7 @@ abstract class BaseTest extends TestCase
 
         $this->assertSame(
             preg_replace('/\s+/', '', $query),
-            preg_replace('/\s+/', '', (string)$fragment)
+            preg_replace('/\s+/', '', (string) $fragment)
         );
     }
 
@@ -199,10 +200,10 @@ abstract class BaseTest extends TestCase
                 print_r($pair);
             }
 
-            return "Table '{$table}' not synced, column(s) '" . implode(
+            return "Table '{$table}' not synced, column(s) '".implode(
                 "', '",
                 $names
-            ) . "' have been changed.";
+            )."' have been changed.";
         }
 
         if ($comparator->droppedForeignKeys()) {
@@ -212,7 +213,6 @@ abstract class BaseTest extends TestCase
         if ($comparator->addedForeignKeys()) {
             return "Table '{$table}' not synced, new FKs found.";
         }
-
 
         return "Table '{$table}' not synced, no idea why, add more messages :P";
     }

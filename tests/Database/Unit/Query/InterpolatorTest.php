@@ -78,7 +78,7 @@ class InterpolatorTest extends TestCase
         $query = 'SELECT * FROM table WHERE name = :name AND registered > :registered';
 
         $parameters = [
-            ':name' => new Parameter('Anton'),
+            ':name'       => new Parameter('Anton'),
             ':registered' => new Parameter($date = new \DateTime('now')),
         ];
 
@@ -86,7 +86,7 @@ class InterpolatorTest extends TestCase
 
         $this->assertSame(
             'SELECT * FROM table WHERE name = \'Anton\' AND registered > \''
-            . $date->format(\DateTime::ATOM) . '\'',
+            .$date->format(\DateTime::ATOM).'\'',
             $interpolated
         );
     }
@@ -96,7 +96,7 @@ class InterpolatorTest extends TestCase
         $query = 'SELECT * FROM table WHERE name = :name AND registered > :registered';
 
         $parameters = [
-            ':name' => new Parameter('John Doe'),
+            ':name'       => new Parameter('John Doe'),
             ':registered' => new Parameter($date = new \DateTime('now')),
         ];
 
@@ -104,7 +104,7 @@ class InterpolatorTest extends TestCase
 
         $this->assertSame(
             'SELECT * FROM table WHERE name = \'John Doe\' AND registered > \''
-            . $date->format('Y-m-d H:i:s.u') . '\'',
+            .$date->format('Y-m-d H:i:s.u').'\'',
             $interpolated
         );
     }
@@ -114,7 +114,7 @@ class InterpolatorTest extends TestCase
         $query = 'SELECT * FROM table WHERE name = :name AND registered > :registered';
 
         $parameters = [
-            ':name' => new Parameter('Anton'),
+            ':name'       => new Parameter('Anton'),
             ':registered' => new Parameter($date = new \DateTimeImmutable('now')),
         ];
 
@@ -122,8 +122,8 @@ class InterpolatorTest extends TestCase
 
         $this->assertSame(
             'SELECT * FROM table WHERE name = \'Anton\' AND registered > \''
-            . $date->format(\DateTime::ATOM)
-            . '\'',
+            .$date->format(\DateTime::ATOM)
+            .'\'',
             $interpolated
         );
     }
@@ -149,7 +149,7 @@ class InterpolatorTest extends TestCase
         $query = 'SELECT * FROM table WHERE parameter = :parameter AND param = :param';
 
         $parameters = [
-            'param' => 'foo',
+            'param'     => 'foo',
             'parameter' => 'bar',
         ];
 
@@ -163,7 +163,7 @@ class InterpolatorTest extends TestCase
 
     public function testInterpolateParametersInStrings(): void
     {
-        $query = 'SELECT \'?\', \'?\\\'?\', "?\\"?" as qq FROM table ' .
+        $query = 'SELECT \'?\', \'?\\\'?\', "?\\"?" as qq FROM table '.
             'WHERE parameter = (":param", \':param\\\':param\', :param, ?)';
 
         $parameters = [
@@ -174,7 +174,7 @@ class InterpolatorTest extends TestCase
         $interpolated = Interpolator::interpolate($query, $parameters);
 
         $this->assertSame(
-            'SELECT \'?\', \'?\\\'?\', "?\\"?" as qq FROM table ' .
+            'SELECT \'?\', \'?\\\'?\', "?\\"?" as qq FROM table '.
             'WHERE parameter = (":param", \':param\\\':param\', \'foo\', 42)',
             $interpolated
         );
@@ -182,8 +182,8 @@ class InterpolatorTest extends TestCase
 
     public function testNestedInterpolation(): void
     {
-        $query = 'SELECT * FROM table WHERE name = ? AND ' .
-            "id IN(\"in dq ?\", 'in \n\n sq ?', ?) AND " .
+        $query = 'SELECT * FROM table WHERE name = ? AND '.
+            "id IN(\"in dq ?\", 'in \n\n sq ?', ?) AND ".
             "balance > IN(\"in dq :p\", 'in sq :p', :p)";
 
         $parameters = [
@@ -195,8 +195,8 @@ class InterpolatorTest extends TestCase
         $interpolated = Interpolator::interpolate($query, $parameters);
 
         $this->assertSame(
-            'SELECT * FROM table WHERE name = 42 ' .
-            "AND id IN(\"in dq ?\", 'in \n\n sq ?', 'foo') " .
+            'SELECT * FROM table WHERE name = 42 '.
+            "AND id IN(\"in dq ?\", 'in \n\n sq ?', 'foo') ".
             "AND balance > IN(\"in dq :p\", 'in sq :p', 'bar')",
             $interpolated
         );
@@ -234,7 +234,7 @@ class InterpolatorTest extends TestCase
     {
         $query = 'SELECT * FROM table WHERE name = :name';
 
-        $parameters = ['name' => new class () {
+        $parameters = ['name' => new class() {
             public function __toString(): string
             {
                 return 'foo';
@@ -310,17 +310,17 @@ class InterpolatorTest extends TestCase
         $query = 'SELECT :c26, :c0, :sq, :dq, :b, :bs, :n, :r, :t, :pc, :us, :pc_esc';
 
         $parameters = [
-            'c26' => \chr(26),
-            'c0' => \chr(0),
-            'sq' => "'",
-            'dq' => '"',
-            'b' => \chr(8),
-            'bs' => '\\',
-            'n' => "\n",
-            'r' => "\r",
-            't' => "\t",
-            'pc' => '%',
-            'us' => '_',
+            'c26'    => \chr(26),
+            'c0'     => \chr(0),
+            'sq'     => "'",
+            'dq'     => '"',
+            'b'      => \chr(8),
+            'bs'     => '\\',
+            'n'      => "\n",
+            'r'      => "\r",
+            't'      => "\t",
+            'pc'     => '%',
+            'us'     => '_',
             'pc_esc' => '\\%\\_',
         ];
 
@@ -338,7 +338,7 @@ class InterpolatorTest extends TestCase
         $parameters = null;
         $expected = null;
 
-        include \dirname(__DIR__) . '/Stub/InterpolatorTestLargeFixture.php';
+        include \dirname(__DIR__).'/Stub/InterpolatorTestLargeFixture.php';
 
         if (!\is_string($query) || !\is_array($parameters) || !\is_string($expected)) {
             $this->markTestSkipped('no test data');

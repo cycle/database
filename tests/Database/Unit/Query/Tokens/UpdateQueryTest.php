@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Unit\Query\Tokens;
 
-use PHPUnit\Framework\TestCase;
 use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\UpdateQuery;
+use PHPUnit\Framework\TestCase;
 
 class UpdateQueryTest extends TestCase
 {
@@ -27,7 +27,7 @@ class UpdateQueryTest extends TestCase
 
         $this->assertEquals(
             [
-                'table' => 'table',
+                'table'  => 'table',
                 'values' => [
                     'name' => 'John',
                 ],

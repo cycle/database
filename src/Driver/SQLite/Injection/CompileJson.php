@@ -17,6 +17,6 @@ class CompileJson extends JsonExpression
 {
     protected function compile(string $statement): string
     {
-        return 'json_extract(' . $this->getField($statement) . $this->getPath($statement) . ')';
+        return 'json_extract('.$this->getField($statement).$this->getPath($statement).')';
     }
 }

@@ -12,17 +12,17 @@ declare(strict_types=1);
 namespace Cycle\Database\Query;
 
 use Countable;
+use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Injection\Expression;
 use Cycle\Database\Injection\Fragment;
-use Cycle\Database\Query\Traits\WhereJsonTrait;
-use IteratorAggregate;
-use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Query\Traits\HavingTrait;
 use Cycle\Database\Query\Traits\JoinTrait;
 use Cycle\Database\Query\Traits\TokenTrait;
+use Cycle\Database\Query\Traits\WhereJsonTrait;
 use Cycle\Database\Query\Traits\WhereTrait;
 use Cycle\Database\StatementInterface;
+use IteratorAggregate;
 use Spiral\Pagination\PaginableInterface;
 use Throwable;
 
@@ -138,6 +138,7 @@ class SelectQuery extends ActiveQuery implements
     {
         if (!\is_array($expression)) {
             $this->addOrder($expression, $direction);
+
             return $this;
         }
 
@@ -270,8 +271,9 @@ class SelectQuery extends ActiveQuery implements
         $select->groupBy = [];
 
         $st = $select->run();
+
         try {
-            return (int)$st->fetchColumn();
+            return (int) $st->fetchColumn();
         } finally {
             $st->close();
         }
@@ -320,6 +322,7 @@ class SelectQuery extends ActiveQuery implements
     public function fetchAll(int $mode = StatementInterface::FETCH_ASSOC): array
     {
         $st = $this->run();
+
         try {
             return $st->fetchAll($mode);
         } finally {
@@ -363,6 +366,7 @@ class SelectQuery extends ActiveQuery implements
         } elseif (!\array_key_exists($field, $this->orderBy)) {
             $this->orderBy[$field] = [$field, $order];
         }
+
         return $this;
     }
 
@@ -378,6 +382,7 @@ class SelectQuery extends ActiveQuery implements
         $select->columns = ["{$method}({$column})"];
 
         $st = $select->run();
+
         try {
             return $st->fetchColumn();
         } finally {

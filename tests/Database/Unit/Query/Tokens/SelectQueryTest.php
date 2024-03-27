@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Unit\Query\Tokens;
 
-use PHPUnit\Framework\TestCase;
 use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\SelectQuery;
+use PHPUnit\Framework\TestCase;
 
 class SelectQueryTest extends TestCase
 {
@@ -28,11 +28,11 @@ class SelectQueryTest extends TestCase
         $this->assertEquals(
             [
                 'forUpdate' => false,
-                'from' => ['table'],
-                'join' => [],
-                'columns' => ['name', 'value'],
-                'distinct' => false,
-                'where' => [
+                'from'      => ['table'],
+                'join'      => [],
+                'columns'   => ['name', 'value'],
+                'distinct'  => false,
+                'where'     => [
                     [
                         'AND',
                         ['name', '=', new Parameter('Antony')],
@@ -42,12 +42,12 @@ class SelectQueryTest extends TestCase
                         ['id', '>', new Parameter(1)],
                     ],
                 ],
-                'having' => [],
+                'having'  => [],
                 'groupBy' => [],
                 'orderBy' => [],
-                'limit' => null,
-                'offset' => null,
-                'union' => [],
+                'limit'   => null,
+                'offset'  => null,
+                'union'   => [],
             ],
             $select->getTokens()
         );

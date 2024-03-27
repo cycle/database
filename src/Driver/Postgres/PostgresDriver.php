@@ -38,7 +38,7 @@ class PostgresDriver extends Driver
     private array $primaryKeys = [];
 
     /**
-     * Schemas to search tables in (search_path)
+     * Schemas to search tables in (search_path).
      *
      * @var string[]
      *
@@ -47,7 +47,7 @@ class PostgresDriver extends Driver
     private array $searchPath = [];
 
     /**
-     * Schemas to search tables in
+     * Schemas to search tables in.
      *
      * @var string[]
      *
@@ -64,7 +64,7 @@ class PostgresDriver extends Driver
     }
 
     /**
-     * Schemas to search tables in
+     * Schemas to search tables in.
      *
      * @return string[]
      */
@@ -74,7 +74,7 @@ class PostgresDriver extends Driver
     }
 
     /**
-     * Check if schemas are defined
+     * Check if schemas are defined.
      *
      * @return bool
      */
@@ -97,7 +97,7 @@ class PostgresDriver extends Driver
      */
     public function getPrimaryKey(string $prefix, string $table): ?string
     {
-        $name = $prefix . $table;
+        $name = $prefix.$table;
         if (\array_key_exists($name, $this->primaryKeys)) {
             return $this->primaryKeys[$name];
         }
@@ -143,7 +143,7 @@ class PostgresDriver extends Driver
      */
     public function beginTransaction(string $isolationLevel = null): bool
     {
-        ++$this->transactionLevel;
+        $this->transactionLevel++;
 
         if ($this->transactionLevel === 1) {
             $this->logger?->info('Begin transaction');
@@ -166,13 +166,16 @@ class PostgresDriver extends Driver
 
                     try {
                         $this->transactionLevel = 1;
+
                         return $this->getPDO()->beginTransaction();
                     } catch (Throwable $e) {
                         $this->transactionLevel = 0;
+
                         throw $this->mapException($e, 'BEGIN TRANSACTION');
                     }
                 } else {
                     $this->transactionLevel = 0;
+
                     throw $e;
                 }
             }
@@ -186,7 +189,7 @@ class PostgresDriver extends Driver
     /**
      * Parse the table name and extract the schema and table.
      *
-     * @param  string  $name
+     * @param string $name
      *
      * @return string[]
      */
@@ -216,7 +219,7 @@ class PostgresDriver extends Driver
         // TODO Should be moved into driver settings.
         $pdo->exec("SET NAMES 'UTF-8'");
 
-        $schema = '"' . implode('", "', $this->searchPath) . '"';
+        $schema = '"'.implode('", "', $this->searchPath).'"';
         $pdo->exec("SET search_path TO {$schema}");
 
         return $pdo;
@@ -239,7 +242,7 @@ class PostgresDriver extends Driver
             return new StatementException\ConnectionException($exception, $query);
         }
 
-        if ((int)$exception->getCode() >= 23000 && (int)$exception->getCode() < 24000) {
+        if ((int) $exception->getCode() >= 23000 && (int) $exception->getCode() < 24000) {
             return new StatementException\ConstrainException($exception, $query);
         }
 
@@ -247,7 +250,7 @@ class PostgresDriver extends Driver
     }
 
     /**
-     * Define schemas from config
+     * Define schemas from config.
      */
     private function defineSchemas(): void
     {
@@ -258,7 +261,7 @@ class PostgresDriver extends Driver
 
         $position = \array_search('$user', $this->searchSchemas, true);
         if ($position !== false) {
-            $this->searchSchemas[$position] = (string)$config->connection->getUsername();
+            $this->searchSchemas[$position] = (string) $config->connection->getUsername();
         }
     }
 

@@ -11,18 +11,18 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Schema;
 
-use Cycle\Database\Driver\Jsoner;
-use Cycle\Database\Schema\Attribute\ColumnAttribute;
-use Cycle\Database\Schema\Traits\ColumnAttributesTrait;
-use DateTimeImmutable;
 use Cycle\Database\ColumnInterface;
 use Cycle\Database\Driver\DriverInterface;
+use Cycle\Database\Driver\Jsoner;
 use Cycle\Database\Exception\DefaultValueException;
 use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Query\QueryParameters;
+use Cycle\Database\Schema\Attribute\ColumnAttribute;
+use Cycle\Database\Schema\Traits\ColumnAttributesTrait;
 use Cycle\Database\Schema\Traits\ElementTrait;
+use DateTimeImmutable;
 
 /**
  * Abstract column schema with read (see ColumnInterface) and write abilities. Must be implemented
@@ -88,9 +88,9 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      */
     protected array $mapping = [
         //Primary sequences
-        'primary'     => null,
+        'primary'       => null,
         'smallPrimary'  => null,
-        'bigPrimary'  => null,
+        'bigPrimary'    => null,
 
         //Enum type (mapped via method)
         'enum'        => null,
@@ -100,10 +100,10 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
 
         //Integer types (size can always be changed with size method), longInteger has method alias
         //bigInteger
-        'integer'     => null,
-        'tinyInteger' => null,
+        'integer'      => null,
+        'tinyInteger'  => null,
         'smallInteger' => null,
-        'bigInteger'  => null,
+        'bigInteger'   => null,
 
         //String with specified length (mapped via method)
         'string'      => null,
@@ -142,30 +142,30 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      * @internal
      */
     protected array $reverseMapping = [
-        'primary'     => [],
+        'primary'       => [],
         'smallPrimary'  => [],
-        'bigPrimary'  => [],
-        'enum'        => [],
-        'boolean'     => [],
-        'integer'     => [],
-        'tinyInteger' => [],
-        'smallInteger' => [],
-        'bigInteger'  => [],
-        'string'      => [],
-        'text'        => [],
-        'tinyText'    => [],
-        'longText'    => [],
-        'double'      => [],
-        'float'       => [],
-        'decimal'     => [],
-        'datetime'    => [],
-        'date'        => [],
-        'time'        => [],
-        'timestamp'   => [],
-        'binary'      => [],
-        'tinyBinary'  => [],
-        'longBinary'  => [],
-        'json'        => [],
+        'bigPrimary'    => [],
+        'enum'          => [],
+        'boolean'       => [],
+        'integer'       => [],
+        'tinyInteger'   => [],
+        'smallInteger'  => [],
+        'bigInteger'    => [],
+        'string'        => [],
+        'text'          => [],
+        'tinyText'      => [],
+        'longText'      => [],
+        'double'        => [],
+        'float'         => [],
+        'decimal'       => [],
+        'datetime'      => [],
+        'date'          => [],
+        'time'          => [],
+        'timestamp'     => [],
+        'binary'        => [],
+        'tinyBinary'    => [],
+        'longBinary'    => [],
+        'json'          => [],
     ];
 
     /**
@@ -220,14 +220,14 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      * Abstract type aliases (for consistency).
      */
     protected array $aliases = [
-        'int'            => 'integer',
-        'smallint'       => 'smallInteger',
-        'bigint'         => 'bigInteger',
-        'incremental'    => 'primary',
+        'int'              => 'integer',
+        'smallint'         => 'smallInteger',
+        'bigint'           => 'bigInteger',
+        'incremental'      => 'primary',
         'smallIncremental' => 'smallPrimary',
-        'bigIncremental' => 'bigPrimary',
-        'bool'           => 'boolean',
-        'blob'           => 'binary',
+        'bigIncremental'   => 'bigPrimary',
+        'bool'             => 'boolean',
+        'blob'             => 'binary',
     ];
 
     /**
@@ -271,6 +271,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         if (\count($arguments) === 1 && \key($arguments) === 0) {
             if (\array_key_exists($name, $this->getAttributesMap())) {
                 $this->fillAttributes([$name => $arguments[0]]);
+
                 return $this;
             }
         }
@@ -282,7 +283,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
 
     public function __toString(): string
     {
-        return $this->table . '.' . $this->getName();
+        return $this->table.'.'.$this->getName();
     }
 
     /**
@@ -371,11 +372,11 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         }
 
         return match ($this->getType()) {
-            'int' => (int) $this->defaultValue,
+            'int'   => (int) $this->defaultValue,
             'float' => (float) $this->defaultValue,
-            'bool' => \is_string($this->defaultValue) && strtolower($this->defaultValue) === 'false'
+            'bool'  => \is_string($this->defaultValue) && strtolower($this->defaultValue) === 'false'
                 ? false : (bool) $this->defaultValue,
-            default => (string)$this->defaultValue
+            default => (string) $this->defaultValue
         };
     }
 
@@ -528,9 +529,9 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     public function defaultValue(mixed $value): self
     {
         $this->defaultValue = match (true) {
-            $value === self::DATETIME_NOW => static::DATETIME_NOW,
+            $value === self::DATETIME_NOW                        => static::DATETIME_NOW,
             static::isJson($this) !== false && \is_array($value) => Jsoner::toJson($value),
-            default => $value
+            default                                              => $value
         };
 
         return $this;
@@ -705,7 +706,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
             $enumValues[] = $driver->quote($value);
         }
 
-        return !empty($enumValues) ? '(' . implode(', ', $enumValues) . ')' : '';
+        return !empty($enumValues) ? '('.implode(', ', $enumValues).')' : '';
     }
 
     /**
@@ -727,9 +728,9 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         }
 
         return match ($this->getType()) {
-            'bool' => $defaultValue ? 'TRUE' : 'FALSE',
+            'bool'  => $defaultValue ? 'TRUE' : 'FALSE',
             'float' => sprintf('%F', $defaultValue),
-            'int' => (string) $defaultValue,
+            'int'   => (string) $defaultValue,
             default => $driver->quote($defaultValue)
         };
     }
@@ -764,8 +765,8 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
 
         return match ($type) {
             'datetime', 'timestamp' => $datetime,
-            'time' => $datetime->format(static::TIME_FORMAT),
-            'date' => $datetime->format(static::DATE_FORMAT),
+            'time'  => $datetime->format(static::TIME_FORMAT),
+            'date'  => $datetime->format(static::DATE_FORMAT),
             default => $value
         };
     }

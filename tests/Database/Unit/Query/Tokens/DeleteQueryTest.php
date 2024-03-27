@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Unit\Query\Tokens;
 
-use PHPUnit\Framework\TestCase;
 use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\DeleteQuery;
+use PHPUnit\Framework\TestCase;
 
 class DeleteQueryTest extends TestCase
 {

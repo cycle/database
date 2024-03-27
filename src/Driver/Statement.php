@@ -11,9 +11,9 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver;
 
+use Cycle\Database\StatementInterface;
 use Generator;
 use PDOStatement;
-use Cycle\Database\StatementInterface;
 
 /**
  * Adds few quick methods to PDOStatement and fully compatible with it. By default uses

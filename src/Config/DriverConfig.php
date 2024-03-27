@@ -26,20 +26,20 @@ abstract class DriverConfig
 
     protected array $defaultOptions = [
         'withDatetimeMicroseconds' => false,
-        'logQueryParameters' => false,
+        'logQueryParameters'       => false,
     ];
 
     public array $options = [];
 
     /**
-     * @param T $connection
+     * @param T                             $connection
      * @param class-string<DriverInterface> $driver
-     * @param bool $reconnect Allow reconnects
-     * @param non-empty-string $timezone All datetime objects will be converted
-     *        relative to this timezone (must match with DB timezone!)
-     * @param bool $queryCache Enables query caching
-     * @param bool $readonlySchema Disable schema modifications
-     * @param bool $readonly Disable write expressions
+     * @param bool                          $reconnect      Allow reconnects
+     * @param non-empty-string              $timezone       All datetime objects will be converted
+     *                                                      relative to this timezone (must match with DB timezone!)
+     * @param bool                          $queryCache     Enables query caching
+     * @param bool                          $readonlySchema Disable schema modifications
+     * @param bool                          $readonly       Disable write expressions
      * @param array{
      *     withDatetimeMicroseconds?: bool,
      *     logQueryParameters?: bool

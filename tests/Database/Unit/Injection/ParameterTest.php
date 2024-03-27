@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Unit\Injection;
 
-use PHPUnit\Framework\TestCase;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Injection\ParameterInterface;
+use PHPUnit\Framework\TestCase;
 
 class ParameterTest extends TestCase
 {
@@ -72,7 +72,7 @@ class ParameterTest extends TestCase
         $this->assertSame(
             [
                 'value' => [1, 2, 3],
-                'type' => \PDO::PARAM_STR,
+                'type'  => \PDO::PARAM_STR,
             ],
             $parameter->__debugInfo()
         );

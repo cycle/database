@@ -14,7 +14,7 @@ use Traversable;
 class TestPDOStatement implements PDOStatementInterface
 {
     private \PDOStatement $statement;
-    /** @var Closure(\PDOStatement $pdo, ?array $params): bool|null */
+    /** @var Closure(\PDOStatement, ?array): bool|null */
     private ?Closure $queryCallback;
 
     /**

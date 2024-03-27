@@ -8,29 +8,29 @@ error_reporting(E_ALL | E_STRICT);
 ini_set('display_errors', '1');
 
 //Composer
-require dirname(__DIR__) . '/vendor/autoload.php';
+require dirname(__DIR__).'/vendor/autoload.php';
 
 $tokenizer = new Tokenizer\Tokenizer(new Tokenizer\Config\TokenizerConfig([
-    'directories' => [__DIR__ . '/Database/Functional/Driver/Common'],
-    'exclude' => [],
+    'directories' => [__DIR__.'/Database/Functional/Driver/Common'],
+    'exclude'     => [],
 ]));
 
 $databases = [
     'sqlite' => [
         'namespace' => 'Cycle\Database\Tests\Functional\Driver\SQLite',
-        'directory' => __DIR__ . '/Database/Functional/Driver/SQLite/',
+        'directory' => __DIR__.'/Database/Functional/Driver/SQLite/',
     ],
     'mysql' => [
         'namespace' => 'Cycle\Database\Tests\Functional\Driver\MySQL',
-        'directory' => __DIR__ . '/Database/Functional/Driver/MySQL/',
+        'directory' => __DIR__.'/Database/Functional/Driver/MySQL/',
     ],
     'postgres' => [
         'namespace' => 'Cycle\Database\Tests\Functional\Driver\Postgres',
-        'directory' => __DIR__ . '/Database/Functional/Driver/Postgres/',
+        'directory' => __DIR__.'/Database/Functional/Driver/Postgres/',
     ],
     'sqlserver' => [
         'namespace' => 'Cycle\Database\Tests\Functional\Driver\SQLServer',
-        'directory' => __DIR__ . '/Database/Functional/Driver/SQLServer/',
+        'directory' => __DIR__.'/Database/Functional/Driver/SQLServer/',
     ],
 ];
 
@@ -83,7 +83,7 @@ foreach ($classes as $class) {
         file_put_contents(
             $filename,
             sprintf(
-                <<<PHP
+                <<<'PHP'
 <?php
 
 declare(strict_types=1);

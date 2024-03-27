@@ -484,7 +484,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     public function renameIndex(array $columns, string $name): self
     {
         $this->hasIndex($columns) or throw new SchemaException(
-            "Undefined index ['" . implode("', '", $columns) . "'] in '{$this->getFullName()}'"
+            "Undefined index ['".implode("', '", $columns)."'] in '{$this->getFullName()}'"
         );
 
         //Declaring new index name
@@ -520,7 +520,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     {
         $schema = $this->current->findIndex($columns);
         $schema === null and throw new SchemaException(
-            "Undefined index ['" . implode("', '", $columns) . "'] in '{$this->getFullName()}'"
+            "Undefined index ['".implode("', '", $columns)."'] in '{$this->getFullName()}'"
         );
 
         //Dropping index from current schema
@@ -539,6 +539,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         $schema = $this->current->findForeignKey($columns);
         if ($schema === null) {
             $names = implode("','", $columns);
+
             throw new SchemaException("Undefined FK on '{$names}' in '{$this->getFullName()}'");
         }
 
@@ -636,7 +637,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     }
 
     /**
-     * Sanitize column expression for index name
+     * Sanitize column expression for index name.
      *
      * @psalm-param non-empty-string $column
      *
@@ -656,7 +657,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     }
 
     /**
-     * Add prefix to a given table name
+     * Add prefix to a given table name.
      *
      * @psalm-param non-empty-string $column
      *
@@ -664,7 +665,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      */
     protected function prefixTableName(string $name): string
     {
-        return $this->prefix . $name;
+        return $this->prefix.$name;
     }
 
     /**
@@ -842,9 +843,9 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         }
 
         $name = $this->getFullName()
-            . '_' . $type
-            . '_' . implode('_', $sanitized)
-            . '_' . uniqid();
+            .'_'.$type
+            .'_'.implode('_', $sanitized)
+            .'_'.uniqid();
 
         if (\strlen($name) > 64) {
             //Many DBMS has limitations on identifier length

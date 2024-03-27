@@ -21,12 +21,12 @@ class TcpConnectionConfig extends ConnectionConfig implements ProvidesSourceStri
     public int $port;
 
     /**
-     * @param non-empty-string $database
-     * @param non-empty-string $host
+     * @param non-empty-string            $database
+     * @param non-empty-string            $host
      * @param numeric-string|positive-int $port
-     * @param non-empty-string|null $user
-     * @param non-empty-string|null $password
-     * @param array $options
+     * @param non-empty-string|null       $user
+     * @param non-empty-string|null       $password
+     * @param array                       $options
      */
     public function __construct(
         public string $database,
@@ -60,8 +60,8 @@ class TcpConnectionConfig extends ConnectionConfig implements ProvidesSourceStri
     public function getDsn(): string
     {
         $config = [
-            'host' => $this->host,
-            'port' => $this->port,
+            'host'   => $this->host,
+            'port'   => $this->port,
             'dbname' => $this->database,
 
             //

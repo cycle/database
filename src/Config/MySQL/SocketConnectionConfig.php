@@ -16,11 +16,11 @@ use Cycle\Database\Config\ProvidesSourceString;
 class SocketConnectionConfig extends ConnectionConfig implements ProvidesSourceString
 {
     /**
-     * @param non-empty-string $socket
-     * @param non-empty-string $database
-     * @param non-empty-string|null $charset
-     * @param non-empty-string|null $user
-     * @param non-empty-string|null $password
+     * @param non-empty-string                              $socket
+     * @param non-empty-string                              $database
+     * @param non-empty-string|null                         $charset
+     * @param non-empty-string|null                         $user
+     * @param non-empty-string|null                         $password
      * @param array<int, non-empty-string|non-empty-string> $options
      */
     public function __construct(
@@ -47,7 +47,7 @@ class SocketConnectionConfig extends ConnectionConfig implements ProvidesSourceS
      * that looks like:
      * <code>
      *  mysql:unix_socket=/tmp/mysql.sock;dbname=dbname
-     * </code>
+     * </code>.
      *
      * {@inheritDoc}
      */
@@ -55,8 +55,8 @@ class SocketConnectionConfig extends ConnectionConfig implements ProvidesSourceS
     {
         $config = [
             'unix_socket' => $this->socket,
-            'dbname' => $this->database,
-            'charset' => $this->charset,
+            'dbname'      => $this->database,
+            'charset'     => $this->charset,
         ];
 
         return \sprintf('%s:%s', $this->getName(), $this->dsn($config));

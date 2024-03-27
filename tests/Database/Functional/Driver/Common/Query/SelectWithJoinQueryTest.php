@@ -129,7 +129,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
                 [
                     '@or' => [
                         [
-                            'pht.user_id' => 'users.id',
+                            'pht.user_id'    => 'users.id',
                             'users.is_admin' => new Parameter(true),
                         ],
                         [
@@ -169,11 +169,11 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         $select = $this->database->select()
             ->from(['users', 'admins'])
             ->join('LEFT', 'photos', 'pht', [
-                'pht.user_id' => 'admins.id',
+                'pht.user_id'    => 'admins.id',
                 'users.is_admin' => 'pht.is_admin',
-                '@or' => [
+                '@or'            => [
                     [
-                        'users.name' => new Parameter('Anton'),
+                        'users.name'     => new Parameter('Anton'),
                         'users.is_admin' => 'pht.is_admin',
                     ],
                     [
@@ -234,8 +234,8 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         $select = $this->database->select()
             ->from(['users', 'admins'])
             ->join('LEFT', 'photos', 'pht', [
-                'pht.user_id' => 'users.id',
-                'users.is_admin' => 'pht.is_admin',
+                'pht.user_id'                                    => 'users.id',
+                'users.is_admin'                                 => 'pht.is_admin',
                 fn ($select, string $boolean, callable $wrapper) => $select
                     ->on('photos.user_id', 'users.id')
                     ->onWhere('photos.type', 'avatar'),
@@ -517,7 +517,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
             ->on(
                 [
                     'p.user_id' => 'users.id',
-                    'p.public' => new Parameter(true),
+                    'p.public'  => new Parameter(true),
                 ]
             );
 
@@ -536,7 +536,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
             ->on(
                 [
                     'p.user_id' => 'users.id',
-                    'p.public' => new Parameter(true),
+                    'p.public'  => new Parameter(true),
                 ]
             );
 
@@ -555,7 +555,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
             ->on(
                 [
                     'p.user_id' => 'users.id',
-                    'p.public' => new Parameter(true),
+                    'p.public'  => new Parameter(true),
                 ]
             );
 
@@ -574,7 +574,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
             ->on(
                 [
                     'p.user_id' => 'u.id',
-                    'p.public' => new Parameter(true),
+                    'p.public'  => new Parameter(true),
                 ]
             );
 
@@ -602,12 +602,12 @@ abstract class SelectWithJoinQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'SELECT COUNT(*), {prefix_groups}.{id}, {u}.{id}, SUM({t}.{amount}) '
-            . 'FROM {prefix_users} AS {u}'
-            . 'LEFT JOIN {prefix_transactions} AS {t} ON {t}.{user_id} = {u}.{id}'
-            . 'RIGHT JOIN {prefix_groups} ON {prefix_groups}.{id} = {u}.{group_id} AND {prefix_groups}.{public} = ?'
-            . 'WHERE {u}.{status} IN (?,?)'
-            . 'GROUP BY {u}.{id}'
-            . 'ORDER BY {u}.{name} DESC',
+            .'FROM {prefix_users} AS {u}'
+            .'LEFT JOIN {prefix_transactions} AS {t} ON {t}.{user_id} = {u}.{id}'
+            .'RIGHT JOIN {prefix_groups} ON {prefix_groups}.{id} = {u}.{group_id} AND {prefix_groups}.{public} = ?'
+            .'WHERE {u}.{status} IN (?,?)'
+            .'GROUP BY {u}.{id}'
+            .'ORDER BY {u}.{name} DESC',
             $select
         );
     }

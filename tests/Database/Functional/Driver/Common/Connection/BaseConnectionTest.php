@@ -39,6 +39,7 @@ abstract class BaseConnectionTest extends BaseTest
             || $driver instanceof PostgresWrapDriver
             || $driver instanceof MSSQLWrapDriver,
         );
+
         return $driver;
     }
 }

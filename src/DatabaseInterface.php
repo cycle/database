@@ -24,7 +24,7 @@ use Cycle\Database\Query\UpdateQuery;
  * (unless you are locking your module/application to one database).
  *
  * @method DatabaseInterface withoutCache() Get a new Database instance without query cache or the same instance
- *         if no cache is used. Will be added the next major release.
+ *                                          if no cache is used. Will be added the next major release.
  */
 interface DatabaseInterface
 {
@@ -89,7 +89,7 @@ interface DatabaseInterface
      *
      * @psalm-param non-empty-string $query
      *
-     * @param array  $parameters Parameters to be binded into query.
+     * @param array $parameters Parameters to be binded into query.
      *
      * @throws StatementException
      */

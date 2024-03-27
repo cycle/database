@@ -27,9 +27,9 @@ final class DatabaseConfig extends InjectableConfig
     public function __construct(array $config = [])
     {
         parent::__construct(\array_merge([
-            'default' => self::DEFAULT_DATABASE,
-            'aliases' => [],
-            'databases' => [],
+            'default'     => self::DEFAULT_DATABASE,
+            'aliases'     => [],
+            'databases'   => [],
             'connections' => [],
         ], $config));
     }

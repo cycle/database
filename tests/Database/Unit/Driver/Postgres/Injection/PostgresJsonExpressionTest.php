@@ -63,7 +63,7 @@ final class PostgresJsonExpressionTest extends TestCase
 
     private function createExpression(): PostgresJsonExpression
     {
-        return new class () extends PostgresJsonExpression {
+        return new class() extends PostgresJsonExpression {
             public function __construct()
             {
                 $this->quoter = new Quoter('', $this->getQuotes());

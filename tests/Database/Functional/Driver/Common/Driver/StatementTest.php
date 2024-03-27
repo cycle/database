@@ -33,7 +33,7 @@ abstract class StatementTest extends BaseTest
         for ($i = 0; $i < 10; $i++) {
             $table->insertOne(
                 [
-                    'name' => md5((string)$i),
+                    'name'  => md5((string) $i),
                     'value' => $i * 10,
                 ]
             );
@@ -74,7 +74,7 @@ abstract class StatementTest extends BaseTest
 
         $i = 0;
         foreach ($result as $item) {
-            $this->assertEquals(md5((string)$i), $item['name']);
+            $this->assertEquals(md5((string) $i), $item['name']);
             $this->assertEquals($i * 10, $item['value']);
 
             $i++;
@@ -97,7 +97,7 @@ abstract class StatementTest extends BaseTest
 
         $i = 0;
         foreach ($result as $item) {
-            $this->assertEquals(md5((string)$i), $item['name']);
+            $this->assertEquals(md5((string) $i), $item['name']);
             $this->assertEquals($i * 10, $item['value']);
 
             $i++;
@@ -115,7 +115,7 @@ abstract class StatementTest extends BaseTest
 
         $i = 5;
         foreach ($result as $item) {
-            $this->assertEquals(md5((string)$i), $item['name']);
+            $this->assertEquals(md5((string) $i), $item['name']);
             $this->assertEquals($i * 10, $item['value']);
 
             $i++;
@@ -133,7 +133,7 @@ abstract class StatementTest extends BaseTest
 
         $i = 5;
         foreach ($result as $item) {
-            $this->assertEquals(md5((string)$i), $item['name']);
+            $this->assertEquals(md5((string) $i), $item['name']);
             $this->assertEquals($i * 10, $item['value']);
 
             $i++;
@@ -154,7 +154,7 @@ abstract class StatementTest extends BaseTest
 
         $i = 0;
         foreach ($select as $item) {
-            $this->assertEquals(md5((string)$i), $item['name']);
+            $this->assertEquals(md5((string) $i), $item['name']);
             $this->assertEquals($i * 10, $item['value']);
 
             $i++;
@@ -166,7 +166,7 @@ abstract class StatementTest extends BaseTest
         $paginator->withPage(2)->paginate($select);
         $i = 2;
         foreach ($select as $item) {
-            $this->assertEquals(md5((string)$i), $item['name']);
+            $this->assertEquals(md5((string) $i), $item['name']);
             $this->assertEquals($i * 10, $item['value']);
 
             $i++;
@@ -179,7 +179,7 @@ abstract class StatementTest extends BaseTest
 
         $i = 4;
         foreach ($select as $item) {
-            $this->assertEquals(md5((string)$i), $item['name']);
+            $this->assertEquals(md5((string) $i), $item['name']);
             $this->assertEquals($i * 10, $item['value']);
 
             $i++;
@@ -194,7 +194,7 @@ abstract class StatementTest extends BaseTest
 
         $i = 6;
         foreach ($select as $item) {
-            $this->assertEquals(md5((string)$i), $item['name']);
+            $this->assertEquals(md5((string) $i), $item['name']);
             $this->assertEquals($i * 10, $item['value']);
 
             $i++;
@@ -313,7 +313,7 @@ abstract class StatementTest extends BaseTest
         )->fetch();
 
         $i = 5;
-        $this->assertEquals(md5((string)$i), $row['name']);
+        $this->assertEquals(md5((string) $i), $row['name']);
         $this->assertEquals($i * 10, $row['value']);
 
         $row = $this->database->query(
@@ -322,7 +322,7 @@ abstract class StatementTest extends BaseTest
         )->fetch();
 
         $i = 4;
-        $this->assertEquals(md5((string)$i), $row['name']);
+        $this->assertEquals(md5((string) $i), $row['name']);
         $this->assertEquals($i * 10, $row['value']);
     }
 
@@ -362,7 +362,7 @@ abstract class StatementTest extends BaseTest
 
         $table->insertOne(
             [
-                'name' => 'foo',
+                'name'  => 'foo',
                 'value' => 100500,
             ]
         );
@@ -411,15 +411,15 @@ abstract class StatementTest extends BaseTest
         )->fetchAll();
 
         $i = 0;
-        $this->assertEquals(md5((string)$i), $rows[0]['name']);
+        $this->assertEquals(md5((string) $i), $rows[0]['name']);
         $this->assertEquals($i * 10, $rows[0]['value']);
 
         $i = 1;
-        $this->assertEquals(md5((string)$i), $rows[1]['name']);
+        $this->assertEquals(md5((string) $i), $rows[1]['name']);
         $this->assertEquals($i * 10, $rows[1]['value']);
 
         $i = 2;
-        $this->assertEquals(md5((string)$i), $rows[2]['name']);
+        $this->assertEquals(md5((string) $i), $rows[2]['name']);
         $this->assertEquals($i * 10, $rows[2]['value']);
     }
 }

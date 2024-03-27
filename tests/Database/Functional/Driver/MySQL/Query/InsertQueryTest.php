@@ -21,7 +21,7 @@ class InsertQueryTest extends CommonClass
 
         $this->assertSameQuery(
             'INSERT INTO {table} () VALUES ()',
-            (string)$insert
+            (string) $insert
         );
     }
 

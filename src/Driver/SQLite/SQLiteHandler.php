@@ -53,7 +53,7 @@ class SQLiteHandler extends Handler
     {
         $query = "SELECT COUNT('sql') FROM 'sqlite_master' WHERE type = 'table' and name = ?";
 
-        return (bool)$this->driver->query($query, [$table])->fetchColumn();
+        return (bool) $this->driver->query($query, [$table])->fetchColumn();
     }
 
     public function getSchema(string $table, string $prefix = null): AbstractTable
@@ -160,7 +160,7 @@ class SQLiteHandler extends Handler
         //Temporary table is required to copy data over
         $temporary = clone $table;
         $temporary->setName(
-            'spiral_temp_' . $table->getFullName() . '_' . uniqid()
+            'spiral_temp_'.$table->getFullName().'_'.uniqid()
         );
 
         //We don't need any indexes in temporary table
@@ -201,7 +201,7 @@ class SQLiteHandler extends Handler
      * @psalm-param non-empty-string $source
      * @psalm-param non-empty-string $to
      *
-     * @param array  $mapping (destination => source)
+     * @param array $mapping (destination => source)
      *
      * @throws HandlerException
      */

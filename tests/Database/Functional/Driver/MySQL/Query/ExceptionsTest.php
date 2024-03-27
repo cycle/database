@@ -19,7 +19,7 @@ class ExceptionsTest extends CommonClass
     public function testPacketsOutOfOrderConsideredAsConnectionException(): void
     {
         if (PHP_VERSION_ID < 70400) {
-            $this->markTestSkipped('Expecting PHP version >=7.4. Skipped due to ' . PHP_VERSION);
+            $this->markTestSkipped('Expecting PHP version >=7.4. Skipped due to '.PHP_VERSION);
         }
 
         // Prepare connection to generate "Packets out of order. Expected 1 received 0. Packet size=145"
@@ -32,6 +32,7 @@ class ExceptionsTest extends CommonClass
             $this->assertNotEmpty($result[0]['version'] ?? '', 'Expected result from second query');
         } catch (\RuntimeException $e) {
             $this->assertInstanceOf(ConnectionException::class, $e);
+
             return;
         }
     }

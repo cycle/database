@@ -116,7 +116,7 @@ class SQLiteCompiler extends Compiler implements CachingCompilerInterface
                 );
             }
 
-            $statement[] = 'SELECT ' . implode(', ', $selectColumns);
+            $statement[] = 'SELECT '.implode(', ', $selectColumns);
         }
 
         return implode("\n", $statement);

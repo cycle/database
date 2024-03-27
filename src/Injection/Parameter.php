@@ -56,6 +56,7 @@ class Parameter implements ParameterInterface
 
         if ($value instanceof ValueInterface) {
             $this->type = $value->rawType();
+
             return;
         }
 
@@ -90,8 +91,8 @@ class Parameter implements ParameterInterface
         return match (gettype($value)) {
             'boolean' => PDO::PARAM_BOOL,
             'integer' => PDO::PARAM_INT,
-            'NULL' => PDO::PARAM_NULL,
-            default => PDO::PARAM_STR
+            'NULL'    => PDO::PARAM_NULL,
+            default   => PDO::PARAM_STR
         };
     }
 }

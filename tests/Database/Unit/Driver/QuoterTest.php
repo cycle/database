@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Unit\Driver;
 
-use PHPUnit\Framework\TestCase;
 use Cycle\Database\Driver\Quoter;
+use PHPUnit\Framework\TestCase;
 
 class QuoterTest extends TestCase
 {

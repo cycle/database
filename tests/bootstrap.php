@@ -12,7 +12,7 @@ ini_set('display_errors', '1');
 mb_internal_encoding('UTF-8');
 
 //Composer
-require dirname(__DIR__) . '/vendor/autoload.php';
+require dirname(__DIR__).'/vendor/autoload.php';
 
 $drivers = [
     'sqlite' => new Database\Config\SQLiteDriverConfig(
@@ -99,5 +99,5 @@ Database\Tests\Functional\Driver\Common\BaseTest::$config = [
 ] + (
     $db === null
     ? $drivers
-    : array_intersect_key($drivers, array_flip((array)$db))
+    : array_intersect_key($drivers, array_flip((array) $db))
 );

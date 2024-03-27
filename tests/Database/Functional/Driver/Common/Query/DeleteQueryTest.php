@@ -34,7 +34,7 @@ abstract class DeleteQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'DELETE FROM {table} WHERE {name} = \'Antony\'',
-            (string)$delete
+            (string) $delete
         );
     }
 

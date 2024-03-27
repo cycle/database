@@ -19,7 +19,7 @@ class CompileJsonContainsKey extends PostgresJsonExpression
         $attribute = $this->getAttribute($statement);
         $fullPath = $this->getField($statement);
         if (!empty($path)) {
-            $fullPath .= '->' . $path;
+            $fullPath .= '->'.$path;
         }
 
         if (!\filter_var($attribute, FILTER_VALIDATE_INT)) {

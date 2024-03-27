@@ -23,7 +23,7 @@ final class DsnConnectionConfigTest extends TestCase
         $exported = var_export($config, true);
 
         /** @var DsnConnectionConfig $recoveredConfig */
-        eval('$recoveredConfig = ' . $exported . ';');
+        eval('$recoveredConfig = '.$exported.';');
 
         $this->assertSame("pgsql:$dsn", $recoveredConfig->getDsn());
         $this->assertSame('*', $recoveredConfig->getSourceString());

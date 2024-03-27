@@ -29,7 +29,7 @@ class DeleteQuery extends ActiveQuery
 
     /**
      * @param non-empty-string|null $table Associated table name.
-     * @param array  $where Initial set of where rules specified as array.
+     * @param array                 $where Initial set of where rules specified as array.
      */
     public function __construct(?string $table = null, array $where = [])
     {
@@ -53,7 +53,7 @@ class DeleteQuery extends ActiveQuery
     }
 
     /**
-     * Alias for execute method();
+     * Alias for execute method();.
      */
     public function run(): int
     {

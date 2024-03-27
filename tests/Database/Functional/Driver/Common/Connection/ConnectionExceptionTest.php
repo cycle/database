@@ -34,7 +34,7 @@ abstract class ConnectionExceptionTest extends BaseConnectionTest
 
         $result = $driver->query('SELECT 42')->fetchColumn(0);
 
-        $this->assertSame('42', (string)$result);
+        $this->assertSame('42', (string) $result);
     }
 
     /**
@@ -89,6 +89,7 @@ abstract class ConnectionExceptionTest extends BaseConnectionTest
             if ($exceptions !== []) {
                 throw \array_shift($exceptions);
             }
+
             return $statement->execute($params);
         });
     }

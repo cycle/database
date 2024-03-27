@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Functional\Driver\Common;
 
-use Mockery as m;
 use Cycle\Database\Database;
 use Cycle\Database\DatabaseInterface;
 use Cycle\Database\Driver\DriverInterface;
+use Mockery as m;
 
 abstract class DatabaseTest extends BaseTest
 {

@@ -101,14 +101,14 @@ class SQLServerDriver extends Driver
      *
      * @link http://en.wikipedia.org/wiki/Savepoint
      *
-     * @param int $level   Savepoint name/id, must not contain spaces and be valid database
-     *                     identifier.
+     * @param int $level Savepoint name/id, must not contain spaces and be valid database
+     *                   identifier.
      */
     protected function createSavepoint(int $level): void
     {
         $this->logger?->info("Transaction: new savepoint 'SVP{$level}'");
 
-        $this->execute('SAVE TRANSACTION ' . $this->identifier("SVP{$level}"));
+        $this->execute('SAVE TRANSACTION '.$this->identifier("SVP{$level}"));
     }
 
     /**
@@ -136,7 +136,7 @@ class SQLServerDriver extends Driver
     {
         $this->logger?->info("Transaction: rollback savepoint 'SVP{$level}'");
 
-        $this->execute('ROLLBACK TRANSACTION ' . $this->identifier("SVP{$level}"));
+        $this->execute('ROLLBACK TRANSACTION '.$this->identifier("SVP{$level}"));
     }
 
     /**
@@ -146,7 +146,6 @@ class SQLServerDriver extends Driver
     {
         $message = strtolower($exception->getMessage());
 
-
         if (
             \str_contains($message, '0800')
             || \str_contains($message, '080p')
@@ -155,7 +154,7 @@ class SQLServerDriver extends Driver
             return new StatementException\ConnectionException($exception, $query);
         }
 
-        if ((int)$exception->getCode() === 23000) {
+        if ((int) $exception->getCode() === 23000) {
             return new StatementException\ConstrainException($exception, $query);
         }
 

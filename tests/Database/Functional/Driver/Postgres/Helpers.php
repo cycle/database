@@ -73,7 +73,7 @@ trait Helpers
                 user: 'postgres',
                 password: 'postgres'
             ),
-            schema: \array_filter([$defaultSchema, ...\array_values((array)$schema)]),
+            schema: \array_filter([$defaultSchema, ...\array_values((array) $schema)]),
         );
 
         $driver = PostgresDriver::create($options);

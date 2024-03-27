@@ -16,7 +16,7 @@ class ReadonlyConnectionException extends DBALException
     private const WRITE_STMT_MESSAGE = 'Can not execute non-query statement on readonly connection.';
 
     /**
-     * @param int $code
+     * @param int             $code
      * @param \Throwable|null $prev
      *
      * @return static
