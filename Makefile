@@ -61,13 +61,13 @@ help:
 	@echo 'Management commands for package:'
 	@echo 'Usage:'
 	@echo '    ${MAKE_CMD_COLOR}make${RST}                       Setups dependencies for fresh-project, like composer install, git hooks and others...'
-	@grep -E '^[a-zA-Z_0-9%-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "    ${MAKE_CMD_COLOR}make %-21s${RST} %s\n", $$1, $$2}'
+	@grep -E '^[a-zA-Z_0-9%-]+:.*?## .*$$' Makefile | awk 'BEGIN {FS = ":.*?## "}; {printf "    ${MAKE_CMD_COLOR}make %-21s${RST} %s\n", $$1, $$2}'
 	@echo
 	@echo '    📑 Logs are stored in      $(MAKE_LOGFILE)'
 	@echo
-	@echo '    📦 Package                 database (github.com/cycle/database)'
-	@echo '    🤠 Author                  Andrij Orlenko (github.com/lotyp)'
-	@echo '    🏢 ${YELLOW}Org                     cycle (github.com/cycle)${RST}'
+	@echo '    📦 Package                 database (https://github.com/cycle/database)'
+	@echo '    🤠 Author                  Andrij Orlenko (https://github.com/lotyp)'
+	@echo '    🏢 ${YELLOW}Org                     cycle (https://github.com/cycle)${RST}'
 .PHONY: help
 
 .EXPORT_ALL_VARIABLES:
@@ -167,22 +167,22 @@ lint-diff: prepare ## Runs php-cs-fixer in dry-run mode and shows diff which wil
 	$(APP_COMPOSER) cs:diff
 .PHONY: lint-diff
 
-lint-psalm: ## Runs phpstan – static analysis tool
-	$(APP_COMPOSER) stan
+lint-psalm: ## Runs psalm – static analysis tool
+	$(APP_COMPOSER) psalm
 .PHONY: lint-psalm
 
 lint-psalm-ci:
 	$(APP_COMPOSER) psalm:ci
 .PHONY: lint-psalm-ci
 
-test: ## Run project php-unit and pest tests
+test: ## Run project php-unit tests
 	$(APP_COMPOSER) test
 .PHONY: test
 
-test-cc: ## Run project php-unit and pest tests in coverage mode and build report
+test-cc: ## Run project php-unit tests in coverage mode and build report
 	$(APP_COMPOSER) test:cc
 .PHONY: test-cc
 
-test-sqlite: ## Run project php-unit and pest tests with sqlite database
+test-sqlite: ## Run project php-unit tests with sqlite database
 	$(APP_COMPOSER) test:sqlite
 .PHONY: test-sqlite
