@@ -1,0 +1,76 @@
+---
+
+version: '3.9'
+
+services:
+  app:
+    image: wayofdev/php-dev:8.2-cli-alpine-latest
+    container_name: ${COMPOSE_PROJECT_NAME}-app
+    restart: on-failure
+    networks:
+      - default
+    volumes:
+      - ./:/app:rw
+      - ~/.composer:/.composer
+    env_file:
+      - .env
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: ${COMPOSE_PROJECT_NAME}-sqlserver
+    restart: on-failure
+    networks:
+      - default
+    ports:
+      - '${DB_SQLSERVER_FORWARD_PORT:-11433}:1433'
+    environment:
+      SA_PASSWORD: ${DB_PASSWORD}
+      ACCEPT_EULA: 'Y'
+
+  mysql:
+      image: mysql:latest
+      container_name: ${COMPOSE_PROJECT_NAME}-mysql
+      restart: on-failure
+      networks:
+          - default
+      ports:
+          - '${DB_MYSQL_FORWARD_PORT:-13306}:3306'
+      env_file:
+          - .env
+      environment:
+          MYSQL_ROOT_HOST: '%'
+          MYSQL_USER: ${DB_USERNAME}
+          MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+          MYSQL_DATABASE: ${DB_DATABASE}
+      volumes:
+          - mysql-data:/var/lib/mysql:cached
+      command: --default-authentication-plugin=mysql_native_password
+
+  pgsql:
+    image: wayofdev/postgres:15-alpine-latest
+    container_name: ${COMPOSE_PROJECT_NAME}-pgsql
+    restart: on-failure
+    networks:
+      - default
+    ports:
+      - '${DB_PGSQL_FORWARD_PORT:-15432}:5432'
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    volumes:
+      - pgsql-data:/var/lib/postgresql/data:cached
+
+volumes:
+  pgsql-data:
+    name: ${COMPOSE_PROJECT_NAME}-pgsql-data
+  mysql-data:
+      name: ${COMPOSE_PROJECT_NAME}-mysql-data
+
+networks:
+  default:
+    name: project.${COMPOSE_PROJECT_NAME}
+
+...
