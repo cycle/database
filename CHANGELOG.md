@@ -4,6 +4,8 @@ v2.9.0 (27.03.2024)
 -------------------
 - Added `logInterpolatedQueries` for detailed query logging and refined `logQueryParameters` to accurately log query parameters as arrays, enhancing ORM debugging and monitoring. @lotyp (#165)
 - Improved logging with enriched context in Driver.php, including driver details and query parameters. @lotyp (#165)
+- Improved `orderBy` method to accept a null direction parameter, providing more flexibility when constructing queries by @butschster (#167)
+- Added support for PostgreSQL-specific directions **NULLS FIRST** and **NULLS LAST** for more control over null value ordering in result sets by @butschster (#167)
 
 v2.8.1 (08.02.2024)
 -------------------
