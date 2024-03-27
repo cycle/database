@@ -1,4 +1,32 @@
-# CHANGELOG
+# Changelog
+
+## 1.0.0 (2024-03-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* update php version to 8.2
+
+### Features
+
+* add automation, linting and improve DX ([acccd75](https://github.com/cycle/database/commit/acccd758e24edab1fe3324f2649ead27421e6fd5))
+* add release-please changelog generator ([0298dc4](https://github.com/cycle/database/commit/0298dc4267037238f45c54c8cfa6473f2a9eddcd))
+* add release-please initial bootstrap command ([b823bee](https://github.com/cycle/database/commit/b823beed2992783c97770281634d9758a49d12f6))
+* update php version to 8.2 ([753eeda](https://github.com/cycle/database/commit/753eeda872328ccf5dc5adfc70d0daae909abb20))
+
+
+### Bug Fixes
+
+* 53 ([ddec160](https://github.com/cycle/database/commit/ddec160362ea67ab11cb33b180b9921bfa15dff8))
+* don't add a table prefix when column quoting ([#103](https://github.com/cycle/database/issues/103)) ([0fe0319](https://github.com/cycle/database/commit/0fe0319554c6ee473699cf3a47b00cc1121bdd6c))
+* interpolator includes microseconds into SQL result if it's configured ([#155](https://github.com/cycle/database/issues/155)) ([16047de](https://github.com/cycle/database/commit/16047de074f4c5f0cb1478daa1a8e04a84f5d508))
+
+
+### Miscellaneous
+
+* fixes in Makefile ([1d0ba94](https://github.com/cycle/database/commit/1d0ba942aa41354a9134e4a9927eb3781844e34b))
+
+## CHANGELOG
 
 v2.8.1 (08.02.2024)
 -------------------
