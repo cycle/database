@@ -686,11 +686,11 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
      *
      * @param float $queryStart Query start time
      * @param PDOStatement|PDOStatementInterface|null $statement Statement object
-     * @param iterable|null $parameters Query parameters
+     * @param iterable $parameters Query parameters
      *
      * @return array
      */
-    protected function defineLoggerContext(float $queryStart, PDOStatement|PDOStatementInterface|null $statement, ?iterable $parameters): array
+    protected function defineLoggerContext(float $queryStart, PDOStatement|PDOStatementInterface|null $statement, iterable $parameters = []): array
     {
         $context = [
             'driver' => $this->getType(),

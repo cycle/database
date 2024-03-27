@@ -138,7 +138,7 @@ final class Interpolator
      *
      * @param iterable $parameters Parameters to categorize.
      *
-     * @return array An associative array with keys 'named' and 'unnamed'.
+     * @return array{named: array<string, mixed>, unnamed: list<mixed>} An associative array with keys 'named' and 'unnamed'.
      */
     private static function categorizeParameters(iterable $parameters): array
     {
