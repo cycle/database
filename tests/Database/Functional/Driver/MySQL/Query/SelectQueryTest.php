@@ -481,4 +481,16 @@ class SelectQueryTest extends CommonClass
         );
         $this->assertSameParameters([5], $select);
     }
+
+    public function testOrderByCompileException(): void
+    {
+        $this->expectException(\Cycle\Database\Exception\CompilerException::class);
+        $this->expectExceptionMessage('Invalid sorting direction, only `ASC`, `DESC` are allowed');
+
+        $this->database
+            ->select()
+            ->from('table')
+            ->orderBy('name', 'FOO')
+            ->sqlStatement();
+    }
 }

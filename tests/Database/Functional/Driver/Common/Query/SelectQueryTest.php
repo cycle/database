@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Functional\Driver\Common\Query;
 
 use Cycle\Database\Exception\BuilderException;
+use Cycle\Database\Exception\CompilerException;
 use Cycle\Database\Exception\CompilerException\UnexpectedOperatorException;
 use Cycle\Database\Injection\Expression;
 use Cycle\Database\Injection\Fragment;
@@ -1698,6 +1699,28 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             'SELECT * FROM {users} ORDER BY RAND() ASC',
             $select
         );
+    }
+
+    public function testOrderByNullableDirection(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->orderBy(new Fragment('RAND()'), null);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} ORDER BY RAND()',
+            $select
+        );
+    }
+
+    public function testOrderByWrongDirection(): void
+    {
+        $this->expectException(CompilerException::class);
+
+        $this->database->select()
+            ->from(['users'])
+            ->orderBy('column', 'FOO')
+            ->sqlStatement();
     }
 
     //Please not this example

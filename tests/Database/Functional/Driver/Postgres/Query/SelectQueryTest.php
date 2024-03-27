@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Functional\Driver\Postgres\Query;
 
 // phpcs:ignore
+use Cycle\Database\Injection\Fragment;
+use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Tests\Functional\Driver\Common\Query\SelectQueryTest as CommonClass;
 
 /**
@@ -455,5 +457,50 @@ class SelectQueryTest extends CommonClass
             $select
         );
         $this->assertSameParameters([5], $select);
+    }
+
+    /**
+     * @dataProvider orderByProvider
+     */
+    public function testOrderBy(string|FragmentInterface $column, ?string $direction): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->orderBy($column, $direction);
+
+        if (\is_string($column)) {
+            $column = \sprintf('"%s"', $column);
+        }
+
+        $this->assertSameQuery(
+            \sprintf('SELECT * FROM {table} ORDER BY %s %s', $column, $direction),
+            $select,
+        );
+    }
+
+    public function orderByProvider(): iterable
+    {
+        return [
+            ['column', 'ASC'],
+            ['column', 'DESC'],
+            ['column', 'ASC NULLS LAST'],
+            ['column', 'ASC NULLS FIRST'],
+            ['column', 'DESC NULLS LAST'],
+            ['column', 'DESC NULLS FIRST'],
+            [new Fragment('RAND()'), null],
+        ];
+    }
+
+    public function testOrderByCompileException(): void
+    {
+        $this->expectException(\Cycle\Database\Exception\CompilerException::class);
+        $this->expectExceptionMessage('Invalid sorting direction, only `ASC`, `ASC NULLS LAST`, `ASC NULLS FIRST`, `DESC`, `DESC NULLS LAST`, `DESC NULLS FIRST` are allowed');
+
+        $this->database
+            ->select()
+            ->from('table')
+            ->orderBy('name', 'FOO')
+            ->sqlStatement();
     }
 }

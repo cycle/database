@@ -18,11 +18,18 @@ class SelectQueryTest extends TestCase
             ->from('table')
             ->columns('name', 'value')
             ->where(['name' => 'Antony'])
-            ->orWhere('id', '>', 1);
+            ->orWhere('id', '>', 1)
+            ->orderBy('name', 'ASC')
+            ->orderBy('id', 'DESC')
+            ->orderBy('RAND()', null)
+            ->orderBy([
+                'FOO()' => null,
+                'COALESCE(name, test)',
+            ]);
 
         $this->assertSame(
             CompilerInterface::SELECT_QUERY,
-            $select->getType()
+            $select->getType(),
         );
 
         $this->assertEquals(
@@ -44,12 +51,18 @@ class SelectQueryTest extends TestCase
                 ],
                 'having' => [],
                 'groupBy' => [],
-                'orderBy' => [],
+                'orderBy' => [
+                    ['name', 'ASC'],
+                    ['id', 'DESC'],
+                    ['RAND()', null],
+                    ['FOO()', null],
+                    ['COALESCE(name, test)', null],
+                ],
                 'limit' => null,
                 'offset' => null,
                 'union' => [],
             ],
-            $select->getTokens()
+            $select->getTokens(),
         );
     }
 }

@@ -23,6 +23,11 @@ use Cycle\Database\Query\QueryParameters;
  */
 class PostgresCompiler extends Compiler implements CachingCompilerInterface
 {
+    protected const ORDER_OPTIONS = [
+        'ASC', 'ASC NULLS LAST', 'ASC NULLS FIRST' ,
+        'DESC', 'DESC NULLS LAST', 'DESC NULLS FIRST',
+    ];
+
     /**
      * @psalm-return non-empty-string
      */
