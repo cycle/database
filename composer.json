@@ -44,7 +44,7 @@
         "psr/log": "1 - 3",
         "spiral/core": "^2.8 || ^3.0",
         "spiral/pagination": "^2.8 || ^3.0",
-        "symfony/polyfill-php83": "^1.28"
+        "symfony/polyfill-php83": "^1.29"
     },
     "autoload": {
         "files": [
@@ -56,11 +56,13 @@
         }
     },
     "require-dev": {
-        "infection/infection": "^0.26.10",
-        "mockery/mockery": "^1.5",
-        "phpunit/phpunit": "^9.5",
+        "infection/infection": "^0.26",
+        "mockery/mockery": "^1.6",
+        "phpunit/phpunit": "^9.6",
         "spiral/tokenizer": "^2.14 | ^3.0",
-        "vimeo/psalm": "^5.18"
+        "vimeo/psalm": "^5.23",
+        "roave/security-advisories": "dev-latest",
+        "wayofdev/cs-fixer-config": "^1.2"
     },
     "autoload-dev": {
         "psr-4": {
@@ -68,11 +70,13 @@
         }
     },
     "scripts": {
-        "test": [
-            "phpcs --standard=phpcs.xml",
-            "psalm --no-cache",
-            "phpunit"
-        ]
+        "cs:fix": "php vendor/bin/php-cs-fixer fix -v",
+        "cs:diff": "php vendor/bin/php-cs-fixer fix --dry-run -v --diff",
+        "test": "php vendor/bin/phpunit --colors=always",
+        "test:cc": "php vendor/bin/phpunit --colors=always --coverage",
+        "test:sqlite": "php vendor/bin/phpunit --colors=always --group=driver-sqlite",
+        "psalm": "php vendor/bin/psalm --no-cache",
+        "psalm:ci": "php vendor/bin/psalm --no-cache --error-format=github"
     },
     "config": {
         "sort-packages": true,
