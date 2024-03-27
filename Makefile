@@ -186,3 +186,9 @@ test-cc: ## Run project php-unit tests in coverage mode and build report
 test-sqlite: ## Run project php-unit tests with sqlite database
 	$(APP_COMPOSER) test:sqlite
 .PHONY: test-sqlite
+
+# Release
+# ------------------------------------------------------------------------------------
+release: ## Create a new release
+	release-please github-release --token=$(GITHUB_TOKEN) --repo-url=cycle/database --default-branch=2.x
+.PHONE: release
