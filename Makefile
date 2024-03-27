@@ -197,7 +197,7 @@ release: ## Create a new release
 	release-please release-pr \
 		--token=$(GITHUB_TOKEN) \
 		--repo-url=cycle/database \
-		--target-branch=feat/dx \
+		--target-branch=feat/infra-dx-v2 \
 		--config-file=.github/.release-please-config.json \
 		--manifest-file=.github/.release-please-manifest.json
 .PHONE: release
