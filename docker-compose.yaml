@@ -16,7 +16,8 @@ services:
       - .env
 
   sqlserver:
-    image: mcr.microsoft.com/mssql/server:2019-latest
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64
     container_name: ${COMPOSE_PROJECT_NAME}-sqlserver
     restart: on-failure
     networks:

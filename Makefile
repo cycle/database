@@ -189,6 +189,16 @@ test-sqlite: ## Run project php-unit tests with sqlite database
 
 # Release
 # ------------------------------------------------------------------------------------
+commit:
+	cz commit
+.PHONY: commit
+
 release: ## Create a new release
-	release-please github-release --token=$(GITHUB_TOKEN) --repo-url=cycle/database --default-branch=2.x
+	release-please github-release \
+		--token=$(GITHUB_TOKEN) \
+		--repo-url=cycle/database \
+		--default-branch=2.x \
+		--target-branch=feat/dx \
+		--config-file=./.github/.release-please-config.json \
+		--manifest-file=./.github/.release-please-manifest.json
 .PHONE: release
