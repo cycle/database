@@ -466,7 +466,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 [
                     'name' => [
                         'like' => 'Anton',
-                        '!=' => 'Antony',
+                        '!='   => 'Antony',
                     ],
                 ]
             );
@@ -539,7 +539,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             ->from(['users'])
             ->where(
                 [
-                    'name' => 'Anton',
+                    'name'  => 'Anton',
                     'value' => 1,
                 ]
             );
@@ -803,7 +803,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             ->orderBy(
                 [
                     'value' => SelectQuery::SORT_ASC,
-                    'name' => SelectQuery::SORT_DESC,
+                    'name'  => SelectQuery::SORT_DESC,
                 ]
             );
 
@@ -1377,7 +1377,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 [
                     'name' => [
                         'like' => 'Anton',
-                        '!=' => 'Antony',
+                        '!='   => 'Antony',
                     ],
                 ]
             );
@@ -1446,7 +1446,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                                  ->from(['users'])
                                  ->having(
                                      [
-                                         'name' => 'Anton',
+                                         'name'  => 'Anton',
                                          'value' => 1,
                                      ]
                                  );
@@ -1590,7 +1590,6 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             'SELECT * FROM {users} LIMIT ? OFFSET ?',
             $select
         );
-
 
         $this->assertSameParameters(
             [
@@ -2010,7 +2009,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             ->where(
                 [
                     'status' => ['IN' => $status],
-                    'name' => ['NOT IN' => $name],
+                    'name'   => ['NOT IN' => $name],
                 ],
             );
 
@@ -2146,7 +2145,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
         $this->assertSameQuery(
             'SELECT CASE WHEN field1 ILIKE ? THEN 1 WHEN field2 ILIKE ? THEN2 '
-            . 'WHEN field3 ILIKE ? THEN 3 END AS rank FROM {users} WHERE {id} > ?',
+            .'WHEN field3 ILIKE ? THEN 3 END AS rank FROM {users} WHERE {id} > ?',
             $select
         );
 
@@ -2176,7 +2175,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
         $this->assertSameQuery(
             'SELECT CASE WHEN field1 ILIKE ? THEN 1 WHEN field2 ILIKE ? '
-            . 'THEN2 WHEN field3 ILIKE ? THEN 3 END AS rank FROM {users} WHERE {id} > ?',
+            .'THEN2 WHEN field3 ILIKE ? THEN 3 END AS rank FROM {users} WHERE {id} > ?',
             $select
         );
 
@@ -2292,7 +2291,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     }
 
     /**
-     * Issue https://github.com/cycle/database/issues/49
+     * Issue https://github.com/cycle/database/issues/49.
      */
     public function testLeftJoinQuoting(): void
     {

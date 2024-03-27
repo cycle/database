@@ -171,7 +171,7 @@ abstract class Handler implements HandlerInterface
         if ($table->getPrimaryKeys() !== []) {
             $primaryKeys = array_map([$this, 'identify'], $table->getPrimaryKeys());
 
-            $innerStatement[] = 'PRIMARY KEY (' . implode(', ', $primaryKeys) . ')';
+            $innerStatement[] = 'PRIMARY KEY ('.implode(', ', $primaryKeys).')';
         }
 
         //Constraints and foreign keys
@@ -179,7 +179,7 @@ abstract class Handler implements HandlerInterface
             $innerStatement[] = $reference->sqlStatement($this->driver);
         }
 
-        $statement[] = '    ' . implode(",\n    ", $innerStatement);
+        $statement[] = '    '.implode(",\n    ", $innerStatement);
         $statement[] = ')';
 
         return implode("\n", $statement);

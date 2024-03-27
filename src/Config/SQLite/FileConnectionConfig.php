@@ -17,9 +17,9 @@ class FileConnectionConfig extends ConnectionConfig implements ProvidesSourceStr
 {
     /**
      * @param string $database The pathname to the SQLite database file.
-     *        - In case of keyword ":memory:" {@see MemoryConnectionConfig}.
-     *        - In case of empty string value {@see TempFileConnectionConfig}.
-     * @param array $options
+     *                         - In case of keyword ":memory:" {@see MemoryConnectionConfig}.
+     *                         - In case of empty string value {@see TempFileConnectionConfig}.
+     * @param array  $options
      */
     public function __construct(
         public string $database = '',

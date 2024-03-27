@@ -20,7 +20,7 @@ final class MemoryConnectionConfigTest extends TestCase
         $exported = var_export($config, true);
 
         /** @var MemoryConnectionConfig $recoveredConfig */
-        eval('$recoveredConfig = ' . $exported . ';');
+        eval('$recoveredConfig = '.$exported.';');
 
         $this->assertSame('sqlite::memory:', $recoveredConfig->getDsn());
         $this->assertSame(':memory:', $recoveredConfig->getSourceString());

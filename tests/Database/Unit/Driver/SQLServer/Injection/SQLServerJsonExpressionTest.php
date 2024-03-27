@@ -20,7 +20,7 @@ final class SQLServerJsonExpressionTest extends TestCase
 
     private function createExpression(): SQLServerJsonExpression
     {
-        return new class () extends SQLServerJsonExpression {
+        return new class() extends SQLServerJsonExpression {
             public function __construct()
             {
             }

@@ -21,12 +21,12 @@ class TcpConnectionConfig extends ConnectionConfig implements ProvidesSourceStri
     public int $port;
 
     /**
-     * @param non-empty-string $host
-     * @param numeric-string|positive-int $port
-     * @param non-empty-string $database
-     * @param non-empty-string|null $charset
-     * @param non-empty-string|null $user
-     * @param non-empty-string|null $password
+     * @param non-empty-string                              $host
+     * @param numeric-string|positive-int                   $port
+     * @param non-empty-string                              $database
+     * @param non-empty-string|null                         $charset
+     * @param non-empty-string|null                         $user
+     * @param non-empty-string|null                         $password
      * @param array<int, non-empty-string|non-empty-string> $options
      */
     public function __construct(
@@ -56,16 +56,16 @@ class TcpConnectionConfig extends ConnectionConfig implements ProvidesSourceStri
      * that looks like:
      * <code>
      *  mysql:host=localhost;port=3307;dbname=dbname
-     * </code>
+     * </code>.
      *
      * {@inheritDoc}
      */
     public function getDsn(): string
     {
         $config = [
-            'host' => $this->host,
-            'port' => $this->port,
-            'dbname' => $this->database,
+            'host'    => $this->host,
+            'port'    => $this->port,
+            'dbname'  => $this->database,
             'charset' => $this->charset,
         ];
 

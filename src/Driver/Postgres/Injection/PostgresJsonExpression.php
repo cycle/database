@@ -88,7 +88,7 @@ abstract class PostgresJsonExpression extends JsonExpression
             foreach ($parsedAttributes as $attribute) {
                 $result[] = \filter_var($attribute, FILTER_VALIDATE_INT) !== false
                     ? $attribute
-                    : $quote . $attribute . $quote;
+                    : $quote.$attribute.$quote;
             }
         }
 

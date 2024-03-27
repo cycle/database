@@ -19,7 +19,7 @@ use Cycle\Database\Exception\BuilderException;
 final class Jsoner
 {
     /**
-     * @param bool $encode Encode the value into JSON.
+     * @param bool $encode   Encode the value into JSON.
      * @param bool $validate Check that $value is a valid JSON string if the $encode parameter is false.
      *
      * @throws BuilderException|\JsonException
@@ -30,7 +30,7 @@ final class Jsoner
             return \json_encode($value, \JSON_UNESCAPED_UNICODE | \JSON_THROW_ON_ERROR);
         }
 
-        $result = (string)$value;
+        $result = (string) $value;
 
         if ($validate && !\json_validate($result)) {
             throw new BuilderException('Invalid JSON value.');

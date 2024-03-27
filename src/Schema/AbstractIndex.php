@@ -41,7 +41,7 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
     protected array $columns = [];
 
     /**
-     * Columns mapping to sorting order
+     * Columns mapping to sorting order.
      */
     protected array $sort = [];
 
@@ -71,11 +71,12 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
     }
 
     /**
-     * Will return columns list with their corresponding order expressions
+     * Will return columns list with their corresponding order expressions.
      */
     public function getColumnsWithSort(): array
     {
         $self = $this;
+
         return array_map(
             static fn (string $column): string => ($order = $self->sort[$column] ?? null) ? "$column $order" : $column,
             $this->columns
@@ -136,7 +137,7 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
      * Index sql creation syntax.
      *
      * @param DriverInterface $driver
-     * @param bool $includeTable Include table ON statement (not required for inline index creation).
+     * @param bool            $includeTable Include table ON statement (not required for inline index creation).
      *
      * @psalm-return non-empty-string
      */
@@ -173,7 +174,7 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
     }
 
     /**
-     * Parse column name and order from column expression
+     * Parse column name and order from column expression.
      */
     public static function parseColumn(array|string $column): array
     {

@@ -24,8 +24,8 @@ trait TokenTrait
      *
      * @psalm-param non-empty-string $boolean Boolean joiner (AND | OR).
      *
-     * @param array $params Set of parameters collected from where functions.
-     * @param array $tokens Array to aggregate compiled tokens. Reference.
+     * @param array    $params  Set of parameters collected from where functions.
+     * @param array    $tokens  Array to aggregate compiled tokens. Reference.
      * @param callable $wrapper Callback or closure used to wrap/collect every potential parameter.
      *
      * @throws BuilderException
@@ -58,6 +58,7 @@ trait TokenTrait
                         $tokens,
                         $wrapper
                     );
+
                     return;
                 }
 
@@ -79,11 +80,13 @@ trait TokenTrait
                 $tokens[] = [$boolean, '('];
                 $complex($this, $boolean, $wrapper);
                 $tokens[] = ['', ')'];
+
                 return;
             }
 
             if ($complex instanceof FragmentInterface) {
                 $tokens[] = [$boolean, $complex];
+
                 return;
             }
 
@@ -110,7 +113,7 @@ trait TokenTrait
                         $value = new Parameter($value);
                     }
                 } elseif (\is_scalar($operator)) {
-                    $operator = (string)$operator;
+                    $operator = (string) $operator;
                 }
 
                 // AND|OR [name] [valueA: OPERATION] [valueA]
@@ -153,8 +156,8 @@ trait TokenTrait
      *
      * @psalm-param non-empty-string $grouper Grouper type (see self::TOKEN_AND, self::TOKEN_OR).
      *
-     * @param array $where Simplified where definition.
-     * @param array $tokens Array to aggregate compiled tokens. Reference.
+     * @param array    $where   Simplified where definition.
+     * @param array    $tokens  Array to aggregate compiled tokens. Reference.
      * @param callable $wrapper Callback or closure used to wrap/collect every potential parameter.
      *
      * @throws BuilderException
@@ -227,8 +230,8 @@ trait TokenTrait
      * @psalm-param non-empty-string $innerJoiner Inner boolean joiner.
      * @psalm-param non-empty-string $key Column identifier.
      *
-     * @param array $where Operations associated with identifier.
-     * @param array $tokens Array to aggregate compiled tokens. Reference.
+     * @param array    $where   Operations associated with identifier.
+     * @param array    $tokens  Array to aggregate compiled tokens. Reference.
      * @param callable $wrapper Callback or closure used to wrap/collect every potential parameter.
      */
     private function pushCondition(string $innerJoiner, string $key, array $where, &$tokens, callable $wrapper): array

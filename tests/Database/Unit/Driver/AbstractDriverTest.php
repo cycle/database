@@ -158,7 +158,7 @@ class AbstractDriverTest extends TestCase
         $driver = TestDriver::createWith(
             new SQLiteDriverConfig(options: [
                 'logInterpolatedQueries' => false,
-                'logQueryParameters' => true,
+                'logQueryParameters'     => true,
             ]),
             $this->createMock(HandlerInterface::class),
             $this->createMock(BuilderInterface::class),

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Unit\Query\Tokens;
 
-use PHPUnit\Framework\TestCase;
 use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\InsertQuery;
+use PHPUnit\Framework\TestCase;
 
 class InsertQueryTest extends TestCase
 {
@@ -26,9 +26,9 @@ class InsertQueryTest extends TestCase
 
         $this->assertEquals(
             [
-                'table' => 'table',
+                'table'   => 'table',
                 'columns' => ['name', 'value'],
-                'values' => [new Parameter(['Antony', 1])],
+                'values'  => [new Parameter(['Antony', 1])],
             ],
             $insert->getTokens()
         );

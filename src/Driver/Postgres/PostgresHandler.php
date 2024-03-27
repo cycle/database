@@ -39,7 +39,7 @@ class PostgresHandler extends Handler
             WHERE table_type = 'BASE TABLE'";
 
         if ($this->driver->shouldUseDefinedSchemas()) {
-            $query .= " AND table_schema in ('" . implode("','", $this->driver->getSearchSchemas()) . "')";
+            $query .= " AND table_schema in ('".implode("','", $this->driver->getSearchSchemas())."')";
         } else {
             $query .= " AND table_schema !~ '^pg_.*' AND table_schema != 'information_schema'";
         }
@@ -50,7 +50,7 @@ class PostgresHandler extends Handler
                 continue;
             }
 
-            $tables[] = $row['table_schema'] . '.' . $row['table_name'];
+            $tables[] = $row['table_schema'].'.'.$row['table_name'];
         }
 
         return $tables;
@@ -69,7 +69,7 @@ class PostgresHandler extends Handler
             AND table_type = 'BASE TABLE'
             AND table_name = ?";
 
-        return (bool)$this->driver->query($query, [$schema, $name])->fetchColumn();
+        return (bool) $this->driver->query($query, [$schema, $name])->fetchColumn();
     }
 
     public function eraseTable(AbstractTable $table, bool $restartIdentity = false): void

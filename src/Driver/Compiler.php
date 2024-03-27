@@ -70,7 +70,7 @@ abstract class Compiler implements CompilerInterface
             $params->push(new Parameter($tokens['offset']));
         }
 
-        return '_' . ($tokens['limit'] === null) . '_' . ($tokens['offset'] === null);
+        return '_'.($tokens['limit'] === null).'_'.($tokens['offset'] === null);
     }
 
     /**
@@ -260,7 +260,7 @@ abstract class Compiler implements CompilerInterface
                 ),
             );
 
-            $result[] = $this->name($params, $q, $order[0]) . ' ' . $direction;
+            $result[] = $this->name($params, $q, $order[0]).' '.$direction;
         }
 
         return \implode(', ', $result);
@@ -354,7 +354,7 @@ abstract class Compiler implements CompilerInterface
         if ($alias !== null) {
             $q->registerAlias($alias, (string) $name);
 
-            $quotedName .= ' AS ' . $this->name($params, $q, $alias);
+            $quotedName .= ' AS '.$this->name($params, $q, $alias);
         }
 
         return $quotedName;
@@ -395,7 +395,7 @@ abstract class Compiler implements CompilerInterface
                 $values[] = $this->value($params, $q, $child);
             }
 
-            return '(' . implode(', ', $values) . ')';
+            return '('.implode(', ', $values).')';
         }
 
         $params->push($value);
@@ -476,7 +476,7 @@ abstract class Compiler implements CompilerInterface
         }
 
         if ($value instanceof FragmentInterface) {
-            return $operator . ' ' . $this->fragment($params, $q, $value);
+            return $operator.' '.$this->fragment($params, $q, $value);
         }
 
         if (!$value instanceof ParameterInterface) {
@@ -508,10 +508,10 @@ abstract class Compiler implements CompilerInterface
             $params->push($context[3]);
 
             // possibly support between nested queries
-            return $operator . ' ? AND ?';
+            return $operator.' ? AND ?';
         }
 
-        return $operator . ' ' . $placeholder;
+        return $operator.' '.$placeholder;
     }
 
     /**
@@ -528,7 +528,7 @@ abstract class Compiler implements CompilerInterface
             $prefix .= ' ';
         }
 
-        return $prefix . $expression . $postfix;
+        return $prefix.$expression.$postfix;
     }
 
     private function arrayToInOperator(QueryParameters $params, Quoter $q, array $values, bool $in): string

@@ -15,6 +15,6 @@ class CompileJsonDoesntContain extends CompileJsonContains
 {
     protected function compile(string $statement): string
     {
-        return 'NOT ' . parent::compile($statement);
+        return 'NOT '.parent::compile($statement);
     }
 }

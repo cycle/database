@@ -20,7 +20,7 @@ use Cycle\Database\Schema\AbstractTable;
 /**
  * Manages database schema.
  *
- * @method void enableForeignKeyConstraints() Enable foreign key constraints. Will be added the next major release.
+ * @method void enableForeignKeyConstraints()  Enable foreign key constraints. Will be added the next major release.
  * @method void disableForeignKeyConstraints() Disable foreign key constraints. Will be added the next major release.
  */
 interface HandlerInterface

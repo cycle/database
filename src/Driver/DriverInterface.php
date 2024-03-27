@@ -11,13 +11,13 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver;
 
-use PDO;
 use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\ReadonlyConnectionException;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Query\BuilderInterface;
 use Cycle\Database\StatementInterface;
+use PDO;
 
 /**
  * Wraps PDO connection and provides common abstractions over database operations.

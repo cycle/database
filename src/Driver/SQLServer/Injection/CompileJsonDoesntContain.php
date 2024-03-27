@@ -17,7 +17,7 @@ class CompileJsonDoesntContain extends SQLServerJsonExpression
     {
         return \sprintf(
             '? NOT IN (SELECT [value] FROM openjson(%s))',
-            $this->getField($statement) . $this->getPath($statement)
+            $this->getField($statement).$this->getPath($statement)
         );
     }
 }

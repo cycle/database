@@ -34,8 +34,8 @@ final class Database implements DatabaseInterface
     /**
      * @psalm-param non-empty-string $name Internal database name/id.
      *
-     * @param string $prefix Default database table prefix, will be used for all table identifiers.
-     * @param DriverInterface $driver Driver instance responsible for database connection.
+     * @param string               $prefix     Default database table prefix, will be used for all table identifiers.
+     * @param DriverInterface      $driver     Driver instance responsible for database connection.
      * @param DriverInterface|null $readDriver Read-only driver connection.
      */
     public function __construct(
@@ -96,7 +96,7 @@ final class Database implements DatabaseInterface
      */
     public function hasTable(string $name): bool
     {
-        return $this->getDriver()->getSchemaHandler()->hasTable($this->prefix . $name);
+        return $this->getDriver()->getSchemaHandler()->hasTable($this->prefix.$name);
     }
 
     /**
@@ -109,7 +109,7 @@ final class Database implements DatabaseInterface
         $result = [];
         foreach ($schemaHandler->getTableNames($this->prefix) as $table) {
             $table = str_contains($table, '.')
-                ? str_replace('.' . $this->prefix, '.', $table)
+                ? str_replace('.'.$this->prefix, '.', $table)
                 : substr($table, strlen($this->prefix));
 
             $result[] = new Table($this, $table);
@@ -191,6 +191,7 @@ final class Database implements DatabaseInterface
             return $result;
         } catch (Throwable $e) {
             $this->rollback();
+
             throw $e;
         }
     }

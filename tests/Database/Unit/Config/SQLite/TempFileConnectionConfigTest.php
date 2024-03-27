@@ -20,7 +20,7 @@ final class TempFileConnectionConfigTest extends TestCase
         $exported = var_export($config, true);
 
         /** @var TempFileConnectionConfig $recoveredConfig */
-        eval('$recoveredConfig = ' . $exported . ';');
+        eval('$recoveredConfig = '.$exported.';');
 
         $this->assertSame('sqlite:', $recoveredConfig->getDsn());
         $this->assertSame('', $recoveredConfig->getSourceString());

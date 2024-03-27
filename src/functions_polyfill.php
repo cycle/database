@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 if (!function_exists('array_is_list')) {
     /**
-     * Checks whether a given array is a list
+     * Checks whether a given array is a list.
      *
      * @param array $array
      *

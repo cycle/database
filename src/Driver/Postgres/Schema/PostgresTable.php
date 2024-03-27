@@ -71,7 +71,7 @@ class PostgresTable extends AbstractTable
         $tables = [];
         foreach ($this->current->getForeignKeys() as $foreignKey) {
             [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($foreignKey->getForeignTable());
-            $tables[] = $tableSchema . '.' . $tableName;
+            $tables[] = $tableSchema.'.'.$tableName;
         }
 
         return $tables;
@@ -136,7 +136,7 @@ class PostgresTable extends AbstractTable
             $schema['is_primary'] = \in_array($schema['column_name'], $primaryKeys, true);
 
             $result[] = PostgresColumn::createInstance(
-                $tableSchema . '.' . $tableName,
+                $tableSchema.'.'.$tableName,
                 $schema + ['tableOID' => $tableOID],
                 $this->driver
             );
@@ -149,7 +149,7 @@ class PostgresTable extends AbstractTable
     {
         [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
 
-        $query = <<<SQL
+        $query = <<<'SQL'
             SELECT i.indexname, i.indexdef, c.contype
             FROM pg_indexes i
             LEFT JOIN pg_namespace ns
@@ -166,7 +166,7 @@ class PostgresTable extends AbstractTable
                 //Skipping primary keys
                 continue;
             }
-            $result[] = PostgresIndex::createInstance($tableSchema . '.' . $tableName, $schema);
+            $result[] = PostgresIndex::createInstance($tableSchema.'.'.$tableName, $schema);
         }
 
         return $result;
@@ -178,16 +178,16 @@ class PostgresTable extends AbstractTable
 
         //Mindblowing
         $query = 'SELECT tc.constraint_name, tc.constraint_schema, tc.table_name, kcu.column_name, rc.update_rule, '
-            . 'rc.delete_rule, ccu.table_name AS foreign_table_name, '
-            . "ccu.column_name AS foreign_column_name\n"
-            . "FROM information_schema.table_constraints AS tc\n"
-            . "JOIN information_schema.key_column_usage AS kcu\n"
-            . "   ON tc.constraint_name = kcu.constraint_name\n"
-            . "JOIN information_schema.constraint_column_usage AS ccu\n"
-            . "   ON ccu.constraint_name = tc.constraint_name\n"
-            . "JOIN information_schema.referential_constraints AS rc\n"
-            . "   ON rc.constraint_name = tc.constraint_name\n"
-            . "WHERE constraint_type = 'FOREIGN KEY' AND tc.table_schema = ? AND tc.table_name = ?";
+            .'rc.delete_rule, ccu.table_name AS foreign_table_name, '
+            ."ccu.column_name AS foreign_column_name\n"
+            ."FROM information_schema.table_constraints AS tc\n"
+            ."JOIN information_schema.key_column_usage AS kcu\n"
+            ."   ON tc.constraint_name = kcu.constraint_name\n"
+            ."JOIN information_schema.constraint_column_usage AS ccu\n"
+            ."   ON ccu.constraint_name = tc.constraint_name\n"
+            ."JOIN information_schema.referential_constraints AS rc\n"
+            ."   ON rc.constraint_name = tc.constraint_name\n"
+            ."WHERE constraint_type = 'FOREIGN KEY' AND tc.table_schema = ? AND tc.table_name = ?";
 
         $fks = [];
         foreach ($this->driver->query($query, [$tableSchema, $tableName]) as $schema) {
@@ -205,7 +205,7 @@ class PostgresTable extends AbstractTable
         $result = [];
         foreach ($fks as $schema) {
             $result[] = PostgresForeignKey::createInstance(
-                $tableSchema . '.' . $tableName,
+                $tableSchema.'.'.$tableName,
                 $this->getPrefix(),
                 $schema
             );
@@ -218,7 +218,7 @@ class PostgresTable extends AbstractTable
     {
         [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
 
-        $query = <<<SQL
+        $query = <<<'SQL'
             SELECT i.indexname, i.indexdef, c.contype
             FROM pg_indexes i
             INNER JOIN pg_namespace ns
@@ -232,7 +232,7 @@ class PostgresTable extends AbstractTable
 
         foreach ($this->driver->query($query, [$tableSchema, $tableName]) as $schema) {
             //To simplify definitions
-            $index = PostgresIndex::createInstance($tableSchema . '.' . $tableName, $schema);
+            $index = PostgresIndex::createInstance($tableSchema.'.'.$tableName, $schema);
 
             if (\is_array($this->primarySequence) && count($index->getColumns()) === 1) {
                 $column = $index->getColumns()[0];
@@ -291,21 +291,21 @@ class PostgresTable extends AbstractTable
     {
         [$schema, $name] = $this->driver->parseSchemaAndTable($name);
 
-        return $schema . '.' . parent::prefixTableName($name);
+        return $schema.'.'.parent::prefixTableName($name);
     }
 
     /**
-     * Get table name with schema. If table doesn't contain schema, schema will be added from config
+     * Get table name with schema. If table doesn't contain schema, schema will be added from config.
      */
     protected function getNormalizedTableName(): string
     {
         [$schema, $name] = $this->driver->parseSchemaAndTable($this->getFullName());
 
-        return $schema . '.' . $name;
+        return $schema.'.'.$name;
     }
 
     /**
-     * Return table name without schema
+     * Return table name without schema.
      *
      * @psalm-param non-empty-string $name
      */

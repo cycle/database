@@ -44,8 +44,8 @@ abstract class PDOConnectionConfig extends ConnectionConfig
      * @var array<PDOFlag, mixed>
      */
     protected const DEFAULT_PDO_OPTIONS = [
-        \PDO::ATTR_CASE => \PDO::CASE_NATURAL,
-        \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+        \PDO::ATTR_CASE             => \PDO::CASE_NATURAL,
+        \PDO::ATTR_ERRMODE          => \PDO::ERRMODE_EXCEPTION,
         \PDO::ATTR_EMULATE_PREPARES => false,
     ];
 
@@ -109,7 +109,7 @@ abstract class PDOConnectionConfig extends ConnectionConfig
         return match (true) {
             \is_bool($value) => $value ? '1' : '0',
             // TODO Think about escaping special chars in strings
-            \is_scalar($value), $value instanceof \Stringable => (string)$value,
+            \is_scalar($value), $value instanceof \Stringable => (string) $value,
             default => throw new \InvalidArgumentException(
                 \sprintf('Can not convert config value of type "%s" to string', \get_debug_type($value))
             )

@@ -28,7 +28,7 @@ abstract class InsertQueryTest extends BaseTest
 
         $this->assertSameQuery(
             "INSERT INTO {table} ({name}) VALUES ('Antony')",
-            (string)$insert
+            (string) $insert
         );
     }
 
@@ -38,7 +38,7 @@ abstract class InsertQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'INSERT INTO {table} DEFAULT VALUES',
-            (string)$insert
+            (string) $insert
         );
     }
 

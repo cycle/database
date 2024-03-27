@@ -16,6 +16,7 @@ abstract class ExceptionsTest extends BaseTest
     public function testSelectionException(): void
     {
         $select = $this->database->select()->from('udnefinedTable');
+
         try {
             $select->run();
         } catch (StatementException $e) {
@@ -31,6 +32,7 @@ abstract class ExceptionsTest extends BaseTest
     public function testHandlerException(): void
     {
         $select = $this->database->select()->from('udnefinedTable');
+
         try {
             $select->run();
         } catch (StatementException $e) {

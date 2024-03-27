@@ -88,7 +88,6 @@ class AlterColumnsWithSchemaTest extends TestCase
         $schema->timestamp('timestamp')->defaultValue(AbstractColumn::DATETIME_NOW);
         $schema->datetime('datetime')->defaultValue('2017-01-01 00:00:00');
 
-
         $schema->date('datetime')->nullable(true);
         $schema->time('datetime')->defaultValue('00:00');
 

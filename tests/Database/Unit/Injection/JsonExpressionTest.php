@@ -106,7 +106,6 @@ final class JsonExpressionTest extends TestCase
         $refParameters->setAccessible(true);
         $refParameters->setValue($expression, ['bar']);
 
-
         $this->assertSame([
             'expression' => 'foo',
             'parameters' => ['bar'],
@@ -185,7 +184,7 @@ final class JsonExpressionTest extends TestCase
 
     private function createExpression(): JsonExpression
     {
-        return new class () extends JsonExpression {
+        return new class() extends JsonExpression {
             public function __construct()
             {
                 $this->quoter = new Quoter('', $this->getQuotes());

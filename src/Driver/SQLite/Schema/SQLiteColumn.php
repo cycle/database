@@ -53,10 +53,10 @@ class SQLiteColumn extends AbstractColumn
 
         //Integer types (size can always be changed with size method), longInteger has method alias
         //bigInteger
-        'integer'     => 'integer',
-        'tinyInteger' => 'tinyint',
+        'integer'      => 'integer',
+        'tinyInteger'  => 'tinyint',
         'smallInteger' => 'smallint',
-        'bigInteger'  => 'bigint',
+        'bigInteger'   => 'bigint',
 
         //String with specified length (mapped via method)
         'string'      => ['type' => 'text', 'size' => 255],
@@ -90,23 +90,23 @@ class SQLiteColumn extends AbstractColumn
     ];
 
     protected array $reverseMapping = [
-        'primary'     => [['type' => 'integer', 'primaryKey' => true]],
-        'enum'        => ['enum'],
-        'boolean'     => ['boolean'],
-        'integer'     => ['int', 'integer', 'mediumint'],
-        'tinyInteger' => ['tinyint'],
+        'primary'      => [['type' => 'integer', 'primaryKey' => true]],
+        'enum'         => ['enum'],
+        'boolean'      => ['boolean'],
+        'integer'      => ['int', 'integer', 'mediumint'],
+        'tinyInteger'  => ['tinyint'],
         'smallInteger' => ['smallint'],
-        'bigInteger'  => ['bigint'],
-        'text'        => ['text', 'string'],
-        'double'      => ['double'],
-        'float'       => ['real'],
-        'decimal'     => ['numeric'],
-        'datetime'    => ['datetime'],
-        'date'        => ['date'],
-        'time'        => ['time'],
-        'timestamp'   => ['timestamp'],
-        'binary'      => ['blob'],
-        'string'      => ['varchar'],
+        'bigInteger'   => ['bigint'],
+        'text'         => ['text', 'string'],
+        'double'       => ['double'],
+        'float'        => ['real'],
+        'decimal'      => ['numeric'],
+        'datetime'     => ['datetime'],
+        'date'         => ['date'],
+        'time'         => ['time'],
+        'timestamp'    => ['timestamp'],
+        'binary'       => ['blob'],
+        'string'       => ['varchar'],
     ];
 
     /**
@@ -152,7 +152,7 @@ class SQLiteColumn extends AbstractColumn
 
         $quoted = $driver->identifier($this->name);
 
-        return "$statement CHECK ({$quoted} IN (" . implode(', ', $enumValues) . '))';
+        return "$statement CHECK ({$quoted} IN (".implode(', ', $enumValues).'))';
     }
 
     /**
@@ -168,7 +168,7 @@ class SQLiteColumn extends AbstractColumn
         $column->nullable = !$schema['notnull'];
         $column->type = \strtolower($schema['type']);
 
-        if ((bool)$schema['pk'] && $column->type === 'integer') {
+        if ((bool) $schema['pk'] && $column->type === 'integer') {
             $column->primaryKey = true;
         }
 
@@ -203,10 +203,10 @@ class SQLiteColumn extends AbstractColumn
             $options = explode(',', $matches['options']);
 
             if (count($options) > 1) {
-                $column->precision = (int)$options[0];
-                $column->scale = (int)$options[1];
+                $column->precision = (int) $options[0];
+                $column->scale = (int) $options[1];
             } else {
-                $column->size = (int)$options[0];
+                $column->size = (int) $options[0];
             }
         }
 

@@ -26,7 +26,7 @@ final class SQLiteDriverConfigTest extends TestCase
         $exported = var_export($config, true);
 
         /** @var SQLiteDriverConfig $recoveredConfig */
-        eval('$recoveredConfig = ' . $exported . ';');
+        eval('$recoveredConfig = '.$exported.';');
 
         $this->assertInstanceOf(DsnConnectionConfig::class, $recoveredConfig->connection);
         $this->assertSame("sqlite:$dsn", $recoveredConfig->connection->getDsn());

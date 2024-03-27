@@ -25,7 +25,7 @@ abstract class UpdateQueryTest extends BaseTest
 
         $this->assertSameQuery(
             "UPDATE {table} SET {name} = 'John' WHERE {name} = 'Antony'",
-            (string)$update
+            (string) $update
         );
     }
 

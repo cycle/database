@@ -46,7 +46,7 @@ class SQLServerCompiler extends Compiler
         $output = \implode(',', \array_map(
             fn (string|FragmentInterface|null $return) => $return instanceof FragmentInterface
                 ? $this->fragment($params, $q, $return)
-                : 'INSERTED.' . $this->quoteIdentifier($return),
+                : 'INSERTED.'.$this->quoteIdentifier($return),
             $tokens['return']
         ));
 
@@ -131,7 +131,7 @@ class SQLServerCompiler extends Compiler
         //Modern SQLServer are easier to work with
         if ($rowNumber === null) {
             $statement = 'OFFSET ? ROWS ';
-            $params->push(new Parameter((int)$offset));
+            $params->push(new Parameter((int) $offset));
 
             if ($limit !== null) {
                 $statement .= 'FETCH FIRST ? ROWS ONLY';
@@ -144,15 +144,15 @@ class SQLServerCompiler extends Compiler
         $statement = "WHERE {$this->name($params, $q, $rowNumber)} ";
 
         //0 = row_number(1)
-        ++$offset;
+        $offset++;
 
         if ($limit !== null) {
             $statement .= 'BETWEEN ? AND ?';
-            $params->push(new Parameter((int)$offset));
+            $params->push(new Parameter((int) $offset));
             $params->push(new Parameter($offset + $limit - 1));
         } else {
             $statement .= '>= ?';
-            $params->push(new Parameter((int)$offset));
+            $params->push(new Parameter((int) $offset));
         }
 
         return $statement;

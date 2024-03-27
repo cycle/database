@@ -57,8 +57,8 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     * @param bool $encode Encode the value into JSON. It is not used in this driver.
-     * @param bool $validate Check that $value is a valid JSON string if the $encode parameter is false. It is not used in this driver.
+     * @param bool             $encode   Encode the value into JSON. It is not used in this driver.
+     * @param bool             $validate Check that $value is a valid JSON string if the $encode parameter is false. It is not used in this driver.
      */
     public function whereJsonContains(string $column, mixed $value, bool $encode = true, bool $validate = true): static
     {
@@ -74,8 +74,8 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     * @param bool $encode Encode the value into JSON. It is not used in this driver.
-     * @param bool $validate Check that $value is a valid JSON string if the $encode parameter is false. It is not used in this driver.
+     * @param bool             $encode   Encode the value into JSON. It is not used in this driver.
+     * @param bool             $validate Check that $value is a valid JSON string if the $encode parameter is false. It is not used in this driver.
      */
     public function orWhereJsonContains(
         string $column,
@@ -95,8 +95,8 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     * @param bool $encode Encode the value into JSON. It is not used in this driver.
-     * @param bool $validate Check that $value is a valid JSON string if the $encode parameter is false. It is not used in this driver.
+     * @param bool             $encode   Encode the value into JSON. It is not used in this driver.
+     * @param bool             $validate Check that $value is a valid JSON string if the $encode parameter is false. It is not used in this driver.
      */
     public function whereJsonDoesntContain(
         string $column,
@@ -116,8 +116,8 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     * @param bool $encode Encode the value into JSON. It is not used in this driver.
-     * @param bool $validate Check that $value is a valid JSON string if the $encode parameter is false. It is not used in this driver.
+     * @param bool             $encode   Encode the value into JSON. It is not used in this driver.
+     * @param bool             $validate Check that $value is a valid JSON string if the $encode parameter is false. It is not used in this driver.
      */
     public function orWhereJsonDoesntContain(
         string $column,
@@ -197,7 +197,7 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     * @param int<0, max> $length
+     * @param int<0, max>      $length
      * @param non-empty-string $operator
      */
     public function whereJsonLength(string $column, int $length, string $operator = '='): static
@@ -214,7 +214,7 @@ trait WhereJsonTrait
 
     /**
      * @param non-empty-string $column
-     * @param int<0, max> $length
+     * @param int<0, max>      $length
      * @param non-empty-string $operator
      */
     public function orWhereJsonLength(string $column, int $length, string $operator = '='): static

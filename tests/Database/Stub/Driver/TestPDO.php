@@ -16,7 +16,7 @@ class TestPDO implements PDOInterface
 {
     private PDO $pdo;
     private int $exceptionOnTransactionBegin;
-    /** @var Closure(\PDOStatement $pdo, ?array $params): bool|null */
+    /** @var Closure(\PDOStatement, ?array): bool|null */
     private ?Closure $queryCallback;
 
     /**
@@ -37,15 +37,18 @@ class TestPDO implements PDOInterface
     public function beginTransaction(): bool
     {
         if ($this->exceptionOnTransactionBegin > 0) {
-            --$this->exceptionOnTransactionBegin;
+            $this->exceptionOnTransactionBegin--;
+
             throw new ConnectionException(new Exception(), 'Test exception');
         }
+
         return $this->pdo->beginTransaction();
     }
 
     public function prepare(string $query, array $options = []): PDOStatementInterface|false
     {
         $statement = $this->pdo->prepare(...\func_get_args());
+
         return $this->prepareStatement($statement);
     }
 
@@ -72,6 +75,7 @@ class TestPDO implements PDOInterface
     public function query($statement, $mode = PDO::ATTR_DEFAULT_FETCH_MODE, ...$fetch_mode_args): TestPDOStatement|false
     {
         $statement = $this->pdo->query(...\func_get_args());
+
         return $this->prepareStatement($statement);
     }
 

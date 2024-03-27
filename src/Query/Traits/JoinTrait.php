@@ -68,11 +68,11 @@ trait JoinTrait
      * Register new JOIN with specified type with set of on conditions (linking one table to
      * another, no parametric on conditions allowed here).
      *
-     * @param ActiveQuery|string $type    Join type. Allowed values, LEFT, RIGHT, INNER and etc.
-     * @param ActiveQuery|string $outer   Joined table name (without prefix), may include AS statement.
-     * @param string             $alias   Joined table or query alias.
-     * @param mixed              $on      Simplified on definition linking table names (no
-     *                                    parameters allowed) or closure.
+     * @param ActiveQuery|string $type  Join type. Allowed values, LEFT, RIGHT, INNER and etc.
+     * @param ActiveQuery|string $outer Joined table name (without prefix), may include AS statement.
+     * @param string             $alias Joined table or query alias.
+     * @param mixed              $on    Simplified on definition linking table names (no
+     *                                  parameters allowed) or closure.
      *
      * @throws BuilderException
      */
@@ -85,8 +85,8 @@ trait JoinTrait
         $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
             'alias' => $alias,
-            'type' => strtoupper($type),
-            'on' => [],
+            'type'  => strtoupper($type),
+            'on'    => [],
         ];
 
         if ($on === null) {
@@ -117,8 +117,8 @@ trait JoinTrait
         $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
             'alias' => $alias,
-            'type' => 'INNER',
-            'on' => [],
+            'type'  => 'INNER',
+            'on'    => [],
         ];
 
         return $this;
@@ -131,10 +131,10 @@ trait JoinTrait
      * @link http://www.w3schools.com/sql/sql_join_right.asp
      * @see  join()
      *
-     * @param ActiveQuery|string $outer   Joined table name (without prefix), may include AS statement.
-     * @param string             $alias   Joined table or query alias.
-     * @param mixed              $on      Simplified on definition linking table names (no
-     *                                    parameters allowed) or closure.
+     * @param ActiveQuery|string $outer Joined table name (without prefix), may include AS statement.
+     * @param string             $alias Joined table or query alias.
+     * @param mixed              $on    Simplified on definition linking table names (no
+     *                                  parameters allowed) or closure.
      *
      * @throws BuilderException
      */
@@ -143,8 +143,8 @@ trait JoinTrait
         $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
             'alias' => $alias,
-            'type' => 'RIGHT',
-            'on' => [],
+            'type'  => 'RIGHT',
+            'on'    => [],
         ];
 
         return $this;
@@ -168,8 +168,8 @@ trait JoinTrait
         $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
             'alias' => $alias,
-            'type' => 'LEFT',
-            'on' => [],
+            'type'  => 'LEFT',
+            'on'    => [],
         ];
 
         return $this;
@@ -195,8 +195,8 @@ trait JoinTrait
         $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
             'alias' => $alias,
-            'type' => 'FULL',
-            'on' => [],
+            'type'  => 'FULL',
+            'on'    => [],
         ];
 
         return $this;
@@ -333,8 +333,8 @@ trait JoinTrait
      *
      * @psalm-param non-empty-string $boolean Boolean joiner (AND | OR).
      *
-     * @param array $params Set of parameters collected from where functions.
-     * @param array $tokens Array to aggregate compiled tokens. Reference.
+     * @param array    $params  Set of parameters collected from where functions.
+     * @param array    $tokens  Array to aggregate compiled tokens. Reference.
      * @param callable $wrapper Callback or closure used to wrap/collect every potential parameter.
      *
      * @throws BuilderException
@@ -351,8 +351,7 @@ trait JoinTrait
      */
     private function onWrapper(): Closure
     {
-        return static fn ($parameter) =>
-            $parameter instanceof FragmentInterface || $parameter instanceof ParameterInterface
+        return static fn ($parameter) => $parameter instanceof FragmentInterface || $parameter instanceof ParameterInterface
                 ? $parameter
                 : new Expression($parameter);
     }

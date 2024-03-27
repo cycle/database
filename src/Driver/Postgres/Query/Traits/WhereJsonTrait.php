@@ -28,8 +28,8 @@ use Cycle\Database\Exception\BuilderException;
 trait WhereJsonTrait
 {
     /**
-     * @param non-empty-string $column
-     * @param non-empty-string $method
+     * @param non-empty-string               $column
+     * @param non-empty-string               $method
      * @param array<non-empty-string, mixed> $params
      */
     protected function buildJsonInjection(

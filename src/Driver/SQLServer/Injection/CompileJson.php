@@ -15,6 +15,6 @@ class CompileJson extends SQLServerJsonExpression
 {
     protected function compile(string $statement): string
     {
-        return 'json_value(' . $this->getField($statement) . $this->getPath($statement) . ')';
+        return 'json_value('.$this->getField($statement).$this->getPath($statement).')';
     }
 }

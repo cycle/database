@@ -47,7 +47,7 @@ final class CompilerCache implements CompilerInterface
     public function compile(QueryParameters $params, string $prefix, FragmentInterface $fragment): string
     {
         if ($fragment->getType() === self::SELECT_QUERY) {
-            $queryHash = $prefix . $this->hashSelectQuery($params, $fragment->getTokens());
+            $queryHash = $prefix.$this->hashSelectQuery($params, $fragment->getTokens());
 
             if (isset($this->cache[$queryHash])) {
                 return $this->cache[$queryHash];
@@ -64,7 +64,7 @@ final class CompilerCache implements CompilerInterface
             $tokens = $fragment->getTokens();
 
             if (count($tokens['values']) === 1) {
-                $queryHash = $prefix . $this->hashInsertQuery($params, $tokens);
+                $queryHash = $prefix.$this->hashInsertQuery($params, $tokens);
                 if (isset($this->cache[$queryHash])) {
                     return $this->cache[$queryHash];
                 }
@@ -89,7 +89,7 @@ final class CompilerCache implements CompilerInterface
      */
     protected function hashInsertQuery(QueryParameters $params, array $tokens): string
     {
-        foreach ((array)($tokens['return'] ?? []) as $return) {
+        foreach ((array) ($tokens['return'] ?? []) as $return) {
             if ($return instanceof FragmentInterface) {
                 foreach ($return->getTokens()['parameters'] as $param) {
                     $params->push($param);
@@ -101,7 +101,7 @@ final class CompilerCache implements CompilerInterface
             'i_%s%s_r%s',
             $tokens['table'],
             \implode('_', $tokens['columns']),
-            \implode('_', (array)($tokens['return'] ?? []))
+            \implode('_', (array) ($tokens['return'] ?? []))
         );
         foreach ($tokens['values'] as $value) {
             if ($value instanceof FragmentInterface) {
@@ -150,14 +150,14 @@ final class CompilerCache implements CompilerInterface
     {
         // stable part of hash
         if (is_array($tokens['distinct']) && isset($tokens['distinct']['on'])) {
-            $hash = 's_' . $tokens['forUpdate'] . '_on_' . $tokens['distinct']['on'];
+            $hash = 's_'.$tokens['forUpdate'].'_on_'.$tokens['distinct']['on'];
         } else {
-            $hash = 's_' . $tokens['forUpdate'] . '_' . $tokens['distinct'];
+            $hash = 's_'.$tokens['forUpdate'].'_'.$tokens['distinct'];
         }
 
         foreach ($tokens['from'] as $table) {
             if ($table instanceof SelectQuery) {
-                $hash .= 's_' . ($table->getPrefix() ?? '');
+                $hash .= 's_'.($table->getPrefix() ?? '');
                 $hash .= $this->hashSelectQuery($params, $table->getTokens());
                 continue;
             }
@@ -168,30 +168,30 @@ final class CompilerCache implements CompilerInterface
         $hash .= $this->hashColumns($params, $tokens['columns']);
 
         foreach ($tokens['join'] as $join) {
-            $hash .= 'j' . $join['alias'] . $join['type'];
+            $hash .= 'j'.$join['alias'].$join['type'];
 
             if ($join['outer'] instanceof SelectQuery) {
-                $hash .= $join['outer']->getPrefix() === null ? '' : 'p_' . $join['outer']->getPrefix();
+                $hash .= $join['outer']->getPrefix() === null ? '' : 'p_'.$join['outer']->getPrefix();
                 $hash .= $this->hashSelectQuery($params, $join['outer']->getTokens());
             } else {
                 $hash .= $join['outer'];
             }
 
-            $hash .= 'on' . $this->hashWhere($params, $join['on']);
+            $hash .= 'on'.$this->hashWhere($params, $join['on']);
         }
 
         if ($tokens['where'] !== []) {
-            $hash .= 'w' . $this->hashWhere($params, $tokens['where']);
+            $hash .= 'w'.$this->hashWhere($params, $tokens['where']);
         }
 
         if ($tokens['having'] !== []) {
-            $hash .= 'h' . $this->hashWhere($params, $tokens['having']);
+            $hash .= 'h'.$this->hashWhere($params, $tokens['having']);
         }
 
         $hash .= implode(',', $tokens['groupBy']);
 
         foreach ($tokens['orderBy'] as $order) {
-            $hash .= $order[0] . $order[1];
+            $hash .= $order[0].$order[1];
         }
 
         $hash .= $this->compiler->hashLimit($params, $tokens);
@@ -199,7 +199,7 @@ final class CompilerCache implements CompilerInterface
         foreach ($tokens['union'] as $union) {
             $hash .= $union[0];
             if ($union[1] instanceof SelectQuery) {
-                $hash .= $union[1]->getPrefix() === null ? '' : 'p_' . $union[1]->getPrefix();
+                $hash .= $union[1]->getPrefix() === null ? '' : 'p_'.$union[1]->getPrefix();
                 $hash .= $this->hashSelectQuery($params, $union[1]->getTokens());
                 continue;
             }
@@ -242,7 +242,7 @@ final class CompilerCache implements CompilerInterface
             }
 
             if ($context[0] instanceof QueryInterface) {
-                $hash .= $context[0]->getPrefix() === null ? '' : 'p_' . $context[0]->getPrefix();
+                $hash .= $context[0]->getPrefix() === null ? '' : 'p_'.$context[0]->getPrefix();
                 $hash .= $this->hashSelectQuery($params, $context[0]->getTokens());
             } elseif ($context[0] instanceof ParameterInterface) {
                 $hash .= $this->hashParam($params, $context[0]);
@@ -266,7 +266,7 @@ final class CompilerCache implements CompilerInterface
             $hash .= $context[1];
 
             if ($context[2] instanceof QueryInterface) {
-                $hash .= $context[2]->getPrefix() === null ? '' : 'p_' . $context[2]->getPrefix();
+                $hash .= $context[2]->getPrefix() === null ? '' : 'p_'.$context[2]->getPrefix();
                 $hash .= $this->hashSelectQuery($params, $context[2]->getTokens());
             } elseif ($context[2] instanceof ParameterInterface) {
                 $hash .= $this->hashParam($params, $context[2]);
@@ -282,7 +282,7 @@ final class CompilerCache implements CompilerInterface
 
             if (isset($context[3])) {
                 if ($context[3] instanceof QueryInterface) {
-                    $hash .= $context[3]->getPrefix() === null ? '' : 'p_' . $context[3]->getPrefix();
+                    $hash .= $context[3]->getPrefix() === null ? '' : 'p_'.$context[3]->getPrefix();
                     $hash .= $this->hashSelectQuery($params, $context[3]->getTokens());
                 } elseif ($context[3] instanceof ParameterInterface) {
                     $hash .= $this->hashParam($params, $context[3]);
@@ -314,7 +314,7 @@ final class CompilerCache implements CompilerInterface
                 }
             }
 
-            $hash .= (string) $column . ',';
+            $hash .= (string) $column.',';
         }
 
         return $hash;
@@ -345,7 +345,7 @@ final class CompilerCache implements CompilerInterface
                 $params->push(new Parameter($simpleParams));
             }
 
-            return 'A' . count($param->getValue());
+            return 'A'.count($param->getValue());
         }
 
         $params->push($param);

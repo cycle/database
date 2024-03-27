@@ -34,6 +34,7 @@ trait ColumnAttributesTrait
     {
         $this->attributes = [];
         $this->fillAttributes($attributes);
+
         return $this;
     }
 
@@ -51,6 +52,7 @@ trait ColumnAttributesTrait
             }
             $result[$field] = $this->$field;
         }
+
         return $result;
     }
 
@@ -62,11 +64,12 @@ trait ColumnAttributesTrait
     protected function isAttribute(string $name): bool
     {
         $map = $this->getAttributesMap();
+
         return match (true) {
             !\array_key_exists($name, $map) => false,
             $map[$name]->types === null,
             \in_array($this->getInternalType(), $map[$name]->types, true) => true,
-            default => false,
+            default                                                       => false,
         };
     }
 
@@ -113,6 +116,7 @@ trait ColumnAttributesTrait
             $map[$property->getName()] = $attribute->newInstance();
         }
         $cache[static::class] = $map;
+
         return $map;
     }
 }

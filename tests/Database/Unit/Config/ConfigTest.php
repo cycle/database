@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Unit\Config;
 
-use PHPUnit\Framework\TestCase;
 use Cycle\Database\Config\DatabaseConfig;
+use Cycle\Database\Config\MySQL\TcpConnectionConfig;
 use Cycle\Database\Config\MySQLDriverConfig;
 use Cycle\Database\Config\SQLiteDriverConfig;
-use Cycle\Database\Config\MySQL\TcpConnectionConfig;
 use Cycle\Database\Driver\MySQL\MySQLDriver;
 use Cycle\Database\Driver\SQLite\SQLiteDriver;
 use Cycle\Database\Exception\ConfigException;
+use PHPUnit\Framework\TestCase;
 
 class ConfigTest extends TestCase
 {
@@ -36,9 +36,9 @@ class ConfigTest extends TestCase
     {
         $config = new DatabaseConfig(
             [
-                'default' => 'database-1',
+                'default'   => 'database-1',
                 'databases' => [
-                    'test' => [],
+                    'test'  => [],
                     'test2' => [],
                 ],
             ]
@@ -53,9 +53,9 @@ class ConfigTest extends TestCase
     {
         $config = new DatabaseConfig(
             [
-                'default' => 'database-1',
+                'default'   => 'database-1',
                 'databases' => [
-                    'test' => [],
+                    'test'  => [],
                     'test2' => [],
                 ],
             ]
@@ -70,7 +70,7 @@ class ConfigTest extends TestCase
     {
         $config = new DatabaseConfig(
             [
-                'default' => 'database-1',
+                'default'   => 'database-1',
                 'databases' => [
                     'test' => [
                         'connection' => 'abc',
@@ -90,10 +90,10 @@ class ConfigTest extends TestCase
     {
         $config = new DatabaseConfig(
             [
-                'default' => 'database-1',
+                'default'   => 'database-1',
                 'databases' => [
                     'test' => [
-                        'connection' => 'dce',
+                        'connection'     => 'dce',
                         'readConnection' => 'abc',
                     ],
                     'test1' => [
@@ -101,7 +101,7 @@ class ConfigTest extends TestCase
                     ],
                     'test2' => [
                         'write' => 'dce',
-                        'read' => 'bce',
+                        'read'  => 'bce',
                     ],
                 ],
             ]
@@ -116,15 +116,15 @@ class ConfigTest extends TestCase
     {
         $config = new DatabaseConfig(
             [
-                'default' => 'database-1',
+                'default'   => 'database-1',
                 'databases' => [
                     'test' => [
                         'tablePrefix' => 'abc',
-                        'driver' => 'test',
+                        'driver'      => 'test',
                     ],
                     'test2' => [
                         'tablePrefix' => 'bce',
-                        'driver' => 'test',
+                        'driver'      => 'test',
                     ],
                     'test3' => [
                         'driver' => 'test',
@@ -143,7 +143,7 @@ class ConfigTest extends TestCase
     {
         $config = new DatabaseConfig(
             [
-                'default' => 'database-1',
+                'default'   => 'database-1',
                 'databases' => [
                     'test' => [
                         'driver' => 'test',
@@ -172,7 +172,7 @@ class ConfigTest extends TestCase
                     'test4' => 'test',
                 ],
                 'databases' => [
-                    'test' => [],
+                    'test'  => [],
                     'test2' => [],
                 ],
             ]
@@ -196,7 +196,7 @@ class ConfigTest extends TestCase
         $config = new DatabaseConfig(
             [
                 'connections' => [
-                    'test' => [],
+                    'test'  => [],
                     'test2' => [],
                 ],
             ]
@@ -209,7 +209,7 @@ class ConfigTest extends TestCase
         $config = new DatabaseConfig(
             [
                 'drivers' => [
-                    'test' => [],
+                    'test'  => [],
                     'test2' => [],
                 ],
             ]
@@ -238,7 +238,7 @@ class ConfigTest extends TestCase
         $config = new DatabaseConfig(
             [
                 'connections' => [
-                    'test' => new SQLiteDriverConfig(),
+                    'test'  => new SQLiteDriverConfig(),
                     'test2' => new MySQLDriverConfig(
                         connection: new TcpConnectionConfig(
                             database: 'spiral',
@@ -261,7 +261,7 @@ class ConfigTest extends TestCase
         $config = new DatabaseConfig(
             [
                 'connections' => [
-                    'test' => new SQLiteDriverConfig(),
+                    'test'  => new SQLiteDriverConfig(),
                     'test2' => new MySQLDriverConfig(
                         connection: new TcpConnectionConfig(
                             database: 'spiral',

@@ -45,8 +45,8 @@ final class Interpolator
             static function ($match) use (&$named, &$unnamed, $options) {
                 $key = match (true) {
                     isset($match['named']) && '' !== $match['named'] => \ltrim($match['named'], ':'),
-                    isset($match['ph']) => $match['ph'],
-                    default => null
+                    isset($match['ph'])                              => $match['ph'],
+                    default                                          => null
                 };
 
                 switch (true) {
@@ -57,6 +57,7 @@ final class Interpolator
 
                         $value = \current($unnamed);
                         \next($unnamed);
+
                         return self::resolveValue($value, $options);
                     case isset($named[$key]) || \array_key_exists($key, $named):
                         return self::resolveValue($named[$key], $options);
@@ -89,7 +90,7 @@ final class Interpolator
                 return $parameter ? 'TRUE' : 'FALSE';
 
             case 'integer':
-                return (string)$parameter;
+                return (string) $parameter;
 
             case 'NULL':
                 return 'NULL';
@@ -98,11 +99,11 @@ final class Interpolator
                 return \sprintf('%F', $parameter);
 
             case 'string':
-                return "'" . self::escapeStringValue($parameter, "'") . "'";
+                return "'".self::escapeStringValue($parameter, "'")."'";
 
             case 'object':
                 if ($parameter instanceof Stringable) {
-                    return "'" . self::escapeStringValue((string)$parameter, "'") . "'";
+                    return "'".self::escapeStringValue((string) $parameter, "'")."'";
                 }
 
                 if ($parameter instanceof DateTimeInterface) {
@@ -110,7 +111,7 @@ final class Interpolator
                         ? self::DATETIME_WITH_MICROSECONDS_FORMAT
                         : self::DEFAULT_DATETIME_FORMAT;
 
-                    return "'" . $parameter->format($format) . "'";
+                    return "'".$parameter->format($format)."'";
                 }
         }
 
@@ -120,16 +121,16 @@ final class Interpolator
     private static function escapeStringValue(string $value): string
     {
         return \strtr($value, [
-            '\\%' => '\\%',
-            '\\_' => '\\_',
+            '\\%'    => '\\%',
+            '\\_'    => '\\_',
             \chr(26) => '\\Z',
-            \chr(0) => '\\0',
-            "'" => "\\'",
-            \chr(8) => '\\b',
-            "\n" => '\\n',
-            "\r" => '\\r',
-            "\t" => '\\t',
-            '\\' => '\\\\',
+            \chr(0)  => '\\0',
+            "'"      => "\\'",
+            \chr(8)  => '\\b',
+            "\n"     => '\\n',
+            "\r"     => '\\r',
+            "\t"     => '\\t',
+            '\\'     => '\\\\',
         ]);
     }
 

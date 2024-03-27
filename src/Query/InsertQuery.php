@@ -128,7 +128,7 @@ class InsertQuery extends ActiveQuery
 
         $lastID = $this->driver->lastInsertID();
         if (is_numeric($lastID)) {
-            return (int)$lastID;
+            return (int) $lastID;
         }
 
         return $lastID;

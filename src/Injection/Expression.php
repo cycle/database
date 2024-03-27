@@ -47,7 +47,7 @@ class Expression implements FragmentInterface
 
     public function __toString(): string
     {
-        return 'exp:' . $this->expression;
+        return 'exp:'.$this->expression;
     }
 
     public static function __set_state(array $an_array): self

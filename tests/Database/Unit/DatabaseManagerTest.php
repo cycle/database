@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Unit;
 
-use Mockery as m;
-use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerInterface;
 use Cycle\Database\Config\DatabaseConfig;
 use Cycle\Database\Config\SQLiteDriverConfig;
 use Cycle\Database\Database;
@@ -15,16 +11,20 @@ use Cycle\Database\DatabaseManager;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\SQLite\SQLiteDriver;
 use Cycle\Database\Exception\DBALException;
+use Mockery as m;
+use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 
 class DatabaseManagerTest extends TestCase
 {
     public const DEFAULT_OPTIONS = [
-        'default' => 'default',
+        'default'   => 'default',
         'databases' => [
             'default' => [
                 'prefix' => 'prefix_',
-                'read' => 'read',
-                'write' => 'write',
+                'read'   => 'read',
+                'write'  => 'write',
             ],
         ],
         'connections' => [],
@@ -34,7 +34,6 @@ class DatabaseManagerTest extends TestCase
     {
         $driver = m::mock(DriverInterface::class);
         $db = new Database('default', '', $driver);
-
 
         $dbal = new DatabaseManager(new DatabaseConfig(self::DEFAULT_OPTIONS));
         $dbal->addDatabase($db);
@@ -169,7 +168,7 @@ class DatabaseManagerTest extends TestCase
         $dbal = new DatabaseManager(
             new DatabaseConfig(
                 [
-                    'default' => 'default',
+                    'default'   => 'default',
                     'databases' => [
                         'default' => [
                             'driver' => 'default',
@@ -194,7 +193,7 @@ class DatabaseManagerTest extends TestCase
         $dbal = new DatabaseManager(
             new DatabaseConfig(
                 [
-                    'default' => 'default',
+                    'default'   => 'default',
                     'databases' => [
                         'default' => [
                             'driver' => 'default',
@@ -218,7 +217,7 @@ class DatabaseManagerTest extends TestCase
         $dbal = new DatabaseManager(
             new DatabaseConfig(
                 [
-                    'default' => 'default',
+                    'default'   => 'default',
                     'databases' => [
                         'default' => [
                             'driver' => 'default',

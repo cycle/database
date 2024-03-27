@@ -26,7 +26,7 @@ final class TcpConnectionConfigTest extends BaseConfigTest
         $exported = var_export($config, true);
 
         /** @var TcpConnectionConfig $recoveredConfig */
-        eval('$recoveredConfig = ' . $exported . ';');
+        eval('$recoveredConfig = '.$exported.';');
 
         $this->assertSame("mysql:host=$host;port=$port;dbname=$database;charset=$charset", $recoveredConfig->getDsn());
         $this->assertSame($database, $recoveredConfig->getSourceString());

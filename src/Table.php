@@ -67,7 +67,7 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
      */
     public function getFullName(): string
     {
-        return $this->database->getPrefix() . $this->name;
+        return $this->database->getPrefix().$this->name;
     }
 
     /**

@@ -76,10 +76,10 @@ class MySQLColumn extends AbstractColumn
 
         //Integer types (size can always be changed with size method), longInteger has method alias
         //bigInteger
-        'integer'     => ['type' => 'int', 'size' => 11, 'unsigned' => false, 'zerofill' => false],
-        'tinyInteger' => ['type' => 'tinyint', 'size' => 4, 'unsigned' => false, 'zerofill' => false],
+        'integer'      => ['type' => 'int', 'size' => 11, 'unsigned' => false, 'zerofill' => false],
+        'tinyInteger'  => ['type' => 'tinyint', 'size' => 4, 'unsigned' => false, 'zerofill' => false],
         'smallInteger' => ['type' => 'smallint', 'size' => 6, 'unsigned' => false, 'zerofill' => false],
-        'bigInteger'  => ['type' => 'bigint', 'size' => 20, 'unsigned' => false, 'zerofill' => false],
+        'bigInteger'   => ['type' => 'bigint', 'size' => 20, 'unsigned' => false, 'zerofill' => false],
 
         //String with specified length (mapped via method)
         'string'      => ['type' => 'varchar', 'size' => 255],
@@ -114,30 +114,30 @@ class MySQLColumn extends AbstractColumn
     ];
 
     protected array $reverseMapping = [
-        'primary'     => [['type' => 'int', 'autoIncrement' => true]],
-        'bigPrimary'  => ['serial', ['type' => 'bigint', 'size' => 20, 'autoIncrement' => true]],
-        'enum'        => ['enum'],
-        'set'         => ['set'],
-        'boolean'     => ['bool', 'boolean', ['type' => 'tinyint', 'size' => 1]],
-        'integer'     => ['int', 'integer', 'mediumint'],
-        'tinyInteger' => ['tinyint'],
+        'primary'      => [['type' => 'int', 'autoIncrement' => true]],
+        'bigPrimary'   => ['serial', ['type' => 'bigint', 'size' => 20, 'autoIncrement' => true]],
+        'enum'         => ['enum'],
+        'set'          => ['set'],
+        'boolean'      => ['bool', 'boolean', ['type' => 'tinyint', 'size' => 1]],
+        'integer'      => ['int', 'integer', 'mediumint'],
+        'tinyInteger'  => ['tinyint'],
         'smallInteger' => ['smallint'],
-        'bigInteger'  => ['bigint'],
-        'string'      => ['varchar', 'char'],
-        'text'        => ['text', 'mediumtext'],
-        'tinyText'    => ['tinytext'],
-        'longText'    => ['longtext'],
-        'double'      => ['double'],
-        'float'       => ['float', 'real'],
-        'decimal'     => ['decimal'],
-        'datetime'    => ['datetime'],
-        'date'        => ['date'],
-        'time'        => ['time'],
-        'timestamp'   => ['timestamp'],
-        'binary'      => ['blob', 'binary', 'varbinary'],
-        'tinyBinary'  => ['tinyblob'],
-        'longBinary'  => ['longblob'],
-        'json'        => ['json'],
+        'bigInteger'   => ['bigint'],
+        'string'       => ['varchar', 'char'],
+        'text'         => ['text', 'mediumtext'],
+        'tinyText'     => ['tinytext'],
+        'longText'     => ['longtext'],
+        'double'       => ['double'],
+        'float'        => ['float', 'real'],
+        'decimal'      => ['decimal'],
+        'datetime'     => ['datetime'],
+        'date'         => ['date'],
+        'time'         => ['time'],
+        'timestamp'    => ['timestamp'],
+        'binary'       => ['blob', 'binary', 'varbinary'],
+        'tinyBinary'   => ['tinyblob'],
+        'longBinary'   => ['longblob'],
+        'json'         => ['json'],
     ];
 
     /**
@@ -233,10 +233,10 @@ class MySQLColumn extends AbstractColumn
             $options = \explode(',', $matches['options']);
 
             if (count($options) > 1) {
-                $column->precision = (int)$options[0];
-                $column->scale = (int)$options[1];
+                $column->precision = (int) $options[0];
+                $column->scale = (int) $options[1];
             } else {
-                $column->size = (int)$options[0];
+                $column->size = (int) $options[0];
             }
         }
 

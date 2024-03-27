@@ -99,7 +99,7 @@ abstract class ActiveQuery implements QueryInterface, \Stringable
 
     /**
      * Helper methods used to correctly fetch and split identifiers provided by function
-     * parameters. Example: fI(['name, email']) => 'name', 'email'
+     * parameters. Example: fI(['name, email']) => 'name', 'email'.
      */
     protected function fetchIdentifiers(array $identifiers): array
     {
