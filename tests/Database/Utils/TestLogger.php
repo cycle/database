@@ -43,15 +43,15 @@ class TestLogger implements LoggerInterface
         }
 
         if ($level === LogLevel::ERROR) {
-            echo " \n! \033[31m" . $message . "\033[0m";
+            echo " \n! \033[31m".$message."\033[0m";
         } elseif ($level === LogLevel::ALERT) {
-            echo " \n! \033[35m" . $message . "\033[0m";
+            echo " \n! \033[35m".$message."\033[0m";
         } elseif (strpos($message, 'SHOW') === 0) {
-            echo " \n> \033[34m" . $message . "\033[0m";
+            echo " \n> \033[34m".$message."\033[0m";
         } elseif (strpos($message, 'SELECT') === 0) {
-            echo " \n> \033[32m" . $message . "\033[0m";
+            echo " \n> \033[32m".$message."\033[0m";
         } else {
-            echo " \n> \033[33m" . $message . "\033[0m";
+            echo " \n> \033[33m".$message."\033[0m";
         }
     }
 }

@@ -26,7 +26,7 @@ final class SQLServerDriverConfigTest extends TestCase
         $exported = var_export($config, true);
 
         /** @var SQLServerDriverConfig $recoveredConfig */
-        eval('$recoveredConfig = ' . $exported . ';');
+        eval('$recoveredConfig = '.$exported.';');
 
         $this->assertInstanceOf(DsnConnectionConfig::class, $recoveredConfig->connection);
         $this->assertSame("sqlsrv:$dsn", $recoveredConfig->connection->getDsn());

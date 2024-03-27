@@ -63,10 +63,10 @@ class SQLServerColumn extends AbstractColumn
 
         //Integer types (size can always be changed with size method), longInteger has method alias
         //bigInteger
-        'integer'     => 'int',
-        'tinyInteger' => 'tinyint',
+        'integer'      => 'int',
+        'tinyInteger'  => 'tinyint',
         'smallInteger' => 'smallint',
-        'bigInteger'  => 'bigint',
+        'bigInteger'   => 'bigint',
 
         //String with specified length (mapped via method)
         'string'      => ['type' => 'varchar', 'size' => 255],
@@ -101,23 +101,23 @@ class SQLServerColumn extends AbstractColumn
     ];
 
     protected array $reverseMapping = [
-        'primary'     => [['type' => 'int', 'identity' => true]],
-        'bigPrimary'  => [['type' => 'bigint', 'identity' => true]],
-        'enum'        => ['enum'],
-        'boolean'     => ['bit'],
-        'integer'     => ['int'],
-        'tinyInteger' => ['tinyint'],
+        'primary'      => [['type' => 'int', 'identity' => true]],
+        'bigPrimary'   => [['type' => 'bigint', 'identity' => true]],
+        'enum'         => ['enum'],
+        'boolean'      => ['bit'],
+        'integer'      => ['int'],
+        'tinyInteger'  => ['tinyint'],
         'smallInteger' => ['smallint'],
-        'bigInteger'  => ['bigint'],
-        'text'        => [['type' => 'varchar', 'size' => 0]],
-        'string'      => ['varchar', 'char'],
-        'double'      => ['float'],
-        'float'       => ['real'],
-        'decimal'     => ['decimal'],
-        'timestamp'   => ['datetime'],
-        'date'        => ['date'],
-        'time'        => ['time'],
-        'binary'      => ['varbinary'],
+        'bigInteger'   => ['bigint'],
+        'text'         => [['type' => 'varchar', 'size' => 0]],
+        'string'       => ['varchar', 'char'],
+        'double'       => ['float'],
+        'float'        => ['real'],
+        'decimal'      => ['decimal'],
+        'timestamp'    => ['datetime'],
+        'date'         => ['date'],
+        'time'         => ['time'],
+        'binary'       => ['varbinary'],
     ];
 
     #[ColumnAttribute(['varchar', 'datetime2', 'varbinary'])]
@@ -169,7 +169,7 @@ class SQLServerColumn extends AbstractColumn
 
         $this->type = 'varchar';
         foreach ($this->enumValues as $value) {
-            $this->size = max((int)$this->size, strlen($value));
+            $this->size = max((int) $this->size, strlen($value));
         }
 
         return $this;
@@ -258,7 +258,7 @@ class SQLServerColumn extends AbstractColumn
                 }
 
                 $type = "ALTER COLUMN {$driver->identifier($this->getName())} varchar($enumSize)";
-                $operations[] = $type . ' ' . ($this->nullable ? 'NULL' : 'NOT NULL');
+                $operations[] = $type.' '.($this->nullable ? 'NULL' : 'NOT NULL');
             } else {
                 $type = "ALTER COLUMN {$driver->identifier($this->getName())} {$this->type}";
 
@@ -270,15 +270,15 @@ class SQLServerColumn extends AbstractColumn
                     $type .= "($this->precision, $this->scale)";
                 }
 
-                $operations[] = $type . ' ' . ($this->nullable ? 'NULL' : 'NOT NULL');
+                $operations[] = $type.' '.($this->nullable ? 'NULL' : 'NOT NULL');
             }
         }
 
         //Constraint should be already removed it this moment (see doColumnChange in TableSchema)
         if ($this->hasDefaultValue()) {
             $operations[] = "ADD CONSTRAINT {$this->defaultConstrain()} "
-                . "DEFAULT {$this->quoteDefault($driver)} "
-                . "FOR {$driver->identifier($this->getName())}";
+                ."DEFAULT {$this->quoteDefault($driver)} "
+                ."FOR {$driver->identifier($this->getName())}";
         }
 
         //Constraint should be already removed it this moment (see alterColumn in SQLServerHandler)
@@ -305,16 +305,16 @@ class SQLServerColumn extends AbstractColumn
         $column->nullable = strtoupper($schema['IS_NULLABLE']) === 'YES';
         $column->defaultValue = $schema['COLUMN_DEFAULT'];
 
-        $column->identity = (bool)$schema['is_identity'];
+        $column->identity = (bool) $schema['is_identity'];
 
-        $column->size = (int)$schema['CHARACTER_MAXIMUM_LENGTH'];
+        $column->size = (int) $schema['CHARACTER_MAXIMUM_LENGTH'];
         if ($column->size === -1) {
             $column->size = 0;
         }
 
         if ($column->type === 'decimal') {
-            $column->precision = (int)$schema['NUMERIC_PRECISION'];
-            $column->scale = (int)$schema['NUMERIC_SCALE'];
+            $column->precision = (int) $schema['NUMERIC_PRECISION'];
+            $column->scale = (int) $schema['NUMERIC_SCALE'];
         }
 
         if ($column->type === 'datetime2') {
@@ -358,7 +358,7 @@ class SQLServerColumn extends AbstractColumn
     {
         $defaultValue = parent::quoteDefault($driver);
         if ($this->getAbstractType() === 'boolean') {
-            $defaultValue = (string) ((int)$this->defaultValue);
+            $defaultValue = (string) ((int) $this->defaultValue);
         }
 
         return $defaultValue;
@@ -370,7 +370,7 @@ class SQLServerColumn extends AbstractColumn
     protected function enumConstraint(): string
     {
         if (empty($this->enumConstraint)) {
-            $this->enumConstraint = $this->table . '_' . $this->getName() . '_enum_' . uniqid();
+            $this->enumConstraint = $this->table.'_'.$this->getName().'_enum_'.uniqid();
         }
 
         return $this->enumConstraint;
@@ -382,7 +382,7 @@ class SQLServerColumn extends AbstractColumn
     protected function defaultConstrain(): string
     {
         if (empty($this->defaultConstraint)) {
-            $this->defaultConstraint = $this->table . '_' . $this->getName() . '_default_' . uniqid();
+            $this->defaultConstraint = $this->table.'_'.$this->getName().'_default_'.uniqid();
         }
 
         return $this->defaultConstraint;
@@ -452,9 +452,9 @@ class SQLServerColumn extends AbstractColumn
         self $column
     ): void {
         $query = 'SELECT object_definition([o].[object_id]) AS [definition], '
-            . "OBJECT_NAME([o].[object_id]) AS [name]\nFROM [sys].[objects] AS [o]\n"
-            . "JOIN [sys].[sysconstraints] AS [c] ON [o].[object_id] = [c].[constid]\n"
-            . "WHERE [type_desc] = 'CHECK_CONSTRAINT' AND [parent_object_id] = ? AND [c].[colid] = ?";
+            ."OBJECT_NAME([o].[object_id]) AS [name]\nFROM [sys].[objects] AS [o]\n"
+            ."JOIN [sys].[sysconstraints] AS [c] ON [o].[object_id] = [c].[constid]\n"
+            ."WHERE [type_desc] = 'CHECK_CONSTRAINT' AND [parent_object_id] = ? AND [c].[colid] = ?";
 
         $constraints = $driver->query($query, [$schema['object_id'], $schema['column_id']]);
 
@@ -467,7 +467,7 @@ class SQLServerColumn extends AbstractColumn
             // we made some assumptions here...
             if (
                 preg_match_all(
-                    '/' . $name . '=[\']?([^\']+)[\']?/i',
+                    '/'.$name.'=[\']?([^\']+)[\']?/i',
                     $constraint['definition'],
                     $matches
                 )

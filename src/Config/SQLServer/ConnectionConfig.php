@@ -34,7 +34,7 @@ abstract class ConnectionConfig extends PDOConnectionConfig
     /**
      * @param non-empty-string|null $user
      * @param non-empty-string|null $password
-     * @param array $options
+     * @param array                 $options
      */
     public function __construct(
         ?string $user = null,

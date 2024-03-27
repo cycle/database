@@ -21,7 +21,7 @@ class HandlerException extends DriverException implements StatementExceptionInte
      */
     public function __construct(StatementException $e)
     {
-        parent::__construct($e->getMessage(), (int)$e->getCode(), $e);
+        parent::__construct($e->getMessage(), (int) $e->getCode(), $e);
     }
 
     /**

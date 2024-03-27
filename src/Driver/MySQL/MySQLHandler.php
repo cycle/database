@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\MySQL;
 
-use PDO;
 use Cycle\Database\Driver\Handler;
 use Cycle\Database\Driver\MySQL\Exception\MySQLException;
 use Cycle\Database\Driver\MySQL\Schema\MySQLTable;
@@ -20,6 +19,7 @@ use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Schema\AbstractForeignKey;
 use Cycle\Database\Schema\AbstractIndex;
 use Cycle\Database\Schema\AbstractTable;
+use PDO;
 
 class MySQLHandler extends Handler
 {
@@ -52,7 +52,7 @@ class MySQLHandler extends Handler
     {
         $query = 'SELECT COUNT(*) FROM `information_schema`.`tables` WHERE `table_schema` = ? AND `table_name` = ?';
 
-        return (bool)$this->driver->query(
+        return (bool) $this->driver->query(
             $query,
             [$this->driver->getSource(), $table]
         )->fetchColumn();
@@ -131,7 +131,7 @@ class MySQLHandler extends Handler
     {
         $table instanceof MySQLTable or throw new SchemaException('MySQLHandler can process only MySQL tables');
 
-        return parent::createStatement($table) . " ENGINE {$table->getEngine()}";
+        return parent::createStatement($table)." ENGINE {$table->getEngine()}";
     }
 
     /**

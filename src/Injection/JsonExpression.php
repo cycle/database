@@ -45,7 +45,7 @@ abstract class JsonExpression implements FragmentInterface
 
     public function __toString(): string
     {
-        return 'exp:' . $this->expression;
+        return 'exp:'.$this->expression;
     }
 
     public static function __set_state(array $an_array): self
@@ -97,7 +97,7 @@ abstract class JsonExpression implements FragmentInterface
     {
         $parts = \explode('->', $statement, 2);
 
-        return \count($parts) > 1 ? ', ' . $this->wrapPath($parts[1]) : '';
+        return \count($parts) > 1 ? ', '.$this->wrapPath($parts[1]) : '';
     }
 
     /**
@@ -156,7 +156,7 @@ abstract class JsonExpression implements FragmentInterface
         $segments = \explode($delimiter, $value);
         $path = \implode('.', \array_map(fn (string $segment): string => $this->wrapPathSegment($segment), $segments));
 
-        return "'$" . (\str_starts_with($path, '[') ? '' : '.') . $path . "'";
+        return "'$".(\str_starts_with($path, '[') ? '' : '.').$path."'";
     }
 
     /**

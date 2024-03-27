@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\SQLServer;
 
-use PDO;
 use Cycle\Database\Driver\Handler;
 use Cycle\Database\Driver\SQLServer\Schema\SQLServerColumn;
 use Cycle\Database\Driver\SQLServer\Schema\SQLServerTable;
@@ -19,6 +18,7 @@ use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Schema\AbstractIndex;
 use Cycle\Database\Schema\AbstractTable;
+use PDO;
 
 class SQLServerHandler extends Handler
 {
@@ -54,7 +54,7 @@ class SQLServerHandler extends Handler
         $query = "SELECT COUNT(*) FROM [information_schema].[tables]
             WHERE [table_type] = 'BASE TABLE' AND [table_name] = ?";
 
-        return (bool)$this->driver->query($query, [$table])->fetchColumn();
+        return (bool) $this->driver->query($query, [$table])->fetchColumn();
     }
 
     public function eraseTable(AbstractTable $table): void
@@ -170,7 +170,7 @@ class SQLServerHandler extends Handler
         $this->run(
             "sp_rename ?, ?, 'COLUMN'",
             [
-                $table->getFullName() . '.' . $initial->getName(),
+                $table->getFullName().'.'.$initial->getName(),
                 $column->getName(),
             ]
         );

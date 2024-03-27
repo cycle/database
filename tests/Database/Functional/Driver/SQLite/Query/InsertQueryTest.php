@@ -53,8 +53,8 @@ UNION ALL SELECT ?, ?',
 
         $this->assertSameQuery(
             'INSERT INTO {table} ({name}, {balance}) SELECT ? AS {name}, ? AS {balance}'
-            . ' UNION ALL SELECT ?, ?'
-            . ' UNION ALL SELECT ?, ?',
+            .' UNION ALL SELECT ?, ?'
+            .' UNION ALL SELECT ?, ?',
             $insert
         );
     }

@@ -34,10 +34,10 @@ class PostgresDriverConfig extends DriverConfig
     public array $schema;
 
     /**
-     * @param ConnectionConfig $connection
-     * @param iterable<non-empty-string>|non-empty-string $schema List of available Postgres
-     *        schemas for "search path" (See also {@link https://www.postgresql.org/docs/9.6/ddl-schemas.html}).
-     *        The first parameter's item will be used as default schema.
+     * @param ConnectionConfig                            $connection
+     * @param iterable<non-empty-string>|non-empty-string $schema     List of available Postgres
+     *                                                                schemas for "search path" (See also {@link https://www.postgresql.org/docs/9.6/ddl-schemas.html}).
+     *                                                                The first parameter's item will be used as default schema.
      *
      * {@inheritDoc}
      */
@@ -77,8 +77,8 @@ class PostgresDriverConfig extends DriverConfig
         // Cast any schema config variants to array
         $schema = match (true) {
             $schema instanceof \Traversable => \iterator_to_array($schema),
-            \is_string($schema) => [$schema],
-            default => $schema
+            \is_string($schema)             => [$schema],
+            default                         => $schema
         };
 
         // Fill array by default in case that result array is empty

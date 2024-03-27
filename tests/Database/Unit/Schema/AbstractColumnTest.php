@@ -13,7 +13,7 @@ final class AbstractColumnTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->column = new class ('foo', 'bar') extends AbstractColumn {};
+        $this->column = new class('foo', 'bar') extends AbstractColumn {};
     }
 
     public function testReadonlySchemaFalseByDefault(): void

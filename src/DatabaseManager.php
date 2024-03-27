@@ -43,7 +43,7 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
     }
 
     /**
-     * Set logger for all drivers
+     * Set logger for all drivers.
      */
     public function setLogger(LoggerInterface $logger): void
     {

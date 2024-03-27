@@ -33,7 +33,7 @@ class TableTest extends CommonClass
         $this->assertSame(4, $table->count());
 
         //Rounded
-        $this->assertSame(13, (int)$table->avg('value'));
+        $this->assertSame(13, (int) $table->avg('value'));
     }
 
     public function testAggregationAvgByPassRealFloat(): void
@@ -61,6 +61,6 @@ class TableTest extends CommonClass
         $this->assertSame(4, $table->count());
 
         //Rounded
-        $this->assertSame(13.75, (float)$table->avg('value'));
+        $this->assertSame(13.75, (float) $table->avg('value'));
     }
 }

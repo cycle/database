@@ -26,7 +26,7 @@ class StatementException extends DatabaseException implements StatementException
      */
     public function __construct(\Throwable $previous, string $query)
     {
-        parent::__construct($previous->getMessage(), (int)$previous->getCode(), $previous);
+        parent::__construct($previous->getMessage(), (int) $previous->getCode(), $previous);
         $this->query = $query;
     }
 

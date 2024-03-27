@@ -23,7 +23,7 @@ class SQLiteForeignKey extends AbstractForeignKey
      */
     public function getName(): string
     {
-        return $this->tablePrefix . $this->table . '_' . implode('_', $this->columns) . '_fk';
+        return $this->tablePrefix.$this->table.'_'.implode('_', $this->columns).'_fk';
     }
 
     /**
@@ -34,10 +34,10 @@ class SQLiteForeignKey extends AbstractForeignKey
         $statement = [];
 
         $statement[] = 'FOREIGN KEY';
-        $statement[] = '(' . $this->packColumns($driver, $this->columns) . ')';
+        $statement[] = '('.$this->packColumns($driver, $this->columns).')';
 
-        $statement[] = 'REFERENCES ' . $driver->identifier($this->foreignTable);
-        $statement[] = '(' . $this->packColumns($driver, $this->foreignKeys) . ')';
+        $statement[] = 'REFERENCES '.$driver->identifier($this->foreignTable);
+        $statement[] = '('.$this->packColumns($driver, $this->foreignKeys).')';
 
         $statement[] = "ON DELETE {$this->deleteRule}";
         $statement[] = "ON UPDATE {$this->updateRule}";
@@ -70,7 +70,7 @@ class SQLiteForeignKey extends AbstractForeignKey
      */
     public static function createInstance(string $table, string $tablePrefix, array $schema): self
     {
-        $reference = new self($table, $tablePrefix, (string)$schema['id']);
+        $reference = new self($table, $tablePrefix, (string) $schema['id']);
 
         $reference->columns = $schema['from'];
         $reference->foreignTable = $schema['table'];

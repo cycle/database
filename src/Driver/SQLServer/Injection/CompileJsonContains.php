@@ -15,6 +15,6 @@ class CompileJsonContains extends SQLServerJsonExpression
 {
     protected function compile(string $statement): string
     {
-        return '? IN (SELECT [value] FROM openjson(' . $this->getField($statement) . $this->getPath($statement) . '))';
+        return '? IN (SELECT [value] FROM openjson('.$this->getField($statement).$this->getPath($statement).'))';
     }
 }

@@ -87,13 +87,13 @@ final class Quoter
             $this->left,
             str_replace(
                 [$this->left, $this->right],
-                [$this->left . $this->left, $this->right . $this->right],
+                [$this->left.$this->left, $this->right.$this->right],
                 $identifier
             ),
             $this->right
         );
 
-        return str_replace('.', $this->right . '.' . $this->left, $identifier);
+        return str_replace('.', $this->right.'.'.$this->left, $identifier);
     }
 
     /**
@@ -173,7 +173,7 @@ final class Quoter
         // never create table alias to alias associations
         $quoted = sprintf(
             '%s AS %s',
-            $this->identifier($isTable ? $this->prefix . $identifier : $identifier),
+            $this->identifier($isTable ? $this->prefix.$identifier : $identifier),
             $this->identifier($alias)
         );
 
@@ -215,7 +215,7 @@ final class Quoter
     private function unpaired(string $identifier, bool $isTable): string
     {
         if ($isTable && !isset($this->aliases[$identifier])) {
-            $name = $this->prefix . $identifier;
+            $name = $this->prefix.$identifier;
             if (!isset($this->aliases[$name])) {
                 //Generating our alias
                 $this->registerAlias($name, $identifier);

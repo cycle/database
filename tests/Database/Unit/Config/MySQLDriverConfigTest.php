@@ -26,7 +26,7 @@ final class MySQLDriverConfigTest extends TestCase
         $exported = var_export($config, true);
 
         /** @var MySQLDriverConfig $recoveredConfig */
-        eval('$recoveredConfig = ' . $exported . ';');
+        eval('$recoveredConfig = '.$exported.';');
 
         $this->assertInstanceOf(DsnConnectionConfig::class, $recoveredConfig->connection);
         $this->assertSame("mysql:$dsn", $recoveredConfig->connection->getDsn());

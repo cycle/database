@@ -20,7 +20,7 @@ final class MySQLJsonExpressionTest extends TestCase
 
     private function createExpression(): MySQLJsonExpression
     {
-        return new class () extends MySQLJsonExpression {
+        return new class() extends MySQLJsonExpression {
             public function __construct()
             {
             }

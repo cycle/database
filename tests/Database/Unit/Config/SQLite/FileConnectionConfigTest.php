@@ -21,7 +21,7 @@ final class FileConnectionConfigTest extends TestCase
         $exported = var_export($config, true);
 
         /** @var FileConnectionConfig $recoveredConfig */
-        eval('$recoveredConfig = ' . $exported . ';');
+        eval('$recoveredConfig = '.$exported.';');
 
         $this->assertSame("sqlite:$database", $recoveredConfig->getDsn());
         $this->assertSame($database, $recoveredConfig->getSourceString());

@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 class DriverTest extends TestCase
 {
     /**
-     * TODO Should be moved in common config
+     * TODO Should be moved in common config.
      *
      * @return TcpConnectionConfig
      */

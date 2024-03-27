@@ -172,7 +172,7 @@ class SQLiteTable extends AbstractTable
     private function columnSchemas(array $include = []): array
     {
         $columns = $this->driver->query(
-            'PRAGMA TABLE_INFO(' . $this->driver->quote($this->getFullName()) . ')'
+            'PRAGMA TABLE_INFO('.$this->driver->quote($this->getFullName()).')'
         );
 
         $result = [];

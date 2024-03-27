@@ -358,7 +358,7 @@ class PostgresColumn extends AbstractColumn
 
         $this->type = 'character varying';
         foreach ($this->enumValues as $value) {
-            $this->size = max((int)$this->size, \strlen($value));
+            $this->size = max((int) $this->size, \strlen($value));
         }
 
         return $this;
@@ -476,7 +476,7 @@ class PostgresColumn extends AbstractColumn
 
         //Dropping enum constrain before any operation
         if ($this->constrained && $initial->getAbstractType() === 'enum') {
-            $operations[] = 'DROP CONSTRAINT ' . $driver->identifier($this->enumConstraint());
+            $operations[] = 'DROP CONSTRAINT '.$driver->identifier($this->enumConstraint());
         }
 
         //Default value set and dropping
@@ -490,7 +490,7 @@ class PostgresColumn extends AbstractColumn
 
         //Nullable option
         if ($initial->nullable !== $this->nullable) {
-            $operations[] = "ALTER COLUMN {$identifier} " . (!$this->nullable ? 'SET' : 'DROP') . ' NOT NULL';
+            $operations[] = "ALTER COLUMN {$identifier} ".(!$this->nullable ? 'SET' : 'DROP').' NOT NULL';
         }
 
         if ($this->getAbstractType() === 'enum') {
@@ -500,7 +500,7 @@ class PostgresColumn extends AbstractColumn
             }
 
             $operations[] = "ADD CONSTRAINT {$driver->identifier($this->enumConstraint())} "
-                . "CHECK ({$identifier} IN (" . implode(', ', $enumValues) . '))';
+                ."CHECK ({$identifier} IN (".implode(', ', $enumValues).'))';
         }
 
         return $operations;
@@ -520,9 +520,9 @@ class PostgresColumn extends AbstractColumn
 
         $column->type = match (true) {
             $schema['typname'] === 'timestamp' || $schema['typname'] === 'timestamptz' => 'timestamp',
-            $schema['typname'] === 'date' => 'date',
-            $schema['typname'] === 'time' || $schema['typname'] === 'timetz' => 'time',
-            default => $schema['data_type']
+            $schema['typname'] === 'date'                                              => 'date',
+            $schema['typname'] === 'time' || $schema['typname'] === 'timetz'           => 'time',
+            default                                                                    => $schema['data_type']
         };
 
         $column->defaultValue = $schema['column_default'];
@@ -534,9 +534,9 @@ class PostgresColumn extends AbstractColumn
             && \preg_match('/nextval(.*)/', $column->defaultValue)
         ) {
             $column->type = match (true) {
-                $column->type === 'bigint' => 'bigserial',
+                $column->type === 'bigint'   => 'bigserial',
                 $column->type === 'smallint' => 'smallserial',
-                default => 'serial'
+                default                      => 'serial'
             };
             $column->autoIncrement = true;
 
@@ -622,7 +622,7 @@ class PostgresColumn extends AbstractColumn
     protected function quoteEnum(DriverInterface $driver): string
     {
         //Postgres enums are just constrained strings
-        return '(' . $this->size . ')';
+        return '('.$this->size.')';
     }
 
     protected static function isJson(AbstractColumn $column): bool
@@ -636,7 +636,7 @@ class PostgresColumn extends AbstractColumn
     private function enumConstraint(): string
     {
         if (empty($this->constrainName)) {
-            $this->constrainName = str_replace('.', '_', $this->table) . '_' . $this->getName() . '_enum_' . uniqid();
+            $this->constrainName = str_replace('.', '_', $this->table).'_'.$this->getName().'_enum_'.uniqid();
         }
 
         return $this->constrainName;
@@ -686,7 +686,7 @@ class PostgresColumn extends AbstractColumn
             $query,
             [
                 $schema['tableOID'],
-                '{' . $schema['dtd_identifier'] . '}',
+                '{'.$schema['dtd_identifier'].'}',
             ]
         );
 
@@ -715,7 +715,7 @@ class PostgresColumn extends AbstractColumn
      */
     private static function resolveEnum(DriverInterface $driver, self $column): void
     {
-        $range = $driver->query('SELECT enum_range(NULL::' . $column->type . ')')->fetchColumn(0);
+        $range = $driver->query('SELECT enum_range(NULL::'.$column->type.')')->fetchColumn(0);
 
         $column->enumValues = explode(',', substr($range, 1, -1));
 

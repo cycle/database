@@ -25,7 +25,7 @@ final class SocketConnectionConfigTest extends TestCase
         $exported = var_export($config, true);
 
         /** @var SocketConnectionConfig $recoveredConfig */
-        eval('$recoveredConfig = ' . $exported . ';');
+        eval('$recoveredConfig = '.$exported.';');
 
         $this->assertSame("mysql:unix_socket=$socket;dbname=$database;charset=$charset", $recoveredConfig->getDsn());
         $this->assertSame($database, $recoveredConfig->getSourceString());

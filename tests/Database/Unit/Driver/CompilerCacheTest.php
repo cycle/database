@@ -21,10 +21,10 @@ final class CompilerCacheTest extends TestCase
         $this->assertSame(
             'i_some_tablename_full_name_rname_"full_name" as "fullName"P?',
             $ref->invoke($compiler, new QueryParameters(), [
-                'table' => 'some_table',
+                'table'   => 'some_table',
                 'columns' => ['name', 'full_name'],
-                'values' => ['Foo'],
-                'return' => ['name', new Fragment('"full_name" as "fullName"')],
+                'values'  => ['Foo'],
+                'return'  => ['name', new Fragment('"full_name" as "fullName"')],
             ])
         );
     }

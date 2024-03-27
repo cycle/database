@@ -17,7 +17,7 @@ trait WhereJsonTrait
 {
     /**
      * Select records where the JSON value at the specified path is equal to the passed value.
-
+     *
      * Example:
      * $select->whereJson('options->notifications->type', 'sms')
      *
@@ -26,12 +26,13 @@ trait WhereJsonTrait
     public function whereJson(string $path, mixed $value): static
     {
         $this->registerWhereJsonToken('AND', $path, $value, __FUNCTION__);
+
         return $this;
     }
 
     /**
      * Similar to the whereJson method, but uses the OR operator to combine with other conditions.
-
+     *
      * Example:
      * $select->orWhereJson('options->notifications->type', 'sms')
      *
@@ -40,90 +41,95 @@ trait WhereJsonTrait
     public function orWhereJson(string $path, mixed $value): static
     {
         $this->registerWhereJsonToken('OR', $path, $value, __FUNCTION__);
+
         return $this;
     }
 
     /**
      * Select records where the JSON array contains the passed value.
      * The passed value can be an array, which will be encoded into JSON.
-
+     *
      * Example:
      * $select->whereJsonContains('settings->languages', 'en')
      *
      * @param non-empty-string $path
-     * @param bool $encode Encode the value into JSON.
-     * @param bool $validate Check that $value is a valid JSON string if the $encode parameter is false.
+     * @param bool             $encode   Encode the value into JSON.
+     * @param bool             $validate Check that $value is a valid JSON string if the $encode parameter is false.
      */
     public function whereJsonContains(string $path, mixed $value, bool $encode = true, bool $validate = true): static
     {
         $this->registerWhereJsonToken('AND', $path, $value, __FUNCTION__, [
-            'encode' => $encode,
+            'encode'   => $encode,
             'validate' => $validate,
         ]);
+
         return $this;
     }
 
     /**
      * Similar to the whereJsonContains method, but uses the OR operator to combine with other conditions.
-
+     *
      * Example:
      * $select->orWhereJsonContains('settings->languages', 'en')
      *
      * @param non-empty-string $path
-     * @param bool $encode Encode the value into JSON.
-     * @param bool $validate Check that $value is a valid JSON string if the $encode parameter is false.
+     * @param bool             $encode   Encode the value into JSON.
+     * @param bool             $validate Check that $value is a valid JSON string if the $encode parameter is false.
      */
     public function orWhereJsonContains(string $path, mixed $value, bool $encode = true, bool $validate = true): static
     {
         $this->registerWhereJsonToken('OR', $path, $value, __FUNCTION__, [
-            'encode' => $encode,
+            'encode'   => $encode,
             'validate' => $validate,
         ]);
+
         return $this;
     }
 
     /**
      * Select records where the JSON array doesn't contain the passed value.
      * The passed value can be an array, which will be encoded into JSON.
-
+     *
      * Example:
      * $select->whereJsonDoesntContain('settings->languages', 'en')
      *
      * @param non-empty-string $path
-     * @param bool $encode Encode the value into JSON.
-     * @param bool $validate Check that $value is a valid JSON string if the $encode parameter is false.
+     * @param bool             $encode   Encode the value into JSON.
+     * @param bool             $validate Check that $value is a valid JSON string if the $encode parameter is false.
      */
     public function whereJsonDoesntContain(string $path, mixed $value, bool $encode = true, bool $validate = true): static
     {
         $this->registerWhereJsonToken('AND', $path, $value, __FUNCTION__, [
-            'encode' => $encode,
+            'encode'   => $encode,
             'validate' => $validate,
         ]);
+
         return $this;
     }
 
     /**
      * Similar to the whereJsonDoesntContain method, but uses the OR operator to combine with other conditions.
-
+     *
      * Example:
      * $select->orWhereJsonDoesntContain('settings->languages', 'en')
      *
      * @param non-empty-string $path
-     * @param bool $encode Encode the value into JSON. Encode the value into JSON.
-     * @param bool $validate Check that $value is a valid JSON string if the $encode parameter is false. Check that $value is a valid JSON string if the $encode parameter is false.
+     * @param bool             $encode   Encode the value into JSON. Encode the value into JSON.
+     * @param bool             $validate Check that $value is a valid JSON string if the $encode parameter is false. Check that $value is a valid JSON string if the $encode parameter is false.
      */
     public function orWhereJsonDoesntContain(string $path, mixed $value, bool $encode = true, bool $validate = true): static
     {
         $this->registerWhereJsonToken('OR', $path, $value, __FUNCTION__, [
-            'encode' => $encode,
+            'encode'   => $encode,
             'validate' => $validate,
         ]);
+
         return $this;
     }
 
     /**
      * Select records where the JSON contains the passed path.
-
+     *
      * Example:
      * $select->whereJsonContainsKey('options->languages->de')
      *
@@ -132,12 +138,13 @@ trait WhereJsonTrait
     public function whereJsonContainsKey(string $path): static
     {
         $this->registerWhereJsonToken('AND', $path, null, __FUNCTION__);
+
         return $this;
     }
 
     /**
      * Similar to the whereJsonContainsKey method, but uses the OR operator to combine with other conditions.
-
+     *
      * Example:
      * $select->orWhereJsonContainsKey('options->languages->de')
      *
@@ -146,6 +153,7 @@ trait WhereJsonTrait
     public function orWhereJsonContainsKey(string $path): static
     {
         $this->registerWhereJsonToken('OR', $path, null, __FUNCTION__);
+
         return $this;
     }
 
@@ -160,12 +168,13 @@ trait WhereJsonTrait
     public function whereJsonDoesntContainKey(string $path): static
     {
         $this->registerWhereJsonToken('AND', $path, null, __FUNCTION__);
+
         return $this;
     }
 
     /**
      * Similar to the whereJsonDoesntContainKey method, but uses the OR operator to combine with other conditions.
-
+     *
      * Example:
      * $select->orWhereJsonDoesntContainKey('options->languages->de')
      *
@@ -174,41 +183,44 @@ trait WhereJsonTrait
     public function orWhereJsonDoesntContainKey(string $path): static
     {
         $this->registerWhereJsonToken('OR', $path, null, __FUNCTION__);
+
         return $this;
     }
 
     /**
      * Select JSON arrays by their length.
-
+     *
      * Example:
      * $select->whereJsonLength('journal->errors', 1, '>=')
      *
-     * @param non-empty-string $path
+     * @param non-empty-string      $path
      * @param "<"|"<="|"="|">"|">=" $operator Comparison operator.
      */
     public function whereJsonLength(string $path, int $length, string $operator = '='): static
     {
         $this->registerWhereJsonToken('AND', $path, $length, __FUNCTION__, ['operator' => $operator]);
+
         return $this;
     }
 
     /**
      * Similar to the whereJsonLength method, but uses the OR operator to combine with other conditions.
-
+     *
      * Example:
      * $select->orWhereJsonLength('journal->errors', 1, '>=')
      *
-     * @param non-empty-string $path
+     * @param non-empty-string      $path
      * @param "<"|"<="|"="|">"|">=" $operator Comparison operator.
      */
     public function orWhereJsonLength(string $path, int $length, string $operator = '='): static
     {
         $this->registerWhereJsonToken('OR', $path, $length, __FUNCTION__, ['operator' => $operator]);
+
         return $this;
     }
 
     /**
-     * @param "AND"|"OR" $operator Boolean joiner (AND | OR).
+     * @param "AND"|"OR"       $operator Boolean joiner (AND | OR).
      * @param non-empty-string $path
      * @param non-empty-string $method
      */
@@ -228,8 +240,8 @@ trait WhereJsonTrait
     }
 
     /**
-     * @param non-empty-string $path
-     * @param non-empty-string $method
+     * @param non-empty-string               $path
+     * @param non-empty-string               $method
      * @param array<non-empty-string, mixed> $params
      */
     protected function buildJsonInjection(
@@ -245,9 +257,9 @@ trait WhereJsonTrait
      * Convert various amount of where function arguments into valid where token.
      *
      * @param non-empty-string $boolean Boolean joiner (AND | OR).
-     * @param array $params Set of parameters collected from where functions.
-     * @param array $tokens Array to aggregate compiled tokens. Reference.
-     * @param callable $wrapper Callback or closure used to wrap/collect every potential parameter.
+     * @param array            $params  Set of parameters collected from where functions.
+     * @param array            $tokens  Array to aggregate compiled tokens. Reference.
+     * @param callable         $wrapper Callback or closure used to wrap/collect every potential parameter.
      *
      * @throws BuilderException
      */

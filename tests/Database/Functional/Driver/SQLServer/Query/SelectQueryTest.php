@@ -70,7 +70,6 @@ class SelectQueryTest extends CommonClass
             $select
         );
 
-
         $this->assertSameParameters(
             [
                 20,

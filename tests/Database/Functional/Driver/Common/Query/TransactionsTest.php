@@ -235,6 +235,6 @@ abstract class TransactionsTest extends BaseTest
         $this->database->table->update(['value' => 234], ['id' => $user['id']])->run();
         $this->database->commit();
 
-        $this->assertEquals(234, (int)$this->database->table->select()->run()->fetchColumn(2));
+        $this->assertEquals(234, (int) $this->database->table->select()->run()->fetchColumn(2));
     }
 }

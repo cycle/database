@@ -13,7 +13,7 @@ trait TestDriverTrait
 {
     public int $disconnectCalls = 0;
     public int $exceptionOnTransactionBegin = 0;
-    /** @var Closure(\PDOStatement $pdo, ?array $params): bool|null */
+    /** @var Closure(\PDOStatement, ?array): bool|null */
     public ?Closure $queryCallback = null;
 
     protected function getPDO(): PDOInterface
@@ -40,12 +40,13 @@ trait TestDriverTrait
         if ($exception instanceof ConnectionException) {
             return $exception;
         }
+
         return parent::mapException($exception, $query);
     }
 
     public function disconnect(): void
     {
-        ++$this->disconnectCalls;
+        $this->disconnectCalls++;
         parent::disconnect();
     }
 

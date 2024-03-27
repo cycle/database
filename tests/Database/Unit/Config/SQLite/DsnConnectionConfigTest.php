@@ -21,7 +21,7 @@ final class DsnConnectionConfigTest extends TestCase
         $exported = var_export($config, true);
 
         /** @var DsnConnectionConfig $recoveredConfig */
-        eval('$recoveredConfig = ' . $exported . ';');
+        eval('$recoveredConfig = '.$exported.';');
 
         $this->assertSame("sqlite:$dsn", $recoveredConfig->getDsn());
         $this->assertSame($dsn, $recoveredConfig->getSourceString());

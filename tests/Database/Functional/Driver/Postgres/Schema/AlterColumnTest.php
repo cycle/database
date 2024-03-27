@@ -20,6 +20,7 @@ class AlterColumnTest extends CommonClass
     public function testNativeEnums(): void
     {
         $driver = $this->database->getDriver();
+
         try {
             $driver->execute("CREATE TYPE mood AS ENUM ('sad', 'ok', 'happy');");
         } catch (StatementException $e) {

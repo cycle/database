@@ -33,7 +33,7 @@ use Psr\Log\LoggerAwareTrait;
 use Throwable;
 
 /**
- * Provides low level abstraction at top of
+ * Provides low level abstraction at top of.
  */
 abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInterface
 {
@@ -124,9 +124,9 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     {
         return [
             'connection' => $this->config->connection,
-            'source' => $this->getSource(),
-            'connected' => $this->isConnected(),
-            'options' => $this->config,
+            'source'     => $this->getSource(),
+            'connected'  => $this->isConnected(),
+            'options'    => $this->config,
         ];
     }
 
@@ -140,16 +140,16 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     public function __call(string $name, array $arguments): mixed
     {
         return match ($name) {
-            'isProfiling' => true,
+            'isProfiling'  => true,
             'setProfiling' => null,
-            'getSchema' => $this->getSchemaHandler()->getSchema(
+            'getSchema'    => $this->getSchemaHandler()->getSchema(
                 $arguments[0],
                 $arguments[1] ?? null
             ),
             'tableNames' => $this->getSchemaHandler()->getTableNames(),
-            'hasTable' => $this->getSchemaHandler()->hasTable($arguments[0]),
+            'hasTable'   => $this->getSchemaHandler()->hasTable($arguments[0]),
             'identifier' => $this->getQueryCompiler()->quoteIdentifier($arguments[0]),
-            'eraseData' => $this->getSchemaHandler()->eraseTable(
+            'eraseData'  => $this->getSchemaHandler()->eraseTable(
                 $this->getSchemaHandler()->getSchema($arguments[0])
             ),
             'insertQuery',
@@ -247,7 +247,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     {
         /** @since PHP 8.1 */
         if ($value instanceof BackedEnum) {
-            $value = (string)$value->value;
+            $value = (string) $value->value;
         }
 
         if ($value instanceof DateTimeInterface) {
@@ -318,7 +318,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
      */
     public function beginTransaction(string $isolationLevel = null): bool
     {
-        ++$this->transactionLevel;
+        $this->transactionLevel++;
 
         if ($this->transactionLevel === 1) {
             if ($isolationLevel !== null) {
@@ -340,13 +340,16 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
 
                     try {
                         $this->transactionLevel = 1;
+
                         return $this->getPDO()->beginTransaction();
                     } catch (Throwable $e) {
                         $this->transactionLevel = 0;
+
                         throw $this->mapException($e, 'BEGIN TRANSACTION');
                     }
                 } else {
                     $this->transactionLevel = 0;
+
                     throw $e;
                 }
             }
@@ -378,10 +381,11 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
             }
 
             $this->transactionLevel = 0;
+
             return true;
         }
 
-        --$this->transactionLevel;
+        $this->transactionLevel--;
 
         if ($this->transactionLevel === 0) {
             $this->logger?->info('Commit transaction');
@@ -415,10 +419,11 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
             );
 
             $this->transactionLevel = 0;
+
             return false;
         }
 
-        --$this->transactionLevel;
+        $this->transactionLevel--;
 
         if ($this->transactionLevel === 0) {
             $this->logger?->info('Rollback transaction');
@@ -558,12 +563,12 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
         try {
             $datetime = match (true) {
                 $value instanceof \DateTimeImmutable => $value->setTimezone($this->getTimezone()),
-                $value instanceof \DateTime => DateTimeImmutable::createFromMutable($value)
+                $value instanceof \DateTime          => DateTimeImmutable::createFromMutable($value)
                     ->setTimezone($this->getTimezone()),
                 default => (new DateTimeImmutable('now', $this->getTimezone()))->setTimestamp($value->getTimestamp())
             };
         } catch (Throwable $e) {
-            throw new DriverException($e->getMessage(), (int)$e->getCode(), $e);
+            throw new DriverException($e->getMessage(), (int) $e->getCode(), $e);
         }
 
         return $datetime->format(
@@ -606,7 +611,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     {
         $this->logger?->info("Transaction: new savepoint 'SVP{$level}'");
 
-        $this->execute('SAVEPOINT ' . $this->identifier("SVP{$level}"));
+        $this->execute('SAVEPOINT '.$this->identifier("SVP{$level}"));
     }
 
     /**
@@ -620,7 +625,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     {
         $this->logger?->info("Transaction: release savepoint 'SVP{$level}'");
 
-        $this->execute('RELEASE SAVEPOINT ' . $this->identifier("SVP{$level}"));
+        $this->execute('RELEASE SAVEPOINT '.$this->identifier("SVP{$level}"));
     }
 
     /**
@@ -634,7 +639,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     {
         $this->logger?->info("Transaction: rollback savepoint 'SVP{$level}'");
 
-        $this->execute('ROLLBACK TO SAVEPOINT ' . $this->identifier("SVP{$level}"));
+        $this->execute('ROLLBACK TO SAVEPOINT '.$this->identifier("SVP{$level}"));
     }
 
     /**
@@ -673,7 +678,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     }
 
     /**
-     * Creating a context for logging
+     * Creating a context for logging.
      *
      * @param float $queryStart Query start time
      */

@@ -117,15 +117,15 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
      *
      * @@psalm-param non-empty-string $table Foreign table name with or without database prefix (see 3rd argument).
      *
-     * @param array $columns Foreign key names (id by default).
-     * @param bool $forcePrefix When true foreign table will get same prefix as table being modified.
+     * @param array $columns     Foreign key names (id by default).
+     * @param bool  $forcePrefix When true foreign table will get same prefix as table being modified.
      */
     public function references(
         string $table,
         array $columns = ['id'],
         bool $forcePrefix = true
     ): self {
-        $this->foreignTable = ($forcePrefix ? $this->tablePrefix : '') . $table;
+        $this->foreignTable = ($forcePrefix ? $this->tablePrefix : '').$table;
         $this->foreignKeys = $columns;
 
         return $this;
@@ -179,10 +179,10 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
         $statement[] = 'CONSTRAINT';
         $statement[] = $driver->identifier($this->name);
         $statement[] = 'FOREIGN KEY';
-        $statement[] = '(' . $this->packColumns($driver, $this->columns) . ')';
+        $statement[] = '('.$this->packColumns($driver, $this->columns).')';
 
-        $statement[] = 'REFERENCES ' . $driver->identifier($this->foreignTable);
-        $statement[] = '(' . $this->packColumns($driver, $this->foreignKeys) . ')';
+        $statement[] = 'REFERENCES '.$driver->identifier($this->foreignTable);
+        $statement[] = '('.$this->packColumns($driver, $this->foreignKeys).')';
 
         $statement[] = "ON DELETE {$this->deleteRule}";
         $statement[] = "ON UPDATE {$this->updateRule}";
@@ -200,6 +200,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
                 return false;
             }
         }
+
         return true;
     }
 

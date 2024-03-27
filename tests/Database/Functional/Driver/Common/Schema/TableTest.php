@@ -152,8 +152,8 @@ abstract class TableTest extends BaseTest
 
         $this->assertSame(
             [
-                'id' => 'primary',
-                'name' => 'text',
+                'id'    => 'primary',
+                'name'  => 'text',
                 'value' => 'integer',
             ],
             $columns
@@ -168,7 +168,7 @@ abstract class TableTest extends BaseTest
 
         $id = $table->insertOne(
             [
-                'name' => 'Anton',
+                'name'  => 'Anton',
                 'value' => 10,
             ]
         );
@@ -197,7 +197,7 @@ abstract class TableTest extends BaseTest
 
         $id = $table->insertOne(
             [
-                'name' => FooBarEnum::FOO,
+                'name'  => FooBarEnum::FOO,
                 'value' => IntegerEnum::HUNDRED,
             ]
         );
@@ -225,7 +225,7 @@ abstract class TableTest extends BaseTest
 
         $table->insertOne(
             [
-                'name' => 'Leo',
+                'name'  => 'Leo',
                 'value' => UntypedEnum::FOO,
             ]
         );
@@ -238,7 +238,7 @@ abstract class TableTest extends BaseTest
 
         $id = $table->insertOne(
             [
-                'name' => 'Anton',
+                'name'  => 'Anton',
                 'value' => 10,
             ]
         );
@@ -248,7 +248,7 @@ abstract class TableTest extends BaseTest
 
         $id = $table->insertOne(
             [
-                'name' => 'John',
+                'name'  => 'John',
                 'value' => 20,
             ]
         );
