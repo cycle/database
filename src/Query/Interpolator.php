@@ -38,16 +38,7 @@ final class Interpolator
             return $query;
         }
 
-        $named = [];
-        $unnamed = [];
-
-        foreach ($parameters as $k => $v) {
-            if (\is_int($k)) {
-                $unnamed[] = $v;
-            } else {
-                $named[\ltrim($k, ':')] = $v;
-            }
-        }
+        ['named' => $named, 'unnamed' => $unnamed] = self::categorizeParameters($parameters);
 
         return \preg_replace_callback(
             '/(?<dq>"(?:\\\\\"|[^"])*")|(?<sq>\'(?:\\\\\'|[^\'])*\')|(?<ph>\\?)|(?<named>:[a-z_\\d]+)/',
@@ -82,7 +73,7 @@ final class Interpolator
      *
      * @psalm-return non-empty-string
      */
-    private static function resolveValue(mixed $parameter, array $options): string
+    public static function resolveValue(mixed $parameter, array $options): string
     {
         if ($parameter instanceof ParameterInterface) {
             return self::resolveValue($parameter->getValue(), $options);
@@ -140,5 +131,28 @@ final class Interpolator
             "\t" => '\\t',
             '\\' => '\\\\',
         ]);
+    }
+
+    /**
+     * Categorizes parameters into named and unnamed.
+     *
+     * @param iterable $parameters Parameters to categorize.
+     *
+     * @return array{named: array<string, mixed>, unnamed: list<mixed>} An associative array with keys 'named' and 'unnamed'.
+     */
+    private static function categorizeParameters(iterable $parameters): array
+    {
+        $named = [];
+        $unnamed = [];
+
+        foreach ($parameters as $k => $v) {
+            if (\is_int($k)) {
+                $unnamed[] = $v;
+            } else {
+                $named[\ltrim($k, ':')] = $v;
+            }
+        }
+
+        return ['named' => $named, 'unnamed' => $unnamed];
     }
 }

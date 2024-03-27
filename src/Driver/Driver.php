@@ -476,10 +476,19 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
             throw $e;
         } finally {
             if ($this->logger !== null) {
-                $queryString = $this->config->options['logQueryParameters']
+                $queryString = $this->config->options['logInterpolatedQueries']
                     ? Interpolator::interpolate($query, $parameters, $this->config->options)
                     : $query;
-                $context = $this->defineLoggerContext($queryStart, $statement ?? null);
+
+                $contextParameters = $this->config->options['logQueryParameters']
+                    ? $parameters
+                    : [];
+
+                $context = $this->defineLoggerContext(
+                    $queryStart,
+                    $statement ?? null,
+                    $contextParameters
+                );
 
                 if (isset($e)) {
                     $this->logger->error($queryString, $context);
@@ -676,14 +685,23 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
      * Creating a context for logging
      *
      * @param float $queryStart Query start time
+     * @param PDOStatement|PDOStatementInterface|null $statement Statement object
+     * @param iterable $parameters Query parameters
+     *
+     * @return array
      */
-    protected function defineLoggerContext(float $queryStart, PDOStatement|PDOStatementInterface|null $statement): array
+    protected function defineLoggerContext(float $queryStart, PDOStatement|PDOStatementInterface|null $statement, iterable $parameters = []): array
     {
         $context = [
+            'driver' => $this->getType(),
             'elapsed' => microtime(true) - $queryStart,
         ];
         if ($statement !== null) {
             $context['rowCount'] = $statement->rowCount();
+        }
+
+        foreach ($parameters as $parameter) {
+            $context['parameters'][] = Interpolator::resolveValue($parameter, $this->config->options);
         }
 
         return $context;

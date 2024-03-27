@@ -128,7 +128,7 @@ class AbstractDriverTest extends TestCase
             ->willReturn($this->createMock(PDOStatementInterface::class));
 
         $driver = TestDriver::createWith(
-            new SQLiteDriverConfig(options: ['logQueryParameters' => true]),
+            new SQLiteDriverConfig(options: ['logInterpolatedQueries' => true]),
             $this->createMock(HandlerInterface::class),
             $this->createMock(BuilderInterface::class),
             $pdo
@@ -147,6 +147,53 @@ class AbstractDriverTest extends TestCase
         );
     }
 
+    public function testLogsQueryParameters(): void
+    {
+        $pdo = $this->createMock(PDOInterface::class);
+        $pdo
+            ->expects($this->once())
+            ->method('prepare')
+            ->willReturn($this->createMock(PDOStatementInterface::class));
+
+        $driver = TestDriver::createWith(
+            new SQLiteDriverConfig(options: [
+                'logInterpolatedQueries' => false,
+                'logQueryParameters' => true,
+            ]),
+            $this->createMock(HandlerInterface::class),
+            $this->createMock(BuilderInterface::class),
+            $pdo
+        );
+
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger
+            ->expects($this->once())
+            ->method('info')
+            ->with(
+                $this->equalTo('SELECT * FROM sample_table WHERE id IN (?, ?, ?) ORDER BY id ASC'),
+                $this->callback(function (array $context) {
+                    if (!isset($context['parameters'])) {
+                        return false;
+                    }
+
+                    $parametersAsString = array_map('strval', $context['parameters']);
+
+                    $expectedParameters = ['1', '2', '3'];
+                    if ($parametersAsString !== $expectedParameters) {
+                        return false;
+                    }
+
+                    return isset($context['driver']);
+                })
+            );
+        $driver->setLogger($logger);
+
+        $driver->query(
+            'SELECT * FROM sample_table WHERE id IN (?, ?, ?) ORDER BY id ASC',
+            [1, 2, 3]
+        );
+    }
+
     public function testLogsWithEnabledInterpolationAndWithDatetimeMicroseconds(): void
     {
         $pdo = $this->createMock(PDOInterface::class);
@@ -156,7 +203,7 @@ class AbstractDriverTest extends TestCase
             ->willReturn($this->createMock(PDOStatementInterface::class));
 
         $driver = TestDriver::createWith(
-            new SQLiteDriverConfig(options: ['logQueryParameters' => true, 'withDatetimeMicroseconds' => true]),
+            new SQLiteDriverConfig(options: ['logInterpolatedQueries' => true, 'withDatetimeMicroseconds' => true]),
             $this->createMock(HandlerInterface::class),
             $this->createMock(BuilderInterface::class),
             $pdo

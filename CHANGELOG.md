@@ -1,5 +1,10 @@
 # CHANGELOG
 
+v2.9.0 (27.03.2024)
+-------------------
+- Added `logInterpolatedQueries` for detailed query logging and refined `logQueryParameters` to accurately log query parameters as arrays, enhancing ORM debugging and monitoring. @lotyp (#165)
+- Improved logging with enriched context in Driver.php, including driver details and query parameters. @lotyp (#165)
+
 v2.8.1 (08.02.2024)
 -------------------
 - Fix compiling of Fragment with parameters in the returning() definition by @msmakouz (#161)
