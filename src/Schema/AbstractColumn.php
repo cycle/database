@@ -40,6 +40,7 @@ use Cycle\Database\Schema\Traits\ElementTrait;
  * @method $this|AbstractColumn bigInteger()
  * @method $this|AbstractColumn text()
  * @method $this|AbstractColumn tinyText()
+ * @method $this|AbstractColumn mediumText()
  * @method $this|AbstractColumn longText()
  * @method $this|AbstractColumn double()
  * @method $this|AbstractColumn float()

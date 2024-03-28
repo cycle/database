@@ -143,6 +143,7 @@ class PostgresColumn extends AbstractColumn
 
         //Generic types
         'text'         => 'text',
+        'mediumText'   => 'text',
         'tinyText'     => 'text',
         'longText'     => 'text',
 

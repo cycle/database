@@ -87,6 +87,7 @@ class MySQLColumn extends AbstractColumn
         //Generic types
         'text'        => 'text',
         'tinyText'    => 'tinytext',
+        'mediumText'  => 'mediumtext',
         'longText'    => 'longtext',
 
         //Real types
@@ -124,8 +125,9 @@ class MySQLColumn extends AbstractColumn
         'smallInteger' => ['smallint'],
         'bigInteger'  => ['bigint'],
         'string'      => ['varchar', 'char'],
-        'text'        => ['text', 'mediumtext'],
+        'text'        => ['text'],
         'tinyText'    => ['tinytext'],
+        'mediumText'  => ['mediumtext'],
         'longText'    => ['longtext'],
         'double'      => ['double'],
         'float'       => ['float', 'real'],

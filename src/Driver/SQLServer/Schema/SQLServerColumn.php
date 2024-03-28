@@ -74,6 +74,7 @@ class SQLServerColumn extends AbstractColumn
         //Generic types
         'text'        => ['type' => 'varchar', 'size' => 0],
         'tinyText'    => ['type' => 'varchar', 'size' => 0],
+        'mediumText'  => ['type' => 'varchar', 'size' => 0],
         'longText'    => ['type' => 'varchar', 'size' => 0],
 
         //Real types
