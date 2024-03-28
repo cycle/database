@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="5.23.1@8471a896ccea3526b26d082f4461eeea467f10a4">
+  <file src="src/Config/DatabaseConfig.php">
+    <NoValue>
+      <code><![CDATA[$database]]></code>
+      <code><![CDATA[$database]]></code>
+      <code><![CDATA[$driver]]></code>
+      <code><![CDATA[$driver]]></code>
+    </NoValue>
+    <UnusedForeachValue>
+      <code><![CDATA[$database]]></code>
+      <code><![CDATA[$driver]]></code>
+    </UnusedForeachValue>
+  </file>
+  <file src="src/Config/PDOConnectionConfig.php">
+    <NoValue>
+      <code><![CDATA[$key]]></code>
+    </NoValue>
+  </file>
+  <file src="src/Driver/MySQL/Query/Traits/WhereJsonTrait.php">
+    <ParamNameMismatch>
+      <code><![CDATA[$column]]></code>
+    </ParamNameMismatch>
+  </file>
+  <file src="src/Driver/PDOStatementInterface.php">
+    <MissingTemplateParam>
+      <code><![CDATA[IteratorAggregate]]></code>
+    </MissingTemplateParam>
+    <UndefinedAttributeClass>
+      <code><![CDATA[ArrayShape]]></code>
+    </UndefinedAttributeClass>
+  </file>
+  <file src="src/Driver/Postgres/PostgresHandler.php">
+    <UnusedFunctionCall>
+      <code><![CDATA[\json_decode]]></code>
+    </UnusedFunctionCall>
+  </file>
+  <file src="src/Driver/Postgres/Query/Traits/WhereJsonTrait.php">
+    <ParamNameMismatch>
+      <code><![CDATA[$column]]></code>
+    </ParamNameMismatch>
+  </file>
+  <file src="src/Driver/SQLServer/Query/Traits/WhereJsonTrait.php">
+    <MethodSignatureMismatch>
+      <code><![CDATA[public function orWhereJson(string $column, mixed $value): static]]></code>
+      <code><![CDATA[public function orWhereJson(string $column, mixed $value): static]]></code>
+      <code><![CDATA[public function orWhereJson(string $column, mixed $value): static]]></code>
+      <code><![CDATA[public function orWhereJsonContains(]]></code>
+      <code><![CDATA[public function orWhereJsonContains(]]></code>
+      <code><![CDATA[public function orWhereJsonContains(]]></code>
+      <code><![CDATA[public function orWhereJsonContainsKey(string $column): static]]></code>
+      <code><![CDATA[public function orWhereJsonContainsKey(string $column): static]]></code>
+      <code><![CDATA[public function orWhereJsonContainsKey(string $column): static]]></code>
+      <code><![CDATA[public function orWhereJsonDoesntContain(]]></code>
+      <code><![CDATA[public function orWhereJsonDoesntContain(]]></code>
+      <code><![CDATA[public function orWhereJsonDoesntContain(]]></code>
+      <code><![CDATA[public function orWhereJsonDoesntContainKey(string $column): static]]></code>
+      <code><![CDATA[public function orWhereJsonDoesntContainKey(string $column): static]]></code>
+      <code><![CDATA[public function orWhereJsonDoesntContainKey(string $column): static]]></code>
+      <code><![CDATA[public function orWhereJsonLength(string $column, int $length, string $operator = '='): static]]></code>
+      <code><![CDATA[public function orWhereJsonLength(string $column, int $length, string $operator = '='): static]]></code>
+      <code><![CDATA[public function orWhereJsonLength(string $column, int $length, string $operator = '='): static]]></code>
+      <code><![CDATA[public function whereJson(string $column, mixed $value): static]]></code>
+      <code><![CDATA[public function whereJson(string $column, mixed $value): static]]></code>
+      <code><![CDATA[public function whereJson(string $column, mixed $value): static]]></code>
+      <code><![CDATA[public function whereJsonContains(string $column, mixed $value, bool $encode = true, bool $validate = true): static]]></code>
+      <code><![CDATA[public function whereJsonContains(string $column, mixed $value, bool $encode = true, bool $validate = true): static]]></code>
+      <code><![CDATA[public function whereJsonContains(string $column, mixed $value, bool $encode = true, bool $validate = true): static]]></code>
+      <code><![CDATA[public function whereJsonContainsKey(string $column): static]]></code>
+      <code><![CDATA[public function whereJsonContainsKey(string $column): static]]></code>
+      <code><![CDATA[public function whereJsonContainsKey(string $column): static]]></code>
+      <code><![CDATA[public function whereJsonDoesntContain(]]></code>
+      <code><![CDATA[public function whereJsonDoesntContain(]]></code>
+      <code><![CDATA[public function whereJsonDoesntContain(]]></code>
+      <code><![CDATA[public function whereJsonDoesntContainKey(string $column): static]]></code>
+      <code><![CDATA[public function whereJsonDoesntContainKey(string $column): static]]></code>
+      <code><![CDATA[public function whereJsonDoesntContainKey(string $column): static]]></code>
+      <code><![CDATA[public function whereJsonLength(string $column, int $length, string $operator = '='): static]]></code>
+      <code><![CDATA[public function whereJsonLength(string $column, int $length, string $operator = '='): static]]></code>
+      <code><![CDATA[public function whereJsonLength(string $column, int $length, string $operator = '='): static]]></code>
+    </MethodSignatureMismatch>
+    <ParamNameMismatch>
+      <code><![CDATA[$column]]></code>
+      <code><![CDATA[$column]]></code>
+      <code><![CDATA[$column]]></code>
+      <code><![CDATA[$column]]></code>
+      <code><![CDATA[$column]]></code>
+      <code><![CDATA[$column]]></code>
+      <code><![CDATA[$column]]></code>
+      <code><![CDATA[$column]]></code>
+      <code><![CDATA[$column]]></code>
+      <code><![CDATA[$column]]></code>
+      <code><![CDATA[$column]]></code>
+      <code><![CDATA[$column]]></code>
+    </ParamNameMismatch>
+  </file>
+  <file src="src/Driver/SQLite/Query/Traits/WhereJsonTrait.php">
+    <ParamNameMismatch>
+      <code><![CDATA[$column]]></code>
+    </ParamNameMismatch>
+  </file>
+  <file src="src/Driver/Statement.php">
+    <MissingTemplateParam>
+      <code><![CDATA[\IteratorAggregate]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="src/Query/SelectQuery.php">
+    <MissingTemplateParam>
+      <code><![CDATA[IteratorAggregate]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="src/StatementInterface.php">
+    <MissingTemplateParam>
+      <code><![CDATA[\Traversable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="src/Table.php">
+    <MissingTemplateParam>
+      <code><![CDATA[\IteratorAggregate]]></code>
+    </MissingTemplateParam>
+  </file>
+</files>

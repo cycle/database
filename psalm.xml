@@ -7,11 +7,11 @@
     findUnusedBaselineEntry="true"
     findUnusedCode="false"
     hoistConstants="true"
-    resolveFromConfigFile="true"
     findUnusedPsalmSuppress="true"
     findUnusedVariablesAndParams="true"
     ensureArrayStringOffsetsExist="true"
     addParamDefaultToDocblockType="true"
+    errorBaseline="psalm-baseline.xml"
 >
     <issueHandlers>
         <LessSpecificReturnStatement errorLevel="suppress"/>
