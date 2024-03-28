@@ -1,0 +1,70 @@
+---
+
+on:  # yamllint disable-line rule:truthy
+  pull_request:
+    branches:
+      - master
+
+name: 🔍 Integration
+
+jobs:
+  code-coverage:
+    name: 📊 Code coverage
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os:
+          - "ubuntu-latest"
+        php-version:
+          - "8.1"
+          - "8.2"
+          - "8.3"
+        dependencies:
+          - "locked"
+
+    steps:
+      - name: 📦 Check out the codebase
+        uses: actions/checkout@v4
+
+      - name: 🛠️ Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: mbstring, pdo, pdo_sqlite, pdo_pgsql, pdo_sqlsrv, pdo_mysql
+          ini-values: error_reporting=E_ALL
+          tools: composer:v2, pecl
+          coverage: xdebug
+
+      - name: 🛠️ Setup problem matchers
+        run: |
+          echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+          echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+
+      - name: 🤖 Validate composer.json and composer.lock
+        run: composer validate --ansi --strict
+
+      - name: 🔍 Determine composer cache directory
+        run: echo "COMPOSER_CACHE_DIR=$(composer config cache-dir --working-dir=.)" >> $GITHUB_ENV
+        shell: bash
+
+      - name: ♻️ Cache dependencies installed with composer
+        uses: actions/cache@v4.0.2
+        with:
+          path: ${{ env.COMPOSER_CACHE_DIR }}
+          key: php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-${{ hashFiles('composer.lock') }}
+          restore-keys: php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-
+
+      - name: 📥 Install "${{ matrix.dependencies }}" dependencies
+        run: composer install --ansi --no-interaction --no-progress --working-dir="."
+
+      - name: 🚜 Collect code coverage with Xdebug and phpunit/phpunit
+        env:
+          XDEBUG_MODE: coverage
+        run: vendor/bin/phpunit --colors=always --configuration=phpunit.xml --coverage-clover=.build/phpunit/logs/clover.xml
+
+      - name: 📤 Upload code coverage report to Codecov
+        uses: codecov/codecov-action@v4.1.1
+        with:
+          files: .build/phpunit/logs/clover.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
