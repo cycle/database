@@ -9,7 +9,7 @@ name: 🔍 Integration
 
 jobs:
   code-coverage:
-    name: 📊 Code coverage
+    name: 📊 Coverage
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: true
