@@ -1,24 +1,18 @@
 {
     "name": "cycle/database",
-    "type": "library",
     "description": "DBAL, schema introspection, migration and pagination",
-    "keywords": ["dbal", "database", "mysql", "mssql", "sqlite", "postgresql", "orm", "sql", "query-builder"],
     "license": "MIT",
-    "conflict": {
-        "spiral/database": "*"
-    },
-    "homepage": "https://cycle-orm.dev",
-    "support": {
-        "issues": "https://github.com/cycle/database/issues",
-        "source": "https://github.com/cycle/database",
-        "docs": "https://cycle-orm.dev/docs",
-        "chat": "https://discord.gg/spiralphp"
-    },
-    "funding": [
-        {
-            "type": "github",
-            "url": "https://github.com/sponsors/cycle"
-        }
+    "type": "library",
+    "keywords": [
+        "dbal",
+        "database",
+        "mysql",
+        "mssql",
+        "sqlite",
+        "postgresql",
+        "orm",
+        "sql",
+        "query-builder"
     ],
     "authors": [
         {
@@ -38,6 +32,19 @@
             "email": "pavel.buchnev@spiralscout.com"
         }
     ],
+    "homepage": "https://cycle-orm.dev",
+    "support": {
+        "issues": "https://github.com/cycle/database/issues",
+        "chat": "https://discord.gg/spiralphp",
+        "source": "https://github.com/cycle/database",
+        "docs": "https://cycle-orm.dev/docs"
+    },
+    "funding": [
+        {
+            "type": "github",
+            "url": "https://github.com/sponsors/cycle"
+        }
+    ],
     "require": {
         "php": ">=8.1",
         "ext-pdo": "*",
@@ -46,44 +53,55 @@
         "spiral/pagination": "^2.8 || ^3.0",
         "symfony/polyfill-php83": "^1.29"
     },
-    "autoload": {
-        "files": [
-            "src/polyfill.php",
-            "src/functions_polyfill.php"
-        ],
-        "psr-4": {
-            "Cycle\\Database\\": "src"
-        }
-    },
     "require-dev": {
+        "ergebnis/composer-normalize": "^2.42",
         "infection/infection": "^0.26",
         "mockery/mockery": "^1.6",
         "phpunit/phpunit": "^9.6",
-        "spiral/tokenizer": "^2.14 | ^3.0",
-        "vimeo/psalm": "^5.23",
         "roave/security-advisories": "dev-latest",
+        "spiral/tokenizer": "^2.14 || ^3.0",
+        "vimeo/psalm": "^5.23",
         "wayofdev/cs-fixer-config": "^1.2"
+    },
+    "conflict": {
+        "spiral/database": "*"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Cycle\\Database\\": "src"
+        },
+        "files": [
+            "src/polyfill.php",
+            "src/functions_polyfill.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
             "Cycle\\Database\\Tests\\": "tests/Database"
         }
     },
-    "scripts": {
-        "cs:fix": "php vendor/bin/php-cs-fixer fix -v",
-        "cs:diff": "php vendor/bin/php-cs-fixer fix --dry-run -v --diff",
-        "test": "php vendor/bin/phpunit --colors=always",
-        "test:cc": "php vendor/bin/phpunit --colors=always --coverage",
-        "test:sqlite": "php vendor/bin/phpunit --colors=always --group=driver-sqlite",
-        "psalm": "php vendor/bin/psalm --no-cache",
-        "psalm:ci": "php vendor/bin/psalm --no-cache --error-format=github"
-    },
     "config": {
-        "sort-packages": true,
         "allow-plugins": {
+            "ergebnis/composer-normalize": true,
             "infection/extension-installer": true
+        },
+        "sort-packages": true
+    },
+    "extra": {
+        "composer-normalize": {
+            "indent-size": 4,
+            "indent-style": "space"
         }
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    "scripts": {
+        "cs:diff": "php vendor/bin/php-cs-fixer fix --dry-run -v --diff",
+        "cs:fix": "php vendor/bin/php-cs-fixer fix -v",
+        "psalm": "php vendor/bin/psalm --no-cache",
+        "psalm:ci": "php vendor/bin/psalm --no-cache --error-format=github",
+        "test": "php vendor/bin/phpunit --colors=always",
+        "test:cc": "php vendor/bin/phpunit --colors=always --coverage",
+        "test:sqlite": "php vendor/bin/phpunit --colors=always --group=driver-sqlite"
+    }
 }
