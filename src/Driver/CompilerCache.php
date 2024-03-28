@@ -123,7 +123,7 @@ final class CompilerCache implements CompilerInterface
                 foreach ($value->getValue() as $child) {
                     if ($child instanceof FragmentInterface) {
                         if ($child instanceof \Stringable) {
-                            $hash .= '_F_'. $child;
+                            $hash .= '_F_' . $child;
                         }
                         continue;
                     }
