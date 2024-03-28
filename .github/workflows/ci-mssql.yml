@@ -28,11 +28,6 @@ jobs:
         env:
           ACCEPT_EULA: 'Y'
           SA_PASSWORD: 'Pass_wo_rd'
-        options: >-
-          --health-cmd="sqlcmd -S localhost -U SA -P 'Pass_wo_rd' -Q 'SELECT 1'"
-          --health-interval 12s
-          --health-timeout 7s
-          --health-retries 7
         ports:
           - 11433:1433
 
