@@ -18,18 +18,18 @@ jobs:
       fail-fast: true
       matrix:
         os:
-          - "ubuntu-latest"
+          - ubuntu-latest
         php-version:
-          - "8.2"
+          - '8.1'
         dependencies:
-          - "locked"
+          - locked
 
     steps:
       - name: 📦 Check out the codebase
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.1
 
       - name: 🛠️ Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@v2.30.1
         with:
           php-version: ${{ matrix.php-version }}
           extensions: mbstring, pdo, pdo_sqlite
@@ -45,9 +45,8 @@ jobs:
       - name: 🤖 Validate composer.json and composer.lock
         run: composer validate --ansi --strict
 
-      - name: 🔍 Determine composer cache directory
-        run: echo "COMPOSER_CACHE_DIR=$(composer config cache-dir --working-dir=.)" >> $GITHUB_ENV
-        shell: bash
+      - name: 🔍 Get composer cache directory
+        uses: wayofdev/gh-actions/actions/composer/get-cache-directory@master
 
       - name: ♻️ Restore cached dependencies installed with composer
         uses: actions/cache@v4.0.2
@@ -57,7 +56,9 @@ jobs:
           restore-keys: php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-
 
       - name: 📥 Install "${{ matrix.dependencies }}" dependencies
-        run: composer install --ansi --no-interaction --no-progress --working-dir="."
+        uses: wayofdev/gh-actions/actions/composer/install@master
+        with:
+          dependencies: ${{ matrix.dependencies }}
 
       - name: 🧪 Collect code coverage with Xdebug and phpunit/phpunit
         env:
@@ -82,15 +83,15 @@ jobs:
         os:
           - "ubuntu-latest"
         php-version:
-          - "8.2"
+          - "8.1"
         dependencies:
           - "locked"
     steps:
       - name: 📦 Check out the codebase
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.1
 
       - name: 🛠️ Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@v2.30.1
         with:
           php-version: ${{ matrix.php-version }}
           extensions: mbstring, pdo, pdo_sqlite
@@ -106,19 +107,20 @@ jobs:
       - name: 🤖 Validate composer.json and composer.lock
         run: composer validate --ansi --strict
 
-      - name: 🔍 Determine composer cache directory
-        run: echo "COMPOSER_CACHE_DIR=$(composer config cache-dir --working-dir=.)" >> $GITHUB_ENV
-        shell: bash
+      - name: 🔍 Get composer cache directory
+        uses: wayofdev/gh-actions/actions/composer/get-cache-directory@master
 
       - name: ♻️ Restore cached dependencies installed with composer
-        uses: actions/cache@v4
+        uses: actions/cache@v4.0.2
         with:
           path: ${{ env.COMPOSER_CACHE_DIR }}
           key: php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-${{ hashFiles('composer.lock') }}
           restore-keys: php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-
 
       - name: 📥 Install "${{ matrix.dependencies }}" dependencies
-        run: composer install --ansi --no-interaction --no-progress --working-dir="."
+        uses: wayofdev/gh-actions/actions/composer/install@master
+        with:
+          dependencies: ${{ matrix.dependencies }}
 
       - name: 🛠️ Prepare environment
         run: |
@@ -150,15 +152,15 @@ jobs:
         os:
           - "ubuntu-latest"
         php-version:
-          - "8.2"
+          - "8.1"
         dependencies:
           - "locked"
     steps:
       - name: 📦 Check out the codebase
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.1
 
       - name: 🛠️ Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@v2.30.1
         with:
           php-version: ${{ matrix.php-version }}
           extensions: mbstring, pdo, pdo_sqlite
@@ -174,19 +176,20 @@ jobs:
       - name: 🤖 Validate composer.json and composer.lock
         run: composer validate --ansi --strict
 
-      - name: 🔍 Determine composer cache directory
-        run: echo "COMPOSER_CACHE_DIR=$(composer config cache-dir --working-dir=.)" >> $GITHUB_ENV
-        shell: bash
+      - name: 🔍 Get composer cache directory
+        uses: wayofdev/gh-actions/actions/composer/get-cache-directory@master
 
       - name: ♻️ Restore cached dependencies installed with composer
-        uses: actions/cache@v4
+        uses: actions/cache@v4.0.2
         with:
           path: ${{ env.COMPOSER_CACHE_DIR }}
           key: php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-${{ hashFiles('composer.lock') }}
           restore-keys: php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-
 
       - name: 📥 Install "${{ matrix.dependencies }}" dependencies
-        run: composer install --ansi --no-interaction --no-progress --working-dir="."
+        uses: wayofdev/gh-actions/actions/composer/install@master
+        with:
+          dependencies: ${{ matrix.dependencies }}
 
       - name: 🔍 Run static analysis using psalm
         run: composer psalm:ci
@@ -203,15 +206,15 @@ jobs:
         os:
           - "ubuntu-latest"
         php-version:
-          - "8.2"
+          - "8.1"
         dependencies:
           - "locked"
     steps:
       - name: 📦 Check out the codebase
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.1
 
       - name: 🛠️ Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@v2.30.1
         with:
           php-version: ${{ matrix.php-version }}
           extensions: mbstring, pdo, pdo_sqlite
@@ -225,19 +228,20 @@ jobs:
       - name: 🤖 Validate composer.json and composer.lock
         run: composer validate --ansi --strict
 
-      - name: 🔍 Determine composer cache directory
-        run: echo "COMPOSER_CACHE_DIR=$(composer config cache-dir --working-dir=.)" >> $GITHUB_ENV
-        shell: bash
+      - name: 🔍 Get composer cache directory
+        uses: wayofdev/gh-actions/actions/composer/get-cache-directory@master
 
       - name: ♻️ Restore cached dependencies installed with composer
-        uses: actions/cache@v4
+        uses: actions/cache@v4.0.2
         with:
           path: ${{ env.COMPOSER_CACHE_DIR }}
           key: php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-${{ hashFiles('composer.lock') }}
           restore-keys: php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-
 
       - name: 📥 Install "${{ matrix.dependencies }}" dependencies
-        run: composer install --ansi --no-interaction --no-progress --working-dir="."
+        uses: wayofdev/gh-actions/actions/composer/install@master
+        with:
+          dependencies: ${{ matrix.dependencies }}
 
       - name: 🧪 Run mutation testing using Xdebug and infection/infection
         run: composer infection:ci
