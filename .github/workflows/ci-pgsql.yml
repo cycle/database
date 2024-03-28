@@ -67,7 +67,7 @@ jobs:
           dependencies: ${{ matrix.dependencies }}
 
       - name: 🧪 Run unit tests with phpunit
-        run: php vendor/bin/phpunit --colors=always -testsuite=Unit
+        run: php vendor/bin/phpunit --colors=always --testsuite=Unit
 
       - name: 🧪 Run integration tests with phpunit
         run: php vendor/bin/phpunit --colors=always --testsuite=Cycle DBAL
