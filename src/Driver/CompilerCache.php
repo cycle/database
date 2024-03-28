@@ -121,7 +121,8 @@ final class CompilerCache implements CompilerInterface
 
             if ($value->isArray()) {
                 foreach ($value->getValue() as $child) {
-                    if ($child instanceof FragmentInterface) {
+                    if ($child instanceof FragmentInterface && $child instanceof \Stringable) {
+                        $hash .= '_F_'. $child;
                         continue;
                     }
 
