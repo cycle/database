@@ -99,7 +99,7 @@
         "cs:diff": "php vendor/bin/php-cs-fixer fix --dry-run --verbose --diff --show-progress=dots",
         "cs:fix": "php vendor/bin/php-cs-fixer fix -v",
         "psalm": "php vendor/bin/psalm --no-cache",
-        "psalm:ci": "php vendor/bin/psalm --no-cache --error-format=github",
+        "psalm:ci": "php vendor/bin/psalm --no-cache --output-format=compact",
         "test": "php vendor/bin/phpunit --colors=always",
         "test:cc": "php vendor/bin/phpunit --colors=always --coverage",
         "test:sqlite": "php vendor/bin/phpunit --colors=always --group=driver-sqlite"
