@@ -96,7 +96,7 @@
         }
     },
     "scripts": {
-        "cs:diff": "php vendor/bin/php-cs-fixer fix --dry-run -v --diff",
+        "cs:diff": "php vendor/bin/php-cs-fixer fix --dry-run --verbose --diff --show-progress=dots",
         "cs:fix": "php vendor/bin/php-cs-fixer fix -v",
         "psalm": "php vendor/bin/psalm --no-cache",
         "psalm:ci": "php vendor/bin/psalm --no-cache --error-format=github",
