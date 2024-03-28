@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         cacheResultFile=".build/phpunit/result.cache"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="tests/bootstrap.php"
-         backupGlobals="false"
-         backupStaticAttributes="false"
-         colors="true" verbose="false"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         processIsolation="false"
+         colors="true"
          stopOnFailure="true"
          stopOnError="true"
+         executionOrder="random"
 >
     <coverage>
         <include>
@@ -18,7 +14,7 @@
         </include>
     </coverage>
     <testsuites>
-        <testsuite name="Cycle DBAL">
+        <testsuite name="DBAL">
             <directory>./tests/</directory>
         </testsuite>
         <testsuite name="Unit">

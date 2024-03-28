@@ -15,5 +15,7 @@
     "mutators": {
         "@default": true,
         "@function_signature": false
-    }
+    },
+    "testFramework":"phpunit",
+    "testFrameworkOptions": "--group=driver-sqlite"
 }

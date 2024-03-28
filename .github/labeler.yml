@@ -1,0 +1,14 @@
+---
+
+# this file is for the labeler workflow job
+# Documentation https://github.com/marketplace/actions/labeler
+
+"type: documentation":
+  - changed-files:
+      - any-glob-to-any-file: [resources/*, .github/*, ./*.md]
+
+"type: maintenance":
+  - changed-files:
+      - any-glob-to-any-file: [tests/**/*, .github/workflows/*]
+
+...
