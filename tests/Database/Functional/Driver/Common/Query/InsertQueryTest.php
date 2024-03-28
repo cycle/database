@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Functional\Driver\Common\Query;
 
+use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Injection\Expression;
 use Cycle\Database\Injection\Fragment;
+use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Query\InsertQuery;
 use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
@@ -152,5 +154,38 @@ abstract class InsertQueryTest extends BaseTest
             'INSERT INTO {table} ({name}, {updated_at}, {deleted_at}) VALUES (?, NOW(), datetime(\'now\'))',
             $insert,
         );
+    }
+
+    public function testInsertWithCustomFragment(): void
+    {
+        $fragment = $this->createMock(FragmentInterface::class);
+        $fragment->method('getType')->willReturn(CompilerInterface::FRAGMENT);
+        $fragment->method('getTokens')->willReturn([
+            'fragment' => 'NOW()',
+            'parameters' => [],
+        ]);
+
+        $insert = $this->database->insert()->into('table')->values([
+            'name' => 'Anton',
+            'updated_at' => $fragment,
+        ]);
+
+        $this->assertSameQuery(
+            'INSERT INTO {table} ({name}, {updated_at}) VALUES (?, NOW())',
+            $insert
+        );
+        $this->assertSameParameters(['Anton'], $insert);
+
+        // cached query
+        $insert = $this->database->insert()->into('table')->values([
+            'name' => 'Anton',
+            'updated_at' => $fragment,
+        ]);
+
+        $this->assertSameQuery(
+            'INSERT INTO {table} ({name}, {updated_at}) VALUES (?, NOW())',
+            $insert
+        );
+        $this->assertSameParameters(['Anton'], $insert);
     }
 }
