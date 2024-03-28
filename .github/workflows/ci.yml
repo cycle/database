@@ -61,7 +61,7 @@ jobs:
       - name: 🚜 Collect code coverage with Xdebug and phpunit/phpunit
         env:
           XDEBUG_MODE: coverage
-        run: vendor/bin/phpunit --colors=always --configuration=phpunit.xml --coverage-clover=.build/phpunit/logs/clover.xml
+        run: vendor/bin/phpunit --group=driver-sqlite --colors=always --configuration=phpunit.xml --coverage-clover=.build/phpunit/logs/clover.xml
 
       - name: 📤 Upload code coverage report to Codecov
         uses: codecov/codecov-action@v4.1.1
