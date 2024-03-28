@@ -175,6 +175,10 @@ lint-psalm-ci:
 	$(APP_COMPOSER) psalm:ci
 .PHONY: lint-psalm-ci
 
+lint-psalm-baseline: ## Runs psalm to update its baseline
+	$(APP_COMPOSER) psalm:baseline:update
+.PHONY: lint-psalm-baseline
+
 lint-infect: ## Runs infection – mutation testing framework
 	$(APP_COMPOSER) infection
 .PHONY: lint-infect
