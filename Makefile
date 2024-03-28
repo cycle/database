@@ -195,6 +195,15 @@ test-sqlite: ## Run project php-unit tests with sqlite database
 	$(APP_COMPOSER) test:sqlite
 .PHONY: test-sqlite
 
+test-mysql: ## Run project php-unit tests with mysql database
+	$(APP_COMPOSER) test:mysql
+.PHONY: test-mysql
+
+test-pgsql: ## Run project php-unit tests with postgres database
+	$(APP_COMPOSER) test:pgsql
+.PHONY: test-pgsql
+
+
 # Release
 # ------------------------------------------------------------------------------------
 commit:
