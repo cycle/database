@@ -58,6 +58,7 @@
         "infection/infection": "^0.26",
         "mockery/mockery": "^1.6",
         "phpunit/phpunit": "^9.6",
+        "psalm/plugin-phpunit": "^0.19.0",
         "roave/security-advisories": "dev-latest",
         "spiral/tokenizer": "^2.14 || ^3.0",
         "vimeo/psalm": "^5.23",
