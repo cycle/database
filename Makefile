@@ -175,6 +175,14 @@ lint-psalm-ci:
 	$(APP_COMPOSER) psalm:ci
 .PHONY: lint-psalm-ci
 
+lint-infect: ## Runs infection – mutation testing framework
+	$(APP_COMPOSER) infection
+.PHONY: lint-infect
+
+lint-infect-ci: ## Runs infection – mutation testing framework
+	$(APP_COMPOSER) infection:ci
+.PHONY: lint-infect-ci
+
 test: ## Run project php-unit tests
 	$(APP_COMPOSER) test
 .PHONY: test

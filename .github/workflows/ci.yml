@@ -190,3 +190,54 @@ jobs:
 
       - name: 🔍 Run static analysis using psalm
         run: composer psalm:ci
+
+  mutation-testing:
+    name: 🧪 Mutation Testing
+    runs-on: ${{ matrix.os }}
+    concurrency:
+      cancel-in-progress: true
+      group: mutation-testing-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os:
+          - "ubuntu-latest"
+        php-version:
+          - "8.2"
+        dependencies:
+          - "locked"
+    steps:
+      - name: 📦 Check out the codebase
+        uses: actions/checkout@v4
+
+      - name: 🛠️ Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: mbstring, pdo, pdo_sqlite
+          ini-values: error_reporting=E_ALL
+          tools: composer:v2, pecl
+          coverage: xdebug
+
+      - name: 🛠️ Setup problem matchers
+        run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+
+      - name: 🤖 Validate composer.json and composer.lock
+        run: composer validate --ansi --strict
+
+      - name: 🔍 Determine composer cache directory
+        run: echo "COMPOSER_CACHE_DIR=$(composer config cache-dir --working-dir=.)" >> $GITHUB_ENV
+        shell: bash
+
+      - name: ♻️ Restore cached dependencies installed with composer
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.COMPOSER_CACHE_DIR }}
+          key: php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-${{ hashFiles('composer.lock') }}
+          restore-keys: php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-
+
+      - name: 📥 Install "${{ matrix.dependencies }}" dependencies
+        run: composer install --ansi --no-interaction --no-progress --working-dir="."
+
+      - name: 🧪 Run mutation testing using Xdebug and infection/infection
+        run: composer infection:ci

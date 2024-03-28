@@ -103,6 +103,8 @@
         "psalm:ci": "php vendor/bin/psalm --output-format=github --shepherd --show-info=false --stats --threads=4",
         "test": "php vendor/bin/phpunit --colors=always",
         "test:cc": "php vendor/bin/phpunit --colors=always --coverage",
-        "test:sqlite": "php vendor/bin/phpunit --colors=always --group=driver-sqlite"
+        "test:sqlite": "php vendor/bin/phpunit --colors=always --group=driver-sqlite",
+        "infection": "vendor/bin/infection --ansi --configuration=infection.json.dist --logger-github",
+        "infection:ci": "vendor/bin/infection --ansi --configuration=infection.json.dist --logger-github"
     }
 }
