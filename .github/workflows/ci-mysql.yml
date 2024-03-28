@@ -30,7 +30,7 @@ jobs:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_ROOT_HOST: '%'
         options: >-
-          --health-cmd mysqladmin ping
+          --health-cmd="mysqladmin ping"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
