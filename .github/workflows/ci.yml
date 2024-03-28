@@ -3,7 +3,7 @@
 on:  # yamllint disable-line rule:truthy
   pull_request:
     branches:
-      - master
+      - 2.x
 
 name: 🔍 Integration
 
