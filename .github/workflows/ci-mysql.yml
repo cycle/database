@@ -20,7 +20,7 @@ jobs:
         dependencies:
           - locked
         mysql-version:
-          - '8.3.0'
+          - latest
 
     services:
       mysql:
