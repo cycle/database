@@ -24,7 +24,22 @@ jobs:
           - locked
           - highest
         pgsql-version:
-          - 13
+          - '13-alpine'
+
+    services:
+      pgsql:
+        image: postgres:${{ matrix.pgsql-version }}
+        env:
+          POSTGRES_DB: spiral
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 15432:5432
 
     steps:
       - name: 📦 Check out the codebase
@@ -70,4 +85,4 @@ jobs:
         run: php vendor/bin/phpunit --colors=always --testsuite=Unit
 
       - name: 🧪 Run integration tests with phpunit
-        run: php vendor/bin/phpunit --colors=always --testsuite=Cycle DBAL
+        run: php vendor/bin/phpunit --colors=always --testsuite=DBAL
