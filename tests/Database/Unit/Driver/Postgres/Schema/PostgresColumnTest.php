@@ -24,6 +24,9 @@ final class PostgresColumnTest extends TestCase
 
     public static function enumConstrainsDataProvider(): \Traversable
     {
+        yield ['', []];
+        yield ['foo', []];
+
         // simple single value
         yield ["CHECK (((target)::text = 'catalog'::text))", ['catalog']];
 
