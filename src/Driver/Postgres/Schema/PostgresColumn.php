@@ -692,28 +692,12 @@ class PostgresColumn extends AbstractColumn
         );
 
         foreach ($constraints as $constraint) {
-            if (preg_match('/ARRAY\[([^\]]+)\]/', $constraint['consrc'], $matches)) {
-                $enumValues = explode(',', $matches[1]);
-                foreach ($enumValues as &$value) {
-                    if (preg_match("/^'?(.*?)'?::(.+)/", trim($value, ' ()'), $matches)) {
-                        //In database: 'value'::TYPE
-                        $value = $matches[1];
-                    }
+            $values = static::parseEnumValues($constraint['consrc']);
 
-                    unset($value);
-                }
-                unset($value);
-
-                $column->enumValues = $enumValues;
+            if ($values !== []) {
+                $column->enumValues = $values;
                 $column->constrainName = $constraint['conname'];
                 $column->constrained = true;
-            } else {
-                $pattern = '/CHECK \\(\\(\\([A-Za-z]+\\)::(.+) = \'([A-Za-z]+)\'::(.+)\\)\\)/i';
-                if (\preg_match($pattern, $constraint['consrc'], $matches) && !empty($matches[2])) {
-                    $column->enumValues = [$matches[2]];
-                    $column->constrainName = $constraint['conname'];
-                    $column->constrained = true;
-                }
             }
         }
     }
@@ -735,5 +719,30 @@ class PostgresColumn extends AbstractColumn
                 strpos($column->defaultValue, $column->type) - 4
             );
         }
+    }
+
+    private static function parseEnumValues(string $constraint): array
+    {
+        if (\preg_match('/ARRAY\[([^\]]+)\]/', $constraint, $matches)) {
+            $enumValues = \explode(',', $matches[1]);
+            foreach ($enumValues as &$value) {
+                if (\preg_match("/^'?(.*?)'?::(.+)/", \trim($value, ' ()'), $matches)) {
+                    //In database: 'value'::TYPE
+                    $value = $matches[1];
+                }
+
+                unset($value);
+            }
+            unset($value);
+
+            return $enumValues;
+        }
+
+        $pattern = '/CHECK \\(\\(\\([a-zA-Z0-9_]+\\)::(.+) = \'([a-zA-Z0-9_]+)\'::(.+)\\)\\)/i';
+        if (\preg_match($pattern, $constraint, $matches) && !empty($matches[2])) {
+            return [$matches[2]];
+        }
+
+        return [];
     }
 }
