@@ -57,11 +57,11 @@ final class PostgresColumnTest extends TestCase
         // multiple values with number
         yield [
             "CHECK (((type)::text = ANY (ARRAY['user_profile_2'::text, 'view'::text])))",
-            ['user_profile_2', 'view']
+            ['user_profile_2', 'view'],
         ];
         yield [
             "CHECK (((type)::text = ANY (ARRAY['user_profile2'::text, 'view'::text])))",
-            ['user_profile2', 'view']
+            ['user_profile2', 'view'],
         ];
 
         // different type casting TODO: it can be unnecessary
