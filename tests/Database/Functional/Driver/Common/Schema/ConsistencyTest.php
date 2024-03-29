@@ -229,6 +229,19 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
+    public function testMediumText(): void
+    {
+        $schema = $this->schema('table');
+        $this->assertFalse($schema->exists());
+
+        $column = $schema->mediumText('target');
+
+        $schema->save();
+        $schema = $this->schema('table');
+        $this->assertTrue($schema->exists());
+        $this->assertTrue($schema->column('target')->compare($column));
+    }
+
     public function testTextLongText(): void
     {
         $schema = $this->schema('table');

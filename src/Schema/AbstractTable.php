@@ -39,6 +39,7 @@ use Cycle\Database\TableInterface;
  * @method AbstractColumn bigInteger($column)
  * @method AbstractColumn text($column)
  * @method AbstractColumn tinyText($column)
+ * @method AbstractColumn mediumText($column)
  * @method AbstractColumn longText($column)
  * @method AbstractColumn json($column)
  * @method AbstractColumn double($column)

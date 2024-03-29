@@ -64,6 +64,7 @@ class SQLiteColumn extends AbstractColumn
         //Generic types
         'text'        => 'text',
         'tinyText'    => 'text',
+        'mediumText'  => 'text',
         'longText'    => 'text',
 
         //Real types
