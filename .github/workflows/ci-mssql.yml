@@ -41,7 +41,6 @@ jobs:
           php-version: ${{ matrix.php-version }}
           extensions: mbstring, pdo, pdo_sqlite, pdo_sqlsrv, json
           ini-values: error_reporting=E_ALL
-          tools: composer:v2, pecl
           coverage: none
 
       - name: 🛠️ Setup problem matchers
