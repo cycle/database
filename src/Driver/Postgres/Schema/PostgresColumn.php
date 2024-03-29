@@ -707,6 +707,13 @@ class PostgresColumn extends AbstractColumn
                 $column->enumValues = $enumValues;
                 $column->constrainName = $constraint['conname'];
                 $column->constrained = true;
+            } else {
+                $pattern = '/CHECK \\(\\(\\([A-Za-z]+\\)::(.+) = \'([A-Za-z]+)\'::(.+)\\)\\)/i';
+                if (\preg_match($pattern, $constraint['consrc'], $matches) && !empty($matches[2])) {
+                    $column->enumValues = [$matches[2]];
+                    $column->constrainName = $constraint['conname'];
+                    $column->constrained = true;
+                }
             }
         }
     }
