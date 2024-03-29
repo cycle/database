@@ -1,5 +1,9 @@
 # CHANGELOG
 
+v2.10.0 (29.03.2024)
+-------------------
+- Added `mediumText` column type by @msmakouz (#178)
+
 v2.9.0 (27.03.2024)
 -------------------
 - Added `logInterpolatedQueries` for detailed query logging and refined `logQueryParameters` to accurately log query parameters as arrays, enhancing ORM debugging and monitoring. @lotyp (#165)
