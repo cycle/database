@@ -726,7 +726,7 @@ class PostgresColumn extends AbstractColumn
         if (\preg_match('/ARRAY\[([^\]]+)\]/', $constraint, $matches)) {
             $enumValues = \explode(',', $matches[1]);
             foreach ($enumValues as &$value) {
-                if (\preg_match("/^'?(.*?)'?::(.+)/", \trim($value, ' ()'), $matches)) {
+                if (\preg_match("/^'?([a-zA-Z0-9_]++)'?::([a-zA-Z0-9_]++)/", \trim($value, ' ()'), $matches)) {
                     //In database: 'value'::TYPE
                     $value = $matches[1];
                 }
@@ -738,7 +738,7 @@ class PostgresColumn extends AbstractColumn
             return $enumValues;
         }
 
-        $pattern = '/CHECK \\(\\(\\([a-zA-Z0-9_]+\\)::(.+) = \'([a-zA-Z0-9_]+)\'::(.+)\\)\\)/i';
+        $pattern = '/CHECK \\(\\(\\([a-zA-Z0-9_]++\\)::([a-z]++) = \'([a-zA-Z0-9_]++)\'::([a-z]++)\\)\\)/i';
         if (\preg_match($pattern, $constraint, $matches) && !empty($matches[2])) {
             return [$matches[2]];
         }

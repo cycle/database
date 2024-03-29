@@ -63,5 +63,9 @@ final class PostgresColumnTest extends TestCase
             "CHECK (((type)::text = ANY (ARRAY['user_profile2'::text, 'view'::text])))",
             ['user_profile2', 'view']
         ];
+
+        // different type casting TODO: it can be unnecessary
+        yield ["CHECK (((target)::foo = 'catalog'::bar))", ['catalog']];
+        yield ["CHECK (((log_type)::foo = ANY (ARRAY['catalog'::bar, 'view'::baz])))", ['catalog', 'view']];
     }
 }
