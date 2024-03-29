@@ -164,6 +164,20 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
+    public function testEnumWithSingleValue(): void
+    {
+        $schema = $this->schema('table');
+        $this->assertFalse($schema->exists());
+
+        $column = $schema->enum('target', ['catalog']);
+
+        $schema->save();
+        $schema = $this->schema('table');
+        $this->assertTrue($schema->exists());
+        $this->assertTrue($schema->column('target')->compare($column));
+        $this->assertSame(['catalog'], $schema->column('target')->getEnumValues());
+    }
+
     public function testJson(): void
     {
         $schema = $this->schema('table');
