@@ -108,7 +108,7 @@
         "cs:fix": "php vendor/bin/php-cs-fixer fix -v",
         "infection": "vendor/bin/infection --ansi --configuration=infection.json.dist --logger-github",
         "infection:ci": "vendor/bin/infection --ansi --configuration=infection.json.dist --logger-github",
-        "psalm": "php vendor/bin/psalm --output-format=compact",
+        "psalm": "php vendor/bin/psalm",
         "psalm:baseline:update": "php vendor/bin/psalm --set-baseline=psalm-baseline.xml",
         "psalm:ci": "php vendor/bin/psalm --output-format=github --shepherd --show-info=false --stats --threads=4",
         "test": "php vendor/bin/phpunit --colors=always",

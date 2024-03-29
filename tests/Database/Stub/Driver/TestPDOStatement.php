@@ -96,7 +96,7 @@ class TestPDOStatement implements PDOStatementInterface
     }
 
     /**
-     * @return array{0:string, 1:int, 2:string}
+     * @return array{0:non-empty-string, 1:positive-int, 2:non-empty-string}
      */
     public function errorInfo(): array
     {

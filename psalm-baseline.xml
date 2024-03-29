@@ -26,9 +26,6 @@
     <MissingTemplateParam>
       <code><![CDATA[IteratorAggregate]]></code>
     </MissingTemplateParam>
-    <UndefinedAttributeClass>
-      <code><![CDATA[ArrayShape]]></code>
-    </UndefinedAttributeClass>
   </file>
   <file src="src/Driver/Postgres/PostgresHandler.php">
     <UnusedFunctionCall>
