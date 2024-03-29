@@ -6,7 +6,6 @@ namespace Cycle\Database\Tests\Stub\Driver;
 
 use Closure;
 use Cycle\Database\Driver\PDOStatementInterface;
-use JetBrains\PhpStorm\ArrayShape;
 use PDO;
 use stdClass;
 use Traversable;

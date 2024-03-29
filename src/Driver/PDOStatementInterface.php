@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Cycle\Database\Driver;
 
 use IteratorAggregate;
-use JetBrains\PhpStorm\ArrayShape;
 use PDO;
 use PDOStatement;
 use stdClass;
