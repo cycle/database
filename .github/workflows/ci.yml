@@ -9,7 +9,7 @@ name: 🔍 Integration
 
 jobs:
   code-coverage:
-    timeout-minutes: 5
+    timeout-minutes: 4
     runs-on: ${{ matrix.os }}
     concurrency:
       cancel-in-progress: true
@@ -72,7 +72,7 @@ jobs:
           verbose: true
 
   coding-standards:
-    timeout-minutes: 10
+    timeout-minutes: 16
     runs-on: ${{ matrix.os }}
     concurrency:
       cancel-in-progress: true
@@ -140,7 +140,7 @@ jobs:
           PHP_CS_FIXER_IGNORE_ENV: true
 
   static-analysis:
-    timeout-minutes: 5
+    timeout-minutes: 4
     runs-on: ${{ matrix.os }}
     concurrency:
       cancel-in-progress: true
@@ -193,7 +193,7 @@ jobs:
         run: composer psalm:ci
 
   mutation-testing:
-    timeout-minutes: 5
+    timeout-minutes: 16
     runs-on: ${{ matrix.os }}
     concurrency:
       cancel-in-progress: true
@@ -244,7 +244,7 @@ jobs:
         run: composer infection:ci
 
   security-analysis:
-    timeout-minutes: 5
+    timeout-minutes: 4
     runs-on: ${{ matrix.os }}
     concurrency:
       cancel-in-progress: true
@@ -295,7 +295,7 @@ jobs:
         run: composer audit --ansi
 
   dependency-analysis:
-    timeout-minutes: 5
+    timeout-minutes: 4
     runs-on: ${{ matrix.os }}
     concurrency:
       cancel-in-progress: true

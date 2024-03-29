@@ -64,7 +64,9 @@ interface PDOStatementInterface extends IteratorAggregate
 
     public function errorCode(): ?string;
 
-    #[ArrayShape([0 => 'string', 1 => 'int', 2 => 'string'])]
+    /**
+     * @return array{0:string, 1:int, 2:string}
+     */
     public function errorInfo(): array;
 
     public function setAttribute(int $attribute, mixed $value): bool;

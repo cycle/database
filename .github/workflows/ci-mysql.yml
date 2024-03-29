@@ -9,6 +9,7 @@ name: 🔍 Integration with MySQL
 
 jobs:
   test-mysql:
+    timeout-minutes: 4
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: true

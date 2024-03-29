@@ -1,2 +1,6 @@
 {
+    "symbol-whitelist": [
+        "Cycle\\Database\\Driver\\SQLServer\\Schema\\SQlServerForeignKey",
+        "Spiral\\Database\\Driver\\SQLServer\\Schema\\SQlServerForeignKey"
+    ]
 }

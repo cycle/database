@@ -9,6 +9,7 @@ name: 🔍 Integration with SQLServer
 
 jobs:
   test-mssql:
+    timeout-minutes: 4
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: true

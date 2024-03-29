@@ -96,7 +96,9 @@ class TestPDOStatement implements PDOStatementInterface
         return $this->statement->errorCode(...\func_get_args());
     }
 
-    #[ArrayShape([0 => 'string', 1 => 'int', 2 => 'string'])]
+    /**
+     * @return array{0:string, 1:int, 2:string}
+     */
     public function errorInfo(): array
     {
         return $this->statement->errorInfo(...\func_get_args());
