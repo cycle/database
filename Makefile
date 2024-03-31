@@ -25,6 +25,12 @@ BUILDER_WIRED ?= $(BUILDER_PARAMS) --network project.$(COMPOSE_PROJECT_NAME) $(S
 # Shorthand envsubst command, executed through build-deps
 ENVSUBST ?= $(BUILDER) envsubst
 
+# Commitizen docker image
+CZ_RUNNER ?= docker run --rm --name commitizen \
+  --platform linux/amd64 \
+  -v $(shell pwd):/app \
+  commitizen/commitizen:latest
+
 EXPORT_VARS = '\
 	$${COMPOSE_PROJECT_NAME} \
 	$${COMPOSER_AUTH}'
@@ -223,7 +229,7 @@ test-pgsql: ## Run project php-unit tests with postgres database
 # Release
 # ------------------------------------------------------------------------------------
 commit:
-	cz commit
+	$(CZ_RUNNER) commit
 .PHONY: commit
 
 release: ## Create a new release
