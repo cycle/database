@@ -13,7 +13,7 @@ final class CompilerTest extends TestCase
 {
     public function testCompileJsonOrderByShouldReturnOriginalStatement(): void
     {
-        $compiler = new class extends Compiler {
+        $compiler = new class () extends Compiler {
             protected function limit(QueryParameters $params, Quoter $q, int $limit = null, int $offset = null): string
             {
             }
