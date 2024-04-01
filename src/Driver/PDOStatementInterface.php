@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Cycle\Database\Driver;
 
 use IteratorAggregate;
-use JetBrains\PhpStorm\ArrayShape;
 use PDO;
 use PDOStatement;
 use stdClass;
@@ -64,7 +63,9 @@ interface PDOStatementInterface extends IteratorAggregate
 
     public function errorCode(): ?string;
 
-    #[ArrayShape([0 => 'string', 1 => 'int', 2 => 'string'])]
+    /**
+     * @return array{0:non-empty-string, 1:positive-int, 2:non-empty-string}
+     */
     public function errorInfo(): array;
 
     public function setAttribute(int $attribute, mixed $value): bool;

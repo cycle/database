@@ -6,7 +6,6 @@ namespace Cycle\Database\Tests\Stub\Driver;
 
 use Closure;
 use Cycle\Database\Driver\PDOStatementInterface;
-use JetBrains\PhpStorm\ArrayShape;
 use PDO;
 use stdClass;
 use Traversable;
@@ -96,7 +95,9 @@ class TestPDOStatement implements PDOStatementInterface
         return $this->statement->errorCode(...\func_get_args());
     }
 
-    #[ArrayShape([0 => 'string', 1 => 'int', 2 => 'string'])]
+    /**
+     * @return array{0:non-empty-string, 1:positive-int, 2:non-empty-string}
+     */
     public function errorInfo(): array
     {
         return $this->statement->errorInfo(...\func_get_args());

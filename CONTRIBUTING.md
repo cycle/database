@@ -1,4 +1,5 @@
 # Contributing
+
 Feel free to contribute to the development of the Cycle DBAL.
 Please make sure that the following requirements are satisfied before submitting your pull request:
 
@@ -13,20 +14,27 @@ Please make sure that the following requirements are satisfied before submitting
 To test Cycle DBAL locally, download the `cycle/database` repository and start docker containers inside the tests folder:
 
 ```bash
-$ cd tests/
-$ docker-composer up
+## to set up the environment with one command
+make
+
+## or, manually
+make env
+make prepare
+make install
+make hooks
+make up
 ```
 
 To run full test suite:
 
 ```bash
-$ ./vendor/bin/phpunit 
+make test
 ```
 
 To run quick test suite:
 
 ```bash
-$ ./vendor/bin/phpunit --group driver-sqlite
+make test-sqlite
 ```
 
 ## Help Needed In

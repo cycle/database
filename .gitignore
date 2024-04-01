@@ -1,5 +1,4 @@
 .idea/
-.env
 .coveralls.yml
 composer.lock
 vendor/
@@ -11,3 +10,4 @@ clover.xml
 clover.json
 .php_cs.cache
 .phpunit.result.cache
+.env

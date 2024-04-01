@@ -20,21 +20,21 @@ $drivers = [
     ),
     'mysql' => new Database\Config\MySQLDriverConfig(
         connection: new Database\Config\MySQL\TcpConnectionConfig(
-            database: 'spiral',
-            host: '127.0.0.1',
-            port: 13306,
-            user: 'root',
-            password: 'root',
+            database: env('DB_DATABASE', 'spiral'),
+            host: 'mysql',
+            port: 3306,
+            user: env('DB_USER', 'root'),
+            password: env('DB_PASSWORD', 'root'),
         ),
         queryCache: true
     ),
     'postgres' => new Database\Config\PostgresDriverConfig(
         connection: new Database\Config\Postgres\TcpConnectionConfig(
-            database: 'spiral',
-            host: '127.0.0.1',
-            port: 15432,
-            user: 'postgres',
-            password: 'postgres',
+            database: env('DB_DATABASE', 'spiral'),
+            host: 'pgsql',
+            port: 5432,
+            user: env('DB_USER', 'postgres'),
+            password: env('DB_PASSWORD', 'postgres'),
         ),
         schema: 'public',
         queryCache: true,
@@ -42,10 +42,10 @@ $drivers = [
     'sqlserver' => new Database\Config\SQLServerDriverConfig(
         connection: new Database\Config\SQLServer\TcpConnectionConfig(
             database: 'tempdb',
-            host: '127.0.0.1',
-            port: 11433,
+            host: 'sqlserver',
+            port: 1433,
             user: 'SA',
-            password: 'SSpaSS__1'
+            password: env('DB_PASSWORD', 'SSpaSS__1')
         ),
         queryCache: true
     ),
@@ -56,11 +56,11 @@ $drivers = [
     ),
     'postgres-mock' => new Database\Config\PostgresDriverConfig(
         connection: new Database\Config\Postgres\TcpConnectionConfig(
-            database: 'spiral',
-            host: '127.0.0.1',
-            port: 15432,
-            user: 'postgres',
-            password: 'postgres',
+            database: env('DB_DATABASE', 'spiral'),
+            host: 'pgsql',
+            port: 5432,
+            user: env('DB_USER', 'postgres'),
+            password: env('DB_PASSWORD', 'postgres'),
         ),
         schema: 'public',
         driver: Database\Tests\Stub\Driver\PostgresWrapDriver::class,
@@ -68,11 +68,11 @@ $drivers = [
     ),
     'mysql-mock' => new Database\Config\MySQLDriverConfig(
         connection: new Database\Config\MySQL\TcpConnectionConfig(
-            database: 'spiral',
-            host: '127.0.0.1',
-            port: 13306,
-            user: 'root',
-            password: 'root',
+            database: env('DB_DATABASE', 'spiral'),
+            host: 'mysql',
+            port: 3306,
+            user: env('DB_USER', 'root'),
+            password: env('DB_PASSWORD', 'root'),
         ),
         driver: Database\Tests\Stub\Driver\MysqlWrapDriver::class,
         queryCache: true,
@@ -80,10 +80,10 @@ $drivers = [
     'sqlserver-mock' => new Database\Config\SQLServerDriverConfig(
         connection: new Database\Config\SQLServer\TcpConnectionConfig(
             database: 'tempdb',
-            host: '127.0.0.1',
-            port: 11433,
+            host: 'sqlserver',
+            port: 1433,
             user: 'SA',
-            password: 'SSpaSS__1'
+            password: env('DB_PASSWORD', 'SSpaSS__1')
         ),
         driver: Database\Tests\Stub\Driver\MSSQLWrapDriver::class,
         queryCache: true,

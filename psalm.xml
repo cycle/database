@@ -7,21 +7,24 @@
     findUnusedBaselineEntry="true"
     findUnusedCode="false"
     hoistConstants="true"
-    resolveFromConfigFile="true"
     findUnusedPsalmSuppress="true"
     findUnusedVariablesAndParams="true"
     ensureArrayStringOffsetsExist="true"
     addParamDefaultToDocblockType="true"
+    errorBaseline="psalm-baseline.xml"
 >
     <issueHandlers>
-        <LessSpecificReturnStatement errorLevel="suppress" />
-        <MoreSpecificReturnType errorLevel="suppress" />
-        <UnusedPsalmSuppress errorLevel="suppress" />
+        <LessSpecificReturnStatement errorLevel="suppress"/>
+        <MoreSpecificReturnType errorLevel="suppress"/>
+        <UnusedPsalmSuppress errorLevel="suppress"/>
     </issueHandlers>
     <projectFiles>
-        <directory name="src" />
+        <directory name="src"/>
         <ignoreFiles>
-            <directory name="vendor" />
+            <directory name="vendor"/>
         </ignoreFiles>
     </projectFiles>
+    <plugins>
+        <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>
+    </plugins>
 </psalm>
