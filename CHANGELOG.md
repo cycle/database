@@ -1,10 +1,10 @@
 # CHANGELOG
 
 v2.10.0 (01.04.2024)
--------------------
-- Added `mediumText` column type by @msmakouz (#178)
-- Fix caching of SQL queries for inserting data that use `Cycle\Database\Injection\FragmentInterface` by @msmakouz (#177)
-- Fix the search for enum values in **pg_constraint** for PostgreSQL when the enum has only one value by @msmakouz (#181)
+--------------------
+- Add `mediumText` column type by @msmakouz (#178)
+- Fix caching of SQL insert query with Fragment values by @msmakouz (#177)
+- Fix detection of enum values in PostgreSQL when a enum field has only one value by @msmakouz (#181)
 
 v2.9.0 (27.03.2024)
 -------------------
