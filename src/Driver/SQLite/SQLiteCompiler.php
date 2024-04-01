@@ -14,7 +14,9 @@ namespace Cycle\Database\Driver\SQLite;
 use Cycle\Database\Driver\CachingCompilerInterface;
 use Cycle\Database\Driver\Compiler;
 use Cycle\Database\Driver\Quoter;
+use Cycle\Database\Driver\SQLite\Injection\CompileJson;
 use Cycle\Database\Exception\CompilerException;
+use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Injection\ParameterInterface;
 use Cycle\Database\Query\QueryParameters;
@@ -120,5 +122,10 @@ class SQLiteCompiler extends Compiler implements CachingCompilerInterface
         }
 
         return implode("\n", $statement);
+    }
+
+    protected function compileJsonOrderBy(string $path): FragmentInterface
+    {
+        return new CompileJson($path);
     }
 }
