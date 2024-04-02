@@ -418,6 +418,12 @@ abstract class Compiler implements CompilerInterface
 
             // first condition in group/query, no any AND, OR required
             if ($activeGroup) {
+                // first condition can have a `NOT` keyword (WHERE NOT ...)
+                if (\str_contains(\strtoupper($boolean), 'NOT')) {
+                    $statement .= 'NOT';
+                    $statement .= ' ';
+                }
+
                 // next conditions require AND or OR
                 $activeGroup = false;
             } else {

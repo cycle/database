@@ -70,20 +70,13 @@ abstract class SelectQueryTest extends BaseTest
 
     public function testArrayWhere(): void
     {
-        $select = $this->database->select()
-                                 ->from('table')
-                                 ->where('id', 'IN', new Parameter([1, 2, 3, 4]));
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->where('id', 'IN', new Parameter([1, 2, 3, 4]));
 
         $this->assertSameQuery('SELECT * FROM {table} WHERE {id} IN (?, ?, ?, ?)', $select);
-        $this->assertSameParameters(
-            [
-                1,
-                2,
-                3,
-                4,
-            ],
-            $select
-        );
+        $this->assertSameParameters([1, 2, 3, 4], $select);
     }
 
     public function testCompileNestedQuery(): void
@@ -208,11 +201,10 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     public function testSelectWithSimpleWhereNotNull(): void
     {
         $select = $this->database->select()->distinct()->from(['users'])->where('name', '!=', null);
+        $this->assertSameQuery('SELECT DISTINCT * FROM {users} WHERE {name} IS NOT NULL', $select);
 
-        $this->assertSameQuery(
-            'SELECT DISTINCT * FROM {users} WHERE {name} IS NOT NULL',
-            $select
-        );
+        $select = $this->database->select()->distinct()->from(['users'])->whereNot('name', null);
+        $this->assertSameQuery('SELECT DISTINCT * FROM {users} WHERE NOT {name} IS NULL', $select);
     }
 
     public function testSelectWithWhereWithOperator(): void
@@ -239,13 +231,11 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     public function testSelectWithWhereWithNotBetween(): void
     {
-        $select = $this->database->select()->distinct()->from(['users'])
-                                 ->where('balance', 'NOT BETWEEN', 0, 1000);
+        $select = $this->database->select()->distinct()->from(['users'])->where('balance', 'NOT BETWEEN', 0, 1000);
+        $this->assertSameQuery('SELECT DISTINCT * FROM {users} WHERE {balance} NOT BETWEEN ? AND ?', $select);
 
-        $this->assertSameQuery(
-            'SELECT DISTINCT * FROM {users} WHERE {balance} NOT BETWEEN ? AND ?',
-            $select
-        );
+        $select = $this->database->select()->distinct()->from(['users'])->whereNot('balance', 'BETWEEN', 0, 1000);
+        $this->assertSameQuery('SELECT DISTINCT * FROM {users} WHERE NOT {balance} BETWEEN ? AND ?', $select);
     }
 
     public function testSelectWithWhereBetweenBadValue(): void
@@ -253,8 +243,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $this->expectExceptionMessage('Between statements expects exactly 2 values');
         $this->expectException(BuilderException::class);
 
-        $select = $this->database->select()->distinct()->from(['users'])
-                                 ->where('balance', 'BETWEEN', 0);
+        $this->database->select()->distinct()->from(['users'])->where('balance', 'BETWEEN', 0);
     }
 
     public function testSelectWithFullySpecificColumnNameInWhere(): void
@@ -2304,6 +2293,122 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {_1SCONST} _1SCONST2({NOLOCK}) ON {SC3271}.{ID} = {_1SCONST2}.{OBJID}',
+            $select
+        );
+    }
+
+    // WHERE NOT
+    public function testSimpleWhereNot(): void
+    {
+        $select = $this->db()
+            ->select('*')
+            ->from('table')
+            ->whereNot('name', 'John Doe');
+
+        $this->assertSameQuery('SELECT * FROM {table} WHERE NOT {name} = \'John Doe\'', (string) $select);
+    }
+
+    public function testArrayWhereNot(): void
+    {
+        $select = $this->database->select()
+            ->from('table')
+            ->whereNot('id', 'IN', [1, 2, 3, 4]);
+
+        $this->assertSameQuery('SELECT * FROM {table} WHERE NOT {id} IN (?, ?, ?, ?)', $select);
+        $this->assertSameParameters([1, 2, 3, 4], $select);
+    }
+
+    public function testSelectWithWhereNotWithOperator(): void
+    {
+        $select = $this->database->select()->distinct()->from(['users'])->whereNot('name', 'LIKE', 'Anton%');
+
+        $this->assertSameQuery('SELECT DISTINCT * FROM {users} WHERE NOT {name} LIKE ?', $select);
+    }
+
+    public function testSelectWithWhereNotWithBetween(): void
+    {
+        $select = $this->database->select()->distinct()->from(['users'])->whereNot('balance', 'BETWEEN', 0, 1000);
+
+        $this->assertSameQuery('SELECT DISTINCT * FROM {users} WHERE NOT {balance} BETWEEN ? AND ?', $select);
+    }
+
+    public function testWhereWithOrWhereNot(): void
+    {
+        $select = $this->db()
+            ->select('*')
+            ->from('table')
+            ->where('status', 'active')
+            ->orWhereNot('name', 'John Doe');
+
+        $this->assertSameQuery(
+            'SELECT * FROM {table} WHERE {status} = \'active\' OR NOT {name} = \'John Doe\'',
+            (string) $select
+        );
+    }
+
+    public function testWhereWithAndWhereNot(): void
+    {
+        $select = $this->db()
+            ->select('*')
+            ->from('table')
+            ->where('status', 'active')
+            ->andWhereNot('name', 'John Doe');
+
+        $this->assertSameQuery(
+            'SELECT * FROM {table} WHERE {status} = \'active\' AND NOT {name} = \'John Doe\'',
+            (string) $select
+        );
+    }
+
+    public function testWhereNotAndOrWhere(): void
+    {
+        $select = $this->db()
+            ->select('*')
+            ->from('table')
+            ->whereNot('status', 'blocked')
+            ->orWhere('id', 1);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {table} WHERE NOT {status} = \'blocked\' OR {id} = 1',
+            (string) $select
+        );
+    }
+
+    public function testCompileNestedQueryWithWhereNot(): void
+    {
+        $select = $this->db()
+            ->select('*')
+            ->from('table', 'table2')
+            ->where(['name' => 'Antony'])
+            ->whereNot('id', 'in', (new SelectQuery())->from('other')->columns('id')->where('x', 123));
+
+        $this->assertSameQuery(
+            'SELECT * FROM {table}, {table2} WHERE {name} = \'Antony\' AND NOT {id} IN (
+            SELECT {id} FROM {other} WHERE {x} = 123)',
+            (string) $select
+        );
+
+        $this->assertSameParameters(['Antony', 123], $select);
+    }
+
+    public function testPrefixedSelectWithFullySpecificColumnNameInWhereNot(): void
+    {
+        $select = $this->db('prefixed', 'prefix_')
+            ->select()
+            ->distinct()
+            ->from(['users'])
+            ->whereNot('users.balance', 0);
+
+        $this->assertSameQuery('SELECT DISTINCT * FROM {prefix_users} WHERE NOT {prefix_users}.{balance} = ?', $select);
+    }
+
+    public function testPrefixedSelectWithFullySpecificColumnNameInWhereNotButAliased(): void
+    {
+        $select = $this->db('prefixed', 'prefix_')->select()->distinct()->from(['users as u'])
+            ->whereNot('u.balance', 0);
+
+        $this->assertSameQuery(
+            'SELECT DISTINCT * FROM {prefix_users} AS {u} WHERE NOT {u}.{balance} = ?',
             $select
         );
     }
