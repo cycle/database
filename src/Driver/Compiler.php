@@ -22,7 +22,6 @@ abstract class Compiler implements CompilerInterface
     private Quoter $quoter;
 
     protected const ORDER_OPTIONS = ['ASC', 'DESC'];
-    private const JSON_SELECTOR = '->';
 
     /**
      * @psalm-param non-empty-string $quotes
@@ -247,7 +246,7 @@ abstract class Compiler implements CompilerInterface
     {
         $result = [];
         foreach ($orderBy as $order) {
-            if (\is_string($order[0]) && $this->isJsonSelector($order[0])) {
+            if (\is_string($order[0]) && $this->isJsonPath($order[0])) {
                 $order[0] = $this->compileJsonOrderBy($order[0]);
             }
 
@@ -536,9 +535,9 @@ abstract class Compiler implements CompilerInterface
         return $prefix . $expression . $postfix;
     }
 
-    protected function isJsonSelector(string $selector): bool
+    protected function isJsonPath(string $selector): bool
     {
-        return \str_contains($selector, self::JSON_SELECTOR);
+        return \str_contains($selector, '->');
     }
 
     /**
