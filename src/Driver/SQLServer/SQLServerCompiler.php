@@ -13,6 +13,7 @@ namespace Cycle\Database\Driver\SQLServer;
 
 use Cycle\Database\Driver\Compiler;
 use Cycle\Database\Driver\Quoter;
+use Cycle\Database\Driver\SQLServer\Injection\CompileJson;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Injection\Parameter;
@@ -156,6 +157,11 @@ class SQLServerCompiler extends Compiler
         }
 
         return $statement;
+    }
+
+    protected function compileJsonOrderBy(string $path): FragmentInterface
+    {
+        return new CompileJson($path);
     }
 
     /**

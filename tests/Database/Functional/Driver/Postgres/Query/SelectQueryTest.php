@@ -503,4 +503,14 @@ class SelectQueryTest extends CommonClass
             ->orderBy('name', 'FOO')
             ->sqlStatement();
     }
+
+    public function testOrderByJson(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->orderBy('logs->created_at', 'DESC');
+
+        $this->assertSameQuery("SELECT * FROM {table} ORDER BY {logs}->>'created_at' DESC", $select);
+    }
 }
