@@ -1,7 +1,9 @@
 # CHANGELOG
 
-v2.10.0 (01.04.2024)
+v2.10.0 (04.04.2024)
 --------------------
+- Add support for the `NOT` operator in SQL queries. New methods `whereNot`, `andWhereNot`, and `orWhereNot`
+  have been added to the query builder by @msmakouz (#185)
 - Add `mediumText` column type by @msmakouz (#178)
 - Fix caching of SQL insert query with Fragment values by @msmakouz (#177)
 - Fix detection of enum values in PostgreSQL when a enum field has only one value by @msmakouz (#181)
