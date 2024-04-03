@@ -2510,6 +2510,22 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $this->assertSameQuery('SELECT * FROM {users} WHERE NOT ({name} = ? AND {value} = ?)', $select);
     }
 
+    public function testWhereNotWithSequenceCalls(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->whereNot('status', 'blocked')
+            ->where('email_confirmed', true)
+            ->whereNot('name', 'John Doe')
+            ->orWhere('id', 1);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE NOT {status} = ? AND {email_confirmed} = ? AND NOT {name} = ? OR {id}=?',
+            $select
+        );
+    }
+
     public function testAndWhereNotWithArrayOr(): void
     {
         $select = $this->database
