@@ -535,9 +535,9 @@ abstract class Compiler implements CompilerInterface
         return $prefix . $expression . $postfix;
     }
 
-    protected function isJsonPath(string $selector): bool
+    protected function isJsonPath(string $column): bool
     {
-        return \str_contains($selector, '->');
+        return \str_contains($column, '->');
     }
 
     /**
