@@ -27,6 +27,8 @@ interface CompilerInterface
 
     public const TOKEN_AND = '@AND';
     public const TOKEN_OR = '@OR';
+    public const TOKEN_AND_NOT = '@AND NOT';
+    public const TOKEN_OR_NOT = '@OR NOT';
 
     /**
      * @param string $identifier

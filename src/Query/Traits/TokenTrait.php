@@ -52,12 +52,7 @@ trait TokenTrait
                 }
 
                 if (\count($complex) === 1) {
-                    $this->flattenWhere(
-                        $boolean === 'AND' ? CompilerInterface::TOKEN_AND : CompilerInterface::TOKEN_OR,
-                        $complex,
-                        $tokens,
-                        $wrapper
-                    );
+                    $this->flattenWhere($this->booleanToToken($boolean), $complex, $tokens, $wrapper);
                     return;
                 }
 
@@ -161,7 +156,7 @@ trait TokenTrait
      */
     private function flattenWhere(string $grouper, array $where, array &$tokens, callable $wrapper): void
     {
-        $boolean = ($grouper === CompilerInterface::TOKEN_AND ? 'AND' : 'OR');
+        $boolean = $this->tokenToBoolean($grouper);
 
         foreach ($where as $key => $value) {
             // Support for closures
@@ -175,7 +170,12 @@ trait TokenTrait
             $token = strtoupper($key);
 
             // Grouping identifier (@OR, @AND), MongoDB like style
-            if ($token === CompilerInterface::TOKEN_AND || $token === CompilerInterface::TOKEN_OR) {
+            if (
+                $token === CompilerInterface::TOKEN_AND ||
+                $token === CompilerInterface::TOKEN_OR ||
+                $token === CompilerInterface::TOKEN_AND_NOT ||
+                $token === CompilerInterface::TOKEN_OR_NOT
+            ) {
                 $tokens[] = [$boolean, '('];
 
                 foreach ($value as $nested) {
@@ -184,7 +184,7 @@ trait TokenTrait
                         continue;
                     }
 
-                    $tokens[] = [$token === CompilerInterface::TOKEN_AND ? 'AND' : 'OR', '('];
+                    $tokens[] = [$this->tokenToBoolean($token), '('];
                     $this->flattenWhere(CompilerInterface::TOKEN_AND, $nested, $tokens, $wrapper);
                     $tokens[] = ['', ')'];
                 }
@@ -266,5 +266,25 @@ trait TokenTrait
         }
 
         return $tokens;
+    }
+
+    private function tokenToBoolean(string $token): string
+    {
+        return match ($token) {
+            CompilerInterface::TOKEN_AND => 'AND',
+            CompilerInterface::TOKEN_AND_NOT => 'AND NOT',
+            CompilerInterface::TOKEN_OR_NOT => 'OR NOT',
+            default => 'OR',
+        };
+    }
+
+    private function booleanToToken(string $boolean): string
+    {
+        return match ($boolean) {
+            'AND' => CompilerInterface::TOKEN_AND,
+            'AND NOT' => CompilerInterface::TOKEN_AND_NOT,
+            'OR NOT' => CompilerInterface::TOKEN_OR_NOT,
+            default => 'OR',
+        };
     }
 }

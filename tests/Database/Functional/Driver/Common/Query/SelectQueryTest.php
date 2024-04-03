@@ -588,6 +588,27 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    public function testAndShortWhereOrNot(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->where(['name' => 'Anton'])
+            ->andWhere(
+                [
+                    '@or not' => [
+                        ['value' => 1],
+                        ['value' => ['>' => 12]],
+                    ],
+                ]
+            );
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE {name} = ? AND (NOT {value} = ? OR NOT {value} > ?)',
+            $select
+        );
+    }
+
     public function testOrShortWhereOR(): void
     {
         $select = $this->database
@@ -605,6 +626,27 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {name} = ? OR ({value} = ? OR {value} > ?)',
+            $select
+        );
+    }
+
+    public function testOrShortWhereOrNot(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->where(['name' => 'Anton'])
+            ->orWhere(
+                [
+                    '@or not' => [
+                        ['value' => 1],
+                        ['value' => ['>' => 12]],
+                    ],
+                ]
+            );
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE {name} = ? OR (NOT {value} = ? OR NOT {value} > ?)',
             $select
         );
     }
@@ -630,6 +672,27 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    public function testAndShortWhereAndNot(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->where(['name' => 'Anton'])
+            ->andWhere(
+                [
+                    '@and not' => [
+                        ['value' => 1],
+                        ['value' => ['>' => 12]],
+                    ],
+                ]
+            );
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE {name} = ? AND (NOT {value} = ? AND NOT {value} > ?)',
+            $select
+        );
+    }
+
     public function testOrShortWhereAND(): void
     {
         $select = $this->database
@@ -647,6 +710,27 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {name} = ? OR ({value} = ? AND {value} > ?)',
+            $select
+        );
+    }
+
+    public function testOrShortWhereAndNot(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->where(['name' => 'Anton'])
+            ->orWhere(
+                [
+                    '@and not' => [
+                        ['value' => 1],
+                        ['value' => ['>' => 12]],
+                    ],
+                ]
+            );
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE {name} = ? OR (NOT {value} = ? AND NOT {value} > ?)',
             $select
         );
     }
@@ -2409,6 +2493,95 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
         $this->assertSameQuery(
             'SELECT DISTINCT * FROM {prefix_users} AS {u} WHERE NOT {u}.{balance} = ?',
+            $select
+        );
+    }
+
+    public function testShortWhereNotMultiple(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->whereNot([
+                'name' => 'John Doe',
+                'value' => 1,
+            ]);
+
+        $this->assertSameQuery('SELECT * FROM {users} WHERE NOT ({name} = ? AND {value} = ?)', $select);
+    }
+
+    public function testAndWhereNotWithArrayOr(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->where(['name' => 'John Doe'])
+            ->andWhereNot([
+                '@or' => [
+                    ['id' => ['between' => [10, 100]], 'name' => 'John Doe'],
+                    ['status' => 'disabled']
+                ]
+            ]);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE {name} = ? AND NOT (({id} BETWEEN ? AND ? AND {name} = ?) OR {status} = ?)',
+            $select
+        );
+    }
+
+    public function testAndWhereNotWithArrayAnd(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->where(['name' => 'John Doe'])
+            ->andWhereNot([
+                '@and' => [
+                    ['id' => ['between' => [10, 100]], 'name' => 'John Doe'],
+                    ['status' => 'disabled']
+                ]
+            ]);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE {name} = ? AND NOT (({id} BETWEEN ? AND ? AND {name} = ?) AND {status} = ?)',
+            $select
+        );
+    }
+
+    public function testOrWhereNotWithArrayOr(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->where(['name' => 'John Doe'])
+            ->orWhereNot([
+                '@or' => [
+                    ['id' => ['between' => [10, 100]], 'name' => 'John Doe'],
+                    ['status' => 'disabled']
+                ]
+            ]);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE {name} = ? OR NOT (({id} BETWEEN ? AND ? AND {name} = ?) OR {status} = ?)',
+            $select
+        );
+    }
+
+    public function testOrWhereNotWithArrayAnd(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->where(['name' => 'John Doe'])
+            ->orWhereNot([
+                '@and' => [
+                    ['id' => ['between' => [10, 100]], 'name' => 'John Doe'],
+                    ['status' => 'disabled']
+                ]
+            ]);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE {name} = ? OR NOT (({id} BETWEEN ? AND ? AND {name} = ?) AND {status} = ?)',
             $select
         );
     }
