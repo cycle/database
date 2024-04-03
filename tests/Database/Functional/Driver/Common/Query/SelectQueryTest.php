@@ -2519,8 +2519,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             ->andWhereNot([
                 '@or' => [
                     ['id' => ['between' => [10, 100]], 'name' => 'John Doe'],
-                    ['status' => 'disabled']
-                ]
+                    ['status' => 'disabled'],
+                ],
             ]);
 
         $this->assertSameQuery(
@@ -2538,8 +2538,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             ->andWhereNot([
                 '@and' => [
                     ['id' => ['between' => [10, 100]], 'name' => 'John Doe'],
-                    ['status' => 'disabled']
-                ]
+                    ['status' => 'disabled'],
+                ],
             ]);
 
         $this->assertSameQuery(
@@ -2557,8 +2557,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             ->orWhereNot([
                 '@or' => [
                     ['id' => ['between' => [10, 100]], 'name' => 'John Doe'],
-                    ['status' => 'disabled']
-                ]
+                    ['status' => 'disabled'],
+                ],
             ]);
 
         $this->assertSameQuery(
@@ -2576,8 +2576,8 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             ->orWhereNot([
                 '@and' => [
                     ['id' => ['between' => [10, 100]], 'name' => 'John Doe'],
-                    ['status' => 'disabled']
-                ]
+                    ['status' => 'disabled'],
+                ],
             ]);
 
         $this->assertSameQuery(
