@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.10.0](https://github.com/cycle/database/compare/2.9.0...v2.10.0) (2024-04-04)
+
+
+### Features
+
+* Add support for the `NOT` operator in SQL queries. Add new methods `whereNot`, `andWhereNot`, and `orWhereNot` ([943437e](https://github.com/cycle/database/commit/943437ef745102b25f79acaf1fa3cefcc42c0a2b))
+
+
+### Bug Fixes
+
+* Fix psalm type for DatabaseInterface::transaction() method ([#186](https://github.com/cycle/database/issues/186)) ([1f5b226](https://github.com/cycle/database/commit/1f5b226f6da26cd7c132f5ecc35a3fb37c396984))
+
+
+### Continuous Integration
+
+* automate changelog and release management ([#2](https://github.com/cycle/database/issues/2)) ([10bd18e](https://github.com/cycle/database/commit/10bd18e116f8345ca8d34fc280f5692abd18c531))
+* switch to auto changelog ([#3](https://github.com/cycle/database/issues/3)) ([bed846b](https://github.com/cycle/database/commit/bed846b7afba7fc18390d2256814884504eaaf09))
+
 ## [2.9.0](https://github.com/cycle/database/compare/2.8.1...2.9.0) (2024-03-27)
 
 ### Features
