@@ -9,6 +9,8 @@ Before submitting your pull request, ensure that your changes adhere to the foll
 - Use `declare(strict_types=1);` at the beginning of all PHP files
 - Include tests with your code to verify your changes
 
+Feel free to join our **Discord** server for advice or suggestions: 🤖 [Spiral Discord](https://discord.gg/4TSbaMDG)
+
 <br>
 
 ## 🛠️ Setting Up for Development
@@ -18,6 +20,10 @@ Before submitting your pull request, ensure that your changes adhere to the foll
 To set up a local development environment for testing:
 
 1. Clone the `cycle/database` repository.
+
+    ```bash
+    git clone git@github.com:cycle/database.git
+    ```
 2. Navigate to the `tests/` directory and start the Docker containers:
 
     ```bash
@@ -51,7 +57,7 @@ Please ensure that each pull request focuses on a single feature, fix, or update
 ## 📝 Contribution Checklist
 
 - **Tests:** Your PR should include tests that cover your changes.
-- **Code Quality:** Run `make lint` to ensure your code follows our coding standards and `make lint-stan` for static analysis with PHPStan.
+- **Code Quality:** Run `make lint` to ensure your code follows our coding standards and `make lint-psalm` for static analysis with [Psalm](https://psalm.dev).
 - **Documentation:** Update the documentation to reflect your changes or additions.
 
 <br>
@@ -62,20 +68,20 @@ We follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0
 
 **Allowed Prefixes:**
 
-| Prefix     | Purpose                                                      |
-| ---------- | ------------------------------------------------------------ |
-| `feat`     | Introduces a new feature                                     |
-| `fix`      | Fixes a bug                                                  |
-| `perf`     | Improves performance                                         |
-| `docs`     | Documentation only changes                                   |
-| `style`    | Code style changes (formatting, missing semi-colons, etc.)   |
-| `deps`     | Updates dependencies                                         |
-| `refactor` | Code changes that neither fixes a bug nor adds a feature     |
-| `ci`       | Changes to our CI configuration files and scripts            |
-| `test`     | Adding missing tests or correcting existing tests            |
-| `revert`   | Reverts a previous commit                                    |
+| Prefix     | Purpose                                                       |
+|------------|---------------------------------------------------------------|
+| `feat`     | Introduces a new feature                                      |
+| `fix`      | Fixes a bug                                                   |
+| `perf`     | Improves performance                                          |
+| `docs`     | Documentation only changes                                    |
+| `style`    | Code style changes (formatting, missing semi-colons, etc.)    |
+| `deps`     | Updates dependencies                                          |
+| `refactor` | Code changes that neither fixes a bug nor adds a feature      |
+| `ci`       | Changes to our CI configuration files and scripts             |
+| `test`     | Adding missing tests or correcting existing tests             |
+| `revert`   | Reverts a previous commit                                     |
 | `build`    | Changes that affect the build system or external dependencies |
-| `chore`    | Other changes that don't modify src or test files            |
+| `chore`    | Other changes that don't modify src or test files             |
 
 <br>
 
@@ -89,13 +95,12 @@ If you discover a security vulnerability, please report it to us immediately via
 
 If you're looking for ways to contribute but are unsure where to start, consider the following areas:
 
-- Addressing TODOs
-- Updating dependencies to the latest versions
-- Suggesting quality improvements
-- Adding more tests
-- Correcting typos or improving documentation
+- **Documentation:** Help us improve and expand our documentation to make it more comprehensive and easier to understand.
+- **Architecture Changes:** Propose or implement improvements to the project's architecture to enhance its efficiency, scalability, or usability.
+- **Performance Enhancements:** Identify and contribute improvements to make Cycle DBAL faster and more resource-efficient.
+- **Feature Suggestions:** Have an idea for a new feature? Let us know or contribute code to make it happen.
 
-Check our [Open Issues](https://github.com/cycle/database/issues) for more specific tasks.
+For more specific tasks or if you're unsure where to start, check our [Open Issues](https://github.com/cycle/database/issues).
 
 <br>
 
@@ -105,7 +110,7 @@ Cycle DBAL is maintained by [Spiral Scout](https://spiralscout.com/). For commer
 
 <br>
 
-## 🤝 Licensing
+## 🔖 Licensing
 
 Cycle DBAL is available under the [MIT license](/LICENSE).
 
@@ -114,4 +119,3 @@ Cycle DBAL is available under the [MIT license](/LICENSE).
 ## 🌐 Community and Conduct
 
 Please ensure your interactions in the project are respectful and inclusive. Read our [Code of Conduct](https://github.com/cycle/database/blob/2.x/CODE_OF_CONDUCT.md) for more information.
-
