@@ -9,7 +9,7 @@ Before submitting your pull request, ensure that your changes adhere to the foll
 - Use `declare(strict_types=1);` at the beginning of all PHP files
 - Include tests with your code to verify your changes
 
-Feel free to join our **Discord** server for advice or suggestions: 🤖 [Spiral Discord](https://discord.gg/4TSbaMDG)
+Feel free to join our **Discord** server for advice or suggestions: 🤖 [SpiralPHP Discord](https://discord.gg/spiralphp)
 
 <br>
 
