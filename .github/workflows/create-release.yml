@@ -6,7 +6,7 @@
 on:  # yamllint disable-line rule:truthy
   push:
     branches:
-      - master
+      - 2.x
 
 name: 📦 Create release
 
