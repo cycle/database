@@ -1,7 +1,7 @@
 // More info: https://github.com/wayofdev/npm-shareable-configs/blob/master/packages/commitlint-config/src/index.js
 const automaticCommitPattern = /^chore\(release\):.*\[skip ci]/
 
-module.exports = {
+export default {
     extends: ['@commitlint/config-conventional'],
     /*
       This resolves a linting conflict between commitlint's body-max-line-length
