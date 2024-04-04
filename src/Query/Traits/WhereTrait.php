@@ -84,6 +84,69 @@ trait WhereTrait
     }
 
     /**
+     * Simple WHERE NOT condition with various set of arguments.
+     *
+     * @param mixed ...$args [(column, value), (column, operator, value)]
+     *
+     * @throws BuilderException
+     *
+     * @return $this|self
+     */
+    public function whereNot(mixed ...$args): self
+    {
+        $this->registerToken(
+            'AND NOT',
+            $args,
+            $this->whereTokens,
+            $this->whereWrapper()
+        );
+
+        return $this;
+    }
+
+    /**
+     * Simple AND WHERE NOT condition with various set of arguments.
+     *
+     * @param mixed ...$args [(column, value), (column, operator, value)]
+     *
+     * @throws BuilderException
+     *
+     * @return $this|self
+     */
+    public function andWhereNot(mixed ...$args): self
+    {
+        $this->registerToken(
+            'AND NOT',
+            $args,
+            $this->whereTokens,
+            $this->whereWrapper()
+        );
+
+        return $this;
+    }
+
+    /**
+     * Simple OR WHERE NOT condition with various set of arguments.
+     *
+     * @param mixed ...$args [(column, value), (column, operator, value)]
+     *
+     * @throws BuilderException
+     *
+     * @return $this|self
+     */
+    public function orWhereNot(mixed ...$args): self
+    {
+        $this->registerToken(
+            'OR NOT',
+            $args,
+            $this->whereTokens,
+            $this->whereWrapper()
+        );
+
+        return $this;
+    }
+
+    /**
      * Convert various amount of where function arguments into valid where token.
      *
      * @psalm-param non-empty-string $boolean Boolean joiner (AND | OR).
