@@ -13,7 +13,9 @@ namespace Cycle\Database\Driver\MySQL;
 
 use Cycle\Database\Driver\CachingCompilerInterface;
 use Cycle\Database\Driver\Compiler;
+use Cycle\Database\Driver\MySQL\Injection\CompileJson;
 use Cycle\Database\Driver\Quoter;
+use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\QueryParameters;
 
@@ -68,5 +70,10 @@ class MySQLCompiler extends Compiler implements CachingCompilerInterface
         }
 
         return trim($statement);
+    }
+
+    protected function compileJsonOrderBy(string $path): FragmentInterface
+    {
+        return new CompileJson($path);
     }
 }

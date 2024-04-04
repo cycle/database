@@ -548,4 +548,17 @@ class SelectQueryTest extends CommonClass
         );
         $this->assertSameParameters([5], $select);
     }
+
+    public function testOrderByJson(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('table')
+            ->orderBy('logs->created_at', 'DESC');
+
+        $this->assertSameQuery(
+            "SELECT * FROM {table} ORDER BY json_value({logs}, '$.\"created_at\"') DESC",
+            $select
+        );
+    }
 }

@@ -13,6 +13,7 @@ namespace Cycle\Database\Driver\Postgres;
 
 use Cycle\Database\Driver\CachingCompilerInterface;
 use Cycle\Database\Driver\Compiler;
+use Cycle\Database\Driver\Postgres\Injection\CompileJson;
 use Cycle\Database\Driver\Quoter;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Injection\Parameter;
@@ -86,5 +87,10 @@ class PostgresCompiler extends Compiler implements CachingCompilerInterface
         }
 
         return trim($statement);
+    }
+
+    protected function compileJsonOrderBy(string $path): FragmentInterface
+    {
+        return new CompileJson($path);
     }
 }
