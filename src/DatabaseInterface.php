@@ -136,7 +136,7 @@ interface DatabaseInterface
      *
      * @template CallbackResult
      *
-     * @param callable(): CallbackResult $callback
+     * @param callable(DatabaseInterface): CallbackResult $callback
      *
      * @throws \Throwable
      *
