@@ -37,8 +37,6 @@ export default {
                 'revert',
                 'build',
                 'chore',
-                'translation',
-                'security',
             ],
         ],
     },
