@@ -21,7 +21,7 @@ jobs:
       - name: 🧐 Lint commits using "commitlint"
         uses: wagoid/commitlint-github-action@v6.0.0
         with:
-          configFile: ${{ github.workspace }}/.github/commitlint.config.js
+          configFile: ${{ github.workspace }}/.github/commitlint.config.mjs
           failOnWarnings: false
           failOnErrors: true
           helpURL: 'https://github.com/conventional-changelog/commitlint/#what-is-commitlint'
