@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.10.0](https://github.com/cycle/database/compare/2.9.0...v2.10.0) (2024-04-04)
+
+### Features
+- Add support JSON columns in `orderBy` statement by @msmakouz (#184)
+- Add `mediumText` column type by @msmakouz (#178)
+- Add support for the `NOT` operator in SQL queries. Add new methods `whereNot`, `andWhereNot`, and `orWhereNot` by @msmakouz (#185)
+
+### Bug Fixes
+- Fixed caching of SQL insert query with Fragment values by @msmakouz (#177)
+- Fixed detection of enum values in PostgreSQL when a enum field has only one value by @msmakouz (#181)
+- Fix psalm type for `DatabaseInterface::transaction()` method by @roxblnfk (#186)
+
+### Continuous Integration
+- Automate changelog and release management @lotyp (#189)
+
 ## [2.9.0](https://github.com/cycle/database/compare/2.8.1...2.9.0) (2024-03-27)
 
 ### Features
