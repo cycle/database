@@ -68,6 +68,16 @@
             "type": "build",
             "section": "Build System",
             "hidden": true
+        },
+        {
+            "type": "security",
+            "section": "Security",
+            "hidden": true
+        },
+        {
+            "type": "translation",
+            "section": "Translations",
+            "hidden": true
         }
     ]
 }
