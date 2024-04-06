@@ -1,4 +1,6 @@
-on:
+---
+
+on:  # yamllint disable-line rule:truthy
   push:
     branches:
       - master
@@ -97,3 +99,5 @@ jobs:
           DB: postgres
           POSTGRES: ${{ matrix.pgsql-version }}
         run: vendor/bin/phpunit --group driver-postgres --colors=always
+
+...

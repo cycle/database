@@ -1,4 +1,6 @@
-on:
+---
+
+on:  # yamllint disable-line rule:truthy
   push:
     branches:
       - master
@@ -96,3 +98,5 @@ jobs:
           DB: mysql
           MYSQL: ${{ matrix.mysql-version }}
         run: vendor/bin/phpunit --group driver-mysql --colors=always
+
+...

@@ -1,3 +1,5 @@
+---
+
 checks:
   php: true
 
@@ -19,3 +21,5 @@ build:
       tests:
         override:
           - php-scrutinizer-run
+
+...
