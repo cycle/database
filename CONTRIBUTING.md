@@ -118,4 +118,4 @@ Cycle DBAL is available under the [MIT license](/LICENSE).
 
 ## 🌐 Community and Conduct
 
-Please ensure your interactions in the project are respectful and inclusive. Read our [Code of Conduct](https://github.com/cycle/database/blob/2.x/CODE_OF_CONDUCT.md) for more information.
+Please ensure your interactions in the project are respectful and inclusive. Read our [Code of Conduct](https://github.com/cycle/database/blob/2.x/.github/CODE_OF_CONDUCT.md) for more information.

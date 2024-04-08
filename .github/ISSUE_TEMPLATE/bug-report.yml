@@ -1,3 +1,5 @@
+---
+
 name: Bug Report
 description: 🐛 File a bug report
 title: "🐛 "
@@ -50,3 +52,5 @@ body:
         PHP 8.1
     validations:
       required: true
+
+...

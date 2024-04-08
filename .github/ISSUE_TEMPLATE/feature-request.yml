@@ -1,3 +1,5 @@
+---
+
 name: Feature request
 description: 💡 Suggest an idea for this project
 title: "💡 "
@@ -19,3 +21,5 @@ body:
       value: "I have an idea, listen to me!!"
     validations:
       required: true
+
+...

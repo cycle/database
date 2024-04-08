@@ -1,4 +1,6 @@
-on:
+---
+
+on:  # yamllint disable-line rule:truthy
   push:
     branches:
       - master
@@ -39,14 +41,14 @@ jobs:
 
     services:
       mssql:
-          image: mcr.microsoft.com/mssql/${{ matrix.mssql }}
-          env:
-              SA_PASSWORD: SSpaSS__1
-              ACCEPT_EULA: Y
-              MSSQL_PID: Developer
-          ports:
-              - 11433:1433
-          options: --name=mssql --health-cmd="/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'SSpaSS__1' -Q 'SELECT 1'" --health-interval=10s --health-timeout=5s --health-retries=3
+        image: mcr.microsoft.com/mssql/${{ matrix.mssql }}
+        env:
+          SA_PASSWORD: SSpaSS__1
+          ACCEPT_EULA: Y
+          MSSQL_PID: Developer
+        ports:
+          - 11433:1433
+        options: --name=mssql --health-cmd="/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'SSpaSS__1' -Q 'SELECT 1'" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: Checkout
@@ -86,3 +88,5 @@ jobs:
         env:
           DB: sqlserver
         run: vendor/bin/phpunit --group driver-sqlserver --colors=always
+
+...

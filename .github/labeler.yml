@@ -1,0 +1,37 @@
+---
+
+# This file is for the labeler workflow job
+# Documentation https://github.com/marketplace/actions/labeler
+
+"type: feature":
+  - head-branch: ['^feature', '^feat', 'feature']
+
+"type: documentation":
+  - changed-files:
+      - any-glob-to-any-file: ['./*.md']
+
+"type: test":
+  - changed-files:
+      - any-glob-to-any-file: ['tests/**/*']
+
+"type: maintenance":
+  - changed-files:
+      - any-glob-to-any-file: ['.github/**/*.yml', '*.yml', '*.json', '*.xml']
+
+"mysql":
+  - changed-files:
+      - any-glob-to-any-file: ['src/Driver/MySQL/**/*', 'src/Config/MySQL/*']
+
+"postgres":
+  - changed-files:
+      - any-glob-to-any-file: ['src/Driver/Postgres/**/*', 'src/Config/Postgres/*']
+
+"sqlite":
+  - changed-files:
+      - any-glob-to-any-file: ['src/Driver/SQLite/**/*', 'src/Config/SQLite/*']
+
+"sqlserver":
+  - changed-files:
+      - any-glob-to-any-file: ['src/Driver/SQLServer/**/*', 'src/Config/SQLServer/*']
+
+...

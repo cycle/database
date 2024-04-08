@@ -1,3 +1,5 @@
+---
+
 preset: psr12
 risky: true
 
@@ -74,3 +76,5 @@ enabled:
 finder:
   exclude:
     - "tests/Database/Unit/Stub"
+
+...

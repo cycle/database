@@ -1,6 +1,8 @@
+---
+
 name: build
 
-on:
+on:  # yamllint disable-line rule:truthy
   push:
     branches:
       - master
@@ -102,3 +104,5 @@ jobs:
           DB: sqlite
         run: |
           vendor/bin/phpunit --group driver-sqlite --colors=always
+
+...
