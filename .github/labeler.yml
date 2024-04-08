@@ -10,9 +10,13 @@
   - changed-files:
       - any-glob-to-any-file: ['./*.md']
 
+"type: test":
+  - changed-files:
+      - any-glob-to-any-file: ['tests/**/*']
+
 "type: maintenance":
   - changed-files:
-      - any-glob-to-any-file: ['tests/**/*', '.github/workflows/*']
+      - any-glob-to-any-file: ['.github/**/*.yml', '*.yml', '*.json', '*.xml']
 
 "mysql":
   - changed-files:
