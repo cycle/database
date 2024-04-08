@@ -8,7 +8,7 @@
 
 "type: documentation":
   - changed-files:
-      - any-glob-to-any-file: ['resources/*', '.github/*', './*.md']
+      - any-glob-to-any-file: ['./*.md']
 
 "type: maintenance":
   - changed-files:
