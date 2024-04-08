@@ -14,19 +14,19 @@
   - changed-files:
       - any-glob-to-any-file: ['tests/**/*', '.github/workflows/*']
 
-"driver: mysql":
+"mysql":
   - changed-files:
       - any-glob-to-any-file: ['src/Driver/MySQL/**/*', 'src/Config/MySQL/*']
 
-"driver: postgres":
+"postgres":
   - changed-files:
       - any-glob-to-any-file: ['src/Driver/Postgres/**/*', 'src/Config/Postgres/*']
 
-"driver: sqlite":
+"sqlite":
   - changed-files:
       - any-glob-to-any-file: ['src/Driver/SQLite/**/*', 'src/Config/SQLite/*']
 
-"driver: sqlserver":
+"sqlserver":
   - changed-files:
       - any-glob-to-any-file: ['src/Driver/SQLServer/**/*', 'src/Config/SQLServer/*']
 
