@@ -140,7 +140,7 @@ interface DatabaseInterface
      *
      * @throws \Throwable
      *
-     * @preturn CallbackResult
+     * @return CallbackResult
      */
     public function transaction(callable $callback, string $isolationLevel = null): mixed;
 
