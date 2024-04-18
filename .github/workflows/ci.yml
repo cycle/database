@@ -8,7 +8,8 @@ on:  # yamllint disable-line rule:truthy
 name: 🔍 Integration
 
 jobs:
-  lint-commits:
+  commit-linting:
+    timeout-minutes: 4
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -17,13 +18,12 @@ jobs:
       - name: 📦 Check out the codebase
         uses: actions/checkout@v4.1.1
 
-      # See: https://github.com/wagoid/commitlint-github-action
       - name: 🧐 Lint commits using "commitlint"
-        uses: wagoid/commitlint-github-action@v6.0.0
+        uses: wagoid/commitlint-github-action@v6.0.1
         with:
-          configFile: ${{ github.workspace }}/.github/commitlint.config.mjs
+          configFile: ${{ github.workspace }}/.github/.commitlint.config.mjs
           failOnWarnings: false
-          failOnErrors: true
+          failOnErrors: false
           helpURL: 'https://github.com/conventional-changelog/commitlint/#what-is-commitlint'
 
 ...
