@@ -1,6 +1,5 @@
 ---
 
-# https://github.com/wayofdev/gh-actions/blob/master/.github/workflows/create-release.yml
 # https://github.com/google-github-actions/release-please-action#release-types-supported
 # https://github.com/googleapis/release-please/blob/main/docs/customizing.md
 
@@ -16,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 🎉 Create release
-        uses: google-github-actions/release-please-action@v4
+        uses: google-github-actions/release-please-action@v4.1.0
         id: release
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
