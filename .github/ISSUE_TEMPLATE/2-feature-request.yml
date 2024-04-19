@@ -61,7 +61,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        📛 To ensure a smooth issue processing, please check if a similar bug report has already been submitted before creating a new one.
+        📛 To ensure a smooth issue processing, please check if a similar feature request has already been submitted before creating a new one.
         We highly value your contributions, so please make sure to familiarize yourself with our repository's guidelines:
         - [Code of Conduct](https://github.com/cycle/database/blob/2.x/.github/CODE_OF_CONDUCT.md)
         - [Contribution Guidelines](https://github.com/cycle/database/blob/2.x/.github/CONTRIBUTING.md)
