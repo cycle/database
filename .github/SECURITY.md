@@ -34,7 +34,7 @@ We take all security bugs in `cycle/database` seriously. Please follow the instr
 
 1. **GitHub Security Advisories**: Please report security issues directly through our GitHub Security Advisories page: [https://github.com/cycle/database/security/advisories/new](https://github.com/cycle/database/security/advisories/new). This ensures that sensitive information is handled confidentially.
 
-2. **Empty Security Issue**: After submitting through GitHub Security Advisories, please also create an empty security issue to alert us, as GitHub Advisories do not send automatic notifications. This can be done [here](https://github.com/cycle/database/issues/new?assignees=&labels=type%3A+bug%2Cpriority%3A+high%2Ctype%3A+security&projects=&template=5-security-report.yml&title=%5BSecurity%5D%3A+).
+2. **Empty Security Issue**: After submitting through GitHub Security Advisories, please also create an empty security issue to alert us, as GitHub Advisories do not send automatic notifications. This can be done [here](https://github.com/cycle/database/issues/new?assignees=&labels=type%3A+bug%2Cpriority%3A+high%2Ctype%3A+security&projects=&template=4-security-report.yml&title=%5BSecurity%5D%3A+).
 
 3. **Direct Contact**: For highly sensitive information, in addition to the GitHub Security Advisories, please email us directly at `team@spiralscout.com` with the subject line "SECURITY - Vulnerability Report". This will be treated with the highest priority.
 
