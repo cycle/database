@@ -1,7 +1,6 @@
 .idea/
 .env
 .coveralls.yml
-composer.lock
 vendor/
 tests/runtime/*
 build/logs/*
