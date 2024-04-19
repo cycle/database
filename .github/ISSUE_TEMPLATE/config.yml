@@ -3,8 +3,16 @@
 blank_issues_enabled: false
 
 contact_links:
-  - name: ❓ Start a discussion or ask a question.
+  - name: Start a discussion or ask a question.
     url: https://github.com/cycle/orm/discussions
     about: Please ask and answer questions here.
+
+  - name: Join our Discord Community
+    url: https://discord.gg/spiralphp
+    about: Join our Discord community to get help, share your ideas, and chat with other developers.
+
+  - name: Send an e-mail to the developer
+    url: mailto:team@spiralscout.com
+    about: Please do NOT use this email to post issues or feature requests (only important business/personal contact).
 
 ...
