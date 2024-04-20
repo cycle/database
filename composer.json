@@ -1,24 +1,18 @@
 {
     "name": "cycle/database",
-    "type": "library",
     "description": "DBAL, schema introspection, migration and pagination",
-    "keywords": ["dbal", "database", "mysql", "mssql", "sqlite", "postgresql", "orm", "sql", "query-builder"],
     "license": "MIT",
-    "conflict": {
-        "spiral/database": "*"
-    },
-    "homepage": "https://cycle-orm.dev",
-    "support": {
-        "issues": "https://github.com/cycle/database/issues",
-        "source": "https://github.com/cycle/database",
-        "docs": "https://cycle-orm.dev/docs",
-        "chat": "https://discord.gg/spiralphp"
-    },
-    "funding": [
-        {
-            "type": "github",
-            "url": "https://github.com/sponsors/cycle"
-        }
+    "type": "library",
+    "keywords": [
+        "dbal",
+        "database",
+        "mysql",
+        "mssql",
+        "sqlite",
+        "postgresql",
+        "orm",
+        "sql",
+        "query-builder"
     ],
     "authors": [
         {
@@ -38,6 +32,19 @@
             "email": "pavel.buchnev@spiralscout.com"
         }
     ],
+    "homepage": "https://cycle-orm.dev",
+    "support": {
+        "issues": "https://github.com/cycle/database/issues",
+        "chat": "https://discord.gg/spiralphp",
+        "source": "https://github.com/cycle/database",
+        "docs": "https://cycle-orm.dev/docs"
+    },
+    "funding": [
+        {
+            "type": "github",
+            "url": "https://github.com/sponsors/cycle"
+        }
+    ],
     "require": {
         "php": ">=8.0",
         "ext-pdo": "*",
@@ -46,26 +53,39 @@
         "spiral/pagination": "^2.8 || ^3.0",
         "symfony/polyfill-php83": "^1.28"
     },
-    "autoload": {
-        "files": [
-            "src/polyfill.php",
-            "src/functions_polyfill.php"
-        ],
-        "psr-4": {
-            "Cycle\\Database\\": "src"
-        }
-    },
     "require-dev": {
+        "ergebnis/composer-normalize": "^2.42",
         "infection/infection": "^0.26.10",
         "mockery/mockery": "^1.5",
         "phpunit/phpunit": "^9.5",
-        "spiral/tokenizer": "^2.14 | ^3.0",
+        "spiral/tokenizer": "^2.14 || ^3.0",
         "vimeo/psalm": "^5.18"
+    },
+    "conflict": {
+        "spiral/database": "*"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Cycle\\Database\\": "src"
+        },
+        "files": [
+            "src/polyfill.php",
+            "src/functions_polyfill.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
             "Cycle\\Database\\Tests\\": "tests/Database"
         }
+    },
+    "config": {
+        "allow-plugins": {
+            "ergebnis/composer-normalize": true,
+            "infection/extension-installer": true
+        },
+        "sort-packages": true
     },
     "scripts": {
         "test": [
@@ -73,13 +93,5 @@
             "psalm --no-cache",
             "phpunit"
         ]
-    },
-    "config": {
-        "sort-packages": true,
-        "allow-plugins": {
-            "infection/extension-installer": true
-        }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    }
 }
