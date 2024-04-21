@@ -13,9 +13,9 @@
 *.md            @lotyp @cycle/core-contributors
 
 # @cycle/core-contributors are responsible to review the rest of the files.
-resources/      @cycle/contributors
-src/            @cycle/contributors
-tests/          @cycle/contributors
-composer.*      @cycle/contributors
-infection.*     @cycle/contributors
-*.xml           @cycle/contributors
+resources/      @roxblnfk @cycle/contributors
+src/            @roxblnfk @cycle/contributors
+tests/          @roxblnfk @cycle/contributors
+composer.*      @roxblnfk @cycle/contributors
+infection.*     @roxblnfk @cycle/contributors
+*.xml           @roxblnfk @cycle/contributors
