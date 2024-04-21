@@ -5,14 +5,14 @@
 # Responsible for reviewing any code changes that do not have a more specific owner.
 *               @cycle/core-contributors
 
-# @roxblnfk @lotyp are responsible to review "support/health/infra files".
+# @roxblnfk and @lotyp are responsible to review "support/health/infra files".
 .github/        @lotyp @cycle/core-contributors
 .*              @lotyp @cycle/core-contributors
 .*.yml          @lotyp @cycle/core-contributors
 .*.yaml         @lotyp @cycle/core-contributors
 *.md            @lotyp @cycle/core-contributors
 
-# @cycle/core-contributors are responsible to review the rest of the files.
+# @cycle/contributors are responsible to review the rest of the files.
 resources/      @roxblnfk @cycle/contributors
 src/            @roxblnfk @cycle/contributors
 tests/          @roxblnfk @cycle/contributors
