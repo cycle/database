@@ -86,5 +86,5 @@ foreach ($users->select()->where(['name' => 'test']) as $u) {
 
 ## License:
 
-MIT License (MIT). Please see [`LICENSE`](./LICENSE) for more information. Maintained
+MIT License (MIT). Please see [`LICENSE`](./LICENSE.md) for more information. Maintained
 by [Spiral Scout](https://spiralscout.com).

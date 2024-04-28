@@ -5,17 +5,19 @@
 # Responsible for reviewing any code changes that do not have a more specific owner.
 *               @cycle/core-contributors
 
-# @roxblnfk and @lotyp are responsible to review "support/health/infra files".
-.github/        @lotyp @cycle/core-contributors
-.*              @lotyp @cycle/core-contributors
-.*.yml          @lotyp @cycle/core-contributors
-.*.yaml         @lotyp @cycle/core-contributors
-*.md            @lotyp @cycle/core-contributors
+# @cycle/infrastructure is responsible to review "support/health/infra files".
+.github/        @cycle/infrastructure
+.*              @cycle/infrastructure
+.*.yml          @cycle/infrastructure
+.*.yaml         @cycle/infrastructure
+*.md            @cycle/infrastructure
 
-# @cycle/contributors are responsible to review the rest of the files.
-resources/      @roxblnfk @cycle/contributors
-src/            @roxblnfk @cycle/contributors
-tests/          @roxblnfk @cycle/contributors
-composer.*      @roxblnfk @cycle/contributors
-infection.*     @roxblnfk @cycle/contributors
-*.xml           @roxblnfk @cycle/contributors
+# @cycle/contributors and @cycle/core-contributors are responsible to review "core" files.
+resources/      @cycle/core-contributors @cycle/contributors
+src/            @cycle/core-contributors @cycle/contributors
+tests/          @cycle/core-contributors @cycle/contributors
+
+# all teams are responsible to review dependency and test configuration files.
+composer.*      @cycle/core-contributors @cycle/contributors @cycle/infrastructure
+infection.*     @cycle/core-contributors @cycle/contributors @cycle/infrastructure
+*.xml           @cycle/core-contributors @cycle/contributors @cycle/infrastructure
