@@ -112,7 +112,7 @@ Cycle DBAL is maintained by [Spiral Scout](https://spiralscout.com/). For commer
 
 ## 🔖 Licensing
 
-Cycle DBAL is available under the [MIT license](/LICENSE).
+Cycle DBAL is available under the [MIT license](/LICENSE.md).
 
 <br>
 
