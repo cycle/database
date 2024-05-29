@@ -404,8 +404,8 @@ class SelectQuery extends ActiveQuery implements
             'limit'     => $this->limit,
             'offset'    => $this->offset,
             'union'     => $this->unionTokens,
-            'intersect'     => $this->intersectTokens,
-            'except'     => $this->exceptTokens,
+            'intersect' => $this->intersectTokens,
+            'except'    => $this->exceptTokens,
         ];
     }
 
