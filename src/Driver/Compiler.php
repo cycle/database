@@ -181,7 +181,7 @@ abstract class Compiler implements CompilerInterface
         }
 
         return sprintf(
-            "SELECT%s %s\nFROM %s%s%s%s%s%s%s%s%s",
+            "SELECT%s %s\nFROM %s%s%s%s%s%s%s%s%s%s%s",
             $this->optional(' ', $this->distinct($params, $q, $tokens['distinct'])),
             $this->columns($params, $q, $tokens['columns']),
             \implode(', ', $tables),
@@ -190,6 +190,8 @@ abstract class Compiler implements CompilerInterface
             $this->optional("\nGROUP BY", $this->groupBy($params, $q, $tokens['groupBy']), ' '),
             $this->optional("\nHAVING", $this->where($params, $q, $tokens['having'])),
             $this->optional("\n", $this->unions($params, $q, $tokens['union'])),
+            $this->optional("\n", $this->intersects($params, $q, $tokens['intersect'])),
+            $this->optional("\n", $this->excepts($params, $q, $tokens['except'])),
             $this->optional("\nORDER BY", $this->orderBy($params, $q, $tokens['orderBy'])),
             $this->optional("\n", $this->limit($params, $q, $tokens['limit'], $tokens['offset'])),
             $this->optional(' ', $tokens['forUpdate'] ? 'FOR UPDATE' : '')
@@ -236,6 +238,50 @@ abstract class Compiler implements CompilerInterface
             } else {
                 //No extra space
                 $statement .= "\nUNION \n{$select}";
+            }
+        }
+
+        return \ltrim($statement, "\n");
+    }
+
+    protected function intersects(QueryParameters $params, Quoter $q, array $intersects): string
+    {
+        if ($intersects === []) {
+            return '';
+        }
+
+        $statement = '';
+        foreach ($intersects as $intersect) {
+            $select = $this->fragment($params, $q, $intersect[1]);
+
+            if ($intersect[0] !== '') {
+                //First key is intersect type, second intersected query (no need to share compiler)
+                $statement .= "\nINTERSECT {$intersect[0]}\n{$select}";
+            } else {
+                //No extra space
+                $statement .= "\nINTERSECT \n{$select}";
+            }
+        }
+
+        return \ltrim($statement, "\n");
+    }
+
+    protected function excepts(QueryParameters $params, Quoter $q, array $excepts): string
+    {
+        if ($excepts === []) {
+            return '';
+        }
+
+        $statement = '';
+        foreach ($excepts as $except) {
+            $select = $this->fragment($params, $q, $except[1]);
+
+            if ($except[0] !== '') {
+                //First key is except type, second excepted query (no need to share compiler)
+                $statement .= "\nEXCEPT {$except[0]}\n{$select}";
+            } else {
+                //No extra space
+                $statement .= "\nEXCEPT \n{$select}";
             }
         }
 
