@@ -206,7 +206,7 @@ abstract class Compiler implements CompilerInterface
         $statement = '';
         foreach ($joins as $join) {
             $statement .= sprintf(
-                "\n%s JOIN %s",
+                \str_contains($join['type'], 'JOIN') ? "\n%s %s" : "\n%s JOIN %s",
                 $join['type'],
                 $this->nameWithAlias($params, $q, $join['outer'], $join['alias'], true)
             );
