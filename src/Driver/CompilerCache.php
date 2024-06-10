@@ -193,9 +193,7 @@ final class CompilerCache implements CompilerInterface
 
         $hash .= implode(',', $tokens['groupBy']);
 
-        foreach ($tokens['orderBy'] as $order) {
-            $hash .= $order[0] . $order[1];
-        }
+        $hash .= $this->hashOrderBy($params, $tokens['orderBy']);
 
         $hash .= $this->compiler->hashLimit($params, $tokens);
 
@@ -354,5 +352,20 @@ final class CompilerCache implements CompilerInterface
         $params->push($param);
 
         return '?';
+    }
+
+    private function hashOrderBy(QueryParameters $params, array $tokens): string
+    {
+        $hash = '';
+        foreach ($tokens as $order) {
+            if ($order[0] instanceof FragmentInterface) {
+                foreach ($order[0]->getTokens()['parameters'] as $param) {
+                    $params->push($param);
+                }
+            }
+            $hash .= $order[0] . $order[1];
+        }
+
+        return $hash;
     }
 }
