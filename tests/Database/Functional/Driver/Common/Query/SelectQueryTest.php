@@ -926,6 +926,45 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    public function testOrderByWithExpressionAndParameter(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('permissions')
+            ->orderBy(new Expression('role = ?', '*'), 'DESC');
+
+        $this->assertSameQuery('SELECT * FROM {permissions} ORDER BY {role} = ? DESC', $select);
+        $this->assertSameParameters(['*'], $select);
+    }
+
+    public function testOrderByWithFragmentAndParameter(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('permissions')
+            ->orderBy(new Fragment('"role" = ?', '*'), 'DESC');
+
+        $this->assertSameQuery('SELECT * FROM {permissions} ORDER BY "role" = ? DESC', $select);
+        $this->assertSameParameters(['*'], $select);
+    }
+
+    public function testOrderByWithFragmentAndParameterInArray(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from('permissions')
+            ->orderBy([
+                new Fragment('"role" = ? DESC', '*'),
+                'read' => 'ASC',
+            ]);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {permissions} ORDER BY "role" = ? DESC, {read} ASC',
+            $select
+        );
+        $this->assertSameParameters(['*'], $select);
+    }
+
     //Group By
 
     public function testGroupBy(): void
