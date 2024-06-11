@@ -61,6 +61,8 @@ class SelectQueryTest extends TestCase
                 'limit' => null,
                 'offset' => null,
                 'union' => [],
+                'intersect' => [],
+                'except' => [],
             ],
             $select->getTokens(),
         );
