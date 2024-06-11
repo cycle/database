@@ -171,7 +171,7 @@ final class CompilerCache implements CompilerInterface
         $hash .= $this->hashColumns($params, $tokens['columns']);
 
         foreach ($tokens['join'] as $join) {
-            $hash .= 'j' . $join['alias'] . $join['type'];
+            $hash .= 'j' . $join['alias'] . \str_replace(['JOIN', ' '], '', $join['type']);
 
             if ($join['outer'] instanceof SelectQuery) {
                 $hash .= $join['outer']->getPrefix() === null ? '' : 'p_' . $join['outer']->getPrefix();

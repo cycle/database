@@ -368,6 +368,28 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    public function testJoinWithFullTypeName(): void
+    {
+        $select = $this->database->select()
+            ->from('temperature as t')
+            ->where('t.date', '2022-01-05')
+            ->join(
+                type: 'LEFT JOIN LATERAL',
+                outer: $this->database->select()
+                    ->from('humidity')
+                    ->where('h.date', '<=', 't.date'),
+                alias: 'h',
+                on: new Fragment('true')
+            );
+
+        $this->assertSameQuery(
+            'SELECT * FROM {temperature} AS {t}
+            LEFT JOIN LATERAL (SELECT * FROM {humidity} WHERE {h}.{date} <= ?) AS {h}
+            ON true WHERE {t}.{date} = ?',
+            $select
+        );
+    }
+
     //Join with WHERE
 
     public function testJoinOnWhereParameterOrder(): void
