@@ -46,6 +46,8 @@ class SelectQuery extends ActiveQuery implements
 
     protected array $tables = [];
     protected array $unionTokens = [];
+    protected array $exceptTokens = [];
+    protected array $intersectTokens = [];
     protected bool|string|array $distinct = false;
     protected array $columns = ['*'];
     /** @var FragmentInterface[][]|string[][] */
@@ -189,6 +191,46 @@ class SelectQuery extends ActiveQuery implements
     public function unionAll(FragmentInterface $query): self
     {
         $this->unionTokens[] = ['ALL', $query];
+
+        return $this;
+    }
+
+    /**
+     * Add select query to be intersected with.
+     */
+    public function intersect(FragmentInterface $query): self
+    {
+        $this->intersectTokens[] = ['', $query];
+
+        return $this;
+    }
+
+    /**
+     * Add select query to be intersected with. Duplicate values will be included in result.
+     */
+    public function intersectAll(FragmentInterface $query): self
+    {
+        $this->intersectTokens[] = ['ALL', $query];
+
+        return $this;
+    }
+
+    /**
+     * Add select query to be excepted with.
+     */
+    public function except(FragmentInterface $query): self
+    {
+        $this->exceptTokens[] = ['', $query];
+
+        return $this;
+    }
+
+    /**
+     * Add select query to be excepted with. Duplicate values will be included in result.
+     */
+    public function exceptAll(FragmentInterface $query): self
+    {
+        $this->exceptTokens[] = ['ALL', $query];
 
         return $this;
     }
@@ -362,6 +404,8 @@ class SelectQuery extends ActiveQuery implements
             'limit'     => $this->limit,
             'offset'    => $this->offset,
             'union'     => $this->unionTokens,
+            'intersect' => $this->intersectTokens,
+            'except'    => $this->exceptTokens,
         ];
     }
 

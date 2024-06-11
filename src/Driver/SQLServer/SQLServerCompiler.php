@@ -179,7 +179,7 @@ class SQLServerCompiler extends Compiler
         }
 
         return sprintf(
-            "SELECT%s %s\nFROM %s%s%s%s%s%s%s%s%s",
+            "SELECT%s %s\nFROM %s%s%s%s%s%s%s%s%s%s%s",
             $this->optional(' ', $this->distinct($params, $q, $tokens['distinct'])),
             $this->columns($params, $q, $tokens['columns']),
             implode(', ', $tables),
@@ -189,6 +189,8 @@ class SQLServerCompiler extends Compiler
             $this->optional("\nGROUP BY", $this->groupBy($params, $q, $tokens['groupBy']), ' '),
             $this->optional("\nHAVING", $this->where($params, $q, $tokens['having'])),
             $this->optional("\n", $this->unions($params, $q, $tokens['union'])),
+            $this->optional("\n", $this->intersects($params, $q, $tokens['intersect'])),
+            $this->optional("\n", $this->excepts($params, $q, $tokens['except'])),
             $this->optional("\nORDER BY", $this->orderBy($params, $q, $tokens['orderBy'])),
             $this->optional("\n", $this->limit($params, $q, $tokens['limit'], $tokens['offset']))
         );
