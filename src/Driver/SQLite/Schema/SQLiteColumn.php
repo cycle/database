@@ -49,7 +49,7 @@ class SQLiteColumn extends AbstractColumn
         'enum'        => 'enum',
 
         //Logical types
-        'boolean'     => 'integer',
+        'boolean'     => ['type' => 'tinyint', 'size' => 1],
 
         //Integer types (size can always be changed with size method), longInteger has method alias
         //bigInteger
@@ -93,7 +93,7 @@ class SQLiteColumn extends AbstractColumn
     protected array $reverseMapping = [
         'primary'     => [['type' => 'integer', 'primaryKey' => true]],
         'enum'        => ['enum'],
-        'boolean'     => ['boolean'],
+        'boolean'     => ['boolean', ['type' => 'tinyint', 'size' => 1]],
         'integer'     => ['int', 'integer', 'mediumint'],
         'tinyInteger' => ['tinyint'],
         'smallInteger' => ['smallint'],
