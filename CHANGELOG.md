@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.11.1](https://github.com/cycle/database/compare/2.11.0...2.11.1) (2024-10-22)
+
+
+### Bug Fixes
+
+* typecasting of an integer to a boolean in SQLite ([32c29c7](https://github.com/cycle/database/commit/32c29c760ca30735b4d0f36b8ad11af9bb470997))
+
+
+### Continuous Integration
+
+* fix MSSQL initialization in CI ([678c049](https://github.com/cycle/database/commit/678c04970760f5be76e13dde9f84dd85d4465e37))
+* replace `docker-compose` with `docker compose` ([914ed58](https://github.com/cycle/database/commit/914ed5837966fd11ee5a559f3e9b9564eaeb06f3))
+
 ## [2.11.0](https://github.com/cycle/database/compare/2.10.0...2.11.0) (2024-06-11)
 
 
