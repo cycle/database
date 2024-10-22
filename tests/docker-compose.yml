@@ -5,7 +5,6 @@ version: "3"
 services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2019-latest
-    restart: always
     ports:
       - "11433:1433"
     environment:
@@ -14,8 +13,6 @@ services:
 
   mysql_latest:
     image: mysql:latest
-    restart: always
-    command: --mysql-native-password=ON
     ports:
       - "13306:3306"
     environment:
@@ -25,7 +22,6 @@ services:
 
   postgres:
     image: postgres:12
-    restart: always
     ports:
       - "15432:5432"
     environment:
