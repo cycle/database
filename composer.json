@@ -54,6 +54,7 @@
         "symfony/polyfill-php83": "^1.28"
     },
     "require-dev": {
+        "buggregator/trap": "^1.11",
         "ergebnis/composer-normalize": "^2.42",
         "infection/infection": "^0.26.10",
         "mockery/mockery": "^1.5",
