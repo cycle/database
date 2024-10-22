@@ -171,7 +171,7 @@ final class CompilerCache implements CompilerInterface
         $hash .= $this->hashColumns($params, $tokens['columns']);
 
         foreach ($tokens['join'] as $join) {
-            $hash .= 'j' . $join['alias'] . $join['type'];
+            $hash .= 'j' . $join['alias'] . \str_replace(['JOIN', ' '], '', $join['type']);
 
             if ($join['outer'] instanceof SelectQuery) {
                 $hash .= $join['outer']->getPrefix() === null ? '' : 'p_' . $join['outer']->getPrefix();
@@ -206,6 +206,28 @@ final class CompilerCache implements CompilerInterface
             }
 
             $hash .= $union[1];
+        }
+
+        foreach ($tokens['intersect'] as $intersect) {
+            $hash .= $intersect[0];
+            if ($intersect[1] instanceof SelectQuery) {
+                $hash .= $intersect[1]->getPrefix() === null ? '' : 'i_' . $intersect[1]->getPrefix();
+                $hash .= $this->hashSelectQuery($params, $intersect[1]->getTokens());
+                continue;
+            }
+
+            $hash .= $intersect[1];
+        }
+
+        foreach ($tokens['except'] as $except) {
+            $hash .= $except[0];
+            if ($except[1] instanceof SelectQuery) {
+                $hash .= $except[1]->getPrefix() === null ? '' : 'e_' . $except[1]->getPrefix();
+                $hash .= $this->hashSelectQuery($params, $except[1]->getTokens());
+                continue;
+            }
+
+            $hash .= $except[1];
         }
 
         return $hash;

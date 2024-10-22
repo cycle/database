@@ -335,6 +335,218 @@ abstract class NestedQueriesTest extends BaseTest
         );
     }
 
+    public function testIntersectWithPrefixes(): void
+    {
+        $select = $this->db('prefixed', 'prefix_')
+            ->select('*')
+            ->from('table AS u')
+            ->where('type', 'user')->orWhere('table.id', '<', 100);
+
+        $select->intersect(
+            $this->db('prefixed', 'prefix_2_')
+                ->select('*')
+                ->from('table AS u')
+                ->where('type', 'admin')->orWhere('table.id', '>', 800)
+        );
+
+        $this->assertSameQuery(
+            'SELECT * FROM {prefix_table} AS {u} WHERE {type} = ? OR {prefix_table}.{id} < ?
+                     INTERSECT
+                     (SELECT * FROM {prefix_2_table} AS {u} WHERE {type} = ? OR {prefix_2_table}.{id} > ?)',
+            $select
+        );
+
+        $this->assertSameParameters(
+            [
+                'user',
+                100,
+                'admin',
+                800,
+            ],
+            $select
+        );
+    }
+
+    public function testIntersectWithPrefixes1(): void
+    {
+        $select = $this->db('prefixed', 'prefix_')
+            ->select('*')
+            ->from('table AS u')
+            ->where('type', 'user')->orWhere('table.id', '<', 100);
+
+        $select->intersectAll(
+            $this->db('prefixed', 'prefix_2_')
+                ->select('*')
+                ->from('table AS u')
+                ->where('type', 'admin')->orWhere('table.id', '>', 800)
+        );
+
+        $this->assertSameQuery(
+            'SELECT * FROM {prefix_table} AS {u} WHERE {type} = ? OR {prefix_table}.{id} < ?
+                     INTERSECT ALL
+                     (SELECT * FROM {prefix_2_table} AS {u} WHERE {type} = ? OR {prefix_2_table}.{id} > ?)',
+            $select
+        );
+
+        $this->assertSameParameters(
+            [
+                'user',
+                100,
+                'admin',
+                800,
+            ],
+            $select
+        );
+    }
+
+    public function testIntersectWithPrefixes2(): void
+    {
+        $select = $this->db('prefixed', 'prefix_')
+            ->select('*')
+            ->from('table AS u')
+            ->where('type', 'user')->orWhere('table.id', '<', 100);
+
+        $select->intersect(
+            $this->db('prefixed', 'prefix_2_')
+                ->select('*')
+                ->from('table AS u')
+                ->where('type', 'admin')->orWhere('table.id', '>', 800)
+        );
+
+        $select->intersectAll(
+            $this->db('prefixed', 'prefix_3_')->select('*')
+                ->from('table')->where('x', 'IN', new Parameter([8, 9, 10]))
+        );
+
+        $this->assertSameQuery(
+            'SELECT * FROM {prefix_table} AS {u} WHERE {type} = ? OR {prefix_table}.{id} < ?
+                     INTERSECT
+                     (SELECT * FROM {prefix_2_table} AS {u} WHERE {type} = ? OR {prefix_2_table}.{id} > ?)
+                     INTERSECT ALL
+                     (SELECT * FROM {prefix_3_table} WHERE {x} IN (?, ?, ?))',
+            $select
+        );
+
+        $this->assertSameParameters(
+            [
+                'user',
+                100,
+                'admin',
+                800,
+                8,
+                9,
+                10,
+            ],
+            $select
+        );
+    }
+
+    public function testExceptWithPrefixes(): void
+    {
+        $select = $this->db('prefixed', 'prefix_')
+            ->select('*')
+            ->from('table AS u')
+            ->where('type', 'user')->orWhere('table.id', '<', 100);
+
+        $select->except(
+            $this->db('prefixed', 'prefix_2_')
+                ->select('*')
+                ->from('table AS u')
+                ->where('type', 'admin')->orWhere('table.id', '>', 800)
+        );
+
+        $this->assertSameQuery(
+            'SELECT * FROM {prefix_table} AS {u} WHERE {type} = ? OR {prefix_table}.{id} < ?
+                     EXCEPT
+                     (SELECT * FROM {prefix_2_table} AS {u} WHERE {type} = ? OR {prefix_2_table}.{id} > ?)',
+            $select
+        );
+
+        $this->assertSameParameters(
+            [
+                'user',
+                100,
+                'admin',
+                800,
+            ],
+            $select
+        );
+    }
+
+    public function testExceptWithPrefixes1(): void
+    {
+        $select = $this->db('prefixed', 'prefix_')
+            ->select('*')
+            ->from('table AS u')
+            ->where('type', 'user')->orWhere('table.id', '<', 100);
+
+        $select->exceptAll(
+            $this->db('prefixed', 'prefix_2_')
+                ->select('*')
+                ->from('table AS u')
+                ->where('type', 'admin')->orWhere('table.id', '>', 800)
+        );
+
+        $this->assertSameQuery(
+            'SELECT * FROM {prefix_table} AS {u} WHERE {type} = ? OR {prefix_table}.{id} < ?
+                     EXCEPT ALL
+                     (SELECT * FROM {prefix_2_table} AS {u} WHERE {type} = ? OR {prefix_2_table}.{id} > ?)',
+            $select
+        );
+
+        $this->assertSameParameters(
+            [
+                'user',
+                100,
+                'admin',
+                800,
+            ],
+            $select
+        );
+    }
+
+    public function testExceptWithPrefixes2(): void
+    {
+        $select = $this->db('prefixed', 'prefix_')
+            ->select('*')
+            ->from('table AS u')
+            ->where('type', 'user')->orWhere('table.id', '<', 100);
+
+        $select->except(
+            $this->db('prefixed', 'prefix_2_')
+                ->select('*')
+                ->from('table AS u')
+                ->where('type', 'admin')->orWhere('table.id', '>', 800)
+        );
+
+        $select->exceptAll(
+            $this->db('prefixed', 'prefix_3_')->select('*')
+                ->from('table')->where('x', 'IN', new Parameter([8, 9, 10]))
+        );
+
+        $this->assertSameQuery(
+            'SELECT * FROM {prefix_table} AS {u} WHERE {type} = ? OR {prefix_table}.{id} < ?
+                     EXCEPT
+                     (SELECT * FROM {prefix_2_table} AS {u} WHERE {type} = ? OR {prefix_2_table}.{id} > ?)
+                     EXCEPT ALL
+                     (SELECT * FROM {prefix_3_table} WHERE {x} IN (?, ?, ?))',
+            $select
+        );
+
+        $this->assertSameParameters(
+            [
+                'user',
+                100,
+                'admin',
+                800,
+                8,
+                9,
+                10,
+            ],
+            $select
+        );
+    }
+
     public function testSubQueryInUpdate(): void
     {
         $select = $this->database->update()
