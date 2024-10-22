@@ -28,7 +28,7 @@ To set up a local development environment for testing:
 
     ```bash
     cd tests/
-    docker-compose up
+    docker compose up
     ```
 
 3. To run the full test suite:
