@@ -523,6 +523,9 @@ class PostgresColumn extends AbstractColumn
             $schema['typname'] === 'timestamp' || $schema['typname'] === 'timestamptz' => 'timestamp',
             $schema['typname'] === 'date' => 'date',
             $schema['typname'] === 'time' || $schema['typname'] === 'timetz' => 'time',
+            \in_array($schema['typname'], ['_varchar', '_text', '_bpchar'], true) => 'string[]',
+            \str_starts_with($schema['typname'], '_int') => 'integer[]',
+            $schema['typname'] === '_numeric', \str_starts_with($schema['typname'], '_float') => 'float[]',
             default => $schema['data_type']
         };
 
