@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\SQLServer;
 
-use PDO;
 use Cycle\Database\Driver\Handler;
 use Cycle\Database\Driver\SQLServer\Schema\SQLServerColumn;
 use Cycle\Database\Driver\SQLServer\Schema\SQLServerTable;
@@ -35,8 +34,8 @@ class SQLServerHandler extends Handler
         $query = "SELECT [table_name] FROM [information_schema].[tables] WHERE [table_type] = 'BASE TABLE'";
 
         $tables = [];
-        foreach ($this->driver->query($query)->fetchAll(PDO::FETCH_NUM) as $name) {
-            if ($prefix !== '' && !str_starts_with($name[0], $prefix)) {
+        foreach ($this->driver->query($query)->fetchAll(\PDO::FETCH_NUM) as $name) {
+            if ($prefix !== '' && !\str_starts_with($name[0], $prefix)) {
                 continue;
             }
 
@@ -54,13 +53,13 @@ class SQLServerHandler extends Handler
         $query = "SELECT COUNT(*) FROM [information_schema].[tables]
             WHERE [table_type] = 'BASE TABLE' AND [table_name] = ?";
 
-        return (bool)$this->driver->query($query, [$table])->fetchColumn();
+        return (bool) $this->driver->query($query, [$table])->fetchColumn();
     }
 
     public function eraseTable(AbstractTable $table): void
     {
         $this->driver->execute(
-            "TRUNCATE TABLE {$this->driver->identifier($table->getFullName())}"
+            "TRUNCATE TABLE {$this->driver->identifier($table->getFullName())}",
         );
     }
 
@@ -72,14 +71,14 @@ class SQLServerHandler extends Handler
     {
         $this->run(
             'sp_rename @objname = ?, @newname = ?',
-            [$table, $name]
+            [$table, $name],
         );
     }
 
     public function createColumn(AbstractTable $table, AbstractColumn $column): void
     {
         $this->run(
-            "ALTER TABLE {$this->identify($table)} ADD {$column->sqlStatement($this->driver)}"
+            "ALTER TABLE {$this->identify($table)} ADD {$column->sqlStatement($this->driver)}",
         );
     }
 
@@ -91,7 +90,7 @@ class SQLServerHandler extends Handler
     public function alterColumn(
         AbstractTable $table,
         AbstractColumn $initial,
-        AbstractColumn $column
+        AbstractColumn $column,
     ): void {
         if (!$initial instanceof SQLServerColumn || !$column instanceof SQLServerColumn) {
             throw new SchemaException('SQlServer handler can work only with SQLServer columns');
@@ -103,7 +102,7 @@ class SQLServerHandler extends Handler
         $indexesBackup = [];
         $foreignBackup = [];
         foreach ($table->getIndexes() as $index) {
-            if (in_array($column->getName(), $index->getColumns(), true)) {
+            if (\in_array($column->getName(), $index->getColumns(), true)) {
                 $indexesBackup[] = $index;
                 $this->dropIndex($table, $index);
             }
@@ -165,14 +164,14 @@ class SQLServerHandler extends Handler
     private function renameColumn(
         AbstractTable $table,
         AbstractColumn $initial,
-        AbstractColumn $column
+        AbstractColumn $column,
     ): void {
         $this->run(
             "sp_rename ?, ?, 'COLUMN'",
             [
                 $table->getFullName() . '.' . $initial->getName(),
                 $column->getName(),
-            ]
+            ],
         );
     }
 }

@@ -37,27 +37,8 @@ final class State
      * @psalm-param non-empty-string $name
      */
     public function __construct(
-        private string $name
-    ) {
-    }
-
-    /**
-     * Cloning all elements.
-     */
-    public function __clone()
-    {
-        foreach ($this->columns as $name => $column) {
-            $this->columns[$name] = clone $column;
-        }
-
-        foreach ($this->indexes as $name => $index) {
-            $this->indexes[$name] = clone $index;
-        }
-
-        foreach ($this->foreignKeys as $name => $foreignKey) {
-            $this->foreignKeys[$name] = clone $foreignKey;
-        }
-    }
+        private string $name,
+    ) {}
 
     /**
      * Set table name. Operation will be applied at moment of saving.
@@ -124,7 +105,7 @@ final class State
             }
         }
 
-        return array_unique(array_merge($this->primaryKeys, $primaryColumns));
+        return \array_unique(\array_merge($this->primaryKeys, $primaryColumns));
     }
 
     /**
@@ -310,5 +291,23 @@ final class State
         $this->remountElements();
 
         return $this;
+    }
+
+    /**
+     * Cloning all elements.
+     */
+    public function __clone()
+    {
+        foreach ($this->columns as $name => $column) {
+            $this->columns[$name] = clone $column;
+        }
+
+        foreach ($this->indexes as $name => $index) {
+            $this->indexes[$name] = clone $index;
+        }
+
+        foreach ($this->foreignKeys as $name => $foreignKey) {
+            $this->foreignKeys[$name] = clone $foreignKey;
+        }
     }
 }

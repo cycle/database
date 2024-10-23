@@ -27,37 +27,29 @@ use Cycle\Database\Query\QueryBuilder;
 class MySQLDriver extends Driver
 {
     /**
+     * @param MySQLDriverConfig $config
+     */
+    public static function create(DriverConfig $config): static
+    {
+        return new static(
+            $config,
+            new MySQLHandler(),
+            new MySQLCompiler('``'),
+            new QueryBuilder(
+                new MySQLSelectQuery(),
+                new InsertQuery(),
+                new MySQLUpdateQuery(),
+                new MySQLDeleteQuery(),
+            ),
+        );
+    }
+
+    /**
      * @psalm-return non-empty-string
      */
     public function getType(): string
     {
         return 'MySQL';
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @see https://dev.mysql.com/doc/refman/5.6/en/error-messages-client.html#error_cr_conn_host_error
-     */
-    protected function mapException(\Throwable $exception, string $query): StatementException
-    {
-        if ((int)$exception->getCode() === 23000) {
-            return new StatementException\ConstrainException($exception, $query);
-        }
-
-        $message = strtolower($exception->getMessage());
-
-        if (
-            str_contains($message, 'server has gone away')
-            || str_contains($message, 'broken pipe')
-            || str_contains($message, 'connection')
-            || str_contains($message, 'packets out of order')
-            || ((int)$exception->getCode() > 2000 && (int)$exception->getCode() < 2100)
-        ) {
-            return new StatementException\ConnectionException($exception, $query);
-        }
-
-        return new StatementException($exception, $query);
     }
 
     public function getTransactionLevel(): int
@@ -72,20 +64,28 @@ class MySQLDriver extends Driver
     }
 
     /**
-     * @param MySQLDriverConfig $config
+     *
+     *
+     * @see https://dev.mysql.com/doc/refman/5.6/en/error-messages-client.html#error_cr_conn_host_error
      */
-    public static function create(DriverConfig $config): static
+    protected function mapException(\Throwable $exception, string $query): StatementException
     {
-        return new static(
-            $config,
-            new MySQLHandler(),
-            new MySQLCompiler('``'),
-            new QueryBuilder(
-                new MySQLSelectQuery(),
-                new InsertQuery(),
-                new MySQLUpdateQuery(),
-                new MySQLDeleteQuery()
-            )
-        );
+        if ((int) $exception->getCode() === 23000) {
+            return new StatementException\ConstrainException($exception, $query);
+        }
+
+        $message = \strtolower($exception->getMessage());
+
+        if (
+            \str_contains($message, 'server has gone away')
+            || \str_contains($message, 'broken pipe')
+            || \str_contains($message, 'connection')
+            || \str_contains($message, 'packets out of order')
+            || ((int) $exception->getCode() > 2000 && (int) $exception->getCode() < 2100)
+        ) {
+            return new StatementException\ConnectionException($exception, $query);
+        }
+
+        return new StatementException($exception, $query);
     }
 }

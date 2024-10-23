@@ -16,8 +16,6 @@ final class DatabasePartial
     /**
      * @psalm-param non-empty-string $name
      *
-     * @param string $prefix
-     *
      * @psalm-param non-empty-string $driver
      * @psalm-param non-empty-string|null $readDriver
      */
@@ -25,9 +23,8 @@ final class DatabasePartial
         private string $name,
         private string $prefix,
         private string $driver,
-        private ?string $readDriver = null
-    ) {
-    }
+        private ?string $readDriver = null,
+    ) {}
 
     public function getName(): string
     {

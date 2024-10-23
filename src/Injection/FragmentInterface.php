@@ -19,14 +19,12 @@ interface FragmentInterface
     /**
      * Return the fragment type.
      *
-     * @return int
      */
     public function getType(): int;
 
     /**
      * Return the fragment tokens.
      *
-     * @return array
      */
     public function getTokens(): array;
 }

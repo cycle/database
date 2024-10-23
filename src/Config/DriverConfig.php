@@ -24,13 +24,12 @@ abstract class DriverConfig
 {
     use RestoreStateTrait;
 
+    public array $options = [];
     protected array $defaultOptions = [
         'withDatetimeMicroseconds' => false,
         'logInterpolatedQueries' => false,
         'logQueryParameters' => false,
     ];
-
-    public array $options = [];
 
     /**
      * @param T $connection
@@ -55,7 +54,7 @@ abstract class DriverConfig
         public bool $queryCache = true,
         public bool $readonlySchema = false,
         public bool $readonly = false,
-        array $options = []
+        array $options = [],
     ) {
         $this->options = $options + $this->defaultOptions;
     }

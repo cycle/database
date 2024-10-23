@@ -43,9 +43,6 @@ class TcpConnectionConfig extends ConnectionConfig implements ProvidesSourceStri
         parent::__construct($user, $password, $options);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getSourceString(): string
     {
         return $this->database;

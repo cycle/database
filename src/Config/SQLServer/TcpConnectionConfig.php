@@ -56,7 +56,6 @@ class TcpConnectionConfig extends ConnectionConfig implements ProvidesSourceStri
      * @param non-empty-string|null $wsid Specifies the name of the computer for tracing.
      * @param non-empty-string|null $user
      * @param non-empty-string|null $password
-     * @param array $options
      */
     public function __construct(
         public string $database,
@@ -76,16 +75,13 @@ class TcpConnectionConfig extends ConnectionConfig implements ProvidesSourceStri
         public ?string $wsid = null,
         ?string $user = null,
         ?string $password = null,
-        array $options = []
+        array $options = [],
     ) {
         $this->port = $port !== null ? (int) $port : null;
 
         parent::__construct($user, $password, $options);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getSourceString(): string
     {
         return $this->database;

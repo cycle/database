@@ -34,7 +34,7 @@ trait WhereJsonTrait
             'AND',
             [new CompileJson($column), $value],
             $this->whereTokens,
-            $this->whereWrapper()
+            $this->whereWrapper(),
         );
 
         return $this;
@@ -49,7 +49,7 @@ trait WhereJsonTrait
             'OR',
             [new CompileJson($column), $value],
             $this->whereTokens,
-            $this->whereWrapper()
+            $this->whereWrapper(),
         );
 
         return $this;
@@ -66,7 +66,7 @@ trait WhereJsonTrait
             'AND',
             [new CompileJsonContains($column, $value)],
             $this->whereTokens,
-            $this->whereWrapper()
+            $this->whereWrapper(),
         );
 
         return $this;
@@ -81,13 +81,13 @@ trait WhereJsonTrait
         string $column,
         mixed $value,
         bool $encode = true,
-        bool $validate = true
+        bool $validate = true,
     ): static {
         $this->registerToken(
             'OR',
             [new CompileJsonContains($column, $value)],
             $this->whereTokens,
-            $this->whereWrapper()
+            $this->whereWrapper(),
         );
 
         return $this;
@@ -102,13 +102,13 @@ trait WhereJsonTrait
         string $column,
         mixed $value,
         bool $encode = true,
-        bool $validate = true
+        bool $validate = true,
     ): static {
         $this->registerToken(
             'AND',
             [new CompileJsonDoesntContain($column, $value)],
             $this->whereTokens,
-            $this->whereWrapper()
+            $this->whereWrapper(),
         );
 
         return $this;
@@ -123,13 +123,13 @@ trait WhereJsonTrait
         string $column,
         mixed $value,
         bool $encode = true,
-        bool $validate = true
+        bool $validate = true,
     ): static {
         $this->registerToken(
             'OR',
             [new CompileJsonDoesntContain($column, $value)],
             $this->whereTokens,
-            $this->whereWrapper()
+            $this->whereWrapper(),
         );
 
         return $this;
@@ -144,7 +144,7 @@ trait WhereJsonTrait
             'AND',
             [new CompileJsonContainsKey($column)],
             $this->whereTokens,
-            $this->whereWrapper()
+            $this->whereWrapper(),
         );
 
         return $this;
@@ -159,7 +159,7 @@ trait WhereJsonTrait
             'OR',
             [new CompileJsonContainsKey($column)],
             $this->whereTokens,
-            $this->whereWrapper()
+            $this->whereWrapper(),
         );
 
         return $this;
@@ -174,7 +174,7 @@ trait WhereJsonTrait
             'AND',
             [new CompileJsonDoesntContainKey($column)],
             $this->whereTokens,
-            $this->whereWrapper()
+            $this->whereWrapper(),
         );
 
         return $this;
@@ -189,7 +189,7 @@ trait WhereJsonTrait
             'OR',
             [new CompileJsonDoesntContainKey($column)],
             $this->whereTokens,
-            $this->whereWrapper()
+            $this->whereWrapper(),
         );
 
         return $this;
@@ -206,7 +206,7 @@ trait WhereJsonTrait
             'AND',
             [new CompileJsonLength($column, $length, $operator)],
             $this->whereTokens,
-            $this->whereWrapper()
+            $this->whereWrapper(),
         );
 
         return $this;
@@ -223,7 +223,7 @@ trait WhereJsonTrait
             'OR',
             [new CompileJsonLength($column, $length, $operator)],
             $this->whereTokens,
-            $this->whereWrapper()
+            $this->whereWrapper(),
         );
 
         return $this;

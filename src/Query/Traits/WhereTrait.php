@@ -25,9 +25,9 @@ trait WhereTrait
      *
      * @param mixed ...$args [(column, value), (column, operator, value)]
      *
+     * @return $this|self
      * @throws BuilderException
      *
-     * @return $this|self
      */
     public function where(mixed ...$args): self
     {
@@ -35,7 +35,7 @@ trait WhereTrait
             'AND',
             $args,
             $this->whereTokens,
-            $this->whereWrapper()
+            $this->whereWrapper(),
         );
 
         return $this;
@@ -46,9 +46,9 @@ trait WhereTrait
      *
      * @param mixed ...$args [(column, value), (column, operator, value)]
      *
+     * @return $this|self
      * @throws BuilderException
      *
-     * @return $this|self
      */
     public function andWhere(mixed ...$args): self
     {
@@ -56,7 +56,7 @@ trait WhereTrait
             'AND',
             $args,
             $this->whereTokens,
-            $this->whereWrapper()
+            $this->whereWrapper(),
         );
 
         return $this;
@@ -67,9 +67,9 @@ trait WhereTrait
      *
      * @param mixed ...$args [(column, value), (column, operator, value)]
      *
+     * @return $this|self
      * @throws BuilderException
      *
-     * @return $this|self
      */
     public function orWhere(mixed ...$args): self
     {
@@ -77,7 +77,7 @@ trait WhereTrait
             'OR',
             $args,
             $this->whereTokens,
-            $this->whereWrapper()
+            $this->whereWrapper(),
         );
 
         return $this;
@@ -88,9 +88,9 @@ trait WhereTrait
      *
      * @param mixed ...$args [(column, value), (column, operator, value)]
      *
+     * @return $this|self
      * @throws BuilderException
      *
-     * @return $this|self
      */
     public function whereNot(mixed ...$args): self
     {
@@ -98,7 +98,7 @@ trait WhereTrait
             'AND NOT',
             $args,
             $this->whereTokens,
-            $this->whereWrapper()
+            $this->whereWrapper(),
         );
 
         return $this;
@@ -109,9 +109,9 @@ trait WhereTrait
      *
      * @param mixed ...$args [(column, value), (column, operator, value)]
      *
+     * @return $this|self
      * @throws BuilderException
      *
-     * @return $this|self
      */
     public function andWhereNot(mixed ...$args): self
     {
@@ -119,7 +119,7 @@ trait WhereTrait
             'AND NOT',
             $args,
             $this->whereTokens,
-            $this->whereWrapper()
+            $this->whereWrapper(),
         );
 
         return $this;
@@ -130,9 +130,9 @@ trait WhereTrait
      *
      * @param mixed ...$args [(column, value), (column, operator, value)]
      *
+     * @return $this|self
      * @throws BuilderException
      *
-     * @return $this|self
      */
     public function orWhereNot(mixed ...$args): self
     {
@@ -140,7 +140,7 @@ trait WhereTrait
             'OR NOT',
             $args,
             $this->whereTokens,
-            $this->whereWrapper()
+            $this->whereWrapper(),
         );
 
         return $this;
@@ -161,16 +161,16 @@ trait WhereTrait
         string $boolean,
         array $params,
         array &$tokens,
-        callable $wrapper
+        callable $wrapper,
     ): void;
 
     /**
      * Applied to every potential parameter while where tokens generation. Used to prepare and
      * collect where parameters.
      */
-    protected function whereWrapper(): Closure
+    protected function whereWrapper(): \Closure
     {
-        return static fn ($parameter) => $parameter instanceof Parameter || $parameter instanceof Fragment
+        return static fn($parameter) => $parameter instanceof Parameter || $parameter instanceof Fragment
             ? $parameter
             : new \Cycle\Database\Injection\Parameter($parameter);
     }

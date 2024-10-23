@@ -30,20 +30,12 @@ final class Quoter
      */
     public function __construct(
         private string $prefix,
-        string $quotes
+        string $quotes,
     ) {
-        strlen($quotes) !== 2 and throw new CompilerException('Invalid quoter quotes, expected 2 characters string');
+        \strlen($quotes) !== 2 and throw new CompilerException('Invalid quoter quotes, expected 2 characters string');
 
         $this->left = $quotes[0];
         $this->right = $quotes[1];
-    }
-
-    /**
-     * Reset aliases cache.
-     */
-    public function __clone()
-    {
-        $this->aliases = [];
     }
 
     public function withPrefix(string $prefix, bool $preserveAliases = false): self
@@ -82,18 +74,18 @@ final class Quoter
             return '*';
         }
 
-        $identifier = sprintf(
+        $identifier = \sprintf(
             '%s%s%s',
             $this->left,
-            str_replace(
+            \str_replace(
                 [$this->left, $this->right],
                 [$this->left . $this->left, $this->right . $this->right],
-                $identifier
+                $identifier,
             ),
-            $this->right
+            $this->right,
         );
 
-        return str_replace('.', $this->right . '.' . $this->left, $identifier);
+        return \str_replace('.', $this->right . '.' . $this->left, $identifier);
     }
 
     /**
@@ -108,8 +100,8 @@ final class Quoter
      */
     public function quote(string $identifier, bool $isTable = false): string
     {
-        if (preg_match('/ AS /i', $identifier, $matches)) {
-            [$identifier, $alias] = explode($matches[0], $identifier);
+        if (\preg_match('/ AS /i', $identifier, $matches)) {
+            [$identifier, $alias] = \explode($matches[0], $identifier);
 
             return $this->aliasing($identifier, $alias, $isTable);
         }
@@ -119,7 +111,7 @@ final class Quoter
             return $this->expression($identifier);
         }
 
-        if (!str_contains($identifier, '.')) {
+        if (!\str_contains($identifier, '.')) {
             // no table/column pair found
             return $this->unpaired($identifier, $isTable);
         }
@@ -129,13 +121,21 @@ final class Quoter
     }
 
     /**
+     * Reset aliases cache.
+     */
+    public function __clone()
+    {
+        $this->aliases = [];
+    }
+
+    /**
      * Quoting columns and tables in complex expression.
      *
      * @psalm-param non-empty-string $identifier
      */
     private function expression(string $identifier): string
     {
-        return preg_replace_callback(
+        return \preg_replace_callback(
             '/([_a-z][0-9_a-z\.]*\(?)/i',
             function ($match) {
                 $identifier = $match[1];
@@ -147,7 +147,7 @@ final class Quoter
 
                 return $this->quote($identifier);
             },
-            $identifier
+            $identifier,
         );
     }
 
@@ -163,18 +163,18 @@ final class Quoter
     {
         if (\str_contains($identifier, '.')) {
             // non table alias
-            return sprintf(
+            return \sprintf(
                 '%s AS %s',
                 $this->quote($identifier, $isTable),
-                $this->identifier($alias)
+                $this->identifier($alias),
             );
         }
 
         // never create table alias to alias associations
-        $quoted = sprintf(
+        $quoted = \sprintf(
             '%s AS %s',
             $this->identifier($isTable ? $this->prefix . $identifier : $identifier),
-            $this->identifier($alias)
+            $this->identifier($alias),
         );
 
         if ($isTable) {
@@ -196,12 +196,12 @@ final class Quoter
     private function paired(string $identifier): string
     {
         //We expecting only table and column, no database name can be included (due database isolation)
-        [$table, $column] = explode('.', $identifier);
+        [$table, $column] = \explode('.', $identifier);
 
-        return sprintf(
+        return \sprintf(
             '%s.%s',
             $this->quote($table, true),
-            $this->identifier($column)
+            $this->identifier($column),
         );
     }
 
@@ -235,7 +235,7 @@ final class Quoter
     private function hasExpressions(string $string): bool
     {
         foreach (self::STOPS as $symbol) {
-            if (str_contains($string, $symbol)) {
+            if (\str_contains($string, $symbol)) {
                 return true;
             }
         }

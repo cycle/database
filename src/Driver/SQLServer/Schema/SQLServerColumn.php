@@ -27,6 +27,7 @@ class SQLServerColumn extends AbstractColumn
      * Default timestamp expression (driver specific).
      */
     public const DATETIME_NOW = 'getdate()';
+
     public const DATETIME_PRECISION = 7;
 
     /**
@@ -49,7 +50,6 @@ class SQLServerColumn extends AbstractColumn
         'bool'      => 'boolean',
         'varbinary' => 'binary',
     ];
-
     protected array $mapping = [
         //Primary sequences
         'primary'     => ['type' => 'int', 'identity' => true, 'nullable' => false],
@@ -100,7 +100,6 @@ class SQLServerColumn extends AbstractColumn
         'json'        => ['type' => 'varchar', 'size' => 0],
         'uuid'        => ['type' => 'varchar', 'size' => 36],
     ];
-
     protected array $reverseMapping = [
         'primary'     => [['type' => 'int', 'identity' => true]],
         'bigPrimary'  => [['type' => 'bigint', 'identity' => true]],
@@ -143,6 +142,68 @@ class SQLServerColumn extends AbstractColumn
      */
     protected string $enumConstraint = '';
 
+    /**
+     * @psalm-param non-empty-string $table Table name.
+     *
+     * @param DriverInterface $driver SQLServer columns are bit more complex.
+     */
+    public static function createInstance(
+        string $table,
+        array $schema,
+        DriverInterface $driver,
+    ): self {
+        $column = new self($table, $schema['COLUMN_NAME'], $driver->getTimezone());
+
+        $column->type = $schema['DATA_TYPE'];
+        $column->nullable = \strtoupper($schema['IS_NULLABLE']) === 'YES';
+        $column->defaultValue = $schema['COLUMN_DEFAULT'];
+
+        $column->identity = (bool) $schema['is_identity'];
+
+        $column->size = (int) $schema['CHARACTER_MAXIMUM_LENGTH'];
+        if ($column->size === -1) {
+            $column->size = 0;
+        }
+
+        if ($column->type === 'decimal') {
+            $column->precision = (int) $schema['NUMERIC_PRECISION'];
+            $column->scale = (int) $schema['NUMERIC_SCALE'];
+        }
+
+        if ($column->type === 'datetime2') {
+            $column->size = (int) $schema['DATETIME_PRECISION'];
+        }
+
+        //Normalizing default value
+        $column->normalizeDefault();
+
+        /*
+        * We have to fetch all column constrains cos default and enum check will be included into
+        * them, plus column drop is not possible without removing all constraints.
+        */
+
+        if (!empty($schema['default_object_id'])) {
+            //Looking for default constrain id
+            $column->defaultConstraint = $driver->query(
+                'SELECT [name] FROM [sys].[default_constraints] WHERE [object_id] = ?',
+                [
+                    $schema['default_object_id'],
+                ],
+            )->fetchColumn();
+
+            if (!empty($column->defaultConstraint)) {
+                $column->constrainedDefault = true;
+            }
+        }
+
+        //Potential enum
+        if ($column->type === 'varchar' && !empty($column->size)) {
+            self::resolveEnum($driver, $schema, $column);
+        }
+
+        return $column;
+    }
+
     public function getConstraints(): array
     {
         $constraints = parent::getConstraints();
@@ -165,12 +226,12 @@ class SQLServerColumn extends AbstractColumn
 
     public function enum(mixed $values): AbstractColumn
     {
-        $this->enumValues = array_map('strval', is_array($values) ? $values : func_get_args());
-        sort($this->enumValues);
+        $this->enumValues = \array_map('strval', \is_array($values) ? $values : \func_get_args());
+        \sort($this->enumValues);
 
         $this->type = 'varchar';
         foreach ($this->enumValues as $value) {
-            $this->size = max((int)$this->size, strlen($value));
+            $this->size = \max((int) $this->size, \strlen($value));
         }
 
         return $this;
@@ -182,7 +243,7 @@ class SQLServerColumn extends AbstractColumn
         $this->fillAttributes($attributes);
 
         ($size < 0 || $size > static::DATETIME_PRECISION) && throw new SchemaException(
-            \sprintf('Invalid %s precision value.', $this->getAbstractType())
+            \sprintf('Invalid %s precision value.', $this->getAbstractType()),
         );
         $this->size = $size;
 
@@ -221,7 +282,7 @@ class SQLServerColumn extends AbstractColumn
             $statement[] = "DEFAULT {$this->quoteDefault($driver)}";
         }
 
-        return implode(' ', $statement);
+        return \implode(' ', $statement);
     }
 
     /**
@@ -255,7 +316,7 @@ class SQLServerColumn extends AbstractColumn
                 //Getting longest value
                 $enumSize = $this->size;
                 foreach ($this->enumValues as $value) {
-                    $enumSize = max($enumSize, strlen($value));
+                    $enumSize = \max($enumSize, \strlen($value));
                 }
 
                 $type = "ALTER COLUMN {$driver->identifier($this->getName())} varchar($enumSize)";
@@ -290,66 +351,10 @@ class SQLServerColumn extends AbstractColumn
         return $operations;
     }
 
-    /**
-     * @psalm-param non-empty-string $table Table name.
-     *
-     * @param DriverInterface $driver SQLServer columns are bit more complex.
-     */
-    public static function createInstance(
-        string $table,
-        array $schema,
-        DriverInterface $driver
-    ): self {
-        $column = new self($table, $schema['COLUMN_NAME'], $driver->getTimezone());
-
-        $column->type = $schema['DATA_TYPE'];
-        $column->nullable = strtoupper($schema['IS_NULLABLE']) === 'YES';
-        $column->defaultValue = $schema['COLUMN_DEFAULT'];
-
-        $column->identity = (bool)$schema['is_identity'];
-
-        $column->size = (int)$schema['CHARACTER_MAXIMUM_LENGTH'];
-        if ($column->size === -1) {
-            $column->size = 0;
-        }
-
-        if ($column->type === 'decimal') {
-            $column->precision = (int)$schema['NUMERIC_PRECISION'];
-            $column->scale = (int)$schema['NUMERIC_SCALE'];
-        }
-
-        if ($column->type === 'datetime2') {
-            $column->size = (int) $schema['DATETIME_PRECISION'];
-        }
-
-        //Normalizing default value
-        $column->normalizeDefault();
-
-        /*
-        * We have to fetch all column constrains cos default and enum check will be included into
-        * them, plus column drop is not possible without removing all constraints.
-        */
-
-        if (!empty($schema['default_object_id'])) {
-            //Looking for default constrain id
-            $column->defaultConstraint = $driver->query(
-                'SELECT [name] FROM [sys].[default_constraints] WHERE [object_id] = ?',
-                [
-                    $schema['default_object_id'],
-                ]
-            )->fetchColumn();
-
-            if (!empty($column->defaultConstraint)) {
-                $column->constrainedDefault = true;
-            }
-        }
-
-        //Potential enum
-        if ($column->type === 'varchar' && !empty($column->size)) {
-            self::resolveEnum($driver, $schema, $column);
-        }
-
-        return $column;
+    protected static function isJson(AbstractColumn $column): ?bool
+    {
+        // In SQL Server, we cannot determine if a column has a JSON type.
+        return $column->getAbstractType() === 'text' ? null : false;
     }
 
     /**
@@ -359,7 +364,7 @@ class SQLServerColumn extends AbstractColumn
     {
         $defaultValue = parent::quoteDefault($driver);
         if ($this->getAbstractType() === 'boolean') {
-            $defaultValue = (string) ((int)$this->defaultValue);
+            $defaultValue = (string) ((int) $this->defaultValue);
         }
 
         return $defaultValue;
@@ -371,7 +376,7 @@ class SQLServerColumn extends AbstractColumn
     protected function enumConstraint(): string
     {
         if (empty($this->enumConstraint)) {
-            $this->enumConstraint = $this->table . '_' . $this->getName() . '_enum_' . uniqid();
+            $this->enumConstraint = $this->table . '_' . $this->getName() . '_enum_' . \uniqid();
         }
 
         return $this->enumConstraint;
@@ -383,16 +388,46 @@ class SQLServerColumn extends AbstractColumn
     protected function defaultConstrain(): string
     {
         if (empty($this->defaultConstraint)) {
-            $this->defaultConstraint = $this->table . '_' . $this->getName() . '_default_' . uniqid();
+            $this->defaultConstraint = $this->table . '_' . $this->getName() . '_default_' . \uniqid();
         }
 
         return $this->defaultConstraint;
     }
 
-    protected static function isJson(AbstractColumn $column): ?bool
-    {
-        // In SQL Server, we cannot determine if a column has a JSON type.
-        return $column->getAbstractType() === 'text' ? null : false;
+    /**
+     * Resolve enum values if any.
+     */
+    private static function resolveEnum(
+        DriverInterface $driver,
+        array $schema,
+        self $column,
+    ): void {
+        $query = 'SELECT object_definition([o].[object_id]) AS [definition], '
+            . "OBJECT_NAME([o].[object_id]) AS [name]\nFROM [sys].[objects] AS [o]\n"
+            . "JOIN [sys].[sysconstraints] AS [c] ON [o].[object_id] = [c].[constid]\n"
+            . "WHERE [type_desc] = 'CHECK_CONSTRAINT' AND [parent_object_id] = ? AND [c].[colid] = ?";
+
+        $constraints = $driver->query($query, [$schema['object_id'], $schema['column_id']]);
+
+        foreach ($constraints as $constraint) {
+            $column->enumConstraint = $constraint['name'];
+            $column->constrainedEnum = true;
+
+            $name = \preg_quote($driver->identifier($column->getName()));
+
+            // we made some assumptions here...
+            if (
+                \preg_match_all(
+                    '/' . $name . '=[\']?([^\']+)[\']?/i',
+                    $constraint['definition'],
+                    $matches,
+                )
+            ) {
+                //Fetching enum values
+                $column->enumValues = $matches[1];
+                \sort($column->enumValues);
+            }
+        }
     }
 
     /**
@@ -409,7 +444,7 @@ class SQLServerColumn extends AbstractColumn
 
         $constrain = $driver->identifier($this->enumConstraint());
         $column = $driver->identifier($this->getName());
-        $enumValues = implode(', ', $enumValues);
+        $enumValues = \implode(', ', $enumValues);
 
         return "CONSTRAINT {$constrain} CHECK ({$column} IN ({$enumValues}))";
     }
@@ -423,60 +458,24 @@ class SQLServerColumn extends AbstractColumn
             return;
         }
 
-        if ($this->defaultValue[0] === '(' && $this->defaultValue[strlen($this->defaultValue) - 1] === ')') {
+        if ($this->defaultValue[0] === '(' && $this->defaultValue[\strlen($this->defaultValue) - 1] === ')') {
             //Cut braces
-            $this->defaultValue = substr($this->defaultValue, 1, -1);
+            $this->defaultValue = \substr($this->defaultValue, 1, -1);
         }
 
-        if (preg_match('/^[\'"].*?[\'"]$/', $this->defaultValue)) {
-            $this->defaultValue = substr($this->defaultValue, 1, -1);
+        if (\preg_match('/^[\'"].*?[\'"]$/', $this->defaultValue)) {
+            $this->defaultValue = \substr($this->defaultValue, 1, -1);
         }
 
         if (
             $this->getType() !== 'string'
             && (
                 $this->defaultValue[0] === '('
-                && $this->defaultValue[strlen($this->defaultValue) - 1] === ')'
+                && $this->defaultValue[\strlen($this->defaultValue) - 1] === ')'
             )
         ) {
             //Cut another braces
-            $this->defaultValue = substr($this->defaultValue, 1, -1);
-        }
-    }
-
-    /**
-     * Resolve enum values if any.
-     */
-    private static function resolveEnum(
-        DriverInterface $driver,
-        array $schema,
-        self $column
-    ): void {
-        $query = 'SELECT object_definition([o].[object_id]) AS [definition], '
-            . "OBJECT_NAME([o].[object_id]) AS [name]\nFROM [sys].[objects] AS [o]\n"
-            . "JOIN [sys].[sysconstraints] AS [c] ON [o].[object_id] = [c].[constid]\n"
-            . "WHERE [type_desc] = 'CHECK_CONSTRAINT' AND [parent_object_id] = ? AND [c].[colid] = ?";
-
-        $constraints = $driver->query($query, [$schema['object_id'], $schema['column_id']]);
-
-        foreach ($constraints as $constraint) {
-            $column->enumConstraint = $constraint['name'];
-            $column->constrainedEnum = true;
-
-            $name = preg_quote($driver->identifier($column->getName()));
-
-            // we made some assumptions here...
-            if (
-                preg_match_all(
-                    '/' . $name . '=[\']?([^\']+)[\']?/i',
-                    $constraint['definition'],
-                    $matches
-                )
-            ) {
-                //Fetching enum values
-                $column->enumValues = $matches[1];
-                sort($column->enumValues);
-            }
+            $this->defaultValue = \substr($this->defaultValue, 1, -1);
         }
     }
 }

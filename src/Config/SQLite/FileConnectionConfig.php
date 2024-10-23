@@ -19,11 +19,10 @@ class FileConnectionConfig extends ConnectionConfig implements ProvidesSourceStr
      * @param string $database The pathname to the SQLite database file.
      *        - In case of keyword ":memory:" {@see MemoryConnectionConfig}.
      *        - In case of empty string value {@see TempFileConnectionConfig}.
-     * @param array $options
      */
     public function __construct(
         public string $database = '',
-        array $options = []
+        array $options = [],
     ) {
         parent::__construct($options);
     }
@@ -41,9 +40,6 @@ class FileConnectionConfig extends ConnectionConfig implements ProvidesSourceStr
         return \sprintf('%s:%s', $this->getName(), $this->database);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getSourceString(): string
     {
         return $this->database;

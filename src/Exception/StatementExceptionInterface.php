@@ -16,7 +16,6 @@ interface StatementExceptionInterface
     /**
      * Get query SQL.
      *
-     * @return string
      */
     public function getQuery(): string;
 }

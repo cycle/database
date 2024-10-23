@@ -14,7 +14,6 @@ namespace Cycle\Database\Query;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Exception\BuilderException;
 use Cycle\Database\Exception\StatementException;
-use Throwable;
 
 /**
  * QueryBuilder classes generate set of control tokens for query compilers, this is query level
@@ -26,33 +25,6 @@ abstract class ActiveQuery implements QueryInterface, \Stringable
 {
     protected ?DriverInterface $driver = null;
     protected ?string $prefix = null;
-
-    public function __toString(): string
-    {
-        $parameters = new QueryParameters();
-
-        return Interpolator::interpolate(
-            $this->sqlStatement($parameters),
-            $parameters->getParameters()
-        );
-    }
-
-    public function __debugInfo(): array
-    {
-        $parameters = new QueryParameters();
-
-        try {
-            $queryString = $this->sqlStatement($parameters);
-        } catch (Throwable $e) {
-            $queryString = "[ERROR: {$e->getMessage()}]";
-        }
-
-        return [
-            'queryString' => Interpolator::interpolate($queryString, $parameters->getParameters()),
-            'parameters'  => $parameters->getParameters(),
-            'driver'      => $this->driver,
-        ];
-    }
 
     public function withDriver(DriverInterface $driver, string $prefix = null): QueryInterface
     {
@@ -85,7 +57,7 @@ abstract class ActiveQuery implements QueryInterface, \Stringable
         return $this->driver->getQueryCompiler()->compile(
             $parameters ?? new QueryParameters(),
             $this->prefix,
-            $this
+            $this,
         );
     }
 
@@ -96,6 +68,33 @@ abstract class ActiveQuery implements QueryInterface, \Stringable
      * @throws StatementException
      */
     abstract public function run(): mixed;
+
+    public function __toString(): string
+    {
+        $parameters = new QueryParameters();
+
+        return Interpolator::interpolate(
+            $this->sqlStatement($parameters),
+            $parameters->getParameters(),
+        );
+    }
+
+    public function __debugInfo(): array
+    {
+        $parameters = new QueryParameters();
+
+        try {
+            $queryString = $this->sqlStatement($parameters);
+        } catch (\Throwable $e) {
+            $queryString = "[ERROR: {$e->getMessage()}]";
+        }
+
+        return [
+            'queryString' => Interpolator::interpolate($queryString, $parameters->getParameters()),
+            'parameters'  => $parameters->getParameters(),
+            'driver'      => $this->driver,
+        ];
+    }
 
     /**
      * Helper methods used to correctly fetch and split identifiers provided by function

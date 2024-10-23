@@ -45,19 +45,6 @@ class Expression implements FragmentInterface
         }
     }
 
-    public function __toString(): string
-    {
-        return 'exp:' . $this->expression;
-    }
-
-    public static function __set_state(array $an_array): self
-    {
-        return new self(
-            $an_array['expression'] ?? $an_array['statement'],
-            ...($an_array['parameters'] ?? [])
-        );
-    }
-
     public function getType(): int
     {
         return CompilerInterface::EXPRESSION;
@@ -69,5 +56,18 @@ class Expression implements FragmentInterface
             'expression' => $this->expression,
             'parameters' => $this->parameters,
         ];
+    }
+
+    public function __toString(): string
+    {
+        return 'exp:' . $this->expression;
+    }
+
+    public static function __set_state(array $an_array): self
+    {
+        return new self(
+            $an_array['expression'] ?? $an_array['statement'],
+            ...($an_array['parameters'] ?? []),
+        );
     }
 }

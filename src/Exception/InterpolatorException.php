@@ -11,6 +11,4 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Exception;
 
-class InterpolatorException extends DBALException
-{
-}
+class InterpolatorException extends DBALException {}

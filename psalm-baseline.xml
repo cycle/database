@@ -230,11 +230,6 @@
       <code><![CDATA[$alias]]></code>
       <code><![CDATA[(string) $name]]></code>
     </ArgumentTypeCoercion>
-    <MissingParamType>
-      <code><![CDATA[$name]]></code>
-      <code><![CDATA[$name]]></code>
-      <code><![CDATA[$value]]></code>
-    </MissingParamType>
     <MixedArgument>
       <code><![CDATA[$boolean]]></code>
       <code><![CDATA[$context]]></code>
@@ -413,7 +408,7 @@
       <code><![CDATA[$union[1]->getTokens()]]></code>
     </MixedArgument>
     <MixedArgumentTypeCoercion>
-      <code><![CDATA[(array)($tokens['return'] ?? [])]]></code>
+      <code><![CDATA[(array) ($tokens['return'] ?? [])]]></code>
     </MixedArgumentTypeCoercion>
     <MixedArrayAccess>
       <code><![CDATA[$boolean]]></code>
@@ -607,7 +602,7 @@
       <code><![CDATA[$isolationLevel]]></code>
     </ArgumentTypeCoercion>
     <InvalidNullableReturnType>
-      <code><![CDATA[PDO|PDOInterface]]></code>
+      <code><![CDATA[\PDO|PDOInterface]]></code>
     </InvalidNullableReturnType>
     <MixedArgument>
       <code><![CDATA[$arguments[0]]]></code>
@@ -707,9 +702,6 @@
     <ArgumentTypeCoercion>
       <code><![CDATA[$path]]></code>
     </ArgumentTypeCoercion>
-    <LessSpecificImplementedReturnType>
-      <code><![CDATA[string]]></code>
-    </LessSpecificImplementedReturnType>
     <PossiblyUndefinedStringArrayOffset>
       <code><![CDATA[$tokens['columns']]]></code>
       <code><![CDATA[$tokens['table']]]></code>
@@ -731,8 +723,8 @@
                 new MySQLSelectQuery(),
                 new InsertQuery(),
                 new MySQLUpdateQuery(),
-                new MySQLDeleteQuery()
-            )
+                new MySQLDeleteQuery(),
+            ),
         )]]></code>
     </UnsafeInstantiation>
   </file>
@@ -808,7 +800,7 @@
       <code><![CDATA[$schema['Extra']]]></code>
       <code><![CDATA[$schema['Field']]]></code>
       <code><![CDATA[$schema['Null']]]></code>
-      <code><![CDATA[is_array($values) ? $values : func_get_args()]]></code>
+      <code><![CDATA[\is_array($values) ? $values : \func_get_args()]]></code>
     </MixedArgument>
     <MixedAssignment>
       <code><![CDATA[$column->type]]></code>
@@ -892,7 +884,7 @@
             'SHOW TABLE STATUS WHERE `Name` = ?',
             [
                 $state->getName(),
-            ]
+            ],
         )->fetch()['Engine']]]></code>
       <code><![CDATA[$this->driver->query('SELECT VERSION() AS version')->fetch()['version']]]></code>
     </MixedArrayAccess>
@@ -946,7 +938,7 @@
       <code><![CDATA[setFetchMode]]></code>
     </MissingReturnType>
     <MissingTemplateParam>
-      <code><![CDATA[IteratorAggregate]]></code>
+      <code><![CDATA[\IteratorAggregate]]></code>
     </MissingTemplateParam>
     <UndefinedAttributeClass>
       <code><![CDATA[ArrayShape]]></code>
@@ -999,11 +991,8 @@
       <code><![CDATA[[]]]></code>
       <code><![CDATA[[]]]></code>
     </InvalidPropertyAssignmentValue>
-    <LessSpecificImplementedReturnType>
-      <code><![CDATA[string]]></code>
-    </LessSpecificImplementedReturnType>
     <MixedInferredReturnType>
-      <code><![CDATA[string|null]]></code>
+      <code><![CDATA[?string]]></code>
     </MixedInferredReturnType>
     <MixedReturnStatement>
       <code><![CDATA[$this->primaryKeys[$name]]]></code>
@@ -1026,8 +1015,8 @@
                 new PostgresSelectQuery(),
                 new PostgresInsertQuery(),
                 new PostgresUpdateQuery(),
-                new PostgresDeleteQuery()
-            )
+                new PostgresDeleteQuery(),
+            ),
         )]]></code>
     </UnsafeInstantiation>
   </file>
@@ -1169,8 +1158,8 @@
       <code><![CDATA[$schema['dtd_identifier']]]></code>
     </MixedOperand>
     <PossiblyFalseOperand>
-      <code><![CDATA[strpos($column->defaultValue, $column->type)]]></code>
-      <code><![CDATA[strpos($this->defaultValue, '::')]]></code>
+      <code><![CDATA[\strpos($column->defaultValue, $column->type)]]></code>
+      <code><![CDATA[\strpos($this->defaultValue, '::')]]></code>
     </PossiblyFalseOperand>
     <PossiblyUndefinedStringArrayOffset>
       <code><![CDATA[$schema['character_maximum_length']]]></code>
@@ -1193,7 +1182,7 @@
             \in_array($this->getAbstractType(), self::SERIAL_TYPES, true)
             && $initial->getDefaultValue() != $this->getDefaultValue()
         )]]></code>
-      <code><![CDATA[(int)$this->size]]></code>
+      <code><![CDATA[(int) $this->size]]></code>
     </RedundantCast>
     <RiskyTruthyFalsyComparison>
       <code><![CDATA[empty($matches[2])]]></code>
@@ -1463,7 +1452,7 @@
       <code><![CDATA[string]]></code>
     </MixedInferredReturnType>
     <MixedReturnStatement>
-      <code><![CDATA[call_user_func_array([$this, 'baseSelect'], func_get_args())]]></code>
+      <code><![CDATA[\call_user_func_array([$this, 'baseSelect'], \func_get_args())]]></code>
     </MixedReturnStatement>
     <PossiblyNullArgument>
       <code><![CDATA[$return]]></code>
@@ -1500,9 +1489,6 @@
     <InvalidArgument>
       <code><![CDATA[$config]]></code>
     </InvalidArgument>
-    <LessSpecificImplementedReturnType>
-      <code><![CDATA[string]]></code>
-    </LessSpecificImplementedReturnType>
     <MixedArgument>
       <code><![CDATA[$type]]></code>
     </MixedArgument>
@@ -1516,7 +1502,7 @@
       <code><![CDATA[$config]]></code>
     </MoreSpecificImplementedParamType>
     <RiskyCast>
-      <code><![CDATA[$driver->getPDO()->getAttribute(PDO::ATTR_SERVER_VERSION)]]></code>
+      <code><![CDATA[$driver->getPDO()->getAttribute(\PDO::ATTR_SERVER_VERSION)]]></code>
     </RiskyCast>
     <StringIncrement>
       <code><![CDATA[$index]]></code>
@@ -1530,8 +1516,8 @@
                 new SQLServerSelectQuery(),
                 new SQLServerInsertQuery(),
                 new SQLServerUpdateQuery(),
-                new SQLServerDeleteQuery()
-            )
+                new SQLServerDeleteQuery(),
+            ),
         )]]></code>
     </UnsafeInstantiation>
   </file>
@@ -1595,7 +1581,7 @@
       <code><![CDATA[$this->defaultValue]]></code>
       <code><![CDATA[$this->defaultValue]]></code>
       <code><![CDATA[$value]]></code>
-      <code><![CDATA[is_array($values) ? $values : func_get_args()]]></code>
+      <code><![CDATA[\is_array($values) ? $values : \func_get_args()]]></code>
     </MixedArgument>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$attributes]]></code>
@@ -1631,13 +1617,13 @@
       <code><![CDATA[$schema['object_id']]]></code>
     </PossiblyUndefinedStringArrayOffset>
     <RedundantCast>
-      <code><![CDATA[(int)$this->size]]></code>
+      <code><![CDATA[(int) $this->size]]></code>
     </RedundantCast>
     <RiskyTruthyFalsyComparison>
-      <code><![CDATA[preg_match_all(
+      <code><![CDATA[\preg_match_all(
                     '/' . $name . '=[\']?([^\']+)[\']?/i',
                     $constraint['definition'],
-                    $matches
+                    $matches,
                 )]]></code>
     </RiskyTruthyFalsyComparison>
     <UndefinedInterfaceMethod>
@@ -1673,14 +1659,14 @@
   </file>
   <file src="src/Driver/SQLServer/Schema/SQLServerIndex.php">
     <MixedArgument>
-      <code><![CDATA[current($schema)['indexName']]]></code>
+      <code><![CDATA[\current($schema)['indexName']]]></code>
     </MixedArgument>
     <MixedArrayAccess>
       <code><![CDATA[$indexColumn['columnName']]]></code>
       <code><![CDATA[$indexColumn['columnName']]]></code>
       <code><![CDATA[$indexColumn['isDescendingKey']]]></code>
-      <code><![CDATA[current($schema)['indexName']]]></code>
-      <code><![CDATA[current($schema)['isUnique']]]></code>
+      <code><![CDATA[\current($schema)['indexName']]]></code>
+      <code><![CDATA[\current($schema)['isUnique']]]></code>
     </MixedArrayAccess>
     <MixedArrayOffset>
       <code><![CDATA[$index->sort[$indexColumn['columnName']]]]></code>
@@ -1792,8 +1778,8 @@
                 new SQLiteSelectQuery(),
                 new InsertQuery(),
                 new SQLiteUpdateQuery(),
-                new SQLiteDeleteQuery()
-            )
+                new SQLiteDeleteQuery(),
+            ),
         )]]></code>
     </UnsafeInstantiation>
   </file>
@@ -1875,11 +1861,8 @@
   <file src="src/Driver/SQLite/Schema/SQLiteForeignKey.php">
     <ArgumentTypeCoercion>
       <code><![CDATA[$table]]></code>
-      <code><![CDATA[(string)$schema['id']]]></code>
+      <code><![CDATA[(string) $schema['id']]]></code>
     </ArgumentTypeCoercion>
-    <LessSpecificImplementedReturnType>
-      <code><![CDATA[string]]></code>
-    </LessSpecificImplementedReturnType>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$this->columns]]></code>
     </MixedArgumentTypeCoercion>
@@ -1898,9 +1881,6 @@
       <code><![CDATA[$schema['table']]]></code>
       <code><![CDATA[$schema['to']]]></code>
     </PossiblyUndefinedStringArrayOffset>
-    <PropertyTypeCoercion>
-      <code><![CDATA[$reference->getName()]]></code>
-    </PropertyTypeCoercion>
     <UndefinedInterfaceMethod>
       <code><![CDATA[identifier]]></code>
     </UndefinedInterfaceMethod>
@@ -2034,7 +2014,7 @@
       <code><![CDATA[getQuery]]></code>
     </PossiblyNullReference>
     <RedundantCast>
-      <code><![CDATA[(int)$e->getCode()]]></code>
+      <code><![CDATA[(int) $e->getCode()]]></code>
     </RedundantCast>
     <UndefinedInterfaceMethod>
       <code><![CDATA[getQuery]]></code>
@@ -2086,7 +2066,7 @@
     <UnsafeInstantiation>
       <code><![CDATA[new static(
             $an_array['expression'] ?? $an_array['statement'],
-            ...($an_array['parameters'] ?? [])
+            ...($an_array['parameters'] ?? []),
         )]]></code>
     </UnsafeInstantiation>
   </file>
@@ -2143,7 +2123,7 @@
     </RiskyTruthyFalsyComparison>
     <TooManyArguments>
       <code><![CDATA[self::escapeStringValue($parameter, "'")]]></code>
-      <code><![CDATA[self::escapeStringValue((string)$parameter, "'")]]></code>
+      <code><![CDATA[self::escapeStringValue((string) $parameter, "'")]]></code>
     </TooManyArguments>
   </file>
   <file src="src/Query/QueryBuilder.php">
@@ -2184,7 +2164,7 @@
       <code><![CDATA[$this->orderBy]]></code>
     </InvalidPropertyAssignmentValue>
     <MissingTemplateParam>
-      <code><![CDATA[IteratorAggregate]]></code>
+      <code><![CDATA[\IteratorAggregate]]></code>
     </MissingTemplateParam>
     <MixedArgument>
       <code><![CDATA[$dir]]></code>
@@ -2316,7 +2296,7 @@
             'datetime', 'timestamp' => $datetime,
             'time' => $datetime->format(static::TIME_FORMAT),
             'date' => $datetime->format(static::DATE_FORMAT),
-            default => $value
+            default => $value,
         }]]></code>
     </InvalidReturnStatement>
     <InvalidReturnType>
@@ -2327,7 +2307,7 @@
       <code><![CDATA[$candidates]]></code>
       <code><![CDATA[$defaultValue]]></code>
       <code><![CDATA[$this->defaultValue]]></code>
-      <code><![CDATA[is_array($values) ? $values : func_get_args()]]></code>
+      <code><![CDATA[\is_array($values) ? $values : \func_get_args()]]></code>
       <code><![CDATA[static::DATE_FORMAT]]></code>
       <code><![CDATA[static::EXCLUDE_FROM_COMPARE]]></code>
       <code><![CDATA[static::TIME_FORMAT]]></code>
@@ -2402,7 +2382,7 @@
     </MixedArgument>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$statement]]></code>
-      <code><![CDATA[array_map([$driver, 'identifier'], $columns)]]></code>
+      <code><![CDATA[\array_map([$driver, 'identifier'], $columns)]]></code>
     </MixedArgumentTypeCoercion>
     <MixedAssignment>
       <code><![CDATA[$name]]></code>
@@ -2493,7 +2473,7 @@
     <MixedReturnStatement>
       <code><![CDATA[\call_user_func_array(
             [$this->column($arguments[0]), $type],
-            \array_slice($arguments, 1)
+            \array_slice($arguments, 1),
         )]]></code>
     </MixedReturnStatement>
     <NullableReturnStatement>

@@ -14,6 +14,4 @@ namespace Cycle\Database\Exception;
 /**
  * Error while compiling query based on builder options.
  */
-class CompilerException extends DBALException
-{
-}
+class CompilerException extends DBALException {}

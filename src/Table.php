@@ -36,21 +36,8 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
      */
     public function __construct(
         protected DatabaseInterface $database,
-        private string $name
-    ) {
-    }
-
-    /**
-     * Bypass call to SelectQuery builder.
-     *
-     * @psalm-param non-empty-string $method
-     *
-     * @return mixed|SelectQuery
-     */
-    public function __call(string $method, array $arguments): mixed
-    {
-        return \call_user_func_array([$this->select(), $method], $arguments);
-    }
+        private string $name,
+    ) {}
 
     /**
      * Get associated database.
@@ -88,7 +75,7 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
             ->getSchemaHandler()
             ->getSchema(
                 $this->name,
-                $this->database->getPrefix()
+                $this->database->getPrefix(),
             );
     }
 
@@ -247,7 +234,6 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
     /**
      * Check if table has index related to set of provided columns. Columns order does matter!
      *
-     * @param array $columns
      */
     public function hasIndex(array $columns = []): bool
     {
@@ -291,5 +277,17 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
     public function getDependencies(): array
     {
         return $this->getSchema()->getDependencies();
+    }
+
+    /**
+     * Bypass call to SelectQuery builder.
+     *
+     * @psalm-param non-empty-string $method
+     *
+     * @return mixed|SelectQuery
+     */
+    public function __call(string $method, array $arguments): mixed
+    {
+        return \call_user_func_array([$this->select(), $method], $arguments);
     }
 }

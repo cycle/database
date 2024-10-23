@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\MySQL;
 
-use PDO;
 use Cycle\Database\Driver\Handler;
 use Cycle\Database\Driver\MySQL\Exception\MySQLException;
 use Cycle\Database\Driver\MySQL\Schema\MySQLTable;
@@ -34,8 +33,8 @@ class MySQLHandler extends Handler
     public function getTableNames(string $prefix = ''): array
     {
         $result = [];
-        foreach ($this->driver->query('SHOW TABLES')->fetchAll(PDO::FETCH_NUM) as $row) {
-            if ($prefix !== '' && !str_starts_with($row[0], $prefix)) {
+        foreach ($this->driver->query('SHOW TABLES')->fetchAll(\PDO::FETCH_NUM) as $row) {
+            if ($prefix !== '' && !\str_starts_with($row[0], $prefix)) {
                 continue;
             }
 
@@ -52,23 +51,23 @@ class MySQLHandler extends Handler
     {
         $query = 'SELECT COUNT(*) FROM `information_schema`.`tables` WHERE `table_schema` = ? AND `table_name` = ?';
 
-        return (bool)$this->driver->query(
+        return (bool) $this->driver->query(
             $query,
-            [$this->driver->getSource(), $table]
+            [$this->driver->getSource(), $table],
         )->fetchColumn();
     }
 
     public function eraseTable(AbstractTable $table): void
     {
         $this->driver->execute(
-            "TRUNCATE TABLE {$this->driver->identifier($table->getFullName())}"
+            "TRUNCATE TABLE {$this->driver->identifier($table->getFullName())}",
         );
     }
 
     public function alterColumn(
         AbstractTable $table,
         AbstractColumn $initial,
-        AbstractColumn $column
+        AbstractColumn $column,
     ): void {
         $foreignBackup = [];
         foreach ($table->getForeignKeys() as $foreign) {
@@ -80,7 +79,7 @@ class MySQLHandler extends Handler
 
         $this->run(
             "ALTER TABLE {$this->identify($table)}
-                    CHANGE {$this->identify($initial)} {$column->sqlStatement($this->driver)}"
+                    CHANGE {$this->identify($initial)} {$column->sqlStatement($this->driver)}",
         );
 
         //Restoring FKs
@@ -92,7 +91,7 @@ class MySQLHandler extends Handler
     public function dropIndex(AbstractTable $table, AbstractIndex $index): void
     {
         $this->run(
-            "DROP INDEX {$this->identify($index)} ON {$this->identify($table)}"
+            "DROP INDEX {$this->identify($index)} ON {$this->identify($table)}",
         );
     }
 
@@ -101,14 +100,14 @@ class MySQLHandler extends Handler
         $this->run(
             "ALTER TABLE {$this->identify($table)}
                     DROP INDEX  {$this->identify($initial)},
-                    ADD {$index->sqlStatement($this->driver, false)}"
+                    ADD {$index->sqlStatement($this->driver, false)}",
         );
     }
 
     public function dropForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void
     {
         $this->run(
-            "ALTER TABLE {$this->identify($table)} DROP FOREIGN KEY {$this->identify($foreignKey)}"
+            "ALTER TABLE {$this->identify($table)} DROP FOREIGN KEY {$this->identify($foreignKey)}",
         );
     }
 
@@ -143,11 +142,11 @@ class MySQLHandler extends Handler
             $column->getDefaultValue() !== null
             && \in_array(
                 $column->getAbstractType(),
-                ['text', 'tinyText', 'longText', 'blob', 'tinyBlob', 'longBlob', 'json']
+                ['text', 'tinyText', 'longText', 'blob', 'tinyBlob', 'longBlob', 'json'],
             )
         ) {
             throw new MySQLException(
-                "Column {$column} of type text/blob/json can not have non empty default value"
+                "Column {$column} of type text/blob/json can not have non empty default value",
             );
         }
     }

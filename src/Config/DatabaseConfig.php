@@ -89,7 +89,7 @@ final class DatabaseConfig extends InjectableConfig
             $database,
             $config['tablePrefix'] ?? $config['prefix'] ?? '',
             $config['connection'] ?? $config['write'] ?? $config['driver'],
-            $config['readConnection'] ?? $config['read'] ?? $config['readDriver'] ?? null
+            $config['readConnection'] ?? $config['read'] ?? $config['readDriver'] ?? null,
         );
     }
 
@@ -123,7 +123,7 @@ final class DatabaseConfig extends InjectableConfig
             \vsprintf('Driver config must be an instance of %s, but %s passed', [
                 DriverConfig::class,
                 \get_debug_type($config),
-            ])
+            ]),
         );
     }
 }

@@ -23,7 +23,7 @@ class CompileJsonContainsKey extends SQLServerJsonExpression
                 '\'%s\' IN (SELECT [key] FROM openjson(%s%s))',
                 \array_shift($key),
                 $this->getField($statement),
-                $this->getPath(\implode('->', $path))
+                $this->getPath(\implode('->', $path)),
             );
         }
 
@@ -33,7 +33,7 @@ class CompileJsonContainsKey extends SQLServerJsonExpression
             '%s IN (SELECT [key] FROM openjson(%s%s))',
             \array_pop($key),
             $this->getField($statement),
-            $this->getPath(\implode('->', $path))
+            $this->getPath(\implode('->', $path)),
         );
     }
 }

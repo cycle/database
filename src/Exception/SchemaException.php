@@ -14,6 +14,4 @@ namespace Cycle\Database\Exception;
 /**
  * Error while building table schema.
  */
-class SchemaException extends DBALException
-{
-}
+class SchemaException extends DBALException {}

@@ -138,9 +138,9 @@ interface DatabaseInterface
      *
      * @param callable(DatabaseInterface): CallbackResult $callback
      *
+     * @return CallbackResult
      * @throws \Throwable
      *
-     * @return CallbackResult
      */
     public function transaction(callable $callback, string $isolationLevel = null): mixed;
 

@@ -16,17 +16,11 @@ namespace Cycle\Database\Exception;
  */
 class HandlerException extends DriverException implements StatementExceptionInterface
 {
-    /**
-     * @param StatementException $e
-     */
     public function __construct(StatementException $e)
     {
-        parent::__construct($e->getMessage(), (int)$e->getCode(), $e);
+        parent::__construct($e->getMessage(), (int) $e->getCode(), $e);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getQuery(): string
     {
         return $this->getPrevious()->getQuery();

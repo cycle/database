@@ -13,6 +13,4 @@ namespace Cycle\Database\Driver\MySQL\Exception;
 
 use Cycle\Database\Exception\DriverException;
 
-class MySQLException extends DriverException
-{
-}
+class MySQLException extends DriverException {}

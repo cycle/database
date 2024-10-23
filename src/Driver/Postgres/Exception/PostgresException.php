@@ -13,6 +13,4 @@ namespace Cycle\Database\Driver\Postgres\Exception;
 
 use Cycle\Database\Exception\DriverException;
 
-class PostgresException extends DriverException
-{
-}
+class PostgresException extends DriverException {}

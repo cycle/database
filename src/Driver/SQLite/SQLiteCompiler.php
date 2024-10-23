@@ -24,7 +24,7 @@ use Cycle\Database\Query\QueryParameters;
 class SQLiteCompiler extends Compiler implements CachingCompilerInterface
 {
     /**
-     * {@inheritdoc}
+     *
      *
      * @link http://stackoverflow.com/questions/10491492/sqllite-with-skip-offset-only-not-limit
      */
@@ -46,12 +46,9 @@ class SQLiteCompiler extends Compiler implements CachingCompilerInterface
             $params->push(new Parameter($offset));
         }
 
-        return trim($statement);
+        return \trim($statement);
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function selectQuery(QueryParameters $params, Quoter $q, array $tokens): string
     {
         // FOR UPDATE is not available
@@ -61,39 +58,39 @@ class SQLiteCompiler extends Compiler implements CachingCompilerInterface
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @see http://stackoverflow.com/questions/1609637/is-it-possible-to-insert-multiple-rows-at-a-time-in-an-sqlite-database
      */
     protected function insertQuery(QueryParameters $params, Quoter $q, array $tokens): string
     {
         if ($tokens['columns'] === []) {
-            return sprintf(
+            return \sprintf(
                 'INSERT INTO %s DEFAULT VALUES',
-                $this->name($params, $q, $tokens['table'], true)
+                $this->name($params, $q, $tokens['table'], true),
             );
         }
 
         // @todo possibly different statement for versions higher than 3.7.11
-        if (count($tokens['values']) === 1) {
+        if (\count($tokens['values']) === 1) {
             return parent::insertQuery($params, $q, $tokens);
         }
 
         // SQLite uses alternative syntax
         $statement = [];
-        $statement[] = sprintf(
+        $statement[] = \sprintf(
             'INSERT INTO %s (%s)',
             $this->name($params, $q, $tokens['table'], true),
-            $this->columns($params, $q, $tokens['columns'])
+            $this->columns($params, $q, $tokens['columns']),
         );
 
         foreach ($tokens['values'] as $rowset) {
-            if (count($statement) !== 1) {
+            if (\count($statement) !== 1) {
                 // It is critically important to use UNION ALL, UNION will try to merge values together
                 // which will cause non predictable insert order
-                $statement[] = sprintf(
+                $statement[] = \sprintf(
                     'UNION ALL SELECT %s',
-                    trim($this->value($params, $q, $rowset), '()')
+                    \trim($this->value($params, $q, $rowset), '()'),
                 );
                 continue;
             }
@@ -104,24 +101,24 @@ class SQLiteCompiler extends Compiler implements CachingCompilerInterface
                 $rowset = $rowset->getValue();
             }
 
-            if (!is_array($rowset)) {
+            if (!\is_array($rowset)) {
                 throw new CompilerException(
-                    'Insert parameter expected to be parametric array'
+                    'Insert parameter expected to be parametric array',
                 );
             }
 
             foreach ($tokens['columns'] as $index => $column) {
-                $selectColumns[] = sprintf(
+                $selectColumns[] = \sprintf(
                     '%s AS %s',
                     $this->value($params, $q, $rowset[$index]),
-                    $this->name($params, $q, $column)
+                    $this->name($params, $q, $column),
                 );
             }
 
-            $statement[] = 'SELECT ' . implode(', ', $selectColumns);
+            $statement[] = 'SELECT ' . \implode(', ', $selectColumns);
         }
 
-        return implode("\n", $statement);
+        return \implode("\n", $statement);
     }
 
     protected function compileJsonOrderBy(string $path): FragmentInterface

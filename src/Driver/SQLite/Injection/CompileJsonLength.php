@@ -23,7 +23,7 @@ class CompileJsonLength extends JsonExpression
     public function __construct(
         string $statement,
         int $length,
-        protected string $operator
+        protected string $operator,
     ) {
         parent::__construct($statement, $length);
     }
@@ -34,7 +34,7 @@ class CompileJsonLength extends JsonExpression
             'json_array_length(%s%s) %s ?',
             $this->getField($statement),
             $this->getPath($statement),
-            $this->operator
+            $this->operator,
         );
     }
 }

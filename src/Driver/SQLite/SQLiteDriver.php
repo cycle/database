@@ -24,34 +24,6 @@ use Cycle\Database\Query\QueryBuilder;
 class SQLiteDriver extends Driver
 {
     /**
-     * @inheritDoc
-     */
-    public function getType(): string
-    {
-        return 'SQLite';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function mapException(\Throwable $exception, string $query): StatementException
-    {
-        if ((int)$exception->getCode() === 23000) {
-            return new StatementException\ConstrainException($exception, $query);
-        }
-
-        return new StatementException($exception, $query);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setIsolationLevel(string $level): void
-    {
-        $this->logger?->alert("Transaction isolation level is not fully supported by SQLite ({$level})");
-    }
-
-    /**
      * @param SQLiteDriverConfig $config
      */
     public static function create(DriverConfig $config): static
@@ -64,8 +36,27 @@ class SQLiteDriver extends Driver
                 new SQLiteSelectQuery(),
                 new InsertQuery(),
                 new SQLiteUpdateQuery(),
-                new SQLiteDeleteQuery()
-            )
+                new SQLiteDeleteQuery(),
+            ),
         );
+    }
+
+    public function getType(): string
+    {
+        return 'SQLite';
+    }
+
+    protected function mapException(\Throwable $exception, string $query): StatementException
+    {
+        if ((int) $exception->getCode() === 23000) {
+            return new StatementException\ConstrainException($exception, $query);
+        }
+
+        return new StatementException($exception, $query);
+    }
+
+    protected function setIsolationLevel(string $level): void
+    {
+        $this->logger?->alert("Transaction isolation level is not fully supported by SQLite ({$level})");
     }
 }

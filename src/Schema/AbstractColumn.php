@@ -14,7 +14,6 @@ namespace Cycle\Database\Schema;
 use Cycle\Database\Driver\Jsoner;
 use Cycle\Database\Schema\Attribute\ColumnAttribute;
 use Cycle\Database\Schema\Traits\ColumnAttributesTrait;
-use DateTimeImmutable;
 use Cycle\Database\ColumnInterface;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Exception\DefaultValueException;
@@ -72,6 +71,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      * Normalization for time and dates.
      */
     public const DATE_FORMAT = 'Y-m-d';
+
     public const TIME_FORMAT = 'H:i:s';
     public const DATETIME_PRECISION = 6;
 
@@ -250,82 +250,9 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     public function __construct(
         protected string $table,
         protected string $name,
-        \DateTimeZone $timezone = null
+        \DateTimeZone $timezone = null,
     ) {
-        $this->timezone = $timezone ?? new \DateTimeZone(date_default_timezone_get());
-    }
-
-    /**
-     * Shortcut for AbstractColumn->type() method.
-     *
-     * @psalm-param non-empty-string $name
-     */
-    public function __call(string $name, array $arguments = []): self
-    {
-        if (isset($this->aliases[$name]) || isset($this->mapping[$name])) {
-            $this->type($name);
-        }
-
-        // The type must be set before the attributes are filled.
-        !empty($this->type) or throw new SchemaException('Undefined abstract/virtual type');
-
-        if (\count($arguments) === 1 && \key($arguments) === 0) {
-            if (\array_key_exists($name, $this->getAttributesMap())) {
-                $this->fillAttributes([$name => $arguments[0]]);
-                return $this;
-            }
-        }
-
-        $this->fillAttributes($arguments);
-
-        return $this;
-    }
-
-    public function __toString(): string
-    {
-        return $this->table . '.' . $this->getName();
-    }
-
-    /**
-     * Simplified way to dump information.
-     */
-    public function __debugInfo(): array
-    {
-        $column = [
-            'name' => $this->name,
-            'type' => [
-                'database' => $this->type,
-                'schema'   => $this->getAbstractType(),
-                'php'      => $this->getType(),
-            ],
-        ];
-
-        if (!empty($this->size)) {
-            $column['size'] = $this->size;
-        }
-
-        if ($this->nullable) {
-            $column['nullable'] = true;
-        }
-
-        if ($this->defaultValue !== null) {
-            $column['defaultValue'] = $this->getDefaultValue();
-        }
-
-        if (static::isEnum($this)) {
-            $column['enumValues'] = $this->enumValues;
-        }
-
-        if ($this->getAbstractType() === 'decimal') {
-            $column['precision'] = $this->precision;
-            $column['scale'] = $this->scale;
-        }
-
-        if ($this->attributes !== []) {
-            $column['attributes'] = $this->attributes;
-        }
-
-        return $column;
+        $this->timezone = $timezone ?? new \DateTimeZone(\date_default_timezone_get());
     }
 
     public function getSize(): int
@@ -374,9 +301,9 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         return match ($this->getType()) {
             'int' => (int) $this->defaultValue,
             'float' => (float) $this->defaultValue,
-            'bool' => \is_string($this->defaultValue) && strtolower($this->defaultValue) === 'false'
+            'bool' => \is_string($this->defaultValue) && \strtolower($this->defaultValue) === 'false'
                 ? false : (bool) $this->defaultValue,
-            default => (string)$this->defaultValue
+            default => (string) $this->defaultValue,
         };
     }
 
@@ -436,14 +363,14 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         foreach ($this->reverseMapping as $type => $candidates) {
             foreach ($candidates as $candidate) {
                 if (\is_string($candidate)) {
-                    if (strtolower($candidate) === strtolower($this->type)) {
+                    if (\strtolower($candidate) === \strtolower($this->type)) {
                         return $type;
                     }
 
                     continue;
                 }
 
-                if (strtolower($candidate['type']) !== strtolower($this->type)) {
+                if (\strtolower($candidate['type']) !== \strtolower($this->type)) {
                     continue;
                 }
 
@@ -531,7 +458,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         $this->defaultValue = match (true) {
             $value === self::DATETIME_NOW => static::DATETIME_NOW,
             static::isJson($this) !== false && \is_array($value) => Jsoner::toJson($value),
-            default => $value
+            default => $value,
         };
 
         return $this;
@@ -550,9 +477,9 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     public function enum(string|array $values): self
     {
         $this->type('enum');
-        $this->enumValues = array_map(
+        $this->enumValues = \array_map(
             'strval',
-            is_array($values) ? $values : func_get_args()
+            \is_array($values) ? $values : \func_get_args(),
         );
 
         return $this;
@@ -589,7 +516,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         $this->fillAttributes($attributes);
 
         ($size < 0 || $size > static::DATETIME_PRECISION) && throw new SchemaException(
-            \sprintf('Invalid %s precision value.', $this->getAbstractType())
+            \sprintf('Invalid %s precision value.', $this->getAbstractType()),
         );
         $this->size = $size;
 
@@ -646,8 +573,8 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
             return true;
         }
 
-        $columnVars = get_object_vars($this);
-        $dbColumnVars = get_object_vars($normalized);
+        $columnVars = \get_object_vars($this);
+        $dbColumnVars = \get_object_vars($normalized);
 
         $difference = [];
         foreach ($columnVars as $name => $value) {
@@ -697,6 +624,94 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     }
 
     /**
+     * Shortcut for AbstractColumn->type() method.
+     *
+     * @psalm-param non-empty-string $name
+     */
+    public function __call(string $name, array $arguments = []): self
+    {
+        if (isset($this->aliases[$name]) || isset($this->mapping[$name])) {
+            $this->type($name);
+        }
+
+        // The type must be set before the attributes are filled.
+        !empty($this->type) or throw new SchemaException('Undefined abstract/virtual type');
+
+        if (\count($arguments) === 1 && \key($arguments) === 0) {
+            if (\array_key_exists($name, $this->getAttributesMap())) {
+                $this->fillAttributes([$name => $arguments[0]]);
+                return $this;
+            }
+        }
+
+        $this->fillAttributes($arguments);
+
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->table . '.' . $this->getName();
+    }
+
+    /**
+     * Simplified way to dump information.
+     */
+    public function __debugInfo(): array
+    {
+        $column = [
+            'name' => $this->name,
+            'type' => [
+                'database' => $this->type,
+                'schema'   => $this->getAbstractType(),
+                'php'      => $this->getType(),
+            ],
+        ];
+
+        if (!empty($this->size)) {
+            $column['size'] = $this->size;
+        }
+
+        if ($this->nullable) {
+            $column['nullable'] = true;
+        }
+
+        if ($this->defaultValue !== null) {
+            $column['defaultValue'] = $this->getDefaultValue();
+        }
+
+        if (static::isEnum($this)) {
+            $column['enumValues'] = $this->enumValues;
+        }
+
+        if ($this->getAbstractType() === 'decimal') {
+            $column['precision'] = $this->precision;
+            $column['scale'] = $this->scale;
+        }
+
+        if ($this->attributes !== []) {
+            $column['attributes'] = $this->attributes;
+        }
+
+        return $column;
+    }
+
+    protected static function isEnum(self $column): bool
+    {
+        return $column->getAbstractType() === 'enum';
+    }
+
+    /**
+     * Checks if the column is JSON or no.
+     *
+     * Returns null if it's impossible to explicitly define the JSON type.
+     */
+    protected static function isJson(self $column): ?bool
+    {
+        return $column->getAbstractType() === 'json';
+    }
+
+    /**
      * Get database specific enum type definition options.
      */
     protected function quoteEnum(DriverInterface $driver): string
@@ -706,7 +721,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
             $enumValues[] = $driver->quote($value);
         }
 
-        return !empty($enumValues) ? '(' . implode(', ', $enumValues) . ')' : '';
+        return !empty($enumValues) ? '(' . \implode(', ', $enumValues) . ')' : '';
     }
 
     /**
@@ -723,15 +738,15 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
             return $driver->getQueryCompiler()->compile(
                 new QueryParameters(),
                 '',
-                $defaultValue
+                $defaultValue,
             );
         }
 
         return match ($this->getType()) {
             'bool' => $defaultValue ? 'TRUE' : 'FALSE',
-            'float' => sprintf('%F', $defaultValue),
+            'float' => \sprintf('%F', $defaultValue),
             'int' => (string) $defaultValue,
-            default => $driver->quote($defaultValue)
+            default => $driver->quote($defaultValue),
         };
     }
 
@@ -744,7 +759,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
      */
     protected function formatDatetime(
         string $type,
-        string|int|\DateTimeInterface $value
+        string|int|\DateTimeInterface $value,
     ): \DateTimeInterface|FragmentInterface|string {
         if ($value === static::DATETIME_NOW) {
             //Dynamic default value
@@ -754,12 +769,12 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         if ($value instanceof \DateTimeInterface) {
             $datetime = clone $value;
         } else {
-            if (is_numeric($value)) {
+            if (\is_numeric($value)) {
                 //Presumably timestamp
-                $datetime = new DateTimeImmutable('now', $this->timezone);
+                $datetime = new \DateTimeImmutable('now', $this->timezone);
                 $datetime = $datetime->setTimestamp($value);
             } else {
-                $datetime = new DateTimeImmutable($value, $this->timezone);
+                $datetime = new \DateTimeImmutable($value, $this->timezone);
             }
         }
 
@@ -767,22 +782,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
             'datetime', 'timestamp' => $datetime,
             'time' => $datetime->format(static::TIME_FORMAT),
             'date' => $datetime->format(static::DATE_FORMAT),
-            default => $value
+            default => $value,
         };
-    }
-
-    protected static function isEnum(self $column): bool
-    {
-        return $column->getAbstractType() === 'enum';
-    }
-
-    /**
-     * Checks if the column is JSON or no.
-     *
-     * Returns null if it's impossible to explicitly define the JSON type.
-     */
-    protected static function isJson(self $column): ?bool
-    {
-        return $column->getAbstractType() === 'json';
     }
 }

@@ -41,7 +41,6 @@ class MySQLColumn extends AbstractColumn
     public const DATETIME_NOW = 'CURRENT_TIMESTAMP';
 
     public const EXCLUDE_FROM_COMPARE = ['size', 'timezone', 'userType', 'attributes'];
-
     protected const INTEGER_TYPES = ['tinyint', 'smallint', 'mediumint', 'int', 'bigint'];
 
     protected array $mapping = [
@@ -113,7 +112,6 @@ class MySQLColumn extends AbstractColumn
         'json'        => 'json',
         'uuid'        => ['type' => 'varchar', 'size' => 36],
     ];
-
     protected array $reverseMapping = [
         'primary'     => [['type' => 'int', 'autoIncrement' => true]],
         'bigPrimary'  => ['serial', ['type' => 'bigint', 'size' => 20, 'autoIncrement' => true]],
@@ -157,7 +155,7 @@ class MySQLColumn extends AbstractColumn
     ];
 
     #[ColumnAttribute(
-        ['int', 'tinyint', 'smallint', 'bigint', 'varchar', 'varbinary', 'time', 'datetime', 'timestamp']
+        ['int', 'tinyint', 'smallint', 'bigint', 'varchar', 'varbinary', 'time', 'datetime', 'timestamp'],
     )]
     protected int $size = 0;
 
@@ -180,32 +178,6 @@ class MySQLColumn extends AbstractColumn
     protected bool $zerofill = false;
 
     /**
-     * @psalm-return non-empty-string
-     */
-    public function sqlStatement(DriverInterface $driver): string
-    {
-        if (\in_array($this->type, self::INTEGER_TYPES, true)) {
-            return $this->sqlStatementInteger($driver);
-        }
-
-        $defaultValue = $this->defaultValue;
-
-        if (\in_array($this->type, $this->forbiddenDefaults, true)) {
-            //Flushing default value for forbidden types
-            $this->defaultValue = null;
-        }
-
-        $statement = parent::sqlStatement($driver);
-
-        $this->defaultValue = $defaultValue;
-        if ($this->autoIncrement) {
-            return "{$statement} AUTO_INCREMENT";
-        }
-
-        return $statement;
-    }
-
-    /**
      * @psalm-param non-empty-string $table
      */
     public static function createInstance(string $table, array $schema, \DateTimeZone $timezone = null): self
@@ -213,15 +185,15 @@ class MySQLColumn extends AbstractColumn
         $column = new self($table, $schema['Field'], $timezone);
 
         $column->type = $schema['Type'];
-        $column->nullable = strtolower($schema['Null']) === 'yes';
+        $column->nullable = \strtolower($schema['Null']) === 'yes';
         $column->defaultValue = $schema['Default'];
-        $column->autoIncrement = stripos($schema['Extra'], 'auto_increment') !== false;
+        $column->autoIncrement = \stripos($schema['Extra'], 'auto_increment') !== false;
 
         if (
-            !preg_match(
+            !\preg_match(
                 '/^(?P<type>[a-z]+)(?:\((?P<options>[^)]+)\))?(?: (?P<attr>[a-z ]+))?/',
                 $column->type,
-                $matches
+                $matches,
             )
         ) {
             //No extra definitions
@@ -234,17 +206,17 @@ class MySQLColumn extends AbstractColumn
         if (!empty($matches['options'])) {
             $options = \explode(',', $matches['options']);
 
-            if (count($options) > 1) {
-                $column->precision = (int)$options[0];
-                $column->scale = (int)$options[1];
+            if (\count($options) > 1) {
+                $column->precision = (int) $options[0];
+                $column->scale = (int) $options[1];
             } else {
-                $column->size = (int)$options[0];
+                $column->size = (int) $options[0];
             }
         }
 
         if (!empty($matches['attr'])) {
             if (\in_array($column->type, self::INTEGER_TYPES, true)) {
-                $intAttr = array_map('trim', explode(' ', $matches['attr']));
+                $intAttr = \array_map('trim', \explode(' ', $matches['attr']));
                 if (\in_array('unsigned', $intAttr, true)) {
                     $column->unsigned = true;
                 }
@@ -275,7 +247,7 @@ class MySQLColumn extends AbstractColumn
 
         //Fetching enum and set values
         if ($options !== [] && static::isEnum($column)) {
-            $column->enumValues = \array_map(static fn ($value) => trim($value, $value[0]), $options);
+            $column->enumValues = \array_map(static fn($value) => \trim($value, $value[0]), $options);
 
             return $column;
         }
@@ -295,6 +267,32 @@ class MySQLColumn extends AbstractColumn
         }
 
         return $column;
+    }
+
+    /**
+     * @psalm-return non-empty-string
+     */
+    public function sqlStatement(DriverInterface $driver): string
+    {
+        if (\in_array($this->type, self::INTEGER_TYPES, true)) {
+            return $this->sqlStatementInteger($driver);
+        }
+
+        $defaultValue = $this->defaultValue;
+
+        if (\in_array($this->type, $this->forbiddenDefaults, true)) {
+            //Flushing default value for forbidden types
+            $this->defaultValue = null;
+        }
+
+        $statement = parent::sqlStatement($driver);
+
+        $this->defaultValue = $defaultValue;
+        if ($this->autoIncrement) {
+            return "{$statement} AUTO_INCREMENT";
+        }
+
+        return $statement;
     }
 
     public function compare(AbstractColumn $initial): bool
@@ -321,7 +319,7 @@ class MySQLColumn extends AbstractColumn
     public function set(string|array $values): self
     {
         $this->type('set');
-        $this->enumValues = array_map('strval', is_array($values) ? $values : func_get_args());
+        $this->enumValues = \array_map('strval', \is_array($values) ? $values : \func_get_args());
 
         return $this;
     }
@@ -357,6 +355,11 @@ class MySQLColumn extends AbstractColumn
         return $this;
     }
 
+    protected static function isEnum(AbstractColumn $column): bool
+    {
+        return $column->getAbstractType() === 'enum' || $column->getAbstractType() === 'set';
+    }
+
     /**
      * Ensure that datetime fields are correctly formatted.
      *
@@ -366,18 +369,13 @@ class MySQLColumn extends AbstractColumn
      */
     protected function formatDatetime(
         string $type,
-        string|int|\DateTimeInterface $value
+        string|int|\DateTimeInterface $value,
     ): \DateTimeInterface|FragmentInterface|string {
         if ($value === 'current_timestamp()') {
             $value = self::DATETIME_NOW;
         }
 
         return parent::formatDatetime($type, $value);
-    }
-
-    protected static function isEnum(AbstractColumn $column): bool
-    {
-        return $column->getAbstractType() === 'enum' || $column->getAbstractType() === 'set';
     }
 
     private function sqlStatementInteger(DriverInterface $driver): string
@@ -391,7 +389,7 @@ class MySQLColumn extends AbstractColumn
             $this->zerofill ? ' ZEROFILL' : '',
             $this->nullable ? ' NULL' : ' NOT NULL',
             $this->defaultValue !== null ? " DEFAULT {$this->quoteDefault($driver)}" : '',
-            $this->autoIncrement ? ' AUTO_INCREMENT' : ''
+            $this->autoIncrement ? ' AUTO_INCREMENT' : '',
         );
     }
 }

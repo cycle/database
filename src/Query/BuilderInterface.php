@@ -19,7 +19,6 @@ use Cycle\Database\Driver\DriverInterface;
 interface BuilderInterface
 {
     /**
-     * @param DriverInterface $driver
      *
      * @return $this|BuilderInterface
      */
@@ -28,58 +27,36 @@ interface BuilderInterface
     /**
      * Get InsertQuery builder with driver specific query compiler.
      *
-     * @param string      $prefix
-     * @param string|null $table
-     *
-     * @return InsertQuery
      */
     public function insertQuery(
         string $prefix,
-        string $table = null
+        string $table = null,
     ): InsertQuery;
 
     /**
      * Get SelectQuery builder with driver specific query compiler.
      *
-     * @param string $prefix
-     * @param array  $from
-     * @param array  $columns
-     *
-     * @return SelectQuery
      */
     public function selectQuery(
         string $prefix,
         array $from = [],
-        array $columns = []
+        array $columns = [],
     ): SelectQuery;
 
-    /**
-     * @param string      $prefix
-     * @param string|null $from
-     * @param array       $where
-     *
-     * @return DeleteQuery
-     */
     public function deleteQuery(
         string $prefix,
         string $from = null,
-        array $where = []
+        array $where = [],
     ): DeleteQuery;
 
     /**
      * Get UpdateQuery builder with driver specific query compiler.
      *
-     * @param string      $prefix
-     * @param string|null $table
-     * @param array       $where
-     * @param array       $values
-     *
-     * @return UpdateQuery
      */
     public function updateQuery(
         string $prefix,
         string $table = null,
         array $where = [],
-        array $values = []
+        array $values = [],
     ): UpdateQuery;
 }

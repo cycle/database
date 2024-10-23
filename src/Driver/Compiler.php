@@ -19,9 +19,9 @@ use Cycle\Database\Query\QueryParameters;
 
 abstract class Compiler implements CompilerInterface
 {
-    private Quoter $quoter;
-
     protected const ORDER_OPTIONS = ['ASC', 'DESC'];
+
+    private Quoter $quoter;
 
     /**
      * @psalm-param non-empty-string $quotes
@@ -47,13 +47,13 @@ abstract class Compiler implements CompilerInterface
     public function compile(
         QueryParameters $params,
         string $prefix,
-        FragmentInterface $fragment
+        FragmentInterface $fragment,
     ): string {
         return $this->fragment(
             $params,
             $this->quoter->withPrefix($prefix),
             $fragment,
-            false
+            false,
         );
     }
 
@@ -80,7 +80,7 @@ abstract class Compiler implements CompilerInterface
         QueryParameters $params,
         Quoter $q,
         FragmentInterface $fragment,
-        bool $nestedQuery = true
+        bool $nestedQuery = true,
     ): string {
         $tokens = $fragment->getTokens();
 
@@ -114,13 +114,13 @@ abstract class Compiler implements CompilerInterface
                     if ($fragment->getPrefix() !== null) {
                         $q = $q->withPrefix(
                             $fragment->getPrefix(),
-                            true
+                            true,
                         );
                     }
 
-                    return sprintf(
+                    return \sprintf(
                         '(%s)',
-                        $this->selectQuery($params, $q, $tokens)
+                        $this->selectQuery($params, $q, $tokens),
                     );
                 }
 
@@ -134,10 +134,10 @@ abstract class Compiler implements CompilerInterface
         }
 
         throw new CompilerException(
-            sprintf(
+            \sprintf(
                 'Unknown fragment type %s',
-                $fragment->getType()
-            )
+                $fragment->getType(),
+            ),
         );
     }
 
@@ -152,17 +152,17 @@ abstract class Compiler implements CompilerInterface
         }
 
         if ($tokens['columns'] === []) {
-            return sprintf(
+            return \sprintf(
                 'INSERT INTO %s DEFAULT VALUES',
-                $this->name($params, $q, $tokens['table'], true)
+                $this->name($params, $q, $tokens['table'], true),
             );
         }
 
-        return sprintf(
+        return \sprintf(
             'INSERT INTO %s (%s) VALUES %s',
             $this->name($params, $q, $tokens['table'], true),
             $this->columns($params, $q, $tokens['columns']),
-            implode(', ', $values)
+            \implode(', ', $values),
         );
     }
 
@@ -180,7 +180,7 @@ abstract class Compiler implements CompilerInterface
             $this->nameWithAlias(new QueryParameters(), $q, $join['outer'], $join['alias'], true);
         }
 
-        return sprintf(
+        return \sprintf(
             "SELECT%s %s\nFROM %s%s%s%s%s%s%s%s%s%s%s",
             $this->optional(' ', $this->distinct($params, $q, $tokens['distinct'])),
             $this->columns($params, $q, $tokens['columns']),
@@ -194,7 +194,7 @@ abstract class Compiler implements CompilerInterface
             $this->optional("\n", $this->excepts($params, $q, $tokens['except'])),
             $this->optional("\nORDER BY", $this->orderBy($params, $q, $tokens['orderBy'])),
             $this->optional("\n", $this->limit($params, $q, $tokens['limit'], $tokens['offset'])),
-            $this->optional(' ', $tokens['forUpdate'] ? 'FOR UPDATE' : '')
+            $this->optional(' ', $tokens['forUpdate'] ? 'FOR UPDATE' : ''),
         );
     }
 
@@ -207,15 +207,15 @@ abstract class Compiler implements CompilerInterface
     {
         $statement = '';
         foreach ($joins as $join) {
-            $statement .= sprintf(
+            $statement .= \sprintf(
                 \str_contains($join['type'], 'JOIN') ? "\n%s %s" : "\n%s JOIN %s",
                 $join['type'],
-                $this->nameWithAlias($params, $q, $join['outer'], $join['alias'], true)
+                $this->nameWithAlias($params, $q, $join['outer'], $join['alias'], true),
             );
 
             $statement .= $this->optional(
                 "\n    ON",
-                $this->where($params, $q, $join['on'])
+                $this->where($params, $q, $join['on']),
             );
         }
 
@@ -330,28 +330,28 @@ abstract class Compiler implements CompilerInterface
         QueryParameters $params,
         Quoter $q,
         int $limit = null,
-        int $offset = null
+        int $offset = null,
     ): string;
 
     protected function updateQuery(
         QueryParameters $parameters,
         Quoter $quoter,
-        array $tokens
+        array $tokens,
     ): string {
         $values = [];
         foreach ($tokens['values'] as $column => $value) {
-            $values[] = sprintf(
+            $values[] = \sprintf(
                 '%s = %s',
                 $this->name($parameters, $quoter, $column),
-                $this->value($parameters, $quoter, $value)
+                $this->value($parameters, $quoter, $value),
             );
         }
 
-        return sprintf(
+        return \sprintf(
             "UPDATE %s\nSET %s%s",
             $this->name($parameters, $quoter, $tokens['table'], true),
-            trim(implode(', ', $values)),
-            $this->optional("\nWHERE", $this->where($parameters, $quoter, $tokens['where']))
+            \trim(\implode(', ', $values)),
+            $this->optional("\nWHERE", $this->where($parameters, $quoter, $tokens['where'])),
         );
     }
 
@@ -361,20 +361,21 @@ abstract class Compiler implements CompilerInterface
     protected function deleteQuery(
         QueryParameters $parameters,
         Quoter $quoter,
-        array $tokens
+        array $tokens,
     ): string {
-        return sprintf(
+        return \sprintf(
             'DELETE FROM %s%s',
             $this->name($parameters, $quoter, $tokens['table'], true),
             $this->optional(
                 "\nWHERE",
-                $this->where($parameters, $quoter, $tokens['where'])
-            )
+                $this->where($parameters, $quoter, $tokens['where']),
+            ),
         );
     }
 
     /**
      * @psalm-return non-empty-string
+     * @param mixed $name
      */
     protected function name(QueryParameters $params, Quoter $q, $name, bool $table = false): string
     {
@@ -391,6 +392,7 @@ abstract class Compiler implements CompilerInterface
 
     /**
      * @psalm-return non-empty-string
+     * @param mixed $name
      */
     protected function nameWithAlias(
         QueryParameters $params,
@@ -416,18 +418,19 @@ abstract class Compiler implements CompilerInterface
     protected function columns(QueryParameters $params, Quoter $q, array $columns, int $maxLength = 180): string
     {
         // let's quote every identifier
-        $columns = array_map(
+        $columns = \array_map(
             function ($column) use ($params, $q) {
                 return $this->name($params, $q, $column);
             },
-            $columns
+            $columns,
         );
 
-        return wordwrap(implode(', ', $columns), $maxLength);
+        return \wordwrap(\implode(', ', $columns), $maxLength);
     }
 
     /**
      * @psalm-return non-empty-string
+     * @param mixed $value
      */
     protected function value(QueryParameters $params, Quoter $q, $value): string
     {
@@ -445,7 +448,7 @@ abstract class Compiler implements CompilerInterface
                 $values[] = $this->value($params, $q, $child);
             }
 
-            return '(' . implode(', ', $values) . ')';
+            return '(' . \implode(', ', $values) . ')';
         }
 
         $params->push($value);
@@ -510,7 +513,7 @@ abstract class Compiler implements CompilerInterface
 
         $activeGroup and throw new CompilerException('Unable to build where statement, unclosed where group');
 
-        if (trim($statement, ' ()') === '') {
+        if (\trim($statement, ' ()') === '') {
             return '';
         }
 

@@ -29,14 +29,11 @@ class SocketConnectionConfig extends ConnectionConfig implements ProvidesSourceS
         public ?string $charset = null,
         ?string $user = null,
         ?string $password = null,
-        array $options = []
+        array $options = [],
     ) {
         parent::__construct($user, $password, $options);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getSourceString(): string
     {
         return $this->database;

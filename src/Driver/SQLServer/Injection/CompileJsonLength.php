@@ -21,7 +21,7 @@ class CompileJsonLength extends SQLServerJsonExpression
     public function __construct(
         string $statement,
         int $length,
-        protected string $operator
+        protected string $operator,
     ) {
         parent::__construct($statement, $length);
     }
@@ -32,7 +32,7 @@ class CompileJsonLength extends SQLServerJsonExpression
             '(SELECT count(*) FROM openjson(%s%s)) %s ?',
             $this->getField($statement),
             $this->getPath($statement),
-            $this->operator
+            $this->operator,
         );
     }
 }

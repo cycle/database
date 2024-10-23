@@ -55,7 +55,7 @@ abstract class Handler implements HandlerInterface
     public function dropTable(AbstractTable $table): void
     {
         $this->run(
-            "DROP TABLE {$this->identify($table->getInitialName())}"
+            "DROP TABLE {$this->identify($table->getInitialName())}",
         );
     }
 
@@ -83,14 +83,14 @@ abstract class Handler implements HandlerInterface
     public function renameTable(string $table, string $name): void
     {
         $this->run(
-            "ALTER TABLE {$this->identify($table)} RENAME TO {$this->identify($name)}"
+            "ALTER TABLE {$this->identify($table)} RENAME TO {$this->identify($name)}",
         );
     }
 
     public function createColumn(AbstractTable $table, AbstractColumn $column): void
     {
         $this->run(
-            "ALTER TABLE {$this->identify($table)} ADD COLUMN {$column->sqlStatement($this->driver)}"
+            "ALTER TABLE {$this->identify($table)} ADD COLUMN {$column->sqlStatement($this->driver)}",
         );
     }
 
@@ -102,7 +102,7 @@ abstract class Handler implements HandlerInterface
         }
 
         $this->run(
-            "ALTER TABLE {$this->identify($table)} DROP COLUMN {$this->identify($column)}"
+            "ALTER TABLE {$this->identify($table)} DROP COLUMN {$this->identify($column)}",
         );
     }
 
@@ -119,7 +119,7 @@ abstract class Handler implements HandlerInterface
     public function alterIndex(
         AbstractTable $table,
         AbstractIndex $initial,
-        AbstractIndex $index
+        AbstractIndex $index,
     ): void {
         $this->dropIndex($table, $initial);
         $this->createIndex($table, $index);
@@ -128,7 +128,7 @@ abstract class Handler implements HandlerInterface
     public function createForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void
     {
         $this->run(
-            "ALTER TABLE {$this->identify($table)} ADD {$foreignKey->sqlStatement($this->driver)}"
+            "ALTER TABLE {$this->identify($table)} ADD {$foreignKey->sqlStatement($this->driver)}",
         );
     }
 
@@ -140,7 +140,7 @@ abstract class Handler implements HandlerInterface
     public function alterForeignKey(
         AbstractTable $table,
         AbstractForeignKey $initial,
-        AbstractForeignKey $foreignKey
+        AbstractForeignKey $foreignKey,
     ): void {
         $this->dropForeignKey($table, $initial);
         $this->createForeignKey($table, $foreignKey);
@@ -149,7 +149,7 @@ abstract class Handler implements HandlerInterface
     public function dropConstrain(AbstractTable $table, string $constraint): void
     {
         $this->run(
-            "ALTER TABLE {$this->identify($table)} DROP CONSTRAINT {$this->identify($constraint)}"
+            "ALTER TABLE {$this->identify($table)} DROP CONSTRAINT {$this->identify($constraint)}",
         );
     }
 
@@ -169,9 +169,9 @@ abstract class Handler implements HandlerInterface
 
         //Primary key
         if ($table->getPrimaryKeys() !== []) {
-            $primaryKeys = array_map([$this, 'identify'], $table->getPrimaryKeys());
+            $primaryKeys = \array_map([$this, 'identify'], $table->getPrimaryKeys());
 
-            $innerStatement[] = 'PRIMARY KEY (' . implode(', ', $primaryKeys) . ')';
+            $innerStatement[] = 'PRIMARY KEY (' . \implode(', ', $primaryKeys) . ')';
         }
 
         //Constraints and foreign keys
@@ -179,16 +179,16 @@ abstract class Handler implements HandlerInterface
             $innerStatement[] = $reference->sqlStatement($this->driver);
         }
 
-        $statement[] = '    ' . implode(",\n    ", $innerStatement);
+        $statement[] = '    ' . \implode(",\n    ", $innerStatement);
         $statement[] = ')';
 
-        return implode("\n", $statement);
+        return \implode("\n", $statement);
     }
 
     protected function executeChanges(
         AbstractTable $table,
         int $operation,
-        ComparatorInterface $comparator
+        ComparatorInterface $comparator,
     ): void {
         //Remove all non needed table constraints
         $this->dropConstrains($table, $operation, $comparator);
@@ -341,7 +341,7 @@ abstract class Handler implements HandlerInterface
     protected function dropConstrains(
         AbstractTable $table,
         int $operation,
-        ComparatorInterface $comparator
+        ComparatorInterface $comparator,
     ): void {
         if ($operation & self::DROP_FOREIGN_KEYS) {
             $this->dropForeignKeys($table, $comparator);
@@ -359,7 +359,7 @@ abstract class Handler implements HandlerInterface
     protected function setConstrains(
         AbstractTable $table,
         int $operation,
-        ComparatorInterface $comparator
+        ComparatorInterface $comparator,
     ): void {
         if ($operation & self::CREATE_INDEXES) {
             $this->createIndexes($table, $comparator);

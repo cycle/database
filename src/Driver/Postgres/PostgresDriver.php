@@ -22,7 +22,6 @@ use Cycle\Database\Driver\Postgres\Query\PostgresUpdateQuery;
 use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Query\QueryBuilder;
-use Throwable;
 
 /**
  * Talks to postgres databases.
@@ -33,7 +32,6 @@ class PostgresDriver extends Driver
      * Cached list of primary keys associated with their table names. Used by InsertBuilder to
      * emulate last insert id.
      *
-     * @var array
      */
     private array $primaryKeys = [];
 
@@ -56,8 +54,27 @@ class PostgresDriver extends Driver
     private array $searchSchemas = [];
 
     /**
-     * @return string
+     * @param PostgresDriverConfig $config
      */
+    public static function create(DriverConfig $config): static
+    {
+        $driver = new static(
+            $config,
+            new PostgresHandler(),
+            new PostgresCompiler('""'),
+            new QueryBuilder(
+                new PostgresSelectQuery(),
+                new PostgresInsertQuery(),
+                new PostgresUpdateQuery(),
+                new PostgresDeleteQuery(),
+            ),
+        );
+
+        $driver->defineSchemas();
+
+        return $driver;
+    }
+
     public function getType(): string
     {
         return 'Postgres';
@@ -76,7 +93,6 @@ class PostgresDriver extends Driver
     /**
      * Check if schemas are defined
      *
-     * @return bool
      */
     public function shouldUseDefinedSchemas(): bool
     {
@@ -93,7 +109,6 @@ class PostgresDriver extends Driver
      *
      * @throws DriverException
      *
-     * @return string|null
      */
     public function getPrimaryKey(string $prefix, string $table): ?string
     {
@@ -104,15 +119,15 @@ class PostgresDriver extends Driver
 
         if (!$this->getSchemaHandler()->hasTable($name)) {
             throw new DriverException(
-                "Unable to fetch table primary key, no such table '{$name}' exists"
+                "Unable to fetch table primary key, no such table '{$name}' exists",
             );
         }
 
         $this->primaryKeys[$name] = $this->getSchemaHandler()
-                                         ->getSchema($table, $prefix)
-                                         ->getPrimaryKeys();
+            ->getSchema($table, $prefix)
+            ->getPrimaryKeys();
 
-        if (count($this->primaryKeys[$name]) === 1) {
+        if (\count($this->primaryKeys[$name]) === 1) {
             //We do support only single primary key
             $this->primaryKeys[$name] = $this->primaryKeys[$name][0];
         } else {
@@ -137,9 +152,7 @@ class PostgresDriver extends Driver
      * @link http://en.wikipedia.org/wiki/Database_transaction
      * @link http://en.wikipedia.org/wiki/Isolation_(database_systems)
      *
-     * @param string|null $isolationLevel
      *
-     * @return bool
      */
     public function beginTransaction(string $isolationLevel = null): bool
     {
@@ -155,7 +168,7 @@ class PostgresDriver extends Driver
                 }
 
                 return $ok;
-            } catch (Throwable $e) {
+            } catch (\Throwable $e) {
                 $e = $this->mapException($e, 'BEGIN TRANSACTION');
 
                 if (
@@ -167,7 +180,7 @@ class PostgresDriver extends Driver
                     try {
                         $this->transactionLevel = 1;
                         return $this->getPDO()->beginTransaction();
-                    } catch (Throwable $e) {
+                    } catch (\Throwable $e) {
                         $this->transactionLevel = 0;
                         throw $this->mapException($e, 'BEGIN TRANSACTION');
                     }
@@ -186,8 +199,6 @@ class PostgresDriver extends Driver
     /**
      * Parse the table name and extract the schema and table.
      *
-     * @param  string  $name
-     *
      * @return string[]
      */
     public function parseSchemaAndTable(string $name): array
@@ -195,8 +206,8 @@ class PostgresDriver extends Driver
         $schema = null;
         $table = $name;
 
-        if (str_contains($name, '.')) {
-            [$schema, $table] = explode('.', $name, 2);
+        if (\str_contains($name, '.')) {
+            [$schema, $table] = \explode('.', $name, 2);
 
             if ($schema === '$user') {
                 $schema = $this->config->connection->getUsername();
@@ -206,9 +217,6 @@ class PostgresDriver extends Driver
         return [$schema ?? $this->searchSchemas[0], $table];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createPDO(): \PDO|PDOInterface
     {
         // Cycle is purely UTF-8
@@ -216,30 +224,27 @@ class PostgresDriver extends Driver
         // TODO Should be moved into driver settings.
         $pdo->exec("SET NAMES 'UTF-8'");
 
-        $schema = '"' . implode('", "', $this->searchPath) . '"';
+        $schema = '"' . \implode('", "', $this->searchPath) . '"';
         $pdo->exec("SET search_path TO {$schema}");
 
         return $pdo;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function mapException(Throwable $exception, string $query): StatementException
+    protected function mapException(\Throwable $exception, string $query): StatementException
     {
-        $message = strtolower($exception->getMessage());
+        $message = \strtolower($exception->getMessage());
 
         if (
-            str_contains($message, 'eof detected')
-            || str_contains($message, 'broken pipe')
-            || str_contains($message, '0800')
-            || str_contains($message, '080p')
-            || str_contains($message, 'connection')
+            \str_contains($message, 'eof detected')
+            || \str_contains($message, 'broken pipe')
+            || \str_contains($message, '0800')
+            || \str_contains($message, '080p')
+            || \str_contains($message, 'connection')
         ) {
             return new StatementException\ConnectionException($exception, $query);
         }
 
-        if ((int)$exception->getCode() >= 23000 && (int)$exception->getCode() < 24000) {
+        if ((int) $exception->getCode() >= 23000 && (int) $exception->getCode() < 24000) {
             return new StatementException\ConstrainException($exception, $query);
         }
 
@@ -258,29 +263,7 @@ class PostgresDriver extends Driver
 
         $position = \array_search('$user', $this->searchSchemas, true);
         if ($position !== false) {
-            $this->searchSchemas[$position] = (string)$config->connection->getUsername();
+            $this->searchSchemas[$position] = (string) $config->connection->getUsername();
         }
-    }
-
-    /**
-     * @param PostgresDriverConfig $config
-     */
-    public static function create(DriverConfig $config): static
-    {
-        $driver = new static(
-            $config,
-            new PostgresHandler(),
-            new PostgresCompiler('""'),
-            new QueryBuilder(
-                new PostgresSelectQuery(),
-                new PostgresInsertQuery(),
-                new PostgresUpdateQuery(),
-                new PostgresDeleteQuery()
-            )
-        );
-
-        $driver->defineSchemas();
-
-        return $driver;
     }
 }

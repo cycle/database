@@ -20,7 +20,7 @@ use Cycle\Database\Schema\AbstractTable;
 class SQLServerTable extends AbstractTable
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * SQLServer will reload schemas after successful savw.
      */
@@ -39,9 +39,6 @@ class SQLServerTable extends AbstractTable
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function fetchColumns(): array
     {
         $query = 'SELECT * FROM [information_schema].[columns] INNER JOIN [sys].[columns] AS [sysColumns] '
@@ -54,16 +51,13 @@ class SQLServerTable extends AbstractTable
             $result[] = SQLServerColumn::createInstance(
                 $this->getFullName(),
                 $schema,
-                $this->driver
+                $this->driver,
             );
         }
 
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function fetchIndexes(): array
     {
         $query = 'SELECT [indexes].[name] AS [indexName], '
@@ -93,9 +87,6 @@ class SQLServerTable extends AbstractTable
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function fetchReferences(): array
     {
         $query = $this->driver->query('sp_fkeys @fktable_name = ?', [$this->getFullName()]);
@@ -119,16 +110,13 @@ class SQLServerTable extends AbstractTable
             $result[] = SQlServerForeignKey::createInstance(
                 $this->getFullName(),
                 $this->getPrefix(),
-                $schema
+                $schema,
             );
         }
 
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function fetchPrimaryKeys(): array
     {
         $query = "SELECT [indexes].[name] AS [indexName], [cl].[name] AS [columnName]\n"
@@ -150,25 +138,16 @@ class SQLServerTable extends AbstractTable
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createColumn(string $name): AbstractColumn
     {
         return new SQLServerColumn($this->getFullName(), $name, $this->driver->getTimezone());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createIndex(string $name): AbstractIndex
     {
         return new SQLServerIndex($this->getFullName(), $name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createForeign(string $name): AbstractForeignKey
     {
         return new SQlServerForeignKey($this->getFullName(), $this->getPrefix(), $name);

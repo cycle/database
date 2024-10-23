@@ -39,14 +39,14 @@ class PostgresHandler extends Handler
             WHERE table_type = 'BASE TABLE'";
 
         if ($this->driver->shouldUseDefinedSchemas()) {
-            $query .= " AND table_schema in ('" . implode("','", $this->driver->getSearchSchemas()) . "')";
+            $query .= " AND table_schema in ('" . \implode("','", $this->driver->getSearchSchemas()) . "')";
         } else {
             $query .= " AND table_schema !~ '^pg_.*' AND table_schema != 'information_schema'";
         }
 
         $tables = [];
         foreach ($this->driver->query($query) as $row) {
-            if ($prefix !== '' && !str_starts_with($row['table_name'], $prefix)) {
+            if ($prefix !== '' && !\str_starts_with($row['table_name'], $prefix)) {
                 continue;
             }
 
@@ -69,7 +69,7 @@ class PostgresHandler extends Handler
             AND table_type = 'BASE TABLE'
             AND table_name = ?";
 
-        return (bool)$this->driver->query($query, [$schema, $name])->fetchColumn();
+        return (bool) $this->driver->query($query, [$schema, $name])->fetchColumn();
     }
 
     public function eraseTable(AbstractTable $table, bool $restartIdentity = false): void
@@ -101,7 +101,7 @@ class PostgresHandler extends Handler
     public function alterColumn(
         AbstractTable $table,
         AbstractColumn $initial,
-        AbstractColumn $column
+        AbstractColumn $column,
     ): void {
         if (!$initial instanceof PostgresColumn || !$column instanceof PostgresColumn) {
             throw new SchemaException('Postgres handler can work only with Postgres columns');
@@ -122,10 +122,10 @@ class PostgresHandler extends Handler
         }
 
         //Postgres columns should be altered using set of operations
-        $query = sprintf(
+        $query = \sprintf(
             'ALTER TABLE %s %s',
             $this->identify($table),
-            trim(implode(', ', $operations), ', ')
+            \trim(\implode(', ', $operations), ', '),
         );
 
         $this->run($query);
@@ -173,13 +173,13 @@ class PostgresHandler extends Handler
     private function renameColumn(
         AbstractTable $table,
         AbstractColumn $initial,
-        AbstractColumn $column
+        AbstractColumn $column,
     ): void {
-        $statement = sprintf(
+        $statement = \sprintf(
             'ALTER TABLE %s RENAME COLUMN %s TO %s',
             $this->identify($table),
             $this->identify($initial),
-            $this->identify($column)
+            $this->identify($column),
         );
 
         $this->run($statement);

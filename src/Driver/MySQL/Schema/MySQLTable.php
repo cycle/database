@@ -24,6 +24,7 @@ class MySQLTable extends AbstractTable
      * List of most common MySQL table engines.
      */
     public const ENGINE_INNODB = 'InnoDB';
+
     public const ENGINE_MYISAM = 'MyISAM';
     public const ENGINE_MEMORY = 'Memory';
 
@@ -75,7 +76,7 @@ class MySQLTable extends AbstractTable
             'SHOW TABLE STATUS WHERE `Name` = ?',
             [
                 $state->getName(),
-            ]
+            ],
         )->fetch()['Engine'];
     }
 
@@ -85,11 +86,11 @@ class MySQLTable extends AbstractTable
             $this->version = $this->driver->query('SELECT VERSION() AS version')->fetch()['version'];
         }
 
-        if (str_contains($this->version, 'MariaDB')) {
+        if (\str_contains($this->version, 'MariaDB')) {
             return false;
         }
 
-        return version_compare($this->version, '8.0', '>=');
+        return \version_compare($this->version, '8.0', '>=');
     }
 
     protected function fetchColumns(): array
@@ -101,7 +102,7 @@ class MySQLTable extends AbstractTable
             $result[] = MySQLColumn::createInstance(
                 $this->getFullName(),
                 $schema,
-                $this->driver->getTimezone()
+                $this->driver->getTimezone(),
             );
         }
 
@@ -136,7 +137,7 @@ class MySQLTable extends AbstractTable
         $references = $this->driver->query(
             'SELECT * FROM `information_schema`.`referential_constraints`
             WHERE `constraint_schema` = ? AND `table_name` = ?',
-            [$this->driver->getSource(), $this->getFullName()]
+            [$this->driver->getSource(), $this->getFullName()],
         );
 
         $result = [];
@@ -144,7 +145,7 @@ class MySQLTable extends AbstractTable
             $columns = $this->driver->query(
                 'SELECT * FROM `information_schema`.`key_column_usage`
                 WHERE `constraint_name` = ? AND `table_schema` = ? AND `table_name` = ?',
-                [$schema['CONSTRAINT_NAME'], $this->driver->getSource(), $this->getFullName()]
+                [$schema['CONSTRAINT_NAME'], $this->driver->getSource(), $this->getFullName()],
             )->fetchAll();
 
             $schema['COLUMN_NAME'] = [];
@@ -158,7 +159,7 @@ class MySQLTable extends AbstractTable
             $result[] = MySQLForeignKey::createInstance(
                 $this->getFullName(),
                 $this->getPrefix(),
-                $schema
+                $schema,
             );
         }
 

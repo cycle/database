@@ -39,14 +39,12 @@ interface ParameterInterface
     /**
      * Indication that parameter represent multiple values.
      *
-     * @return bool
      */
     public function isArray(): bool;
 
     /**
      * Indication that parameter represent NULL value.
      *
-     * @return bool
      */
     public function isNull(): bool;
 }

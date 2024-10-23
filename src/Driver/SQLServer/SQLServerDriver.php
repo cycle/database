@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\SQLServer;
 
-use BackedEnum;
 use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Config\SQLServerDriverConfig;
 use Cycle\Database\Driver\Driver;
@@ -24,7 +23,6 @@ use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Injection\ParameterInterface;
 use Cycle\Database\Query\QueryBuilder;
-use PDO;
 
 class SQLServerDriver extends Driver
 {
@@ -34,8 +32,31 @@ class SQLServerDriver extends Driver
     protected const DATETIME = 'Y-m-d\TH:i:s.000';
 
     /**
-     * @return string
+     * @param SQLServerDriverConfig $config
+     *
+     * @throws DriverException
      */
+    public static function create(DriverConfig $config): static
+    {
+        $driver = new static(
+            $config,
+            new SQLServerHandler(),
+            new SQLServerCompiler('[]'),
+            new QueryBuilder(
+                new SQLServerSelectQuery(),
+                new SQLServerInsertQuery(),
+                new SQLServerUpdateQuery(),
+                new SQLServerDeleteQuery(),
+            ),
+        );
+
+        if ((int) $driver->getPDO()->getAttribute(\PDO::ATTR_SERVER_VERSION) < 12) {
+            throw new DriverException('SQLServer driver supports only 12+ version of SQLServer');
+        }
+
+        return $driver;
+    }
+
     public function getType(): string
     {
         return 'SQLServer';
@@ -51,13 +72,13 @@ class SQLServerDriver extends Driver
         $index = 0;
 
         foreach ($parameters as $name => $parameter) {
-            if (is_string($name)) {
+            if (\is_string($name)) {
                 $index = $name;
             } else {
                 $index++;
             }
 
-            $type = PDO::PARAM_STR;
+            $type = \PDO::PARAM_STR;
 
             if ($parameter instanceof ParameterInterface) {
                 $type = $parameter->getType();
@@ -65,8 +86,8 @@ class SQLServerDriver extends Driver
             }
 
             /** @since PHP 8.1 */
-            if ($parameter instanceof BackedEnum) {
-                $type = PDO::PARAM_STR;
+            if ($parameter instanceof \BackedEnum) {
+                $type = \PDO::PARAM_STR;
                 $parameter = $parameter->value;
             }
 
@@ -74,14 +95,14 @@ class SQLServerDriver extends Driver
                 $parameter = $this->formatDatetime($parameter);
             }
 
-            if ($type === PDO::PARAM_LOB) {
+            if ($type === \PDO::PARAM_LOB) {
                 /** @psalm-suppress UndefinedConstant */
                 $statement->bindParam(
                     $index,
                     $parameter,
                     $type,
                     0,
-                    PDO::SQLSRV_ENCODING_BINARY
+                    \PDO::SQLSRV_ENCODING_BINARY,
                 );
 
                 unset($parameter);
@@ -139,12 +160,9 @@ class SQLServerDriver extends Driver
         $this->execute('ROLLBACK TRANSACTION ' . $this->identifier("SVP{$level}"));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function mapException(\Throwable $exception, string $query): StatementException
     {
-        $message = strtolower($exception->getMessage());
+        $message = \strtolower($exception->getMessage());
 
 
         if (
@@ -155,36 +173,10 @@ class SQLServerDriver extends Driver
             return new StatementException\ConnectionException($exception, $query);
         }
 
-        if ((int)$exception->getCode() === 23000) {
+        if ((int) $exception->getCode() === 23000) {
             return new StatementException\ConstrainException($exception, $query);
         }
 
         return new StatementException($exception, $query);
-    }
-
-    /**
-     * @param SQLServerDriverConfig $config
-     *
-     * @throws DriverException
-     */
-    public static function create(DriverConfig $config): static
-    {
-        $driver = new static(
-            $config,
-            new SQLServerHandler(),
-            new SQLServerCompiler('[]'),
-            new QueryBuilder(
-                new SQLServerSelectQuery(),
-                new SQLServerInsertQuery(),
-                new SQLServerUpdateQuery(),
-                new SQLServerDeleteQuery()
-            )
-        );
-
-        if ((int) $driver->getPDO()->getAttribute(PDO::ATTR_SERVER_VERSION) < 12) {
-            throw new DriverException('SQLServer driver supports only 12+ version of SQLServer');
-        }
-
-        return $driver;
     }
 }

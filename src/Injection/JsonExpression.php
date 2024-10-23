@@ -43,19 +43,6 @@ abstract class JsonExpression implements FragmentInterface
         }
     }
 
-    public function __toString(): string
-    {
-        return 'exp:' . $this->expression;
-    }
-
-    public static function __set_state(array $an_array): self
-    {
-        return new static(
-            $an_array['expression'] ?? $an_array['statement'],
-            ...($an_array['parameters'] ?? [])
-        );
-    }
-
     public function getType(): int
     {
         return CompilerInterface::JSON_EXPRESSION;
@@ -67,6 +54,19 @@ abstract class JsonExpression implements FragmentInterface
             'expression' => $this->expression,
             'parameters' => $this->parameters,
         ];
+    }
+
+    public function __toString(): string
+    {
+        return 'exp:' . $this->expression;
+    }
+
+    public static function __set_state(array $an_array): self
+    {
+        return new static(
+            $an_array['expression'] ?? $an_array['statement'],
+            ...($an_array['parameters'] ?? []),
+        );
     }
 
     /**
@@ -126,7 +126,7 @@ abstract class JsonExpression implements FragmentInterface
 
         if (\str_contains($path, '[') && \str_contains($path, ']')) {
             throw new DriverException(
-                'Unable to parse array path syntax. Array key must be wrapped in square brackets.'
+                'Unable to parse array path syntax. Array key must be wrapped in square brackets.',
             );
         }
 
@@ -154,7 +154,7 @@ abstract class JsonExpression implements FragmentInterface
         $value = \preg_replace("/(\\+)?'/", "''", $value);
 
         $segments = \explode($delimiter, $value);
-        $path = \implode('.', \array_map(fn (string $segment): string => $this->wrapPathSegment($segment), $segments));
+        $path = \implode('.', \array_map(fn(string $segment): string => $this->wrapPathSegment($segment), $segments));
 
         return "'$" . (\str_starts_with($path, '[') ? '' : '.') . $path . "'";
     }

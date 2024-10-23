@@ -49,7 +49,6 @@ class PostgresColumn extends AbstractColumn
 {
     private const WITH_TIMEZONE = 'with time zone';
     private const WITHOUT_TIMEZONE = 'without time zone';
-
     private const SERIAL_TYPES = [
         'smallPrimary',
         'primary',
@@ -58,13 +57,13 @@ class PostgresColumn extends AbstractColumn
         'serial',
         'bigserial',
     ];
-
     protected const INTEGER_TYPES = ['int', 'bigint', 'integer', 'smallint'];
 
     /**
      * Default timestamp expression (driver specific).
      */
     public const DATETIME_NOW = 'now()';
+
     public const DATETIME_PRECISION = 6;
 
     /**
@@ -93,7 +92,6 @@ class PostgresColumn extends AbstractColumn
         'HOUR TO SECOND',
         'MINUTE TO SECOND',
     ];
-
     protected const INTERVALS_WITH_ALLOWED_PRECISION = [
         'SECOND',
         'DAY TO SECOND',
@@ -113,7 +111,6 @@ class PostgresColumn extends AbstractColumn
         'smallSerial'    => 'smallserial',
         'bigSerial'      => 'bigserial',
     ];
-
     protected array $mapping = [
         //Primary sequences
         'smallPrimary' => ['type' => 'smallserial', 'nullable' => false, 'isPrimary' => true],
@@ -198,7 +195,6 @@ class PostgresColumn extends AbstractColumn
         'tsvector'     => 'tsvector',
         'tsquery'      => 'tsquery',
     ];
-
     protected array $reverseMapping = [
         'smallPrimary' => [['type' => 'smallserial', 'isPrimary' => true]],
         'primary'      => [['type' => 'serial', 'isPrimary' => true]],
@@ -298,6 +294,107 @@ class PostgresColumn extends AbstractColumn
      */
     protected bool $isPrimary = false;
 
+    /**
+     * @psalm-param non-empty-string $table Table name.
+     *
+     * @param DriverInterface $driver Postgres columns are bit more complex.
+     */
+    public static function createInstance(
+        string $table,
+        array $schema,
+        DriverInterface $driver,
+    ): self {
+        $column = new self($table, $schema['column_name'], $driver->getTimezone());
+
+        $column->type = match (true) {
+            $schema['typname'] === 'timestamp' || $schema['typname'] === 'timestamptz' => 'timestamp',
+            $schema['typname'] === 'date' => 'date',
+            $schema['typname'] === 'time' || $schema['typname'] === 'timetz' => 'time',
+            \in_array($schema['typname'], ['_varchar', '_text', '_bpchar'], true) => 'string[]',
+            \str_starts_with($schema['typname'], '_int') => 'integer[]',
+            $schema['typname'] === '_numeric', \str_starts_with($schema['typname'], '_float') => 'float[]',
+            default => $schema['data_type'],
+        };
+
+        $column->defaultValue = $schema['column_default'];
+        $column->nullable = $schema['is_nullable'] === 'YES';
+
+        if (
+            \is_string($column->defaultValue)
+            && \in_array($column->type, self::INTEGER_TYPES)
+            && \preg_match('/nextval(.*)/', $column->defaultValue)
+        ) {
+            $column->type = match (true) {
+                $column->type === 'bigint' => 'bigserial',
+                $column->type === 'smallint' => 'smallserial',
+                default => 'serial',
+            };
+            $column->autoIncrement = true;
+
+            $column->defaultValue = new Fragment($column->defaultValue);
+
+            if ($schema['is_primary']) {
+                $column->isPrimary = true;
+            }
+
+            return $column;
+        }
+
+        if ($schema['character_maximum_length'] !== null && \str_contains($column->type, 'char')) {
+            $column->size = (int) $schema['character_maximum_length'];
+        }
+
+        if ($column->type === 'numeric') {
+            $column->precision = (int) $schema['numeric_precision'];
+            $column->scale = (int) $schema['numeric_scale'];
+        }
+
+        if ($column->type === 'USER-DEFINED' && $schema['typtype'] === 'e') {
+            $column->type = $schema['typname'];
+
+            /**
+             * Attention, this is not default enum type emulated via CHECK.
+             * This is real Postgres enum type.
+             */
+            self::resolveEnum($driver, $column);
+        }
+
+        if ($column->type === 'timestamp' || $column->type === 'time' || $column->type === 'interval') {
+            $column->size = (int) $schema['datetime_precision'];
+        }
+
+        if (
+            $schema['typname'] === 'timestamptz' ||
+            $schema['typname'] === 'timetz' ||
+            $schema['typname'] === 'tstzrange'
+        ) {
+            $column->withTimezone = true;
+        }
+
+        if (!empty($column->size) && \str_contains($column->type, 'char')) {
+            //Potential enum with manually created constraint (check in)
+            self::resolveConstrains($driver, $schema, $column);
+        }
+
+        if ($column->type === 'interval' && \is_string($schema['interval_type'])) {
+            $column->intervalType = \str_replace(\sprintf('(%s)', $column->size), '', $schema['interval_type']);
+            if (!\in_array($column->intervalType, self::INTERVALS_WITH_ALLOWED_PRECISION, true)) {
+                $column->size = 0;
+            }
+        }
+
+        if (
+            ($column->type === 'bit' || $column->type === 'bit varying') &&
+            isset($schema['character_maximum_length'])
+        ) {
+            $column->size = (int) $schema['character_maximum_length'];
+        }
+
+        $column->normalizeDefault();
+
+        return $column;
+    }
+
     public function getConstraints(): array
     {
         $constraints = parent::getConstraints();
@@ -355,11 +452,11 @@ class PostgresColumn extends AbstractColumn
 
     public function enum(string|array $values): AbstractColumn
     {
-        $this->enumValues = array_map('strval', \is_array($values) ? $values : \func_get_args());
+        $this->enumValues = \array_map('strval', \is_array($values) ? $values : \func_get_args());
 
         $this->type = 'character varying';
         foreach ($this->enumValues as $value) {
-            $this->size = max((int)$this->size, \strlen($value));
+            $this->size = \max((int) $this->size, \strlen($value));
         }
 
         return $this;
@@ -389,7 +486,7 @@ class PostgresColumn extends AbstractColumn
             if (!\in_array($this->intervalType, self::INTERVAL_TYPES, true)) {
                 throw new SchemaException(\sprintf(
                     'Invalid interval type value. Valid values for interval type: `%s`.',
-                    \implode('`, `', self::INTERVAL_TYPES)
+                    \implode('`, `', self::INTERVAL_TYPES),
                 ));
             }
             $statement[] = $this->intervalType;
@@ -457,7 +554,7 @@ class PostgresColumn extends AbstractColumn
                 //Getting longest value
                 $enumSize = $this->size;
                 foreach ($this->enumValues as $value) {
-                    $enumSize = max($enumSize, strlen($value));
+                    $enumSize = \max($enumSize, \strlen($value));
                 }
 
                 $operations[] = "ALTER COLUMN {$identifier} TYPE character varying($enumSize)";
@@ -501,111 +598,10 @@ class PostgresColumn extends AbstractColumn
             }
 
             $operations[] = "ADD CONSTRAINT {$driver->identifier($this->enumConstraint())} "
-                . "CHECK ({$identifier} IN (" . implode(', ', $enumValues) . '))';
+                . "CHECK ({$identifier} IN (" . \implode(', ', $enumValues) . '))';
         }
 
         return $operations;
-    }
-
-    /**
-     * @psalm-param non-empty-string $table Table name.
-     *
-     * @param DriverInterface $driver Postgres columns are bit more complex.
-     */
-    public static function createInstance(
-        string $table,
-        array $schema,
-        DriverInterface $driver
-    ): self {
-        $column = new self($table, $schema['column_name'], $driver->getTimezone());
-
-        $column->type = match (true) {
-            $schema['typname'] === 'timestamp' || $schema['typname'] === 'timestamptz' => 'timestamp',
-            $schema['typname'] === 'date' => 'date',
-            $schema['typname'] === 'time' || $schema['typname'] === 'timetz' => 'time',
-            \in_array($schema['typname'], ['_varchar', '_text', '_bpchar'], true) => 'string[]',
-            \str_starts_with($schema['typname'], '_int') => 'integer[]',
-            $schema['typname'] === '_numeric', \str_starts_with($schema['typname'], '_float') => 'float[]',
-            default => $schema['data_type']
-        };
-
-        $column->defaultValue = $schema['column_default'];
-        $column->nullable = $schema['is_nullable'] === 'YES';
-
-        if (
-            \is_string($column->defaultValue)
-            && \in_array($column->type, self::INTEGER_TYPES)
-            && \preg_match('/nextval(.*)/', $column->defaultValue)
-        ) {
-            $column->type = match (true) {
-                $column->type === 'bigint' => 'bigserial',
-                $column->type === 'smallint' => 'smallserial',
-                default => 'serial'
-            };
-            $column->autoIncrement = true;
-
-            $column->defaultValue = new Fragment($column->defaultValue);
-
-            if ($schema['is_primary']) {
-                $column->isPrimary = true;
-            }
-
-            return $column;
-        }
-
-        if ($schema['character_maximum_length'] !== null && str_contains($column->type, 'char')) {
-            $column->size = (int) $schema['character_maximum_length'];
-        }
-
-        if ($column->type === 'numeric') {
-            $column->precision = (int) $schema['numeric_precision'];
-            $column->scale = (int) $schema['numeric_scale'];
-        }
-
-        if ($column->type === 'USER-DEFINED' && $schema['typtype'] === 'e') {
-            $column->type = $schema['typname'];
-
-            /**
-             * Attention, this is not default enum type emulated via CHECK.
-             * This is real Postgres enum type.
-             */
-            self::resolveEnum($driver, $column);
-        }
-
-        if ($column->type === 'timestamp' || $column->type === 'time' || $column->type === 'interval') {
-            $column->size = (int) $schema['datetime_precision'];
-        }
-
-        if (
-            $schema['typname'] === 'timestamptz' ||
-            $schema['typname'] === 'timetz' ||
-            $schema['typname'] === 'tstzrange'
-        ) {
-            $column->withTimezone = true;
-        }
-
-        if (!empty($column->size) && str_contains($column->type, 'char')) {
-            //Potential enum with manually created constraint (check in)
-            self::resolveConstrains($driver, $schema, $column);
-        }
-
-        if ($column->type === 'interval' && \is_string($schema['interval_type'])) {
-            $column->intervalType = \str_replace(\sprintf('(%s)', $column->size), '', $schema['interval_type']);
-            if (!in_array($column->intervalType, self::INTERVALS_WITH_ALLOWED_PRECISION, true)) {
-                $column->size = 0;
-            }
-        }
-
-        if (
-            ($column->type === 'bit' || $column->type === 'bit varying') &&
-            isset($schema['character_maximum_length'])
-        ) {
-            $column->size = (int) $schema['character_maximum_length'];
-        }
-
-        $column->normalizeDefault();
-
-        return $column;
     }
 
     public function compare(AbstractColumn $initial): bool
@@ -620,6 +616,11 @@ class PostgresColumn extends AbstractColumn
         );
     }
 
+    protected static function isJson(AbstractColumn $column): bool
+    {
+        return $column->getAbstractType() === 'json' || $column->getAbstractType() === 'jsonb';
+    }
+
     /**
      * @psalm-return non-empty-string
      */
@@ -629,59 +630,13 @@ class PostgresColumn extends AbstractColumn
         return '(' . $this->size . ')';
     }
 
-    protected static function isJson(AbstractColumn $column): bool
-    {
-        return $column->getAbstractType() === 'json' || $column->getAbstractType() === 'jsonb';
-    }
-
-    /**
-     * Get/generate name for enum constraint.
-     */
-    private function enumConstraint(): string
-    {
-        if (empty($this->constrainName)) {
-            $this->constrainName = str_replace('.', '_', $this->table) . '_' . $this->getName() . '_enum_' . uniqid();
-        }
-
-        return $this->constrainName;
-    }
-
-    /**
-     * Normalize default value.
-     */
-    private function normalizeDefault(): void
-    {
-        if (!$this->hasDefaultValue()) {
-            return;
-        }
-
-        if (preg_match('/^\'?(.*?)\'?::(.+)/', $this->defaultValue, $matches)) {
-            //In database: 'value'::TYPE
-            $this->defaultValue = $matches[1];
-        } elseif ($this->type === 'bit') {
-            $this->defaultValue = bindec(
-                substr($this->defaultValue, 2, strpos($this->defaultValue, '::') - 3)
-            );
-        } elseif ($this->type === 'boolean') {
-            $this->defaultValue = (strtolower($this->defaultValue) === 'true');
-        }
-
-        $type = $this->getType();
-        if ($type === self::FLOAT || $type === self::INT) {
-            if (preg_match('/^\(?(.*?)\)?(?!::(.+))?$/', $this->defaultValue, $matches)) {
-                //Negative numeric values
-                $this->defaultValue = $matches[1];
-            }
-        }
-    }
-
     /**
      * Resolving enum constrain and converting it into proper enum values set.
      */
     private static function resolveConstrains(
         DriverInterface $driver,
         array $schema,
-        self $column
+        self $column,
     ): void {
         $query = "SELECT conname, pg_get_constraintdef(oid) as consrc FROM pg_constraint
         WHERE conrelid = ? AND contype = 'c' AND conkey = ?";
@@ -691,7 +646,7 @@ class PostgresColumn extends AbstractColumn
             [
                 $schema['tableOID'],
                 '{' . $schema['dtd_identifier'] . '}',
-            ]
+            ],
         );
 
         foreach ($constraints as $constraint) {
@@ -712,14 +667,14 @@ class PostgresColumn extends AbstractColumn
     {
         $range = $driver->query('SELECT enum_range(NULL::' . $column->type . ')')->fetchColumn(0);
 
-        $column->enumValues = explode(',', substr($range, 1, -1));
+        $column->enumValues = \explode(',', \substr($range, 1, -1));
 
         if (!empty($column->defaultValue)) {
             //In database: 'value'::enumType
-            $column->defaultValue = substr(
+            $column->defaultValue = \substr(
                 $column->defaultValue,
                 1,
-                strpos($column->defaultValue, $column->type) - 4
+                \strpos($column->defaultValue, $column->type) - 4,
             );
         }
     }
@@ -747,5 +702,46 @@ class PostgresColumn extends AbstractColumn
         }
 
         return [];
+    }
+
+    /**
+     * Get/generate name for enum constraint.
+     */
+    private function enumConstraint(): string
+    {
+        if (empty($this->constrainName)) {
+            $this->constrainName = \str_replace('.', '_', $this->table) . '_' . $this->getName() . '_enum_' . \uniqid();
+        }
+
+        return $this->constrainName;
+    }
+
+    /**
+     * Normalize default value.
+     */
+    private function normalizeDefault(): void
+    {
+        if (!$this->hasDefaultValue()) {
+            return;
+        }
+
+        if (\preg_match('/^\'?(.*?)\'?::(.+)/', $this->defaultValue, $matches)) {
+            //In database: 'value'::TYPE
+            $this->defaultValue = $matches[1];
+        } elseif ($this->type === 'bit') {
+            $this->defaultValue = \bindec(
+                \substr($this->defaultValue, 2, \strpos($this->defaultValue, '::') - 3),
+            );
+        } elseif ($this->type === 'boolean') {
+            $this->defaultValue = (\strtolower($this->defaultValue) === 'true');
+        }
+
+        $type = $this->getType();
+        if ($type === self::FLOAT || $type === self::INT) {
+            if (\preg_match('/^\(?(.*?)\)?(?!::(.+))?$/', $this->defaultValue, $matches)) {
+                //Negative numeric values
+                $this->defaultValue = $matches[1];
+            }
+        }
     }
 }

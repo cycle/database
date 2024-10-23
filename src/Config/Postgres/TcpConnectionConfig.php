@@ -26,7 +26,6 @@ class TcpConnectionConfig extends ConnectionConfig implements ProvidesSourceStri
      * @param numeric-string|positive-int $port
      * @param non-empty-string|null $user
      * @param non-empty-string|null $password
-     * @param array $options
      */
     public function __construct(
         public string $database,
@@ -34,16 +33,13 @@ class TcpConnectionConfig extends ConnectionConfig implements ProvidesSourceStri
         int|string $port = 5432,
         ?string $user = null,
         ?string $password = null,
-        array $options = []
+        array $options = [],
     ) {
         $this->port = (int) $port;
 
         parent::__construct($user, $password, $options);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getSourceString(): string
     {
         return $this->database;

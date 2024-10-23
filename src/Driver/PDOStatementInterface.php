@@ -11,31 +11,29 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver;
 
-use IteratorAggregate;
 use JetBrains\PhpStorm\ArrayShape;
 use PDO;
 use PDOStatement;
-use stdClass;
 
 /**
  * You can use the class to avoid the PDO for any reasons. For example, to create a PDO Mock in tests.
  *
  * @see PDOStatement
  */
-interface PDOStatementInterface extends IteratorAggregate
+interface PDOStatementInterface extends \IteratorAggregate
 {
     public function execute(array|null $params = null): bool;
 
     public function fetch(
-        int $mode = PDO::FETCH_BOTH,
-        int $cursorOrientation = PDO::FETCH_ORI_NEXT,
+        int $mode = \PDO::FETCH_BOTH,
+        int $cursorOrientation = \PDO::FETCH_ORI_NEXT,
         int $cursorOffset = 0,
     ): mixed;
 
     public function bindParam(
         int|string $param,
         mixed &$var,
-        int $type = PDO::PARAM_STR,
+        int $type = \PDO::PARAM_STR,
         int $maxLength = null,
         mixed $driverOptions = null,
     ): bool;
@@ -43,7 +41,7 @@ interface PDOStatementInterface extends IteratorAggregate
     public function bindColumn(
         int|string $column,
         mixed &$var,
-        int $type = PDO::PARAM_STR,
+        int $type = \PDO::PARAM_STR,
         int $maxLength = null,
         mixed $driverOptions = null,
     ): bool;
@@ -51,16 +49,16 @@ interface PDOStatementInterface extends IteratorAggregate
     public function bindValue(
         int|string $param,
         mixed $value,
-        int $type = PDO::PARAM_STR,
+        int $type = \PDO::PARAM_STR,
     ): bool;
 
     public function rowCount(): int;
 
     public function fetchColumn(int $column = 0): mixed;
 
-    public function fetchAll(int $mode = PDO::FETCH_BOTH, mixed ...$args): array;
+    public function fetchAll(int $mode = \PDO::FETCH_BOTH, mixed ...$args): array;
 
-    public function fetchObject(string|null $class = stdClass::class, array $constructorArgs = []): object|false;
+    public function fetchObject(string|null $class = \stdClass::class, array $constructorArgs = []): object|false;
 
     public function errorCode(): ?string;
 

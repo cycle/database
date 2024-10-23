@@ -13,8 +13,5 @@ namespace Cycle\Database\Config;
 
 interface ProvidesSourceString
 {
-    /**
-     * @return string
-     */
     public function getSourceString(): string;
 }

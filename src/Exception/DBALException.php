@@ -14,6 +14,4 @@ namespace Cycle\Database\Exception;
 /**
  * Generic DBAL exception.
  */
-class DBALException extends \RuntimeException
-{
-}
+class DBALException extends \RuntimeException {}

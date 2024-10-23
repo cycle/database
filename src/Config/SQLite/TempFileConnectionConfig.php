@@ -13,9 +13,6 @@ namespace Cycle\Database\Config\SQLite;
 
 class TempFileConnectionConfig extends FileConnectionConfig
 {
-    /**
-     * @param array $options
-     */
     public function __construct(array $options = [])
     {
         /**

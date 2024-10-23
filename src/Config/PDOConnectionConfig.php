@@ -57,7 +57,7 @@ abstract class PDOConnectionConfig extends ConnectionConfig
     public function __construct(
         ?string $user = null,
         ?string $password = null,
-        public array $options = []
+        public array $options = [],
     ) {
         parent::__construct($user, $password);
 
@@ -78,9 +78,14 @@ abstract class PDOConnectionConfig extends ConnectionConfig
     }
 
     /**
+     * Returns PDO data source name.
+     *
+     */
+    abstract public function getDsn(): string;
+
+    /**
      * @param iterable<int, mixed|non-empty-string> ...$fields
      *
-     * @return string
      */
     protected function dsn(iterable $fields): string
     {
@@ -99,27 +104,15 @@ abstract class PDOConnectionConfig extends ConnectionConfig
         return \implode(';', $result);
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @return string
-     */
     private function dsnValueToString(mixed $value): string
     {
         return match (true) {
             \is_bool($value) => $value ? '1' : '0',
             // TODO Think about escaping special chars in strings
-            \is_scalar($value), $value instanceof \Stringable => (string)$value,
+            \is_scalar($value), $value instanceof \Stringable => (string) $value,
             default => throw new \InvalidArgumentException(
-                \sprintf('Can not convert config value of type "%s" to string', \get_debug_type($value))
-            )
+                \sprintf('Can not convert config value of type "%s" to string', \get_debug_type($value)),
+            ),
         };
     }
-
-    /**
-     * Returns PDO data source name.
-     *
-     * @return string
-     */
-    abstract public function getDsn(): string;
 }

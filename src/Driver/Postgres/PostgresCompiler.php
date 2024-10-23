@@ -44,11 +44,11 @@ class PostgresCompiler extends Compiler implements CachingCompilerInterface
             '%s RETURNING %s',
             $result,
             \implode(',', \array_map(
-                fn (string|FragmentInterface|null $return) => $return instanceof FragmentInterface
+                fn(string|FragmentInterface|null $return) => $return instanceof FragmentInterface
                     ? $this->fragment($params, $q, $return)
                     : $this->quoteIdentifier($return),
-                $tokens['return']
-            ))
+                $tokens['return'],
+            )),
         );
     }
 
@@ -59,11 +59,11 @@ class PostgresCompiler extends Compiler implements CachingCompilerInterface
         }
 
         if (\is_array($distinct) && isset($distinct['on'])) {
-            return sprintf('DISTINCT ON (%s)', $this->name($params, $q, $distinct['on']));
+            return \sprintf('DISTINCT ON (%s)', $this->name($params, $q, $distinct['on']));
         }
 
         if (\is_string($distinct)) {
-            return sprintf('DISTINCT (%s)', $this->name($params, $q, $distinct));
+            return \sprintf('DISTINCT (%s)', $this->name($params, $q, $distinct));
         }
 
         return 'DISTINCT';
@@ -86,7 +86,7 @@ class PostgresCompiler extends Compiler implements CachingCompilerInterface
             $params->push(new Parameter($offset));
         }
 
-        return trim($statement);
+        return \trim($statement);
     }
 
     protected function compileJsonOrderBy(string $path): FragmentInterface

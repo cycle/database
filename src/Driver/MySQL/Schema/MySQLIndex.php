@@ -15,13 +15,6 @@ use Cycle\Database\Schema\AbstractIndex;
 
 class MySQLIndex extends AbstractIndex
 {
-    /**
-     * @param string $table
-     * @param string $name
-     * @param array  $schema
-     *
-     * @return MySQLIndex
-     */
     public static function createInstance(string $table, string $name, array $schema): self
     {
         $index = new self($table, $name);
