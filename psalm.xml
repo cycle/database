@@ -3,7 +3,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
-    errorLevel="7"
+    errorLevel="1"
     findUnusedBaselineEntry="true"
     findUnusedCode="false"
     hoistConstants="true"
@@ -12,6 +12,7 @@
     findUnusedVariablesAndParams="true"
     ensureArrayStringOffsetsExist="true"
     addParamDefaultToDocblockType="true"
+    errorBaseline="psalm-baseline.xml"
 >
     <issueHandlers>
         <LessSpecificReturnStatement errorLevel="suppress" />
