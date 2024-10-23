@@ -29,9 +29,8 @@ final class CompilerCache implements CompilerInterface
     private array $cache = [];
 
     public function __construct(
-        private CachingCompilerInterface $compiler
-    ) {
-    }
+        private CachingCompilerInterface $compiler,
+    ) {}
 
     /**
      * @psalm-param non-empty-string $identifier
@@ -56,14 +55,14 @@ final class CompilerCache implements CompilerInterface
             return $this->cache[$queryHash] = $this->compiler->compile(
                 new QueryParameters(),
                 $prefix,
-                $fragment
+                $fragment,
             );
         }
 
         if ($fragment->getType() === self::INSERT_QUERY) {
             $tokens = $fragment->getTokens();
 
-            if (count($tokens['values']) === 1) {
+            if (\count($tokens['values']) === 1) {
                 $queryHash = $prefix . $this->hashInsertQuery($params, $tokens);
                 if (isset($this->cache[$queryHash])) {
                     return $this->cache[$queryHash];
@@ -72,7 +71,7 @@ final class CompilerCache implements CompilerInterface
                 return $this->cache[$queryHash] = $this->compiler->compile(
                     new QueryParameters(),
                     $prefix,
-                    $fragment
+                    $fragment,
                 );
             }
         }
@@ -80,7 +79,7 @@ final class CompilerCache implements CompilerInterface
         return $this->compiler->compile(
             $params,
             $prefix,
-            $fragment
+            $fragment,
         );
     }
 
@@ -89,7 +88,7 @@ final class CompilerCache implements CompilerInterface
      */
     protected function hashInsertQuery(QueryParameters $params, array $tokens): string
     {
-        foreach ((array)($tokens['return'] ?? []) as $return) {
+        foreach ((array) ($tokens['return'] ?? []) as $return) {
             if ($return instanceof FragmentInterface) {
                 foreach ($return->getTokens()['parameters'] as $param) {
                     $params->push($param);
@@ -101,7 +100,7 @@ final class CompilerCache implements CompilerInterface
             'i_%s%s_r%s',
             $tokens['table'],
             \implode('_', $tokens['columns']),
-            \implode('_', (array)($tokens['return'] ?? []))
+            \implode('_', (array) ($tokens['return'] ?? [])),
         );
         foreach ($tokens['values'] as $value) {
             if ($value instanceof FragmentInterface) {
@@ -152,7 +151,7 @@ final class CompilerCache implements CompilerInterface
     protected function hashSelectQuery(QueryParameters $params, array $tokens): string
     {
         // stable part of hash
-        if (is_array($tokens['distinct']) && isset($tokens['distinct']['on'])) {
+        if (\is_array($tokens['distinct']) && isset($tokens['distinct']['on'])) {
             $hash = 's_' . $tokens['forUpdate'] . '_on_' . $tokens['distinct']['on'];
         } else {
             $hash = 's_' . $tokens['forUpdate'] . '_' . $tokens['distinct'];
@@ -191,7 +190,7 @@ final class CompilerCache implements CompilerInterface
             $hash .= 'h' . $this->hashWhere($params, $tokens['having']);
         }
 
-        $hash .= implode(',', $tokens['groupBy']);
+        $hash .= \implode(',', $tokens['groupBy']);
 
         $hash .= $this->hashOrderBy($params, $tokens['orderBy']);
 
@@ -244,7 +243,7 @@ final class CompilerCache implements CompilerInterface
             [$boolean, $context] = $condition;
 
             $hash .= $boolean;
-            if (is_string($context)) {
+            if (\is_string($context)) {
                 $hash .= $context;
                 continue;
             }
@@ -368,7 +367,7 @@ final class CompilerCache implements CompilerInterface
                 $params->push(new Parameter($simpleParams));
             }
 
-            return 'A' . count($param->getValue());
+            return 'A' . \count($param->getValue());
         }
 
         $params->push($param);

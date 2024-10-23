@@ -36,7 +36,7 @@ class PostgresForeignKey extends AbstractForeignKey
     {
         $result = [];
         foreach ($columns as $column) {
-            if (!in_array($column, $result, true)) {
+            if (!\in_array($column, $result, true)) {
                 $result[] = $column;
             }
         }

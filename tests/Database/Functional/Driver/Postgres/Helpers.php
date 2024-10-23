@@ -71,7 +71,7 @@ trait Helpers
                 host: '127.0.0.1',
                 port: 15432,
                 user: 'postgres',
-                password: 'postgres'
+                password: 'YourStrong!Passw0rd'
             ),
             schema: \array_filter([$defaultSchema, ...\array_values((array)$schema)]),
         );

@@ -1,12 +1,6 @@
 .idea/
 .env
-.coveralls.yml
-vendor/
-tests/runtime/*
-build/logs/*
-build/
+/runtime/
+/vendor/
+/tests/runtime/*
 *.db
-clover.xml
-clover.json
-.php_cs.cache
-.phpunit.result.cache

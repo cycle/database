@@ -19,7 +19,6 @@ interface TableInterface
     /**
      * Check if table exists in database.
      *
-     * @return bool
      */
     public function exists(): bool;
 
@@ -33,7 +32,6 @@ interface TableInterface
     /**
      * Store specific table name (with included prefix and schema).
      *
-     * @return string
      */
     public function getFullName(): string;
 
@@ -50,7 +48,6 @@ interface TableInterface
      *
      * @param string $name Column name.
      *
-     * @return bool
      */
     public function hasColumn(string $name): bool;
 
@@ -64,9 +61,6 @@ interface TableInterface
     /**
      * Check if table has index related to set of provided columns. Columns order does matter!
      *
-     * @param array $columns
-     *
-     * @return bool
      */
     public function hasIndex(array $columns = []): bool;
 
@@ -82,7 +76,6 @@ interface TableInterface
      *
      * @param array $columns Column names.
      *
-     * @return bool
      */
     public function hasForeignKey(array $columns): bool;
 
@@ -97,7 +90,6 @@ interface TableInterface
      * Get list of table names current schema depends on, must include every table linked using
      * foreign key or other constraint. Table names MUST include prefixes.
      *
-     * @return array
      */
     public function getDependencies(): array;
 }

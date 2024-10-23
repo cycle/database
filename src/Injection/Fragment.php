@@ -41,19 +41,6 @@ class Fragment implements FragmentInterface, \Stringable
         }
     }
 
-    public function __toString(): string
-    {
-        return $this->fragment;
-    }
-
-    public static function __set_state(array $an_array): self
-    {
-        return new self(
-            $an_array['fragment'] ?? $an_array['statement'],
-            ...($an_array['parameters'] ?? [])
-        );
-    }
-
     public function getType(): int
     {
         return CompilerInterface::FRAGMENT;
@@ -65,5 +52,18 @@ class Fragment implements FragmentInterface, \Stringable
             'fragment'   => $this->fragment,
             'parameters' => $this->parameters,
         ];
+    }
+
+    public function __toString(): string
+    {
+        return $this->fragment;
+    }
+
+    public static function __set_state(array $an_array): self
+    {
+        return new self(
+            $an_array['fragment'] ?? $an_array['statement'],
+            ...($an_array['parameters'] ?? []),
+        );
     }
 }

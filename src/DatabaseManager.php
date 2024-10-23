@@ -32,15 +32,16 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
 {
     /** @var Database[] */
     private array $databases = [];
+
     /** @var DriverInterface[] */
     private array $drivers = [];
+
     private ?LoggerInterface $logger = null;
 
     public function __construct(
         private DatabaseConfig $config,
-        private ?LoggerFactoryInterface $loggerFactory = null
-    ) {
-    }
+        private ?LoggerFactoryInterface $loggerFactory = null,
+    ) {}
 
     /**
      * Set logger for all drivers
@@ -60,17 +61,17 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
     /**
      * Get all databases.
      *
+     * @return Database[]
      * @throws DatabaseException
      *
-     * @return Database[]
      */
     public function getDatabases(): array
     {
-        $names = array_unique(
-            array_merge(
-                array_keys($this->databases),
-                array_keys($this->config->getDatabases())
-            )
+        $names = \array_unique(
+            \array_merge(
+                \array_keys($this->databases),
+                \array_keys($this->config->getDatabases()),
+            ),
         );
 
         $result = [];
@@ -101,7 +102,7 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
         }
 
         $this->config->hasDatabase($database) or throw new DBALException(
-            "Unable to create Database, no presets for '{$database}' found"
+            "Unable to create Database, no presets for '{$database}' found",
         );
 
         return $this->databases[$database] = $this->makeDatabase($this->config->getDatabase($database));
@@ -115,7 +116,7 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
     public function addDatabase(Database $database): void
     {
         isset($this->databases[$database->getName()]) and throw new DBALException(
-            "Database '{$database->getName()}' already exists"
+            "Database '{$database->getName()}' already exists",
         );
 
         $this->databases[$database->getName()] = $database;
@@ -124,17 +125,17 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
     /**
      * Get instance of every available driver/connection.
      *
+     * @return Driver[]
      * @throws DBALException
      *
-     * @return Driver[]
      */
     public function getDrivers(): array
     {
-        $names = array_unique(
-            array_merge(
-                array_keys($this->drivers),
-                array_keys($this->config->getDrivers())
-            )
+        $names = \array_unique(
+            \array_merge(
+                \array_keys($this->drivers),
+                \array_keys($this->config->getDrivers()),
+            ),
         );
 
         $result = [];
@@ -194,7 +195,7 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
             $database->getName(),
             $database->getPrefix(),
             $this->driver($database->getDriver()),
-            $database->getReadDriver() ? $this->driver($database->getReadDriver()) : null
+            $database->getReadDriver() ? $this->driver($database->getReadDriver()) : null,
         );
     }
 

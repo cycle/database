@@ -30,7 +30,7 @@ class UpdateQuery extends ActiveQuery
     public function __construct(
         string $table = null,
         array $where = [],
-        protected array $values = []
+        protected array $values = [],
     ) {
         $this->table = $table ?? '';
 

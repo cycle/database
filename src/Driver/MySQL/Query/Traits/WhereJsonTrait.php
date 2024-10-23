@@ -42,11 +42,11 @@ trait WhereJsonTrait
             'whereJson', 'orWhereJson' => [new CompileJson($column), $value],
             'whereJsonContains', 'orWhereJsonContains' => [new CompileJsonContains(
                 $column,
-                Jsoner::toJson($value, $params['encode'], $params['validate'])
+                Jsoner::toJson($value, $params['encode'], $params['validate']),
             )],
             'whereJsonDoesntContain', 'orWhereJsonDoesntContain' => [new CompileJsonDoesntContain(
                 $column,
-                Jsoner::toJson($value, $params['encode'], $params['validate'])
+                Jsoner::toJson($value, $params['encode'], $params['validate']),
             )],
             'whereJsonContainsKey', 'orWhereJsonContainsKey' => [new CompileJsonContainsKey($column)],
             'whereJsonDoesntContainKey', 'orWhereJsonDoesntContainKey' => [new CompileJsonDoesntContainKey($column)],

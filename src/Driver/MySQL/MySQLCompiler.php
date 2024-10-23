@@ -24,19 +24,12 @@ use Cycle\Database\Query\QueryParameters;
  */
 class MySQLCompiler extends Compiler implements CachingCompilerInterface
 {
-    /**
-     * @param QueryParameters $params
-     * @param Quoter          $q
-     * @param array           $tokens
-     *
-     * @return string
-     */
     protected function insertQuery(QueryParameters $params, Quoter $q, array $tokens): string
     {
         if ($tokens['columns'] === []) {
-            return sprintf(
+            return \sprintf(
                 'INSERT INTO %s () VALUES ()',
-                $this->name($params, $q, $tokens['table'], true)
+                $this->name($params, $q, $tokens['table'], true),
             );
         }
 
@@ -44,7 +37,7 @@ class MySQLCompiler extends Compiler implements CachingCompilerInterface
     }
 
     /**
-     * {@inheritdoc}
+     *
      *
      * @link http://dev.mysql.com/doc/refman/5.0/en/select.html#id4651990
      */
@@ -69,7 +62,7 @@ class MySQLCompiler extends Compiler implements CachingCompilerInterface
             $params->push(new Parameter($offset));
         }
 
-        return trim($statement);
+        return \trim($statement);
     }
 
     protected function compileJsonOrderBy(string $path): FragmentInterface

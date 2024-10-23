@@ -17,7 +17,6 @@ use Cycle\Database\Query\DeleteQuery;
 use Cycle\Database\Query\InsertQuery;
 use Cycle\Database\Query\SelectQuery;
 use Cycle\Database\Query\UpdateQuery;
-use Throwable;
 
 /**
  * Database class is high level abstraction at top of Driver. Databases usually linked to real
@@ -42,19 +41,8 @@ final class Database implements DatabaseInterface
         private string $name,
         private string $prefix,
         private DriverInterface $driver,
-        private ?DriverInterface $readDriver = null
-    ) {
-    }
-
-    /**
-     * Shortcut to get table abstraction.
-     *
-     * @psalm-param non-empty-string $name Table name without prefix.
-     */
-    public function __get(string $name): TableInterface
-    {
-        return $this->table($name);
-    }
+        private ?DriverInterface $readDriver = null,
+    ) {}
 
     /**
      * @psalm-return non-empty-string
@@ -108,9 +96,9 @@ final class Database implements DatabaseInterface
 
         $result = [];
         foreach ($schemaHandler->getTableNames($this->prefix) as $table) {
-            $table = str_contains($table, '.')
-                ? str_replace('.' . $this->prefix, '.', $table)
-                : substr($table, strlen($this->prefix));
+            $table = \str_contains($table, '.')
+                ? \str_replace('.' . $this->prefix, '.', $table)
+                : \substr($table, \strlen($this->prefix));
 
             $result[] = new Table($this, $table);
         }
@@ -180,7 +168,7 @@ final class Database implements DatabaseInterface
 
     public function transaction(
         callable $callback,
-        string $isolationLevel = null
+        string $isolationLevel = null,
     ): mixed {
         $this->begin($isolationLevel);
 
@@ -189,7 +177,7 @@ final class Database implements DatabaseInterface
             $this->commit();
 
             return $result;
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             $this->rollback();
             throw $e;
         }
@@ -227,5 +215,15 @@ final class Database implements DatabaseInterface
         }
 
         return $this;
+    }
+
+    /**
+     * Shortcut to get table abstraction.
+     *
+     * @psalm-param non-empty-string $name Table name without prefix.
+     */
+    public function __get(string $name): TableInterface
+    {
+        return $this->table($name);
     }
 }

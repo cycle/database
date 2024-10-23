@@ -21,7 +21,6 @@ use Cycle\Database\Query\InsertQuery;
 use Cycle\Database\Query\QueryInterface;
 use Cycle\Database\Query\QueryParameters;
 use Cycle\Database\StatementInterface;
-use Throwable;
 
 /**
  * Postgres driver requires little bit different way to handle last insert id.
@@ -40,7 +39,7 @@ class PostgresInsertQuery extends InsertQuery implements ReturningInterface
     public function withDriver(DriverInterface $driver, string $prefix = null): QueryInterface
     {
         $driver instanceof PostgresDriver or throw new BuilderException(
-            'Postgres InsertQuery can be used only with Postgres driver'
+            'Postgres InsertQuery can be used only with Postgres driver',
         );
 
         return parent::withDriver($driver, $prefix);
@@ -103,7 +102,7 @@ class PostgresInsertQuery extends InsertQuery implements ReturningInterface
     {
         try {
             return $this->driver?->getPrimaryKey($this->prefix, $this->table);
-        } catch (Throwable) {
+        } catch (\Throwable) {
             return null;
         }
     }

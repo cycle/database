@@ -40,7 +40,7 @@ trait WhereJsonTrait
             'whereJson', 'orWhereJson' => [new CompileJson($column), $value],
             'whereJsonContains', 'orWhereJsonContains', 'whereJsonDoesntContain',
             'orWhereJsonDoesntContain' => throw new DriverException(
-                'This SQLite does not support JSON contains operations.'
+                'This SQLite does not support JSON contains operations.',
             ),
             'whereJsonContainsKey', 'orWhereJsonContainsKey' => [new CompileJsonContainsKey($column)],
             'whereJsonDoesntContainKey', 'orWhereJsonDoesntContainKey' => [new CompileJsonDoesntContainKey($column)],

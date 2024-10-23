@@ -18,7 +18,7 @@ class CompileJsonContainsKey extends MySQLJsonExpression
         return \sprintf(
             'IFNULL(json_contains_path(%s, \'one\'%s), 0)',
             $this->getField($statement),
-            $this->getPath($statement)
+            $this->getPath($statement),
         );
     }
 }

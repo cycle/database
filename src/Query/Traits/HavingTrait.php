@@ -34,7 +34,7 @@ trait HavingTrait
             'AND',
             $args,
             $this->havingTokens,
-            $this->havingWrapper()
+            $this->havingWrapper(),
         );
 
         return $this;
@@ -53,7 +53,7 @@ trait HavingTrait
             'AND',
             $args,
             $this->havingTokens,
-            $this->havingWrapper()
+            $this->havingWrapper(),
         );
 
         return $this;
@@ -72,7 +72,7 @@ trait HavingTrait
             'OR',
             $args,
             $this->havingTokens,
-            $this->havingWrapper()
+            $this->havingWrapper(),
         );
 
         return $this;
@@ -93,13 +93,13 @@ trait HavingTrait
         string $boolean,
         array $params,
         array &$tokens,
-        callable $wrapper
+        callable $wrapper,
     ): void;
 
     /**
      * Applied to every potential parameter while having tokens generation.
      */
-    private function havingWrapper(): Closure
+    private function havingWrapper(): \Closure
     {
         return static function ($parameter) {
             \is_array($parameter) and throw new BuilderException('Arrays must be wrapped with Parameter instance');

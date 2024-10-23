@@ -18,9 +18,8 @@ final class Comparator implements ComparatorInterface
 {
     public function __construct(
         private State $initial,
-        private State $current
-    ) {
-    }
+        private State $current,
+    ) {}
 
     public function hasChanges(): bool
     {
@@ -33,18 +32,18 @@ final class Comparator implements ComparatorInterface
         }
 
         $difference = [
-            count($this->addedColumns()),
-            count($this->droppedColumns()),
-            count($this->alteredColumns()),
-            count($this->addedIndexes()),
-            count($this->droppedIndexes()),
-            count($this->alteredIndexes()),
-            count($this->addedForeignKeys()),
-            count($this->droppedForeignKeys()),
-            count($this->alteredForeignKeys()),
+            \count($this->addedColumns()),
+            \count($this->droppedColumns()),
+            \count($this->alteredColumns()),
+            \count($this->addedIndexes()),
+            \count($this->droppedIndexes()),
+            \count($this->alteredIndexes()),
+            \count($this->addedForeignKeys()),
+            \count($this->droppedForeignKeys()),
+            \count($this->alteredForeignKeys()),
         ];
 
-        return array_sum($difference) !== 0;
+        return \array_sum($difference) !== 0;
     }
 
     public function isRenamed(): bool

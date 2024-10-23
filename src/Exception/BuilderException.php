@@ -14,6 +14,4 @@ namespace Cycle\Database\Exception;
 /**
  * Exception raised by query builders.
  */
-class BuilderException extends DBALException
-{
-}
+class BuilderException extends DBALException {}

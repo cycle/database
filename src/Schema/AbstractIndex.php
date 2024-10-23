@@ -27,6 +27,7 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
      * Index types.
      */
     public const NORMAL = 'INDEX';
+
     public const UNIQUE = 'UNIQUE';
 
     /**
@@ -51,8 +52,37 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
      */
     public function __construct(
         protected string $table,
-        protected string $name
-    ) {
+        protected string $name,
+    ) {}
+
+    /**
+     * Parse column name and order from column expression
+     */
+    public static function parseColumn(array|string $column): array
+    {
+        if (\is_array($column)) {
+            return $column;
+        }
+
+        // Contains ASC
+        if (\str_ends_with($column, ' ASC')) {
+            return [
+                \substr($column, 0, -4),
+                'ASC',
+            ];
+        }
+
+        if (\str_ends_with($column, ' DESC')) {
+            return [
+                \substr($column, 0, -5),
+                'DESC',
+            ];
+        }
+
+        return [
+            $column,
+            null,
+        ];
     }
 
     public function isUnique(): bool
@@ -76,9 +106,9 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
     public function getColumnsWithSort(): array
     {
         $self = $this;
-        return array_map(
-            static fn (string $column): string => ($order = $self->sort[$column] ?? null) ? "$column $order" : $column,
-            $this->columns
+        return \array_map(
+            static fn(string $column): string => ($order = $self->sort[$column] ?? null) ? "$column $order" : $column,
+            $this->columns,
         );
     }
 
@@ -102,12 +132,11 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
      *
      * @param array|string $columns Columns array or comma separated list of parameters.
      *
-     * @return self
      */
     public function columns(string|array $columns): self
     {
         if (!\is_array($columns)) {
-            $columns = func_get_args();
+            $columns = \func_get_args();
         }
 
         $this->columns = $columns;
@@ -123,7 +152,6 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
      *
      * @param array $sort Associative array of columns to sort order.
      *
-     * @return self
      */
     public function sort(array $sort): self
     {
@@ -135,7 +163,6 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
     /**
      * Index sql creation syntax.
      *
-     * @param DriverInterface $driver
      * @param bool $includeTable Include table ON statement (not required for inline index creation).
      *
      * @psalm-return non-empty-string
@@ -160,45 +187,15 @@ abstract class AbstractIndex implements IndexInterface, ElementInterface
 
             $columns[] = $quoted;
         }
-        $columns = implode(', ', $columns);
+        $columns = \implode(', ', $columns);
 
         $statement[] = "({$columns})";
 
-        return implode(' ', $statement);
+        return \implode(' ', $statement);
     }
 
     public function compare(self $initial): bool
     {
         return $this == clone $initial;
-    }
-
-    /**
-     * Parse column name and order from column expression
-     */
-    public static function parseColumn(array|string $column): array
-    {
-        if (\is_array($column)) {
-            return $column;
-        }
-
-        // Contains ASC
-        if (str_ends_with($column, ' ASC')) {
-            return [
-                substr($column, 0, -4),
-                'ASC',
-            ];
-        }
-
-        if (str_ends_with($column, ' DESC')) {
-            return [
-                substr($column, 0, -5),
-                'DESC',
-            ];
-        }
-
-        return [
-            $column,
-            null,
-        ];
     }
 }

@@ -19,11 +19,6 @@ use Cycle\Database\Driver\MySQL\MySQLDriver;
  */
 class MySQLDriverConfig extends DriverConfig
 {
-    /**
-     * @param ConnectionConfig $connection
-     *
-     * {@inheritDoc}
-     */
     public function __construct(
         ConnectionConfig $connection,
         string $driver = MySQLDriver::class,

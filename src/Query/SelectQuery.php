@@ -11,11 +11,9 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Query;
 
-use Countable;
 use Cycle\Database\Injection\Expression;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Query\Traits\WhereJsonTrait;
-use IteratorAggregate;
 use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Query\Traits\HavingTrait;
@@ -24,14 +22,13 @@ use Cycle\Database\Query\Traits\TokenTrait;
 use Cycle\Database\Query\Traits\WhereTrait;
 use Cycle\Database\StatementInterface;
 use Spiral\Pagination\PaginableInterface;
-use Throwable;
 
 /**
  * Builds select sql statements.
  */
 class SelectQuery extends ActiveQuery implements
-    Countable,
-    IteratorAggregate,
+    \Countable,
+    \IteratorAggregate,
     PaginableInterface
 {
     use HavingTrait;
@@ -50,11 +47,12 @@ class SelectQuery extends ActiveQuery implements
     protected array $intersectTokens = [];
     protected bool|string|array $distinct = false;
     protected array $columns = ['*'];
+
     /** @var FragmentInterface[][]|string[][] */
     protected array $orderBy = [];
+
     protected array $groupBy = [];
     protected bool $forUpdate = false;
-
     private ?int $limit = null;
     private ?int $offset = null;
 
@@ -105,7 +103,7 @@ class SelectQuery extends ActiveQuery implements
      */
     public function columns(mixed $columns): self
     {
-        $this->columns = $this->fetchIdentifiers(func_get_args());
+        $this->columns = $this->fetchIdentifiers(\func_get_args());
 
         return $this;
     }
@@ -285,7 +283,7 @@ class SelectQuery extends ActiveQuery implements
      *
      * You must return FALSE from walk function to stop chunking.
      *
-     * @throws Throwable
+     * @throws \Throwable
      */
     public function runChunks(int $limit, callable $callback): void
     {
@@ -300,7 +298,7 @@ class SelectQuery extends ActiveQuery implements
             $result = $callback(
                 $select->offset($offset)->getIterator(),
                 $offset,
-                $count
+                $count,
             );
 
             // stop iteration
@@ -328,7 +326,7 @@ class SelectQuery extends ActiveQuery implements
 
         $st = $select->run();
         try {
-            return (int)$st->fetchColumn();
+            return (int) $st->fetchColumn();
         } finally {
             $st->close();
         }
@@ -400,7 +398,7 @@ class SelectQuery extends ActiveQuery implements
             'where'     => $this->whereTokens,
             'having'    => $this->havingTokens,
             'groupBy'   => $this->groupBy,
-            'orderBy'   => array_values($this->orderBy),
+            'orderBy'   => \array_values($this->orderBy),
             'limit'     => $this->limit,
             'offset'    => $this->offset,
             'union'     => $this->unionTokens,
@@ -410,7 +408,6 @@ class SelectQuery extends ActiveQuery implements
     }
 
     /**
-     * @param FragmentInterface|string $field
      * @param string|null $order Sorting direction, ASC|DESC|null.
      *
      * @return $this|self

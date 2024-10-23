@@ -16,19 +16,11 @@ use Cycle\Database\Schema\AbstractIndex;
 
 class SQLiteIndex extends AbstractIndex
 {
-    /**
-     * @param string $table
-     * @param array  $schema
-     * @param array  $columns
-     * @param array  $fallbackColumns
-     *
-     * @return SQLiteIndex
-     */
     public static function createInstance(
         string $table,
         array $schema,
         array $columns,
-        array $fallbackColumns
+        array $fallbackColumns,
     ): self {
         $index = new self($table, $schema['name']);
         $index->type = $schema['unique'] ? self::UNIQUE : self::NORMAL;
@@ -53,9 +45,6 @@ class SQLiteIndex extends AbstractIndex
         return $index;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function sqlStatement(DriverInterface $driver, bool $includeTable = true): string
     {
         $statement = [$this->isUnique() ? 'UNIQUE INDEX' : 'INDEX'];
@@ -78,10 +67,10 @@ class SQLiteIndex extends AbstractIndex
 
             $columns[] = $quoted;
         }
-        $columns = implode(', ', $columns);
+        $columns = \implode(', ', $columns);
 
         $statement[] = "({$columns})";
 
-        return implode(' ', $statement);
+        return \implode(' ', $statement);
     }
 }

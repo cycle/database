@@ -18,9 +18,6 @@ class MemoryConnectionConfig extends FileConnectionConfig
      */
     protected const DATABASE_NAME = ':memory:';
 
-    /**
-     * @param array $options
-     */
     public function __construct(array $options = [])
     {
         parent::__construct(self::DATABASE_NAME, $options);

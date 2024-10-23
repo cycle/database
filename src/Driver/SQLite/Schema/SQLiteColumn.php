@@ -89,7 +89,6 @@ class SQLiteColumn extends AbstractColumn
         'json'        => 'text',
         'uuid'        => ['type' => 'varchar', 'size' => 36],
     ];
-
     protected array $reverseMapping = [
         'primary'     => [['type' => 'integer', 'primaryKey' => true]],
         'enum'        => ['enum'],
@@ -120,6 +119,94 @@ class SQLiteColumn extends AbstractColumn
 
     #[ColumnAttribute(['numeric'])]
     protected int $scale = 0;
+
+    /**
+     * @psalm-param non-empty-string $table
+     */
+    public static function createInstance(
+        string $table,
+        array $schema,
+        \DateTimeZone $timezone = null,
+    ): self {
+        $column = new self($table, $schema['name'], $timezone);
+
+        $column->nullable = !$schema['notnull'];
+        $column->type = \strtolower($schema['type']);
+
+        if ((bool) $schema['pk'] && $column->type === 'integer') {
+            $column->primaryKey = true;
+        }
+
+        /*
+         * Normalizing default value.
+         */
+        $column->defaultValue = $schema['dflt_value'];
+
+        if (
+            \is_string($column->defaultValue)
+            && \preg_match('/^[\'""].*?[\'"]$/', $column->defaultValue)
+        ) {
+            $column->defaultValue = \substr($column->defaultValue, 1, -1);
+        }
+
+        if (
+            !\preg_match(
+                '/^(?P<type>[a-z]+) *(?:\((?P<options>[^\)]+)\))?/',
+                $schema['type'],
+                $matches,
+            )
+        ) {
+            //No type definition included
+            return $column;
+        }
+
+        // reformatted type value
+        $column->type = $matches['type'];
+
+        //Fetching size options
+        if (!empty($matches['options'])) {
+            $options = \explode(',', $matches['options']);
+
+            if (\count($options) > 1) {
+                $column->precision = (int) $options[0];
+                $column->scale = (int) $options[1];
+            } else {
+                $column->size = (int) $options[0];
+            }
+        }
+
+        if ($column->type === 'enum') {
+            //Quoted column name
+            $quoted = $schema['identifier'];
+
+            foreach ($schema['table'] as $columnSchema) {
+                //Looking for enum values in column definition code
+                if (
+                    \preg_match(
+                        "/{$quoted} +enum.*?CHECK *\\({$quoted} in \\((.*?)\\)\\)/i",
+                        \trim($columnSchema),
+                        $matches,
+                    )
+                ) {
+                    $enumValues = \explode(',', $matches[1]);
+                    foreach ($enumValues as &$value) {
+                        //Trimming values
+                        if (\preg_match("/^'?(.*?)'?$/", \trim($value), $matches)) {
+                            //In database: 'value'
+                            $value = $matches[1];
+                        }
+
+                        unset($value);
+                    }
+                    unset($value);
+
+                    $column->enumValues = $enumValues;
+                }
+            }
+        }
+
+        return $column;
+    }
 
     /**
      * DBMS specific reverse mapping must map database specific type into limited set of abstract
@@ -153,100 +240,7 @@ class SQLiteColumn extends AbstractColumn
 
         $quoted = $driver->identifier($this->name);
 
-        return "$statement CHECK ({$quoted} IN (" . implode(', ', $enumValues) . '))';
-    }
-
-    /**
-     * @psalm-param non-empty-string $table
-     */
-    public static function createInstance(
-        string $table,
-        array $schema,
-        \DateTimeZone $timezone = null
-    ): self {
-        $column = new self($table, $schema['name'], $timezone);
-
-        $column->nullable = !$schema['notnull'];
-        $column->type = \strtolower($schema['type']);
-
-        if ((bool)$schema['pk'] && $column->type === 'integer') {
-            $column->primaryKey = true;
-        }
-
-        /*
-         * Normalizing default value.
-         */
-        $column->defaultValue = $schema['dflt_value'];
-
-        if (
-            is_string($column->defaultValue)
-            && preg_match('/^[\'""].*?[\'"]$/', $column->defaultValue)
-        ) {
-            $column->defaultValue = substr($column->defaultValue, 1, -1);
-        }
-
-        if (
-            !preg_match(
-                '/^(?P<type>[a-z]+) *(?:\((?P<options>[^\)]+)\))?/',
-                $schema['type'],
-                $matches
-            )
-        ) {
-            //No type definition included
-            return $column;
-        }
-
-        // reformatted type value
-        $column->type = $matches['type'];
-
-        //Fetching size options
-        if (!empty($matches['options'])) {
-            $options = explode(',', $matches['options']);
-
-            if (count($options) > 1) {
-                $column->precision = (int)$options[0];
-                $column->scale = (int)$options[1];
-            } else {
-                $column->size = (int)$options[0];
-            }
-        }
-
-        if ($column->type === 'enum') {
-            //Quoted column name
-            $quoted = $schema['identifier'];
-
-            foreach ($schema['table'] as $columnSchema) {
-                //Looking for enum values in column definition code
-                if (
-                    preg_match(
-                        "/{$quoted} +enum.*?CHECK *\\({$quoted} in \\((.*?)\\)\\)/i",
-                        trim($columnSchema),
-                        $matches
-                    )
-                ) {
-                    $enumValues = explode(',', $matches[1]);
-                    foreach ($enumValues as &$value) {
-                        //Trimming values
-                        if (preg_match("/^'?(.*?)'?$/", trim($value), $matches)) {
-                            //In database: 'value'
-                            $value = $matches[1];
-                        }
-
-                        unset($value);
-                    }
-                    unset($value);
-
-                    $column->enumValues = $enumValues;
-                }
-            }
-        }
-
-        return $column;
-    }
-
-    protected function quoteEnum(DriverInterface $driver): string
-    {
-        return '';
+        return "$statement CHECK ({$quoted} IN (" . \implode(', ', $enumValues) . '))';
     }
 
     protected static function isEnum(AbstractColumn $column): bool
@@ -258,5 +252,10 @@ class SQLiteColumn extends AbstractColumn
     {
         // In SQLite, we cannot determine if a column has a JSON type.
         return $column->getAbstractType() === 'text' ? null : false;
+    }
+
+    protected function quoteEnum(DriverInterface $driver): string
+    {
+        return '';
     }
 }

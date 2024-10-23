@@ -59,6 +59,7 @@ trait JoinTrait
      * QueryCompilers.
      */
     protected array $joinTokens = [];
+
     /**
      * Name/id of last join, every ON and ON WHERE call will be associated with this join.
      */
@@ -80,12 +81,12 @@ trait JoinTrait
         ActiveQuery|string $type,
         ActiveQuery|string $outer,
         string $alias = null,
-        mixed $on = null
+        mixed $on = null,
     ): self {
         $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
             'alias' => $alias,
-            'type' => strtoupper($type),
+            'type' => \strtoupper($type),
             'on' => [],
         ];
 
@@ -186,9 +187,9 @@ trait JoinTrait
      * @param ActiveQuery|string $outer Joined table name (without prefix), may include AS statement.
      * @param string             $alias Joined table or query alias.
      *
+     * @return $this
      * @throws BuilderException
      *
-     * @return $this
      */
     public function fullJoin(ActiveQuery|string $outer, string $alias = null): self
     {
@@ -216,7 +217,7 @@ trait JoinTrait
             'AND',
             $args,
             $this->joinTokens[$this->lastJoin]['on'],
-            $this->onWrapper()
+            $this->onWrapper(),
         );
 
         return $this;
@@ -236,7 +237,7 @@ trait JoinTrait
             'AND',
             $args,
             $this->joinTokens[$this->lastJoin]['on'],
-            $this->onWrapper()
+            $this->onWrapper(),
         );
 
         return $this;
@@ -256,7 +257,7 @@ trait JoinTrait
             'OR',
             $args,
             $this->joinTokens[$this->lastJoin]['on'],
-            $this->onWrapper()
+            $this->onWrapper(),
         );
 
         return $this;
@@ -278,7 +279,7 @@ trait JoinTrait
             'AND',
             $args,
             $this->joinTokens[$this->lastJoin]['on'],
-            $this->onWhereWrapper()
+            $this->onWhereWrapper(),
         );
 
         return $this;
@@ -300,7 +301,7 @@ trait JoinTrait
             'AND',
             $args,
             $this->joinTokens[$this->lastJoin]['on'],
-            $this->onWhereWrapper()
+            $this->onWhereWrapper(),
         );
 
         return $this;
@@ -322,7 +323,7 @@ trait JoinTrait
             'OR',
             $args,
             $this->joinTokens[$this->lastJoin]['on'],
-            $this->onWhereWrapper()
+            $this->onWhereWrapper(),
         );
 
         return $this;
@@ -343,15 +344,15 @@ trait JoinTrait
         string $boolean,
         array $params,
         array &$tokens,
-        callable $wrapper
+        callable $wrapper,
     );
 
     /**
      * Convert parameters used in JOIN ON statements into sql expressions.
      */
-    private function onWrapper(): Closure
+    private function onWrapper(): \Closure
     {
-        return static fn ($parameter) =>
+        return static fn($parameter) =>
             $parameter instanceof FragmentInterface || $parameter instanceof ParameterInterface
                 ? $parameter
                 : new Expression($parameter);
@@ -360,7 +361,7 @@ trait JoinTrait
     /**
      * Applied to every potential parameter while ON WHERE tokens generation.
      */
-    private function onWhereWrapper(): Closure
+    private function onWhereWrapper(): \Closure
     {
         return static function ($parameter) {
             \is_array($parameter) and throw new BuilderException('Arrays must be wrapped with Parameter instance');

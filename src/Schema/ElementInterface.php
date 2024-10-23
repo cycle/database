@@ -16,7 +16,6 @@ interface ElementInterface
     /**
      * Get element name (unquoted).
      *
-     * @return string
      */
     public function getName(): string;
 }

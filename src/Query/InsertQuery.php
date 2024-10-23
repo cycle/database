@@ -80,8 +80,8 @@ class InsertQuery extends ActiveQuery
      */
     public function values(mixed $rowsets): self
     {
-        if (!is_array($rowsets)) {
-            return $this->values(func_get_args());
+        if (!\is_array($rowsets)) {
+            return $this->values(\func_get_args());
         }
 
         if ($rowsets === []) {
@@ -89,21 +89,21 @@ class InsertQuery extends ActiveQuery
         }
 
         //Checking if provided set is array of multiple
-        reset($rowsets);
+        \reset($rowsets);
 
-        if (!is_array($rowsets[key($rowsets)])) {
+        if (!\is_array($rowsets[\key($rowsets)])) {
             if ($this->columns === []) {
-                $this->columns = array_keys($rowsets);
+                $this->columns = \array_keys($rowsets);
             }
 
-            $this->values[] = new Parameter(array_values($rowsets));
+            $this->values[] = new Parameter(\array_values($rowsets));
         } else {
             if ($this->columns === []) {
                 $this->columns = \array_keys($rowsets[\key($rowsets)]);
             }
 
             foreach ($rowsets as $values) {
-                $this->values[] = new Parameter(array_values($values));
+                $this->values[] = new Parameter(\array_values($values));
             }
         }
 
@@ -123,12 +123,12 @@ class InsertQuery extends ActiveQuery
 
         $this->driver->execute(
             $queryString,
-            $params->getParameters()
+            $params->getParameters(),
         );
 
         $lastID = $this->driver->lastInsertID();
-        if (is_numeric($lastID)) {
-            return (int)$lastID;
+        if (\is_numeric($lastID)) {
+            return (int) $lastID;
         }
 
         return $lastID;

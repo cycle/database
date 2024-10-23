@@ -13,6 +13,4 @@ namespace Cycle\Database\Exception\StatementException;
 
 use Cycle\Database\Exception\StatementException;
 
-class ConstrainException extends StatementException
-{
-}
+class ConstrainException extends StatementException {}

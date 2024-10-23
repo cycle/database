@@ -27,7 +27,7 @@ class SQLiteHandler extends Handler
     public function getTableNames(string $prefix = ''): array
     {
         $query = $this->driver->query(
-            "SELECT name FROM 'sqlite_master' WHERE type = 'table'"
+            "SELECT name FROM 'sqlite_master' WHERE type = 'table'",
         );
 
         $tables = [];
@@ -36,7 +36,7 @@ class SQLiteHandler extends Handler
                 continue;
             }
 
-            if ($prefix !== '' && !str_starts_with($table['name'], $prefix)) {
+            if ($prefix !== '' && !\str_starts_with($table['name'], $prefix)) {
                 continue;
             }
 
@@ -53,7 +53,7 @@ class SQLiteHandler extends Handler
     {
         $query = "SELECT COUNT('sql') FROM 'sqlite_master' WHERE type = 'table' and name = ?";
 
-        return (bool)$this->driver->query($query, [$table])->fetchColumn();
+        return (bool) $this->driver->query($query, [$table])->fetchColumn();
     }
 
     public function getSchema(string $table, string $prefix = null): AbstractTable
@@ -64,7 +64,7 @@ class SQLiteHandler extends Handler
     public function eraseTable(AbstractTable $table): void
     {
         $this->driver->execute(
-            "DELETE FROM {$this->driver->identifier($table->getFullName())}"
+            "DELETE FROM {$this->driver->identifier($table->getFullName())}",
         );
     }
 
@@ -91,7 +91,7 @@ class SQLiteHandler extends Handler
         $this->copyData(
             $initial->getFullName(),
             $temporary->getFullName(),
-            $this->createMapping($initial, $temporary)
+            $this->createMapping($initial, $temporary),
         );
 
         //We can drop initial table now
@@ -119,7 +119,7 @@ class SQLiteHandler extends Handler
     public function alterColumn(
         AbstractTable $table,
         AbstractColumn $initial,
-        AbstractColumn $column
+        AbstractColumn $column,
     ): void {
         //Not supported
     }
@@ -137,7 +137,7 @@ class SQLiteHandler extends Handler
     public function alterForeignKey(
         AbstractTable $table,
         AbstractForeignKey $initial,
-        AbstractForeignKey $foreignKey
+        AbstractForeignKey $foreignKey,
     ): void {
         //Not supported
     }
@@ -160,7 +160,7 @@ class SQLiteHandler extends Handler
         //Temporary table is required to copy data over
         $temporary = clone $table;
         $temporary->setName(
-            'spiral_temp_' . $table->getFullName() . '_' . uniqid()
+            'spiral_temp_' . $table->getFullName() . '_' . \uniqid(),
         );
 
         //We don't need any indexes in temporary table
@@ -181,16 +181,16 @@ class SQLiteHandler extends Handler
         $comparator = $table->getComparator();
 
         $difference = [
-            count($comparator->addedColumns()),
-            count($comparator->droppedColumns()),
-            count($comparator->alteredColumns()),
+            \count($comparator->addedColumns()),
+            \count($comparator->droppedColumns()),
+            \count($comparator->alteredColumns()),
 
-            count($comparator->addedForeignKeys()),
-            count($comparator->droppedForeignKeys()),
-            count($comparator->alteredForeignKeys()),
+            \count($comparator->addedForeignKeys()),
+            \count($comparator->droppedForeignKeys()),
+            \count($comparator->alteredForeignKeys()),
         ];
 
-        return array_sum($difference) !== 0;
+        return \array_sum($difference) !== 0;
     }
 
     /**
@@ -207,19 +207,19 @@ class SQLiteHandler extends Handler
      */
     private function copyData(string $source, string $to, array $mapping): void
     {
-        $sourceColumns = array_keys($mapping);
-        $targetColumns = array_values($mapping);
+        $sourceColumns = \array_keys($mapping);
+        $targetColumns = \array_values($mapping);
 
         //Preparing mapping
-        $sourceColumns = array_map([$this, 'identify'], $sourceColumns);
-        $targetColumns = array_map([$this, 'identify'], $targetColumns);
+        $sourceColumns = \array_map([$this, 'identify'], $sourceColumns);
+        $targetColumns = \array_map([$this, 'identify'], $targetColumns);
 
-        $query = sprintf(
+        $query = \sprintf(
             'INSERT INTO %s (%s) SELECT %s FROM %s',
             $this->identify($to),
-            implode(', ', $targetColumns),
-            implode(', ', $sourceColumns),
-            $this->identify($source)
+            \implode(', ', $targetColumns),
+            \implode(', ', $sourceColumns),
+            $this->identify($source),
         );
 
         $this->run($query);

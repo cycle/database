@@ -24,31 +24,20 @@ interface CompilerInterface
     public const UPDATE_QUERY = 6;
     public const DELETE_QUERY = 7;
     public const JSON_EXPRESSION = 8;
-
     public const TOKEN_AND = '@AND';
     public const TOKEN_OR = '@OR';
     public const TOKEN_AND_NOT = '@AND NOT';
     public const TOKEN_OR_NOT = '@OR NOT';
 
-    /**
-     * @param string $identifier
-     *
-     * @return string
-     */
     public function quoteIdentifier(string $identifier): string;
 
     /**
      * Compile the query fragment.
      *
-     * @param QueryParameters   $params
-     * @param string            $prefix
-     * @param FragmentInterface $fragment
-     *
-     * @return string
      */
     public function compile(
         QueryParameters $params,
         string $prefix,
-        FragmentInterface $fragment
+        FragmentInterface $fragment,
     ): string;
 }

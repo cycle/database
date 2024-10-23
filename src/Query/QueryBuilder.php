@@ -24,8 +24,17 @@ final class QueryBuilder implements BuilderInterface
         private SelectQuery $selectQuery,
         private InsertQuery $insertQuery,
         private UpdateQuery $updateQuery,
-        private DeleteQuery $deleteQuery
-    ) {
+        private DeleteQuery $deleteQuery,
+    ) {}
+
+    public static function defaultBuilder(): self
+    {
+        return new self(
+            new SelectQuery(),
+            new InsertQuery(),
+            new UpdateQuery(),
+            new DeleteQuery(),
+        );
     }
 
     public function withDriver(DriverInterface $driver): BuilderInterface
@@ -41,7 +50,7 @@ final class QueryBuilder implements BuilderInterface
      */
     public function insertQuery(
         string $prefix,
-        string $table = null
+        string $table = null,
     ): InsertQuery {
         $insert = $this->insertQuery->withDriver($this->driver, $prefix);
 
@@ -58,7 +67,7 @@ final class QueryBuilder implements BuilderInterface
     public function selectQuery(
         string $prefix,
         array $from = [],
-        array $columns = []
+        array $columns = [],
     ): SelectQuery {
         $select = $this->selectQuery->withDriver($this->driver, $prefix);
 
@@ -72,7 +81,7 @@ final class QueryBuilder implements BuilderInterface
     public function deleteQuery(
         string $prefix,
         string $from = null,
-        array $where = []
+        array $where = [],
     ): DeleteQuery {
         $delete = $this->deleteQuery->withDriver($this->driver, $prefix);
 
@@ -90,7 +99,7 @@ final class QueryBuilder implements BuilderInterface
         string $prefix,
         string $table = null,
         array $where = [],
-        array $values = []
+        array $values = [],
     ): UpdateQuery {
         $update = $this->updateQuery->withDriver($this->driver, $prefix);
 
@@ -99,15 +108,5 @@ final class QueryBuilder implements BuilderInterface
         }
 
         return $update->where($where)->values($values);
-    }
-
-    public static function defaultBuilder(): self
-    {
-        return new self(
-            new SelectQuery(),
-            new InsertQuery(),
-            new UpdateQuery(),
-            new DeleteQuery()
-        );
     }
 }

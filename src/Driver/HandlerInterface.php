@@ -56,11 +56,6 @@ interface HandlerInterface
     //All operations
     public const DO_ALL = self::DO_FOREIGN_KEYS | self::DO_INDEXES | self::DO_COLUMNS | self::DO_DROP | self::DO_RENAME;
 
-    /**
-     * @param DriverInterface $driver
-     *
-     * @return HandlerInterface
-     */
     public function withDriver(DriverInterface $driver): self;
 
     /**
@@ -68,35 +63,25 @@ interface HandlerInterface
      *
      * @param string|null $prefix
      *
-     * @return array
      */
     public function getTableNames(string $prefix = ''): array;
 
     /**
      * Check if given table exists in database.
      *
-     * @param string $table
-     *
-     * @return bool
      */
     public function hasTable(string $table): bool;
 
     /**
      * Get or create table schema.
      *
-     * @param string      $table
-     * @param string|null $prefix
-     *
      * @throws HandlerException
      *
-     * @return AbstractTable
      */
     public function getSchema(string $table, string $prefix = null): AbstractTable;
 
     /**
      * Create table based on a given schema.
-     *
-     * @param AbstractTable $table
      *
      * @throws HandlerException
      */
@@ -105,16 +90,12 @@ interface HandlerInterface
     /**
      * Truncate table.
      *
-     * @param AbstractTable $table
-     *
      * @throws HandlerException
      */
     public function eraseTable(AbstractTable $table): void;
 
     /**
      * Drop table from database.
-     *
-     * @param AbstractTable $table
      *
      * @throws HandlerException
      */
@@ -123,16 +104,12 @@ interface HandlerInterface
     /**
      * Sync given table schema.
      *
-     * @param AbstractTable $table
      * @param int           $operation See behaviour constants.
      */
     public function syncTable(AbstractTable $table, int $operation = self::DO_ALL): void;
 
     /**
      * Rename table from one name to another.
-     *
-     * @param string $table
-     * @param string $name
      *
      * @throws HandlerException
      */
@@ -141,9 +118,6 @@ interface HandlerInterface
     /**
      * Driver specific column add command.
      *
-     * @param AbstractTable  $table
-     * @param AbstractColumn $column
-     *
      * @throws HandlerException
      */
     public function createColumn(AbstractTable $table, AbstractColumn $column): void;
@@ -151,31 +125,22 @@ interface HandlerInterface
     /**
      * Driver specific column remove (drop) command.
      *
-     * @param AbstractTable  $table
-     * @param AbstractColumn $column
      */
     public function dropColumn(AbstractTable $table, AbstractColumn $column): void;
 
     /**
      * Driver specific column alter command.
      *
-     * @param AbstractTable  $table
-     * @param AbstractColumn $initial
-     * @param AbstractColumn $column
-     *
      * @throws HandlerException
      */
     public function alterColumn(
         AbstractTable $table,
         AbstractColumn $initial,
-        AbstractColumn $column
+        AbstractColumn $column,
     ): void;
 
     /**
      * Driver specific index adding command.
-     *
-     * @param AbstractTable $table
-     * @param AbstractIndex $index
      *
      * @throws HandlerException
      */
@@ -184,9 +149,6 @@ interface HandlerInterface
     /**
      * Driver specific index remove (drop) command.
      *
-     * @param AbstractTable $table
-     * @param AbstractIndex $index
-     *
      * @throws HandlerException
      */
     public function dropIndex(AbstractTable $table, AbstractIndex $index): void;
@@ -194,23 +156,16 @@ interface HandlerInterface
     /**
      * Driver specific index alter command, by default it will remove and add index.
      *
-     * @param AbstractTable $table
-     * @param AbstractIndex $initial
-     * @param AbstractIndex $index
-     *
      * @throws HandlerException
      */
     public function alterIndex(
         AbstractTable $table,
         AbstractIndex $initial,
-        AbstractIndex $index
+        AbstractIndex $index,
     ): void;
 
     /**
      * Driver specific foreign key adding command.
-     *
-     * @param AbstractTable      $table
-     * @param AbstractForeignKey $foreignKey
      *
      * @throws HandlerException
      */
@@ -219,9 +174,6 @@ interface HandlerInterface
     /**
      * Driver specific foreign key remove (drop) command.
      *
-     * @param AbstractTable      $table
-     * @param AbstractForeignKey $foreignKey
-     *
      * @throws HandlerException
      */
     public function dropForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void;
@@ -229,23 +181,16 @@ interface HandlerInterface
     /**
      * Driver specific foreign key alter command, by default it will remove and add foreign key.
      *
-     * @param AbstractTable      $table
-     * @param AbstractForeignKey $initial
-     * @param AbstractForeignKey $foreignKey
-     *
      * @throws HandlerException
      */
     public function alterForeignKey(
         AbstractTable $table,
         AbstractForeignKey $initial,
-        AbstractForeignKey $foreignKey
+        AbstractForeignKey $foreignKey,
     ): void;
 
     /**
      * Drop column constraint using it's name.
-     *
-     * @param AbstractTable $table
-     * @param string        $constraint
      *
      * @throws HandlerException
      */

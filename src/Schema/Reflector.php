@@ -14,7 +14,6 @@ namespace Cycle\Database\Schema;
 use Cycle\Database\Driver\Driver;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\HandlerInterface;
-use Throwable;
 
 /**
  * Saves multiple linked tables at once but treating their cross dependency.
@@ -52,7 +51,7 @@ final class Reflector
      */
     public function getTables(): array
     {
-        return array_values($this->tables);
+        return \array_values($this->tables);
     }
 
     /**
@@ -60,7 +59,7 @@ final class Reflector
      */
     public function sortedTables(): array
     {
-        $items = array_keys($this->tables);
+        $items = \array_keys($this->tables);
         $this->states = $this->stack = [];
 
         foreach ($items as $item) {
@@ -73,7 +72,7 @@ final class Reflector
     /**
      * Synchronize tables.
      *
-     * @throws Throwable
+     * @throws \Throwable
      */
     public function run(): void
     {
@@ -106,7 +105,7 @@ final class Reflector
             foreach ($this->commitChanges() as $table) {
                 $table->save(HandlerInterface::CREATE_FOREIGN_KEYS, true);
             }
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             $this->rollbackTransaction();
             throw $e;
         }
@@ -138,7 +137,7 @@ final class Reflector
         }
     }
 
-    /***
+    /*
      * @return AbstractTable[] Created or updated tables.
      */
     protected function commitChanges(): array
@@ -155,7 +154,7 @@ final class Reflector
                 HandlerInterface::DO_ALL
                 ^ HandlerInterface::DROP_FOREIGN_KEYS
                 ^ HandlerInterface::DROP_INDEXES
-                ^ HandlerInterface::CREATE_FOREIGN_KEYS
+                ^ HandlerInterface::CREATE_FOREIGN_KEYS,
             );
         }
 
@@ -192,7 +191,7 @@ final class Reflector
      */
     protected function rollbackTransaction(): void
     {
-        foreach (array_reverse($this->drivers) as $driver) {
+        foreach (\array_reverse($this->drivers) as $driver) {
             $driver->rollbackTransaction();
         }
     }
@@ -203,7 +202,7 @@ final class Reflector
     private function collectDrivers(): void
     {
         foreach ($this->tables as $table) {
-            if (!in_array($table->getDriver(), $this->drivers, true)) {
+            if (!\in_array($table->getDriver(), $this->drivers, true)) {
                 $this->drivers[] = $table->getDriver();
             }
         }

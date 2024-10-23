@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver;
 
-use BackedEnum;
 use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Config\PDOConnectionConfig;
 use Cycle\Database\Config\ProvidesSourceString;
@@ -23,14 +22,10 @@ use Cycle\Database\NamedInterface;
 use Cycle\Database\Query\BuilderInterface;
 use Cycle\Database\Query\Interpolator;
 use Cycle\Database\StatementInterface;
-use DateTimeImmutable;
-use DateTimeInterface;
-use DateTimeZone;
 use PDO;
 use PDOStatement;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use Throwable;
 
 /**
  * Provides low level abstraction at top of
@@ -45,14 +40,17 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
      * @var non-empty-string (Typehint required for overriding behaviour)
      */
     protected const DATETIME = 'Y-m-d H:i:s';
+
     protected const DATETIME_MICROSECONDS = 'Y-m-d H:i:s.u';
+
     protected ?\PDO $pdo = null;
     protected int $transactionLevel = 0;
     protected HandlerInterface $schemaHandler;
     protected BuilderInterface $queryBuilder;
 
-    /** @var PDOStatement[]|PDOStatementInterface[] */
+    /** @var \PDOStatement[]|PDOStatementInterface[] */
     protected array $queryCache = [];
+
     private ?string $name = null;
     private bool $useCache = true;
 
@@ -60,7 +58,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
         protected DriverConfig $config,
         HandlerInterface $schemaHandler,
         protected CompilerInterface $queryCompiler,
-        BuilderInterface $queryBuilder
+        BuilderInterface $queryBuilder,
     ) {
         $this->useCache = $this->config->queryCache;
 
@@ -113,63 +111,6 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     }
 
     /**
-     * Disconnect and destruct.
-     */
-    public function __destruct()
-    {
-        $this->disconnect();
-    }
-
-    public function __debugInfo(): array
-    {
-        return [
-            'connection' => $this->config->connection,
-            'source' => $this->getSource(),
-            'connected' => $this->isConnected(),
-            'options' => $this->config,
-        ];
-    }
-
-    /**
-     * Compatibility with deprecated methods.
-     *
-     * @psalm-param non-empty-string $name
-     *
-     * @deprecated this method will be removed in a future releases.
-     */
-    public function __call(string $name, array $arguments): mixed
-    {
-        return match ($name) {
-            'isProfiling' => true,
-            'setProfiling' => null,
-            'getSchema' => $this->getSchemaHandler()->getSchema(
-                $arguments[0],
-                $arguments[1] ?? null
-            ),
-            'tableNames' => $this->getSchemaHandler()->getTableNames(),
-            'hasTable' => $this->getSchemaHandler()->hasTable($arguments[0]),
-            'identifier' => $this->getQueryCompiler()->quoteIdentifier($arguments[0]),
-            'eraseData' => $this->getSchemaHandler()->eraseTable(
-                $this->getSchemaHandler()->getSchema($arguments[0])
-            ),
-            'insertQuery',
-            'selectQuery',
-            'updateQuery',
-            'deleteQuery' => call_user_func_array(
-                [$this->queryBuilder, $name],
-                $arguments
-            ),
-            default => throw new DriverException("Undefined driver method `{$name}`")
-        };
-    }
-
-    public function __clone()
-    {
-        $this->schemaHandler = $this->schemaHandler->withDriver($this);
-        $this->queryBuilder = $this->queryBuilder->withDriver($this);
-    }
-
-    /**
      * Get driver source database or file name.
      *
      * @psalm-return non-empty-string
@@ -183,9 +124,9 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
         return $config instanceof ProvidesSourceString ? $config->getSourceString() : '*';
     }
 
-    public function getTimezone(): DateTimeZone
+    public function getTimezone(): \DateTimeZone
     {
-        return new DateTimeZone($this->config->timezone);
+        return new \DateTimeZone($this->config->timezone);
     }
 
     public function getSchemaHandler(): HandlerInterface
@@ -232,7 +173,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
         try {
             $this->queryCache = [];
             $this->pdo = null;
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             // disconnect error
             $this->logger?->error($e->getMessage());
         }
@@ -243,14 +184,14 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     /**
      * @psalm-return non-empty-string
      */
-    public function quote(mixed $value, int $type = PDO::PARAM_STR): string
+    public function quote(mixed $value, int $type = \PDO::PARAM_STR): string
     {
         /** @since PHP 8.1 */
-        if ($value instanceof BackedEnum) {
-            $value = (string)$value->value;
+        if ($value instanceof \BackedEnum) {
+            $value = (string) $value->value;
         }
 
-        if ($value instanceof DateTimeInterface) {
+        if ($value instanceof \DateTimeInterface) {
             $value = $this->formatDatetime($value);
         }
 
@@ -314,7 +255,6 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
      * @link http://en.wikipedia.org/wiki/Database_transaction
      * @link http://en.wikipedia.org/wiki/Isolation_(database_systems)
      *
-     * @param string|null $isolationLevel
      */
     public function beginTransaction(string $isolationLevel = null): bool
     {
@@ -329,7 +269,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
 
             try {
                 return $this->getPDO()->beginTransaction();
-            } catch (Throwable  $e) {
+            } catch (\Throwable  $e) {
                 $e = $this->mapException($e, 'BEGIN TRANSACTION');
 
                 if (
@@ -341,7 +281,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
                     try {
                         $this->transactionLevel = 1;
                         return $this->getPDO()->beginTransaction();
-                    } catch (Throwable $e) {
+                    } catch (\Throwable $e) {
                         $this->transactionLevel = 0;
                         throw $this->mapException($e, 'BEGIN TRANSACTION');
                     }
@@ -367,10 +307,10 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
         // Check active transaction
         if (!$this->getPDO()->inTransaction()) {
             $this->logger?->warning(
-                sprintf(
+                \sprintf(
                     'Attempt to commit a transaction that has not yet begun. Transaction level: %d',
-                    $this->transactionLevel
-                )
+                    $this->transactionLevel,
+                ),
             );
 
             if ($this->transactionLevel === 0) {
@@ -388,7 +328,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
 
             try {
                 return $this->getPDO()->commit();
-            } catch (Throwable $e) {
+            } catch (\Throwable $e) {
                 throw $this->mapException($e, 'COMMIT TRANSACTION');
             }
         }
@@ -408,10 +348,10 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
         // Check active transaction
         if (!$this->getPDO()->inTransaction()) {
             $this->logger?->warning(
-                sprintf(
+                \sprintf(
                     'Attempt to rollback a transaction that has not yet begun. Transaction level: %d',
-                    $this->transactionLevel
-                )
+                    $this->transactionLevel,
+                ),
             );
 
             $this->transactionLevel = 0;
@@ -425,7 +365,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
 
             try {
                 return $this->getPDO()->rollBack();
-            } catch (Throwable  $e) {
+            } catch (\Throwable  $e) {
                 throw $this->mapException($e, 'ROLLBACK TRANSACTION');
             }
         }
@@ -441,6 +381,63 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     public function identifier(string $identifier): string
     {
         return $this->queryCompiler->quoteIdentifier($identifier);
+    }
+
+    public function __debugInfo(): array
+    {
+        return [
+            'connection' => $this->config->connection,
+            'source' => $this->getSource(),
+            'connected' => $this->isConnected(),
+            'options' => $this->config,
+        ];
+    }
+
+    /**
+     * Compatibility with deprecated methods.
+     *
+     * @psalm-param non-empty-string $name
+     *
+     * @deprecated this method will be removed in a future releases.
+     */
+    public function __call(string $name, array $arguments): mixed
+    {
+        return match ($name) {
+            'isProfiling' => true,
+            'setProfiling' => null,
+            'getSchema' => $this->getSchemaHandler()->getSchema(
+                $arguments[0],
+                $arguments[1] ?? null,
+            ),
+            'tableNames' => $this->getSchemaHandler()->getTableNames(),
+            'hasTable' => $this->getSchemaHandler()->hasTable($arguments[0]),
+            'identifier' => $this->getQueryCompiler()->quoteIdentifier($arguments[0]),
+            'eraseData' => $this->getSchemaHandler()->eraseTable(
+                $this->getSchemaHandler()->getSchema($arguments[0]),
+            ),
+            'insertQuery',
+            'selectQuery',
+            'updateQuery',
+            'deleteQuery' => \call_user_func_array(
+                [$this->queryBuilder, $name],
+                $arguments,
+            ),
+            default => throw new DriverException("Undefined driver method `{$name}`"),
+        };
+    }
+
+    public function __clone()
+    {
+        $this->schemaHandler = $this->schemaHandler->withDriver($this);
+        $this->queryBuilder = $this->queryBuilder->withDriver($this);
+    }
+
+    /**
+     * Disconnect and destruct.
+     */
+    public function __destruct()
+    {
+        $this->disconnect();
     }
 
     /**
@@ -460,7 +457,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
             $statement->execute();
 
             return new Statement($statement);
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             $e = $this->mapException($e, Interpolator::interpolate($query, $parameters));
 
             if (
@@ -487,7 +484,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
                 $context = $this->defineLoggerContext(
                     $queryStart,
                     $statement ?? null,
-                    $contextParameters
+                    $contextParameters,
                 );
 
                 if (isset($e)) {
@@ -503,7 +500,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     /**
      * @psalm-param non-empty-string $query
      */
-    protected function prepare(string $query): PDOStatement|PDOStatementInterface
+    protected function prepare(string $query): \PDOStatement|PDOStatementInterface
     {
         if ($this->useCache && isset($this->queryCache[$query])) {
             return $this->queryCache[$query];
@@ -521,9 +518,9 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
      * Bind parameters into statement.
      */
     protected function bindParameters(
-        PDOStatement|PDOStatementInterface $statement,
+        \PDOStatement|PDOStatementInterface $statement,
         iterable $parameters,
-    ): PDOStatement|PDOStatementInterface {
+    ): \PDOStatement|PDOStatementInterface {
         $index = 0;
         foreach ($parameters as $name => $parameter) {
             if (\is_string($name)) {
@@ -532,7 +529,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
                 $index++;
             }
 
-            $type = PDO::PARAM_STR;
+            $type = \PDO::PARAM_STR;
 
             if ($parameter instanceof ParameterInterface) {
                 $type = $parameter->getType();
@@ -540,12 +537,12 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
             }
 
             /** @since PHP 8.1 */
-            if ($parameter instanceof BackedEnum) {
-                $type = PDO::PARAM_STR;
+            if ($parameter instanceof \BackedEnum) {
+                $type = \PDO::PARAM_STR;
                 $parameter = $parameter->value;
             }
 
-            if ($parameter instanceof DateTimeInterface) {
+            if ($parameter instanceof \DateTimeInterface) {
                 $parameter = $this->formatDatetime($parameter);
             }
 
@@ -562,34 +559,32 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
      *
      * @throws DriverException
      */
-    protected function formatDatetime(DateTimeInterface $value): string
+    protected function formatDatetime(\DateTimeInterface $value): string
     {
         try {
             $datetime = match (true) {
                 $value instanceof \DateTimeImmutable => $value->setTimezone($this->getTimezone()),
-                $value instanceof \DateTime => DateTimeImmutable::createFromMutable($value)
+                $value instanceof \DateTime => \DateTimeImmutable::createFromMutable($value)
                     ->setTimezone($this->getTimezone()),
-                default => (new DateTimeImmutable('now', $this->getTimezone()))->setTimestamp($value->getTimestamp())
+                default => (new \DateTimeImmutable('now', $this->getTimezone()))->setTimestamp($value->getTimestamp()),
             };
-        } catch (Throwable $e) {
-            throw new DriverException($e->getMessage(), (int)$e->getCode(), $e);
+        } catch (\Throwable $e) {
+            throw new DriverException($e->getMessage(), (int) $e->getCode(), $e);
         }
 
         return $datetime->format(
-            $this->config->options['withDatetimeMicroseconds'] ? self::DATETIME_MICROSECONDS : self::DATETIME
+            $this->config->options['withDatetimeMicroseconds'] ? self::DATETIME_MICROSECONDS : self::DATETIME,
         );
     }
 
     /**
      * Convert PDO exception into query or integrity exception.
      *
-     * @param Throwable $exception
-     *
      * @psalm-param non-empty-string $query
      */
     abstract protected function mapException(
-        Throwable $exception,
-        string $query
+        \Throwable $exception,
+        string $query,
     ): StatementException;
 
     /**
@@ -649,17 +644,17 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     /**
      * Create instance of configured PDO class.
      */
-    protected function createPDO(): PDO|PDOInterface
+    protected function createPDO(): \PDO|PDOInterface
     {
         $connection = $this->config->connection;
 
         if (!$connection instanceof PDOConnectionConfig) {
             throw new \InvalidArgumentException(
-                'Could not establish PDO connection using non-PDO configuration'
+                'Could not establish PDO connection using non-PDO configuration',
             );
         }
 
-        return new PDO(
+        return new \PDO(
             dsn: $connection->getDsn(),
             username: $connection->getUsername(),
             password: $connection->getPassword(),
@@ -672,7 +667,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
      *
      * @throws DriverException
      */
-    protected function getPDO(): PDO|PDOInterface
+    protected function getPDO(): \PDO|PDOInterface
     {
         if ($this->pdo === null) {
             $this->connect();
@@ -685,16 +680,15 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
      * Creating a context for logging
      *
      * @param float $queryStart Query start time
-     * @param PDOStatement|PDOStatementInterface|null $statement Statement object
+     * @param \PDOStatement|PDOStatementInterface|null $statement Statement object
      * @param iterable $parameters Query parameters
      *
-     * @return array
      */
-    protected function defineLoggerContext(float $queryStart, PDOStatement|PDOStatementInterface|null $statement, iterable $parameters = []): array
+    protected function defineLoggerContext(float $queryStart, \PDOStatement|PDOStatementInterface|null $statement, iterable $parameters = []): array
     {
         $context = [
             'driver' => $this->getType(),
-            'elapsed' => microtime(true) - $queryStart,
+            'elapsed' => \microtime(true) - $queryStart,
         ];
         if ($statement !== null) {
             $context['rowCount'] = $statement->rowCount();

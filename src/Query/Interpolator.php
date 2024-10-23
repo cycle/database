@@ -11,10 +11,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Query;
 
-use BackedEnum;
 use Cycle\Database\Injection\ParameterInterface;
-use DateTimeInterface;
-use Stringable;
 
 /**
  * Simple helper class used to interpolate query with given values. To be used for profiling and
@@ -22,7 +19,7 @@ use Stringable;
  */
 final class Interpolator
 {
-    private const DEFAULT_DATETIME_FORMAT = DateTimeInterface::ATOM;
+    private const DEFAULT_DATETIME_FORMAT = \DateTimeInterface::ATOM;
     private const DATETIME_WITH_MICROSECONDS_FORMAT = 'Y-m-d H:i:s.u';
 
     /**
@@ -44,14 +41,14 @@ final class Interpolator
             '/(?<dq>"(?:\\\\\"|[^"])*")|(?<sq>\'(?:\\\\\'|[^\'])*\')|(?<ph>\\?)|(?<named>:[a-z_\\d]+)/',
             static function ($match) use (&$named, &$unnamed, $options) {
                 $key = match (true) {
-                    isset($match['named']) && '' !== $match['named'] => \ltrim($match['named'], ':'),
+                    isset($match['named']) && $match['named'] !== '' => \ltrim($match['named'], ':'),
                     isset($match['ph']) => $match['ph'],
-                    default => null
+                    default => null,
                 };
 
                 switch (true) {
-                    case '?' === $key:
-                        if (null === \key($unnamed)) {
+                    case $key === '?':
+                        if (\key($unnamed) === null) {
                             return $match[0];
                         }
 
@@ -64,7 +61,7 @@ final class Interpolator
                         return $match[0];
                 }
             },
-            $query
+            $query,
         );
     }
 
@@ -80,7 +77,7 @@ final class Interpolator
         }
 
         /** @since PHP 8.1 */
-        if ($parameter instanceof BackedEnum) {
+        if ($parameter instanceof \BackedEnum) {
             $parameter = $parameter->value;
         }
 
@@ -89,7 +86,7 @@ final class Interpolator
                 return $parameter ? 'TRUE' : 'FALSE';
 
             case 'integer':
-                return (string)$parameter;
+                return (string) $parameter;
 
             case 'NULL':
                 return 'NULL';
@@ -101,11 +98,11 @@ final class Interpolator
                 return "'" . self::escapeStringValue($parameter, "'") . "'";
 
             case 'object':
-                if ($parameter instanceof Stringable) {
-                    return "'" . self::escapeStringValue((string)$parameter, "'") . "'";
+                if ($parameter instanceof \Stringable) {
+                    return "'" . self::escapeStringValue((string) $parameter, "'") . "'";
                 }
 
-                if ($parameter instanceof DateTimeInterface) {
+                if ($parameter instanceof \DateTimeInterface) {
                     $format = $options['withDatetimeMicroseconds'] ?? false
                         ? self::DATETIME_WITH_MICROSECONDS_FORMAT
                         : self::DEFAULT_DATETIME_FORMAT;

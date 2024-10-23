@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Cycle\Database\Driver;
 
 use PDO;
-use PDOStatement;
 
 /**
  * You can use the class to avoid the PDO for any reasons. For example, to create a PDO Mock in tests.
@@ -21,7 +20,7 @@ use PDOStatement;
  */
 interface PDOInterface
 {
-    public function prepare(string $query, array $options = []): PDOStatement|PDOStatementInterface|false;
+    public function prepare(string $query, array $options = []): \PDOStatement|PDOStatementInterface|false;
 
     public function beginTransaction(): bool;
 
@@ -35,9 +34,9 @@ interface PDOInterface
 
     public function query(
         $statement,
-        $mode = PDO::ATTR_DEFAULT_FETCH_MODE,
-        ...$fetch_mode_args
-    ): PDOStatement|PDOStatementInterface|false;
+        $mode = \PDO::ATTR_DEFAULT_FETCH_MODE,
+        ...$fetch_mode_args,
+    ): \PDOStatement|PDOStatementInterface|false;
 
     public function lastInsertId(?string $name = null): string|false;
 
@@ -49,5 +48,5 @@ interface PDOInterface
 
     public function errorInfo(): array;
 
-    public function quote(string $string, int $type = PDO::PARAM_STR): string|false;
+    public function quote(string $string, int $type = \PDO::PARAM_STR): string|false;
 }

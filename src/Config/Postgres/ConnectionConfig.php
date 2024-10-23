@@ -18,19 +18,15 @@ abstract class ConnectionConfig extends BaseConnectionConfig
     /**
      * @param non-empty-string|null $user
      * @param non-empty-string|null $password
-     * @param array $options
      */
     public function __construct(
         ?string $user = null,
         ?string $password = null,
-        array $options = []
+        array $options = [],
     ) {
         parent::__construct($user, $password, $options);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getName(): string
     {
         return 'pgsql';

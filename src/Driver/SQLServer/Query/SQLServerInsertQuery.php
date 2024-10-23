@@ -37,7 +37,7 @@ class SQLServerInsertQuery extends InsertQuery implements ReturningInterface
     public function withDriver(DriverInterface $driver, string $prefix = null): QueryInterface
     {
         $driver instanceof SQLServerDriver or throw new BuilderException(
-            'SQLServer InsertQuery can be used only with SQLServer driver'
+            'SQLServer InsertQuery can be used only with SQLServer driver',
         );
 
         return parent::withDriver($driver, $prefix);

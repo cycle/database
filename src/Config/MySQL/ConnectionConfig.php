@@ -44,9 +44,6 @@ abstract class ConnectionConfig extends BaseConnectionConfig
         parent::__construct($user, $password, $options);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getName(): string
     {
         return 'mysql';

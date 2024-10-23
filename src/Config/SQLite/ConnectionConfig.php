@@ -15,18 +15,12 @@ use Cycle\Database\Config\PDOConnectionConfig;
 
 abstract class ConnectionConfig extends PDOConnectionConfig
 {
-    /**
-     * @param array $options
-     */
     public function __construct(
-        array $options = []
+        array $options = [],
     ) {
         parent::__construct(null, null, $options);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getName(): string
     {
         return 'sqlite';

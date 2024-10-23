@@ -21,7 +21,7 @@ class CompileJsonLength extends PostgresJsonExpression
     public function __construct(
         string $statement,
         int $length,
-        protected string $operator
+        protected string $operator,
     ) {
         parent::__construct($statement, $length);
     }

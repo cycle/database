@@ -16,19 +16,32 @@ use Cycle\Database\Schema\AbstractForeignKey;
 
 class SQLiteForeignKey extends AbstractForeignKey
 {
-    /**
-     * In SQLite we have no predictable name.
-     *
-     * @return string
-     */
-    public function getName(): string
+    public static function createInstance(string $table, string $tablePrefix, array $schema): self
     {
-        return $this->tablePrefix . $this->table . '_' . implode('_', $this->columns) . '_fk';
+        $reference = new self($table, $tablePrefix, (string) $schema['id']);
+
+        $reference->columns = $schema['from'];
+        $reference->foreignTable = $schema['table'];
+        $reference->foreignKeys = $schema['to'];
+
+        //In SQLLite we have to work with pre-defined reference names
+        $reference->name = $reference->getName();
+
+        $reference->deleteRule = $schema['on_delete'];
+        $reference->updateRule = $schema['on_update'];
+
+        return $reference;
     }
 
     /**
-     * {@inheritdoc}
+     * In SQLite we have no predictable name.
+     *
      */
+    public function getName(): string
+    {
+        return $this->tablePrefix . $this->table . '_' . \implode('_', $this->columns) . '_fk';
+    }
+
     public function sqlStatement(DriverInterface $driver): string
     {
         $statement = [];
@@ -42,15 +55,12 @@ class SQLiteForeignKey extends AbstractForeignKey
         $statement[] = "ON DELETE {$this->deleteRule}";
         $statement[] = "ON UPDATE {$this->updateRule}";
 
-        return implode(' ', $statement);
+        return \implode(' ', $statement);
     }
 
     /**
      * Name insensitive compare.
      *
-     * @param AbstractForeignKey $initial
-     *
-     * @return bool
      */
     public function compare(AbstractForeignKey $initial): bool
     {
@@ -59,29 +69,5 @@ class SQLiteForeignKey extends AbstractForeignKey
             && $this->getForeignKeys() === $initial->getForeignKeys()
             && $this->getUpdateRule() === $initial->getUpdateRule()
             && $this->getDeleteRule() === $initial->getDeleteRule();
-    }
-
-    /**
-     * @param string $table
-     * @param string $tablePrefix
-     * @param array  $schema
-     *
-     * @return SQLiteForeignKey
-     */
-    public static function createInstance(string $table, string $tablePrefix, array $schema): self
-    {
-        $reference = new self($table, $tablePrefix, (string)$schema['id']);
-
-        $reference->columns = $schema['from'];
-        $reference->foreignTable = $schema['table'];
-        $reference->foreignKeys = $schema['to'];
-
-        //In SQLLite we have to work with pre-defined reference names
-        $reference->name = $reference->getName();
-
-        $reference->deleteRule = $schema['on_delete'];
-        $reference->updateRule = $schema['on_update'];
-
-        return $reference;
     }
 }

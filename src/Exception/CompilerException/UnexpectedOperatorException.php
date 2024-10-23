@@ -26,8 +26,8 @@ class UnexpectedOperatorException extends CompilerException
             \sprintf(
                 'Unable to compile query, unexpected operator `%s` provided for a value sequence. %s',
                 $operator,
-                'Allowed operators: `IN`, `NOT IN` (or `=`, `!=` as sugar).'
-            )
+                'Allowed operators: `IN`, `NOT IN` (or `=`, `!=` as sugar).',
+            ),
         );
     }
 }

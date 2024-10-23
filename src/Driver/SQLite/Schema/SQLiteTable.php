@@ -18,9 +18,6 @@ use Cycle\Database\Schema\AbstractTable;
 
 class SQLiteTable extends AbstractTable
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function fetchColumns(): array
     {
         /**
@@ -28,7 +25,7 @@ class SQLiteTable extends AbstractTable
          */
         $definition = $this->driver->query(
             "SELECT sql FROM sqlite_master WHERE type = 'table' and name = ?",
-            [$this->getFullName()]
+            [$this->getFullName()],
         )->fetchColumn();
 
         /*
@@ -37,7 +34,7 @@ class SQLiteTable extends AbstractTable
          * schema reader will support fully only tables created by Cycle as we
          * expecting every column definition be on new line.
          */
-        $definition = explode("\n", $definition);
+        $definition = \explode("\n", $definition);
 
         $result = [];
         foreach ($this->columnSchemas(['table' => $definition]) as $schema) {
@@ -48,16 +45,13 @@ class SQLiteTable extends AbstractTable
                     'quoted'     => $this->driver->quote($schema['name']),
                     'identifier' => $this->driver->identifier($schema['name']),
                 ],
-                $this->driver->getTimezone()
+                $this->driver->getTimezone(),
             );
         }
 
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function fetchIndexes(): array
     {
         $primaryKeys = $this->fetchPrimaryKeys();
@@ -70,12 +64,12 @@ class SQLiteTable extends AbstractTable
                 $schema,
                 // 3+ format
                 $this->driver->query(
-                    "PRAGMA INDEX_XINFO({$this->driver->quote($schema['name'])})"
+                    "PRAGMA INDEX_XINFO({$this->driver->quote($schema['name'])})",
                 )->fetchAll(),
                 // legacy format
                 $this->driver->query(
-                    "PRAGMA INDEX_INFO({$this->driver->quote($schema['name'])})"
-                )->fetchAll()
+                    "PRAGMA INDEX_INFO({$this->driver->quote($schema['name'])})",
+                )->fetchAll(),
             );
 
             if ($index->getColumns() === $primaryKeys) {
@@ -90,9 +84,6 @@ class SQLiteTable extends AbstractTable
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function fetchReferences(): array
     {
         $query = "PRAGMA foreign_key_list({$this->driver->quote($this->getFullName())})";
@@ -116,7 +107,7 @@ class SQLiteTable extends AbstractTable
             $result[] = SQLiteForeignKey::createInstance(
                 $this->getFullName(),
                 $this->getPrefix(),
-                $schema
+                $schema,
             );
         }
 
@@ -126,7 +117,6 @@ class SQLiteTable extends AbstractTable
     /**
      * Fetching primary keys from table.
      *
-     * @return array
      */
     protected function fetchPrimaryKeys(): array
     {
@@ -140,25 +130,16 @@ class SQLiteTable extends AbstractTable
         return $primaryKeys;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createColumn(string $name): AbstractColumn
     {
         return new SQLiteColumn($this->getFullName(), $name, $this->driver->getTimezone());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createIndex(string $name): AbstractIndex
     {
         return new SQLiteIndex($this->getFullName(), $name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createForeign(string $name): AbstractForeignKey
     {
         return new SQLiteForeignKey($this->getFullName(), $this->getPrefix(), $name);
@@ -167,12 +148,11 @@ class SQLiteTable extends AbstractTable
     /**
      * @param array $include Include following parameters into each line.
      *
-     * @return array
      */
     private function columnSchemas(array $include = []): array
     {
         $columns = $this->driver->query(
-            'PRAGMA TABLE_INFO(' . $this->driver->quote($this->getFullName()) . ')'
+            'PRAGMA TABLE_INFO(' . $this->driver->quote($this->getFullName()) . ')',
         );
 
         $result = [];

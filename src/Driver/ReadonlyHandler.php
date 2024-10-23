@@ -19,9 +19,8 @@ use Cycle\Database\Schema\AbstractTable;
 final class ReadonlyHandler implements HandlerInterface
 {
     public function __construct(
-        private HandlerInterface $parent
-    ) {
-    }
+        private HandlerInterface $parent,
+    ) {}
 
     public function withDriver(DriverInterface $driver): HandlerInterface
     {
@@ -52,74 +51,47 @@ final class ReadonlyHandler implements HandlerInterface
         return $this->parent->getSchema($table, $prefix);
     }
 
-    public function createTable(AbstractTable $table): void
-    {
-    }
+    public function createTable(AbstractTable $table): void {}
 
     public function eraseTable(AbstractTable $table): void
     {
         $this->parent->eraseTable($table);
     }
 
-    public function dropTable(AbstractTable $table): void
-    {
-    }
+    public function dropTable(AbstractTable $table): void {}
 
-    public function syncTable(AbstractTable $table, int $operation = self::DO_ALL): void
-    {
-    }
+    public function syncTable(AbstractTable $table, int $operation = self::DO_ALL): void {}
 
     /**
      * @psalm-param non-empty-string $table
      * @psalm-param non-empty-string $name
      */
-    public function renameTable(string $table, string $name): void
-    {
-    }
+    public function renameTable(string $table, string $name): void {}
 
-    public function createColumn(AbstractTable $table, AbstractColumn $column): void
-    {
-    }
+    public function createColumn(AbstractTable $table, AbstractColumn $column): void {}
 
-    public function dropColumn(AbstractTable $table, AbstractColumn $column): void
-    {
-    }
+    public function dropColumn(AbstractTable $table, AbstractColumn $column): void {}
 
-    public function alterColumn(AbstractTable $table, AbstractColumn $initial, AbstractColumn $column): void
-    {
-    }
+    public function alterColumn(AbstractTable $table, AbstractColumn $initial, AbstractColumn $column): void {}
 
-    public function createIndex(AbstractTable $table, AbstractIndex $index): void
-    {
-    }
+    public function createIndex(AbstractTable $table, AbstractIndex $index): void {}
 
-    public function dropIndex(AbstractTable $table, AbstractIndex $index): void
-    {
-    }
+    public function dropIndex(AbstractTable $table, AbstractIndex $index): void {}
 
-    public function alterIndex(AbstractTable $table, AbstractIndex $initial, AbstractIndex $index): void
-    {
-    }
+    public function alterIndex(AbstractTable $table, AbstractIndex $initial, AbstractIndex $index): void {}
 
-    public function createForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void
-    {
-    }
+    public function createForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void {}
 
-    public function dropForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void
-    {
-    }
+    public function dropForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void {}
 
     public function alterForeignKey(
         AbstractTable $table,
         AbstractForeignKey $initial,
-        AbstractForeignKey $foreignKey
-    ): void {
-    }
+        AbstractForeignKey $foreignKey,
+    ): void {}
 
     /**
      * @psalm-param non-empty-string $constraint
      */
-    public function dropConstrain(AbstractTable $table, string $constraint): void
-    {
-    }
+    public function dropConstrain(AbstractTable $table, string $constraint): void {}
 }

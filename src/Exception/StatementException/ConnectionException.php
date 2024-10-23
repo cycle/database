@@ -16,6 +16,4 @@ use Cycle\Database\Exception\StatementException;
 /**
  * Connection issue while the query.
  */
-class ConnectionException extends StatementException
-{
-}
+class ConnectionException extends StatementException {}

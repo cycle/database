@@ -20,11 +20,6 @@ use Cycle\Database\Driver\SQLite\SQLiteDriver;
  */
 class SQLiteDriverConfig extends DriverConfig
 {
-    /**
-     * @param ConnectionConfig|null $connection
-     *
-     * {@inheritDoc}
-     */
     public function __construct(
         ?ConnectionConfig $connection = null,
         string $driver = SQLiteDriver::class,

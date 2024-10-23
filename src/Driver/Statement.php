@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver;
 
-use Generator;
 use PDOStatement;
 use Cycle\Database\StatementInterface;
 
@@ -24,7 +23,7 @@ use Cycle\Database\StatementInterface;
 final class Statement implements StatementInterface, \IteratorAggregate
 {
     public function __construct(
-        private PDOStatement|PDOStatementInterface $pdoStatement
+        private \PDOStatement|PDOStatementInterface $pdoStatement,
     ) {
         $this->pdoStatement->setFetchMode(self::FETCH_ASSOC);
     }
@@ -34,7 +33,7 @@ final class Statement implements StatementInterface, \IteratorAggregate
         return $this->pdoStatement->queryString;
     }
 
-    public function getPDOStatement(): PDOStatement|PDOStatementInterface
+    public function getPDOStatement(): \PDOStatement|PDOStatementInterface
     {
         return $this->pdoStatement;
     }
@@ -66,7 +65,7 @@ final class Statement implements StatementInterface, \IteratorAggregate
         return $this->pdoStatement->columnCount();
     }
 
-    public function getIterator(): Generator
+    public function getIterator(): \Generator
     {
         foreach ($this->pdoStatement as $row) {
             yield $row;

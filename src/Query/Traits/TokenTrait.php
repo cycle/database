@@ -62,7 +62,7 @@ trait TokenTrait
                     CompilerInterface::TOKEN_AND,
                     $complex,
                     $tokens,
-                    $wrapper
+                    $wrapper,
                 );
 
                 $tokens[] = ['', ')'];
@@ -70,7 +70,7 @@ trait TokenTrait
                 return;
             }
 
-            if ($complex instanceof Closure) {
+            if ($complex instanceof \Closure) {
                 $tokens[] = [$boolean, '('];
                 $complex($this, $boolean, $wrapper);
                 $tokens[] = ['', ')'];
@@ -105,7 +105,7 @@ trait TokenTrait
                         $value = new Parameter($value);
                     }
                 } elseif (\is_scalar($operator)) {
-                    $operator = (string)$operator;
+                    $operator = (string) $operator;
                 }
 
                 // AND|OR [name] [valueA: OPERATION] [valueA]
@@ -123,7 +123,7 @@ trait TokenTrait
                 $operator = \strtoupper($operator);
                 if ($operator !== 'BETWEEN' && $operator !== 'NOT BETWEEN') {
                     throw new BuilderException(
-                        'Only "BETWEEN" or "NOT BETWEEN" can define second comparision value'
+                        'Only "BETWEEN" or "NOT BETWEEN" can define second comparision value',
                     );
                 }
 
@@ -132,7 +132,7 @@ trait TokenTrait
                     $boolean,
                     [
                         $name,
-                        strtoupper($operator),
+                        \strtoupper($operator),
                         $wrapper($params[2]),
                         $wrapper($params[3]),
                     ],
@@ -167,7 +167,7 @@ trait TokenTrait
                 continue;
             }
 
-            $token = strtoupper($key);
+            $token = \strtoupper($key);
 
             // Grouping identifier (@OR, @AND), MongoDB like style
             if (
@@ -179,7 +179,7 @@ trait TokenTrait
                 $tokens[] = [$boolean, '('];
 
                 foreach ($value as $nested) {
-                    if (count($nested) === 1) {
+                    if (\count($nested) === 1) {
                         $this->flattenWhere($token, $nested, $tokens, $wrapper);
                         continue;
                     }
@@ -203,13 +203,13 @@ trait TokenTrait
                 continue;
             }
 
-            if (count($value) === 1) {
+            if (\count($value) === 1) {
                 $this->pushCondition(
                     $boolean,
                     $key,
                     $value,
                     $tokens,
-                    $wrapper
+                    $wrapper,
                 );
                 continue;
             }
@@ -234,11 +234,11 @@ trait TokenTrait
     private function pushCondition(string $innerJoiner, string $key, array $where, &$tokens, callable $wrapper): array
     {
         foreach ($where as $operation => $value) {
-            if (is_numeric($operation)) {
+            if (\is_numeric($operation)) {
                 throw new BuilderException('Nested conditions should have defined operator');
             }
 
-            $operation = strtoupper($operation);
+            $operation = \strtoupper($operation);
             if ($operation !== 'BETWEEN' && $operation !== 'NOT BETWEEN') {
                 // AND|OR [name] [OPERATION] [nestedValue]
                 if (\is_array($value) && \in_array($operation, ['IN', 'NOT IN'], true)) {
@@ -252,9 +252,9 @@ trait TokenTrait
             }
 
             // Between and not between condition described using array of [left, right] syntax.
-            if (!is_array($value) || count($value) !== 2) {
+            if (!\is_array($value) || \count($value) !== 2) {
                 throw new BuilderException(
-                    'Exactly 2 array values are required for between statement'
+                    'Exactly 2 array values are required for between statement',
                 );
             }
 

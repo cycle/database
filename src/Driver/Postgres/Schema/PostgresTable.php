@@ -89,7 +89,7 @@ class PostgresTable extends AbstractTable
                     ON (pgn.oid = pgc.relnamespace)
                 WHERE pgn.nspname = ?
                 AND pgc.relname = ?',
-            [$tableSchema, $tableName]
+            [$tableSchema, $tableName],
         )->fetchColumn();
 
         $query = $this->driver->query(
@@ -99,7 +99,7 @@ class PostgresTable extends AbstractTable
                     ON (pg_type.typname = columns.udt_name)
                 WHERE table_schema = ?
                 AND table_name = ?',
-            [$tableSchema, $tableName]
+            [$tableSchema, $tableName],
         );
 
         $primaryKeys = \array_column($this->driver->query(
@@ -115,18 +115,18 @@ class PostgresTable extends AbstractTable
                       key_column_usage.ordinal_position IS NOT NULL AND
                       table_constraints.table_schema = ? AND
                       table_constraints.table_name = ?',
-            [$tableSchema, $tableName]
+            [$tableSchema, $tableName],
         )->fetchAll(), 'column_name');
 
         $result = [];
         foreach ($query->fetchAll() as $schema) {
             $name = $schema['column_name'];
             if (
-                is_string($schema['column_default'])
-                && preg_match(
+                \is_string($schema['column_default'])
+                && \preg_match(
                     '/^nextval\([\'"]([a-z0-9_"]+)[\'"](?:::regclass)?\)$/i',
                     $schema['column_default'],
-                    $matches
+                    $matches,
                 )
             ) {
                 //Column is sequential
@@ -138,7 +138,7 @@ class PostgresTable extends AbstractTable
             $result[] = PostgresColumn::createInstance(
                 $tableSchema . '.' . $tableName,
                 $schema + ['tableOID' => $tableOID],
-                $this->driver
+                $this->driver,
             );
         }
 
@@ -207,7 +207,7 @@ class PostgresTable extends AbstractTable
             $result[] = PostgresForeignKey::createInstance(
                 $tableSchema . '.' . $tableName,
                 $this->getPrefix(),
-                $schema
+                $schema,
             );
         }
 
@@ -234,7 +234,7 @@ class PostgresTable extends AbstractTable
             //To simplify definitions
             $index = PostgresIndex::createInstance($tableSchema . '.' . $tableName, $schema);
 
-            if (\is_array($this->primarySequence) && count($index->getColumns()) === 1) {
+            if (\is_array($this->primarySequence) && \count($index->getColumns()) === 1) {
                 $column = $index->getColumns()[0];
 
                 if (isset($this->sequences[$column])) {
@@ -257,7 +257,7 @@ class PostgresTable extends AbstractTable
         return new PostgresColumn(
             $this->getNormalizedTableName(),
             $this->removeSchemaFromTableName($name),
-            $this->driver->getTimezone()
+            $this->driver->getTimezone(),
         );
     }
 
@@ -268,7 +268,7 @@ class PostgresTable extends AbstractTable
     {
         return new PostgresIndex(
             $this->getNormalizedTableName(),
-            $this->removeSchemaFromTableName($name)
+            $this->removeSchemaFromTableName($name),
         );
     }
 
@@ -280,7 +280,7 @@ class PostgresTable extends AbstractTable
         return new PostgresForeignKey(
             $this->getNormalizedTableName(),
             $this->getPrefix(),
-            $this->removeSchemaFromTableName($name)
+            $this->removeSchemaFromTableName($name),
         );
     }
 
@@ -311,8 +311,8 @@ class PostgresTable extends AbstractTable
      */
     protected function removeSchemaFromTableName(string $name): string
     {
-        if (str_contains($name, '.')) {
-            [, $name] = explode('.', $name, 2);
+        if (\str_contains($name, '.')) {
+            [, $name] = \explode('.', $name, 2);
         }
 
         return $name;

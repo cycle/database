@@ -13,19 +13,10 @@ namespace Cycle\Database\Schema;
 
 interface ComparatorInterface
 {
-    /**
-     * @return bool
-     */
     public function hasChanges(): bool;
 
-    /**
-     * @return bool
-     */
     public function isRenamed(): bool;
 
-    /**
-     * @return bool
-     */
     public function isPrimaryChanged(): bool;
 
     /**
@@ -41,7 +32,6 @@ interface ComparatorInterface
     /**
      * Returns array where each value contain current and initial element state.
      *
-     * @return array
      */
     public function alteredColumns(): array;
 
@@ -58,7 +48,6 @@ interface ComparatorInterface
     /**
      * Returns array where each value contain current and initial element state.
      *
-     * @return array
      */
     public function alteredIndexes(): array;
 
@@ -75,7 +64,6 @@ interface ComparatorInterface
     /**
      * Returns array where each value contain current and initial element state.
      *
-     * @return array
      */
     public function alteredForeignKeys(): array;
 }

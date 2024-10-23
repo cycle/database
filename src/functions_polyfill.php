@@ -9,17 +9,15 @@
 
 declare(strict_types=1);
 
-if (!function_exists('array_is_list')) {
+if (!\function_exists('array_is_list')) {
     /**
      * Checks whether a given array is a list
-     *
-     * @param array $array
      *
      * @return bool Returns true if array is a list, false otherwise.
      */
     function array_is_list(array $array): bool
     {
-        if ([] === $array) {
+        if ($array === []) {
             return true;
         }
 

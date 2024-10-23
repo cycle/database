@@ -88,6 +88,11 @@ interface DriverInterface
     public const ISOLATION_READ_UNCOMMITTED = 'READ UNCOMMITTED';
 
     /**
+     * Create new driver instance.
+     */
+    public static function create(DriverConfig $config): self;
+
+    /**
      * Returns {@see true} in the case that the connection is available only
      * for reading or {@see false} instead.
      */
@@ -141,7 +146,7 @@ interface DriverInterface
      *
      * @psalm-return non-empty-string
      */
-    public function quote(mixed $value, int $type = PDO::PARAM_STR): string;
+    public function quote(mixed $value, int $type = \PDO::PARAM_STR): string;
 
     /**
      * Wraps PDO query method with custom representation class.
@@ -202,9 +207,4 @@ interface DriverInterface
      * Get current opened transaction level.
      */
     public function getTransactionLevel(): int;
-
-    /**
-     * Create new driver instance.
-     */
-    public static function create(DriverConfig $config): self;
 }

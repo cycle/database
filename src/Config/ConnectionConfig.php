@@ -32,8 +32,7 @@ abstract class ConnectionConfig
     public function __construct(
         public ?string $user = null,
         public ?string $password = null,
-    ) {
-    }
+    ) {}
 
     /**
      * @return non-empty-string|null
@@ -51,11 +50,11 @@ abstract class ConnectionConfig
         return $this->password;
     }
 
-    /**
-     * @param bool $secure
-     *
-     * @return array
-     */
+    public function __debugInfo(): array
+    {
+        return $this->toArray();
+    }
+
     protected function toArray(bool $secure = true): array
     {
         $options = \get_object_vars($this);
@@ -69,13 +68,5 @@ abstract class ConnectionConfig
         }
 
         return $options;
-    }
-
-    /**
-     * @return array
-     */
-    public function __debugInfo(): array
-    {
-        return $this->toArray();
     }
 }

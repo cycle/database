@@ -11,8 +11,6 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Injection;
 
-use PDO;
-
 /**
  * Default implementation of ParameterInterface, provides ability to mock value or array of values
  * and automatically create valid query placeholder at moment of query compilation (? vs (?, ?, ?)).
@@ -27,19 +25,11 @@ class Parameter implements ParameterInterface
     /** @var array|mixed */
     private mixed $value;
 
-    private int $type = PDO::PARAM_STR;
+    private int $type = \PDO::PARAM_STR;
 
     public function __construct(mixed $value, int $type = self::DETECT_TYPE)
     {
         $this->setValue($value, $type);
-    }
-
-    public function __debugInfo(): array
-    {
-        return [
-            'value' => $this->value,
-            'type'  => $this->type,
-        ];
     }
 
     /**
@@ -61,7 +51,7 @@ class Parameter implements ParameterInterface
 
         if ($type !== self::DETECT_TYPE) {
             $this->type = $type;
-        } elseif (!is_array($value)) {
+        } elseif (!\is_array($value)) {
             $this->type = $this->detectType($value);
         }
     }
@@ -85,13 +75,21 @@ class Parameter implements ParameterInterface
         return $this->value === null;
     }
 
+    public function __debugInfo(): array
+    {
+        return [
+            'value' => $this->value,
+            'type'  => $this->type,
+        ];
+    }
+
     private function detectType(mixed $value): int
     {
-        return match (gettype($value)) {
-            'boolean' => PDO::PARAM_BOOL,
-            'integer' => PDO::PARAM_INT,
-            'NULL' => PDO::PARAM_NULL,
-            default => PDO::PARAM_STR
+        return match (\gettype($value)) {
+            'boolean' => \PDO::PARAM_BOOL,
+            'integer' => \PDO::PARAM_INT,
+            'NULL' => \PDO::PARAM_NULL,
+            default => \PDO::PARAM_STR,
         };
     }
 }

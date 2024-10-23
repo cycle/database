@@ -58,16 +58,13 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
     /**
      * @psalm-param non-empty-string $table
      *
-     * @param string $tablePrefix
-     *
      * @psalm-param non-empty-string $name
      */
     public function __construct(
         protected string $table,
         protected string $tablePrefix,
-        protected string $name
-    ) {
-    }
+        protected string $name,
+    ) {}
 
     public function getColumns(): array
     {
@@ -123,7 +120,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
     public function references(
         string $table,
         array $columns = ['id'],
-        bool $forcePrefix = true
+        bool $forcePrefix = true,
     ): self {
         $this->foreignTable = ($forcePrefix ? $this->tablePrefix : '') . $table;
         $this->foreignKeys = $columns;
@@ -138,7 +135,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
      */
     public function onDelete(string $rule = self::NO_ACTION): self
     {
-        $this->deleteRule = strtoupper($rule);
+        $this->deleteRule = \strtoupper($rule);
 
         return $this;
     }
@@ -150,7 +147,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
      */
     public function onUpdate(string $rule = self::NO_ACTION): self
     {
-        $this->updateRule = strtoupper($rule);
+        $this->updateRule = \strtoupper($rule);
 
         return $this;
     }
@@ -187,7 +184,7 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
         $statement[] = "ON DELETE {$this->deleteRule}";
         $statement[] = "ON UPDATE {$this->updateRule}";
 
-        return implode(' ', $statement);
+        return \implode(' ', $statement);
     }
 
     public function compare(self $initial): bool
@@ -208,6 +205,6 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
      */
     protected function packColumns(DriverInterface $driver, array $columns): string
     {
-        return implode(', ', array_map([$driver, 'identifier'], $columns));
+        return \implode(', ', \array_map([$driver, 'identifier'], $columns));
     }
 }

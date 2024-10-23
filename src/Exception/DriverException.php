@@ -14,6 +14,4 @@ namespace Cycle\Database\Exception;
 /**
  * Driver specific exception.
  */
-class DriverException extends DBALException
-{
-}
+class DriverException extends DBALException {}

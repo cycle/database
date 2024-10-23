@@ -21,10 +21,6 @@ interface CachingCompilerInterface extends CompilerInterface
     /**
      * Must return hash of the limit statement and properly set parameter values.
      *
-     * @param QueryParameters $params
-     * @param array           $tokens
-     *
-     * @return string
      */
     public function hashLimit(QueryParameters $params, array $tokens): string;
 }

@@ -14,6 +14,4 @@ namespace Cycle\Database\Exception;
 /**
  * Generic database exception.
  */
-class DatabaseException extends DBALException
-{
-}
+class DatabaseException extends DBALException {}

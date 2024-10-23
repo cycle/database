@@ -19,11 +19,6 @@ use Cycle\Database\Driver\SQLServer\SQLServerDriver;
  */
 class SQLServerDriverConfig extends DriverConfig
 {
-    /**
-     * @param ConnectionConfig $connection
-     *
-     * {@inheritDoc}
-     */
     public function __construct(
         ConnectionConfig $connection,
         string $driver = SQLServerDriver::class,

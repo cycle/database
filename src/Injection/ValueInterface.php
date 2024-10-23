@@ -16,14 +16,12 @@ interface ValueInterface
     /**
      * Return value to be stored in database in raw form.
      *
-     * @return string
      */
     public function rawValue(): string;
 
     /**
      * Return associated PDO type.
      *
-     * @return int
      */
     public function rawType(): int;
 }

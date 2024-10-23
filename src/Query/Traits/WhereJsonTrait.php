@@ -17,7 +17,7 @@ trait WhereJsonTrait
 {
     /**
      * Select records where the JSON value at the specified path is equal to the passed value.
-
+     *
      * Example:
      * $select->whereJson('options->notifications->type', 'sms')
      *
@@ -31,7 +31,7 @@ trait WhereJsonTrait
 
     /**
      * Similar to the whereJson method, but uses the OR operator to combine with other conditions.
-
+     *
      * Example:
      * $select->orWhereJson('options->notifications->type', 'sms')
      *
@@ -46,7 +46,7 @@ trait WhereJsonTrait
     /**
      * Select records where the JSON array contains the passed value.
      * The passed value can be an array, which will be encoded into JSON.
-
+     *
      * Example:
      * $select->whereJsonContains('settings->languages', 'en')
      *
@@ -65,7 +65,7 @@ trait WhereJsonTrait
 
     /**
      * Similar to the whereJsonContains method, but uses the OR operator to combine with other conditions.
-
+     *
      * Example:
      * $select->orWhereJsonContains('settings->languages', 'en')
      *
@@ -85,7 +85,7 @@ trait WhereJsonTrait
     /**
      * Select records where the JSON array doesn't contain the passed value.
      * The passed value can be an array, which will be encoded into JSON.
-
+     *
      * Example:
      * $select->whereJsonDoesntContain('settings->languages', 'en')
      *
@@ -104,7 +104,7 @@ trait WhereJsonTrait
 
     /**
      * Similar to the whereJsonDoesntContain method, but uses the OR operator to combine with other conditions.
-
+     *
      * Example:
      * $select->orWhereJsonDoesntContain('settings->languages', 'en')
      *
@@ -123,7 +123,7 @@ trait WhereJsonTrait
 
     /**
      * Select records where the JSON contains the passed path.
-
+     *
      * Example:
      * $select->whereJsonContainsKey('options->languages->de')
      *
@@ -137,7 +137,7 @@ trait WhereJsonTrait
 
     /**
      * Similar to the whereJsonContainsKey method, but uses the OR operator to combine with other conditions.
-
+     *
      * Example:
      * $select->orWhereJsonContainsKey('options->languages->de')
      *
@@ -165,7 +165,7 @@ trait WhereJsonTrait
 
     /**
      * Similar to the whereJsonDoesntContainKey method, but uses the OR operator to combine with other conditions.
-
+     *
      * Example:
      * $select->orWhereJsonDoesntContainKey('options->languages->de')
      *
@@ -179,7 +179,7 @@ trait WhereJsonTrait
 
     /**
      * Select JSON arrays by their length.
-
+     *
      * Example:
      * $select->whereJsonLength('journal->errors', 1, '>=')
      *
@@ -194,7 +194,7 @@ trait WhereJsonTrait
 
     /**
      * Similar to the whereJsonLength method, but uses the OR operator to combine with other conditions.
-
+     *
      * Example:
      * $select->orWhereJsonLength('journal->errors', 1, '>=')
      *
@@ -205,26 +205,6 @@ trait WhereJsonTrait
     {
         $this->registerWhereJsonToken('OR', $path, $length, __FUNCTION__, ['operator' => $operator]);
         return $this;
-    }
-
-    /**
-     * @param "AND"|"OR" $operator Boolean joiner (AND | OR).
-     * @param non-empty-string $path
-     * @param non-empty-string $method
-     */
-    private function registerWhereJsonToken(
-        string $operator,
-        string $path,
-        mixed $value,
-        string $method,
-        array $params = [],
-    ): void {
-        $this->registerToken(
-            $operator,
-            $this->buildJsonInjection($path, $value, $method, $params),
-            $this->whereTokens,
-            $this->whereWrapper(),
-        );
     }
 
     /**
@@ -255,6 +235,26 @@ trait WhereJsonTrait
         string $boolean,
         array $params,
         array &$tokens,
-        callable $wrapper
+        callable $wrapper,
     ): void;
+
+    /**
+     * @param "AND"|"OR" $operator Boolean joiner (AND | OR).
+     * @param non-empty-string $path
+     * @param non-empty-string $method
+     */
+    private function registerWhereJsonToken(
+        string $operator,
+        string $path,
+        mixed $value,
+        string $method,
+        array $params = [],
+    ): void {
+        $this->registerToken(
+            $operator,
+            $this->buildJsonInjection($path, $value, $method, $params),
+            $this->whereTokens,
+            $this->whereWrapper(),
+        );
+    }
 }

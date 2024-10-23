@@ -30,7 +30,7 @@ final class Jsoner
             return \json_encode($value, \JSON_UNESCAPED_UNICODE | \JSON_THROW_ON_ERROR);
         }
 
-        $result = (string)$value;
+        $result = (string) $value;
 
         if ($validate && !\json_validate($result)) {
             throw new BuilderException('Invalid JSON value.');
