@@ -17,7 +17,7 @@ services:
       - "13306:3306"
     environment:
       MYSQL_DATABASE: "spiral"
-      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_ROOT_PASSWORD: "SSpaSS__1"
       MYSQL_ROOT_HOST: "%"
 
   postgres:
@@ -27,6 +27,6 @@ services:
     environment:
       POSTGRES_DB: "spiral"
       POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_PASSWORD: "SSpaSS__1"
 
 ...
