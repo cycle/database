@@ -24,7 +24,7 @@ $drivers = [
             host: '127.0.0.1',
             port: 13306,
             user: 'root',
-            password: 'SSpaSS__1',
+            password: 'YourStrong!Passw0rd',
         ),
         queryCache: true
     ),
@@ -34,7 +34,7 @@ $drivers = [
             host: '127.0.0.1',
             port: 15432,
             user: 'postgres',
-            password: 'SSpaSS__1',
+            password: 'YourStrong!Passw0rd',
         ),
         schema: 'public',
         queryCache: true,
@@ -45,7 +45,7 @@ $drivers = [
             host: '127.0.0.1',
             port: 11433,
             user: 'SA',
-            password: 'SSpaSS__1'
+            password: 'YourStrong!Passw0rd'
         ),
         queryCache: true
     ),
@@ -60,7 +60,7 @@ $drivers = [
             host: '127.0.0.1',
             port: 15432,
             user: 'postgres',
-            password: 'SSpaSS__1',
+            password: 'YourStrong!Passw0rd',
         ),
         schema: 'public',
         driver: Database\Tests\Stub\Driver\PostgresWrapDriver::class,
@@ -72,7 +72,7 @@ $drivers = [
             host: '127.0.0.1',
             port: 13306,
             user: 'root',
-            password: 'root',
+            password: 'YourStrong!Passw0rd',
         ),
         driver: Database\Tests\Stub\Driver\MysqlWrapDriver::class,
         queryCache: true,
@@ -83,7 +83,7 @@ $drivers = [
             host: '127.0.0.1',
             port: 11433,
             user: 'SA',
-            password: 'SSpaSS__1'
+            password: 'YourStrong!Passw0rd'
         ),
         driver: Database\Tests\Stub\Driver\MSSQLWrapDriver::class,
         queryCache: true,

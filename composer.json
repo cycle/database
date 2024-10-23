@@ -58,7 +58,7 @@
         "infection/infection": "^0.26.10",
         "mockery/mockery": "^1.5",
         "phpunit/phpunit": "^9.5",
-        "spiral/code-style": "~2.2",
+        "spiral/code-style": "~2.2.0",
         "spiral/tokenizer": "^2.14 || ^3.0",
         "vimeo/psalm": "^5.18"
     },

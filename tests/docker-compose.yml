@@ -8,7 +8,7 @@ services:
     ports:
       - "11433:1433"
     environment:
-      SA_PASSWORD: "SSpaSS__1"
+      SA_PASSWORD: "YourStrong!Passw0rd"
       ACCEPT_EULA: "Y"
 
   mysql_latest:
@@ -17,7 +17,7 @@ services:
       - "13306:3306"
     environment:
       MYSQL_DATABASE: "spiral"
-      MYSQL_ROOT_PASSWORD: "SSpaSS__1"
+      MYSQL_ROOT_PASSWORD: "YourStrong!Passw0rd"
       MYSQL_ROOT_HOST: "%"
 
   postgres:
@@ -27,6 +27,6 @@ services:
     environment:
       POSTGRES_DB: "spiral"
       POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "SSpaSS__1"
+      POSTGRES_PASSWORD: "YourStrong!Passw0rd"
 
 ...
