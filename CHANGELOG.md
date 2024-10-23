@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.11.2](https://github.com/cycle/database/compare/2.11.1...2.11.2) (2024-10-23)
+
+
+### Styles
+
+* apply new code style ([89a7c57](https://github.com/cycle/database/commit/89a7c574c5fe6538541065cf579defacf100c246))
+* **php-cs-fixer:** fix coding standards ([1eae6db](https://github.com/cycle/database/commit/1eae6dbfa5cf7d27107daded67d9fae03ab70b28))
+
+
+### Continuous Integration
+
+* add Spiral CS fixer ([a72e1ae](https://github.com/cycle/database/commit/a72e1ae687eab6d4a3ec97f5fa7f58369d771227))
+* normalize DB passwords in tests; fix style in cs-fix workflow ([b514009](https://github.com/cycle/database/commit/b514009e28adf149cc816e9f9b527e92b653ff73))
+* use common MSSQL workflow ([5c434ec](https://github.com/cycle/database/commit/5c434ec9cb844e0569076f6bb1211e43c587f69d))
+* use common MySQL workflow ([c5aa164](https://github.com/cycle/database/commit/c5aa1646911e99db51b9ec3aa1fb8e36087fb29d))
+* use common Postgres workflow ([8c17e52](https://github.com/cycle/database/commit/8c17e520c84163572ffd1adb394d53558c86cc92))
+
 ## [2.11.1](https://github.com/cycle/database/compare/2.11.0...2.11.1) (2024-10-22)
 
 
