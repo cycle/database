@@ -27,7 +27,7 @@ class PostgresHandler extends Handler
     /**
      * @psalm-param non-empty-string $table
      */
-    public function getSchema(string $table, string $prefix = null): AbstractTable
+    public function getSchema(string $table, ?string $prefix = null): AbstractTable
     {
         return new PostgresTable($this->driver, $table, $prefix ?? '');
     }

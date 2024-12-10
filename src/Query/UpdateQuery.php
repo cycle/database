@@ -28,7 +28,7 @@ class UpdateQuery extends ActiveQuery
     protected string $table = '';
 
     public function __construct(
-        string $table = null,
+        ?string $table = null,
         array $where = [],
         protected array $values = [],
     ) {

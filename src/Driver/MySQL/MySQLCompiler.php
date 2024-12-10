@@ -41,7 +41,7 @@ class MySQLCompiler extends Compiler implements CachingCompilerInterface
      *
      * @link http://dev.mysql.com/doc/refman/5.0/en/select.html#id4651990
      */
-    protected function limit(QueryParameters $params, Quoter $q, int $limit = null, int $offset = null): string
+    protected function limit(QueryParameters $params, Quoter $q, ?int $limit = null, ?int $offset = null): string
     {
         if ($limit === null && $offset === null) {
             return '';

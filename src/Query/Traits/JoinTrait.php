@@ -80,7 +80,7 @@ trait JoinTrait
     public function join(
         ActiveQuery|string $type,
         ActiveQuery|string $outer,
-        string $alias = null,
+        ?string $alias = null,
         mixed $on = null,
     ): self {
         $this->joinTokens[++$this->lastJoin] = [
@@ -113,7 +113,7 @@ trait JoinTrait
      *
      * @throws BuilderException
      */
-    public function innerJoin(ActiveQuery|string $outer, string $alias = null): self
+    public function innerJoin(ActiveQuery|string $outer, ?string $alias = null): self
     {
         $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
@@ -139,7 +139,7 @@ trait JoinTrait
      *
      * @throws BuilderException
      */
-    public function rightJoin(ActiveQuery|string $outer, string $alias = null, mixed $on = null): self
+    public function rightJoin(ActiveQuery|string $outer, ?string $alias = null, mixed $on = null): self
     {
         $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
@@ -164,7 +164,7 @@ trait JoinTrait
      *
      * @throws BuilderException
      */
-    public function leftJoin(ActiveQuery|string $outer, string $alias = null): self
+    public function leftJoin(ActiveQuery|string $outer, ?string $alias = null): self
     {
         $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,
@@ -191,7 +191,7 @@ trait JoinTrait
      * @throws BuilderException
      *
      */
-    public function fullJoin(ActiveQuery|string $outer, string $alias = null): self
+    public function fullJoin(ActiveQuery|string $outer, ?string $alias = null): self
     {
         $this->joinTokens[++$this->lastJoin] = [
             'outer' => $outer,

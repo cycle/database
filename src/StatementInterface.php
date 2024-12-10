@@ -43,7 +43,7 @@ interface StatementInterface extends \Traversable
      *
      * @param int $columnNumber Optional column number.
      */
-    public function fetchColumn(int $columnNumber = null): mixed;
+    public function fetchColumn(?int $columnNumber = null): mixed;
 
     /**
      * Fetch all rows.

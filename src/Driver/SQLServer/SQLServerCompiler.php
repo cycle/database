@@ -121,9 +121,9 @@ class SQLServerCompiler extends Compiler
     protected function limit(
         QueryParameters $params,
         Quoter $q,
-        int $limit = null,
-        int $offset = null,
-        string $rowNumber = null,
+        ?int $limit = null,
+        ?int $offset = null,
+        ?string $rowNumber = null,
     ): string {
         if ($limit === null && $offset === null) {
             return '';

@@ -56,7 +56,7 @@ class SQLiteHandler extends Handler
         return (bool) $this->driver->query($query, [$table])->fetchColumn();
     }
 
-    public function getSchema(string $table, string $prefix = null): AbstractTable
+    public function getSchema(string $table, ?string $prefix = null): AbstractTable
     {
         return new SQLiteTable($this->driver, $table, $prefix ?? '');
     }

@@ -24,7 +24,7 @@ class SQLServerHandler extends Handler
     /**
      * @psalm-param non-empty-string $table
      */
-    public function getSchema(string $table, string $prefix = null): AbstractTable
+    public function getSchema(string $table, ?string $prefix = null): AbstractTable
     {
         return new SQLServerTable($this->driver, $table, $prefix ?? '');
     }

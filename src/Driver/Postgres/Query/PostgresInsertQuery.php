@@ -36,7 +36,7 @@ class PostgresInsertQuery extends InsertQuery implements ReturningInterface
     /** @var list<FragmentInterface|non-empty-string> */
     protected array $returningColumns = [];
 
-    public function withDriver(DriverInterface $driver, string $prefix = null): QueryInterface
+    public function withDriver(DriverInterface $driver, ?string $prefix = null): QueryInterface
     {
         $driver instanceof PostgresDriver or throw new BuilderException(
             'Postgres InsertQuery can be used only with Postgres driver',

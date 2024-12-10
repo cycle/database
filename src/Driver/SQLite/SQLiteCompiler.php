@@ -28,7 +28,7 @@ class SQLiteCompiler extends Compiler implements CachingCompilerInterface
      *
      * @link http://stackoverflow.com/questions/10491492/sqllite-with-skip-offset-only-not-limit
      */
-    protected function limit(QueryParameters $params, Quoter $q, int $limit = null, int $offset = null): string
+    protected function limit(QueryParameters $params, Quoter $q, ?int $limit = null, ?int $offset = null): string
     {
         if ($limit === null && $offset === null) {
             return '';

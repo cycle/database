@@ -237,7 +237,7 @@ class SelectQuery extends ActiveQuery implements
      * Set selection limit. Attention, this limit value does not affect values set in paginator but
      * only changes pagination window. Set to 0 to disable limiting.
      */
-    public function limit(int $limit = null): self
+    public function limit(?int $limit = null): self
     {
         $this->limit = $limit;
 
@@ -253,7 +253,7 @@ class SelectQuery extends ActiveQuery implements
      * Set selection offset. Attention, this value does not affect associated paginator but only
      * changes pagination window.
      */
-    public function offset(int $offset = null): self
+    public function offset(?int $offset = null): self
     {
         $this->offset = $offset;
 

@@ -176,7 +176,7 @@ interface DriverInterface
      *
      * @return mixed
      */
-    public function lastInsertID(string $sequence = null);
+    public function lastInsertID(?string $sequence = null);
 
     /**
      * Start SQL transaction with specified isolation level (not all DBMS support it). Nested
@@ -187,7 +187,7 @@ interface DriverInterface
      *
      * @return bool True of success.
      */
-    public function beginTransaction(string $isolationLevel = null): bool;
+    public function beginTransaction(?string $isolationLevel = null): bool;
 
     /**
      * Commit the active database transaction.

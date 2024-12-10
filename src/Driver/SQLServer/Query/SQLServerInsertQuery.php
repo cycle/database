@@ -34,7 +34,7 @@ class SQLServerInsertQuery extends InsertQuery implements ReturningInterface
      */
     protected array $returningColumns = [];
 
-    public function withDriver(DriverInterface $driver, string $prefix = null): QueryInterface
+    public function withDriver(DriverInterface $driver, ?string $prefix = null): QueryInterface
     {
         $driver instanceof SQLServerDriver or throw new BuilderException(
             'SQLServer InsertQuery can be used only with SQLServer driver',

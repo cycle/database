@@ -126,7 +126,7 @@ class SQLiteColumn extends AbstractColumn
     public static function createInstance(
         string $table,
         array $schema,
-        \DateTimeZone $timezone = null,
+        ?\DateTimeZone $timezone = null,
     ): self {
         $column = new self($table, $schema['name'], $timezone);
 

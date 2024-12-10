@@ -250,7 +250,7 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     public function __construct(
         protected string $table,
         protected string $name,
-        \DateTimeZone $timezone = null,
+        ?\DateTimeZone $timezone = null,
     ) {
         $this->timezone = $timezone ?? new \DateTimeZone(\date_default_timezone_get());
     }

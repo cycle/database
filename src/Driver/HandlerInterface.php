@@ -78,7 +78,7 @@ interface HandlerInterface
      * @throws HandlerException
      *
      */
-    public function getSchema(string $table, string $prefix = null): AbstractTable;
+    public function getSchema(string $table, ?string $prefix = null): AbstractTable;
 
     /**
      * Create table based on a given schema.

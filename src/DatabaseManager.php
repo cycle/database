@@ -87,7 +87,7 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
      *
      * @throws DBALException
      */
-    public function database(string $database = null): DatabaseInterface
+    public function database(?string $database = null): DatabaseInterface
     {
         if ($database === null) {
             $database = $this->config->getDefaultDatabase();

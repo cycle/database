@@ -26,7 +26,7 @@ abstract class ActiveQuery implements QueryInterface, \Stringable
     protected ?DriverInterface $driver = null;
     protected ?string $prefix = null;
 
-    public function withDriver(DriverInterface $driver, string $prefix = null): QueryInterface
+    public function withDriver(DriverInterface $driver, ?string $prefix = null): QueryInterface
     {
         $query = clone $this;
         $query->driver = $driver;
@@ -50,7 +50,7 @@ abstract class ActiveQuery implements QueryInterface, \Stringable
      *
      * @psalm-return non-empty-string
      */
-    public function sqlStatement(QueryParameters $parameters = null): string
+    public function sqlStatement(?QueryParameters $parameters = null): string
     {
         $this->driver === null and throw new BuilderException('Unable to build query without associated driver');
 
