@@ -235,7 +235,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
      *
      * @return mixed
      */
-    public function lastInsertID(string $sequence = null)
+    public function lastInsertID(?string $sequence = null)
     {
         $result = $this->getPDO()->lastInsertId();
         $this->logger?->debug("Insert ID: {$result}");
@@ -256,7 +256,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
      * @link http://en.wikipedia.org/wiki/Isolation_(database_systems)
      *
      */
-    public function beginTransaction(string $isolationLevel = null): bool
+    public function beginTransaction(?string $isolationLevel = null): bool
     {
         ++$this->transactionLevel;
 

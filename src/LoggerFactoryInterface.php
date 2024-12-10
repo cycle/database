@@ -9,5 +9,5 @@ use Psr\Log\LoggerInterface;
 
 interface LoggerFactoryInterface
 {
-    public function getLogger(DriverInterface $driver = null): LoggerInterface;
+    public function getLogger(?DriverInterface $driver = null): LoggerInterface;
 }

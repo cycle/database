@@ -30,7 +30,7 @@ interface BuilderInterface
      */
     public function insertQuery(
         string $prefix,
-        string $table = null,
+        ?string $table = null,
     ): InsertQuery;
 
     /**
@@ -45,7 +45,7 @@ interface BuilderInterface
 
     public function deleteQuery(
         string $prefix,
-        string $from = null,
+        ?string $from = null,
         array $where = [],
     ): DeleteQuery;
 
@@ -55,7 +55,7 @@ interface BuilderInterface
      */
     public function updateQuery(
         string $prefix,
-        string $table = null,
+        ?string $table = null,
         array $where = [],
         array $values = [],
     ): UpdateQuery;

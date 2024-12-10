@@ -43,7 +43,7 @@ final class Statement implements StatementInterface, \IteratorAggregate
         return $this->pdoStatement->fetch($mode);
     }
 
-    public function fetchColumn(int $columnNumber = null): mixed
+    public function fetchColumn(?int $columnNumber = null): mixed
     {
         return $columnNumber === null
             ? $this->pdoStatement->fetchColumn()

@@ -329,8 +329,8 @@ abstract class Compiler implements CompilerInterface
     abstract protected function limit(
         QueryParameters $params,
         Quoter $q,
-        int $limit = null,
-        int $offset = null,
+        ?int $limit = null,
+        ?int $offset = null,
     ): string;
 
     protected function updateQuery(

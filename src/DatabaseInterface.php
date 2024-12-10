@@ -142,14 +142,14 @@ interface DatabaseInterface
      * @throws \Throwable
      *
      */
-    public function transaction(callable $callback, string $isolationLevel = null): mixed;
+    public function transaction(callable $callback, ?string $isolationLevel = null): mixed;
 
     /**
      * Start database transaction.
      *
      * @link http://en.wikipedia.org/wiki/Database_transaction
      */
-    public function begin(string $isolationLevel = null): bool;
+    public function begin(?string $isolationLevel = null): bool;
 
     /**
      * Commit the active database transaction.

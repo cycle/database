@@ -46,7 +46,7 @@ final class ReadonlyHandler implements HandlerInterface
     /**
      * @psalm-param non-empty-string $table
      */
-    public function getSchema(string $table, string $prefix = null): AbstractTable
+    public function getSchema(string $table, ?string $prefix = null): AbstractTable
     {
         return $this->parent->getSchema($table, $prefix);
     }

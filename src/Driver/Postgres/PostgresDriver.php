@@ -154,7 +154,7 @@ class PostgresDriver extends Driver
      *
      *
      */
-    public function beginTransaction(string $isolationLevel = null): bool
+    public function beginTransaction(?string $isolationLevel = null): bool
     {
         ++$this->transactionLevel;
 

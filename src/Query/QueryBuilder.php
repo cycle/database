@@ -50,7 +50,7 @@ final class QueryBuilder implements BuilderInterface
      */
     public function insertQuery(
         string $prefix,
-        string $table = null,
+        ?string $table = null,
     ): InsertQuery {
         $insert = $this->insertQuery->withDriver($this->driver, $prefix);
 
@@ -80,7 +80,7 @@ final class QueryBuilder implements BuilderInterface
 
     public function deleteQuery(
         string $prefix,
-        string $from = null,
+        ?string $from = null,
         array $where = [],
     ): DeleteQuery {
         $delete = $this->deleteQuery->withDriver($this->driver, $prefix);
@@ -97,7 +97,7 @@ final class QueryBuilder implements BuilderInterface
      */
     public function updateQuery(
         string $prefix,
-        string $table = null,
+        ?string $table = null,
         array $where = [],
         array $values = [],
     ): UpdateQuery {

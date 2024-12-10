@@ -180,7 +180,7 @@ class MySQLColumn extends AbstractColumn
     /**
      * @psalm-param non-empty-string $table
      */
-    public static function createInstance(string $table, array $schema, \DateTimeZone $timezone = null): self
+    public static function createInstance(string $table, array $schema, ?\DateTimeZone $timezone = null): self
     {
         $column = new self($table, $schema['Field'], $timezone);
 

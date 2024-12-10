@@ -21,5 +21,5 @@ interface DatabaseProviderInterface
      * @throws DBALException
      *
      */
-    public function database(string $database = null): DatabaseInterface;
+    public function database(?string $database = null): DatabaseInterface;
 }

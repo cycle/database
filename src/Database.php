@@ -132,21 +132,21 @@ final class Database implements DatabaseInterface
             ->query($query, $parameters);
     }
 
-    public function insert(string $table = null): InsertQuery
+    public function insert(?string $table = null): InsertQuery
     {
         return $this->getDriver(self::WRITE)
             ->getQueryBuilder()
             ->insertQuery($this->prefix, $table);
     }
 
-    public function update(string $table = null, array $values = [], array $where = []): UpdateQuery
+    public function update(?string $table = null, array $values = [], array $where = []): UpdateQuery
     {
         return $this->getDriver(self::WRITE)
             ->getQueryBuilder()
             ->updateQuery($this->prefix, $table, $where, $values);
     }
 
-    public function delete(string $table = null, array $where = []): DeleteQuery
+    public function delete(?string $table = null, array $where = []): DeleteQuery
     {
         return $this->getDriver(self::WRITE)
             ->getQueryBuilder()
@@ -168,7 +168,7 @@ final class Database implements DatabaseInterface
 
     public function transaction(
         callable $callback,
-        string $isolationLevel = null,
+        ?string $isolationLevel = null,
     ): mixed {
         $this->begin($isolationLevel);
 
@@ -183,7 +183,7 @@ final class Database implements DatabaseInterface
         }
     }
 
-    public function begin(string $isolationLevel = null): bool
+    public function begin(?string $isolationLevel = null): bool
     {
         return $this->getDriver(self::WRITE)->beginTransaction($isolationLevel);
     }

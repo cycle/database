@@ -23,7 +23,7 @@ class InsertQuery extends ActiveQuery
     protected array $columns = [];
     protected array $values = [];
 
-    public function __construct(string $table = null)
+    public function __construct(?string $table = null)
     {
         $this->table = $table ?? '';
     }

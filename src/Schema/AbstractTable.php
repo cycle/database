@@ -521,7 +521,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      *
      * @param State $state Use null to flush table schema.
      */
-    public function setState(State $state = null): self
+    public function setState(?State $state = null): self
     {
         $this->current = new State($this->initial->getName());
 
