@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.11.3](https://github.com/cycle/database/compare/2.11.2...2.11.3) (2024-12-10)
+
+
+### Bug Fixes
+
+* improve compatibility with PHP 8.4 ([#214](https://github.com/cycle/database/issues/214)) ([a6b860e](https://github.com/cycle/database/commit/a6b860e55c4e1f5812d9d176e659abeb0b4370cc))
+
+
+### Styles
+
+* apply Code Style to tests ([02c2437](https://github.com/cycle/database/commit/02c24376022c6b131df082b947a9dfdc5d12cbc0))
+* **php-cs-fixer:** fix coding standards ([3822f76](https://github.com/cycle/database/commit/3822f7624d6d531b112fd4e5cf5d7f338fa6cb40))
+
 ## [2.11.2](https://github.com/cycle/database/compare/2.11.1...2.11.2) (2024-10-23)
 
 
