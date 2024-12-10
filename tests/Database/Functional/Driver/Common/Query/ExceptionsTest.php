@@ -23,7 +23,7 @@ abstract class ExceptionsTest extends BaseTest
 
             $this->assertSame(
                 $e->getQuery(),
-                $select->sqlStatement()
+                $select->sqlStatement(),
             );
         }
     }
@@ -40,7 +40,7 @@ abstract class ExceptionsTest extends BaseTest
 
             $this->assertSame(
                 $h->getQuery(),
-                $select->sqlStatement()
+                $select->sqlStatement(),
             );
         }
     }

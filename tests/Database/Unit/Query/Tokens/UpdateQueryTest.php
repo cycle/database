@@ -22,7 +22,7 @@ class UpdateQueryTest extends TestCase
 
         $this->assertSame(
             CompilerInterface::UPDATE_QUERY,
-            $delete->getType()
+            $delete->getType(),
         );
 
         $this->assertEquals(
@@ -42,7 +42,7 @@ class UpdateQueryTest extends TestCase
                     ],
                 ],
             ],
-            $delete->getTokens()
+            $delete->getTokens(),
         );
     }
 }

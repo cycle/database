@@ -10,9 +10,6 @@ use Cycle\Database\Tests\Stub\Driver\MSSQLWrapDriver;
 use Cycle\Database\Tests\Stub\Driver\MysqlWrapDriver;
 use Cycle\Database\Tests\Stub\Driver\PostgresWrapDriver;
 use Cycle\Database\Tests\Stub\Driver\SQLiteWrapDriver;
-use Exception;
-use PDOStatement;
-use RuntimeException;
 
 /**
  * @runInSeparateProcess
@@ -20,27 +17,27 @@ use RuntimeException;
 abstract class ConnectionExceptionTest extends BaseConnectionTest
 {
     /**
-     * @return iterable<Exception>
+     * @return iterable<\Exception>
      */
     abstract public function reconnectableExceptionsProvider(): iterable;
 
     /**
      * @dataProvider reconnectableExceptionsProvider()
      */
-    public function testConnectionExceptionOutOfTransaction(Exception $exception): void
+    public function testConnectionExceptionOutOfTransaction(\Exception $exception): void
     {
         $driver = $this->getDriver();
         $this->configureExceptionsQuery($driver, [$exception]);
 
         $result = $driver->query('SELECT 42')->fetchColumn(0);
 
-        $this->assertSame('42', (string)$result);
+        $this->assertSame('42', (string) $result);
     }
 
     /**
      * @dataProvider reconnectableExceptionsProvider()
      */
-    public function testConnectionExceptionInTransaction(Exception $exception): void
+    public function testConnectionExceptionInTransaction(\Exception $exception): void
     {
         $driver = $this->getDriver();
         $driver->beginTransaction();
@@ -58,7 +55,7 @@ abstract class ConnectionExceptionTest extends BaseConnectionTest
     /**
      * @dataProvider reconnectableExceptionsProvider()
      */
-    public function testConnectionExceptionReconnectsOnce(Exception $exception): void
+    public function testConnectionExceptionReconnectsOnce(\Exception $exception): void
     {
         $driver = $this->getDriver();
         $this->configureExceptionsQuery($driver, [$exception, $exception]);
@@ -72,7 +69,7 @@ abstract class ConnectionExceptionTest extends BaseConnectionTest
     {
         $driver = $this->getDriver();
         $this->configureExceptionsQuery($driver, [
-            new RuntimeException('Test exception 42.'),
+            new \RuntimeException('Test exception 42.'),
         ]);
 
         $this->expectException(StatementException::class);
@@ -84,8 +81,8 @@ abstract class ConnectionExceptionTest extends BaseConnectionTest
     private function configureExceptionsQuery(
         SQLiteWrapDriver|MysqlWrapDriver|PostgresWrapDriver|MSSQLWrapDriver $driver,
         array $exceptions,
-    ) {
-        $driver->setQueryCallback(static function (PDOStatement $statement, ?array $params) use (&$exceptions) {
+    ): void {
+        $driver->setQueryCallback(static function (\PDOStatement $statement, ?array $params) use (&$exceptions) {
             if ($exceptions !== []) {
                 throw \array_shift($exceptions);
             }

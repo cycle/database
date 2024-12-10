@@ -17,12 +17,12 @@ abstract class InsertQueryTest extends BaseTest
     {
         $this->assertInstanceOf(
             InsertQuery::class,
-            $this->database->insert()
+            $this->database->insert(),
         );
 
         $this->assertInstanceOf(
             InsertQuery::class,
-            $this->database->table->insert()
+            $this->database->table->insert(),
         );
     }
 
@@ -32,7 +32,7 @@ abstract class InsertQueryTest extends BaseTest
 
         $this->assertSameQuery(
             "INSERT INTO {table} ({name}) VALUES ('Antony')",
-            (string)$insert
+            (string) $insert,
         );
     }
 
@@ -42,7 +42,7 @@ abstract class InsertQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'INSERT INTO {table} DEFAULT VALUES',
-            (string)$insert
+            (string) $insert,
         );
     }
 
@@ -52,7 +52,7 @@ abstract class InsertQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'INSERT INTO {table} ({name}) VALUES (?)',
-            $insert
+            $insert,
         );
     }
 
@@ -62,7 +62,7 @@ abstract class InsertQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'INSERT INTO {table} DEFAULT VALUES',
-            $insert
+            $insert,
         );
     }
 
@@ -74,7 +74,7 @@ abstract class InsertQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'INSERT INTO {table} ({name}, {balance}) VALUES (?, ?)',
-            $insert
+            $insert,
         );
     }
 
@@ -87,7 +87,7 @@ abstract class InsertQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'INSERT INTO {table} ({name}, {balance}) VALUES (?, ?), (?, ?)',
-            $insert
+            $insert,
         );
     }
 
@@ -100,7 +100,7 @@ abstract class InsertQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'INSERT INTO {table} ({name}, {balance}) VALUES (?, ?), (?, ?)',
-            $insert
+            $insert,
         );
     }
 
@@ -114,7 +114,7 @@ abstract class InsertQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'INSERT INTO {table} ({name}, {updated_at}, {deleted_at}) VALUES (?, NOW(), NOW())',
-            $insert
+            $insert,
         );
         $this->assertSameParameters(['Anton'], $insert);
 
@@ -141,7 +141,7 @@ abstract class InsertQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'INSERT INTO {table} ({name}, {updated_at}, {deleted_at}) VALUES (?, NOW(), NOW())',
-            $insert
+            $insert,
         );
 
         $insert = $this->database->insert()->into('table')->values([
@@ -172,7 +172,7 @@ abstract class InsertQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'INSERT INTO {table} ({name}, {updated_at}) VALUES (?, NOW())',
-            $insert
+            $insert,
         );
         $this->assertSameParameters(['Anton'], $insert);
 
@@ -184,7 +184,7 @@ abstract class InsertQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'INSERT INTO {table} ({name}, {updated_at}) VALUES (?, NOW())',
-            $insert
+            $insert,
         );
         $this->assertSameParameters(['Anton'], $insert);
     }

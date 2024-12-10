@@ -21,7 +21,7 @@ class BuildersAccessTest extends CommonClass
         parent::testTableSchemaAccess();
         $this->assertInstanceOf(
             SQLServerTable::class,
-            $this->db()->table('sample')->getSchema()
+            $this->db()->table('sample')->getSchema(),
         );
     }
 }

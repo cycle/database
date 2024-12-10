@@ -14,12 +14,12 @@ use Cycle\Database\Tests\Functional\Driver\Common\BaseTest as CommonClass;
  */
 final class ArrayColumnTest extends CommonClass
 {
-
     public const DRIVER = 'postgres';
 
     /**
      * @dataProvider typesDataProvider
-     */public function testArrayType(string $postgres_type, string $internal_type): void
+     */
+    public function testArrayType(string $postgres_type, string $internal_type): void
     {
         $driver = $this->database->getDriver();
         $driver->execute("DROP TABLE IF EXISTS array_test");
@@ -46,5 +46,4 @@ final class ArrayColumnTest extends CommonClass
         yield ['bpchar[]', 'string[]'];
         yield ['text[]', 'string[]'];
     }
-
 }

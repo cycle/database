@@ -24,7 +24,7 @@ abstract class BuildersAccessTest extends BaseTest
     {
         $this->assertInstanceOf(
             Table::class,
-            $this->db()->table('sample')
+            $this->db()->table('sample'),
         );
     }
 
@@ -32,7 +32,7 @@ abstract class BuildersAccessTest extends BaseTest
     {
         $this->assertInstanceOf(
             AbstractTable::class,
-            $this->db()->table('sample')->getSchema()
+            $this->db()->table('sample')->getSchema(),
         );
     }
 
@@ -40,7 +40,7 @@ abstract class BuildersAccessTest extends BaseTest
     {
         $this->assertEquals(
             $this->db(),
-            $this->db()->table('sample')->getDatabase()
+            $this->db()->table('sample')->getDatabase(),
         );
     }
 
@@ -48,7 +48,7 @@ abstract class BuildersAccessTest extends BaseTest
     {
         $this->assertInstanceOf(
             CompilerInterface::class,
-            $this->db()->getDriver()->getQueryCompiler('')
+            $this->db()->getDriver()->getQueryCompiler(''),
         );
     }
 

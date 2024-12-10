@@ -19,21 +19,6 @@ class InsertQueryTest extends CommonClass
 {
     public const DRIVER = 'postgres';
 
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        //To test PG insert behaviour rendering
-        $schema = $this->database->table('target_table')->getSchema();
-        $schema->primary('target_id');
-        $schema->save();
-    }
-
-    public function tearDown(): void
-    {
-        $this->dropDatabase($this->database);
-    }
-
     public function testQueryInstance(): void
     {
         parent::testQueryInstance();
@@ -45,12 +30,12 @@ class InsertQueryTest extends CommonClass
         $insert = $this->database->insert()->into('target_table')->values(
             [
                 'name' => 'Anton',
-            ]
+            ],
         );
 
         $this->assertSameQuery(
             'INSERT INTO {target_table} ({name}) VALUES (?) RETURNING {target_id}',
-            $insert
+            $insert,
         );
     }
 
@@ -62,7 +47,7 @@ class InsertQueryTest extends CommonClass
 
         $this->assertSameQuery(
             'INSERT INTO {target_table} ({name}, {balance}) VALUES (?, ?) RETURNING {target_id}',
-            $insert
+            $insert,
         );
     }
 
@@ -75,7 +60,7 @@ class InsertQueryTest extends CommonClass
 
         $this->assertSameQuery(
             'INSERT INTO {target_table} ({name}, {balance}) VALUES (?, ?), (?, ?) RETURNING {target_id}',
-            $insert
+            $insert,
         );
     }
 
@@ -88,7 +73,7 @@ class InsertQueryTest extends CommonClass
 
         $this->assertSameQuery(
             'INSERT INTO {table} ({name}, {balance}) VALUES (?, ?) RETURNING {name}',
-            $insert
+            $insert,
         );
     }
 
@@ -101,7 +86,7 @@ class InsertQueryTest extends CommonClass
 
         $this->assertSameQuery(
             'INSERT INTO {table} ({name}, {balance}) VALUES (?, ?) RETURNING {name}, {created_at}',
-            $insert
+            $insert,
         );
     }
 
@@ -114,7 +99,7 @@ class InsertQueryTest extends CommonClass
 
         $this->assertSameQuery(
             'INSERT INTO {table} ({name}, {balance}) VALUES (?, ?) RETURNING {name} as {full_name}',
-            $insert
+            $insert,
         );
     }
 
@@ -127,7 +112,7 @@ class InsertQueryTest extends CommonClass
 
         $this->assertSameQuery(
             'INSERT INTO {table} ({name}, {balance}) VALUES (?,?) RETURNING {balance} + 100 as {modified_balance}',
-            $insert
+            $insert,
         );
     }
 
@@ -140,7 +125,7 @@ class InsertQueryTest extends CommonClass
 
         $this->assertSameQuery(
             'INSERT INTO {table} ({name}, {balance}) VALUES (?, ?) RETURNING {name}, {created_at} as {date}',
-            $insert
+            $insert,
         );
     }
 
@@ -230,7 +215,7 @@ class InsertQueryTest extends CommonClass
     {
         $schema = $this->schema(
             table: 'with_microseconds',
-            driverConfig: ['options' => ['withDatetimeMicroseconds' => true]]
+            driverConfig: ['options' => ['withDatetimeMicroseconds' => true]],
         );
         $schema->primary('id');
         $schema->datetime('datetime', 6);
@@ -239,13 +224,13 @@ class InsertQueryTest extends CommonClass
         $expected = new \DateTimeImmutable();
 
         $id = $this->db(
-            driverConfig: ['options' => ['withDatetimeMicroseconds' => true]]
+            driverConfig: ['options' => ['withDatetimeMicroseconds' => true]],
         )->insert('with_microseconds')->values([
             'datetime' => $expected,
         ])->run();
 
         $result = $this->db(
-            driverConfig: ['options' => ['withDatetimeMicroseconds' => true]]
+            driverConfig: ['options' => ['withDatetimeMicroseconds' => true]],
         )->select('datetime')
             ->from('with_microseconds')
             ->where('id', $id)
@@ -276,7 +261,22 @@ class InsertQueryTest extends CommonClass
 
         $this->assertSame(
             $expected->setTimezone($this->database->getDriver()->getTimezone())->format('Y-m-d H:i:s'),
-            $result['datetime']
+            $result['datetime'],
         );
+    }
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        //To test PG insert behaviour rendering
+        $schema = $this->database->table('target_table')->getSchema();
+        $schema->primary('target_id');
+        $schema->save();
+    }
+
+    public function tearDown(): void
+    {
+        $this->dropDatabase($this->database);
     }
 }

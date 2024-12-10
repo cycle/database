@@ -15,16 +15,6 @@ class TableTest extends CommonClass
 {
     public const DRIVER = 'mysql';
 
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $schema = $this->database->table('set_table')->getSchema();
-        $schema->primary('id');
-        $schema->set('value', ['one', 'two']);
-        $schema->save();
-    }
-
     public function testInsertOneSetValue(): void
     {
         $table = $this->database->table('set_table');
@@ -39,7 +29,7 @@ class TableTest extends CommonClass
             [
                 ['id' => 1, 'value' => 'one'],
             ],
-            $table->fetchAll()
+            $table->fetchAll(),
         );
     }
 
@@ -57,7 +47,17 @@ class TableTest extends CommonClass
             [
                 ['id' => 1, 'value' => 'one,two'],
             ],
-            $table->fetchAll()
+            $table->fetchAll(),
         );
+    }
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $schema = $this->database->table('set_table')->getSchema();
+        $schema->primary('id');
+        $schema->set('value', ['one', 'two']);
+        $schema->save();
     }
 }

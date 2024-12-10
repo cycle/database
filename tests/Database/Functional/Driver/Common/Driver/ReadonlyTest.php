@@ -16,50 +16,6 @@ abstract class ReadonlyTest extends BaseTest
      */
     protected $table = 'readonly_tests';
 
-    public function setUp(): void
-    {
-        $this->database = $this->db('default', '', ['readonly' => true]);
-
-        $this->allowWrite(function () {
-            $table = $this->database->table($this->table);
-            $schema = $table->getSchema();
-            $schema->primary('id');
-            $schema->string('value')->nullable();
-            $schema->save();
-        });
-    }
-
-    private function allowWrite(\Closure $then): void
-    {
-        /** @var Driver $driver */
-        $driver = $this->database->getDriver();
-
-        (function (\Closure $then): void {
-            $this->config->readonly = false;
-            try {
-                $then();
-            } finally {
-                $this->config->readonly = true;
-            }
-        })->call($driver, $then);
-    }
-
-    public function tearDown(): void
-    {
-        $this->allowWrite(function () {
-            $schema = $this->database->table($this->table)
-                ->getSchema();
-
-            $schema->declareDropped();
-            $schema->save();
-        });
-    }
-
-    protected function table(): Table
-    {
-        return $this->database->table($this->table);
-    }
-
     public function testTableAllowSelection(): void
     {
         $this->expectNotToPerformAssertions();
@@ -184,8 +140,8 @@ abstract class ReadonlyTest extends BaseTest
 
         $this->table()
             ->insert()
-                ->columns('value')
-                ->values('example')
+            ->columns('value')
+            ->values('example')
             ->run();
     }
 
@@ -282,5 +238,49 @@ abstract class ReadonlyTest extends BaseTest
         $this->expectException(ReadonlyConnectionException::class);
 
         $this->database->execute("DROP TABLE {$this->table}");
+    }
+
+    public function setUp(): void
+    {
+        $this->database = $this->db('default', '', ['readonly' => true]);
+
+        $this->allowWrite(function (): void {
+            $table = $this->database->table($this->table);
+            $schema = $table->getSchema();
+            $schema->primary('id');
+            $schema->string('value')->nullable();
+            $schema->save();
+        });
+    }
+
+    public function tearDown(): void
+    {
+        $this->allowWrite(function (): void {
+            $schema = $this->database->table($this->table)
+                ->getSchema();
+
+            $schema->declareDropped();
+            $schema->save();
+        });
+    }
+
+    protected function table(): Table
+    {
+        return $this->database->table($this->table);
+    }
+
+    private function allowWrite(\Closure $then): void
+    {
+        /** @var Driver $driver */
+        $driver = $this->database->getDriver();
+
+        (function (\Closure $then): void {
+            $this->config->readonly = false;
+            try {
+                $then();
+            } finally {
+                $this->config->readonly = true;
+            }
+        })->call($driver, $then);
     }
 }

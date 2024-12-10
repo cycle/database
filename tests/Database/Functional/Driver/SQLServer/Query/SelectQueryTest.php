@@ -24,7 +24,7 @@ class SelectQueryTest extends CommonClass
             'SELECT * FROM (
                 SELECT *, ROW_NUMBER() OVER (ORDERBY(SELECT NULL)) AS {_ROW_NUMBER_} FROM {users}
             ) AS {ORD_FALLBACK} WHERE {_ROW_NUMBER_} BETWEEN ? AND ?',
-            $select
+            $select,
         );
 
         $this->assertSameParameters(
@@ -32,7 +32,7 @@ class SelectQueryTest extends CommonClass
                 1,
                 10,
             ],
-            $select
+            $select,
         );
     }
 
@@ -45,7 +45,7 @@ class SelectQueryTest extends CommonClass
             'SELECT * FROM (
                 SELECT *, ROW_NUMBER() OVER (ORDERBY(SELECT NULL)) AS {_ROW_NUMBER_} FROM {users}
             ) AS {ORD_FALLBACK} WHERE {_ROW_NUMBER_} BETWEEN ? AND ?',
-            $select
+            $select,
         );
 
         $this->assertSameParameters(
@@ -53,7 +53,7 @@ class SelectQueryTest extends CommonClass
                 21,
                 30,
             ],
-            $select
+            $select,
         );
     }
 
@@ -67,7 +67,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             'SELECT * FROM {users} ORDER BY {name} ASC OFFSET ? ROWS FETCH FIRST ? ROWS ONLY',
-            $select
+            $select,
         );
 
 
@@ -76,7 +76,7 @@ class SelectQueryTest extends CommonClass
                 20,
                 10,
             ],
-            $select
+            $select,
         );
     }
 
@@ -89,14 +89,14 @@ class SelectQueryTest extends CommonClass
             'SELECT * FROM (
                 SELECT *, ROW_NUMBER() OVER (ORDERBY(SELECT NULL)) AS {_ROW_NUMBER_} FROM {users}
             ) AS {ORD_FALLBACK} WHERE {_ROW_NUMBER_} >= ?',
-            $select
+            $select,
         );
 
         $this->assertSameParameters(
             [
                 21,
             ],
-            $select
+            $select,
         );
     }
 
@@ -109,7 +109,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WITH(UPDLOCK,ROWLOCK) WHERE {name} = ?',
-            $select
+            $select,
         );
     }
 
@@ -123,7 +123,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE {id} = ? AND json_value({settings}, '$.\"theme\"') = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters([1, 'dark'], $select);
     }
@@ -138,7 +138,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE {id} = ? OR json_value({settings}, '$.\"theme\"') = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters([1, 'dark'], $select);
     }
@@ -152,7 +152,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE json_value({settings}, '$.\"phone\".\"work\"') = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters(['+1234567890'], $select);
     }
@@ -166,7 +166,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE json_value({settings}, '$.\"phones\"[1]') = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters(['+1234567890'], $select);
     }
@@ -180,7 +180,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE json_value({settings}, '$.\"phones\"[1].\"numbers\"[3]') = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters(['+1234567890'], $select);
     }
@@ -195,7 +195,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE {id} = ? AND ? IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
-            $select
+            $select,
         );
         $this->assertSameParameters([1, 'en'], $select);
     }
@@ -210,7 +210,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE {id} = ? OR ? IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
-            $select
+            $select,
         );
         $this->assertSameParameters([1, 'en'], $select);
     }
@@ -224,7 +224,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE ? IN (SELECT [value] FROM openjson({settings}, '$.\"phones\".\"work\"'))",
-            $select
+            $select,
         );
         $this->assertSameParameters(['+1234567890'], $select);
     }
@@ -238,7 +238,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE ? IN (SELECT [value] FROM openjson({settings}, '$.\"phones\"[1]'))",
-            $select
+            $select,
         );
         $this->assertSameParameters(['+1234567890'], $select);
     }
@@ -252,7 +252,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE ? IN (SELECT [value] FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"[3]'))",
-            $select
+            $select,
         );
         $this->assertSameParameters(['+1234567890'], $select);
     }
@@ -267,7 +267,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE {id} = ? AND ? NOT IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
-            $select
+            $select,
         );
         $this->assertSameParameters([1, 'en'], $select);
     }
@@ -282,7 +282,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE {id} = ? OR ? NOT IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
-            $select
+            $select,
         );
         $this->assertSameParameters([1, 'en'], $select);
     }
@@ -296,7 +296,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE ? NOT IN (SELECT [value] FROM openjson({settings}, '$.\"phones\".\"work\"'))",
-            $select
+            $select,
         );
         $this->assertSameParameters(['+1234567890'], $select);
     }
@@ -310,7 +310,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE ? NOT IN (SELECT [value] FROM openjson({settings}, '$.\"phones\"[1]'))",
-            $select
+            $select,
         );
         $this->assertSameParameters(['+1234567890'], $select);
     }
@@ -324,7 +324,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE ? NOT IN (SELECT [value] FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"[3]'))",
-            $select
+            $select,
         );
         $this->assertSameParameters(['+1234567890'], $select);
     }
@@ -339,7 +339,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE {id} = ? AND 'languages' IN (SELECT [key] FROM openjson({settings}))",
-            $select
+            $select,
         );
     }
 
@@ -353,7 +353,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE {id} = ? OR 'languages' IN (SELECT [key] FROM openjson({settings}))",
-            $select
+            $select,
         );
     }
 
@@ -366,7 +366,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE 'work' IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"'))",
-            $select
+            $select,
         );
     }
 
@@ -379,7 +379,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE 1 IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"'))",
-            $select
+            $select,
         );
     }
 
@@ -392,7 +392,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE 3 IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"'))",
-            $select
+            $select,
         );
     }
 
@@ -406,7 +406,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE {id} = ? AND NOT 'languages' IN (SELECT [key] FROM openjson({settings}))",
-            $select
+            $select,
         );
     }
 
@@ -420,7 +420,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE {id} = ? OR NOT 'languages' IN (SELECT [key] FROM openjson({settings}))",
-            $select
+            $select,
         );
     }
 
@@ -433,7 +433,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE NOT 'work' IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"'))",
-            $select
+            $select,
         );
     }
 
@@ -446,7 +446,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE NOT 1 IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"'))",
-            $select
+            $select,
         );
     }
 
@@ -459,7 +459,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE NOT 3 IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"'))",
-            $select
+            $select,
         );
     }
 
@@ -472,7 +472,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE(SELECT count(*) FROM openjson({settings}, '$.\"languages\"')) >= ?",
-            $select
+            $select,
         );
         $this->assertSameParameters([1], $select);
     }
@@ -487,7 +487,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE {id} = ? AND (SELECT count(*) FROM openjson({settings}, '$.\"languages\"')) = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters([1, 3], $select);
     }
@@ -502,7 +502,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE {id}= ? OR (SELECT count(*) FROM openjson({settings}, '$.\"languages\"')) = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters([1, 4], $select);
     }
@@ -516,7 +516,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE (SELECT count(*) FROM openjson({settings}, '$.\"personal\".\"languages\"')) = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters([1], $select);
     }
@@ -530,7 +530,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE (SELECT count(*) FROM openjson({settings}, '$.\"phones\"[1]')) = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters([2], $select);
     }
@@ -544,7 +544,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE (SELECT count(*) FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"[3]')) = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters([5], $select);
     }
@@ -558,7 +558,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} ORDER BY json_value({logs}, '$.\"created_at\"') DESC",
-            $select
+            $select,
         );
     }
 }

@@ -23,7 +23,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE json_extract({settings}, '$.\"theme\"') = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters(['dark'], $select);
     }
@@ -37,7 +37,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE {id} = ? OR json_extract({settings}, '$.\"theme\"') = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters([1, 'dark'], $select);
     }
@@ -50,7 +50,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE json_extract({settings}, '$.\"phone\".\"work\"') = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters(['+1234567890'], $select);
     }
@@ -63,7 +63,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE json_extract({settings}, '$.\"phones\"[1]') = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters(['+1234567890'], $select);
     }
@@ -76,7 +76,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE json_extract({settings}, '$.\"phones\"[1].\"numbers\"[3]') = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters(['+1234567890'], $select);
     }
@@ -89,7 +89,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE json_type({settings}, '$.\"languages\"') IS NOT null",
-            $select
+            $select,
         );
     }
 
@@ -102,7 +102,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE {id} = ? OR json_type({settings}, '$.\"languages\"') IS NOT null",
-            $select
+            $select,
         );
     }
 
@@ -114,7 +114,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE json_type({settings}, '$.\"phones\".\"work\"') IS NOT null",
-            $select
+            $select,
         );
     }
 
@@ -126,7 +126,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE json_type({settings}, '$.\"phones\"[1]') IS NOT null",
-            $select
+            $select,
         );
     }
 
@@ -138,7 +138,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE json_type({settings}, '$.\"phones\"[1].\"numbers\"[3]') IS NOT null",
-            $select
+            $select,
         );
     }
 
@@ -150,7 +150,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE NOT json_type({settings}, '$.\"languages\"') IS NOT null",
-            $select
+            $select,
         );
     }
 
@@ -163,7 +163,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE {id} = ? OR NOT json_type({settings}, '$.\"languages\"') IS NOT null",
-            $select
+            $select,
         );
     }
 
@@ -175,7 +175,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE NOT json_type({settings}, '$.\"phones\".\"work\"') IS NOT null",
-            $select
+            $select,
         );
     }
 
@@ -187,7 +187,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE NOT json_type({settings}, '$.\"phones\"[1]') IS NOT null",
-            $select
+            $select,
         );
     }
 
@@ -199,7 +199,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE NOT json_type({settings}, '$.\"phones\"[1].\"numbers\"[3]') IS NOT null",
-            $select
+            $select,
         );
     }
 
@@ -211,7 +211,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE json_array_length({settings}, '$.\"languages\"') >= ?",
-            $select
+            $select,
         );
         $this->assertSameParameters([1], $select);
     }
@@ -225,7 +225,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE {id} = ? AND json_array_length({settings}, '$.\"languages\"') = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters([1, 3], $select);
     }
@@ -239,7 +239,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE {id} = ? OR json_array_length({settings}, '$.\"languages\"') = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters([1, 4], $select);
     }
@@ -252,7 +252,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE json_array_length({settings}, '$.\"personal\".\"languages\"') = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters([1], $select);
     }
@@ -265,7 +265,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE json_array_length({settings}, '$.\"phones\"[1]') = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters([2], $select);
     }
@@ -278,7 +278,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE json_array_length({settings}, '$.\"phones\"[1].\"numbers\"[3]') = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters([5], $select);
     }

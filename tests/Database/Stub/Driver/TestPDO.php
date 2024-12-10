@@ -4,41 +4,33 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Stub\Driver;
 
-use Closure;
 use Cycle\Database\Driver\PDOInterface;
 use Cycle\Database\Driver\PDOStatementInterface;
 use Cycle\Database\Exception\StatementException\ConnectionException;
-use Exception;
-use PDO;
-use PDOStatement;
 
 class TestPDO implements PDOInterface
 {
-    private PDO $pdo;
+    private \PDO $pdo;
     private int $exceptionOnTransactionBegin;
-    /** @var Closure(\PDOStatement $pdo, ?array $params): bool|null */
-    private ?Closure $queryCallback;
+
+    /** @var \Closure(\PDOStatement $\pdo, ?array $params): bool|null */
+    private ?\Closure $queryCallback;
 
     /**
-     * @param Closure(\PDOStatement $pdo, ?array $params): bool|null $queryCallback
+     * @param \Closure(\PDOStatement $\pdo, ?array $params): bool|null $queryCallback
      */
-    public function __construct(PDO $pdo, int &$exceptionOnTransactionBegin, ?Closure $queryCallback)
+    public function __construct(\PDO $pdo, int &$exceptionOnTransactionBegin, ?\Closure $queryCallback)
     {
         $this->pdo = $pdo;
         $this->exceptionOnTransactionBegin = &$exceptionOnTransactionBegin;
         $this->queryCallback = $queryCallback;
     }
 
-    public function __call(string $name, array $arguments): mixed
-    {
-        return $this->pdo->$name(...$arguments);
-    }
-
     public function beginTransaction(): bool
     {
         if ($this->exceptionOnTransactionBegin > 0) {
             --$this->exceptionOnTransactionBegin;
-            throw new ConnectionException(new Exception(), 'Test exception');
+            throw new ConnectionException(new \Exception(), 'Test exception');
         }
         return $this->pdo->beginTransaction();
     }
@@ -69,7 +61,7 @@ class TestPDO implements PDOInterface
         return $this->pdo->{__FUNCTION__}(...\func_get_args());
     }
 
-    public function query($statement, $mode = PDO::ATTR_DEFAULT_FETCH_MODE, ...$fetch_mode_args): TestPDOStatement|false
+    public function query($statement, $mode = \PDO::ATTR_DEFAULT_FETCH_MODE, ...$fetch_mode_args): TestPDOStatement|false
     {
         $statement = $this->pdo->query(...\func_get_args());
         return $this->prepareStatement($statement);
@@ -100,16 +92,21 @@ class TestPDO implements PDOInterface
         return $this->pdo->{__FUNCTION__}(...\func_get_args());
     }
 
-    public function quote(string $string, int $type = PDO::PARAM_STR): string|false
+    public function quote(string $string, int $type = \PDO::PARAM_STR): string|false
     {
         return $this->pdo->{__FUNCTION__}(...\func_get_args());
     }
 
-    private function prepareStatement(PDOStatement|false $statement): TestPDOStatement|false
+    public function __call(string $name, array $arguments): mixed
+    {
+        return $this->pdo->$name(...$arguments);
+    }
+
+    private function prepareStatement(\PDOStatement|false $statement): TestPDOStatement|false
     {
         return $statement === false ? false : new TestPDOStatement(
             statement: $statement,
-            queryCallback: $this->queryCallback
+            queryCallback: $this->queryCallback,
         );
     }
 }

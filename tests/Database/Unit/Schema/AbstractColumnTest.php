@@ -11,11 +11,6 @@ final class AbstractColumnTest extends TestCase
 {
     private AbstractColumn $column;
 
-    protected function setUp(): void
-    {
-        $this->column = new class ('foo', 'bar') extends AbstractColumn {};
-    }
-
     public function testReadonlySchemaFalseByDefault(): void
     {
         $this->assertFalse($this->column->isReadonlySchema());
@@ -28,5 +23,10 @@ final class AbstractColumnTest extends TestCase
         $this->column->setAttributes(['readonlySchema' => true]);
 
         $this->assertTrue($this->column->isReadonlySchema());
+    }
+
+    protected function setUp(): void
+    {
+        $this->column = new class('foo', 'bar') extends AbstractColumn {};
     }
 }

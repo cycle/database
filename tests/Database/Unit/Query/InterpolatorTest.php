@@ -10,7 +10,6 @@ use Cycle\Database\Tests\Stub\FooBarEnum;
 use Cycle\Database\Tests\Stub\IntegerEnum;
 use Cycle\Database\Tests\Stub\UntypedEnum;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 
 class InterpolatorTest extends TestCase
 {
@@ -30,7 +29,7 @@ class InterpolatorTest extends TestCase
 
         $this->assertSame(
             'SELECT * FROM table WHERE name = \'Anton\' AND id IN(1, 2, 3) AND balance > 120',
-            $interpolated
+            $interpolated,
         );
     }
 
@@ -50,7 +49,7 @@ class InterpolatorTest extends TestCase
 
         $this->assertSame(
             "SELECT * FROM table WHERE enums = 'bar' OR enumi = 42",
-            $interpolated
+            $interpolated,
         );
     }
 
@@ -69,7 +68,7 @@ class InterpolatorTest extends TestCase
 
         $this->assertSame(
             'SELECT * FROM table WHERE enum = [UNRESOLVED]',
-            $interpolated
+            $interpolated,
         );
     }
 
@@ -87,7 +86,7 @@ class InterpolatorTest extends TestCase
         $this->assertSame(
             'SELECT * FROM table WHERE name = \'Anton\' AND registered > \''
             . $date->format(\DateTime::ATOM) . '\'',
-            $interpolated
+            $interpolated,
         );
     }
 
@@ -105,7 +104,7 @@ class InterpolatorTest extends TestCase
         $this->assertSame(
             'SELECT * FROM table WHERE name = \'John Doe\' AND registered > \''
             . $date->format('Y-m-d H:i:s.u') . '\'',
-            $interpolated
+            $interpolated,
         );
     }
 
@@ -124,7 +123,7 @@ class InterpolatorTest extends TestCase
             'SELECT * FROM table WHERE name = \'Anton\' AND registered > \''
             . $date->format(\DateTime::ATOM)
             . '\'',
-            $interpolated
+            $interpolated,
         );
     }
 
@@ -140,7 +139,7 @@ class InterpolatorTest extends TestCase
 
         $this->assertSame(
             "SELECT 'John' as prefix, name FROM table WHERE name LIKE (CONCAT('John', \"%\"))",
-            $interpolated
+            $interpolated,
         );
     }
 
@@ -157,7 +156,7 @@ class InterpolatorTest extends TestCase
 
         $this->assertSame(
             "SELECT * FROM table WHERE parameter = 'bar' AND param = 'foo'",
-            $interpolated
+            $interpolated,
         );
     }
 
@@ -176,7 +175,7 @@ class InterpolatorTest extends TestCase
         $this->assertSame(
             'SELECT \'?\', \'?\\\'?\', "?\\"?" as qq FROM table ' .
             'WHERE parameter = (":param", \':param\\\':param\', \'foo\', 42)',
-            $interpolated
+            $interpolated,
         );
     }
 
@@ -198,7 +197,7 @@ class InterpolatorTest extends TestCase
             'SELECT * FROM table WHERE name = 42 ' .
             "AND id IN(\"in dq ?\", 'in \n\n sq ?', 'foo') " .
             "AND balance > IN(\"in dq :p\", 'in sq :p', 'bar')",
-            $interpolated
+            $interpolated,
         );
     }
 
@@ -212,7 +211,7 @@ class InterpolatorTest extends TestCase
 
         $this->assertSame(
             'SELECT * FROM table WHERE name = :name',
-            $interpolated
+            $interpolated,
         );
     }
 
@@ -226,7 +225,7 @@ class InterpolatorTest extends TestCase
 
         $this->assertSame(
             'SELECT * FROM table WHERE name = ? OR value > ?',
-            $interpolated
+            $interpolated,
         );
     }
 
@@ -234,7 +233,7 @@ class InterpolatorTest extends TestCase
     {
         $query = 'SELECT * FROM table WHERE name = :name';
 
-        $parameters = ['name' => new class () {
+        $parameters = ['name' => new class {
             public function __toString(): string
             {
                 return 'foo';
@@ -245,7 +244,7 @@ class InterpolatorTest extends TestCase
 
         $this->assertSame(
             "SELECT * FROM table WHERE name = 'foo'",
-            $interpolated
+            $interpolated,
         );
     }
 
@@ -253,13 +252,13 @@ class InterpolatorTest extends TestCase
     {
         $query = 'SELECT * FROM table WHERE name = :name';
 
-        $parameters = ['name' => new stdClass('foo')];
+        $parameters = ['name' => new \stdClass('foo')];
 
         $interpolated = Interpolator::interpolate($query, $parameters);
 
         $this->assertSame(
             'SELECT * FROM table WHERE name = [UNRESOLVED]',
-            $interpolated
+            $interpolated,
         );
     }
 
@@ -273,7 +272,7 @@ class InterpolatorTest extends TestCase
 
         $this->assertSame(
             'SELECT * FROM table WHERE value > 0.001000 OR value < 0.000000',
-            $interpolated
+            $interpolated,
         );
     }
 
@@ -287,7 +286,7 @@ class InterpolatorTest extends TestCase
 
         $this->assertSame(
             'SELECT * FROM table WHERE value = TRUE OR value = FALSE OR value = NULL',
-            $interpolated
+            $interpolated,
         );
     }
 
@@ -301,7 +300,7 @@ class InterpolatorTest extends TestCase
 
         $this->assertSame(
             'SELECT * FROM table WHERE name = :name',
-            $interpolated
+            $interpolated,
         );
     }
 
@@ -328,7 +327,7 @@ class InterpolatorTest extends TestCase
 
         $this->assertSame(
             "SELECT '\\Z', '\\0', '\\'', '\"', '\\b', '\\\\', '\\n', '\\r', '\\t', '%', '_', '\\%\\_'",
-            $interpolated
+            $interpolated,
         );
     }
 
@@ -363,7 +362,7 @@ class InterpolatorTest extends TestCase
 
         $this->assertSame(
             'SELECT * FROM table WHERE name = \'Hello?\' AND str = \':number\' AND number = 42',
-            $interpolated
+            $interpolated,
         );
     }
 }

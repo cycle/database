@@ -35,10 +35,10 @@ class IndexesTest extends CommonClass
 
     protected function isOrderedIndexSupported(): bool
     {
-        if (getenv('MYSQL') === '5.7') {
+        if (\getenv('MYSQL') === '5.7') {
             return false;
         }
 
-        return getenv('DB') !== 'mariadb';
+        return \getenv('DB') !== 'mariadb';
     }
 }

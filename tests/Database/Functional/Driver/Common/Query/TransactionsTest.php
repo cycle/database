@@ -9,17 +9,6 @@ use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
 abstract class TransactionsTest extends BaseTest
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $schema = $this->database->table('table')->getSchema();
-        $schema->primary('id');
-        $schema->text('name');
-        $schema->integer('value');
-        $schema->save();
-    }
-
     public function testCommitTransactionInsert(): void
     {
         $this->database->begin();
@@ -40,7 +29,7 @@ abstract class TransactionsTest extends BaseTest
             function () use ($db): void {
                 $db->table->insertOne(['name' => 'Anton', 'value' => 123]);
                 $this->assertSame(1, $this->database->table->count());
-            }
+            },
         );
 
         $this->assertSame(1, $this->database->table->count());
@@ -55,7 +44,7 @@ abstract class TransactionsTest extends BaseTest
                 $db->table->insertOne(['name' => 'Anton', 'value' => 123]);
                 $this->assertSame(1, $this->database->table->count());
             },
-            Database::ISOLATION_READ_COMMITTED
+            Database::ISOLATION_READ_COMMITTED,
         );
 
         $this->assertSame(1, $this->database->table->count());
@@ -70,7 +59,7 @@ abstract class TransactionsTest extends BaseTest
                 $db->table->insertOne(['name' => 'Anton', 'value' => 123]);
                 $this->assertSame(1, $this->database->table->count());
             },
-            Database::ISOLATION_READ_UNCOMMITTED
+            Database::ISOLATION_READ_UNCOMMITTED,
         );
 
         $this->assertSame(1, $this->database->table->count());
@@ -85,7 +74,7 @@ abstract class TransactionsTest extends BaseTest
                 $db->table->insertOne(['name' => 'Anton', 'value' => 123]);
                 $this->assertSame(1, $this->database->table->count());
             },
-            Database::ISOLATION_REPEATABLE_READ
+            Database::ISOLATION_REPEATABLE_READ,
         );
 
         $this->assertSame(1, $this->database->table->count());
@@ -100,7 +89,7 @@ abstract class TransactionsTest extends BaseTest
                 $db->table->insertOne(['name' => 'Anton', 'value' => 123]);
                 $this->assertSame(1, $this->database->table->count());
             },
-            Database::ISOLATION_SERIALIZABLE
+            Database::ISOLATION_SERIALIZABLE,
         );
 
         $this->assertSame(1, $this->database->table->count());
@@ -129,7 +118,7 @@ abstract class TransactionsTest extends BaseTest
                     $this->assertSame(1, $this->database->table->count());
 
                     throw new \Error('Something happen');
-                }
+                },
             );
         } catch (\Error $e) {
             $this->assertSame('Something happen', $e->getMessage());
@@ -235,6 +224,17 @@ abstract class TransactionsTest extends BaseTest
         $this->database->table->update(['value' => 234], ['id' => $user['id']])->run();
         $this->database->commit();
 
-        $this->assertEquals(234, (int)$this->database->table->select()->run()->fetchColumn(2));
+        $this->assertEquals(234, (int) $this->database->table->select()->run()->fetchColumn(2));
+    }
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $schema = $this->database->table('table')->getSchema();
+        $schema->primary('id');
+        $schema->text('name');
+        $schema->integer('value');
+        $schema->save();
     }
 }

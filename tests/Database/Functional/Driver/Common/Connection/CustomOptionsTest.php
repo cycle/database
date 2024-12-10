@@ -8,29 +8,9 @@ use Cycle\Database\Driver\Handler;
 use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
-use PDO;
 
 abstract class CustomOptionsTest extends BaseTest
 {
-    public function setUp(): void
-    {
-        $this->database = $this->db(connectionConfig: [
-            'options' => [
-                /**
-                 * Stringify fetches will return everything as string,
-                 * so e.g. decimal/numeric type will not be converted to float, thus losing the precision
-                 * and letting users handle it differently.
-                 *
-                 * As a result, int is also returned as string, so we need to make sure
-                 * that we're properly casting schema information details.
-                 */
-                PDO::ATTR_STRINGIFY_FETCHES => true,
-            ],
-        ]);
-
-        parent::setUp();
-    }
-
     public function testDecimalSizes(): void
     {
         $schema = $this->sampleSchema('table');
@@ -73,5 +53,24 @@ abstract class CustomOptionsTest extends BaseTest
         }
 
         return $schema;
+    }
+
+    public function setUp(): void
+    {
+        $this->database = $this->db(connectionConfig: [
+            'options' => [
+                /**
+                 * Stringify fetches will return everything as string,
+                 * so e.g. decimal/numeric type will not be converted to float, thus losing the precision
+                 * and letting users handle it differently.
+                 *
+                 * As a result, int is also returned as string, so we need to make sure
+                 * that we're properly casting schema information details.
+                 */
+                \PDO::ATTR_STRINGIFY_FETCHES => true,
+            ],
+        ]);
+
+        parent::setUp();
     }
 }

@@ -4,29 +4,26 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Stub\Driver;
 
-use Closure;
 use Cycle\Database\Driver\PDOStatementInterface;
 use JetBrains\PhpStorm\ArrayShape;
-use PDO;
-use stdClass;
-use Traversable;
 
 class TestPDOStatement implements PDOStatementInterface
 {
     private \PDOStatement $statement;
-    /** @var Closure(\PDOStatement $pdo, ?array $params): bool|null */
-    private ?Closure $queryCallback;
+
+    /** @var \Closure(\PDOStatement $\pdo, ?array $params): bool|null */
+    private ?\Closure $queryCallback;
 
     /**
-     * @param Closure(\PDOStatement $pdo, ?array $params): bool|null $queryCallback
+     * @param \Closure(\PDOStatement $\pdo, ?array $params): bool|null $queryCallback
      */
-    public function __construct(\PDOStatement $statement, ?Closure $queryCallback = null)
+    public function __construct(\PDOStatement $statement, ?\Closure $queryCallback = null)
     {
         $this->statement = $statement;
         $this->queryCallback = $queryCallback;
     }
 
-    public function getIterator(): Traversable
+    public function getIterator(): \Traversable
     {
         return $this->statement->getIterator();
     }
@@ -39,8 +36,8 @@ class TestPDOStatement implements PDOStatementInterface
     }
 
     public function fetch(
-        int $mode = PDO::FETCH_BOTH,
-        int $cursorOrientation = PDO::FETCH_ORI_NEXT,
+        int $mode = \PDO::FETCH_BOTH,
+        int $cursorOrientation = \PDO::FETCH_ORI_NEXT,
         int $cursorOffset = 0,
     ): mixed {
         return $this->statement->fetch(...\func_get_args());
@@ -49,8 +46,8 @@ class TestPDOStatement implements PDOStatementInterface
     public function bindParam(
         int|string $param,
         mixed &$var,
-        int $type = PDO::PARAM_STR,
-        int $maxLength = null,
+        int $type = \PDO::PARAM_STR,
+        ?int $maxLength = null,
         mixed $driverOptions = null,
     ): bool {
         return $this->statement->bindParam(...\func_get_args());
@@ -59,14 +56,14 @@ class TestPDOStatement implements PDOStatementInterface
     public function bindColumn(
         int|string $column,
         mixed &$var,
-        int $type = PDO::PARAM_STR,
-        int $maxLength = null,
+        int $type = \PDO::PARAM_STR,
+        ?int $maxLength = null,
         mixed $driverOptions = null,
     ): bool {
         return $this->statement->bindColumn(...\func_get_args());
     }
 
-    public function bindValue(int|string $param, mixed $value, int $type = PDO::PARAM_STR): bool
+    public function bindValue(int|string $param, mixed $value, int $type = \PDO::PARAM_STR): bool
     {
         return $this->statement->bindValue(...\func_get_args());
     }
@@ -81,12 +78,12 @@ class TestPDOStatement implements PDOStatementInterface
         return $this->statement->fetchColumn(...\func_get_args());
     }
 
-    public function fetchAll(int $mode = PDO::FETCH_BOTH, ...$args): array
+    public function fetchAll(int $mode = \PDO::FETCH_BOTH, ...$args): array
     {
         return $this->statement->fetchAll(...\func_get_args());
     }
 
-    public function fetchObject(?string $class = stdClass::class, array $constructorArgs = []): object|false
+    public function fetchObject(?string $class = \stdClass::class, array $constructorArgs = []): object|false
     {
         return $this->statement->fetchObject(...\func_get_args());
     }

@@ -196,7 +196,7 @@ abstract class AlterColumnTest extends BaseTest
 
         $this->assertSame(
             $schema->new_column->getEnumValues(),
-            $this->fetchSchema($schema)->new_column->getEnumValues()
+            $this->fetchSchema($schema)->new_column->getEnumValues(),
         );
     }
 

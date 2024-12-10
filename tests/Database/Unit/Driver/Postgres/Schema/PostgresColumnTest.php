@@ -9,19 +9,6 @@ use PHPUnit\Framework\TestCase;
 
 final class PostgresColumnTest extends TestCase
 {
-    /**
-     * @dataProvider enumConstrainsDataProvider
-     */
-    public function testParseEnumValues(string $constrain, array $expected): void
-    {
-        $column = new PostgresColumn('', '');
-
-        $ref = new \ReflectionMethod($column, 'parseEnumValues');
-        $ref->setAccessible(true);
-
-        $this->assertSame($expected, $ref->invoke($column, $constrain));
-    }
-
     public static function enumConstrainsDataProvider(): \Traversable
     {
         yield ['', []];
@@ -70,5 +57,18 @@ final class PostgresColumnTest extends TestCase
         // different type casting TODO: it can be unnecessary
         yield ["CHECK (((target)::foo = 'catalog'::bar))", ['catalog']];
         yield ["CHECK (((log_type)::foo = ANY (ARRAY['catalog'::bar, 'view'::baz])))", ['catalog', 'view']];
+    }
+
+    /**
+     * @dataProvider enumConstrainsDataProvider
+     */
+    public function testParseEnumValues(string $constrain, array $expected): void
+    {
+        $column = new PostgresColumn('', '');
+
+        $ref = new \ReflectionMethod($column, 'parseEnumValues');
+        $ref->setAccessible(true);
+
+        $this->assertSame($expected, $ref->invoke($column, $constrain));
     }
 }

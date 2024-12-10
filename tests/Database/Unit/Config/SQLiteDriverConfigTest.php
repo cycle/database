@@ -23,7 +23,7 @@ final class SQLiteDriverConfigTest extends TestCase
             readonly: $readonly = false,
         );
 
-        $exported = var_export($config, true);
+        $exported = \var_export($config, true);
 
         /** @var SQLiteDriverConfig $recoveredConfig */
         eval('$recoveredConfig = ' . $exported . ';');

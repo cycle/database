@@ -181,8 +181,8 @@ class DatabaseManagerTest extends TestCase
                     'connections' => [
                         'default' => new SQLiteDriverConfig(),
                     ],
-                ]
-            )
+                ],
+            ),
         );
 
         $this->assertInstanceOf(SQLiteDriver::class, $dbal->driver('default'));
@@ -206,8 +206,8 @@ class DatabaseManagerTest extends TestCase
                     'connections' => [
                         'default' => new SQLiteDriverConfig(),
                     ],
-                ]
-            )
+                ],
+            ),
         );
 
         $this->assertCount(1, $dbal->getDrivers());
@@ -230,8 +230,8 @@ class DatabaseManagerTest extends TestCase
                     'connections' => [
                         'default' => new SQLiteDriverConfig(),
                     ],
-                ]
-            )
+                ],
+            ),
         );
 
         $this->assertCount(2, $dbal->getDatabases());
@@ -250,7 +250,7 @@ class DatabaseManagerTest extends TestCase
                 'connections' => [
                     'default' => 'unknown',
                 ],
-            ])
+            ]),
         );
 
         $this->expectException(\InvalidArgumentException::class);

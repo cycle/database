@@ -25,7 +25,7 @@ abstract class UpdateQueryTest extends BaseTest
 
         $this->assertSameQuery(
             "UPDATE {table} SET {name} = 'John' WHERE {name} = 'Antony'",
-            (string)$update
+            (string) $update,
         );
     }
 
@@ -35,7 +35,7 @@ abstract class UpdateQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'UPDATE {table} SET {name} = ?',
-            $update
+            $update,
         );
     }
 
@@ -45,7 +45,7 @@ abstract class UpdateQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'UPDATE {table} SET {name} = ?',
-            $update
+            $update,
         );
     }
 
@@ -55,7 +55,7 @@ abstract class UpdateQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'UPDATE {table} SET {name} = ? WHERE {id} = ?',
-            $update
+            $update,
         );
 
         $this->assertSameParameters(
@@ -63,7 +63,7 @@ abstract class UpdateQueryTest extends BaseTest
                 'Anton',
                 1,
             ],
-            $update
+            $update,
         );
     }
 
@@ -77,13 +77,13 @@ abstract class UpdateQueryTest extends BaseTest
         $lastID = $this->database->insert('demo')->values(
             [
                 'value' => 'abc',
-            ]
+            ],
         )->run();
 
         $updated = $this->database->update('demo')->values(
             [
                 'value' => 'cde',
-            ]
+            ],
         )->where('id', $lastID)->run();
 
         $this->assertSame(1, $updated);
@@ -94,7 +94,7 @@ abstract class UpdateQueryTest extends BaseTest
                 ->from('demo')
                 ->where('id', $lastID)
                 ->run()
-                ->fetchColumn()
+                ->fetchColumn(),
         );
     }
 
@@ -108,7 +108,7 @@ abstract class UpdateQueryTest extends BaseTest
         $lastID = $this->database->insert('demo')->values(
             [
                 'value' => null,
-            ]
+            ],
         )->run();
 
         $this->assertSame(
@@ -117,13 +117,13 @@ abstract class UpdateQueryTest extends BaseTest
                 ->from('demo')
                 ->where('id', $lastID)
                 ->run()
-                ->fetchColumn()
+                ->fetchColumn(),
         );
 
         $updated = $this->database->update('demo')->values(
             [
                 'value' => 'abc',
-            ]
+            ],
         )->where('id', $lastID)->run();
 
         $this->assertSame(1, $updated);
@@ -134,7 +134,7 @@ abstract class UpdateQueryTest extends BaseTest
                 ->from('demo')
                 ->where('id', $lastID)
                 ->run()
-                ->fetchColumn()
+                ->fetchColumn(),
         );
     }
 
@@ -148,13 +148,13 @@ abstract class UpdateQueryTest extends BaseTest
         $lastID = $this->database->insert('demo')->values(
             [
                 'value' => 'abc',
-            ]
+            ],
         )->run();
 
         $updated = $this->database->update('demo')->values(
             [
                 'value' => null,
-            ]
+            ],
         )->where('id', $lastID)->run();
 
         $this->assertSame(1, $updated);
@@ -165,7 +165,7 @@ abstract class UpdateQueryTest extends BaseTest
                 ->from('demo')
                 ->where('id', $lastID)
                 ->run()
-                ->fetchColumn()
+                ->fetchColumn(),
         );
     }
 }

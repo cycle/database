@@ -27,13 +27,13 @@ class TableTest extends CommonClass
                 ['John', 20],
                 ['Bob', 15],
                 ['Charlie', 10],
-            ]
+            ],
         );
 
         $this->assertSame(4, $table->count());
 
         //Rounded
-        $this->assertSame(13, (int)$table->avg('value'));
+        $this->assertSame(13, (int) $table->avg('value'));
     }
 
     public function testAggregationAvgByPassRealFloat(): void
@@ -55,12 +55,12 @@ class TableTest extends CommonClass
                 ['John', 20],
                 ['Bob', 15],
                 ['Charlie', 10],
-            ]
+            ],
         );
 
         $this->assertSame(4, $table->count());
 
         //Rounded
-        $this->assertSame(13.75, (float)$table->avg('value'));
+        $this->assertSame(13.75, (float) $table->avg('value'));
     }
 }

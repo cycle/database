@@ -15,18 +15,6 @@ use Cycle\Database\Tests\Stub\UntypedEnum;
 
 abstract class TableTest extends BaseTest
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $schema = $this->database->table('table')->getSchema();
-        $schema->primary('id');
-        $schema->text('name');
-        $schema->integer('value');
-
-        $schema->save();
-    }
-
     public function testGetSchema(): void
     {
         $this->assertIsArray($this->database->getDriver()->__debugInfo());
@@ -156,7 +144,7 @@ abstract class TableTest extends BaseTest
                 'name' => 'text',
                 'value' => 'integer',
             ],
-            $columns
+            $columns,
         );
     }
 
@@ -170,7 +158,7 @@ abstract class TableTest extends BaseTest
             [
                 'name' => 'Anton',
                 'value' => 10,
-            ]
+            ],
         );
 
         $this->assertNotNull($id);
@@ -182,7 +170,7 @@ abstract class TableTest extends BaseTest
             [
                 ['id' => 1, 'name' => 'Anton', 'value' => 10],
             ],
-            $table->fetchAll()
+            $table->fetchAll(),
         );
     }
 
@@ -199,7 +187,7 @@ abstract class TableTest extends BaseTest
             [
                 'name' => FooBarEnum::FOO,
                 'value' => IntegerEnum::HUNDRED,
-            ]
+            ],
         );
 
         $this->assertNotNull($id);
@@ -208,7 +196,7 @@ abstract class TableTest extends BaseTest
             [
                 ['id' => 1, 'name' => FooBarEnum::FOO->value, 'value' => IntegerEnum::HUNDRED->value],
             ],
-            $table->fetchAll()
+            $table->fetchAll(),
         );
     }
 
@@ -227,7 +215,7 @@ abstract class TableTest extends BaseTest
             [
                 'name' => 'Leo',
                 'value' => UntypedEnum::FOO,
-            ]
+            ],
         );
     }
 
@@ -240,7 +228,7 @@ abstract class TableTest extends BaseTest
             [
                 'name' => 'Anton',
                 'value' => 10,
-            ]
+            ],
         );
 
         $this->assertNotNull($id);
@@ -250,7 +238,7 @@ abstract class TableTest extends BaseTest
             [
                 'name' => 'John',
                 'value' => 20,
-            ]
+            ],
         );
 
         $this->assertNotNull($id);
@@ -263,7 +251,7 @@ abstract class TableTest extends BaseTest
                 ['id' => 1, 'name' => 'Anton', 'value' => 10],
                 ['id' => 2, 'name' => 'John', 'value' => 20],
             ],
-            $table->fetchAll()
+            $table->fetchAll(),
         );
     }
 
@@ -279,7 +267,7 @@ abstract class TableTest extends BaseTest
                 ['John', 20],
                 ['Bob', 30],
                 ['Charlie', 40],
-            ]
+            ],
         );
 
         $this->assertSame(4, $table->count());
@@ -291,7 +279,7 @@ abstract class TableTest extends BaseTest
                 ['id' => 3, 'name' => 'Bob', 'value' => 30],
                 ['id' => 4, 'name' => 'Charlie', 'value' => 40],
             ],
-            $table->fetchAll()
+            $table->fetchAll(),
         );
     }
 
@@ -307,7 +295,7 @@ abstract class TableTest extends BaseTest
                 ['John', 20],
                 ['Bob', 30],
                 ['Charlie', 40],
-            ]
+            ],
         );
 
         $this->assertSame(4, $table->count());
@@ -326,7 +314,7 @@ abstract class TableTest extends BaseTest
                 ['John', 20],
                 ['Bob', 30],
                 ['Charlie', 40],
-            ]
+            ],
         );
 
         $this->assertSame(4, $table->count());
@@ -345,7 +333,7 @@ abstract class TableTest extends BaseTest
                 ['John', 20],
                 ['Bob', 30],
                 ['Charlie', 40],
-            ]
+            ],
         );
 
         $this->assertSame(4, $table->count());
@@ -364,7 +352,7 @@ abstract class TableTest extends BaseTest
                 ['John', 20],
                 ['Bob', 30],
                 ['Charlie', 40],
-            ]
+            ],
         );
 
         $this->assertSame(4, $table->count());
@@ -383,7 +371,7 @@ abstract class TableTest extends BaseTest
                 ['John', 20],
                 ['Bob', 15],
                 ['Charlie', 10],
-            ]
+            ],
         );
 
         $this->assertSame(4, $table->count());
@@ -402,7 +390,7 @@ abstract class TableTest extends BaseTest
                 ['John', 20],
                 ['Bob', 15],
                 ['Charlie', 10],
-            ]
+            ],
         );
 
         $this->assertSame(4, $table->count());
@@ -422,7 +410,7 @@ abstract class TableTest extends BaseTest
                 ['John', 20],
                 ['Bob', 15],
                 ['Charlie', 10],
-            ]
+            ],
         );
 
         $this->assertSame(4, $table->count());
@@ -442,13 +430,13 @@ abstract class TableTest extends BaseTest
                 ['John', 20],
                 ['Bob', 15],
                 ['Charlie', 10],
-            ]
+            ],
         );
 
         $this->assertSame(4, $table->count());
         $this->assertSame(
             2,
-            $table->update(['value' => new Expression('value * 2')])->where('value', 10)->run()
+            $table->update(['value' => new Expression('value * 2')])->where('value', 10)->run(),
         );
 
         $this->assertSame(3, $table->select()->where(['value' => 20])->count());
@@ -466,7 +454,7 @@ abstract class TableTest extends BaseTest
                 ['John', 20],
                 ['Bob', 15],
                 ['Charlie', 10],
-            ]
+            ],
         );
 
         $this->assertSame(4, $table->count());
@@ -486,7 +474,7 @@ abstract class TableTest extends BaseTest
                 ['John', 20],
                 ['Bob', 15],
                 ['Charlie', 10],
-            ]
+            ],
         );
 
         $this->assertSame(4, $table->select()->count('id'));
@@ -504,9 +492,21 @@ abstract class TableTest extends BaseTest
                 ['John', 20],
                 ['Bob', 15],
                 ['Charlie', 10],
-            ]
+            ],
         );
 
         $this->assertSame(4, $table->select()->count('DISTINCT(id)'));
+    }
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $schema = $this->database->table('table')->getSchema();
+        $schema->primary('id');
+        $schema->text('name');
+        $schema->integer('value');
+
+        $schema->save();
     }
 }

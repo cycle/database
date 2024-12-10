@@ -23,7 +23,7 @@ final class SQLServerDriverConfigTest extends TestCase
             readonly: $readonly = false,
         );
 
-        $exported = var_export($config, true);
+        $exported = \var_export($config, true);
 
         /** @var SQLServerDriverConfig $recoveredConfig */
         eval('$recoveredConfig = ' . $exported . ';');

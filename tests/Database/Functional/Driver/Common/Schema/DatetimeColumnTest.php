@@ -97,7 +97,7 @@ abstract class DatetimeColumnTest extends BaseTest
         $savedSchema = $this->schema('sampleSchema');
         $this->assertSame(
             $schema->column('target')->getDefaultValue()->getTimestamp(),
-            $savedSchema->column('target')->getDefaultValue()->getTimestamp()
+            $savedSchema->column('target')->getDefaultValue()->getTimestamp(),
         );
     }
 
@@ -155,14 +155,14 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertFalse($schema->exists());
 
         $schema->datetime('target')->defaultValue(
-            new \DateTime('1980-01-01 19:00:00', new \DateTimeZone('UTC'))
+            new \DateTime('1980-01-01 19:00:00', new \DateTimeZone('UTC')),
         );
         $schema->save();
 
         $savedSchema = $this->schema('sampleSchema');
         $this->assertEquals(
             $schema->column('target')->getDefaultValue(),
-            $savedSchema->column('target')->getDefaultValue()
+            $savedSchema->column('target')->getDefaultValue(),
         );
     }
 
@@ -177,7 +177,7 @@ abstract class DatetimeColumnTest extends BaseTest
         $savedSchema = $this->schema('sampleSchema');
         $this->assertSame(
             $schema->column('target')->getDefaultValue()->getTimestamp(),
-            $savedSchema->column('target')->getDefaultValue()->getTimestamp()
+            $savedSchema->column('target')->getDefaultValue()->getTimestamp(),
         );
     }
 
@@ -192,7 +192,7 @@ abstract class DatetimeColumnTest extends BaseTest
         $savedSchema = $this->schema('sampleSchema');
         $this->assertSame(
             $schema->column('target')->getDefaultValue()->getTimestamp(),
-            $savedSchema->column('target')->getDefaultValue()->getTimestamp()
+            $savedSchema->column('target')->getDefaultValue()->getTimestamp(),
         );
     }
 

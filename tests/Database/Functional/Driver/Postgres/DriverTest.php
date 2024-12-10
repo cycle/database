@@ -11,29 +11,13 @@ use PHPUnit\Framework\TestCase;
 
 class DriverTest extends TestCase
 {
-    /**
-     * TODO Should be moved in common config
-     *
-     * @return TcpConnectionConfig
-     */
-    protected function getConnection(): TcpConnectionConfig
-    {
-        return new TcpConnectionConfig(
-            database: 'spiral',
-            host: '127.0.0.1',
-            port: 15432,
-            user: 'postgres',
-            password: 'YourStrong!Passw0rd'
-        );
-    }
-
     public function testIfSchemaOptionsDoesNotPresentUsePublicSchema(): void
     {
         $driver = PostgresDriver::create(
             new PostgresDriverConfig(
                 connection: $this->getConnection(),
-                schema: ['$user', 'public']
-            )
+                schema: ['$user', 'public'],
+            ),
         );
 
         $driver->connect();
@@ -48,7 +32,7 @@ class DriverTest extends TestCase
             new PostgresDriverConfig(
                 connection: $this->getConnection(),
                 schema: 'private',
-            )
+            ),
         );
 
         $driver->connect();
@@ -63,7 +47,7 @@ class DriverTest extends TestCase
             new PostgresDriverConfig(
                 connection: $this->getConnection(),
                 schema: 'private',
-            )
+            ),
         );
 
         $driver->connect();
@@ -78,7 +62,7 @@ class DriverTest extends TestCase
             new PostgresDriverConfig(
                 connection: $this->getConnection(),
                 schema: ['$user', 'test', 'private'],
-            )
+            ),
         );
 
         $driver->connect();
@@ -89,6 +73,9 @@ class DriverTest extends TestCase
 
     /**
      * @dataProvider schemaProvider
+     * @param mixed $schema
+     * @param mixed $available
+     * @param mixed $result
      */
     public function testIfSchemaOptionsPresentsUseIt($schema, $available, $result): void
     {
@@ -96,7 +83,7 @@ class DriverTest extends TestCase
             new PostgresDriverConfig(
                 connection: $this->getConnection(),
                 schema: $schema,
-            )
+            ),
         );
 
         $this->assertSame($available, $driver->getSearchSchemas());
@@ -111,5 +98,20 @@ class DriverTest extends TestCase
             [['schema1', 'schema2'], ['schema1', 'schema2'], 'schema1, schema2'],
             [['$user', 'schema2'], ['postgres', 'schema2'], '"$user", schema2'],
         ];
+    }
+
+    /**
+     * TODO Should be moved in common config
+     *
+     */
+    protected function getConnection(): TcpConnectionConfig
+    {
+        return new TcpConnectionConfig(
+            database: 'spiral',
+            host: '127.0.0.1',
+            port: 15432,
+            user: 'postgres',
+            password: 'YourStrong!Passw0rd',
+        );
     }
 }

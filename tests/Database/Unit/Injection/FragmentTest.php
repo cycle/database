@@ -22,7 +22,7 @@ class FragmentTest extends TestCase
 
         $this->assertSame(
             'some sql',
-            $q->compile(new QueryParameters(), '', $fragment)
+            $q->compile(new QueryParameters(), '', $fragment),
         );
     }
 
@@ -35,7 +35,7 @@ class FragmentTest extends TestCase
 
         $this->assertSame(
             '"some" "sql"',
-            $q->compile(new QueryParameters(), '', $fragment)
+            $q->compile(new QueryParameters(), '', $fragment),
         );
     }
 
@@ -47,7 +47,7 @@ class FragmentTest extends TestCase
 
         $this->assertSame(
             '"name" = ?',
-            $q->compile($p = new QueryParameters(), '', $fragment)
+            $q->compile($p = new QueryParameters(), '', $fragment),
         );
 
         $this->assertSame(123, $p->getParameters()[0]->getValue());
@@ -57,24 +57,24 @@ class FragmentTest extends TestCase
     {
         $expression = new Expression('some sql');
 
-        $exp = eval('return ' . var_export($expression, true) . ';');
+        $exp = eval('return ' . \var_export($expression, true) . ';');
         $this->assertSame(
             [
                 'expression' => 'some sql',
                 'parameters' => [],
             ],
-            $exp->getTokens()
+            $exp->getTokens(),
         );
 
         $fragment = new Fragment('some sql');
 
-        $f = eval('return ' . var_export($fragment, true) . ';');
+        $f = eval('return ' . \var_export($fragment, true) . ';');
         $this->assertSame(
             [
                 'fragment' => 'some sql',
                 'parameters' => [],
             ],
-            $f->getTokens()
+            $f->getTokens(),
         );
     }
 }

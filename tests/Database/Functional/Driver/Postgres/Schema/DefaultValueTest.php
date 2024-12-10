@@ -20,7 +20,7 @@ class DefaultValueTest extends CommonClass
     {
         $this->expectException(PostgresException::class);
         $this->expectExceptionMessage(
-            'Column `public.table.target` of type json/jsonb has an invalid default json value.'
+            'Column `public.table.target` of type json/jsonb has an invalid default json value.',
         );
         parent::testJsonDefaultValueEmpty();
     }
@@ -29,7 +29,7 @@ class DefaultValueTest extends CommonClass
     {
         $this->expectException(PostgresException::class);
         $this->expectExceptionMessage(
-            'Column `public.table.target` of type json/jsonb has an invalid default json value.'
+            'Column `public.table.target` of type json/jsonb has an invalid default json value.',
         );
         parent::testJsonDefaultValueString();
     }

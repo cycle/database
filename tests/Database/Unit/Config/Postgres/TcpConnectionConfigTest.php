@@ -22,7 +22,7 @@ final class TcpConnectionConfigTest extends BaseConfigTest
             options: [$testOptionKey => $testOptionValue],
         );
 
-        $exported = var_export($config, true);
+        $exported = \var_export($config, true);
 
         /** @var TcpConnectionConfig $recoveredConfig */
         eval('$recoveredConfig = ' . $exported . ';');
@@ -42,7 +42,7 @@ final class TcpConnectionConfigTest extends BaseConfigTest
     {
         $config = new TcpConnectionConfig(
             database: 'database',
-            port: $port
+            port: $port,
         );
 
         $this->assertSame($expected, $config->port);

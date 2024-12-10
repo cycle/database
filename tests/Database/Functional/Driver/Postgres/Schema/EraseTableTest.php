@@ -13,20 +13,6 @@ class EraseTableTest extends TestCase
     use Helpers;
     use Loggable;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->setUpSchemas();
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-
-        $this->dropUserSchema();
-    }
-
     public function testEraseTable(): void
     {
         $driver = $this->getDriver();
@@ -140,5 +126,19 @@ class EraseTableTest extends TestCase
             ->run();
 
         $this->assertSame(1, (int) $result);
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->setUpSchemas();
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        $this->dropUserSchema();
     }
 }

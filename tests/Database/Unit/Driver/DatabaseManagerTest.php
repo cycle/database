@@ -20,61 +20,53 @@ class DatabaseManagerTest extends TestCase
     private LoggerFactoryInterface|MockObject $loggerFactory;
     private LoggerInterface|MockObject $logger;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->loggerFactory = $this->createMock(LoggerFactoryInterface::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
-    }
-
-    public function testDriverShouldHaveNameIfITHasNamedInterface()
+    public function testDriverShouldHaveNameIfITHasNamedInterface(): void
     {
         $manager = new DatabaseManager(
             new DatabaseConfig([
                 'connections' => [
                     'driver_without_name' => new SQLiteDriverConfig(
-                        driver: TestDriver::class
+                        driver: TestDriver::class,
                     ),
                     'driver_with_name' => new SQLiteDriverConfig(),
                 ],
-            ])
+            ]),
         );
 
         $this->assertSame(
             'driver_with_name',
-            $manager->driver('driver_with_name')->getName()
+            $manager->driver('driver_with_name')->getName(),
         );
     }
 
-    public function testSetsLoggerShouldPassLoggerToDrivers()
+    public function testSetsLoggerShouldPassLoggerToDrivers(): void
     {
         $manager = new DatabaseManager(
             new DatabaseConfig([]),
-            $this->loggerFactory
+            $this->loggerFactory,
         );
         $manager->addDriver(
             'driver1',
-            $driver1 = $this->createMock(Driver::class)
+            $driver1 = $this->createMock(Driver::class),
         );
 
         $driver1->expects($this->once())->method('setLogger')->with($this->logger);
 
         $manager->addDriver(
             'driver2',
-            $driver2 = $this->createMock(Driver::class)
+            $driver2 = $this->createMock(Driver::class),
         );
         $driver2->expects($this->once())->method('setLogger')->with($this->logger);
 
         $manager->addDriver(
             'driverWithoutLogger',
-            $driver3 = $this->createMock(DriverInterface::class)
+            $driver3 = $this->createMock(DriverInterface::class),
         );
 
         $manager->setLogger($this->logger);
     }
 
-    public function testDatabaseManagerWithoutLoggerAndLoggerFactoryShouldReturnNullLogger()
+    public function testDatabaseManagerWithoutLoggerAndLoggerFactoryShouldReturnNullLogger(): void
     {
         $manager = new DatabaseManager($this->getDatabaseConfig());
 
@@ -86,7 +78,7 @@ class DatabaseManagerTest extends TestCase
         $this->assertNull($property->getValue($driver));
     }
 
-    public function testDatabaseManagerWithLoggerAndWithoutLoggerFactoryShouldReturnLogger()
+    public function testDatabaseManagerWithLoggerAndWithoutLoggerFactoryShouldReturnLogger(): void
     {
         $manager = new DatabaseManager($this->getDatabaseConfig());
 
@@ -99,11 +91,11 @@ class DatabaseManagerTest extends TestCase
         $this->assertSame($this->logger, $property->getValue($driver));
     }
 
-    public function testDatabaseManagerWithLoggerAndWithLoggerFactoryShouldReturnLoggerFromFactory()
+    public function testDatabaseManagerWithLoggerAndWithLoggerFactoryShouldReturnLoggerFromFactory(): void
     {
         $manager = new DatabaseManager(
             $this->getDatabaseConfig(),
-            $this->loggerFactory
+            $this->loggerFactory,
         );
 
         $loggerFromFactory = $this->createMock(LoggerInterface::class);
@@ -122,15 +114,20 @@ class DatabaseManagerTest extends TestCase
         $this->assertSame($loggerFromFactory, $property->getValue($driver));
     }
 
-    /**
-     * @return DatabaseConfig
-     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->loggerFactory = $this->createMock(LoggerFactoryInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
+    }
+
     private function getDatabaseConfig(): DatabaseConfig
     {
         return new DatabaseConfig([
             'connections' => [
                 'test' => new SQLiteDriverConfig(
-                    driver: TestDriver::class
+                    driver: TestDriver::class,
                 ),
             ],
         ]);

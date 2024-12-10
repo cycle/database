@@ -26,14 +26,14 @@ class TableTest extends CommonClass
             'name' => 'text',
             'value' => 'integer',
         ];
-        arsort($expected);
+        \arsort($expected);
 
         $columns = [];
         foreach ($table->getColumns() as $column) {
             $columns[$column->getName()] = $column->getAbstractType();
         }
 
-        arsort($columns);
+        \arsort($columns);
 
         $this->assertSame($expected, $columns);
     }
@@ -50,7 +50,7 @@ class TableTest extends CommonClass
                 ['Anton', 20],
                 ['Bob', 15],
                 ['Charlie', 10],
-            ]
+            ],
         );
 
         $data = $table->select('name', 'value')->distinct('name')->fetchAll();
@@ -69,7 +69,7 @@ class TableTest extends CommonClass
                 ['Anton', 20],
                 ['Bob', 15],
                 ['Charlie', 10],
-            ]
+            ],
         );
 
         $data = $table->select('name', 'value')->distinctOn('name')->fetchAll();

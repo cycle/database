@@ -18,7 +18,7 @@ final class FileConnectionConfigTest extends TestCase
             options: [$testOptionKey => $testOptionValue],
         );
 
-        $exported = var_export($config, true);
+        $exported = \var_export($config, true);
 
         /** @var FileConnectionConfig $recoveredConfig */
         eval('$recoveredConfig = ' . $exported . ';');

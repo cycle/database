@@ -18,14 +18,10 @@ class ExceptionsTest extends CommonClass
 
     public function testPacketsOutOfOrderConsideredAsConnectionException(): void
     {
-        if (PHP_VERSION_ID < 70400) {
-            $this->markTestSkipped('Expecting PHP version >=7.4. Skipped due to ' . PHP_VERSION);
-        }
-
         // Prepare connection to generate "Packets out of order. Expected 1 received 0. Packet size=145"
         // at the next query response
         $this->database->query('SET SESSION wait_timeout=1')->fetch();
-        sleep(1);
+        \usleep(1_300_000);
 
         try {
             $result = $this->database->query('SELECT version() AS version')->fetchAll();

@@ -20,14 +20,10 @@ final class SQLServerJsonExpressionTest extends TestCase
 
     private function createExpression(): SQLServerJsonExpression
     {
-        return new class () extends SQLServerJsonExpression {
-            public function __construct()
-            {
-            }
+        return new class extends SQLServerJsonExpression {
+            public function __construct() {}
 
-            protected function compile(string $statement): string
-            {
-            }
+            protected function compile(string $statement): string {}
         };
     }
 }

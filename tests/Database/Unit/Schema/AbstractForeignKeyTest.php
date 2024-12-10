@@ -12,14 +12,14 @@ final class AbstractForeignKeyTest extends TestCase
 {
     public function testDefaultCreateIndex(): void
     {
-        $fk = new class ('foo', 'bar', 'baz') extends AbstractForeignKey {};
+        $fk = new class('foo', 'bar', 'baz') extends AbstractForeignKey {};
 
         $this->assertTrue($fk->hasIndex());
     }
 
     public function testWithoutIndex(): void
     {
-        $fk = new class ('foo', 'bar', 'baz') extends AbstractForeignKey {};
+        $fk = new class('foo', 'bar', 'baz') extends AbstractForeignKey {};
         $fk->setIndex(false);
 
         $this->assertFalse($fk->hasIndex());

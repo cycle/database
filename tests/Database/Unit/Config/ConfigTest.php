@@ -26,7 +26,7 @@ class ConfigTest extends TestCase
         $config = new DatabaseConfig(
             [
                 'default' => 'database-1',
-            ]
+            ],
         );
 
         $this->assertSame('database-1', $config->getDefaultDatabase());
@@ -41,7 +41,7 @@ class ConfigTest extends TestCase
                     'test' => [],
                     'test2' => [],
                 ],
-            ]
+            ],
         );
 
         $this->assertTrue($config->hasDatabase('test'));
@@ -58,7 +58,7 @@ class ConfigTest extends TestCase
                     'test' => [],
                     'test2' => [],
                 ],
-            ]
+            ],
         );
 
         $this->expectException(ConfigException::class);
@@ -79,7 +79,7 @@ class ConfigTest extends TestCase
                         'write' => 'bce',
                     ],
                 ],
-            ]
+            ],
         );
 
         $this->assertSame('abc', $config->getDatabase('test')->getDriver());
@@ -104,7 +104,7 @@ class ConfigTest extends TestCase
                         'read' => 'bce',
                     ],
                 ],
-            ]
+            ],
         );
 
         $this->assertSame('abc', $config->getDatabase('test')->getReadDriver());
@@ -130,7 +130,7 @@ class ConfigTest extends TestCase
                         'driver' => 'test',
                     ],
                 ],
-            ]
+            ],
         );
 
         $this->assertSame('test', $config->getDatabase('test')->getName());
@@ -152,10 +152,10 @@ class ConfigTest extends TestCase
                         'driver' => 'test',
                     ],
                 ],
-            ]
+            ],
         );
 
-        $this->assertSame(['test', 'test2'], array_keys($config->getDatabases()));
+        $this->assertSame(['test', 'test2'], \array_keys($config->getDatabases()));
     }
 
     public function testAliases(): void
@@ -175,7 +175,7 @@ class ConfigTest extends TestCase
                     'test' => [],
                     'test2' => [],
                 ],
-            ]
+            ],
         );
 
         $this->assertTrue($config->hasDatabase('test'));
@@ -199,7 +199,7 @@ class ConfigTest extends TestCase
                     'test' => [],
                     'test2' => [],
                 ],
-            ]
+            ],
         );
 
         $this->assertTrue($config->hasDriver('test'));
@@ -212,7 +212,7 @@ class ConfigTest extends TestCase
                     'test' => [],
                     'test2' => [],
                 ],
-            ]
+            ],
         );
 
         $this->assertTrue($config->hasDriver('test'));
@@ -225,7 +225,7 @@ class ConfigTest extends TestCase
         $config = new DatabaseConfig(
             [
                 'default' => 'database-1',
-            ]
+            ],
         );
 
         $this->expectException(ConfigException::class);
@@ -246,10 +246,10 @@ class ConfigTest extends TestCase
                             port: 13306,
                             user: 'root',
                             password: 'root',
-                        )
+                        ),
                     ),
                 ],
-            ]
+            ],
         );
 
         $this->assertInstanceOf(SQLiteDriver::class, $config->getDriver('test'));
@@ -269,12 +269,12 @@ class ConfigTest extends TestCase
                             port: 13306,
                             user: 'root',
                             password: 'root',
-                        )
+                        ),
                     ),
                 ],
-            ]
+            ],
         );
 
-        $this->assertSame(['test', 'test2'], array_keys($config->getDrivers()));
+        $this->assertSame(['test', 'test2'], \array_keys($config->getDrivers()));
     }
 }

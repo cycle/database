@@ -37,7 +37,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE {id} = ? OR {settings}->>'theme' = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters(['value', 1, 'dark'], $select);
     }
@@ -73,7 +73,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE {settings}->'phones'->1->'numbers'->>3 = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters(['value', '+1234567890'], $select);
     }
@@ -88,9 +88,9 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE {id} = ? AND ({settings}->'languages')::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters(['value', 1, json_encode('en')], $select);
+        $this->assertSameParameters(['value', 1, \json_encode('en')], $select);
     }
 
     public function testUpdateWithOrWhereJsonContains(): void
@@ -103,9 +103,9 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE {id} = ? OR ({settings}->'languages')::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters(['value', 1, json_encode('en')], $select);
+        $this->assertSameParameters(['value', 1, \json_encode('en')], $select);
     }
 
     public function testUpdateWithWhereJsonContainsNested(): void
@@ -117,9 +117,9 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE ({settings}->'phones'->'work')::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters(['value', json_encode('+1234567890')], $select);
+        $this->assertSameParameters(['value', \json_encode('+1234567890')], $select);
     }
 
     public function testUpdateWithWhereJsonContainsSinglePath(): void
@@ -130,7 +130,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonContains('settings', []);
 
         $this->assertSameQuery('UPDATE {table} SET {some} = ? WHERE ({settings})::jsonb @> ?', $select);
-        $this->assertSameParameters(['value', json_encode([])], $select);
+        $this->assertSameParameters(['value', \json_encode([])], $select);
     }
 
     public function testUpdateWithWhereJsonContainsArray(): void
@@ -142,9 +142,9 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE ({settings}->'phones'->1)::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters(['value', json_encode('+1234567890')], $select);
+        $this->assertSameParameters(['value', \json_encode('+1234567890')], $select);
     }
 
     public function testUpdateWithWhereJsonContainsNestedArray(): void
@@ -156,9 +156,9 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE ({settings}->'phones'->1->'numbers'->3)::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters(['value', json_encode('+1234567890')], $select);
+        $this->assertSameParameters(['value', \json_encode('+1234567890')], $select);
     }
 
     public function testUpdateWithWhereJsonDoesntContain(): void
@@ -171,9 +171,9 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE {id} = ? AND NOT ({settings}->'languages')::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters(['value', 1, json_encode('en')], $select);
+        $this->assertSameParameters(['value', 1, \json_encode('en')], $select);
     }
 
     public function testUpdateWithOrWhereJsonDoesntContain(): void
@@ -186,9 +186,9 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE {id} = ? OR NOT({settings}->'languages')::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters(['value', 1, json_encode('en')], $select);
+        $this->assertSameParameters(['value', 1, \json_encode('en')], $select);
     }
 
     public function testUpdateWithWhereJsonDoesntContainNested(): void
@@ -200,9 +200,9 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE NOT ({settings}->'phones'->'work')::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters(['value', json_encode('+1234567890')], $select);
+        $this->assertSameParameters(['value', \json_encode('+1234567890')], $select);
     }
 
     public function testUpdateWithWhereJsonDoesntContainSinglePath(): void
@@ -213,7 +213,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonDoesntContain('settings', []);
 
         $this->assertSameQuery('UPDATE {table} SET {some} = ? WHERE NOT ({settings})::jsonb @> ?', $select);
-        $this->assertSameParameters(['value', json_encode([])], $select);
+        $this->assertSameParameters(['value', \json_encode([])], $select);
     }
 
     public function testUpdateWithWhereJsonDoesntContainArray(): void
@@ -225,9 +225,9 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE NOT ({settings}->'phones'->1)::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters(['value', json_encode('+1234567890')], $select);
+        $this->assertSameParameters(['value', \json_encode('+1234567890')], $select);
     }
 
     public function testUpdateWithWhereJsonDoesntContainNestedArray(): void
@@ -239,9 +239,9 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE NOT ({settings}->'phones'->1->'numbers'->3)::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters(['value', json_encode('+1234567890')], $select);
+        $this->assertSameParameters(['value', \json_encode('+1234567890')], $select);
     }
 
     public function testUpdateWithWhereJsonContainsKey(): void
@@ -254,7 +254,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE {id} = ? AND coalesce(({settings})::jsonb ?? 'languages', false)",
-            $select
+            $select,
         );
     }
 
@@ -268,7 +268,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE {id} = ? OR coalesce(({settings})::jsonb ?? 'languages', false)",
-            $select
+            $select,
         );
     }
 
@@ -281,7 +281,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE coalesce(({settings}->'phones')::jsonb ?? 'work', false)",
-            $select
+            $select,
         );
     }
 
@@ -295,7 +295,7 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE CASE WHEN jsonb_typeof(({settings}->'phones')::jsonb) = 'array'
                     THEN jsonb_array_length(({settings}->'phones')::jsonb) >= 2 ELSE false END",
-            $select
+            $select,
         );
     }
 
@@ -309,7 +309,7 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE CASE WHEN jsonb_typeof(({settings}->'phones'->1->'numbers')::jsonb) = 'array'
                     THEN jsonb_array_length(({settings}->'phones'->1->'numbers')::jsonb) >= 4 ELSE false END",
-            $select
+            $select,
         );
     }
 
@@ -323,7 +323,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE {id} = ? AND NOT coalesce(({settings})::jsonb ?? 'languages', false)",
-            $select
+            $select,
         );
     }
 
@@ -337,7 +337,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE {id} = ? OR NOT coalesce(({settings})::jsonb ?? 'languages', false)",
-            $select
+            $select,
         );
     }
 
@@ -350,7 +350,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE NOT coalesce(({settings}->'phones')::jsonb ?? 'work', false)",
-            $select
+            $select,
         );
     }
 
@@ -364,7 +364,7 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE NOT CASE WHEN jsonb_typeof(({settings}->'phones')::jsonb) = 'array'
                     THEN jsonb_array_length(({settings}->'phones')::jsonb) >= 2 ELSE false END",
-            $select
+            $select,
         );
     }
 
@@ -378,7 +378,7 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE NOT CASE WHEN jsonb_typeof(({settings}->'phones'->1->'numbers')::jsonb) = 'array'
                 THEN jsonb_array_length(({settings}->'phones'->1->'numbers')::jsonb) >= 4 ELSE false END",
-            $select
+            $select,
         );
     }
 
@@ -391,7 +391,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE jsonb_array_length(({settings}->'languages')::jsonb) >= ?",
-            $select
+            $select,
         );
         $this->assertSameParameters(['value', 1], $select);
     }
@@ -406,7 +406,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE {id} = ? AND jsonb_array_length(({settings}->'languages')::jsonb) = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters(['value', 1, 3], $select);
     }
@@ -421,7 +421,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE {id} = ? OR jsonb_array_length(({settings}->'languages')::jsonb) = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters(['value', 1, 4], $select);
     }
@@ -435,7 +435,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE jsonb_array_length(({settings}->'personal'->'languages')::jsonb) = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters(['value', 1], $select);
     }
@@ -449,7 +449,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE jsonb_array_length(({settings}->'phones'->1)::jsonb) = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters(['value', 2], $select);
     }
@@ -463,7 +463,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE jsonb_array_length(({settings}->'phones'->1->'numbers'->3)::jsonb) = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters(['value', 5], $select);
     }

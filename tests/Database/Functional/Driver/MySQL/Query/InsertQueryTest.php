@@ -21,7 +21,7 @@ class InsertQueryTest extends CommonClass
 
         $this->assertSameQuery(
             'INSERT INTO {table} () VALUES ()',
-            (string)$insert
+            (string) $insert,
         );
     }
 
@@ -31,7 +31,7 @@ class InsertQueryTest extends CommonClass
 
         $this->assertSameQuery(
             'INSERT INTO {table} () VALUES ()',
-            $insert
+            $insert,
         );
     }
 
@@ -39,7 +39,7 @@ class InsertQueryTest extends CommonClass
     {
         $schema = $this->schema(
             table: 'with_microseconds',
-            driverConfig: ['options' => ['withDatetimeMicroseconds' => true]]
+            driverConfig: ['options' => ['withDatetimeMicroseconds' => true]],
         );
         $schema->primary('id');
         $schema->datetime('datetime', 6);
@@ -48,13 +48,13 @@ class InsertQueryTest extends CommonClass
         $expected = new \DateTimeImmutable();
 
         $id = $this->db(
-            driverConfig: ['options' => ['withDatetimeMicroseconds' => true]]
+            driverConfig: ['options' => ['withDatetimeMicroseconds' => true]],
         )->insert('with_microseconds')->values([
             'datetime' => $expected,
         ])->run();
 
         $result = $this->db(
-            driverConfig: ['options' => ['withDatetimeMicroseconds' => true]]
+            driverConfig: ['options' => ['withDatetimeMicroseconds' => true]],
         )->select('datetime')
             ->from('with_microseconds')
             ->where('id', $id)
@@ -63,7 +63,7 @@ class InsertQueryTest extends CommonClass
 
         $this->assertSame(
             $expected->setTimezone($this->database->getDriver()->getTimezone())->format('Y-m-d H:i:s.u'),
-            $result['datetime']
+            $result['datetime'],
         );
     }
 
@@ -88,7 +88,7 @@ class InsertQueryTest extends CommonClass
 
         $this->assertSame(
             $expected->setTimezone($this->database->getDriver()->getTimezone())->format('Y-m-d H:i:s'),
-            $result['datetime']
+            $result['datetime'],
         );
     }
 }

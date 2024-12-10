@@ -24,7 +24,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
                 'test',
                 1,
             ],
-            $select
+            $select,
         );
     }
 
@@ -41,7 +41,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
                 'test',
                 1,
             ],
-            $select
+            $select,
         );
     }
 
@@ -53,7 +53,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
-            $select
+            $select,
         );
     }
 
@@ -65,7 +65,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
-            $select
+            $select,
         );
     }
 
@@ -77,7 +77,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
-            $select
+            $select,
         );
     }
 
@@ -89,7 +89,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
-            $select
+            $select,
         );
     }
 
@@ -101,7 +101,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos} AS {pht} ON {pht}.{user_id} = {users}.{id}',
-            $select
+            $select,
         );
     }
 
@@ -117,7 +117,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos} AS {pht} ON ({pht}.{user_id} = {users}.{id})',
-            $select
+            $select,
         );
     }
 
@@ -160,7 +160,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
                 true,
                 false,
             ],
-            $select
+            $select,
         );
     }
 
@@ -203,7 +203,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
                 'Anton',
                 'disabled',
             ],
-            $select
+            $select,
         );
     }
 
@@ -211,7 +211,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
     {
         $select = $this->database->select()
             ->from(['users', 'admins'])
-            ->join('LEFT', 'photos', 'pht', fn ($select, string $boolean, callable $wrapper) => $select
+            ->join('LEFT', 'photos', 'pht', static fn($select, string $boolean, callable $wrapper) => $select
                 ->on('photos.user_id', 'users.id')
                 ->onWhere('photos.type', 'avatar'));
 
@@ -225,7 +225,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
             [
                 'avatar',
             ],
-            $select
+            $select,
         );
     }
 
@@ -236,7 +236,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
             ->join('LEFT', 'photos', 'pht', [
                 'pht.user_id' => 'users.id',
                 'users.is_admin' => 'pht.is_admin',
-                fn ($select, string $boolean, callable $wrapper) => $select
+                static fn($select, string $boolean, callable $wrapper) => $select
                     ->on('photos.user_id', 'users.id')
                     ->onWhere('photos.type', 'avatar'),
             ]);
@@ -256,7 +256,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
             [
                 'avatar',
             ],
-            $select
+            $select,
         );
     }
 
@@ -268,7 +268,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos} AS {pht} ON {pht}.{user_id} = {users}.{id}',
-            $select
+            $select,
         );
     }
 
@@ -280,7 +280,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'SELECT * FROM {users} RIGHT JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
-            $select
+            $select,
         );
     }
 
@@ -292,7 +292,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'SELECT * FROM {users} RIGHT JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
-            $select
+            $select,
         );
     }
 
@@ -304,7 +304,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'SELECT * FROM {users} RIGHT JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
-            $select
+            $select,
         );
     }
 
@@ -316,7 +316,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'SELECT * FROM {users} RIGHT JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
-            $select
+            $select,
         );
     }
 
@@ -328,7 +328,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'SELECT * FROM {users} INNER JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
-            $select
+            $select,
         );
     }
 
@@ -340,7 +340,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'SELECT * FROM {users} INNER JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
-            $select
+            $select,
         );
     }
 
@@ -352,7 +352,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'SELECT * FROM {users} INNER JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
-            $select
+            $select,
         );
     }
 
@@ -364,7 +364,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'SELECT * FROM {users} INNER JOIN {photos} ON {photos}.{user_id} = {users}.{id}',
-            $select
+            $select,
         );
     }
 
@@ -379,14 +379,14 @@ abstract class SelectWithJoinQueryTest extends BaseTest
                     ->from('humidity')
                     ->where('h.date', '<=', 't.date'),
                 alias: 'h',
-                on: new Fragment('true')
+                on: new Fragment('true'),
             );
 
         $this->assertSameQuery(
             'SELECT * FROM {temperature} AS {t}
             LEFT JOIN LATERAL (SELECT * FROM {humidity} WHERE {h}.{date} <= ?) AS {h}
             ON true WHERE {t}.{date} = ?',
-            $select
+            $select,
         );
     }
 
@@ -419,7 +419,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
                 LEFT JOIN {admins} AS {admins} ON {users}.{admin_id}={admins}.{id} AND {admins}.{id} = ?
                 SQL,
             [1, 3, 1, 0, 37],
-            $select
+            $select,
         );
     }
 
@@ -432,7 +432,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos}
                     ON {photos}.{user_id} = {users}.{id} AND {photos}.{public} = ?',
-            $select
+            $select,
         );
     }
 
@@ -447,7 +447,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos}
                     ON {photos}.{user_id} = {users}.{id} OR {photos}.{group_id} = {users}.{group_id}',
-            $select
+            $select,
         );
     }
 
@@ -462,7 +462,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos}
                     ON {photos}.{user_id} = {users}.{id} AND {photos}.{group_id} = {users}.{group_id}',
-            $select
+            $select,
         );
     }
 
@@ -477,7 +477,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos}
                     ON {photos}.{user_id} = {users}.{id} AND {photos}.{group_id} = {users}.{group_id}',
-            $select
+            $select,
         );
     }
 
@@ -493,7 +493,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos}
                     ON {photos}.{user_id} = {users}.{id} AND {photos}.{public} = ? OR {photos}.{magic} > ?',
-            $select
+            $select,
         );
     }
 
@@ -509,7 +509,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos}
                     ON {photos}.{user_id} = {users}.{id} AND {photos}.{public} = ? AND {photos}.{magic} > ?',
-            $select
+            $select,
         );
     }
 
@@ -525,7 +525,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos}
                     ON {photos}.{user_id} = {users}.{id} AND {photos}.{public} = ? AND {photos}.{magic} > ?',
-            $select
+            $select,
         );
     }
 
@@ -540,13 +540,13 @@ abstract class SelectWithJoinQueryTest extends BaseTest
                 [
                     'p.user_id' => 'users.id',
                     'p.public' => new Parameter(true),
-                ]
+                ],
             );
 
         $this->assertSameQuery(
             'SELECT * FROM {users} LEFT JOIN {photos} AS {p}
                     ON ({p}.{user_id} = {users}.{id} AND {p}.{public} = ?)',
-            $select
+            $select,
         );
     }
 
@@ -559,13 +559,13 @@ abstract class SelectWithJoinQueryTest extends BaseTest
                 [
                     'p.user_id' => 'users.id',
                     'p.public' => new Parameter(true),
-                ]
+                ],
             );
 
         $this->assertSameQuery(
             'SELECT * FROM {prefix_users} LEFT JOIN {prefix_photos} AS {p}
                     ON ({p}.{user_id} = {prefix_users}.{id} AND {p}.{public} = ?)',
-            $select
+            $select,
         );
     }
 
@@ -578,13 +578,13 @@ abstract class SelectWithJoinQueryTest extends BaseTest
                 [
                     'p.user_id' => 'users.id',
                     'p.public' => new Parameter(true),
-                ]
+                ],
             );
 
         $this->assertSameQuery(
             'SELECT * FROM {prefix_users} LEFT JOIN {prefix_photos} AS {p}
                     ON ({p}.{user_id} = {prefix_users}.{id} AND {p}.{public} = ?)',
-            $select
+            $select,
         );
     }
 
@@ -597,13 +597,13 @@ abstract class SelectWithJoinQueryTest extends BaseTest
                 [
                     'p.user_id' => 'u.id',
                     'p.public' => new Parameter(true),
-                ]
+                ],
             );
 
         $this->assertSameQuery(
             'SELECT * FROM {prefix_users} AS {u} LEFT JOIN {prefix_photos} AS {p}
                     ON ({p}.{user_id} = {u}.{id} AND {p}.{public} = ?)',
-            $select
+            $select,
         );
     }
 
@@ -630,7 +630,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
             . 'WHERE {u}.{status} IN (?,?)'
             . 'GROUP BY {u}.{id}'
             . 'ORDER BY {u}.{name} DESC',
-            $select
+            $select,
         );
     }
 
@@ -642,7 +642,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
                 $this->db('prefixed', 'prefix_')
                     ->select()->from('posts AS p')
                     ->where('p.user_id', new Expression('u.id')),
-                'sub_posts'
+                'sub_posts',
             );
 
         $this->assertSameQuery(
@@ -650,7 +650,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
                     SELECT * FROM {prefix_posts} AS {p}
                     WHERE {p}.{user_id} = {u}.{id}
                   ) AS {sub_posts} ',
-            $select
+            $select,
         );
     }
 

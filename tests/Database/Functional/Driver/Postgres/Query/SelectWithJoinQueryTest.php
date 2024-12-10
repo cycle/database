@@ -33,7 +33,7 @@ class SelectWithJoinQueryTest extends CommonClass
                     ->from('humidity')
                     ->where('h.date', '<=', 't.date'),
                 alias: 'h',
-                on: new Fragment('true')
+                on: new Fragment('true'),
             );
 
         $select->sqlStatement();
@@ -41,7 +41,7 @@ class SelectWithJoinQueryTest extends CommonClass
         // Verify that the join name has a correct format in the cache
         $this->assertArrayHasKey(
             's__temperature as t*,jhLEFTLATERALp_s__humidity*,wANDh.date<=?_1_1onANDtruewANDt.date=?_1_1',
-            $ref->getValue($compiler)
+            $ref->getValue($compiler),
         );
     }
 }

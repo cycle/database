@@ -12,20 +12,6 @@ class CreateTableWithSchema extends TestCase
 {
     use Helpers;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->setUpSchemas();
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-
-        $this->dropUserSchema();
-    }
-
     public function testCreatesWithPublicSchema(): void
     {
         $driver = $this->getDriver(null, '$user');
@@ -71,5 +57,19 @@ class CreateTableWithSchema extends TestCase
         $this->expectExceptionMessage('Schema `schema3` has not been defined.');
         $driver = $this->getDriver(['schema2', 'schema1']);
         $this->createTable($driver, 'schema3.test1');
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->setUpSchemas();
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        $this->dropUserSchema();
     }
 }

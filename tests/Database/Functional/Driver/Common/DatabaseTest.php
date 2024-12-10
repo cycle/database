@@ -11,11 +11,6 @@ use Cycle\Database\Driver\DriverInterface;
 
 abstract class DatabaseTest extends BaseTest
 {
-    public function tearDown(): void
-    {
-        $this->dropDatabase($this->db());
-    }
-
     public function testConnect(): void
     {
         $this->database->getDriver()->connect();
@@ -36,10 +31,10 @@ abstract class DatabaseTest extends BaseTest
         $db = $this->db();
         $this->assertSame(
             $db->getDriver()->getType(),
-            $db->getType()
+            $db->getType(),
         );
 
-        $this->assertSame(strtolower(static::DRIVER), strtolower($db->getType()));
+        $this->assertSame(\strtolower(static::DRIVER), \strtolower($db->getType()));
     }
 
     public function testReadWrite(): void
@@ -99,5 +94,10 @@ abstract class DatabaseTest extends BaseTest
         $this->assertTrue($db->hasTable('test'));
         $this->assertTrue($db->hasTable('prefix_test'));
         $this->assertCount(2, $db->getTables());
+    }
+
+    public function tearDown(): void
+    {
+        $this->dropDatabase($this->db());
     }
 }

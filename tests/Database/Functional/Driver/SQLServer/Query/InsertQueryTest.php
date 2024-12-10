@@ -34,7 +34,7 @@ final class InsertQueryTest extends CommonClass
 
         $this->assertSameQuery(
             'INSERT INTO {table} ({name}, {balance}) OUTPUT INSERTED.{name} VALUES (?,?)',
-            $insert
+            $insert,
         );
     }
 
@@ -47,7 +47,7 @@ final class InsertQueryTest extends CommonClass
 
         $this->assertSameQuery(
             'INSERT INTO {table} ({name}, {balance}) OUTPUT INSERTED.{name}, INSERTED.{created_at} VALUES (?,?)',
-            $insert
+            $insert,
         );
     }
 
@@ -60,7 +60,7 @@ final class InsertQueryTest extends CommonClass
 
         $this->assertSameQuery(
             'INSERT INTO {table} ({name}, {balance}) OUTPUT INSERTED.{name} as {full_name} VALUES (?,?)',
-            $insert
+            $insert,
         );
     }
 
@@ -73,7 +73,7 @@ final class InsertQueryTest extends CommonClass
 
         $this->assertSameQuery(
             'INSERT INTO {table} ({name}, {balance}) OUTPUT INSERTED.{balance} + 100 as {modified_balance} VALUES (?,?)',
-            $insert
+            $insert,
         );
     }
 
@@ -86,7 +86,7 @@ final class InsertQueryTest extends CommonClass
 
         $this->assertSameQuery(
             'INSERT INTO {table} ({name}, {balance}) OUTPUT INSERTED.{name}, INSERTED.{created_at} as {date} VALUES (?,?)',
-            $insert
+            $insert,
         );
     }
 
@@ -96,7 +96,7 @@ final class InsertQueryTest extends CommonClass
 
         $this->assertSameQuery(
             'INSERT INTO {table} OUTPUT INSERTED.{created_at} DEFAULT VALUES',
-            $insert
+            $insert,
         );
     }
 

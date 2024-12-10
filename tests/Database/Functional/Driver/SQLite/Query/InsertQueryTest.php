@@ -25,7 +25,7 @@ class InsertQueryTest extends CommonClass
         $this->assertSameQuery(
             'INSERT INTO {table} ({name}, {balance}) SELECT ? AS {name}, ? AS {balance}
 UNION ALL SELECT ?, ?',
-            $insert
+            $insert,
         );
     }
 
@@ -39,7 +39,7 @@ UNION ALL SELECT ?, ?',
         $this->assertSameQuery(
             'INSERT INTO {table} ({name}, {balance}) SELECT ? AS {name}, ? AS {balance}
 UNION ALL SELECT ?, ?',
-            $insert
+            $insert,
         );
     }
 
@@ -55,7 +55,7 @@ UNION ALL SELECT ?, ?',
             'INSERT INTO {table} ({name}, {balance}) SELECT ? AS {name}, ? AS {balance}'
             . ' UNION ALL SELECT ?, ?'
             . ' UNION ALL SELECT ?, ?',
-            $insert
+            $insert,
         );
     }
 
@@ -63,7 +63,7 @@ UNION ALL SELECT ?, ?',
     {
         $schema = $this->schema(
             table: 'with_microseconds',
-            driverConfig: ['options' => ['withDatetimeMicroseconds' => true]]
+            driverConfig: ['options' => ['withDatetimeMicroseconds' => true]],
         );
         $schema->primary('id');
         $schema->datetime('datetime', 6);
@@ -72,13 +72,13 @@ UNION ALL SELECT ?, ?',
         $expected = new \DateTimeImmutable();
 
         $id = $this->db(
-            driverConfig: ['options' => ['withDatetimeMicroseconds' => true]]
+            driverConfig: ['options' => ['withDatetimeMicroseconds' => true]],
         )->insert('with_microseconds')->values([
             'datetime' => $expected,
         ])->run();
 
         $result = $this->db(
-            driverConfig: ['options' => ['withDatetimeMicroseconds' => true]]
+            driverConfig: ['options' => ['withDatetimeMicroseconds' => true]],
         )->select('datetime')
             ->from('with_microseconds')
             ->where('id', $id)
@@ -87,7 +87,7 @@ UNION ALL SELECT ?, ?',
 
         $this->assertSame(
             $expected->setTimezone($this->database->getDriver()->getTimezone())->format('Y-m-d H:i:s.u'),
-            $result['datetime']
+            $result['datetime'],
         );
     }
 
@@ -112,7 +112,7 @@ UNION ALL SELECT ?, ?',
 
         $this->assertSame(
             $expected->setTimezone($this->database->getDriver()->getTimezone())->format('Y-m-d H:i:s'),
-            $result['datetime']
+            $result['datetime'],
         );
     }
 }

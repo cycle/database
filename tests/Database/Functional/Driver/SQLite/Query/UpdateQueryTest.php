@@ -24,7 +24,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE json_extract({settings}, '$.\"theme\"') = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters(['value', 'dark'], $select);
     }
@@ -39,7 +39,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE {id} = ? OR json_extract({settings}, '$.\"theme\"') = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters(['value', 1, 'dark'], $select);
     }
@@ -53,7 +53,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE json_extract({settings}, '$.\"phone\".\"work\"') = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters(['value', '+1234567890'], $select);
     }
@@ -67,7 +67,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE json_extract({settings}, '$.\"phones\"[1]') = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters(['value', '+1234567890'], $select);
     }
@@ -81,7 +81,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE json_extract({settings}, '$.\"phones\"[1].\"numbers\"[3]') = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters(['value', '+1234567890'], $select);
     }
@@ -95,7 +95,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE json_type({settings}, '$.\"languages\"') IS NOT null",
-            $select
+            $select,
         );
     }
 
@@ -109,7 +109,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE {id} = ? OR json_type({settings}, '$.\"languages\"') IS NOT null",
-            $select
+            $select,
         );
     }
 
@@ -122,7 +122,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE json_type({settings}, '$.\"phones\".\"work\"') IS NOT null",
-            $select
+            $select,
         );
     }
 
@@ -135,7 +135,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE json_type({settings}, '$.\"phones\"[1]') IS NOT null",
-            $select
+            $select,
         );
     }
 
@@ -148,7 +148,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE json_type({settings}, '$.\"phones\"[1].\"numbers\"[3]') IS NOT null",
-            $select
+            $select,
         );
     }
 
@@ -161,7 +161,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE NOT json_type({settings}, '$.\"languages\"') IS NOT null",
-            $select
+            $select,
         );
     }
 
@@ -175,7 +175,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE {id} = ? OR NOT json_type({settings}, '$.\"languages\"') IS NOT null",
-            $select
+            $select,
         );
     }
 
@@ -188,7 +188,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE NOT json_type({settings}, '$.\"phones\".\"work\"') IS NOT null",
-            $select
+            $select,
         );
     }
 
@@ -201,7 +201,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE NOT json_type({settings}, '$.\"phones\"[1]') IS NOT null",
-            $select
+            $select,
         );
     }
 
@@ -214,7 +214,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE NOT json_type({settings}, '$.\"phones\"[1].\"numbers\"[3]') IS NOT null",
-            $select
+            $select,
         );
     }
 
@@ -227,7 +227,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE json_array_length({settings}, '$.\"languages\"') >= ?",
-            $select
+            $select,
         );
         $this->assertSameParameters(['value', 1], $select);
     }
@@ -242,7 +242,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE {id} = ? AND json_array_length({settings}, '$.\"languages\"') = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters(['value', 1, 3], $select);
     }
@@ -257,7 +257,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE {id} = ? OR json_array_length({settings}, '$.\"languages\"') = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters(['value', 1, 4], $select);
     }
@@ -271,7 +271,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE json_array_length({settings}, '$.\"personal\".\"languages\"') = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters(['value', 1], $select);
     }
@@ -285,7 +285,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE json_array_length({settings}, '$.\"phones\"[1]') = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters(['value', 2], $select);
     }
@@ -299,7 +299,7 @@ class UpdateQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "UPDATE {table} SET {some} = ? WHERE json_array_length({settings}, '$.\"phones\"[1].\"numbers\"[3]') = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters(['value', 5], $select);
     }

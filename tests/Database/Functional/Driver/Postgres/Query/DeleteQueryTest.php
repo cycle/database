@@ -65,7 +65,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE {settings}->'phones'->1->'numbers'->>3 = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters(['+1234567890'], $select);
     }
@@ -79,9 +79,9 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE {id} = ? AND ({settings}->'languages')::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters([1, json_encode('en')], $select);
+        $this->assertSameParameters([1, \json_encode('en')], $select);
     }
 
     public function testDeleteWithOrWhereJsonContains(): void
@@ -93,9 +93,9 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE {id} = ? OR ({settings}->'languages')::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters([1, json_encode('en')], $select);
+        $this->assertSameParameters([1, \json_encode('en')], $select);
     }
 
     public function testDeleteWithWhereJsonContainsNested(): void
@@ -106,9 +106,9 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE ({settings}->'phones'->'work')::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters([json_encode('+1234567890')], $select);
+        $this->assertSameParameters([\json_encode('+1234567890')], $select);
     }
 
     public function testDeleteWithWhereJsonContainsSinglePath(): void
@@ -118,7 +118,7 @@ class DeleteQueryTest extends CommonClass
             ->whereJsonContains('settings', []);
 
         $this->assertSameQuery('DELETE FROM {table} WHERE ({settings})::jsonb @> ?', $select);
-        $this->assertSameParameters([json_encode([])], $select);
+        $this->assertSameParameters([\json_encode([])], $select);
     }
 
     public function testDeleteWithWhereJsonContainsArray(): void
@@ -129,9 +129,9 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE ({settings}->'phones'->1)::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters([json_encode('+1234567890')], $select);
+        $this->assertSameParameters([\json_encode('+1234567890')], $select);
     }
 
     public function testDeleteWithWhereJsonContainsNestedArray(): void
@@ -142,9 +142,9 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE ({settings}->'phones'->1->'numbers'->3)::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters([json_encode('+1234567890')], $select);
+        $this->assertSameParameters([\json_encode('+1234567890')], $select);
     }
 
     public function testDeleteWithWhereJsonDoesntContain(): void
@@ -156,9 +156,9 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE {id} = ? AND NOT ({settings}->'languages')::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters([1, json_encode('en')], $select);
+        $this->assertSameParameters([1, \json_encode('en')], $select);
     }
 
     public function testDeleteWithOrWhereJsonDoesntContain(): void
@@ -170,9 +170,9 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE {id} = ? OR NOT ({settings}->'languages')::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters([1, json_encode('en')], $select);
+        $this->assertSameParameters([1, \json_encode('en')], $select);
     }
 
     public function testDeleteWithWhereJsonDoesntContainNested(): void
@@ -183,9 +183,9 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE NOT ({settings}->'phones'->'work')::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters([json_encode('+1234567890')], $select);
+        $this->assertSameParameters([\json_encode('+1234567890')], $select);
     }
 
     public function testDeleteWithWhereJsonDoesntContainSinglePath(): void
@@ -195,7 +195,7 @@ class DeleteQueryTest extends CommonClass
             ->whereJsonDoesntContain('settings', []);
 
         $this->assertSameQuery('DELETE FROM {table} WHERE NOT ({settings})::jsonb @> ?', $select);
-        $this->assertSameParameters([json_encode([])], $select);
+        $this->assertSameParameters([\json_encode([])], $select);
     }
 
     public function testDeleteWithWhereJsonDoesntContainArray(): void
@@ -206,9 +206,9 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE NOT ({settings}->'phones'->1)::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters([json_encode('+1234567890')], $select);
+        $this->assertSameParameters([\json_encode('+1234567890')], $select);
     }
 
     public function testDeleteWithWhereJsonDoesntContainNestedArray(): void
@@ -219,9 +219,9 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE NOT ({settings}->'phones'->1->'numbers'->3)::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters([json_encode('+1234567890')], $select);
+        $this->assertSameParameters([\json_encode('+1234567890')], $select);
     }
 
     public function testDeleteWithWhereJsonContainsKey(): void
@@ -233,7 +233,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE {id} = ? AND coalesce(({settings})::jsonb ?? 'languages', false)",
-            $select
+            $select,
         );
     }
 
@@ -246,7 +246,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE {id} = ? OR coalesce(({settings})::jsonb ?? 'languages', false)",
-            $select
+            $select,
         );
     }
 
@@ -258,7 +258,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE coalesce(({settings}->'phones')::jsonb ?? 'work', false)",
-            $select
+            $select,
         );
     }
 
@@ -270,7 +270,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE CASE WHEN jsonb_typeof(({settings}->'phones')::jsonb) = 'array' THEN jsonb_array_length(({settings}->'phones')::jsonb) >= 2 ELSE false END",
-            $select
+            $select,
         );
     }
 
@@ -283,7 +283,7 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE CASE WHEN jsonb_typeof(({settings}->'phones'->1->'numbers')::jsonb) = 'array'
                     THEN jsonb_array_length(({settings}->'phones'->1->'numbers')::jsonb) >= 4 ELSE false END",
-            $select
+            $select,
         );
     }
 
@@ -296,7 +296,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE {id} = ? AND NOT coalesce(({settings})::jsonb ?? 'languages', false)",
-            $select
+            $select,
         );
     }
 
@@ -309,7 +309,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE {id} = ? OR NOT coalesce(({settings})::jsonb ?? 'languages', false)",
-            $select
+            $select,
         );
     }
 
@@ -321,7 +321,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE NOT coalesce(({settings}->'phones')::jsonb ?? 'work', false)",
-            $select
+            $select,
         );
     }
 
@@ -334,7 +334,7 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE NOT CASE WHEN jsonb_typeof(({settings}->'phones')::jsonb) = 'array'
                 THEN jsonb_array_length(({settings}->'phones')::jsonb) >= 2 ELSE false END",
-            $select
+            $select,
         );
     }
 
@@ -347,7 +347,7 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE NOT CASE WHEN jsonb_typeof(({settings}->'phones'->1->'numbers')::jsonb) = 'array'
                 THEN jsonb_array_length(({settings}->'phones'->1->'numbers')::jsonb) >= 4 ELSE false END",
-            $select
+            $select,
         );
     }
 
@@ -359,7 +359,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE jsonb_array_length(({settings}->'languages')::jsonb) >= ?",
-            $select
+            $select,
         );
         $this->assertSameParameters([1], $select);
     }
@@ -373,7 +373,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE {id} =? AND jsonb_array_length(({settings}->'languages')::jsonb) =? ",
-            $select
+            $select,
         );
         $this->assertSameParameters([1, 3], $select);
     }
@@ -387,7 +387,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE {id} = ? OR jsonb_array_length(({settings}->'languages')::jsonb) = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters([1, 4], $select);
     }
@@ -400,7 +400,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE jsonb_array_length(({settings}->'personal'->'languages')::jsonb) = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters([1], $select);
     }
@@ -413,7 +413,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE jsonb_array_length(({settings}->'phones'->1)::jsonb) = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters([2], $select);
     }
@@ -426,7 +426,7 @@ class DeleteQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "DELETE FROM {table} WHERE jsonb_array_length(({settings}->'phones'->1->'numbers'->3)::jsonb) = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters([5], $select);
     }

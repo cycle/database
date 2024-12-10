@@ -11,6 +11,22 @@ use PHPUnit\Framework\TestCase;
 
 final class PostgresJsonExpressionTest extends TestCase
 {
+    public static function pathDataProvider(): \Traversable
+    {
+        yield ['options', ''];
+        yield ['options->languages', ''];
+        yield ['options->languages->fr', "'languages'"];
+        yield ['options->personal->languages->fr', "'personal'->'languages'"];
+    }
+
+    public static function attributeDataProvider(): \Traversable
+    {
+        yield ['options->languages', "'languages'"];
+        yield ['options->languages->fr', "'fr'"];
+        yield ['options->personal->languages->fr', "'fr'"];
+        yield ['options->personal->phones->3', 3];
+    }
+
     /**
      * @dataProvider pathDataProvider
      */
@@ -45,33 +61,15 @@ final class PostgresJsonExpressionTest extends TestCase
         $ref->invoke($expression, 'options');
     }
 
-    public static function pathDataProvider(): \Traversable
-    {
-        yield ['options', ''];
-        yield ['options->languages', ''];
-        yield ['options->languages->fr', "'languages'"];
-        yield ['options->personal->languages->fr', "'personal'->'languages'"];
-    }
-
-    public static function attributeDataProvider(): \Traversable
-    {
-        yield ['options->languages', "'languages'"];
-        yield ['options->languages->fr', "'fr'"];
-        yield ['options->personal->languages->fr', "'fr'"];
-        yield ['options->personal->phones->3', 3];
-    }
-
     private function createExpression(): PostgresJsonExpression
     {
-        return new class () extends PostgresJsonExpression {
+        return new class extends PostgresJsonExpression {
             public function __construct()
             {
                 $this->quoter = new Quoter('', $this->getQuotes());
             }
 
-            protected function compile(string $statement): string
-            {
-            }
+            protected function compile(string $statement): string {}
         };
     }
 }

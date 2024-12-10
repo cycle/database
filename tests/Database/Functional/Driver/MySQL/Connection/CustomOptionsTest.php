@@ -23,7 +23,7 @@ class CustomOptionsTest extends CommonClass
         string $type,
         string $columnName,
         array $attributes = [],
-        array $expectedAttributes = []
+        array $expectedAttributes = [],
     ): void {
         $schema = $this->schema(\uniqid("{$type}_{$columnName}"));
         \call_user_func_array([$schema, $type], \array_merge([$columnName], $attributes));

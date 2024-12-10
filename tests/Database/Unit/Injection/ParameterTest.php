@@ -74,7 +74,7 @@ class ParameterTest extends TestCase
                 'value' => [1, 2, 3],
                 'type' => \PDO::PARAM_STR,
             ],
-            $parameter->__debugInfo()
+            $parameter->__debugInfo(),
         );
     }
 }

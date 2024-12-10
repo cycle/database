@@ -13,17 +13,17 @@ abstract class DeleteQueryTest extends BaseTest
     {
         $this->assertInstanceOf(
             DeleteQuery::class,
-            $this->database->delete()
+            $this->database->delete(),
         );
 
         $this->assertInstanceOf(
             DeleteQuery::class,
-            $this->database->table('table')->delete()
+            $this->database->table('table')->delete(),
         );
 
         $this->assertInstanceOf(
             DeleteQuery::class,
-            $this->database->table->delete()
+            $this->database->table->delete(),
         );
     }
 
@@ -34,7 +34,7 @@ abstract class DeleteQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'DELETE FROM {table} WHERE {name} = \'Antony\'',
-            (string)$delete
+            (string) $delete,
         );
     }
 
@@ -44,7 +44,7 @@ abstract class DeleteQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'DELETE FROM {table}',
-            $delete
+            $delete,
         );
     }
 
@@ -54,7 +54,7 @@ abstract class DeleteQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'DELETE FROM {table} WHERE {name} = ?',
-            $delete
+            $delete,
         );
     }
 
@@ -64,7 +64,7 @@ abstract class DeleteQueryTest extends BaseTest
 
         $this->assertSameQuery(
             'DELETE FROM {table} WHERE {name} = ?',
-            $delete
+            $delete,
         );
     }
 }

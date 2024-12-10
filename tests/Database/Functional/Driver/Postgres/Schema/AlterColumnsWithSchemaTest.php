@@ -24,17 +24,6 @@ class AlterColumnsWithSchemaTest extends TestCase
     /** @var Database */
     private $db;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $driver = $this->getDriver(['schema1', 'schema2']);
-
-        $this->db = new Database('default', '', $driver);
-
-        $this->setUpSchemas();
-    }
-
     public function schema(string $table): AbstractTable
     {
         return $this->db->table($table)->getSchema();
@@ -60,6 +49,17 @@ class AlterColumnsWithSchemaTest extends TestCase
             $this->fail('Tables should be different');
         } catch (ExpectationFailedException $e) {
         }
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $driver = $this->getDriver(['schema1', 'schema2']);
+
+        $this->db = new Database('default', '', $driver);
+
+        $this->setUpSchemas();
     }
 
     protected function createSchema(TableInterface $schema, bool $extraFields = false): TableInterface

@@ -20,7 +20,7 @@ class DatetimeColumnTest extends CommonClass
     public function testTimestampDatetimeZero(): void
     {
         $this->expectExceptionMessage(
-            "SQLSTATE[42000]: Syntax error or access violation: 1067 Invalid default value for 'target'"
+            "SQLSTATE[42000]: Syntax error or access violation: 1067 Invalid default value for 'target'",
         );
 
         $this->expectException(HandlerException::class);

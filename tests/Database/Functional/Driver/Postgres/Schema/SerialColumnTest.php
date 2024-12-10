@@ -34,7 +34,7 @@ final class SerialColumnTest extends BaseTest
         $this->assertSame('smallserial', $column->getInternalType());
         $this->assertSame(
             "nextval('small_serial_foo_seq'::regclass)",
-            (string) $savedColumn->getDefaultValue()
+            (string) $savedColumn->getDefaultValue(),
         );
     }
 

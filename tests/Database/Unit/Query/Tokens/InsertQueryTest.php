@@ -21,7 +21,7 @@ class InsertQueryTest extends TestCase
 
         $this->assertSame(
             CompilerInterface::INSERT_QUERY,
-            $insert->getType()
+            $insert->getType(),
         );
 
         $this->assertEquals(
@@ -30,7 +30,7 @@ class InsertQueryTest extends TestCase
                 'columns' => ['name', 'value'],
                 'values' => [new Parameter(['Antony', 1])],
             ],
-            $insert->getTokens()
+            $insert->getTokens(),
         );
     }
 }

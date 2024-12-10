@@ -44,62 +44,11 @@ abstract class BaseTest extends TestCase
         $this->dropDatabase($this->database);
     }
 
-    /**
-     * @return DriverInterface
-     */
-    private function getDriver(array $driverConfig = [], array $connectionConfig = []): DriverInterface
-    {
-        $hash = \hash('crc32', static::DRIVER . ':' . \json_encode($driverConfig) . \json_encode($connectionConfig));
-
-        if (!isset(self::$memoizedDrivers[$hash])) {
-            $config = clone self::$config[static::DRIVER];
-            assert($config instanceof DriverConfig);
-
-            $this->applyDriverOptions($config, $driverConfig);
-            $config->connection = $this->applyConnectionOptions($config->connection, $connectionConfig);
-
-            $driver = $config->driver::create($config);
-
-            $this->setUpLogger($driver);
-
-            self::$memoizedDrivers[$hash] = $driver;
-        }
-
-        return self::$memoizedDrivers[$hash];
-    }
-
-    private function applyConnectionOptions(ConnectionConfig $config, array $options): ConnectionConfig
-    {
-        if ($options === []) {
-            return $config;
-        }
-        $config = clone $config;
-        foreach ($options as $key => $value) {
-            $config->$key = $value;
-        }
-        return $config;
-    }
-
-    private function applyDriverOptions(DriverConfig $config, array $options): void
-    {
-        foreach ($options as $key => $value) {
-            if ($key === 'options') {
-                $value += $config->options;
-            }
-            $config->$key = $value;
-        }
-    }
-
-    /**
-     * @param array $connectionConfig
-     *
-     * @return Database
-     */
     protected function db(
         string $name = 'default',
         string $prefix = '',
         array $driverConfig = [],
-        array $connectionConfig = []
+        array $connectionConfig = [],
     ): Database {
         return new Database($name, $prefix, $this->getDriver($driverConfig, $connectionConfig));
     }
@@ -107,7 +56,6 @@ abstract class BaseTest extends TestCase
     /**
      * Send sample query in a form where all quotation symbols replaced with { and }.
      *
-     * @param string                   $query
      * @param string                   $parameters
      * @param FragmentInterface|string $fragment
      */
@@ -120,7 +68,6 @@ abstract class BaseTest extends TestCase
     /**
      * Send sample query in a form where all quotation symbols replaced with { and }.
      *
-     * @param string                   $query
      * @param FragmentInterface|string $fragment
      */
     protected function assertSameQuery(string $query, $fragment): void
@@ -130,22 +77,19 @@ abstract class BaseTest extends TestCase
         }
 
         //Preparing query
-        $query = str_replace(
+        $query = \str_replace(
             ['{', '}'],
-            explode('\a', $this->db()->getDriver()->identifier('\a')),
-            $query
+            \explode('\a', $this->db()->getDriver()->identifier('\a')),
+            $query,
         );
 
         $this->assertSame(
-            preg_replace('/\s+/', '', $query),
-            preg_replace('/\s+/', '', (string)$fragment)
+            \preg_replace('/\s+/', '', $query),
+            \preg_replace('/\s+/', '', (string) $fragment),
         );
     }
 
-    /**
-     * @param Database|null $database
-     */
-    protected function dropDatabase(Database $database = null): void
+    protected function dropDatabase(?Database $database = null): void
     {
         if ($database === null) {
             return;
@@ -168,11 +112,6 @@ abstract class BaseTest extends TestCase
         }
     }
 
-    /**
-     * @param AbstractTable $table
-     *
-     * @return AbstractTable
-     */
     protected function fetchSchema(AbstractTable $table): AbstractTable
     {
         return $this->schema($table->getFullName());
@@ -196,12 +135,12 @@ abstract class BaseTest extends TestCase
             $names = [];
             foreach ($comparator->alteredColumns() as $pair) {
                 $names[] = $pair[0]->getName();
-                print_r($pair);
+                \print_r($pair);
             }
 
-            return "Table '{$table}' not synced, column(s) '" . implode(
+            return "Table '{$table}' not synced, column(s) '" . \implode(
                 "', '",
-                $names
+                $names,
             ) . "' have been changed.";
         }
 
@@ -247,5 +186,48 @@ abstract class BaseTest extends TestCase
         $ref->setAccessible(true);
 
         return $ref->getValue($object);
+    }
+
+    private function getDriver(array $driverConfig = [], array $connectionConfig = []): DriverInterface
+    {
+        $hash = \hash('crc32', static::DRIVER . ':' . \json_encode($driverConfig) . \json_encode($connectionConfig));
+
+        if (!isset(self::$memoizedDrivers[$hash])) {
+            $config = clone self::$config[static::DRIVER];
+            \assert($config instanceof DriverConfig);
+
+            $this->applyDriverOptions($config, $driverConfig);
+            $config->connection = $this->applyConnectionOptions($config->connection, $connectionConfig);
+
+            $driver = $config->driver::create($config);
+
+            $this->setUpLogger($driver);
+
+            self::$memoizedDrivers[$hash] = $driver;
+        }
+
+        return self::$memoizedDrivers[$hash];
+    }
+
+    private function applyConnectionOptions(ConnectionConfig $config, array $options): ConnectionConfig
+    {
+        if ($options === []) {
+            return $config;
+        }
+        $config = clone $config;
+        foreach ($options as $key => $value) {
+            $config->$key = $value;
+        }
+        return $config;
+    }
+
+    private function applyDriverOptions(DriverConfig $config, array $options): void
+    {
+        foreach ($options as $key => $value) {
+            if ($key === 'options') {
+                $value += $config->options;
+            }
+            $config->$key = $value;
+        }
     }
 }

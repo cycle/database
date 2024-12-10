@@ -21,7 +21,7 @@ class DeleteQueryTest extends TestCase
 
         $this->assertSame(
             CompilerInterface::DELETE_QUERY,
-            $delete->getType()
+            $delete->getType(),
         );
 
         $this->assertEquals(
@@ -38,7 +38,7 @@ class DeleteQueryTest extends TestCase
                     ],
                 ],
             ],
-            $delete->getTokens()
+            $delete->getTokens(),
         );
     }
 }

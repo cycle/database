@@ -82,9 +82,9 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE ({settings}->'languages')::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters([json_encode('en')], $select);
+        $this->assertSameParameters([\json_encode('en')], $select);
     }
 
     public function testSelectWithOrWhereJsonContains(): void
@@ -97,9 +97,9 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE {id} = ? OR ({settings}->'languages')::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters([1, json_encode('en')], $select);
+        $this->assertSameParameters([1, \json_encode('en')], $select);
     }
 
     public function testSelectWithWhereJsonContainsNested(): void
@@ -111,9 +111,9 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE ({settings}->'phones'->'work')::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters([json_encode('+1234567890')], $select);
+        $this->assertSameParameters([\json_encode('+1234567890')], $select);
     }
 
     public function testSelectWithWhereJsonContainsSinglePath(): void
@@ -124,7 +124,7 @@ class SelectQueryTest extends CommonClass
             ->whereJsonContains('settings', []);
 
         $this->assertSameQuery('SELECT * FROM {table} WHERE ({settings})::jsonb @> ?', $select);
-        $this->assertSameParameters([json_encode([])], $select);
+        $this->assertSameParameters([\json_encode([])], $select);
     }
 
     public function testSelectWithWhereJsonContainsArray(): void
@@ -136,9 +136,9 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE ({settings}->'phones'->1)::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters([json_encode('+1234567890')], $select);
+        $this->assertSameParameters([\json_encode('+1234567890')], $select);
     }
 
     public function testSelectWithWhereJsonContainsNestedArray(): void
@@ -150,9 +150,9 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE ({settings}->'phones'->1->'numbers'->3)::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters([json_encode('+1234567890')], $select);
+        $this->assertSameParameters([\json_encode('+1234567890')], $select);
     }
 
     public function testSelectWithWhereJsonDoesntContain(): void
@@ -164,9 +164,9 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE NOT ({settings}->'languages')::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters([json_encode('en')], $select);
+        $this->assertSameParameters([\json_encode('en')], $select);
     }
 
     public function testSelectWithOrWhereJsonDoesntContain(): void
@@ -179,9 +179,9 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE {id} = ? OR NOT({settings}->'languages')::jsonb @>?",
-            $select
+            $select,
         );
-        $this->assertSameParameters([1, json_encode('en')], $select);
+        $this->assertSameParameters([1, \json_encode('en')], $select);
     }
 
     public function testSelectWithWhereJsonDoesntContainNested(): void
@@ -193,9 +193,9 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE NOT ({settings}->'phones'->'work')::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters([json_encode('+1234567890')], $select);
+        $this->assertSameParameters([\json_encode('+1234567890')], $select);
     }
 
     public function testSelectWithWhereJsonDoesntContainSinglePath(): void
@@ -206,7 +206,7 @@ class SelectQueryTest extends CommonClass
             ->whereJsonDoesntContain('settings', []);
 
         $this->assertSameQuery('SELECT * FROM {table} WHERE NOT ({settings})::jsonb @> ?', $select);
-        $this->assertSameParameters([json_encode([])], $select);
+        $this->assertSameParameters([\json_encode([])], $select);
     }
 
     public function testSelectWithWhereJsonDoesntContainArray(): void
@@ -218,9 +218,9 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE NOT ({settings}->'phones'->1)::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters([json_encode('+1234567890')], $select);
+        $this->assertSameParameters([\json_encode('+1234567890')], $select);
     }
 
     public function testSelectWithWhereJsonDoesntContainNestedArray(): void
@@ -232,9 +232,9 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE NOT ({settings}->'phones'->1->'numbers'->3)::jsonb @> ?",
-            $select
+            $select,
         );
-        $this->assertSameParameters([json_encode('+1234567890')], $select);
+        $this->assertSameParameters([\json_encode('+1234567890')], $select);
     }
 
     public function testSelectWithWhereJsonContainsKey(): void
@@ -246,7 +246,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE coalesce(({settings})::jsonb ?? 'languages', false)",
-            $select
+            $select,
         );
     }
 
@@ -260,7 +260,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE {id} = ? OR coalesce(({settings})::jsonb ?? 'languages', false)",
-            $select
+            $select,
         );
     }
 
@@ -273,7 +273,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE coalesce(({settings}->'phones')::jsonb ?? 'work', false)",
-            $select
+            $select,
         );
     }
 
@@ -287,7 +287,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE CASE WHEN jsonb_typeof(({settings}->'phones')::jsonb) = 'array'
                     THEN jsonb_array_length(({settings}->'phones')::jsonb) >= 2 ELSE false END",
-            $select
+            $select,
         );
     }
 
@@ -301,7 +301,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE CASE WHEN jsonb_typeof(({settings}->'phones'->1->'numbers')::jsonb) = 'array'
                     THEN jsonb_array_length(({settings}->'phones'->1->'numbers')::jsonb) >= 4 ELSE false END",
-            $select
+            $select,
         );
     }
 
@@ -314,7 +314,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE NOT coalesce(({settings})::jsonb ?? 'languages', false)",
-            $select
+            $select,
         );
     }
 
@@ -328,7 +328,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE {id} = ? OR NOT coalesce(({settings})::jsonb ?? 'languages', false)",
-            $select
+            $select,
         );
     }
 
@@ -341,7 +341,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE NOT coalesce(({settings}->'phones')::jsonb ?? 'work', false)",
-            $select
+            $select,
         );
     }
 
@@ -355,7 +355,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE NOT CASE WHEN jsonb_typeof(({settings}->'phones')::jsonb) = 'array'
                 THEN jsonb_array_length(({settings}->'phones')::jsonb) >= 2 ELSE false END",
-            $select
+            $select,
         );
     }
 
@@ -369,7 +369,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE NOT CASE WHEN jsonb_typeof(({settings}->'phones'->1->'numbers')::jsonb) = 'array'
                 THEN jsonb_array_length(({settings}->'phones'->1->'numbers')::jsonb) >= 4 ELSE false END",
-            $select
+            $select,
         );
     }
 
@@ -382,7 +382,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE jsonb_array_length(({settings}->'languages')::jsonb) >= ?",
-            $select
+            $select,
         );
         $this->assertSameParameters([1], $select);
     }
@@ -397,7 +397,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE {id} = ? AND jsonb_array_length(({settings}->'languages')::jsonb) = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters([1, 3], $select);
     }
@@ -412,7 +412,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE {id} = ? OR jsonb_array_length(({settings}->'languages')::jsonb) = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters([1, 4], $select);
     }
@@ -426,7 +426,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE jsonb_array_length(({settings}->'personal'->'languages')::jsonb) = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters([1], $select);
     }
@@ -440,7 +440,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE jsonb_array_length(({settings}->'phones'->1)::jsonb) = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters([2], $select);
     }
@@ -454,7 +454,7 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} WHERE jsonb_array_length(({settings}->'phones'->1->'numbers'->3)::jsonb) = ?",
-            $select
+            $select,
         );
         $this->assertSameParameters([5], $select);
     }

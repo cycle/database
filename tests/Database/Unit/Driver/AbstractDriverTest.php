@@ -22,13 +22,6 @@ class AbstractDriverTest extends TestCase
 
     private Driver $driver;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->driver = TestDriver::create(new SQLiteDriverConfig());
-    }
-
     public function testLoggerShouldBeSet(): void
     {
         $logger = m::mock(LoggerInterface::class);
@@ -57,7 +50,7 @@ class AbstractDriverTest extends TestCase
         $driver = TestDriver::createWith(
             new SQLiteDriverConfig(),
             $handler,
-            $builder
+            $builder,
         );
 
         $driver->getSchemaHandler()->shouldReceive('withDriver')->once();
@@ -80,7 +73,7 @@ class AbstractDriverTest extends TestCase
         $driver = TestDriver::createWith(
             new SQLiteDriverConfig(),
             $handler,
-            $builder
+            $builder,
         );
 
         $driver->getSchemaHandler()->shouldReceive('withDriver')->once();
@@ -103,7 +96,7 @@ class AbstractDriverTest extends TestCase
             new SQLiteDriverConfig(),
             $this->createMock(HandlerInterface::class),
             $this->createMock(BuilderInterface::class),
-            $pdo
+            $pdo,
         );
 
         $logger = $this->createMock(LoggerInterface::class);
@@ -115,7 +108,7 @@ class AbstractDriverTest extends TestCase
 
         $driver->query(
             'SELECT * FROM sample_table WHERE id IN (?, ?, ?) ORDER BY id ASC',
-            [1, 2, 3]
+            [1, 2, 3],
         );
     }
 
@@ -131,7 +124,7 @@ class AbstractDriverTest extends TestCase
             new SQLiteDriverConfig(options: ['logInterpolatedQueries' => true]),
             $this->createMock(HandlerInterface::class),
             $this->createMock(BuilderInterface::class),
-            $pdo
+            $pdo,
         );
 
         $logger = $this->createMock(LoggerInterface::class);
@@ -143,7 +136,7 @@ class AbstractDriverTest extends TestCase
 
         $driver->query(
             'SELECT * FROM sample_table WHERE id IN (?, ?, ?) ORDER BY id ASC',
-            [1, 2, 3]
+            [1, 2, 3],
         );
     }
 
@@ -162,7 +155,7 @@ class AbstractDriverTest extends TestCase
             ]),
             $this->createMock(HandlerInterface::class),
             $this->createMock(BuilderInterface::class),
-            $pdo
+            $pdo,
         );
 
         $logger = $this->createMock(LoggerInterface::class);
@@ -171,12 +164,12 @@ class AbstractDriverTest extends TestCase
             ->method('info')
             ->with(
                 $this->equalTo('SELECT * FROM sample_table WHERE id IN (?, ?, ?) ORDER BY id ASC'),
-                $this->callback(function (array $context) {
+                $this->callback(static function (array $context) {
                     if (!isset($context['parameters'])) {
                         return false;
                     }
 
-                    $parametersAsString = array_map('strval', $context['parameters']);
+                    $parametersAsString = \array_map('strval', $context['parameters']);
 
                     $expectedParameters = ['1', '2', '3'];
                     if ($parametersAsString !== $expectedParameters) {
@@ -184,13 +177,13 @@ class AbstractDriverTest extends TestCase
                     }
 
                     return isset($context['driver']);
-                })
+                }),
             );
         $driver->setLogger($logger);
 
         $driver->query(
             'SELECT * FROM sample_table WHERE id IN (?, ?, ?) ORDER BY id ASC',
-            [1, 2, 3]
+            [1, 2, 3],
         );
     }
 
@@ -206,7 +199,7 @@ class AbstractDriverTest extends TestCase
             new SQLiteDriverConfig(options: ['logInterpolatedQueries' => true, 'withDatetimeMicroseconds' => true]),
             $this->createMock(HandlerInterface::class),
             $this->createMock(BuilderInterface::class),
-            $pdo
+            $pdo,
         );
 
         $date = new \DateTime('now');
@@ -217,7 +210,7 @@ class AbstractDriverTest extends TestCase
             ->with(\sprintf(
                 'SELECT * FROM sample_table WHERE name = \'%s\' AND registered > \'%s\'',
                 'John Doe',
-                $date->format('Y-m-d H:i:s.u')
+                $date->format('Y-m-d H:i:s.u'),
             ));
         $driver->setLogger($logger);
 
@@ -272,6 +265,13 @@ class AbstractDriverTest extends TestCase
         $newPDO = $ref->invoke($driver);
 
         $this->assertSame($oldPDO, $newPDO);
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->driver = TestDriver::create(new SQLiteDriverConfig());
     }
 
     private function checkImmutability(DriverInterface $driver, DriverInterface $newDriver): void

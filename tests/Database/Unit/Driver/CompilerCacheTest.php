@@ -25,7 +25,7 @@ final class CompilerCacheTest extends TestCase
                 'columns' => ['name', 'full_name'],
                 'values' => ['Foo'],
                 'return' => ['name', new Fragment('"full_name" as "fullName"')],
-            ])
+            ]),
         );
     }
 }

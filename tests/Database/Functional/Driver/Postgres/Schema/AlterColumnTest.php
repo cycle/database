@@ -30,7 +30,7 @@ class AlterColumnTest extends CommonClass
                 'CREATE TABLE person (
     name text,
     current_mood mood
-);'
+);',
             );
         } catch (StatementException $e) {
         }
@@ -114,7 +114,7 @@ class AlterColumnTest extends CommonClass
         $this->assertSame('unknown', $column->getAbstractType());
         $this->assertSame(
             '"vector_column" vector(3) NULL',
-            $schema->column('vector_column')->sqlStatement($this->database->getDriver())
+            $schema->column('vector_column')->sqlStatement($this->database->getDriver()),
         );
     }
 }

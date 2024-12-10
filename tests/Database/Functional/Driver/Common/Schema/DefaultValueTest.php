@@ -35,7 +35,7 @@ abstract class DefaultValueTest extends BaseTest
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
 
-        $column = $schema->integer('target')->defaultValue(mt_rand(0, 100000));
+        $column = $schema->integer('target')->defaultValue(\mt_rand(0, 100000));
 
         $schema->save();
         $schema = $this->schema('table');
@@ -49,7 +49,7 @@ abstract class DefaultValueTest extends BaseTest
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
 
-        $column = $schema->integer('target')->defaultValue(mt_rand(-100000, 0));
+        $column = $schema->integer('target')->defaultValue(\mt_rand(-100000, 0));
 
         $schema->save();
         $schema = $this->schema('table');
@@ -77,7 +77,7 @@ abstract class DefaultValueTest extends BaseTest
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
 
-        $column = $schema->float('target')->defaultValue(mt_rand(0, 100000));
+        $column = $schema->float('target')->defaultValue(\mt_rand(0, 100000));
 
         $schema->save();
         $schema = $this->schema('table');
@@ -90,7 +90,7 @@ abstract class DefaultValueTest extends BaseTest
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
 
-        $column = $schema->float('target')->defaultValue(mt_rand(-100000, 0));
+        $column = $schema->float('target')->defaultValue(\mt_rand(-100000, 0));
 
         $schema->save();
         $schema = $this->schema('table');
@@ -117,7 +117,7 @@ abstract class DefaultValueTest extends BaseTest
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
 
-        $column = $schema->double('target')->defaultValue(mt_rand(0, 100000));
+        $column = $schema->double('target')->defaultValue(\mt_rand(0, 100000));
 
         $schema->save();
         $schema = $this->schema('table');
@@ -130,7 +130,7 @@ abstract class DefaultValueTest extends BaseTest
         $schema = $this->schema('table');
         $this->assertFalse($schema->exists());
 
-        $column = $schema->double('target')->defaultValue(mt_rand(-100000, 0));
+        $column = $schema->double('target')->defaultValue(\mt_rand(-100000, 0));
 
         $schema->save();
         $schema = $this->schema('table');
@@ -158,7 +158,7 @@ abstract class DefaultValueTest extends BaseTest
         $this->assertFalse($schema->exists());
 
         //@todo test with invalid default value when code is ready
-        $column = $schema->decimal('target', 10, 1)->defaultValue(mt_rand(0, 100000));
+        $column = $schema->decimal('target', 10, 1)->defaultValue(\mt_rand(0, 100000));
 
         $schema->save();
         $schema = $this->schema('table');
@@ -172,7 +172,7 @@ abstract class DefaultValueTest extends BaseTest
         $this->assertFalse($schema->exists());
 
         //@todo test with invalid default value when code is ready
-        $column = $schema->decimal('target', 10, 1)->defaultValue(mt_rand(-100000, 0));
+        $column = $schema->decimal('target', 10, 1)->defaultValue(\mt_rand(-100000, 0));
 
         $schema->save();
         $schema = $this->schema('table');

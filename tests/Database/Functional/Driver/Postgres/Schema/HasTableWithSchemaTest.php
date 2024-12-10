@@ -15,13 +15,6 @@ class HasTableWithSchemaTest extends TestCase
 {
     use Helpers;
 
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-
-        $this->dropUserSchema();
-    }
-
     public function testGetsTableNamesWithoutSchema(): void
     {
         $driver = $this->getDriver();
@@ -97,15 +90,22 @@ class HasTableWithSchemaTest extends TestCase
         $this->assertTrue($driver->getSchemaHandler()->hasTable($tables['test_sh2']));
     }
 
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        $this->dropUserSchema();
+    }
+
     protected function createTables(DriverInterface $driver): array
     {
         $tables = [];
-        $time = time();
+        $time = \time();
 
         foreach (['public.test_pb', 'schema1.test_sh1', 'schema2.test_sh2'] as $table) {
             $driver->query('CREATE TABLE ' . $table . '_' . $time . '()');
 
-            $table = explode('.', $table)[1];
+            $table = \explode('.', $table)[1];
             $tables[$table] = $table . '_' . $time;
         }
 

@@ -344,7 +344,7 @@ abstract class IndexesTest extends BaseTest
         $this->assertTrue($schema->exists());
 
         $schema->index(['email', 'status'])->columns(['email', 'status', 'flagged'])->setName(
-            '3d_index'
+            '3d_index',
         );
 
         $schema->save(Handler::DO_ALL);

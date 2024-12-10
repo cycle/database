@@ -11,44 +11,6 @@ use PHPUnit\Framework\TestCase;
 
 final class ComparatorTest extends TestCase
 {
-    /**
-     * @dataProvider addedColumnsDataProvider
-     */
-    public function testAddedColumns(array $expected, State $current): void
-    {
-        $comparator = new Comparator(new State(''), $current);
-
-        $this->assertEquals($expected, $comparator->addedColumns());
-    }
-
-    /**
-     * @dataProvider alteredColumnsDataProvider
-     */
-    public function testAlteredColumns(array $expected, State $current): void
-    {
-        $initial = new State('');
-        $initial->registerColumn((new SQLiteColumn('a', 'b'))->setAttributes(['readonlySchema' => true]));
-        $initial->registerColumn(new SQLiteColumn('c', 'd'));
-
-        $comparator = new Comparator($initial, $current);
-
-        $this->assertEquals($expected, $comparator->alteredColumns());
-    }
-
-    /**
-     * @dataProvider droppedColumnsDataProvider
-     */
-    public function testDroppedColumns(array $expected, State $current): void
-    {
-        $initial = new State('');
-        $initial->registerColumn((new SQLiteColumn('a', 'b'))->setAttributes(['readonlySchema' => true]));
-        $initial->registerColumn(new SQLiteColumn('c', 'd'));
-
-        $comparator = new Comparator($initial, $current);
-
-        $this->assertEquals($expected, $comparator->droppedColumns());
-    }
-
     public static function addedColumnsDataProvider(): \Traversable
     {
         yield [[], new State('')];
@@ -102,5 +64,43 @@ final class ComparatorTest extends TestCase
         $current = new State('');
         $current->registerColumn((new SQLiteColumn('a', 'b'))->setAttributes(['readonlySchema' => true]));
         yield [[new SQLiteColumn('c', 'd')], $current];
+    }
+
+    /**
+     * @dataProvider addedColumnsDataProvider
+     */
+    public function testAddedColumns(array $expected, State $current): void
+    {
+        $comparator = new Comparator(new State(''), $current);
+
+        $this->assertEquals($expected, $comparator->addedColumns());
+    }
+
+    /**
+     * @dataProvider alteredColumnsDataProvider
+     */
+    public function testAlteredColumns(array $expected, State $current): void
+    {
+        $initial = new State('');
+        $initial->registerColumn((new SQLiteColumn('a', 'b'))->setAttributes(['readonlySchema' => true]));
+        $initial->registerColumn(new SQLiteColumn('c', 'd'));
+
+        $comparator = new Comparator($initial, $current);
+
+        $this->assertEquals($expected, $comparator->alteredColumns());
+    }
+
+    /**
+     * @dataProvider droppedColumnsDataProvider
+     */
+    public function testDroppedColumns(array $expected, State $current): void
+    {
+        $initial = new State('');
+        $initial->registerColumn((new SQLiteColumn('a', 'b'))->setAttributes(['readonlySchema' => true]));
+        $initial->registerColumn(new SQLiteColumn('c', 'd'));
+
+        $comparator = new Comparator($initial, $current);
+
+        $this->assertEquals($expected, $comparator->droppedColumns());
     }
 }

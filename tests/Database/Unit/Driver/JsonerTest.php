@@ -9,23 +9,6 @@ use PHPUnit\Framework\TestCase;
 
 final class JsonerTest extends TestCase
 {
-    /**
-     * @dataProvider toJsonValuesDataProvider
-     */
-    public function testToJson(mixed $value, mixed $expected, bool $encode, bool $validate): void
-    {
-        $this->assertSame($expected, Jsoner::toJson($value, $encode, $validate));
-    }
-
-    /**
-     * @dataProvider toJsonInvalidValuesDataProvider
-     */
-    public function testToJsonException(mixed $value, bool $encode, bool $validate): void
-    {
-        $this->expectException(\Exception::class);
-        Jsoner::toJson($value, $encode, $validate);
-    }
-
     public static function toJsonValuesDataProvider(): \Traversable
     {
         // A non-encoded valid string with 'encode=true' is correctly encoded with both enabled and disabled validation
@@ -46,7 +29,7 @@ final class JsonerTest extends TestCase
 
         // Stringable object will be converted to string if 'encode' is set to 'false'
         yield [
-            new class () implements \Stringable {
+            new class implements \Stringable {
                 public function __toString(): string
                 {
                     return 'foo';
@@ -59,7 +42,7 @@ final class JsonerTest extends TestCase
 
         // JsonSerializable object will be converted to JSON string correctly if 'encode' is set to 'true'
         yield [
-            new class () implements \JsonSerializable {
+            new class implements \JsonSerializable {
                 public function jsonSerialize(): array
                 {
                     return ['foo' => 'bar'];
@@ -76,5 +59,22 @@ final class JsonerTest extends TestCase
         yield ['fr', false, true];
         yield [\fopen(__FILE__, 'rb'), true, false];
         yield [\fopen(__FILE__, 'rb'), true, true];
+    }
+
+    /**
+     * @dataProvider toJsonValuesDataProvider
+     */
+    public function testToJson(mixed $value, mixed $expected, bool $encode, bool $validate): void
+    {
+        $this->assertSame($expected, Jsoner::toJson($value, $encode, $validate));
+    }
+
+    /**
+     * @dataProvider toJsonInvalidValuesDataProvider
+     */
+    public function testToJsonException(mixed $value, bool $encode, bool $validate): void
+    {
+        $this->expectException(\Exception::class);
+        Jsoner::toJson($value, $encode, $validate);
     }
 }

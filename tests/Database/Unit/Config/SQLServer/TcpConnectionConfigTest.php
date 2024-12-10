@@ -34,13 +34,13 @@ final class TcpConnectionConfigTest extends BaseConfigTest
             options: [$testOptionKey => $testOptionValue],
         );
 
-        $exported = var_export($config, true);
+        $exported = \var_export($config, true);
 
         /** @var TcpConnectionConfig $recoveredConfig */
         eval('$recoveredConfig = ' . $exported . ';');
 
         $this->assertSame(
-            sprintf(
+            \sprintf(
                 'sqlsrv:APP=%s;ConnectionPooling=%s;Database=%s;Encrypt=%s;Failover_Partner=%s;LoginTimeout=%s;MultipleActiveResultSets=%s;QuotedId=%s;Server=%s,%s;TraceFile=%s;TraceOn=%s;TransactionIsolation=%s;TrustServerCertificate=%s;WSID=%s',
                 $app,
                 (int) $pooling,
@@ -75,7 +75,7 @@ final class TcpConnectionConfigTest extends BaseConfigTest
     {
         $config = new TcpConnectionConfig(
             database: 'database',
-            port: $port
+            port: $port,
         );
 
         $this->assertSame($expected, $config->port);

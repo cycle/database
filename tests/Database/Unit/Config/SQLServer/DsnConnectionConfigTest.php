@@ -20,7 +20,7 @@ final class DsnConnectionConfigTest extends TestCase
             options: [$testOptionKey => $testOptionValue],
         );
 
-        $exported = var_export($config, true);
+        $exported = \var_export($config, true);
 
         /** @var DsnConnectionConfig $recoveredConfig */
         eval('$recoveredConfig = ' . $exported . ';');
