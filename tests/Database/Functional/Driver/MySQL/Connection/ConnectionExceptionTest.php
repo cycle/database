@@ -25,6 +25,7 @@ class ConnectionExceptionTest extends CommonClass
             [new \Exception('broken pipe')],
             [new \Exception('Bad connection')],
             [new \Exception('packets out of order')],
+            [new \Exception('disconnected by the server because of inactivity')],
             [new \Exception(code: 2001)],
             [new \Exception(code: 2099)],
         ];

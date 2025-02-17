@@ -81,6 +81,7 @@ class MySQLDriver extends Driver
             || \str_contains($message, 'broken pipe')
             || \str_contains($message, 'connection')
             || \str_contains($message, 'packets out of order')
+            || \str_contains($message, 'disconnected by the server because of inactivity')
             || ((int) $exception->getCode() > 2000 && (int) $exception->getCode() < 2100)
         ) {
             return new StatementException\ConnectionException($exception, $query);

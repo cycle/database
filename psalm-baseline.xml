@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.26.1@d747f6500b38ac4f7dfc5edbcae6e4b637d7add0">
+<files psalm-version="6.6.1@dae5a05eac03b55e8f50ae00f4cd2ba5d5588d59">
   <file src="src/Config/ConnectionConfig.php">
     <MixedAssignment>
       <code><![CDATA[$options[$key]]]></code>
@@ -41,9 +41,6 @@
       <code><![CDATA[$config]]></code>
       <code><![CDATA[$config]]></code>
     </MixedAssignment>
-    <MixedInferredReturnType>
-      <code><![CDATA[string]]></code>
-    </MixedInferredReturnType>
     <MixedReturnStatement>
       <code><![CDATA[$this->config['default'] ?? 'default']]></code>
       <code><![CDATA[$this->config['default'] ?? 'default']]></code>
@@ -78,16 +75,25 @@
     </InvalidConstantAssignmentValue>
   </file>
   <file src="src/Config/MySQL/DsnConnectionConfig.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[DsnConnectionConfig]]></code>
+    </ClassMustBeFinal>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$options]]></code>
     </MixedArgumentTypeCoercion>
   </file>
   <file src="src/Config/MySQL/SocketConnectionConfig.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[SocketConnectionConfig]]></code>
+    </ClassMustBeFinal>
     <InvalidArgument>
       <code><![CDATA[$config]]></code>
     </InvalidArgument>
   </file>
   <file src="src/Config/MySQL/TcpConnectionConfig.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[TcpConnectionConfig]]></code>
+    </ClassMustBeFinal>
     <InvalidArgument>
       <code><![CDATA[$config]]></code>
     </InvalidArgument>
@@ -96,6 +102,9 @@
     </PropertyTypeCoercion>
   </file>
   <file src="src/Config/MySQLDriverConfig.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[MySQLDriverConfig]]></code>
+    </ClassMustBeFinal>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$options]]></code>
     </MixedArgumentTypeCoercion>
@@ -119,7 +128,15 @@
       <code><![CDATA[$options]]></code>
     </MixedArgumentTypeCoercion>
   </file>
+  <file src="src/Config/Postgres/DsnConnectionConfig.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[DsnConnectionConfig]]></code>
+    </ClassMustBeFinal>
+  </file>
   <file src="src/Config/Postgres/TcpConnectionConfig.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[TcpConnectionConfig]]></code>
+    </ClassMustBeFinal>
     <InvalidArgument>
       <code><![CDATA[$config]]></code>
     </InvalidArgument>
@@ -128,6 +145,9 @@
     </PropertyTypeCoercion>
   </file>
   <file src="src/Config/PostgresDriverConfig.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[PostgresDriverConfig]]></code>
+    </ClassMustBeFinal>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$options]]></code>
     </MixedArgumentTypeCoercion>
@@ -161,7 +181,15 @@
       <code><![CDATA[$options]]></code>
     </MixedArgumentTypeCoercion>
   </file>
+  <file src="src/Config/SQLServer/DsnConnectionConfig.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[DsnConnectionConfig]]></code>
+    </ClassMustBeFinal>
+  </file>
   <file src="src/Config/SQLServer/TcpConnectionConfig.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[TcpConnectionConfig]]></code>
+    </ClassMustBeFinal>
     <InvalidArgument>
       <code><![CDATA[$config]]></code>
     </InvalidArgument>
@@ -176,6 +204,9 @@
     </PropertyTypeCoercion>
   </file>
   <file src="src/Config/SQLServerDriverConfig.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[SQLServerDriverConfig]]></code>
+    </ClassMustBeFinal>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$options]]></code>
     </MixedArgumentTypeCoercion>
@@ -185,7 +216,25 @@
       <code><![CDATA[$options]]></code>
     </MixedArgumentTypeCoercion>
   </file>
+  <file src="src/Config/SQLite/DsnConnectionConfig.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[DsnConnectionConfig]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Config/SQLite/MemoryConnectionConfig.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[MemoryConnectionConfig]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Config/SQLite/TempFileConnectionConfig.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[TempFileConnectionConfig]]></code>
+    </ClassMustBeFinal>
+  </file>
   <file src="src/Config/SQLiteDriverConfig.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[SQLiteDriverConfig]]></code>
+    </ClassMustBeFinal>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$options]]></code>
     </MixedArgumentTypeCoercion>
@@ -319,9 +368,6 @@
       <code><![CDATA[$value]]></code>
       <code><![CDATA[[$boolean, $context]]]></code>
     </MixedAssignment>
-    <MixedInferredReturnType>
-      <code><![CDATA[non-empty-string]]></code>
-    </MixedInferredReturnType>
     <MixedOperand>
       <code><![CDATA[$boolean]]></code>
     </MixedOperand>
@@ -502,9 +548,6 @@
       <code><![CDATA[$value]]></code>
       <code><![CDATA[[$boolean, $context]]]></code>
     </MixedAssignment>
-    <MixedInferredReturnType>
-      <code><![CDATA[non-empty-string]]></code>
-    </MixedInferredReturnType>
     <MixedMethodCall>
       <code><![CDATA[getPrefix]]></code>
       <code><![CDATA[getPrefix]]></code>
@@ -659,9 +702,6 @@
       <code><![CDATA[[$current, $initial]]]></code>
       <code><![CDATA[[$current, $initial]]]></code>
     </MixedAssignment>
-    <MixedInferredReturnType>
-      <code><![CDATA[non-empty-string]]></code>
-    </MixedInferredReturnType>
     <MixedReturnStatement>
       <code><![CDATA[$this->driver->identifier($element)]]></code>
       <code><![CDATA[$this->driver->identifier($element->getFullName())]]></code>
@@ -698,16 +738,47 @@
       <code><![CDATA[string|null]]></code>
     </MismatchingDocblockParamType>
   </file>
+  <file src="src/Driver/MySQL/Exception/MySQLException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[MySQLException]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Driver/MySQL/Injection/CompileJson.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[CompileJson]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Driver/MySQL/Injection/CompileJsonDoesntContain.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[CompileJsonDoesntContain]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Driver/MySQL/Injection/CompileJsonDoesntContainKey.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[CompileJsonDoesntContainKey]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Driver/MySQL/Injection/CompileJsonLength.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[CompileJsonLength]]></code>
+    </ClassMustBeFinal>
+  </file>
   <file src="src/Driver/MySQL/MySQLCompiler.php">
     <ArgumentTypeCoercion>
       <code><![CDATA[$path]]></code>
     </ArgumentTypeCoercion>
+    <ClassMustBeFinal>
+      <code><![CDATA[MySQLCompiler]]></code>
+    </ClassMustBeFinal>
     <PossiblyUndefinedStringArrayOffset>
       <code><![CDATA[$tokens['columns']]]></code>
       <code><![CDATA[$tokens['table']]]></code>
     </PossiblyUndefinedStringArrayOffset>
   </file>
   <file src="src/Driver/MySQL/MySQLDriver.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[MySQLDriver]]></code>
+    </ClassMustBeFinal>
     <InvalidArgument>
       <code><![CDATA[$config]]></code>
     </InvalidArgument>
@@ -729,6 +800,9 @@
     </UnsafeInstantiation>
   </file>
   <file src="src/Driver/MySQL/MySQLHandler.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[MySQLHandler]]></code>
+    </ClassMustBeFinal>
     <MixedArgument>
       <code><![CDATA[$row[0]]]></code>
     </MixedArgument>
@@ -766,6 +840,21 @@
       <code><![CDATA[identifier]]></code>
     </UndefinedInterfaceMethod>
   </file>
+  <file src="src/Driver/MySQL/Query/MySQLDeleteQuery.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[MySQLDeleteQuery]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Driver/MySQL/Query/MySQLSelectQuery.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[MySQLSelectQuery]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Driver/MySQL/Query/MySQLUpdateQuery.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[MySQLUpdateQuery]]></code>
+    </ClassMustBeFinal>
+  </file>
   <file src="src/Driver/MySQL/Query/Traits/WhereJsonTrait.php">
     <MixedArgument>
       <code><![CDATA[$params['encode']]]></code>
@@ -787,6 +876,9 @@
     </PossiblyUndefinedStringArrayOffset>
   </file>
   <file src="src/Driver/MySQL/Schema/MySQLColumn.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[MySQLColumn]]></code>
+    </ClassMustBeFinal>
     <DocblockTypeContradiction>
       <code><![CDATA[$size < 0]]></code>
     </DocblockTypeContradiction>
@@ -826,6 +918,9 @@
     <ArgumentTypeCoercion>
       <code><![CDATA[$table]]></code>
     </ArgumentTypeCoercion>
+    <ClassMustBeFinal>
+      <code><![CDATA[MySQLForeignKey]]></code>
+    </ClassMustBeFinal>
     <MixedArgument>
       <code><![CDATA[$schema['CONSTRAINT_NAME']]]></code>
     </MixedArgument>
@@ -850,6 +945,9 @@
       <code><![CDATA[$name]]></code>
       <code><![CDATA[$table]]></code>
     </ArgumentTypeCoercion>
+    <ClassMustBeFinal>
+      <code><![CDATA[MySQLIndex]]></code>
+    </ClassMustBeFinal>
     <MixedArrayAccess>
       <code><![CDATA[$definition['Collation']]]></code>
       <code><![CDATA[$definition['Column_name']]]></code>
@@ -864,6 +962,9 @@
     </MixedAssignment>
   </file>
   <file src="src/Driver/MySQL/Schema/MySQLTable.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[MySQLTable]]></code>
+    </ClassMustBeFinal>
     <MixedArgument>
       <code><![CDATA[$schema]]></code>
       <code><![CDATA[$schema]]></code>
@@ -944,6 +1045,16 @@
       <code><![CDATA[ArrayShape]]></code>
     </UndefinedAttributeClass>
   </file>
+  <file src="src/Driver/Postgres/Exception/PostgresException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[PostgresException]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Driver/Postgres/Injection/CompileJson.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[CompileJson]]></code>
+    </ClassMustBeFinal>
+  </file>
   <file src="src/Driver/Postgres/Injection/CompileJsonContains.php">
     <RiskyTruthyFalsyComparison>
       <code><![CDATA[empty($attribute)]]></code>
@@ -956,6 +1067,21 @@
     <RiskyTruthyFalsyComparison>
       <code><![CDATA[!\filter_var($attribute, FILTER_VALIDATE_INT)]]></code>
     </RiskyTruthyFalsyComparison>
+  </file>
+  <file src="src/Driver/Postgres/Injection/CompileJsonDoesntContain.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[CompileJsonDoesntContain]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Driver/Postgres/Injection/CompileJsonDoesntContainKey.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[CompileJsonDoesntContainKey]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Driver/Postgres/Injection/CompileJsonLength.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[CompileJsonLength]]></code>
+    </ClassMustBeFinal>
   </file>
   <file src="src/Driver/Postgres/Injection/PostgresJsonExpression.php">
     <ArgumentTypeCoercion>
@@ -970,6 +1096,9 @@
       <code><![CDATA[$path]]></code>
       <code><![CDATA[$return]]></code>
     </ArgumentTypeCoercion>
+    <ClassMustBeFinal>
+      <code><![CDATA[PostgresCompiler]]></code>
+    </ClassMustBeFinal>
     <InvalidClassConstantType>
       <code><![CDATA[ORDER_OPTIONS]]></code>
     </InvalidClassConstantType>
@@ -984,6 +1113,9 @@
     <ArgumentTypeCoercion>
       <code><![CDATA[$isolationLevel]]></code>
     </ArgumentTypeCoercion>
+    <ClassMustBeFinal>
+      <code><![CDATA[PostgresDriver]]></code>
+    </ClassMustBeFinal>
     <InvalidArgument>
       <code><![CDATA[$config]]></code>
     </InvalidArgument>
@@ -991,9 +1123,6 @@
       <code><![CDATA[[]]]></code>
       <code><![CDATA[[]]]></code>
     </InvalidPropertyAssignmentValue>
-    <MixedInferredReturnType>
-      <code><![CDATA[?string]]></code>
-    </MixedInferredReturnType>
     <MixedReturnStatement>
       <code><![CDATA[$this->primaryKeys[$name]]]></code>
     </MixedReturnStatement>
@@ -1024,6 +1153,9 @@
     <ArgumentTypeCoercion>
       <code><![CDATA[$name]]></code>
     </ArgumentTypeCoercion>
+    <ClassMustBeFinal>
+      <code><![CDATA[PostgresHandler]]></code>
+    </ClassMustBeFinal>
     <MixedArgument>
       <code><![CDATA[$column->getDefaultValue()]]></code>
       <code><![CDATA[$row['table_name']]]></code>
@@ -1060,13 +1192,18 @@
       <code><![CDATA[\json_decode]]></code>
     </UnusedFunctionCall>
   </file>
+  <file src="src/Driver/Postgres/Query/PostgresDeleteQuery.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[PostgresDeleteQuery]]></code>
+    </ClassMustBeFinal>
+  </file>
   <file src="src/Driver/Postgres/Query/PostgresInsertQuery.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[PostgresInsertQuery]]></code>
+    </ClassMustBeFinal>
     <DeprecatedProperty>
       <code><![CDATA[$this->returning]]></code>
     </DeprecatedProperty>
-    <MixedInferredReturnType>
-      <code><![CDATA[mixed]]></code>
-    </MixedInferredReturnType>
     <MixedReturnStatement>
       <code><![CDATA[$result->fetch(StatementInterface::FETCH_ASSOC)]]></code>
       <code><![CDATA[$result->fetchColumn()]]></code>
@@ -1084,6 +1221,16 @@
     <PropertyTypeCoercion>
       <code><![CDATA[\array_values($columns)]]></code>
     </PropertyTypeCoercion>
+  </file>
+  <file src="src/Driver/Postgres/Query/PostgresSelectQuery.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[PostgresSelectQuery]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Driver/Postgres/Query/PostgresUpdateQuery.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[PostgresUpdateQuery]]></code>
+    </ClassMustBeFinal>
   </file>
   <file src="src/Driver/Postgres/Query/Traits/WhereJsonTrait.php">
     <MixedArgument>
@@ -1109,6 +1256,9 @@
     <ArgumentTypeCoercion>
       <code><![CDATA[$column->defaultValue]]></code>
     </ArgumentTypeCoercion>
+    <ClassMustBeFinal>
+      <code><![CDATA[PostgresColumn]]></code>
+    </ClassMustBeFinal>
     <DeprecatedProperty>
       <code><![CDATA[$column->autoIncrement]]></code>
     </DeprecatedProperty>
@@ -1197,6 +1347,9 @@
     </UndefinedInterfaceMethod>
   </file>
   <file src="src/Driver/Postgres/Schema/PostgresForeignKey.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[PostgresForeignKey]]></code>
+    </ClassMustBeFinal>
     <MixedArgument>
       <code><![CDATA[$schema['column_name']]]></code>
       <code><![CDATA[$schema['constraint_name']]]></code>
@@ -1219,6 +1372,9 @@
     </PossiblyUndefinedStringArrayOffset>
   </file>
   <file src="src/Driver/Postgres/Schema/PostgresIndex.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[PostgresIndex]]></code>
+    </ClassMustBeFinal>
     <MixedArgument>
       <code><![CDATA[$schema['indexdef']]]></code>
       <code><![CDATA[$schema['indexdef']]]></code>
@@ -1241,6 +1397,9 @@
       <code><![CDATA[$this->removeSchemaFromTableName($name)]]></code>
       <code><![CDATA[$this->removeSchemaFromTableName($name)]]></code>
     </ArgumentTypeCoercion>
+    <ClassMustBeFinal>
+      <code><![CDATA[PostgresTable]]></code>
+    </ClassMustBeFinal>
     <LessSpecificImplementedReturnType>
       <code><![CDATA[string]]></code>
     </LessSpecificImplementedReturnType>
@@ -1317,6 +1476,25 @@
       <code><![CDATA[$matches[0]]]></code>
       <code><![CDATA[$table]]></code>
     </ArgumentTypeCoercion>
+    <InvalidNullableReturnType>
+      <code><![CDATA[string]]></code>
+    </InvalidNullableReturnType>
+    <NullableReturnStatement>
+      <code><![CDATA[\preg_replace_callback(
+            '/([_a-z][0-9_a-z\.]*\(?)/i',
+            function ($match) {
+                $identifier = $match[1];
+
+                //Function name
+                if ($this->hasExpressions($identifier)) {
+                    return $identifier;
+                }
+
+                return $this->quote($identifier);
+            },
+            $identifier,
+        )]]></code>
+    </NullableReturnStatement>
   </file>
   <file src="src/Driver/ReadonlyHandler.php">
     <MoreSpecificImplementedParamType>
@@ -1328,16 +1506,49 @@
       <code><![CDATA[$table]]></code>
     </MoreSpecificImplementedParamType>
   </file>
+  <file src="src/Driver/SQLServer/Injection/CompileJson.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[CompileJson]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Driver/SQLServer/Injection/CompileJsonContains.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[CompileJsonContains]]></code>
+    </ClassMustBeFinal>
+  </file>
   <file src="src/Driver/SQLServer/Injection/CompileJsonContainsKey.php">
     <ArgumentTypeCoercion>
       <code><![CDATA[\array_pop($path)]]></code>
       <code><![CDATA[\implode('->', $path)]]></code>
     </ArgumentTypeCoercion>
+    <PossiblyNullArgument>
+      <code><![CDATA[\array_pop($key)]]></code>
+    </PossiblyNullArgument>
+  </file>
+  <file src="src/Driver/SQLServer/Injection/CompileJsonDoesntContain.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[CompileJsonDoesntContain]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Driver/SQLServer/Injection/CompileJsonDoesntContainKey.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[CompileJsonDoesntContainKey]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Driver/SQLServer/Injection/CompileJsonLength.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[CompileJsonLength]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Driver/SQLServer/Query/SQLServerDeleteQuery.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[SQLServerDeleteQuery]]></code>
+    </ClassMustBeFinal>
   </file>
   <file src="src/Driver/SQLServer/Query/SQLServerInsertQuery.php">
-    <MixedInferredReturnType>
-      <code><![CDATA[mixed]]></code>
-    </MixedInferredReturnType>
+    <ClassMustBeFinal>
+      <code><![CDATA[SQLServerInsertQuery]]></code>
+    </ClassMustBeFinal>
     <MixedReturnStatement>
       <code><![CDATA[$result->fetch(StatementInterface::FETCH_ASSOC)]]></code>
       <code><![CDATA[$result->fetchColumn()]]></code>
@@ -1351,6 +1562,16 @@
     <PropertyTypeCoercion>
       <code><![CDATA[\array_values($columns)]]></code>
     </PropertyTypeCoercion>
+  </file>
+  <file src="src/Driver/SQLServer/Query/SQLServerSelectQuery.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[SQLServerSelectQuery]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Driver/SQLServer/Query/SQLServerUpdateQuery.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[SQLServerUpdateQuery]]></code>
+    </ClassMustBeFinal>
   </file>
   <file src="src/Driver/SQLServer/Query/Traits/WhereJsonTrait.php">
     <MethodSignatureMismatch>
@@ -1415,6 +1636,9 @@
       <code><![CDATA[$path]]></code>
       <code><![CDATA[$return]]></code>
     </ArgumentTypeCoercion>
+    <ClassMustBeFinal>
+      <code><![CDATA[SQLServerCompiler]]></code>
+    </ClassMustBeFinal>
     <MixedArgument>
       <code><![CDATA[$join['alias']]]></code>
       <code><![CDATA[$limit]]></code>
@@ -1448,9 +1672,6 @@
       <code><![CDATA[$table]]></code>
       <code><![CDATA[$value]]></code>
     </MixedAssignment>
-    <MixedInferredReturnType>
-      <code><![CDATA[string]]></code>
-    </MixedInferredReturnType>
     <MixedReturnStatement>
       <code><![CDATA[\call_user_func_array([$this, 'baseSelect'], \func_get_args())]]></code>
     </MixedReturnStatement>
@@ -1486,6 +1707,9 @@
     </PossiblyUndefinedStringArrayOffset>
   </file>
   <file src="src/Driver/SQLServer/SQLServerDriver.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[SQLServerDriver]]></code>
+    </ClassMustBeFinal>
     <InvalidArgument>
       <code><![CDATA[$config]]></code>
     </InvalidArgument>
@@ -1522,6 +1746,9 @@
     </UnsafeInstantiation>
   </file>
   <file src="src/Driver/SQLServer/SQLServerHandler.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[SQLServerHandler]]></code>
+    </ClassMustBeFinal>
     <MixedArgument>
       <code><![CDATA[$constraint]]></code>
       <code><![CDATA[$name[0]]]></code>
@@ -1566,6 +1793,9 @@
     </UndefinedInterfaceMethod>
   </file>
   <file src="src/Driver/SQLServer/Schema/SQLServerColumn.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[SQLServerColumn]]></code>
+    </ClassMustBeFinal>
     <InvalidClassConstantType>
       <code><![CDATA[DATETIME_NOW]]></code>
       <code><![CDATA[DATETIME_PRECISION]]></code>
@@ -1640,6 +1870,9 @@
     <ArgumentTypeCoercion>
       <code><![CDATA[$table]]></code>
     </ArgumentTypeCoercion>
+    <ClassMustBeFinal>
+      <code><![CDATA[SQLServerForeignKey]]></code>
+    </ClassMustBeFinal>
     <MixedArgument>
       <code><![CDATA[$schema['FK_NAME']]]></code>
     </MixedArgument>
@@ -1658,6 +1891,9 @@
     </PossiblyUndefinedStringArrayOffset>
   </file>
   <file src="src/Driver/SQLServer/Schema/SQLServerIndex.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[SQLServerIndex]]></code>
+    </ClassMustBeFinal>
     <MixedArgument>
       <code><![CDATA[\current($schema)['indexName']]]></code>
     </MixedArgument>
@@ -1676,6 +1912,9 @@
     </MixedAssignment>
   </file>
   <file src="src/Driver/SQLServer/Schema/SQLServerTable.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[SQLServerTable]]></code>
+    </ClassMustBeFinal>
     <InvalidClass>
       <code><![CDATA[SQlServerForeignKey]]></code>
       <code><![CDATA[SQlServerForeignKey]]></code>
@@ -1726,6 +1965,36 @@
       <code><![CDATA[$schema]]></code>
     </MixedAssignment>
   </file>
+  <file src="src/Driver/SQLite/Injection/CompileJson.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[CompileJson]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Driver/SQLite/Injection/CompileJsonDoesntContainKey.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[CompileJsonDoesntContainKey]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Driver/SQLite/Injection/CompileJsonLength.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[CompileJsonLength]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Driver/SQLite/Query/SQLiteDeleteQuery.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[SQLiteDeleteQuery]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Driver/SQLite/Query/SQLiteSelectQuery.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[SQLiteSelectQuery]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Driver/SQLite/Query/SQLiteUpdateQuery.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[SQLiteUpdateQuery]]></code>
+    </ClassMustBeFinal>
+  </file>
   <file src="src/Driver/SQLite/Query/Traits/WhereJsonTrait.php">
     <MixedArgument>
       <code><![CDATA[$params['operator']]]></code>
@@ -1742,6 +2011,9 @@
     <ArgumentTypeCoercion>
       <code><![CDATA[$path]]></code>
     </ArgumentTypeCoercion>
+    <ClassMustBeFinal>
+      <code><![CDATA[SQLiteCompiler]]></code>
+    </ClassMustBeFinal>
     <MixedArgument>
       <code><![CDATA[$tokens['columns']]]></code>
       <code><![CDATA[$tokens['values']]]></code>
@@ -1763,6 +2035,9 @@
     </PossiblyUndefinedStringArrayOffset>
   </file>
   <file src="src/Driver/SQLite/SQLiteDriver.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[SQLiteDriver]]></code>
+    </ClassMustBeFinal>
     <InvalidArgument>
       <code><![CDATA[$config]]></code>
     </InvalidArgument>
@@ -1787,6 +2062,9 @@
     <ArgumentTypeCoercion>
       <code><![CDATA[$table]]></code>
     </ArgumentTypeCoercion>
+    <ClassMustBeFinal>
+      <code><![CDATA[SQLiteHandler]]></code>
+    </ClassMustBeFinal>
     <MixedArgument>
       <code><![CDATA[$table['name']]]></code>
       <code><![CDATA[$targetColumns]]></code>
@@ -1826,6 +2104,9 @@
     </UndefinedInterfaceMethod>
   </file>
   <file src="src/Driver/SQLite/Schema/SQLiteColumn.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[SQLiteColumn]]></code>
+    </ClassMustBeFinal>
     <InvalidClassConstantType>
       <code><![CDATA[EXCLUDE_FROM_COMPARE]]></code>
     </InvalidClassConstantType>
@@ -1863,6 +2144,9 @@
       <code><![CDATA[$table]]></code>
       <code><![CDATA[(string) $schema['id']]]></code>
     </ArgumentTypeCoercion>
+    <ClassMustBeFinal>
+      <code><![CDATA[SQLiteForeignKey]]></code>
+    </ClassMustBeFinal>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$this->columns]]></code>
     </MixedArgumentTypeCoercion>
@@ -1889,6 +2173,9 @@
     <ArgumentTypeCoercion>
       <code><![CDATA[$table]]></code>
     </ArgumentTypeCoercion>
+    <ClassMustBeFinal>
+      <code><![CDATA[SQLiteIndex]]></code>
+    </ClassMustBeFinal>
     <MixedArgument>
       <code><![CDATA[$schema['name']]]></code>
     </MixedArgument>
@@ -1930,6 +2217,9 @@
     </UndefinedInterfaceMethod>
   </file>
   <file src="src/Driver/SQLite/Schema/SQLiteTable.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[SQLiteTable]]></code>
+    </ClassMustBeFinal>
     <MixedArgument>
       <code><![CDATA[$definition]]></code>
       <code><![CDATA[$schema]]></code>
@@ -2003,10 +2293,30 @@
       <code><![CDATA[$this->pdoStatement->queryString]]></code>
     </NoInterfaceProperties>
   </file>
+  <file src="src/Exception/BuilderException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[BuilderException]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Exception/CompilerException/UnexpectedOperatorException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[UnexpectedOperatorException]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Exception/ConfigException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[ConfigException]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Exception/DefaultValueException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[DefaultValueException]]></code>
+    </ClassMustBeFinal>
+  </file>
   <file src="src/Exception/HandlerException.php">
-    <MixedInferredReturnType>
-      <code><![CDATA[string]]></code>
-    </MixedInferredReturnType>
+    <ClassMustBeFinal>
+      <code><![CDATA[HandlerException]]></code>
+    </ClassMustBeFinal>
     <MixedReturnStatement>
       <code><![CDATA[$this->getPrevious()->getQuery()]]></code>
     </MixedReturnStatement>
@@ -2020,7 +2330,30 @@
       <code><![CDATA[getQuery]]></code>
     </UndefinedInterfaceMethod>
   </file>
+  <file src="src/Exception/InterpolatorException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[InterpolatorException]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Exception/ReadonlyConnectionException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[ReadonlyConnectionException]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Exception/StatementException/ConnectionException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[ConnectionException]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Exception/StatementException/ConstrainException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[ConstrainException]]></code>
+    </ClassMustBeFinal>
+  </file>
   <file src="src/Injection/Expression.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[Expression]]></code>
+    </ClassMustBeFinal>
     <MixedArgument>
       <code><![CDATA[$an_array['expression'] ?? $an_array['statement']]]></code>
       <code><![CDATA[$an_array['parameters'] ?? []]]></code>
@@ -2033,6 +2366,9 @@
     </PossiblyUndefinedStringArrayOffset>
   </file>
   <file src="src/Injection/Fragment.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[Fragment]]></code>
+    </ClassMustBeFinal>
     <MixedArgument>
       <code><![CDATA[$an_array['fragment'] ?? $an_array['statement']]]></code>
       <code><![CDATA[$an_array['parameters'] ?? []]]></code>
@@ -2060,6 +2396,9 @@
     <PossiblyFalseArgument>
       <code><![CDATA[\strpos($path, $parts[0])]]></code>
     </PossiblyFalseArgument>
+    <PossiblyNullArgument>
+      <code><![CDATA[$value]]></code>
+    </PossiblyNullArgument>
     <PossiblyUndefinedStringArrayOffset>
       <code><![CDATA[$an_array['statement']]]></code>
     </PossiblyUndefinedStringArrayOffset>
@@ -2071,6 +2410,9 @@
     </UnsafeInstantiation>
   </file>
   <file src="src/Injection/Parameter.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[Parameter]]></code>
+    </ClassMustBeFinal>
     <PropertyNotSetInConstructor>
       <code><![CDATA[$value]]></code>
     </PropertyNotSetInConstructor>
@@ -2094,9 +2436,6 @@
       <code><![CDATA[$lastID]]></code>
       <code><![CDATA[$values]]></code>
     </MixedAssignment>
-    <MixedInferredReturnType>
-      <code><![CDATA[array<non-empty-string, mixed>|int|non-empty-string|null]]></code>
-    </MixedInferredReturnType>
     <MixedReturnStatement>
       <code><![CDATA[$lastID]]></code>
     </MixedReturnStatement>
@@ -2105,6 +2444,9 @@
     </PossiblyNullReference>
   </file>
   <file src="src/Query/Interpolator.php">
+    <InvalidNullableReturnType>
+      <code><![CDATA[non-empty-string]]></code>
+    </InvalidNullableReturnType>
     <MixedArgument>
       <code><![CDATA[$k]]></code>
     </MixedArgument>
@@ -2115,6 +2457,34 @@
       <code><![CDATA[$v]]></code>
       <code><![CDATA[$value]]></code>
     </MixedAssignment>
+    <NullableReturnStatement>
+      <code><![CDATA[\preg_replace_callback(
+            '/(?<dq>"(?:\\\\\"|[^"])*")|(?<sq>\'(?:\\\\\'|[^\'])*\')|(?<ph>\\?)|(?<named>:[a-z_\\d]+)/',
+            static function ($match) use (&$named, &$unnamed, $options) {
+                $key = match (true) {
+                    isset($match['named']) && $match['named'] !== '' => \ltrim($match['named'], ':'),
+                    isset($match['ph']) => $match['ph'],
+                    default => null,
+                };
+
+                switch (true) {
+                    case $key === '?':
+                        if (\key($unnamed) === null) {
+                            return $match[0];
+                        }
+
+                        $value = \current($unnamed);
+                        \next($unnamed);
+                        return self::resolveValue($value, $options);
+                    case isset($named[$key]) || \array_key_exists($key, $named):
+                        return self::resolveValue($named[$key], $options);
+                    default:
+                        return $match[0];
+                }
+            },
+            $query,
+        )]]></code>
+    </NullableReturnStatement>
     <PossiblyNullArgument>
       <code><![CDATA[$key]]></code>
     </PossiblyNullArgument>
@@ -2127,11 +2497,6 @@
     </TooManyArguments>
   </file>
   <file src="src/Query/QueryBuilder.php">
-    <MixedInferredReturnType>
-      <code><![CDATA[DeleteQuery]]></code>
-      <code><![CDATA[SelectQuery]]></code>
-      <code><![CDATA[UpdateQuery]]></code>
-    </MixedInferredReturnType>
     <MixedMethodCall>
       <code><![CDATA[columns]]></code>
       <code><![CDATA[values]]></code>
@@ -2345,9 +2710,6 @@
       <code><![CDATA[$value]]></code>
       <code><![CDATA[$value]]></code>
     </MixedAssignment>
-    <MixedInferredReturnType>
-      <code><![CDATA[bool]]></code>
-    </MixedInferredReturnType>
     <MixedMethodCall>
       <code><![CDATA[__toString]]></code>
       <code><![CDATA[__toString]]></code>
@@ -2434,6 +2796,7 @@
       <code><![CDATA[AbstractColumn]]></code>
       <code><![CDATA[AbstractForeignKey]]></code>
       <code><![CDATA[AbstractIndex]]></code>
+      <code><![CDATA[non-empty-string]]></code>
     </InvalidNullableReturnType>
     <MixedArgument>
       <code><![CDATA[$arguments[0]]]></code>
@@ -2467,9 +2830,6 @@
       <code><![CDATA[$sort[$column]]]></code>
       <code><![CDATA[[$name, $initial]]]></code>
     </MixedAssignment>
-    <MixedInferredReturnType>
-      <code><![CDATA[AbstractColumn]]></code>
-    </MixedInferredReturnType>
     <MixedReturnStatement>
       <code><![CDATA[\call_user_func_array(
             [$this->column($arguments[0]), $type],
@@ -2480,6 +2840,7 @@
       <code><![CDATA[$this->current->findColumn($name)]]></code>
       <code><![CDATA[$this->current->findForeignKey($columns)]]></code>
       <code><![CDATA[$this->current->findIndex($original)]]></code>
+      <code><![CDATA[\preg_replace(['/\(/', '/\)/', '/ /'], '__', \strtolower($column))]]></code>
     </NullableReturnStatement>
     <PossiblyInvalidArgument>
       <code><![CDATA[$expression]]></code>
@@ -2494,6 +2855,11 @@
     <TypeDoesNotContainType>
       <code><![CDATA[$column->getName() === $foreign->getColumns()]]></code>
     </TypeDoesNotContainType>
+  </file>
+  <file src="src/Schema/Attribute/ColumnAttribute.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[ColumnAttribute]]></code>
+    </ClassMustBeFinal>
   </file>
   <file src="src/Schema/Comparator.php">
     <PossiblyNullArgument>
@@ -2545,9 +2911,6 @@
     <MixedAssignment>
       <code><![CDATA[$result[$field]]]></code>
     </MixedAssignment>
-    <MixedInferredReturnType>
-      <code><![CDATA[array<non-empty-string, ColumnAttribute>]]></code>
-    </MixedInferredReturnType>
   </file>
   <file src="src/StatementInterface.php">
     <MissingTemplateParam>
