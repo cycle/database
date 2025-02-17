@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.12.0](https://github.com/cycle/database/compare/2.11.3...2.12.0) (2025-02-17)
+
+
+### Features
+
+* Reconnect on MySQL disconnected by inactivity ([3f776ab](https://github.com/cycle/database/commit/3f776ab97f0b7d64c5fd9d1f65474c37e78e17b3))
+
+
+### Tests
+
+* update MSSQL config ([14ec20e](https://github.com/cycle/database/commit/14ec20eb807888476c91775fb87f5ac11b141555))
+
+
+### Continuous Integration
+
+* add ODBC driver to tests with codecov ([7dfd98e](https://github.com/cycle/database/commit/7dfd98e9cb166dc2dbd98907ad26e03845ee608f))
+
 ## [2.11.3](https://github.com/cycle/database/compare/2.11.2...2.11.3) (2024-12-10)
 
 
