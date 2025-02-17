@@ -1,6 +1,7 @@
-.idea/
-.env
+/.idea/
+/.dolt/
 /runtime/
 /vendor/
 /tests/runtime/*
+/.env
 *.db
