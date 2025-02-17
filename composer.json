@@ -55,12 +55,12 @@
     },
     "require-dev": {
         "ergebnis/composer-normalize": "^2.42",
-        "infection/infection": "^0.26.10",
+        "infection/infection": ">=0.26.10",
         "mockery/mockery": "^1.5",
         "phpunit/phpunit": "^9.5",
-        "spiral/code-style": "~2.2.0",
+        "spiral/code-style": "^2.2.0",
         "spiral/tokenizer": "^2.14 || ^3.0",
-        "vimeo/psalm": "^5.18"
+        "vimeo/psalm": "^5.26 || ^6.6"
     },
     "conflict": {
         "spiral/database": "*"
