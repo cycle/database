@@ -290,6 +290,12 @@ class PostgresColumn extends AbstractColumn
     protected int $scale = 0;
 
     /**
+     * Column comment.
+     */
+    #[ColumnAttribute]
+    protected string $comment = '';
+
+    /**
      * Internal field to determine if the serial is PK.
      */
     protected bool $isPrimary = false;
@@ -615,6 +621,11 @@ class PostgresColumn extends AbstractColumn
             \in_array($this->getAbstractType(), self::SERIAL_TYPES, true)
             && $initial->getDefaultValue() != $this->getDefaultValue()
         );
+    }
+
+    public function getComment(): string
+    {
+        return $this->comment;
     }
 
     protected static function isJson(AbstractColumn $column): bool

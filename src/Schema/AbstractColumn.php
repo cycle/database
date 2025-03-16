@@ -213,12 +213,6 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     protected int $scale = 0;
 
     /**
-     * Column comment.
-     */
-    #[ColumnAttribute]
-    protected string $comment = '';
-
-    /**
      * List of allowed enum values.
      */
     protected array $enumValues = [];
@@ -274,11 +268,6 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     public function getScale(): int
     {
         return $this->scale;
-    }
-
-    public function getComment(): string
-    {
-        return $this->comment;
     }
 
     public function isNullable(): bool

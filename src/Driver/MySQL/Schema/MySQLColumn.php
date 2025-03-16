@@ -178,6 +178,12 @@ class MySQLColumn extends AbstractColumn
     protected bool $zerofill = false;
 
     /**
+     * Column comment.
+     */
+    #[ColumnAttribute]
+    protected string $comment = '';
+
+    /**
      * @psalm-param non-empty-string $table
      */
     public static function createInstance(string $table, array $schema, ?\DateTimeZone $timezone = null): self
@@ -354,6 +360,11 @@ class MySQLColumn extends AbstractColumn
         $this->type('blob');
 
         return $this;
+    }
+
+    public function getComment(): string
+    {
+        return $this->comment;
     }
 
     protected static function isEnum(AbstractColumn $column): bool
