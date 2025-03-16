@@ -32,11 +32,12 @@ use Cycle\Database\Schema\Attribute\ColumnAttribute;
  * @method $this|AbstractColumn bigInteger(int $size, bool $unsigned = false, $zerofill = false)
  * @method $this|AbstractColumn unsigned(bool $value)
  * @method $this|AbstractColumn zerofill(bool $value)
+ * @method $this|AbstractColumn comment(string $value)
  */
 class MySQLColumn extends AbstractColumn
 {
     /**
-     * Default timestamp expression (driver specific).
+     * Default timestamp expression ().
      */
     public const DATETIME_NOW = 'CURRENT_TIMESTAMP';
 
@@ -178,6 +179,12 @@ class MySQLColumn extends AbstractColumn
     protected bool $zerofill = false;
 
     /**
+     * Column comment.
+     */
+    #[ColumnAttribute]
+    protected string $comment = '';
+
+    /**
      * @psalm-param non-empty-string $table
      */
     public static function createInstance(string $table, array $schema, ?\DateTimeZone $timezone = null): self
@@ -185,6 +192,7 @@ class MySQLColumn extends AbstractColumn
         $column = new self($table, $schema['Field'], $timezone);
 
         $column->type = $schema['Type'];
+        $column->comment = $schema['Comment'];
         $column->nullable = \strtolower($schema['Null']) === 'yes';
         $column->defaultValue = $schema['Default'];
         $column->autoIncrement = \stripos($schema['Extra'], 'auto_increment') !== false;
@@ -292,6 +300,10 @@ class MySQLColumn extends AbstractColumn
             return "{$statement} AUTO_INCREMENT";
         }
 
+        if ($this->comment !== '') {
+            return "{$statement} COMMENT {$driver->quote($this->comment)}";
+        }
+
         return $statement;
     }
 
@@ -355,6 +367,11 @@ class MySQLColumn extends AbstractColumn
         return $this;
     }
 
+    public function getComment(): string
+    {
+        return $this->comment;
+    }
+
     protected static function isEnum(AbstractColumn $column): bool
     {
         return $column->getAbstractType() === 'enum' || $column->getAbstractType() === 'set';
@@ -381,11 +398,12 @@ class MySQLColumn extends AbstractColumn
     private function sqlStatementInteger(DriverInterface $driver): string
     {
         return \sprintf(
-            '%s %s(%s)%s%s%s%s%s',
+            '%s %s(%s)%s%s%s%s%s%s',
             $driver->identifier($this->name),
             $this->type,
             $this->size,
             $this->unsigned ? ' UNSIGNED' : '',
+            $this->comment !== '' ? " COMMENT {$driver->quote($this->comment)}" : '',
             $this->zerofill ? ' ZEROFILL' : '',
             $this->nullable ? ' NULL' : ' NOT NULL',
             $this->defaultValue !== null ? " DEFAULT {$this->quoteDefault($driver)}" : '',

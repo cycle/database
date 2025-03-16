@@ -11,10 +11,10 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\Postgres\Schema;
 
-use Cycle\Database\Driver\DriverInterface;
-use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Schema\AbstractColumn;
+use Cycle\Database\Driver\DriverInterface;
+use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Schema\Attribute\ColumnAttribute;
 
 /**
@@ -44,6 +44,7 @@ use Cycle\Database\Schema\Attribute\ColumnAttribute;
  * @method $this smallSerial()
  * @method $this serial()
  * @method $this bigSerial()
+ * @method $this comment(string $value)
  */
 class PostgresColumn extends AbstractColumn
 {
@@ -290,6 +291,12 @@ class PostgresColumn extends AbstractColumn
     protected int $scale = 0;
 
     /**
+     * Column comment.
+     */
+    #[ColumnAttribute]
+    protected string $comment = '';
+
+    /**
      * Internal field to determine if the serial is PK.
      */
     protected bool $isPrimary = false;
@@ -317,6 +324,7 @@ class PostgresColumn extends AbstractColumn
         };
 
         $column->defaultValue = $schema['column_default'];
+        $column->comment = (string) $schema['description'];
         $column->nullable = $schema['is_nullable'] === 'YES';
 
         if (
@@ -534,6 +542,19 @@ class PostgresColumn extends AbstractColumn
     }
 
     /**
+     * @psalm-return non-empty-string|null
+     */
+    public function commentOperation(DriverInterface $driver, PostgresColumn $initial): ?string
+    {
+        //Comment
+        if ($initial->comment !== $this->comment) {
+            return $this->createComment($driver);
+        }
+
+        return null;
+    }
+
+    /**
      * Generate set of operations need to change column.
      */
     public function alterOperations(DriverInterface $driver, AbstractColumn $initial): array
@@ -614,6 +635,22 @@ class PostgresColumn extends AbstractColumn
             \in_array($this->getAbstractType(), self::SERIAL_TYPES, true)
             && $initial->getDefaultValue() != $this->getDefaultValue()
         );
+    }
+
+    public function getComment(): string
+    {
+        return $this->comment;
+    }
+
+    /**
+     * @psalm-return non-empty-string
+     */
+    public function createComment(DriverInterface $driver): string
+    {
+        $tableName = $driver->identifier($this->getTable());
+        $identifier = $driver->identifier($this->getName());
+
+        return "COMMENT ON COLUMN {$tableName}.{$identifier} IS " . $driver->quote($this->comment);
     }
 
     protected static function isJson(AbstractColumn $column): bool
