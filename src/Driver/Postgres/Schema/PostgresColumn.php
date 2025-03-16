@@ -317,6 +317,7 @@ class PostgresColumn extends AbstractColumn
         };
 
         $column->defaultValue = $schema['column_default'];
+        $column->comment = (string) $schema['description'];
         $column->nullable = $schema['is_nullable'] === 'YES';
 
         if (

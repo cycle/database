@@ -64,6 +64,11 @@ interface ColumnInterface
     public function getScale(): int;
 
     /**
+     * Column comment.
+     */
+    public function getComment(): string;
+
+    /**
      * Can column store null value?
      */
     public function isNullable(): bool;

@@ -185,6 +185,7 @@ class MySQLColumn extends AbstractColumn
         $column = new self($table, $schema['Field'], $timezone);
 
         $column->type = $schema['Type'];
+        $column->comment = $schema['Comment'];
         $column->nullable = \strtolower($schema['Null']) === 'yes';
         $column->defaultValue = $schema['Default'];
         $column->autoIncrement = \stripos($schema['Extra'], 'auto_increment') !== false;
