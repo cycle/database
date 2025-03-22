@@ -20,6 +20,8 @@ use Cycle\Database\Schema\AbstractTable;
 
 /**
  * @property PostgresDriver $driver
+ *
+ * @method PostgresColumn[] getColumns()
  */
 class PostgresTable extends AbstractTable
 {

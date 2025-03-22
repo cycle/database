@@ -895,6 +895,7 @@
       <code><![CDATA[\is_array($values) ? $values : \func_get_args()]]></code>
     </MixedArgument>
     <MixedAssignment>
+      <code><![CDATA[$column->comment]]></code>
       <code><![CDATA[$column->type]]></code>
       <code><![CDATA[$defaultValue]]></code>
     </MixedAssignment>
@@ -905,6 +906,7 @@
       <code><![CDATA[$schema['Field']]]></code>
       <code><![CDATA[$schema['Null']]]></code>
       <code><![CDATA[$schema['Type']]]></code>
+      <code><![CDATA[$schema['Comment']]]></code>
     </PossiblyUndefinedStringArrayOffset>
     <RiskyTruthyFalsyComparison>
       <code><![CDATA[empty($matches['attr'])]]></code>
@@ -1299,10 +1301,12 @@
       <code><![CDATA[$constrain]]></code>
       <code><![CDATA[$constraint]]></code>
       <code><![CDATA[$identifier]]></code>
+      <code><![CDATA[$identifier]]></code>
       <code><![CDATA[$range]]></code>
       <code><![CDATA[$value]]></code>
       <code><![CDATA[$value]]></code>
       <code><![CDATA[$value]]></code>
+      <code><![CDATA[$tableName]]></code>
     </MixedAssignment>
     <MixedOperand>
       <code><![CDATA[$schema['dtd_identifier']]]></code>
@@ -1326,6 +1330,7 @@
       <code><![CDATA[$schema['tableOID']]]></code>
       <code><![CDATA[$schema['typname']]]></code>
       <code><![CDATA[$schema['typtype']]]></code>
+      <code><![CDATA[$schema['description']]]></code>
     </PossiblyUndefinedStringArrayOffset>
     <RedundantCast>
       <code><![CDATA[(bool) (
@@ -1338,6 +1343,8 @@
       <code><![CDATA[empty($matches[2])]]></code>
     </RiskyTruthyFalsyComparison>
     <UndefinedInterfaceMethod>
+      <code><![CDATA[identifier]]></code>
+      <code><![CDATA[identifier]]></code>
       <code><![CDATA[identifier]]></code>
       <code><![CDATA[identifier]]></code>
       <code><![CDATA[identifier]]></code>

@@ -32,11 +32,12 @@ use Cycle\Database\Schema\Attribute\ColumnAttribute;
  * @method $this|AbstractColumn bigInteger(int $size, bool $unsigned = false, $zerofill = false)
  * @method $this|AbstractColumn unsigned(bool $value)
  * @method $this|AbstractColumn zerofill(bool $value)
+ * @method $this|AbstractColumn comment(string $value)
  */
 class MySQLColumn extends AbstractColumn
 {
     /**
-     * Default timestamp expression (driver specific).
+     * Default timestamp expression ().
      */
     public const DATETIME_NOW = 'CURRENT_TIMESTAMP';
 
@@ -393,11 +394,12 @@ class MySQLColumn extends AbstractColumn
     private function sqlStatementInteger(DriverInterface $driver): string
     {
         return \sprintf(
-            '%s %s(%s)%s%s%s%s%s',
+            '%s %s(%s)%s%s%s%s%s%s',
             $driver->identifier($this->name),
             $this->type,
             $this->size,
             $this->unsigned ? ' UNSIGNED' : '',
+            $this->comment !== '' ? ' COMMENT' : '',
             $this->zerofill ? ' ZEROFILL' : '',
             $this->nullable ? ' NULL' : ' NOT NULL',
             $this->defaultValue !== null ? " DEFAULT {$this->quoteDefault($driver)}" : '',
