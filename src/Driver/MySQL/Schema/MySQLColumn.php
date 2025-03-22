@@ -300,6 +300,10 @@ class MySQLColumn extends AbstractColumn
             return "{$statement} AUTO_INCREMENT";
         }
 
+        if ($this->comment !== '') {
+            return "{$statement} COMMENT {$driver->quote($this->comment)}";
+        }
+
         return $statement;
     }
 
@@ -399,7 +403,7 @@ class MySQLColumn extends AbstractColumn
             $this->type,
             $this->size,
             $this->unsigned ? ' UNSIGNED' : '',
-            $this->comment !== '' ? ' COMMENT' : '',
+            $this->comment !== '' ? " COMMENT {$driver->quote($this->comment)}" : '',
             $this->zerofill ? ' ZEROFILL' : '',
             $this->nullable ? ' NULL' : ' NOT NULL',
             $this->defaultValue !== null ? " DEFAULT {$this->quoteDefault($driver)}" : '',
