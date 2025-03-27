@@ -23,14 +23,14 @@ jobs:
           sudo curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
           sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
 
-      - name: Checkout
+      - name: 📦 Checkout
         uses: actions/checkout@v2
-      - name: Setup DB services
+      - name: 🛠️ Setup DB services
         run: |
           cd tests
           docker compose up -d
           cd ..
-      - name: Setup PHP ${{ matrix.php-versions }}
+      - name: 🛠️ Setup PHP ${{ matrix.php-versions }}
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
@@ -38,24 +38,26 @@ jobs:
           tools: pecl
           extensions: mbstring, pdo, pdo_sqlite, pdo_pgsql, pdo_sqlsrv, pdo_mysql
 
-      - name: Validate composer.json and composer.lock
+      - name: 🤖 Validate composer.json and composer.lock
         run: composer validate --ansi --strict
 
-      - name: Install dependencies with composer
+      - name: 📥 Install dependencies with composer
         uses: ramsey/composer-install@v3
+        with:
+          dependency-versions: "highest"
 
-      - name: Execute Tests
+      - name: 🚀 Execute Tests
         run: |
           vendor/bin/phpunit --coverage-clover=coverage.clover
 
-      - name: Upload coverage to Codecov
+      - name: 🦆 Upload coverage to Codecov
         continue-on-error: true # if is fork
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage.clover
 
-      - name: Upload coverage to Scrutinizer
+      - name: 🦆 Upload coverage to Scrutinizer
         continue-on-error: true # if is fork
         uses: sudo-bot/action-scrutinizer@latest
         with:
@@ -68,9 +70,9 @@ jobs:
       matrix:
         php-versions: ['8.0', '8.1', '8.2', '8.3', '8.4']
     steps:
-      - name: Checkout
+      - name: 📦 Checkout
         uses: actions/checkout@v2
-      - name: Setup PHP ${{ matrix.php-versions }}
+      - name: 🛠️ Setup PHP ${{ matrix.php-versions }}
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
@@ -78,13 +80,15 @@ jobs:
           tools: pecl
           extensions: mbstring, pdo, pdo_sqlite
 
-      - name: Validate composer.json and composer.lock
+      - name: 🤖 Validate composer.json and composer.lock
         run: composer validate --ansi --strict
 
-      - name: Install dependencies with composer
+      - name: 📥 Install dependencies with composer
         uses: ramsey/composer-install@v3
+        with:
+          dependency-versions: "highest"
 
-      - name: Execute Tests
+      - name: 🚀 Execute Tests
         env:
           DB: sqlite
         run: |
