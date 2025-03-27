@@ -106,11 +106,12 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
 
         $driver = clone $this;
         $driver->useCache = false;
+        $driver->queryCache = [];
 
         return $driver;
     }
 
-    public function clearCache(): void
+    public function cleanCache(): void
     {
         $this->queryCache = [];
     }
@@ -137,7 +138,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     public function getSchemaHandler(): HandlerInterface
     {
         // do not allow to carry prepared statements between schema changes
-        $this->clearCache();
+        $this->cleanCache();
 
         return $this->schemaHandler;
     }
@@ -176,7 +177,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     public function disconnect(): void
     {
         try {
-            $this->clearCache();
+            $this->cleanCache();
             $this->pdo = null;
         } catch (\Throwable $e) {
             // disconnect error
