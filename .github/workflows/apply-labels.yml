@@ -14,6 +14,9 @@ name: 🏷️ Add labels
 
 jobs:
   label:
+    permissions:
+      contents: read
+      pull-requests: write
     uses: cycle/gh-actions/.github/workflows/apply-labels.yml@v4.0.0
     with:
       os: ubuntu-latest
