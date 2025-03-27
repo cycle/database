@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.13.0](https://github.com/cycle/database/compare/2.12.0...2.13.0) (2025-03-27)
+
+
+### Features
+
+* add `getComment()` method annotation into `ColumnInterface` ([02c4962](https://github.com/cycle/database/commit/02c4962f8b2782a8273571ed50d50e1281f3f93c))
+* Add getComment() method to `AbstractColumn` ([9e780d8](https://github.com/cycle/database/commit/9e780d8899d981778b4152757d39504029a54fcc))
+* add public `Driver::clearCache()` method ([3cc2757](https://github.com/cycle/database/commit/3cc2757e70aea7a65afdd80495649e1422a144a6))
+
+
+### Continuous Integration
+
+* update workflow actions ([d55b36f](https://github.com/cycle/database/commit/d55b36fb538565f88efeb2abd280ead26e4ef025))
+
 ## [2.12.0](https://github.com/cycle/database/compare/2.11.3...2.12.0) (2025-02-17)
 
 
