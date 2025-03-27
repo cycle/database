@@ -54,12 +54,11 @@ jobs:
           strict: true
 
       - name: 🛠️ Setup PHP
-        uses: shivammathur/setup-php@2.30.2
+        uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
           extensions: mbstring, pdo, pdo_sqlite
           ini-values: error_reporting=E_ALL
-          coverage: xdebug
 
       - name: 🛠️ Setup problem matchers
         run: |
@@ -68,20 +67,10 @@ jobs:
       - name: 🤖 Validate composer.json and composer.lock
         run: composer validate --ansi --strict
 
-      - name: 🔍 Get composer cache directory
-        uses: cycle/gh-actions/actions/composer/get-cache-directory@v4.0.0
-
-      - name: ♻️ Restore cached dependencies installed with composer
-        uses: actions/cache@v4.0.2
+      - name: 📥 Install dependencies with composer
+        uses: ramsey/composer-install@v3
         with:
-          path: ${{ env.COMPOSER_CACHE_DIR }}
-          key: php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-${{ hashFiles('composer.lock') }}
-          restore-keys: php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-
-
-      - name: 📥 Install "${{ matrix.dependencies }}" dependencies
-        uses: cycle/gh-actions/actions/composer/install@v4.0.0
-        with:
-          dependencies: ${{ matrix.dependencies }}
+          dependency-versions: ${{ matrix.dependencies }}
 
       - name: 🔍 Run composer-normalize
         run: composer normalize --ansi --dry-run
