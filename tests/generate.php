@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
+use Cycle\Database\Tests\Utils\DontGenerateAttribute;
 use Spiral\Tokenizer;
 
-\error_reporting(E_ALL | E_STRICT);
-\ini_set('display_errors', '1');
+error_reporting(E_ALL | E_STRICT);
+ini_set('display_errors', '1');
 
 //Composer
-require \dirname(__DIR__) . '/vendor/autoload.php';
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 $tokenizer = new Tokenizer\Tokenizer(new Tokenizer\Config\TokenizerConfig([
     'directories' => [__DIR__ . '/Database/Functional/Driver/Common'],
@@ -56,7 +57,9 @@ foreach ($classes as $class) {
         continue;
     }
 
-    echo "Found {$class->getName()}\n";
+    if ($class->getAttributes(DontGenerateAttribute::class) !== []) {
+        continue;
+    }
 
     $path = \str_replace(
         [\str_replace('\\', '/', __DIR__), 'Database/Functional/Driver/Common/'],
@@ -64,10 +67,15 @@ foreach ($classes as $class) {
         \str_replace('\\', '/', $class->getFileName()),
     );
 
-    $path = \ltrim($path, '/');
+    $path = ltrim($path, '/');
 
     foreach ($databases as $driver => $details) {
-        $filename = \sprintf('%s%s', $details['directory'], $path);
+        $filename = $details['directory'] . $path;
+        if (\file_exists($filename)) {
+            continue;
+        }
+        echo "Processing $filename\n";
+
         $dir = \pathinfo($filename, PATHINFO_DIRNAME);
 
         $namespace = \str_replace(
