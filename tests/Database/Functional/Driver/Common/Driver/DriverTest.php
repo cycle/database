@@ -63,14 +63,14 @@ abstract class DriverTest extends BaseTest
         yield [new class('2000-01-23T01:23:45.678+09:00') extends \DateTime {}];
     }
 
-    public function testCleanCache(): void
+    public function testClearCache(): void
     {
         $driver = $this->mockDriver();
 
         $driver->testPolluteCache();
         self::assertNotEmpty($driver->testGetCache());
 
-        $driver->cleanCache();
+        $driver->clearCache();
 
         self::assertEmpty($driver->testGetCache());
     }
