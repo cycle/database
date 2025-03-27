@@ -296,9 +296,6 @@ class MySQLColumn extends AbstractColumn
         $statement = parent::sqlStatement($driver);
 
         $this->defaultValue = $defaultValue;
-        if ($this->autoIncrement) {
-            return "{$statement} AUTO_INCREMENT";
-        }
 
         if ($this->comment !== '') {
             return "{$statement} COMMENT {$driver->quote($this->comment)}";
