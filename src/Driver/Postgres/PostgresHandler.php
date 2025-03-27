@@ -117,18 +117,21 @@ class PostgresHandler extends Handler
 
         //Postgres columns should be altered using set of operations
         $operations = $column->alterOperations($this->driver, $initial);
-        if (empty($operations)) {
-            return;
+        if (\count($operations) > 0) {
+            //Postgres columns should be altered using set of operations
+            $query = \sprintf(
+                'ALTER TABLE %s %s',
+                $this->identify($table),
+                \trim(\implode(', ', $operations), ', '),
+            );
+
+            $this->run($query);
         }
 
-        //Postgres columns should be altered using set of operations
-        $query = \sprintf(
-            'ALTER TABLE %s %s',
-            $this->identify($table),
-            \trim(\implode(', ', $operations), ', '),
-        );
-
-        $this->run($query);
+        $operation = $column->commentOperation($this->driver, $initial);
+        if ($operation !== null) {
+            $this->run($operation);
+        }
     }
 
     public function enableForeignKeyConstraints(): void
@@ -139,6 +142,26 @@ class PostgresHandler extends Handler
     public function disableForeignKeyConstraints(): void
     {
         $this->run('SET CONSTRAINTS ALL DEFERRED;');
+    }
+
+    public function createTable(AbstractTable $table): void
+    {
+        if (!$table instanceof PostgresTable) {
+            throw new SchemaException('Postgres handler can work only with Postgres table');
+        }
+
+        parent::createTable($table);
+
+        foreach ($table->getColumns() as $column) {
+            $this->createComment($column);
+        }
+    }
+
+    public function createComment(PostgresColumn $column): void
+    {
+        if ($column->getComment() !== '') {
+            $this->run($column->createComment($this->driver));
+        }
     }
 
     /**

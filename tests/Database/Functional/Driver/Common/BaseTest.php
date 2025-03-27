@@ -41,6 +41,7 @@ abstract class BaseTest extends TestCase
 
     public function tearDown(): void
     {
+        $this->disableProfiling();
         $this->dropDatabase($this->database);
     }
 

@@ -9,7 +9,9 @@ use Cycle\Database\Tests\Stub\Driver\MSSQLWrapDriver;
 use Cycle\Database\Tests\Stub\Driver\MysqlWrapDriver;
 use Cycle\Database\Tests\Stub\Driver\PostgresWrapDriver;
 use Cycle\Database\Tests\Stub\Driver\SQLiteWrapDriver;
+use Cycle\Database\Tests\Utils\DontGenerateAttribute;
 
+#[DontGenerateAttribute]
 abstract class BaseConnectionTest extends BaseTest
 {
     public function setUp(): void

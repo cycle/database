@@ -20,6 +20,8 @@ use Cycle\Database\Schema\AbstractTable;
 
 /**
  * @property PostgresDriver $driver
+ *
+ * @method PostgresColumn[] getColumns()
  */
 class PostgresTable extends AbstractTable
 {
@@ -93,12 +95,18 @@ class PostgresTable extends AbstractTable
         )->fetchColumn();
 
         $query = $this->driver->query(
-            'SELECT *
-                FROM information_schema.columns
-                JOIN pg_type
-                    ON (pg_type.typname = columns.udt_name)
-                WHERE table_schema = ?
-                AND table_name = ?',
+            'SELECT columns.*, pg_type.*, pg_description.description
+               FROM information_schema.columns
+               JOIN pg_catalog.pg_type
+                   ON (pg_type.typname = columns.udt_name)
+               JOIN pg_catalog.pg_statio_all_tables
+	               ON (pg_statio_all_tables.relname = columns.table_name
+	               AND pg_statio_all_tables.schemaname = columns.table_schema)
+               LEFT JOIN pg_catalog.pg_description
+	               ON (pg_description.objoid = pg_statio_all_tables.relid
+	               AND pg_description.objsubid = columns.ordinal_position)
+               WHERE columns.table_schema = ?
+               AND columns.table_name = ?',
             [$tableSchema, $tableName],
         );
 
