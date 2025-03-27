@@ -106,6 +106,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
 
         $driver = clone $this;
         $driver->useCache = false;
+        $driver->queryCache = [];
 
         return $driver;
     }
