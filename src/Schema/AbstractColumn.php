@@ -785,4 +785,13 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
             default => $value,
         };
     }
+
+    /**
+     * Get column comment.
+     * An empty string will be returned if the feature is not supported by the driver.
+     */
+    public function getComment(): string
+    {
+        return '';
+    }
 }
