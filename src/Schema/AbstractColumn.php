@@ -624,6 +624,15 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
     }
 
     /**
+     * Get column comment.
+     * An empty string will be returned if the feature is not supported by the driver.
+     */
+    public function getComment(): string
+    {
+        return '';
+    }
+
+    /**
      * Shortcut for AbstractColumn->type() method.
      *
      * @psalm-param non-empty-string $name
@@ -784,14 +793,5 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
             'date' => $datetime->format(static::DATE_FORMAT),
             default => $value,
         };
-    }
-
-    /**
-     * Get column comment.
-     * An empty string will be returned if the feature is not supported by the driver.
-     */
-    public function getComment(): string
-    {
-        return '';
     }
 }

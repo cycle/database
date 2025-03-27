@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Functional\Driver\Common\Schema;
 
 // phpcs:ignore
-use Cycle\Database\ColumnInterface;
 use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 use Cycle\Database\Tests\Utils\DontGenerateAttribute;
 
