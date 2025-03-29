@@ -25,4 +25,9 @@ abstract class ConnectionConfig extends PDOConnectionConfig
     {
         return 'sqlite';
     }
+
+    public function formatExceptionMessage(string $message): string
+    {
+        return $message;
+    }
 }

@@ -44,4 +44,9 @@ class FileConnectionConfig extends ConnectionConfig implements ProvidesSourceStr
     {
         return $this->database;
     }
+
+    public function formatExceptionMessage(string $message): string
+    {
+        return \sprintf('(%s) %s', $this->database, $message);
+    }
 }

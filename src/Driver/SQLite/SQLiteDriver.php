@@ -21,6 +21,9 @@ use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Query\InsertQuery;
 use Cycle\Database\Query\QueryBuilder;
 
+/**
+ * @property SQLiteDriverConfig $config
+ */
 class SQLiteDriver extends Driver
 {
     /**
@@ -52,7 +55,9 @@ class SQLiteDriver extends Driver
             return new StatementException\ConstrainException($exception, $query);
         }
 
-        return new StatementException($exception, $query);
+        return (new StatementException($exception, $query))->setMessage(
+            message: $this->config->connection->formatExceptionMessage($exception->getMessage()),
+        );
     }
 
     protected function setIsolationLevel(string $level): void
