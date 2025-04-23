@@ -368,7 +368,18 @@ class SelectQuery extends ActiveQuery implements
     {
         return $this->run();
     }
-
+    /**
+     * Request the first result as array (when you know that you have just one result).
+     */
+        public function fetch(int $mode = StatementInterface::FETCH_ASSOC): array
+    {
+        $st = $this->run();
+        try {
+            return $st->fetch($mode);
+        } finally {
+            $st->close();
+        }
+    }
     /**
      * Request all results as array.
      */
