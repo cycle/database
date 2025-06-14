@@ -109,6 +109,9 @@ abstract class Compiler implements CompilerInterface
             case self::INSERT_QUERY:
                 return $this->insertQuery($params, $q, $tokens);
 
+            case self::UPSERT_QUERY:
+                return $this->upsertQuery($params, $q, $tokens);
+
             case self::SELECT_QUERY:
                 if ($nestedQuery) {
                     if ($fragment->getPrefix() !== null) {
@@ -164,6 +167,51 @@ abstract class Compiler implements CompilerInterface
             $this->columns($params, $q, $tokens['columns']),
             \implode(', ', $values),
         );
+    }
+
+    /**
+     * @psalm-return non-empty-string
+     */
+    protected function upsertQuery(QueryParameters $params, Quoter $q, array $tokens): string
+    {
+        if (\count($tokens['columns']) === 0) {
+            throw new CompilerException('Upsert query must define at least one column');
+        }
+
+        $values = [];
+        foreach ($tokens['values'] as $value) {
+            $values[] = $this->value($params, $q, $value);
+        }
+
+        $alias = $tokens['alias'] ?? \uniqid();
+
+        return \sprintf(
+            'INSERT INTO %s (%s) VALUES %s AS %s ON DUPLICATE KEY UPDATE %s',
+            $this->name($params, $q, $tokens['table'], true),
+            $this->columns($params, $q, $tokens['columns']),
+            \implode(', ', $values),
+            $this->name($params, $q, $alias),
+            $this->updates($params, $q, $tokens['columns'], $alias),
+        );
+    }
+
+    protected function updates(
+        QueryParameters $params,
+        Quoter $q,
+        array $columns,
+        ?string $alias = null,
+        int $maxLength = 180,
+    ): string {
+        $columns = \array_map(
+            function ($column) use ($params, $q, $alias) {
+                $name = $this->name($params, $q, $column);
+                $alias = $this->name($params, $q, $alias);
+                return \sprintf('%s = %s.%s', $name, $alias, $name);
+            },
+            $columns,
+        );
+
+        return \wordwrap(\implode(', ', $columns), $maxLength);
     }
 
     /**

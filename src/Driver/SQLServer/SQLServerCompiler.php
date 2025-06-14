@@ -14,6 +14,7 @@ namespace Cycle\Database\Driver\SQLServer;
 use Cycle\Database\Driver\Compiler;
 use Cycle\Database\Driver\Quoter;
 use Cycle\Database\Driver\SQLServer\Injection\CompileJson;
+use Cycle\Database\Exception\CompilerException;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Injection\Parameter;
@@ -66,6 +67,11 @@ class SQLServerCompiler extends Compiler
             $output,
             \implode(', ', $values),
         );
+    }
+
+    protected function upsertQuery(QueryParameters $params, Quoter $q, array $tokens): string
+    {
+        throw new CompilerException('Upsert behaviour is not supported by SQLServer');
     }
 
     /**

@@ -34,6 +34,15 @@ interface BuilderInterface
     ): InsertQuery;
 
     /**
+     * Get UpsertQuery builder with driver specific query compiler.
+     *
+     */
+    public function upsertQuery(
+        string $prefix,
+        ?string $table = null,
+    ): UpsertQuery;
+
+    /**
      * Get SelectQuery builder with driver specific query compiler.
      *
      */

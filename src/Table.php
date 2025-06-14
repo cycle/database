@@ -16,6 +16,7 @@ use Cycle\Database\Query\DeleteQuery;
 use Cycle\Database\Query\InsertQuery;
 use Cycle\Database\Query\SelectQuery;
 use Cycle\Database\Query\UpdateQuery;
+use Cycle\Database\Query\UpsertQuery;
 use Cycle\Database\Schema\AbstractTable;
 
 /**
@@ -127,12 +128,56 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
     }
 
     /**
+     * Upsert one fieldset into table and return last inserted id.
+     *
+     * Example:
+     * $table->upsertOne(["name" => "Wolfy-J", "balance" => 10]);
+     *
+     * @throws BuilderException
+     */
+    public function upsertOne(array $rowset = []): int|string|null
+    {
+        return $this->database
+            ->upsert($this->name)
+            ->values($rowset)
+            ->run();
+    }
+
+    /**
+     * Perform batch upsert into table, every rowset should have identical amount of values matched
+     * with column names provided in first argument. Method will return lastInsertID on success.
+     *
+     * Example:
+     * $table->insertMultiple(["name", "balance"], array(["Bob", 10], ["Jack", 20]))
+     *
+     * @param array $columns Array of columns.
+     * @param array $rowsets Array of rowsets.
+     */
+    public function upsertMultiple(array $columns = [], array $rowsets = []): void
+    {
+        $this->database
+            ->upsert($this->name)
+            ->columns($columns)
+            ->values($rowsets)
+            ->run();
+    }
+
+    /**
      * Get insert builder specific to current table.
      */
     public function insert(): InsertQuery
     {
         return $this->database
             ->insert($this->name);
+    }
+
+    /**
+     * Get upsert builder specific to current table.
+     */
+    public function upsert(): UpsertQuery
+    {
+        return $this->database
+            ->upsert($this->name);
     }
 
     /**
