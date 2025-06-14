@@ -10,9 +10,11 @@ use Cycle\Database\Injection\Parameter;
 class UpsertQuery extends ActiveQuery
 {
     protected string $table;
-    protected array $columns = [];
-    protected array $values  = [];
-    protected ?string $alias = null;
+    protected array $columns   = [];
+    protected array $values    = [];
+    protected array $conflicts = [];
+    protected string $target   = 'target';
+    protected string $source   = 'source';
 
     public function __construct(?string $table = null)
     {
@@ -102,15 +104,44 @@ class UpsertQuery extends ActiveQuery
     }
 
     /**
-     * Defines an alias name when performing an upsert. By default, and when specified as NULL
-     * a unique value will be generated and used in its place.
+     * Set upsert conflicting index column names. Names can be provided as array, set of parameters or comma
+     * separated string.
      *
      * Examples:
-     * $upsert->alias("foo");
+     * $upsert->conflicts(["identifier", "email"]);
+     * $upsert->conflicts("identifier", "email");
+     * $upsert->conflicts("identifier, email");
      */
-    public function alias(?string $alias): self
+    public function conflicts(array|string ...$conflicts): self
     {
-        $this->alias = $alias;
+        $this->conflicts = $this->fetchIdentifiers($conflicts);
+
+        return $this;
+    }
+
+    /**
+     * Set a target name when performing an upsert.
+     *
+     * Examples:
+     * $upsert->target("foo");
+     */
+    public function target(?string $target): self
+    {
+        $this->target = $target;
+
+        return $this;
+    }
+
+    /**
+     * Set a source name when performing an upsert.
+     *
+     * Examples:
+     * $upsert->source("bar");
+     */
+    public function source(?string $target): self
+    {
+        $this->target = $target;
+
         return $this;
     }
 
@@ -146,10 +177,12 @@ class UpsertQuery extends ActiveQuery
     public function getTokens(): array
     {
         return [
-            'table'   => $this->table,
-            'columns' => $this->columns,
-            'values'  => $this->values,
-            'alias'   => $this->alias,
+            'table'     => $this->table,
+            'columns'   => $this->columns,
+            'values'    => $this->values,
+            'conflicts' => $this->conflicts,
+            'target'    => $this->target,
+            'source'    => $this->source,
         ];
     }
 }

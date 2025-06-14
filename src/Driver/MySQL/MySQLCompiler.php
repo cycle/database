@@ -15,6 +15,7 @@ use Cycle\Database\Driver\CachingCompilerInterface;
 use Cycle\Database\Driver\Compiler;
 use Cycle\Database\Driver\MySQL\Injection\CompileJson;
 use Cycle\Database\Driver\Quoter;
+use Cycle\Database\Exception\CompilerException;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\QueryParameters;
@@ -34,6 +35,31 @@ class MySQLCompiler extends Compiler implements CachingCompilerInterface
         }
 
         return parent::insertQuery($params, $q, $tokens);
+    }
+
+    /**
+     * @psalm-return non-empty-string
+     */
+    protected function upsertQuery(QueryParameters $params, Quoter $q, array $tokens): string
+    {
+        if (\count($tokens['columns']) === 0) {
+            throw new CompilerException('Upsert query must define at least one column');
+        }
+
+        $values = [];
+
+        foreach ($tokens['values'] as $value) {
+            $values[] = $this->value($params, $q, $value);
+        }
+
+        return \sprintf(
+            'INSERT INTO %s (%s) VALUES %s AS %s ON DUPLICATE KEY UPDATE %s',
+            $this->name($params, $q, $tokens['table'], true),
+            $this->columns($params, $q, $tokens['columns']),
+            \implode(', ', $values),
+            $this->name($params, $q, $tokens['target']),
+            $this->updates($params, $q, $tokens['columns'], $tokens['target']),
+        );
     }
 
     /**

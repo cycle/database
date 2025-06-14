@@ -15,7 +15,6 @@ use Cycle\Database\Driver\CachingCompilerInterface;
 use Cycle\Database\Driver\Compiler;
 use Cycle\Database\Driver\Postgres\Injection\CompileJson;
 use Cycle\Database\Driver\Quoter;
-use Cycle\Database\Exception\CompilerException;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\QueryParameters;
@@ -58,25 +57,7 @@ class PostgresCompiler extends Compiler implements CachingCompilerInterface
      */
     protected function upsertQuery(QueryParameters $params, Quoter $q, array $tokens): string
     {
-        if (\count($tokens['columns']) === 0) {
-            throw new CompilerException('Upsert query must define at least one column');
-        }
-
-        $values = [];
-        foreach ($tokens['values'] as $value) {
-            $values[] = $this->value($params, $q, $value);
-        }
-
-        $alias = $tokens['alias'] ?? \uniqid();
-
-        $query = \sprintf(
-            'INSERT INTO %s (%s) VALUES %s AS %s ON CONFLICT DO UPDATE SET %s',
-            $this->name($params, $q, $tokens['table'], true),
-            $this->columns($params, $q, $tokens['columns']),
-            \implode(', ', $values),
-            $this->name($params, $q, $alias),
-            $this->updates($params, $q, $tokens['columns'], $alias),
-        );
+        $query = parent::upsertQuery($params, $q, $tokens);
 
         if (empty($tokens['return'])) {
             return $query;

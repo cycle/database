@@ -15,12 +15,5 @@ use Cycle\Database\Tests\Functional\Driver\Common\Query\UpsertQueryTest as Commo
 class UpsertQueryTest extends CommonClass
 {
     public const DRIVER = 'postgres';
-    public const UPSERT_CLAUSE = 'ON CONFLICT DO UPDATE SET';
-
-    public function testQueryInstance(): void
-    {
-        parent::testQueryInstance();
-
-        $this->assertInstanceOf(PostgresUpsertQuery::class, $this->database->upsert());
-    }
+    protected const QUERY_INSTANCE = PostgresUpsertQuery::class;
 }

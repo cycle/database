@@ -174,24 +174,28 @@ abstract class Compiler implements CompilerInterface
      */
     protected function upsertQuery(QueryParameters $params, Quoter $q, array $tokens): string
     {
+        if (\count($tokens['conflicts']) === 0) {
+            throw new CompilerException('Upsert query must define conflicting index column names');
+        }
+
         if (\count($tokens['columns']) === 0) {
             throw new CompilerException('Upsert query must define at least one column');
         }
 
         $values = [];
+
         foreach ($tokens['values'] as $value) {
             $values[] = $this->value($params, $q, $value);
         }
 
-        $alias = $tokens['alias'] ?? \uniqid();
-
         return \sprintf(
-            'INSERT INTO %s (%s) VALUES %s AS %s ON DUPLICATE KEY UPDATE %s',
+            'INSERT INTO %s (%s) VALUES %s AS %s ON CONFLICT (%s) DO UPDATE SET %s',
             $this->name($params, $q, $tokens['table'], true),
             $this->columns($params, $q, $tokens['columns']),
             \implode(', ', $values),
-            $this->name($params, $q, $alias),
-            $this->updates($params, $q, $tokens['columns'], $alias),
+            $this->name($params, $q, $tokens['target']),
+            $this->columns($params, $q, $tokens['conflicts']),
+            $this->updates($params, $q, $tokens['columns'], $tokens['target']),
         );
     }
 
@@ -199,14 +203,14 @@ abstract class Compiler implements CompilerInterface
         QueryParameters $params,
         Quoter $q,
         array $columns,
-        ?string $alias = null,
+        string $target,
         int $maxLength = 180,
     ): string {
         $columns = \array_map(
-            function ($column) use ($params, $q, $alias) {
-                $name = $this->name($params, $q, $column);
-                $alias = $this->name($params, $q, $alias);
-                return \sprintf('%s = %s.%s', $name, $alias, $name);
+            function ($column) use ($params, $q, $target) {
+                $name   = $this->name($params, $q, $column);
+                $target = $this->name($params, $q, $target);
+                return \sprintf('%s = %s.%s', $name, $target, $name);
             },
             $columns,
         );

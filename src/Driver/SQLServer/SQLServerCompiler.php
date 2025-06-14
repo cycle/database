@@ -69,9 +69,87 @@ class SQLServerCompiler extends Compiler
         );
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
     protected function upsertQuery(QueryParameters $params, Quoter $q, array $tokens): string
     {
-        throw new CompilerException('Upsert behaviour is not supported by SQLServer');
+        if (\count($tokens['conflicts']) === 0) {
+            throw new CompilerException('Upsert query must define conflicting index column names');
+        }
+
+        if (\count($tokens['columns']) === 0) {
+            throw new CompilerException('Upsert query must define at least one column');
+        }
+
+        $values = [];
+
+        foreach ($tokens['values'] as $value) {
+            $values[] = $this->value($params, $q, $value);
+        }
+
+        $target = $tokens['target'];
+        $source = $tokens['source'];
+
+        $conflicts = \array_map(
+            function ($column) use ($params, $q, $target, $source) {
+                $name = $this->name($params, $q, $column);
+                $target = $this->name($params, $q, $target);
+                $source = $this->name($params, $q, $source);
+                return \sprintf('%s.%s = %s.%s', $target, $name, $source, $name);
+            },
+            $tokens['conflicts'],
+        );
+
+        $matched = \array_map(
+            function ($column) use ($params, $q, $target, $source) {
+                $name = $this->name($params, $q, $column);
+                $target = $this->name($params, $q, $target);
+                $source = $this->name($params, $q, $source);
+                return \sprintf('%s.%s = %s.%s', $target, $name, $source, $name);
+            },
+            $tokens['columns'],
+        );
+
+        $sources = \array_map(
+            function ($column) use ($params, $q, $source) {
+                $name = $this->name($params, $q, $column);
+                $source = $this->name($params, $q, $source);
+                return \sprintf('%s.%s', $source, $name);
+            },
+            $tokens['columns'],
+        );
+
+        //MERGE INTO users WITH (holdlock) AS target
+        //USING (
+        //    VALUES
+        //        ('adam@email.com', 'Adam')),
+        //        ('mark@email.com', 'Mark')
+        //) AS source (name, email, created_at)
+        //ON target.email = source.email  -- assuming email has a unique constraint
+        //WHEN MATCHED THEN
+        //    UPDATE SET
+        //        target.name = source.name,
+        //        target.email = source.email,
+        //        target.created_at = source.created_at
+        //WHEN NOT MATCHED THEN
+        //    INSERT (name, email, created_at)
+        //    VALUES (source.name, source.email, source.created_at);
+        //
+        //MERGEINTO[table]WITH(holdlock)AS[target]USING(VALUES(?,?))AS[source]([email],[name])ON[target].[email]=[source].[email]WHENMATCHEDTHENUPDATESET[target].[email]=[source].[email],[target].[name]=[source].[name]WHENNOTMATCHEDTHENINSERT([email],[name])VALUES([source].[email],[source].[name])
+
+        return \sprintf(
+            'MERGE INTO %s WITH (holdlock) AS %s USING ( VALUES %s) AS %s (%s) ON %s WHEN MATCHED THEN UPDATE SET %s WHEN NOT MATCHED THEN INSERT (%s) VALUES (%s)',
+            $this->name($params, $q, $tokens['table'], true),
+            $this->name($params, $q, $target),
+            \implode(', ', $values),
+            $this->name($params, $q, 'source'),
+            $this->columns($params, $q, $tokens['columns']),
+            \implode(' AND ', $conflicts),
+            \implode(', ', $matched),
+            $this->columns($params, $q, $tokens['columns']),
+            \implode(', ', $sources),
+        );
     }
 
     /**
