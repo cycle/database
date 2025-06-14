@@ -16,12 +16,12 @@ abstract class UpsertQueryTest extends BaseTest
 {
     protected const QUERY_INSTANCE             = UpsertQuery::class;
     protected const QUERY_REQUIRES_CONFLICTS   = true;
-    protected const QUERY_WITH_VALUES          = 'INSERT INTO {table} ({email}, {name}) VALUES (?, ?) AS {target} ON CONFLICT ({email}) DO UPDATE SET {email} = {target}.{email}, {name} = {target}.{name}';
-    protected const QUERY_WITH_STATES_VALUES   = 'INSERT INTO {table} ({email}, {name}) VALUES (?, ?) AS {target} ON CONFLICT ({email}) DO UPDATE SET {email} = {target}.{email}, {name} = {target}.{name}';
-    protected const QUERY_WITH_MULTIPLE_ROWS   = 'INSERT INTO {table} ({email}, {name}) VALUES (?, ?), (?, ?) AS {target} ON CONFLICT ({email}) DO UPDATE SET {email} = {target}.{email}, {name} = {target}.{name}';
-    protected const QUERY_WITH_EXPRESSIONS     = 'INSERT INTO {table} ({email}, {name}, {created_at}, {updated_at}, {deleted_at}) VALUES (?, ?, NOW(), NOW(), ?) AS {target} ON CONFLICT ({email}) DO UPDATE SET {email} = {target}.{email}, {name} = {target}.{name}, {created_at} = {target}.{created_at}, {updated_at} = {target}.{updated_at}, {deleted_at} = {target}.{deleted_at}';
-    protected const QUERY_WITH_FRAGMENTS       = 'INSERT INTO {table} ({email}, {name}, {created_at}, {updated_at}, {deleted_at}) VALUES (?, ?, NOW(), datetime(\'now\'), ?) AS {target} ON CONFLICT ({email}) DO UPDATE SET {email} = {target}.{email}, {name} = {target}.{name}, {created_at} = {target}.{created_at}, {updated_at} = {target}.{updated_at}, {deleted_at} = {target}.{deleted_at}';
-    protected const QUERY_WITH_CUSTOM_FRAGMENT = 'INSERT INTO {table} ({email}, {name}, {expired_at}) VALUES (?, ?, NOW()) AS {target} ON CONFLICT ({email}) DO UPDATE SET {email} = {target}.{email}, {name} = {target}.{name}, {expired_at} = {target}.{expired_at}';
+    protected const QUERY_WITH_VALUES          = 'INSERT INTO {table} ({email}, {name}) VALUES (?, ?) ON CONFLICT ({email}) DO UPDATE SET {email} = EXCLUDED.{email}, {name} = EXCLUDED.{name}';
+    protected const QUERY_WITH_STATES_VALUES   = 'INSERT INTO {table} ({email}, {name}) VALUES (?, ?) ON CONFLICT ({email}) DO UPDATE SET {email} = EXCLUDED.{email}, {name} = EXCLUDED.{name}';
+    protected const QUERY_WITH_MULTIPLE_ROWS   = 'INSERT INTO {table} ({email}, {name}) VALUES (?, ?), (?, ?) ON CONFLICT ({email}) DO UPDATE SET {email} = EXCLUDED.{email}, {name} = EXCLUDED.{name}';
+    protected const QUERY_WITH_EXPRESSIONS     = 'INSERT INTO {table} ({email}, {name}, {created_at}, {updated_at}, {deleted_at}) VALUES (?, ?, NOW(), NOW(), ?) ON CONFLICT ({email}) DO UPDATE SET {email} = EXCLUDED.{email}, {name} = EXCLUDED.{name}, {created_at} = EXCLUDED.{created_at}, {updated_at} = EXCLUDED.{updated_at}, {deleted_at} = EXCLUDED.{deleted_at}';
+    protected const QUERY_WITH_FRAGMENTS       = 'INSERT INTO {table} ({email}, {name}, {created_at}, {updated_at}, {deleted_at}) VALUES (?, ?, NOW(), datetime(\'now\'), ?) ON CONFLICT ({email}) DO UPDATE SET {email} = EXCLUDED.{email}, {name} = EXCLUDED.{name}, {created_at} = EXCLUDED.{created_at}, {updated_at} = EXCLUDED.{updated_at}, {deleted_at} = EXCLUDED.{deleted_at}';
+    protected const QUERY_WITH_CUSTOM_FRAGMENT = 'INSERT INTO {table} ({email}, {name}, {expired_at}) VALUES (?, ?, NOW()) ON CONFLICT ({email}) DO UPDATE SET {email} = EXCLUDED.{email}, {name} = EXCLUDED.{name}, {expired_at} = EXCLUDED.{expired_at}';
 
     public function testQueryInstance(): void
     {
@@ -36,7 +36,6 @@ abstract class UpsertQueryTest extends BaseTest
             $this->expectExceptionMessage('Upsert query must define conflicting index column names');
 
             $this->db()->upsert('table')
-                ->target('target')
                 ->values(
                     [
                         'email' => 'adam@email.com',
@@ -54,7 +53,6 @@ abstract class UpsertQueryTest extends BaseTest
         $this->expectExceptionMessage('Upsert query must define at least one column');
 
         $this->db()->upsert('table')
-            ->target('target')
             ->conflicts('email')
             ->values([])->__toString();
     }
@@ -62,7 +60,6 @@ abstract class UpsertQueryTest extends BaseTest
     public function testQueryWithValues(): void
     {
         $upsert = $this->db()->upsert('table')
-            ->target('target')
             ->conflicts('email')
             ->values(
                 [
@@ -78,7 +75,6 @@ abstract class UpsertQueryTest extends BaseTest
     public function testQueryWithStatesValues(): void
     {
         $upsert = $this->database->upsert('table')
-            ->target('target')
             ->conflicts('email')
             ->columns('email', 'name')
             ->values('adam@email.com', 'Adam');
@@ -90,7 +86,6 @@ abstract class UpsertQueryTest extends BaseTest
     public function testQueryWithMultipleRows(): void
     {
         $upsert = $this->database->upsert('table')
-            ->target('target')
             ->conflicts('email')
             ->columns('email', 'name')
             ->values('adam@email.com', 'Adam')
@@ -103,7 +98,6 @@ abstract class UpsertQueryTest extends BaseTest
     public function testQueryWithMultipleRowsAsArray(): void
     {
         $upsert = $this->database->upsert('table')
-            ->target('target')
             ->conflicts('email')
             ->values([
                 ['email' => 'adam@email.com', 'name' => 'Adam'],
@@ -117,7 +111,6 @@ abstract class UpsertQueryTest extends BaseTest
     public function testQueryWithExpressions(): void
     {
         $upsert = $this->database->upsert('table')
-            ->target('target')
             ->conflicts('email')
             ->values([
                 'email' => 'adam@email.com',
@@ -134,7 +127,6 @@ abstract class UpsertQueryTest extends BaseTest
     public function testQueryWithFragments(): void
     {
         $upsert = $this->database->upsert('table')
-            ->target('target')
             ->conflicts('email')
             ->values([
                 'email' => 'adam@email.com',
@@ -158,7 +150,6 @@ abstract class UpsertQueryTest extends BaseTest
         ]);
 
         $upsert = $this->database->upsert('table')
-            ->target('target')
             ->conflicts('email')
             ->values([
                 'email' => 'adam@email.com',

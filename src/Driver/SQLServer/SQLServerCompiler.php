@@ -88,11 +88,11 @@ class SQLServerCompiler extends Compiler
             $values[] = $this->value($params, $q, $value);
         }
 
-        $target = $tokens['target'];
-        $source = $tokens['source'];
+        $target = 'target';
+        $source = 'source';
 
         $conflicts = \array_map(
-            function ($column) use ($params, $q, $target, $source) {
+            function (string $column) use ($params, $q, $target, $source) {
                 $name = $this->name($params, $q, $column);
                 $target = $this->name($params, $q, $target);
                 $source = $this->name($params, $q, $source);
@@ -101,8 +101,8 @@ class SQLServerCompiler extends Compiler
             $tokens['conflicts'],
         );
 
-        $matched = \array_map(
-            function ($column) use ($params, $q, $target, $source) {
+        $updates = \array_map(
+            function (string $column) use ($params, $q, $target, $source) {
                 $name = $this->name($params, $q, $column);
                 $target = $this->name($params, $q, $target);
                 $source = $this->name($params, $q, $source);
@@ -111,32 +111,14 @@ class SQLServerCompiler extends Compiler
             $tokens['columns'],
         );
 
-        $sources = \array_map(
-            function ($column) use ($params, $q, $source) {
+        $inserts = \array_map(
+            function (string $column) use ($params, $q, $source) {
                 $name = $this->name($params, $q, $column);
                 $source = $this->name($params, $q, $source);
                 return \sprintf('%s.%s', $source, $name);
             },
             $tokens['columns'],
         );
-
-        //MERGE INTO users WITH (holdlock) AS target
-        //USING (
-        //    VALUES
-        //        ('adam@email.com', 'Adam')),
-        //        ('mark@email.com', 'Mark')
-        //) AS source (name, email, created_at)
-        //ON target.email = source.email  -- assuming email has a unique constraint
-        //WHEN MATCHED THEN
-        //    UPDATE SET
-        //        target.name = source.name,
-        //        target.email = source.email,
-        //        target.created_at = source.created_at
-        //WHEN NOT MATCHED THEN
-        //    INSERT (name, email, created_at)
-        //    VALUES (source.name, source.email, source.created_at);
-        //
-        //MERGEINTO[table]WITH(holdlock)AS[target]USING(VALUES(?,?))AS[source]([email],[name])ON[target].[email]=[source].[email]WHENMATCHEDTHENUPDATESET[target].[email]=[source].[email],[target].[name]=[source].[name]WHENNOTMATCHEDTHENINSERT([email],[name])VALUES([source].[email],[source].[name])
 
         return \sprintf(
             'MERGE INTO %s WITH (holdlock) AS %s USING ( VALUES %s) AS %s (%s) ON %s WHEN MATCHED THEN UPDATE SET %s WHEN NOT MATCHED THEN INSERT (%s) VALUES (%s)',
@@ -146,9 +128,9 @@ class SQLServerCompiler extends Compiler
             $this->name($params, $q, 'source'),
             $this->columns($params, $q, $tokens['columns']),
             \implode(' AND ', $conflicts),
-            \implode(', ', $matched),
+            \implode(', ', $updates),
             $this->columns($params, $q, $tokens['columns']),
-            \implode(', ', $sources),
+            \implode(', ', $inserts),
         );
     }
 

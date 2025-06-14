@@ -13,8 +13,6 @@ class UpsertQuery extends ActiveQuery
     protected array $columns   = [];
     protected array $values    = [];
     protected array $conflicts = [];
-    protected string $target   = 'target';
-    protected string $source   = 'source';
 
     public function __construct(?string $table = null)
     {
@@ -120,32 +118,6 @@ class UpsertQuery extends ActiveQuery
     }
 
     /**
-     * Set a target name when performing an upsert.
-     *
-     * Examples:
-     * $upsert->target("foo");
-     */
-    public function target(?string $target): self
-    {
-        $this->target = $target;
-
-        return $this;
-    }
-
-    /**
-     * Set a source name when performing an upsert.
-     *
-     * Examples:
-     * $upsert->source("bar");
-     */
-    public function source(?string $target): self
-    {
-        $this->target = $target;
-
-        return $this;
-    }
-
-    /**
      * Run the query and return last insert id.
      * Returns an assoc array of values if multiple columns were specified as returning columns.
      *
@@ -181,8 +153,6 @@ class UpsertQuery extends ActiveQuery
             'columns'   => $this->columns,
             'values'    => $this->values,
             'conflicts' => $this->conflicts,
-            'target'    => $this->target,
-            'source'    => $this->source,
         ];
     }
 }

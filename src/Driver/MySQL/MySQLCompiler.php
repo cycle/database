@@ -52,13 +52,20 @@ class MySQLCompiler extends Compiler implements CachingCompilerInterface
             $values[] = $this->value($params, $q, $value);
         }
 
+        $updates = \array_map(
+            function ($column) use ($params, $q) {
+                $name   = $this->name($params, $q, $column);
+                return \sprintf('%s = VALUES(%s)', $name, $name);
+            },
+            $tokens['columns'],
+        );
+
         return \sprintf(
-            'INSERT INTO %s (%s) VALUES %s AS %s ON DUPLICATE KEY UPDATE %s',
+            'INSERT INTO %s (%s) VALUES %s ON DUPLICATE KEY UPDATE %s',
             $this->name($params, $q, $tokens['table'], true),
             $this->columns($params, $q, $tokens['columns']),
             \implode(', ', $values),
-            $this->name($params, $q, $tokens['target']),
-            $this->updates($params, $q, $tokens['columns'], $tokens['target']),
+            \implode(', ', $updates),
         );
     }
 
