@@ -10,6 +10,7 @@ use Cycle\Database\Exception\CompilerException\UnexpectedOperatorException;
 use Cycle\Database\Injection\Expression;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Injection\Parameter;
+use Cycle\Database\Injection\SubQueryInjection;
 use Cycle\Database\Query\SelectQuery;
 use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 use Spiral\Pagination\PaginableInterface;
@@ -2637,6 +2638,67 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {name} = ? OR NOT (({id} BETWEEN ? AND ? AND {name} = ?) AND {status} = ?)',
             $select,
+        );
+    }
+
+    public function testSelectFromSubQuery()
+    {
+        $innerSelect = $this->database
+            ->select()
+            ->from(['users'])
+            ->where(['name' => 'John Doe']);
+        $injection = new SubQueryInjection($innerSelect,'u');
+
+        $outerSelect = $this->database
+            ->select()
+            ->from($injection);
+
+        $this->assertSameQuery(
+            'SELECT * FROM (SELECT * FROM {users} WHERE {name} = ?) AS {u}',
+            $outerSelect,
+        );
+    }
+
+    public function testSelectFromTwoSubQuery()
+    {
+        $innerSelect1 = $this->database
+            ->select()
+            ->from(['users'])
+            ->where(['name' => 'John Doe']);
+        $injection1 = new SubQueryInjection($innerSelect1,'u');
+
+        $innerSelect2 = $this->database
+            ->select()
+            ->from(['apartments'])
+            ->where(['dom' => 12]);
+        $injection2 = new SubQueryInjection($innerSelect2,'a');
+
+
+        $outerSelect = $this->database
+            ->select()
+            ->from($injection1,$injection2);
+
+        $this->assertSameQuery(
+            'SELECT * FROM (SELECT * FROM {users} WHERE {name} = ?) AS {u}, (SELECT * FROM {apartments} WHERE {dom} = ?) AS {a}',
+            $outerSelect,
+        );
+    }
+
+    public function testSelectSelectSubQuery()
+    {
+        $innerSelect = $this->database
+            ->select()
+            ->from(['users'])
+            ->where(['name' => 'John Doe']);
+        $injection = new SubQueryInjection($innerSelect,'u');
+
+        $outerSelect = $this->database
+            ->select(['*',$injection])
+            ->from(['apartments']);
+
+        $this->assertSameQuery(
+            'SELECT *, (SELECT * FROM {users} WHERE {name} = ?) AS {u} FROM {apartments}',
+            $outerSelect,
         );
     }
 }
