@@ -127,7 +127,7 @@ abstract class Compiler implements CompilerInterface
                 return $this->selectQuery($params, $q, $tokens);
 
             case self::SUBQUERY:
-                return  $this->selectSubQuery($params, $q, $tokens);
+                return  $this->subQuery($params, $q, $tokens);
 
             case self::UPDATE_QUERY:
                 return $this->updateQuery($params, $q, $tokens);
@@ -201,7 +201,7 @@ abstract class Compiler implements CompilerInterface
         );
     }
 
-    protected function selectSubQuery(QueryParameters $params, Quoter $q, array $tokens): string
+    protected function subQuery(QueryParameters $params, Quoter $q, array $tokens): string
     {
         return \sprintf('( %s ) AS %s',$this->selectQuery($params,$q,$tokens), $q->quote($tokens['alias']));
     }

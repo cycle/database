@@ -34,7 +34,6 @@ interface CompilerInterface
 
     /**
      * Compile the query fragment.
-     *
      */
     public function compile(
         QueryParameters $params,
