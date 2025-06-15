@@ -2651,10 +2651,23 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
         $outerSelect = $this->database
             ->select()
-            ->from($injection);
+            ->from($injection)
+            ->where('u.id', '>', 10);
 
         $this->assertSameQuery(
-            'SELECT * FROM (SELECT * FROM {users} WHERE {name} = ?) AS {u}',
+            <<<SQL
+                SELECT *
+                FROM (SELECT * FROM {users} WHERE {name} = ?) AS {u}
+                WHERE {u}.{id} > ?
+                SQL,
+            $outerSelect,
+        );
+
+        $this->assertSameParameters(
+            [
+                'John Doe',
+                10,
+            ],
             $outerSelect,
         );
     }
@@ -2687,6 +2700,14 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
                 SQL,
             $outerSelect,
         );
+
+        $this->assertSameParameters(
+            [
+                'John Doe',
+                12,
+            ],
+            $outerSelect,
+        );
     }
 
     public function testSelectSelectSubQuery(): void
@@ -2703,6 +2724,13 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
         $this->assertSameQuery(
             'SELECT *, (SELECT * FROM {users} WHERE {name} = ?) AS {u} FROM {apartments}',
+            $outerSelect,
+        );
+
+        $this->assertSameParameters(
+            [
+                'John Doe',
+            ],
             $outerSelect,
         );
     }
