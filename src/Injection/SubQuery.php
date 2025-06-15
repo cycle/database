@@ -16,7 +16,7 @@ use Cycle\Database\Query\Interpolator;
 use Cycle\Database\Query\QueryParameters;
 use Cycle\Database\Query\SelectQuery;
 
-class SubQueryInjection implements FragmentInterface
+class SubQuery implements FragmentInterface
 {
     private SelectQuery $query;
     private string $alias;
@@ -34,14 +34,16 @@ class SubQueryInjection implements FragmentInterface
 
     public function getTokens(): array
     {
-        return \array_merge(['alias'=>$this->alias],$this->query->getTokens());
+        return \array_merge(['alias' => $this->alias], $this->query->getTokens());
     }
 
-    public function getQuery(): SelectQuery {
+    public function getQuery(): SelectQuery
+    {
         return $this->query;
     }
 
-    public function __toString(): string{
+    public function __toString(): string
+    {
         $parameters = new QueryParameters();
 
         return Interpolator::interpolate(
