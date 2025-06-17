@@ -335,7 +335,7 @@ final class CompilerCache implements CompilerInterface
     {
         $hash = '';
         foreach ($columns as $column) {
-            if ($column instanceof Expression || $column instanceof Fragment) {
+            if ($column instanceof Expression || $column instanceof Fragment || $column instanceof SubQuery) {
                 foreach ($column->getTokens()['parameters'] as $param) {
                     $params->push($param);
                 }

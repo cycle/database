@@ -20,11 +20,17 @@ class SubQuery implements FragmentInterface
 {
     private SelectQuery $query;
     private string $alias;
+    /** @var ParameterInterface[] */
+    private array $parameters;
 
     public function __construct(SelectQuery $query, string $alias)
     {
         $this->query = $query;
         $this->alias = $alias;
+
+        $parameters = new QueryParameters();
+        $this->query->sqlStatement($parameters);
+        $this->parameters = $parameters->getParameters();
     }
 
     public function getType(): int
@@ -34,7 +40,12 @@ class SubQuery implements FragmentInterface
 
     public function getTokens(): array
     {
-        return \array_merge(['alias' => $this->alias], $this->query->getTokens());
+        return \array_merge(
+            [
+                'alias' => $this->alias,
+                'parameters' => $this->parameters,
+            ],
+            $this->query->getTokens());
     }
 
     public function getQuery(): SelectQuery
