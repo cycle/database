@@ -203,7 +203,7 @@ abstract class Compiler implements CompilerInterface
 
     protected function subQuery(QueryParameters $params, Quoter $q, array $tokens): string
     {
-        return \sprintf('( %s ) AS %s',$this->selectQuery($params,$q,$tokens), $q->quote($tokens['alias']));
+        return \sprintf('( %s ) AS %s', $this->selectQuery($params, $q, $tokens), $q->quote($tokens['alias']));
     }
 
     protected function distinct(QueryParameters $params, Quoter $q, string|bool|array $distinct): string

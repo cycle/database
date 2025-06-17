@@ -20,6 +20,7 @@ class SubQuery implements FragmentInterface
 {
     private SelectQuery $query;
     private string $alias;
+
     /** @var ParameterInterface[] */
     private array $parameters;
 
@@ -45,7 +46,8 @@ class SubQuery implements FragmentInterface
                 'alias' => $this->alias,
                 'parameters' => $this->parameters,
             ],
-            $this->query->getTokens());
+            $this->query->getTokens(),
+        );
     }
 
     public function getQuery(): SelectQuery
