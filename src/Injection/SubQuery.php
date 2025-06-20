@@ -16,6 +16,26 @@ use Cycle\Database\Query\Interpolator;
 use Cycle\Database\Query\QueryParameters;
 use Cycle\Database\Query\SelectQuery;
 
+/**
+ * This fragment is used to inject a whole select statement into
+ * FROM and SELECT parts of the query.
+ *
+ * Examples:
+ *
+ * ```
+ *  $subQuery = new SubQuery($queryBuilder->select()->from(['users']),'u');
+ *  $query = $queryBuilder->select()->from($subQuery);
+ * ```
+ *
+ * Will provide SQL like this: SELECT * FROM (SELECT * FROM users) AS u
+ *
+ * ```
+ *  $subQuery = new SubQuery($queryBuilder->select()->from(['users']),'u');
+ *  $query = $queryBuilder->select($subQuery)->from(['employee']);
+ * ```
+ *
+ * Will provide SQL like this: SELECT *, (SELECT * FROM users) AS u FROM employee
+ */
 class SubQuery implements FragmentInterface
 {
     private SelectQuery $query;
