@@ -89,9 +89,15 @@ abstract class Handler implements HandlerInterface
 
     public function createColumn(AbstractTable $table, AbstractColumn $column): void
     {
-        $this->run(
-            "ALTER TABLE {$this->identify($table)} ADD COLUMN {$column->sqlStatement($this->driver)}",
-        );
+        $statement = "ALTER TABLE {$this->identify($table)} ADD COLUMN {$column->sqlStatement($this->driver)}";
+
+        if ($column->isFirst()) {
+            $statement = "{$statement} FIRST";
+        } elseif ($column->getAfter() !== '') {
+            $statement = "{$statement} AFTER {$this->driver->identifier($column->getAfter())}";
+        }
+
+        $this->run($statement);
     }
 
     public function dropColumn(AbstractTable $table, AbstractColumn $column): void
