@@ -41,7 +41,7 @@ class MySQLColumn extends AbstractColumn
      */
     public const DATETIME_NOW = 'CURRENT_TIMESTAMP';
 
-    public const EXCLUDE_FROM_COMPARE = ['size', 'timezone', 'userType', 'attributes'];
+    public const EXCLUDE_FROM_COMPARE = ['size', 'timezone', 'userType', 'attributes', 'first', 'after'];
     protected const INTEGER_TYPES = ['tinyint', 'smallint', 'mediumint', 'int', 'bigint'];
 
     protected array $mapping = [
@@ -185,6 +185,16 @@ class MySQLColumn extends AbstractColumn
     protected string $comment = '';
 
     /**
+     * Column name to position after.
+     */
+    protected string $after = '';
+
+    /**
+     * Whether the column should be positioned first.
+     */
+    protected bool $first = false;
+
+    /**
      * @psalm-param non-empty-string $table
      */
     public static function createInstance(string $table, array $schema, ?\DateTimeZone $timezone = null): self
@@ -323,6 +333,30 @@ class MySQLColumn extends AbstractColumn
     public function isZerofill(): bool
     {
         return $this->zerofill;
+    }
+
+    public function first(bool $first = true): self
+    {
+        $this->first = $first;
+
+        return $this;
+    }
+
+    public function isFirst(): bool
+    {
+        return $this->first;
+    }
+
+    public function after(string $column): self
+    {
+        $this->after = $column;
+
+        return $this;
+    }
+
+    public function getAfter(): string
+    {
+        return $this->after;
     }
 
     public function set(string|array $values): self
