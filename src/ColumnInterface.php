@@ -13,9 +13,6 @@ namespace Cycle\Database;
 
 /**
  * Represents table schema column abstraction.
- *
- * @method string getComment() Get column comment.
- *         An empty string will be returned if the feature is not supported by the driver.
  */
 interface ColumnInterface
 {
@@ -80,4 +77,22 @@ interface ColumnInterface
      * Get column default value, value must be automatically converted to appropriate internal type.
      */
     public function getDefaultValue(): mixed;
+
+    /**
+     * Whether the column should be positioned first. Always returning false
+     * if the driver does not support this feature.
+     */
+    public function isFirst(): bool;
+
+    /**
+     * Retrieve the column name to position after. Always returning an empty string
+     * if the driver does not support this feature.
+     */
+    public function getAfter(): string;
+
+    /**
+     * Retrieve the column comment. Always returning an empty string
+     * if the driver does not support this feature.
+     */
+    public function getComment(): string;
 }
