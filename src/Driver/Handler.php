@@ -94,6 +94,12 @@ abstract class Handler implements HandlerInterface
         if ($column->isFirst()) {
             $statement = "{$statement} FIRST";
         } elseif ($column->getAfter() !== '') {
+            $columnNames = \array_map(static fn(AbstractColumn $column) => $column->getName(), $table->getColumns());
+
+            if (! \in_array($column->getAfter(), $columnNames)) {
+                throw new DBALException("Column `{$column->getAfter()}` does not exist for positioning after");
+            }
+
             $statement = "{$statement} AFTER {$this->driver->identifier($column->getAfter())}";
         }
 
