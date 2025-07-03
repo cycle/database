@@ -13,6 +13,7 @@ namespace Cycle\Database\Query;
 
 use Cycle\Database\Injection\Expression;
 use Cycle\Database\Injection\Fragment;
+use Cycle\Database\Injection\SubQuery;
 use Cycle\Database\Query\Traits\WhereJsonTrait;
 use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Injection\FragmentInterface;
@@ -84,6 +85,16 @@ class SelectQuery extends ActiveQuery implements
     /**
      * Set table names SELECT query should be performed for. Table names can be provided with
      * specified alias (AS construction).
+     * Also, it is possible to use SubQuery.
+     *
+     * Following example will provide SQL like this: SELECT * FROM (SELECT * FROM users) AS u
+     *
+     * ```
+     *  $subQuery = new SubQuery($queryBuilder->select()->from(['users']),'u');
+     *  $query = $queryBuilder->select()->from($subQuery);
+     * ```
+     *
+     * @see SubQuery
      */
     public function from(mixed $tables): self
     {

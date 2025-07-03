@@ -126,6 +126,9 @@ abstract class Compiler implements CompilerInterface
 
                 return $this->selectQuery($params, $q, $tokens);
 
+            case self::SUBQUERY:
+                return  $this->subQuery($params, $q, $tokens);
+
             case self::UPDATE_QUERY:
                 return $this->updateQuery($params, $q, $tokens);
 
@@ -196,6 +199,11 @@ abstract class Compiler implements CompilerInterface
             $this->optional("\n", $this->limit($params, $q, $tokens['limit'], $tokens['offset'])),
             $this->optional(' ', $tokens['forUpdate'] ? 'FOR UPDATE' : ''),
         );
+    }
+
+    protected function subQuery(QueryParameters $params, Quoter $q, array $tokens): string
+    {
+        return \sprintf('( %s ) AS %s', $this->selectQuery($params, $q, $tokens), $q->quote($tokens['alias']));
     }
 
     protected function distinct(QueryParameters $params, Quoter $q, string|bool|array $distinct): string
