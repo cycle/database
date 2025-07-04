@@ -623,26 +623,6 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
         return $this->getAttributes()['readonlySchema'] ?? false;
     }
 
-    public function first(bool $first = true): self
-    {
-        return $this;
-    }
-
-    public function isFirst(): bool
-    {
-        return false;
-    }
-
-    public function after(string $column): self
-    {
-        return $this;
-    }
-
-    public function getAfter(): string
-    {
-        return '';
-    }
-
     /**
      * Get column comment.
      * An empty string will be returned if the feature is not supported by the driver.
