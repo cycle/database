@@ -15,7 +15,7 @@ namespace Cycle\Database;
  * Represents table schema column abstraction.
  *
  * @method string getComment() Get column comment.
- *          An empty string will be returned if the feature is not supported by the driver.
+ *         An empty string will be returned if the feature is not supported by the driver.
  */
 interface ColumnInterface
 {
