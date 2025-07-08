@@ -17,6 +17,7 @@ use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Injection\JsonExpression;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Injection\ParameterInterface;
+use Cycle\Database\Injection\SubQuery;
 use Cycle\Database\Query\QueryInterface;
 use Cycle\Database\Query\QueryParameters;
 use Cycle\Database\Query\SelectQuery;
@@ -160,6 +161,10 @@ final class CompilerCache implements CompilerInterface
         foreach ($tokens['from'] as $table) {
             if ($table instanceof SelectQuery) {
                 $hash .= 's_' . ($table->getPrefix() ?? '');
+                $hash .= $this->hashSelectQuery($params, $table->getTokens());
+                continue;
+            } elseif ($table instanceof SubQuery) {
+                $hash .= 'sb_';
                 $hash .= $this->hashSelectQuery($params, $table->getTokens());
                 continue;
             }
@@ -330,7 +335,7 @@ final class CompilerCache implements CompilerInterface
     {
         $hash = '';
         foreach ($columns as $column) {
-            if ($column instanceof Expression || $column instanceof Fragment) {
+            if ($column instanceof Expression || $column instanceof Fragment || $column instanceof SubQuery) {
                 foreach ($column->getTokens()['parameters'] as $param) {
                     $params->push($param);
                 }
