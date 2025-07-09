@@ -351,11 +351,6 @@ class MySQLColumn extends AbstractColumn
         return $this;
     }
 
-    public function isFirst(): bool
-    {
-        return $this->first;
-    }
-
     /**
      * @param non-empty-string $column
      * @return $this
@@ -365,11 +360,6 @@ class MySQLColumn extends AbstractColumn
         $this->after = $column;
 
         return $this;
-    }
-
-    public function getAfter(): string
-    {
-        return $this->after;
     }
 
     public function set(string|array $values): self
