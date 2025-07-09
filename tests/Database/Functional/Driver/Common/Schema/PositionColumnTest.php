@@ -9,29 +9,11 @@ use Cycle\Database\Exception\DBALException;
 use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
+use Cycle\Database\Tests\Utils\DontGenerateAttribute;
 
+#[DontGenerateAttribute]
 abstract class PositionColumnTest extends BaseTest
 {
-    public function sampleSchema(string $table): AbstractTable
-    {
-        $schema = $this->schema($table);
-
-        if (! $schema->exists()) {
-            $schema->primary('id');
-            $schema->string('first_name')->nullable(false);
-            $schema->string('last_name')->nullable(false);
-            $schema->string('email', 64)->nullable(false);
-            $schema->enum('status', ['active', 'disabled'])->defaultValue('active');
-            $schema->double('balance')->defaultValue(0);
-            $schema->datetime('created_at')->defaultValue(AbstractColumn::DATETIME_NOW);
-            $schema->datetime('updated_at')->nullable(true);
-
-            $schema->save(Handler::DO_ALL);
-        }
-
-        return $schema;
-    }
-
     public function testPositionFirst(): void
     {
         $schema = $this->sampleSchema('table');
@@ -100,9 +82,29 @@ abstract class PositionColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
 
         $this->expectException(DBALException::class);
-        $this->expectExceptionMessage('Column `nonexistent` does not exist for positioning after');
+        $this->expectExceptionMessage("Unknown column 'nonexistent'");
 
         $schema->string('identifier')->nullable(false)->after('nonexistent');
         $schema->save();
+    }
+
+    private function sampleSchema(string $table): AbstractTable
+    {
+        $schema = $this->schema($table);
+
+        if (! $schema->exists()) {
+            $schema->primary('id');
+            $schema->string('first_name')->nullable(false);
+            $schema->string('last_name')->nullable(false);
+            $schema->string('email', 64)->nullable(false);
+            $schema->enum('status', ['active', 'disabled'])->defaultValue('active');
+            $schema->double('balance')->defaultValue(0);
+            $schema->datetime('created_at')->defaultValue(AbstractColumn::DATETIME_NOW);
+            $schema->datetime('updated_at')->nullable(true);
+
+            $schema->save(Handler::DO_ALL);
+        }
+
+        return $schema;
     }
 }
