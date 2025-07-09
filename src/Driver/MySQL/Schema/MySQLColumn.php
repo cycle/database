@@ -33,6 +33,7 @@ use Cycle\Database\Schema\Attribute\ColumnAttribute;
  * @method $this|AbstractColumn unsigned(bool $value)
  * @method $this|AbstractColumn zerofill(bool $value)
  * @method $this|AbstractColumn comment(string $value)
+ * @method $this|AbstractColumn after(string $column)
  */
 class MySQLColumn extends AbstractColumn
 {
@@ -41,7 +42,7 @@ class MySQLColumn extends AbstractColumn
      */
     public const DATETIME_NOW = 'CURRENT_TIMESTAMP';
 
-    public const EXCLUDE_FROM_COMPARE = ['size', 'timezone', 'userType', 'attributes'];
+    public const EXCLUDE_FROM_COMPARE = ['size', 'timezone', 'userType', 'attributes', 'first', 'after'];
     protected const INTEGER_TYPES = ['tinyint', 'smallint', 'mediumint', 'int', 'bigint'];
 
     protected array $mapping = [
@@ -185,6 +186,18 @@ class MySQLColumn extends AbstractColumn
     protected string $comment = '';
 
     /**
+     * Column name to position after.
+     */
+    #[ColumnAttribute]
+    protected string $after = '';
+
+    /**
+     * Whether the column should be positioned first.
+     */
+    #[ColumnAttribute]
+    protected bool $first = false;
+
+    /**
      * @psalm-param non-empty-string $table
      */
     public static function createInstance(string $table, array $schema, ?\DateTimeZone $timezone = null): self
@@ -283,23 +296,30 @@ class MySQLColumn extends AbstractColumn
     public function sqlStatement(DriverInterface $driver): string
     {
         if (\in_array($this->type, self::INTEGER_TYPES, true)) {
-            return $this->sqlStatementInteger($driver);
+            $statement = $this->sqlStatementInteger($driver);
+        } else {
+            $defaultValue = $this->defaultValue;
+
+            if (\in_array($this->type, $this->forbiddenDefaults, true)) {
+                // Flushing default value for forbidden types
+                $this->defaultValue = null;
+            }
+
+            $statement = parent::sqlStatement($driver);
+
+            $this->defaultValue = $defaultValue;
         }
 
-        $defaultValue = $this->defaultValue;
+        $this->comment === '' or $statement .= " COMMENT {$driver->quote($this->comment)}";
 
-        if (\in_array($this->type, $this->forbiddenDefaults, true)) {
-            //Flushing default value for forbidden types
-            $this->defaultValue = null;
-        }
+        $first = $this->first;
+        $after = $first ? '' : $this->after;
 
-        $statement = parent::sqlStatement($driver);
-
-        $this->defaultValue = $defaultValue;
-
-        if ($this->comment !== '') {
-            return "{$statement} COMMENT {$driver->quote($this->comment)}";
-        }
+        $statement .= match (true) {
+            $first => ' FIRST',
+            $after !== '' => " AFTER {$driver->identifier($after)}",
+            default => '',
+        };
 
         return $statement;
     }
@@ -323,6 +343,13 @@ class MySQLColumn extends AbstractColumn
     public function isZerofill(): bool
     {
         return $this->zerofill;
+    }
+
+    public function first(bool $value = true): self
+    {
+        $this->first = $value;
+
+        return $this;
     }
 
     public function set(string|array $values): self
@@ -395,12 +422,11 @@ class MySQLColumn extends AbstractColumn
     private function sqlStatementInteger(DriverInterface $driver): string
     {
         return \sprintf(
-            '%s %s(%s)%s%s%s%s%s%s',
+            '%s %s(%s)%s%s%s%s%s',
             $driver->identifier($this->name),
             $this->type,
             $this->size,
             $this->unsigned ? ' UNSIGNED' : '',
-            $this->comment !== '' ? " COMMENT {$driver->quote($this->comment)}" : '',
             $this->zerofill ? ' ZEROFILL' : '',
             $this->nullable ? ' NULL' : ' NOT NULL',
             $this->defaultValue !== null ? " DEFAULT {$this->quoteDefault($driver)}" : '',
