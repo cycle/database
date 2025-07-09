@@ -94,6 +94,33 @@ class CustomOptionsTest extends CommonClass
         $this->assertTrue($foo->isNullable());
     }
 
+    public function testNamedArgumentsToConfigureBoolean(): void
+    {
+        $schema = $this->schema('foo');
+        $schema->boolean('bar')->defaultValue(false)->unsigned(true)->size(1);
+        $schema->boolean('baz', nullable: true, unsigned: true, size: 1);
+        $schema->save();
+
+        $this->assertInstanceOf(MySQLColumn::class, $bar = $this->fetchSchema($schema)->column('bar'));
+        $this->assertInstanceOf(MySQLColumn::class, $baz = $this->fetchSchema($schema)->column('baz'));
+
+        \assert($bar instanceof MySQLColumn);
+        \assert($baz instanceof MySQLColumn);
+        $this->assertFalse($bar->isZerofill());
+        $this->assertFalse($baz->isZerofill());
+        $this->assertTrue($bar->isUnsigned());
+        $this->assertTrue($baz->isUnsigned());
+
+        // Below assertion fails. We expect boolean to have a default size of 1 however we receive 4,
+        // even when explicitly declaring the column size. Likely due to MySQLColumn::createInstance
+        // not knowing the `userType` at this point, or that the default size should be 1. Instead, the
+        // size is resolved as 4, default value when resolving a tinyint (DBMS specific column type).
+        $this->assertSame(1, $bar->getSize());
+        $this->assertSame(1, $baz->getSize());
+        $this->assertFalse($bar->isNullable());
+        $this->assertTrue($baz->isNullable());
+    }
+
     /**
      * The `text` have no  the `unsigned` attribute. It will be stored in the additional attributes.
      */
