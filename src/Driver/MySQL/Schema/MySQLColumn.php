@@ -33,6 +33,7 @@ use Cycle\Database\Schema\Attribute\ColumnAttribute;
  * @method $this|AbstractColumn unsigned(bool $value)
  * @method $this|AbstractColumn zerofill(bool $value)
  * @method $this|AbstractColumn comment(string $value)
+ * @method $this|AbstractColumn after(string $column)
  */
 class MySQLColumn extends AbstractColumn
 {
@@ -347,17 +348,6 @@ class MySQLColumn extends AbstractColumn
     public function first(bool $value = true): self
     {
         $this->first = $value;
-
-        return $this;
-    }
-
-    /**
-     * @param non-empty-string $column
-     * @return $this
-     */
-    public function after(string $column): self
-    {
-        $this->after = $column;
 
         return $this;
     }
