@@ -187,11 +187,13 @@ class MySQLColumn extends AbstractColumn
     /**
      * Column name to position after.
      */
+    #[ColumnAttribute]
     protected string $after = '';
 
     /**
      * Whether the column should be positioned first.
      */
+    #[ColumnAttribute]
     protected bool $first = false;
 
     /**
@@ -293,23 +295,30 @@ class MySQLColumn extends AbstractColumn
     public function sqlStatement(DriverInterface $driver): string
     {
         if (\in_array($this->type, self::INTEGER_TYPES, true)) {
-            return $this->sqlStatementInteger($driver);
+            $statement = $this->sqlStatementInteger($driver);
+        } else {
+            $defaultValue = $this->defaultValue;
+
+            if (\in_array($this->type, $this->forbiddenDefaults, true)) {
+                // Flushing default value for forbidden types
+                $this->defaultValue = null;
+            }
+
+            $statement = parent::sqlStatement($driver);
+
+            $this->defaultValue = $defaultValue;
         }
 
-        $defaultValue = $this->defaultValue;
+        $this->comment === '' or $statement .= " COMMENT {$driver->quote($this->comment)}";
 
-        if (\in_array($this->type, $this->forbiddenDefaults, true)) {
-            //Flushing default value for forbidden types
-            $this->defaultValue = null;
-        }
+        $first = $this->first;
+        $after = $first ? '' : $this->after;
 
-        $statement = parent::sqlStatement($driver);
-
-        $this->defaultValue = $defaultValue;
-
-        if ($this->comment !== '') {
-            return "{$statement} COMMENT {$driver->quote($this->comment)}";
-        }
+        $statement .= match (true) {
+            $first => ' FIRST',
+            $after !== '' => " AFTER {$driver->identifier($after)}",
+            default => '',
+        };
 
         return $statement;
     }
@@ -335,9 +344,9 @@ class MySQLColumn extends AbstractColumn
         return $this->zerofill;
     }
 
-    public function first(bool $first = true): self
+    public function first(bool $value = true): self
     {
-        $this->first = $first;
+        $this->first = $value;
 
         return $this;
     }
@@ -347,6 +356,10 @@ class MySQLColumn extends AbstractColumn
         return $this->first;
     }
 
+    /**
+     * @param non-empty-string $column
+     * @return $this
+     */
     public function after(string $column): self
     {
         $this->after = $column;
@@ -429,12 +442,11 @@ class MySQLColumn extends AbstractColumn
     private function sqlStatementInteger(DriverInterface $driver): string
     {
         return \sprintf(
-            '%s %s(%s)%s%s%s%s%s%s',
+            '%s %s(%s)%s%s%s%s%s',
             $driver->identifier($this->name),
             $this->type,
             $this->size,
             $this->unsigned ? ' UNSIGNED' : '',
-            $this->comment !== '' ? " COMMENT {$driver->quote($this->comment)}" : '',
             $this->zerofill ? ' ZEROFILL' : '',
             $this->nullable ? ' NULL' : ' NOT NULL',
             $this->defaultValue !== null ? " DEFAULT {$this->quoteDefault($driver)}" : '',
