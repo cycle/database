@@ -97,28 +97,40 @@ class CustomOptionsTest extends CommonClass
     public function testNamedArgumentsToConfigureBoolean(): void
     {
         $schema = $this->schema('foo');
-        $schema->boolean('bar')->defaultValue(false)->unsigned(true)->size(1);
-        $schema->boolean('baz', nullable: true, unsigned: true, size: 1);
+        $schema->boolean('bar')->defaultValue(false)->nullable(false)->unsigned(true)->size(1)->zerofill(true);
+        $schema->boolean('baz', nullable: true, unsigned: true, size: 1, zerofill: true);
+        $schema->boolean('qux', nullable: false, unsigned: true);
+        $schema->boolean('quux', nullable: false);
         $schema->save();
 
         $this->assertInstanceOf(MySQLColumn::class, $bar = $this->fetchSchema($schema)->column('bar'));
         $this->assertInstanceOf(MySQLColumn::class, $baz = $this->fetchSchema($schema)->column('baz'));
+        $this->assertInstanceOf(MySQLColumn::class, $qux = $this->fetchSchema($schema)->column('qux'));
+        $this->assertInstanceOf(MySQLColumn::class, $quux = $this->fetchSchema($schema)->column('quux'));
 
-        \assert($bar instanceof MySQLColumn);
-        \assert($baz instanceof MySQLColumn);
-        $this->assertFalse($bar->isZerofill());
-        $this->assertFalse($baz->isZerofill());
+        self::assertInstanceOf(MySQLColumn::class, $bar);
+        self::assertInstanceOf(MySQLColumn::class, $baz);
+        self::assertInstanceOf(MySQLColumn::class, $qux);
+        self::assertInstanceOf(MySQLColumn::class, $quux);
+        $this->assertTrue($bar->isZerofill());
+        $this->assertTrue($baz->isZerofill());
+        $this->assertFalse($qux->isZerofill());
+        $this->assertFalse($quux->isZerofill());
         $this->assertTrue($bar->isUnsigned());
         $this->assertTrue($baz->isUnsigned());
+        $this->assertTrue($qux->isUnsigned());
+        $this->assertFalse($quux->isUnsigned());
 
-        // Below assertion fails. We expect boolean to have a default size of 1 however we receive 4,
-        // even when explicitly declaring the column size. Likely due to MySQLColumn::createInstance
-        // not knowing the `userType` at this point, or that the default size should be 1. Instead, the
-        // size is resolved as 4, default value when resolving a tinyint (DBMS specific column type).
         $this->assertSame(1, $bar->getSize());
         $this->assertSame(1, $baz->getSize());
+        // In case of zerofill=false and unsigned=true the size value might be resolved to 4
+        $this->assertTrue(\in_array($qux->getSize(), [1, 4], true));
+        $this->assertSame(1, $quux->getSize());
+
         $this->assertFalse($bar->isNullable());
         $this->assertTrue($baz->isNullable());
+        $this->assertFalse($qux->isNullable());
+        $this->assertFalse($quux->isNullable());
     }
 
     /**
