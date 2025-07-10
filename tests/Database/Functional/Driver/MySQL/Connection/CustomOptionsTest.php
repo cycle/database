@@ -94,6 +94,45 @@ class CustomOptionsTest extends CommonClass
         $this->assertTrue($foo->isNullable());
     }
 
+    public function testNamedArgumentsToConfigureBoolean(): void
+    {
+        $schema = $this->schema('foo');
+        $schema->boolean('bar')->defaultValue(false)->nullable(false)->unsigned(true)->size(1)->zerofill(true);
+        $schema->boolean('baz', nullable: true, unsigned: true, size: 1, zerofill: true);
+        $schema->boolean('qux', nullable: false, unsigned: true);
+        $schema->boolean('quux', nullable: false);
+        $schema->save();
+
+        $this->assertInstanceOf(MySQLColumn::class, $bar = $this->fetchSchema($schema)->column('bar'));
+        $this->assertInstanceOf(MySQLColumn::class, $baz = $this->fetchSchema($schema)->column('baz'));
+        $this->assertInstanceOf(MySQLColumn::class, $qux = $this->fetchSchema($schema)->column('qux'));
+        $this->assertInstanceOf(MySQLColumn::class, $quux = $this->fetchSchema($schema)->column('quux'));
+
+        self::assertInstanceOf(MySQLColumn::class, $bar);
+        self::assertInstanceOf(MySQLColumn::class, $baz);
+        self::assertInstanceOf(MySQLColumn::class, $qux);
+        self::assertInstanceOf(MySQLColumn::class, $quux);
+        $this->assertTrue($bar->isZerofill());
+        $this->assertTrue($baz->isZerofill());
+        $this->assertFalse($qux->isZerofill());
+        $this->assertFalse($quux->isZerofill());
+        $this->assertTrue($bar->isUnsigned());
+        $this->assertTrue($baz->isUnsigned());
+        $this->assertTrue($qux->isUnsigned());
+        $this->assertFalse($quux->isUnsigned());
+
+        $this->assertSame(1, $bar->getSize());
+        $this->assertSame(1, $baz->getSize());
+        // In case of zerofill=false and unsigned=true the size value might be resolved to 4
+        $this->assertTrue(\in_array($qux->getSize(), [1, 4], true));
+        $this->assertSame(1, $quux->getSize());
+
+        $this->assertFalse($bar->isNullable());
+        $this->assertTrue($baz->isNullable());
+        $this->assertFalse($qux->isNullable());
+        $this->assertFalse($quux->isNullable());
+    }
+
     /**
      * The `text` have no  the `unsigned` attribute. It will be stored in the additional attributes.
      */
