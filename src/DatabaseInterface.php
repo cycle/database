@@ -17,6 +17,7 @@ use Cycle\Database\Query\DeleteQuery;
 use Cycle\Database\Query\InsertQuery;
 use Cycle\Database\Query\SelectQuery;
 use Cycle\Database\Query\UpdateQuery;
+use Cycle\Database\Query\UpsertQuery;
 
 /**
  * DatabaseInterface is high level abstraction used to represent single database. You must always
@@ -103,6 +104,15 @@ interface DatabaseInterface
      * @see self::withoutCache() May be useful to disable query cache for batch inserts.
      */
     public function insert(string $table = ''): InsertQuery;
+
+    /**
+     * Get instance of UpsertBuilder associated with current Database.
+     *
+     * @param string $table Table where values should be upserted to.
+     *
+     * @see self::withoutCache() May be useful to disable query cache for batch inserts.
+     */
+    public function upsert(string $table = ''): UpsertQuery;
 
     /**
      * Get instance of UpdateBuilder associated with current Database.

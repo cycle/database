@@ -20,6 +20,7 @@ use Cycle\Database\Driver\SQLite\Query\SQLiteUpdateQuery;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Query\InsertQuery;
 use Cycle\Database\Query\QueryBuilder;
+use Cycle\Database\Query\UpsertQuery;
 
 class SQLiteDriver extends Driver
 {
@@ -35,6 +36,7 @@ class SQLiteDriver extends Driver
             new QueryBuilder(
                 new SQLiteSelectQuery(),
                 new InsertQuery(),
+                new UpsertQuery(),
                 new SQLiteUpdateQuery(),
                 new SQLiteDeleteQuery(),
             ),

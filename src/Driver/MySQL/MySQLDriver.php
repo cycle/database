@@ -20,6 +20,7 @@ use Cycle\Database\Driver\MySQL\Query\MySQLUpdateQuery;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Query\InsertQuery;
 use Cycle\Database\Query\QueryBuilder;
+use Cycle\Database\Query\UpsertQuery;
 
 /**
  * Talks to mysql databases.
@@ -38,6 +39,7 @@ class MySQLDriver extends Driver
             new QueryBuilder(
                 new MySQLSelectQuery(),
                 new InsertQuery(),
+                new UpsertQuery(),
                 new MySQLUpdateQuery(),
                 new MySQLDeleteQuery(),
             ),

@@ -109,6 +109,9 @@ abstract class Compiler implements CompilerInterface
             case self::INSERT_QUERY:
                 return $this->insertQuery($params, $q, $tokens);
 
+            case self::UPSERT_QUERY:
+                return $this->upsertQuery($params, $q, $tokens);
+
             case self::SELECT_QUERY:
                 if ($nestedQuery) {
                     if ($fragment->getPrefix() !== null) {
@@ -166,6 +169,43 @@ abstract class Compiler implements CompilerInterface
             $this->name($params, $q, $tokens['table'], true),
             $this->columns($params, $q, $tokens['columns']),
             \implode(', ', $values),
+        );
+    }
+
+    /**
+     * @psalm-return non-empty-string
+     */
+    protected function upsertQuery(QueryParameters $params, Quoter $q, array $tokens): string
+    {
+        if (\count($tokens['conflicts']) === 0) {
+            throw new CompilerException('Upsert query must define conflicting index column names');
+        }
+
+        if (\count($tokens['columns']) === 0) {
+            throw new CompilerException('Upsert query must define at least one column');
+        }
+
+        $values = [];
+
+        foreach ($tokens['values'] as $value) {
+            $values[] = $this->value($params, $q, $value);
+        }
+
+        $updates = \array_map(
+            function (string $column) use ($params, $q) {
+                $name   = $this->name($params, $q, $column);
+                return \sprintf('%s = EXCLUDED.%s', $name, $name);
+            },
+            $tokens['columns'],
+        );
+
+        return \sprintf(
+            'INSERT INTO %s (%s) VALUES %s ON CONFLICT (%s) DO UPDATE SET %s',
+            $this->name($params, $q, $tokens['table'], true),
+            $this->columns($params, $q, $tokens['columns']),
+            \implode(', ', $values),
+            $this->columns($params, $q, $tokens['conflicts']),
+            \implode(', ', $updates),
         );
     }
 
