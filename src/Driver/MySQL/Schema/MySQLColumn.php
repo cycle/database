@@ -332,6 +332,10 @@ class MySQLColumn extends AbstractColumn
             return $result && $this->size === $initial->size;
         }
 
+        if (! $result && $this->userType === 'boolean' && $this->size === 1 && $initial->size === 4) {
+            return true; // Ignore size differences for boolean columns when matching defaults
+        }
+
         return $result;
     }
 
