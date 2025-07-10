@@ -42,5 +42,6 @@ class BooleanColumnTest extends CommonClass
         $this->assertSame(1, $column->getSize());
         $this->assertSame(4, $schema->column('column')->getSize());
         $this->assertTrue($schema->column('column')->compare($column));
+        $this->assertTrue($column->compare($schema->column('column')));
     }
 }
