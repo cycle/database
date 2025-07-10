@@ -23,17 +23,17 @@ use Cycle\Database\Schema\Attribute\ColumnAttribute;
  * Attention! You can use only one timestamp or datetime with DATETIME_NOW setting! Thought, it will
  * work on multiple fields with MySQL 5.6.6+ version.
  *
- * @method $this|AbstractColumn primary(int $size, bool $unsigned = false, $zerofill = false)
- * @method $this|AbstractColumn smallPrimary(int $size, bool $unsigned = false, $zerofill = false)
- * @method $this|AbstractColumn bigPrimary(int $size, bool $unsigned = false, $zerofill = false)
- * @method $this|AbstractColumn integer(int $size, bool $unsigned = false, $zerofill = false)
- * @method $this|AbstractColumn tinyInteger(int $size, bool $unsigned = false, $zerofill = false)
- * @method $this|AbstractColumn smallInteger(int $size, bool $unsigned = false, $zerofill = false)
- * @method $this|AbstractColumn bigInteger(int $size, bool $unsigned = false, $zerofill = false)
- * @method $this|AbstractColumn unsigned(bool $value)
- * @method $this|AbstractColumn zerofill(bool $value)
- * @method $this|AbstractColumn comment(string $value)
- * @method $this|AbstractColumn after(string $column)
+ * @method $this primary(int $size, bool $unsigned = false, $zerofill = false)
+ * @method $this smallPrimary(int $size, bool $unsigned = false, $zerofill = false)
+ * @method $this bigPrimary(int $size, bool $unsigned = false, $zerofill = false)
+ * @method $this integer(int $size, bool $unsigned = false, $zerofill = false)
+ * @method $this tinyInteger(int $size, bool $unsigned = false, $zerofill = false)
+ * @method $this smallInteger(int $size, bool $unsigned = false, $zerofill = false)
+ * @method $this bigInteger(int $size, bool $unsigned = false, $zerofill = false)
+ * @method $this unsigned(bool $value)
+ * @method $this zerofill(bool $value)
+ * @method $this comment(string $value)
+ * @method $this after(string $column)
  */
 class MySQLColumn extends AbstractColumn
 {
