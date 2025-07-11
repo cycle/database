@@ -174,6 +174,147 @@ abstract class TableTest extends BaseTest
         );
     }
 
+    public function testUpsertOneRowInsert(): void
+    {
+        $schema = $this->schema('foo');
+        $schema->primary('id');
+        $schema->string('name')->nullable(false);
+        $schema->string('email', 64)->nullable(false);
+        $schema->integer('balance')->defaultValue(0);
+        $schema->index(['email'])->unique(true);
+        $schema->save();
+
+        $table = $this->database->table('foo');
+
+        $this->assertTrue($table->exists());
+        $this->assertSame(0, $table->count());
+
+        $insertId = $table->insertOne(
+            ['name' => 'Anton', 'email' => 'anton@email.com', 'balance' => 10],
+        );
+
+        $this->assertNotNull($insertId);
+        $this->assertSame(1, $insertId);
+        $this->assertSame(1, $table->count());
+        $this->assertEquals(
+            [
+                ['id' => 1, 'name' => 'Anton', 'email' => 'anton@email.com', 'balance' => 10],
+            ],
+            $table->fetchAll(),
+        );
+
+        $upsertId = $table->upsertOne(
+            ['name' => 'Adam', 'email' => 'adam@email.com', 'balance' => 100],
+            'email'
+        );
+
+        $this->assertSame(2, $upsertId);
+        $this->assertSame(2, $table->count());
+        $this->assertEquals(
+            [
+                ['id' => 1, 'name' => 'Anton', 'email' => 'anton@email.com', 'balance' => 10],
+                ['id' => 2, 'name' => 'Adam', 'email' => 'adam@email.com', 'balance' => 100],
+            ],
+            $table->fetchAll(),
+        );
+    }
+
+    public function testUpsertOneRowUpdate(): void
+    {
+        $schema = $this->schema('foo');
+        $schema->primary('id');
+        $schema->string('name')->nullable(false);
+        $schema->string('email', 64)->nullable(false);
+        $schema->integer('balance')->defaultValue(0);
+        $schema->index(['email'])->unique(true);
+        $schema->save();
+
+        $table = $this->database->table('foo');
+
+        $this->assertTrue($table->exists());
+        $this->assertSame(0, $table->count());
+
+        $insertId = $table->insertOne(
+            ['name' => 'Anton', 'email' => 'anton@email.com', 'balance' => 10],
+        );
+
+        $this->assertNotNull($insertId);
+        $this->assertSame(1, $insertId);
+        $this->assertSame(1, $table->count());
+        $this->assertEquals(
+            [
+                ['id' => 1, 'name' => 'Anton', 'email' => 'anton@email.com', 'balance' => 10],
+            ],
+            $table->fetchAll(),
+        );
+
+        $upsertId = $table->upsertOne(
+            ['name' => 'Anton', 'email' => 'anton@email.com', 'balance' => 50],
+            'email'
+        );
+
+        $this->assertSame(1, $upsertId);
+        $this->assertSame(1, $table->count());
+        $this->assertEquals(
+            [
+                ['id' => 1, 'name' => 'Anton', 'email' => 'anton@email.com', 'balance' => 50],
+            ],
+            $table->fetchAll(),
+        );
+    }
+
+    public function testUpsertMultipleRows(): void
+    {
+        $schema = $this->schema('foo');
+        $schema->primary('id');
+        $schema->string('name')->nullable(false);
+        $schema->string('email', 64)->nullable(false);
+        $schema->integer('balance')->defaultValue(0);
+        $schema->index(['email'])->unique(true);
+        $schema->save();
+
+        $table = $this->database->table('foo');
+
+        $this->assertTrue($table->exists());
+        $this->assertSame(0, $table->count());
+
+        $insertId = $table->insertOne(
+            ['name' => 'Anton', 'email' => 'anton@email.com', 'balance' => 10],
+        );
+
+        $this->assertNotNull($insertId);
+        $this->assertSame(1, $insertId);
+        $this->assertSame(1, $table->count());
+        $this->assertEquals(
+            [
+                ['id' => 1, 'name' => 'Anton', 'email' => 'anton@email.com', 'balance' => 10],
+            ],
+            $table->fetchAll(),
+        );
+
+        $table->upsertMultiple(
+            ['name', 'email', 'balance'],
+            [
+                ['Anton', 'anton@email.com', 50],
+                ['Adam', 'adam@email.com', 100],
+                ['John', 'john@email.com', 400],
+                ['Mark', 'mark@email.com', 800],
+            ],
+            'email'
+        );
+
+        $this->assertSame(4, $table->count());
+        $this->assertEquals(
+            [
+                ['id' => 1, 'name' => 'Anton', 'email' => 'anton@email.com', 'balance' => 50],
+                ['id' => 2, 'name' => 'Adam', 'email' => 'adam@email.com', 'balance' => 100],
+                ['id' => 3, 'name' => 'John', 'email' => 'john@email.com', 'balance' => 400],
+                ['id' => 4, 'name' => 'Mark', 'email' => 'mark@email.com', 'balance' => 800],
+            ],
+            $table->fetchAll(),
+        );
+    }
+
     /**
      * @requires PHP >= 8.1
      */
