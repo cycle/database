@@ -14,7 +14,7 @@ use Cycle\Database\Tests\Functional\Driver\Common\Query\UpsertQueryTest as Commo
 final class UpsertQueryTest extends CommonClass
 {
     public const DRIVER = 'sqlserver';
-    protected const QUERY_REQUIRES_CONFLICTS   = false;
+    protected const QUERY_REQUIRES_CONFLICTS   = true;
     protected const QUERY_WITH_VALUES          = 'MERGE INTO [table] WITH (holdlock) AS [target] USING ( VALUES (?, ?) ) AS [source] ([email], [name]) ON [target].[email] = [source].[email] WHEN MATCHED THEN UPDATE SET [target].[email] = [source].[email], [target].[name] = [source].[name] WHEN NOT MATCHED THEN INSERT ([email], [name]) VALUES ([source].[email], [source].[name]);';
     protected const QUERY_WITH_STATES_VALUES   = 'MERGE INTO [table] WITH (holdlock) AS [target] USING ( VALUES (?, ?) ) AS [source] ([email], [name]) ON [target].[email] = [source].[email] WHEN MATCHED THEN UPDATE SET [target].[email] = [source].[email], [target].[name] = [source].[name] WHEN NOT MATCHED THEN INSERT ([email], [name]) VALUES ([source].[email], [source].[name]);';
     protected const QUERY_WITH_MULTIPLE_ROWS   = 'MERGE INTO [table] WITH (holdlock) AS [target] USING ( VALUES (?, ?), (?, ?) ) AS [source] ([email], [name]) ON [target].[email] = [source].[email] WHEN MATCHED THEN UPDATE SET [target].[email] = [source].[email], [target].[name] = [source].[name] WHEN NOT MATCHED THEN INSERT ([email], [name]) VALUES ([source].[email], [source].[name]);';
