@@ -23,6 +23,7 @@ final class QueryBuilder implements BuilderInterface
     public function __construct(
         private SelectQuery $selectQuery,
         private InsertQuery $insertQuery,
+        private UpsertQuery $upsertQuery,
         private UpdateQuery $updateQuery,
         private DeleteQuery $deleteQuery,
     ) {}
@@ -32,6 +33,7 @@ final class QueryBuilder implements BuilderInterface
         return new self(
             new SelectQuery(),
             new InsertQuery(),
+            new UpsertQuery(),
             new UpdateQuery(),
             new DeleteQuery(),
         );
@@ -59,6 +61,22 @@ final class QueryBuilder implements BuilderInterface
         }
 
         return $insert;
+    }
+
+    /**
+     * Get UpsertQuery builder with driver specific query compiler.
+     */
+    public function upsertQuery(
+        string $prefix,
+        ?string $table = null,
+    ): UpsertQuery {
+        $upsert = $this->upsertQuery->withDriver($this->driver, $prefix);
+
+        if ($table !== null) {
+            $upsert->into($table);
+        }
+
+        return $upsert;
     }
 
     /**

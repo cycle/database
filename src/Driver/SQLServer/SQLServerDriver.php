@@ -19,6 +19,7 @@ use Cycle\Database\Driver\SQLServer\Query\SQLServerDeleteQuery;
 use Cycle\Database\Driver\SQLServer\Query\SQLServerInsertQuery;
 use Cycle\Database\Driver\SQLServer\Query\SQLServerSelectQuery;
 use Cycle\Database\Driver\SQLServer\Query\SQLServerUpdateQuery;
+use Cycle\Database\Driver\SQLServer\Query\SQLServerUpsertQuery;
 use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Injection\ParameterInterface;
@@ -45,6 +46,7 @@ class SQLServerDriver extends Driver
             new QueryBuilder(
                 new SQLServerSelectQuery(),
                 new SQLServerInsertQuery(),
+                new SQLServerUpsertQuery(),
                 new SQLServerUpdateQuery(),
                 new SQLServerDeleteQuery(),
             ),

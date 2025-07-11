@@ -14,6 +14,7 @@ namespace Cycle\Database\Driver\SQLServer;
 use Cycle\Database\Driver\Compiler;
 use Cycle\Database\Driver\Quoter;
 use Cycle\Database\Driver\SQLServer\Injection\CompileJson;
+use Cycle\Database\Exception\CompilerException;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Injection\Parameter;
@@ -65,6 +66,71 @@ class SQLServerCompiler extends Compiler
             $this->columns($params, $q, $tokens['columns']),
             $output,
             \implode(', ', $values),
+        );
+    }
+
+    /**
+     * @psalm-return non-empty-string
+     */
+    protected function upsertQuery(QueryParameters $params, Quoter $q, array $tokens): string
+    {
+        if (\count($tokens['conflicts']) === 0) {
+            throw new CompilerException('Upsert query must define conflicting index column names');
+        }
+
+        if (\count($tokens['columns']) === 0) {
+            throw new CompilerException('Upsert query must define at least one column');
+        }
+
+        $values = [];
+
+        foreach ($tokens['values'] as $value) {
+            $values[] = $this->value($params, $q, $value);
+        }
+
+        $target = 'target';
+        $source = 'source';
+
+        $conflicts = \array_map(
+            function (string $column) use ($params, $q, $target, $source) {
+                $name = $this->name($params, $q, $column);
+                $target = $this->name($params, $q, $target);
+                $source = $this->name($params, $q, $source);
+                return \sprintf('%s.%s = %s.%s', $target, $name, $source, $name);
+            },
+            $tokens['conflicts'],
+        );
+
+        $updates = \array_map(
+            function (string $column) use ($params, $q, $target, $source) {
+                $name = $this->name($params, $q, $column);
+                $target = $this->name($params, $q, $target);
+                $source = $this->name($params, $q, $source);
+                return \sprintf('%s.%s = %s.%s', $target, $name, $source, $name);
+            },
+            $tokens['columns'],
+        );
+
+        $inserts = \array_map(
+            function (string $column) use ($params, $q, $source) {
+                $name = $this->name($params, $q, $column);
+                $source = $this->name($params, $q, $source);
+                return \sprintf('%s.%s', $source, $name);
+            },
+            $tokens['columns'],
+        );
+
+        return \sprintf(
+            'MERGE INTO %s WITH (holdlock) AS %s USING ( VALUES %s) AS %s (%s) ON %s WHEN MATCHED THEN UPDATE SET %s WHEN NOT MATCHED THEN INSERT (%s) VALUES (%s)',
+            $this->name($params, $q, $tokens['table'], true),
+            $this->name($params, $q, $target),
+            \implode(', ', $values),
+            $this->name($params, $q, 'source'),
+            $this->columns($params, $q, $tokens['columns']),
+            \implode(' AND ', $conflicts),
+            \implode(', ', $updates),
+            $this->columns($params, $q, $tokens['columns']),
+            \implode(', ', $inserts),
         );
     }
 

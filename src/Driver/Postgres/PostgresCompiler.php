@@ -52,6 +52,29 @@ class PostgresCompiler extends Compiler implements CachingCompilerInterface
         );
     }
 
+    /**
+     * @psalm-return non-empty-string
+     */
+    protected function upsertQuery(QueryParameters $params, Quoter $q, array $tokens): string
+    {
+        $query = parent::upsertQuery($params, $q, $tokens);
+
+        if (empty($tokens['return'])) {
+            return $query;
+        }
+
+        return \sprintf(
+            '%s RETURNING %s',
+            $query,
+            \implode(',', \array_map(
+                fn(string|FragmentInterface|null $return) => $return instanceof FragmentInterface
+                    ? $this->fragment($params, $q, $return)
+                    : $this->quoteIdentifier($return),
+                $tokens['return'],
+            )),
+        );
+    }
+
     protected function distinct(QueryParameters $params, Quoter $q, string|bool|array $distinct): string
     {
         if ($distinct === false) {

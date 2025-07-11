@@ -17,6 +17,7 @@ use Cycle\Database\Query\DeleteQuery;
 use Cycle\Database\Query\InsertQuery;
 use Cycle\Database\Query\SelectQuery;
 use Cycle\Database\Query\UpdateQuery;
+use Cycle\Database\Query\UpsertQuery;
 
 /**
  * Database class is high level abstraction at top of Driver. Databases usually linked to real
@@ -137,6 +138,13 @@ final class Database implements DatabaseInterface
         return $this->getDriver(self::WRITE)
             ->getQueryBuilder()
             ->insertQuery($this->prefix, $table);
+    }
+
+    public function upsert(?string $table = null): UpsertQuery
+    {
+        return $this->getDriver(self::WRITE)
+            ->getQueryBuilder()
+            ->upsertQuery($this->prefix, $table);
     }
 
     public function update(?string $table = null, array $values = [], array $where = []): UpdateQuery

@@ -19,6 +19,7 @@ use Cycle\Database\Driver\Postgres\Query\PostgresDeleteQuery;
 use Cycle\Database\Driver\Postgres\Query\PostgresInsertQuery;
 use Cycle\Database\Driver\Postgres\Query\PostgresSelectQuery;
 use Cycle\Database\Driver\Postgres\Query\PostgresUpdateQuery;
+use Cycle\Database\Driver\Postgres\Query\PostgresUpsertQuery;
 use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Query\QueryBuilder;
@@ -65,6 +66,7 @@ class PostgresDriver extends Driver
             new QueryBuilder(
                 new PostgresSelectQuery(),
                 new PostgresInsertQuery(),
+                new PostgresUpsertQuery(),
                 new PostgresUpdateQuery(),
                 new PostgresDeleteQuery(),
             ),
