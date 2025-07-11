@@ -93,6 +93,8 @@
         "cs:fix": "php-cs-fixer fix -v",
         "psalm": "psalm",
         "psalm:baseline": "psalm --set-baseline=psalm-baseline.xml",
-        "test": "phpunit --color=always"
+        "test": "phpunit --color=always",
+        "test:coverage": "phpunit --colors=always --coverage-text",
+        "test:report": "phpunit --do-not-cache-result --log-junit=.report/phpunit.xml --coverage-clover=.report/coverage-clover.xml --coverage-cobertura=.report/coverage-cobertura.xml --coverage-text --colors=never"
     }
 }
