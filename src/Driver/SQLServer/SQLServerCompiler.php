@@ -120,8 +120,8 @@ class SQLServerCompiler extends Compiler
             $tokens['columns'],
         );
 
-        return \sprintf(
-            'MERGE INTO %s WITH (holdlock) AS %s USING ( VALUES %s) AS %s (%s) ON %s WHEN MATCHED THEN UPDATE SET %s WHEN NOT MATCHED THEN INSERT (%s) VALUES (%s);',
+        $query = \sprintf(
+            'MERGE INTO %s WITH (holdlock) AS %s USING ( VALUES %s) AS %s (%s) ON %s WHEN MATCHED THEN UPDATE SET %s WHEN NOT MATCHED THEN INSERT (%s) VALUES (%s)',
             $this->name($params, $q, $tokens['table'], true),
             $this->name($params, $q, $target),
             \implode(', ', $values),
@@ -131,6 +131,25 @@ class SQLServerCompiler extends Compiler
             \implode(', ', $updates),
             $this->columns($params, $q, $tokens['columns']),
             \implode(', ', $inserts),
+        );
+
+        if (empty($tokens['return'])) {
+            return $query . ';';
+        }
+
+        $output = \array_map(
+            function (string|FragmentInterface|null $return) use ($params, $q) {
+                return $return instanceof FragmentInterface
+                    ? $this->fragment($params, $q, $return)
+                    : 'INSERTED.' . $this->name($params, $q, $return);
+            },
+            $tokens['return'],
+        );
+
+        return \sprintf(
+            '%s OUTPUT %s;',
+            $query,
+            \implode(', ', $output),
         );
     }
 
