@@ -132,13 +132,15 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
      *
      * Example:
      * $table->upsertOne(["name" => "Wolfy-J", "balance" => 10]);
+     * $table->upsertOne(["name" => "Wolfy-J", "balance" => 10], 'name');
      *
      * @throws BuilderException
      */
-    public function upsertOne(array $rowset = []): int|string|null
+    public function upsertOne(array $rowset = [], array|string $conflicts = []): int|string|null
     {
         return $this->database
             ->upsert($this->name)
+            ->conflicts($conflicts)
             ->values($rowset)
             ->run();
     }
@@ -153,10 +155,11 @@ final class Table implements TableInterface, \IteratorAggregate, \Countable
      * @param array $columns Array of columns.
      * @param array $rowsets Array of rowsets.
      */
-    public function upsertMultiple(array $columns = [], array $rowsets = []): void
+    public function upsertMultiple(array $columns = [], array $rowsets = [], array|string $conflicts = []): void
     {
         $this->database
             ->upsert($this->name)
+            ->conflicts($conflicts)
             ->columns($columns)
             ->values($rowsets)
             ->run();
