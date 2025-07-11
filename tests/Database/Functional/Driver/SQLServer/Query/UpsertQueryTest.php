@@ -40,4 +40,94 @@ final class UpsertQueryTest extends CommonClass
         $this->assertSameQuery(static::QUERY_WITH_RETURNING_FRAGMENT, $upsert);
         $this->assertSameParameters(['adam@email.com', 'Adam', 100, null], $upsert);
     }
+
+    public function testReturningSingleValueFromDatabase(): void
+    {
+        $schema = $this->schema('foo');
+        $schema->primary('id');
+        $schema->string('name')->nullable(false);
+        $schema->string('email', 64)->nullable(false);
+        $schema->integer('balance')->defaultValue(0);
+        $schema->index(['email'])->unique(true);
+        $schema->save();
+
+        $table = $this->database->table('foo');
+
+        $this->assertTrue($table->exists());
+        $this->assertSame(0, $table->count());
+
+        $email = $table->upsert()
+            ->conflicts('email')
+            ->values([
+                'email' => 'adam@email.com',
+                'name' => 'Adam',
+                'balance' => 100,
+            ])
+            ->returning('email')
+            ->run();
+
+        $this->assertSame('adam@email.com', $email);
+    }
+
+    public function testReturningMultipleValuesFromDatabase(): void
+    {
+        $schema = $this->schema('foo');
+        $schema->primary('id');
+        $schema->string('name')->nullable(false);
+        $schema->string('email', 64)->nullable(false);
+        $schema->integer('balance')->defaultValue(0);
+        $schema->index(['email'])->unique(true);
+        $schema->save();
+
+        $table = $this->database->table('foo');
+
+        $this->assertTrue($table->exists());
+        $this->assertSame(0, $table->count());
+
+        $result = $table->upsert()
+            ->conflicts('email')
+            ->values([
+                'email' => 'adam@email.com',
+                'name' => 'Adam',
+                'balance' => 100,
+            ])
+            ->returning('email', 'name', 'balance')
+            ->run();
+
+        $this->assertSame('adam@email.com', $result['email']);
+        $this->assertSame('Adam', $result['name']);
+        $this->assertSame('100', $result['balance']);
+    }
+
+    public function testEmptyStringReturnedWithoutPrimaryKeyAndReturningValues(): void
+    {
+        $schema = $this->schema('bar');
+        $schema->string('name')->nullable(false);
+        $schema->string('email', 64)->nullable(false);
+        $schema->integer('balance')->defaultValue(0);
+        $schema->index(['email'])->unique(true);
+        $schema->save();
+
+        $table = $this->database->table('bar');
+
+        $this->assertTrue($table->exists());
+        $this->assertSame(0, $table->count());
+
+        $result = $table->upsert()
+            ->conflicts('email')
+            ->values([
+                'email' => 'adam@email.com',
+                'name' => 'Adam',
+                'balance' => 100,
+            ])
+            ->run();
+
+        $this->assertSame('', $result);
+        $this->assertEquals(
+            [
+                ['email' => 'adam@email.com', 'name' => 'Adam', 'balance' => 100],
+            ],
+            $table->select()->fetchAll(),
+        );
+    }
 }
