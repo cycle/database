@@ -137,19 +137,19 @@ class SQLServerCompiler extends Compiler
             return $query . ';';
         }
 
-        $output = \array_map(
+        $output = \implode(', ', \array_map(
             function (string|FragmentInterface|null $return) use ($params, $q) {
                 return $return instanceof FragmentInterface
                     ? $this->fragment($params, $q, $return)
                     : 'INSERTED.' . $this->name($params, $q, $return);
             },
             $tokens['return'],
-        );
+        ));
 
         return \sprintf(
             '%s OUTPUT %s;',
             $query,
-            \implode(', ', $output),
+            $output,
         );
     }
 
