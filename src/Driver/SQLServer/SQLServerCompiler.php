@@ -121,7 +121,7 @@ class SQLServerCompiler extends Compiler
         );
 
         return \sprintf(
-            'MERGE INTO %s WITH (holdlock) AS %s USING ( VALUES %s) AS %s (%s) ON %s WHEN MATCHED THEN UPDATE SET %s WHEN NOT MATCHED THEN INSERT (%s) VALUES (%s)',
+            'MERGE INTO %s WITH (holdlock) AS %s USING ( VALUES %s) AS %s (%s) ON %s WHEN MATCHED THEN UPDATE SET %s WHEN NOT MATCHED THEN INSERT (%s) VALUES (%s);',
             $this->name($params, $q, $tokens['table'], true),
             $this->name($params, $q, $target),
             \implode(', ', $values),
