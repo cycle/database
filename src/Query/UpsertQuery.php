@@ -134,11 +134,8 @@ class UpsertQuery extends ActiveQuery
         );
 
         $lastID = $this->driver->lastInsertID();
-        if (\is_numeric($lastID)) {
-            return (int) $lastID;
-        }
 
-        return $lastID;
+        return \is_numeric($lastID) ? (int) $lastID : $lastID;
     }
 
     public function getType(): int
