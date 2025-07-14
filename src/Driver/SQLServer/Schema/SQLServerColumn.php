@@ -98,6 +98,7 @@ class SQLServerColumn extends AbstractColumn
 
         //Additional types
         'json'        => ['type' => 'varchar', 'size' => 0],
+        'ulid'        => ['type' => 'varchar', 'size' => 26],
         'uuid'        => ['type' => 'varchar', 'size' => 36],
     ];
     protected array $reverseMapping = [
