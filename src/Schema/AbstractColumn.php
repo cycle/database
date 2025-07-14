@@ -598,12 +598,10 @@ abstract class AbstractColumn implements ColumnInterface, ElementInterface
                     ? $initial->getDefaultValue()->__toString()
                     : $initial->getDefaultValue();
 
-                $defaultValue = $this->userType === 'boolean'
-                    ? (bool) $defaultValue
-                    : $defaultValue;
-                $initialDefaultValue = $this->userType === 'boolean'
-                    ? (bool) $initialDefaultValue
-                    : $initialDefaultValue;
+                if ($this->userType === 'boolean') {
+                    $defaultValue = (bool) $defaultValue;
+                    $initialDefaultValue = (bool) $initialDefaultValue;
+                }
 
                 //Default values has to compared using type-casted value
                 if ($defaultValue != $initialDefaultValue) {
