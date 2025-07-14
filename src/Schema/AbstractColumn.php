@@ -50,6 +50,7 @@ use Cycle\Database\Schema\Traits\ElementTrait;
  * @method $this|AbstractColumn tinyBinary()
  * @method $this|AbstractColumn longBinary()
  * @method $this|AbstractColumn json()
+ * @method $this|AbstractColumn ulid()
  * @method $this|AbstractColumn uuid()
  */
 abstract class AbstractColumn implements ColumnInterface, ElementInterface
