@@ -1,5 +1,43 @@
 # Changelog
 
+## [2.14.0](https://github.com/cycle/database/compare/2.13.0...2.14.0) (2025-07-14)
+
+
+### Features
+
+* add parameters to SubQuery ([74dbd7c](https://github.com/cycle/database/commit/74dbd7c11dc8812f54d4145c0fb3d6c07693d829))
+* add SubQuery injection ([8079759](https://github.com/cycle/database/commit/80797599e1d3aff28c76e69904748df0e7d6407b))
+* add ULID column type ([#233](https://github.com/cycle/database/issues/233)) ([f8b3a87](https://github.com/cycle/database/commit/f8b3a87222aa94a7ebd9e5776bc61897ad10237e))
+* **MySQL:** add `first` and `after` into column declaration ([#226](https://github.com/cycle/database/issues/226)) ([7ad2df1](https://github.com/cycle/database/commit/7ad2df1ccf4498ac1a5067a0abc8ded55c6d06cd))
+
+
+### Bug Fixes
+
+* **MySQL:** unsigned boolean Columns comparison ([#234](https://github.com/cycle/database/issues/234)) ([82378ea](https://github.com/cycle/database/commit/82378ea94653eaf0b558149e86b7a6ebec94872e))
+
+
+### Documentation
+
+* cover SubQuery with comments ([8579419](https://github.com/cycle/database/commit/85794199f02e4d2f60f8f66de21f18e7968aafc5))
+
+
+### Styles
+
+* fix code style; rename `SubQueryInjection` to `SubQuery` ([b9cf08e](https://github.com/cycle/database/commit/b9cf08e1ca3911ee4cb3aab513f597988221b3eb))
+* improve code formatting and consistency in Compiler, Jsoner, and SubQuery ([02484a6](https://github.com/cycle/database/commit/02484a66a23bac5f2fe3711944890642f0a4a7a2))
+
+
+### Code Refactoring
+
+* rename `selectSubQuery` to `subQuery` and update related query logic ([727ca0e](https://github.com/cycle/database/commit/727ca0edccd01cb0ba1133240712c65775cc6bd1))
+
+
+### Tests
+
+* enhance subquery tests with additional conditions and parameters ([09013c6](https://github.com/cycle/database/commit/09013c670cadcd865529b7c39578db2413001631))
+* **MySQL:** Added a test case proving bug with boolean columns ([c2c05d1](https://github.com/cycle/database/commit/c2c05d191d5c4379fb9be58599012158ea3b9db6))
+* **MySQL:** enhance boolean column configuration tests with zerofill and nullable checks ([0129e7f](https://github.com/cycle/database/commit/0129e7f0c49e2cefb7d986b0ad0d311bdcdf7738))
+
 ## [2.13.0](https://github.com/cycle/database/compare/2.12.0...2.13.0) (2025-03-27)
 
 
