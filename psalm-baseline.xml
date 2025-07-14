@@ -296,8 +296,14 @@
       <code><![CDATA[$param]]></code>
       <code><![CDATA[$param]]></code>
       <code><![CDATA[$param]]></code>
+      <code><![CDATA[$tokens['alias']]]></code>
       <code><![CDATA[$tokens['columns']]]></code>
       <code><![CDATA[$tokens['columns']]]></code>
+      <code><![CDATA[$tokens['columns']]]></code>
+      <code><![CDATA[$tokens['columns']]]></code>
+      <code><![CDATA[$tokens['columns']]]></code>
+      <code><![CDATA[$tokens['conflicts']]]></code>
+      <code><![CDATA[$tokens['conflicts']]]></code>
       <code><![CDATA[$tokens['distinct']]]></code>
       <code><![CDATA[$tokens['except']]]></code>
       <code><![CDATA[$tokens['expression']]]></code>
@@ -366,6 +372,7 @@
       <code><![CDATA[$value]]></code>
       <code><![CDATA[$value]]></code>
       <code><![CDATA[$value]]></code>
+      <code><![CDATA[$value]]></code>
       <code><![CDATA[[$boolean, $context]]]></code>
     </MixedAssignment>
     <MixedOperand>
@@ -379,8 +386,11 @@
       <code><![CDATA[$identifier]]></code>
     </MoreSpecificImplementedParamType>
     <PossiblyUndefinedStringArrayOffset>
+      <code><![CDATA[$tokens['alias']]]></code>
       <code><![CDATA[$tokens['columns']]]></code>
       <code><![CDATA[$tokens['columns']]]></code>
+      <code><![CDATA[$tokens['columns']]]></code>
+      <code><![CDATA[$tokens['conflicts']]]></code>
       <code><![CDATA[$tokens['distinct']]]></code>
       <code><![CDATA[$tokens['except']]]></code>
       <code><![CDATA[$tokens['expression']]]></code>
@@ -405,7 +415,9 @@
       <code><![CDATA[$tokens['table']]]></code>
       <code><![CDATA[$tokens['table']]]></code>
       <code><![CDATA[$tokens['table']]]></code>
+      <code><![CDATA[$tokens['table']]]></code>
       <code><![CDATA[$tokens['union']]]></code>
+      <code><![CDATA[$tokens['values']]]></code>
       <code><![CDATA[$tokens['values']]]></code>
       <code><![CDATA[$tokens['values']]]></code>
       <code><![CDATA[$tokens['where']]]></code>
@@ -770,9 +782,23 @@
     <ClassMustBeFinal>
       <code><![CDATA[MySQLCompiler]]></code>
     </ClassMustBeFinal>
+    <MissingClosureParamType>
+      <code><![CDATA[$column]]></code>
+    </MissingClosureParamType>
+    <MixedArgument>
+      <code><![CDATA[$tokens['columns']]]></code>
+      <code><![CDATA[$tokens['columns']]]></code>
+      <code><![CDATA[$tokens['columns']]]></code>
+    </MixedArgument>
+    <MixedAssignment>
+      <code><![CDATA[$value]]></code>
+    </MixedAssignment>
     <PossiblyUndefinedStringArrayOffset>
       <code><![CDATA[$tokens['columns']]]></code>
+      <code><![CDATA[$tokens['columns']]]></code>
       <code><![CDATA[$tokens['table']]]></code>
+      <code><![CDATA[$tokens['table']]]></code>
+      <code><![CDATA[$tokens['values']]]></code>
     </PossiblyUndefinedStringArrayOffset>
   </file>
   <file src="src/Driver/MySQL/MySQLDriver.php">
@@ -793,6 +819,7 @@
             new QueryBuilder(
                 new MySQLSelectQuery(),
                 new InsertQuery(),
+                new UpsertQuery(),
                 new MySQLUpdateQuery(),
                 new MySQLDeleteQuery(),
             ),
@@ -901,18 +928,19 @@
     </MixedAssignment>
     <PossiblyUndefinedStringArrayOffset>
       <code><![CDATA[$matches['type']]]></code>
+      <code><![CDATA[$schema['Comment']]]></code>
       <code><![CDATA[$schema['Default']]]></code>
       <code><![CDATA[$schema['Extra']]]></code>
       <code><![CDATA[$schema['Field']]]></code>
       <code><![CDATA[$schema['Null']]]></code>
       <code><![CDATA[$schema['Type']]]></code>
-      <code><![CDATA[$schema['Comment']]]></code>
     </PossiblyUndefinedStringArrayOffset>
     <RiskyTruthyFalsyComparison>
       <code><![CDATA[empty($matches['attr'])]]></code>
       <code><![CDATA[empty($matches['options'])]]></code>
     </RiskyTruthyFalsyComparison>
     <UndefinedInterfaceMethod>
+      <code><![CDATA[identifier]]></code>
       <code><![CDATA[identifier]]></code>
     </UndefinedInterfaceMethod>
   </file>
@@ -1097,6 +1125,7 @@
     <ArgumentTypeCoercion>
       <code><![CDATA[$path]]></code>
       <code><![CDATA[$return]]></code>
+      <code><![CDATA[$return]]></code>
     </ArgumentTypeCoercion>
     <ClassMustBeFinal>
       <code><![CDATA[PostgresCompiler]]></code>
@@ -1106,8 +1135,10 @@
     </InvalidClassConstantType>
     <MixedArgument>
       <code><![CDATA[$tokens['return']]]></code>
+      <code><![CDATA[$tokens['return']]]></code>
     </MixedArgument>
     <PossiblyNullArgument>
+      <code><![CDATA[$return]]></code>
       <code><![CDATA[$return]]></code>
     </PossiblyNullArgument>
   </file>
@@ -1145,6 +1176,7 @@
             new QueryBuilder(
                 new PostgresSelectQuery(),
                 new PostgresInsertQuery(),
+                new PostgresUpsertQuery(),
                 new PostgresUpdateQuery(),
                 new PostgresDeleteQuery(),
             ),
@@ -1234,6 +1266,31 @@
       <code><![CDATA[PostgresUpdateQuery]]></code>
     </ClassMustBeFinal>
   </file>
+  <file src="src/Driver/Postgres/Query/PostgresUpsertQuery.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[PostgresUpsertQuery]]></code>
+    </ClassMustBeFinal>
+    <DeprecatedProperty>
+      <code><![CDATA[$this->returning]]></code>
+    </DeprecatedProperty>
+    <MixedReturnStatement>
+      <code><![CDATA[$result->fetch(StatementInterface::FETCH_ASSOC)]]></code>
+      <code><![CDATA[$result->fetchColumn()]]></code>
+      <code><![CDATA[$result->fetchColumn()]]></code>
+    </MixedReturnStatement>
+    <NonInvariantDocblockPropertyType>
+      <code><![CDATA[$driver]]></code>
+    </NonInvariantDocblockPropertyType>
+    <PossiblyNullArgument>
+      <code><![CDATA[$this->prefix]]></code>
+    </PossiblyNullArgument>
+    <PossiblyNullReference>
+      <code><![CDATA[isReadonly]]></code>
+    </PossiblyNullReference>
+    <PropertyTypeCoercion>
+      <code><![CDATA[\array_values($columns)]]></code>
+    </PropertyTypeCoercion>
+  </file>
   <file src="src/Driver/Postgres/Query/Traits/WhereJsonTrait.php">
     <MixedArgument>
       <code><![CDATA[$params['encode']]]></code>
@@ -1303,10 +1360,10 @@
       <code><![CDATA[$identifier]]></code>
       <code><![CDATA[$identifier]]></code>
       <code><![CDATA[$range]]></code>
-      <code><![CDATA[$value]]></code>
-      <code><![CDATA[$value]]></code>
-      <code><![CDATA[$value]]></code>
       <code><![CDATA[$tableName]]></code>
+      <code><![CDATA[$value]]></code>
+      <code><![CDATA[$value]]></code>
+      <code><![CDATA[$value]]></code>
     </MixedAssignment>
     <MixedOperand>
       <code><![CDATA[$schema['dtd_identifier']]]></code>
@@ -1321,6 +1378,7 @@
       <code><![CDATA[$schema['column_name']]]></code>
       <code><![CDATA[$schema['data_type']]]></code>
       <code><![CDATA[$schema['datetime_precision']]]></code>
+      <code><![CDATA[$schema['description']]]></code>
       <code><![CDATA[$schema['dtd_identifier']]]></code>
       <code><![CDATA[$schema['interval_type']]]></code>
       <code><![CDATA[$schema['is_nullable']]]></code>
@@ -1330,7 +1388,6 @@
       <code><![CDATA[$schema['tableOID']]]></code>
       <code><![CDATA[$schema['typname']]]></code>
       <code><![CDATA[$schema['typtype']]]></code>
-      <code><![CDATA[$schema['description']]]></code>
     </PossiblyUndefinedStringArrayOffset>
     <RedundantCast>
       <code><![CDATA[(bool) (
@@ -1580,6 +1637,24 @@
       <code><![CDATA[SQLServerUpdateQuery]]></code>
     </ClassMustBeFinal>
   </file>
+  <file src="src/Driver/SQLServer/Query/SQLServerUpsertQuery.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[SQLServerUpsertQuery]]></code>
+    </ClassMustBeFinal>
+    <MixedReturnStatement>
+      <code><![CDATA[$result->fetch(StatementInterface::FETCH_ASSOC)]]></code>
+      <code><![CDATA[$result->fetchColumn()]]></code>
+    </MixedReturnStatement>
+    <NonInvariantDocblockPropertyType>
+      <code><![CDATA[$driver]]></code>
+    </NonInvariantDocblockPropertyType>
+    <PossiblyNullReference>
+      <code><![CDATA[isReadonly]]></code>
+    </PossiblyNullReference>
+    <PropertyTypeCoercion>
+      <code><![CDATA[\array_values($columns)]]></code>
+    </PropertyTypeCoercion>
+  </file>
   <file src="src/Driver/SQLServer/Query/Traits/WhereJsonTrait.php">
     <MethodSignatureMismatch>
       <code><![CDATA[public function orWhereJson(string $column, mixed $value): static]]></code>
@@ -1652,6 +1727,13 @@
       <code><![CDATA[$offset]]></code>
       <code><![CDATA[$tokens['columns']]]></code>
       <code><![CDATA[$tokens['columns']]]></code>
+      <code><![CDATA[$tokens['columns']]]></code>
+      <code><![CDATA[$tokens['columns']]]></code>
+      <code><![CDATA[$tokens['columns']]]></code>
+      <code><![CDATA[$tokens['columns']]]></code>
+      <code><![CDATA[$tokens['columns']]]></code>
+      <code><![CDATA[$tokens['conflicts']]]></code>
+      <code><![CDATA[$tokens['conflicts']]]></code>
       <code><![CDATA[$tokens['distinct']]]></code>
       <code><![CDATA[$tokens['except']]]></code>
       <code><![CDATA[$tokens['groupBy']]]></code>
@@ -1661,6 +1743,7 @@
       <code><![CDATA[$tokens['limit']]]></code>
       <code><![CDATA[$tokens['offset']]]></code>
       <code><![CDATA[$tokens['orderBy']]]></code>
+      <code><![CDATA[$tokens['return']]]></code>
       <code><![CDATA[$tokens['return']]]></code>
       <code><![CDATA[$tokens['union']]]></code>
       <code><![CDATA[$tokens['where']]]></code>
@@ -1678,6 +1761,7 @@
       <code><![CDATA[$offset]]></code>
       <code><![CDATA[$table]]></code>
       <code><![CDATA[$value]]></code>
+      <code><![CDATA[$value]]></code>
     </MixedAssignment>
     <MixedReturnStatement>
       <code><![CDATA[\call_user_func_array([$this, 'baseSelect'], \func_get_args())]]></code>
@@ -1691,6 +1775,8 @@
     <PossiblyUndefinedStringArrayOffset>
       <code><![CDATA[$tokens['columns']]]></code>
       <code><![CDATA[$tokens['columns']]]></code>
+      <code><![CDATA[$tokens['columns']]]></code>
+      <code><![CDATA[$tokens['conflicts']]]></code>
       <code><![CDATA[$tokens['distinct']]]></code>
       <code><![CDATA[$tokens['except']]]></code>
       <code><![CDATA[$tokens['forUpdate']]]></code>
@@ -1708,7 +1794,9 @@
       <code><![CDATA[$tokens['orderBy']]]></code>
       <code><![CDATA[$tokens['table']]]></code>
       <code><![CDATA[$tokens['table']]]></code>
+      <code><![CDATA[$tokens['table']]]></code>
       <code><![CDATA[$tokens['union']]]></code>
+      <code><![CDATA[$tokens['values']]]></code>
       <code><![CDATA[$tokens['values']]]></code>
       <code><![CDATA[$tokens['where']]]></code>
     </PossiblyUndefinedStringArrayOffset>
@@ -1746,6 +1834,7 @@
             new QueryBuilder(
                 new SQLServerSelectQuery(),
                 new SQLServerInsertQuery(),
+                new SQLServerUpsertQuery(),
                 new SQLServerUpdateQuery(),
                 new SQLServerDeleteQuery(),
             ),
@@ -2059,6 +2148,7 @@
             new QueryBuilder(
                 new SQLiteSelectQuery(),
                 new InsertQuery(),
+                new UpsertQuery(),
                 new SQLiteUpdateQuery(),
                 new SQLiteDeleteQuery(),
             ),
@@ -2424,6 +2514,14 @@
       <code><![CDATA[$value]]></code>
     </PropertyNotSetInConstructor>
   </file>
+  <file src="src/Injection/SubQuery.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[SubQuery]]></code>
+    </ClassMustBeFinal>
+    <MixedPropertyTypeCoercion>
+      <code><![CDATA[$parameters->getParameters()]]></code>
+    </MixedPropertyTypeCoercion>
+  </file>
   <file src="src/Query/ActiveQuery.php">
     <PossiblyNullArgument>
       <code><![CDATA[$this->prefix]]></code>
@@ -2520,6 +2618,7 @@
       <code><![CDATA[from]]></code>
       <code><![CDATA[from]]></code>
       <code><![CDATA[in]]></code>
+      <code><![CDATA[into]]></code>
       <code><![CDATA[into]]></code>
       <code><![CDATA[where]]></code>
       <code><![CDATA[where]]></code>
@@ -2652,6 +2751,23 @@
     </MissingClosureParamType>
   </file>
   <file src="src/Query/UpdateQuery.php">
+    <PossiblyNullReference>
+      <code><![CDATA[execute]]></code>
+    </PossiblyNullReference>
+  </file>
+  <file src="src/Query/UpsertQuery.php">
+    <MixedArgument>
+      <code><![CDATA[$rowsets[\key($rowsets)]]]></code>
+      <code><![CDATA[$values]]></code>
+    </MixedArgument>
+    <MixedAssignment>
+      <code><![CDATA[$lastID]]></code>
+      <code><![CDATA[$values]]></code>
+    </MixedAssignment>
+    <MixedReturnStatement>
+      <code><![CDATA[\is_numeric($lastID) ? (int) $lastID : $lastID]]></code>
+      <code><![CDATA[\is_numeric($lastID) ? (int) $lastID : $lastID]]></code>
+    </MixedReturnStatement>
     <PossiblyNullReference>
       <code><![CDATA[execute]]></code>
     </PossiblyNullReference>
@@ -2930,8 +3046,14 @@
             ->insert($this->name)
             ->values($rowset)
             ->run()]]></code>
+      <code><![CDATA[$this->database
+            ->upsert($this->name)
+            ->conflicts($conflicts)
+            ->values($rowset)
+            ->run()]]></code>
     </InvalidReturnStatement>
     <InvalidReturnType>
+      <code><![CDATA[int|string|null]]></code>
       <code><![CDATA[int|string|null]]></code>
     </InvalidReturnType>
     <MissingTemplateParam>
