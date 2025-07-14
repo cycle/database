@@ -37,7 +37,7 @@ final class UpsertQueryTest extends CommonClass
                 'deleted_at' => null,
             ])->returning('email', new Fragment('[balance] + 100 AS [modified_balance]'));
 
-        $this->assertSameQuery(static::QUERY_WITH_RETURNING_FRAGMENT, $upsert);
+        $this->assertSameQuery(self::QUERY_WITH_RETURNING_FRAGMENT, $upsert);
         $this->assertSameParameters(['adam@email.com', 'Adam', 100, null], $upsert);
     }
 

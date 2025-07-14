@@ -6,7 +6,6 @@ namespace Cycle\Database\Tests\Functional\Driver\Postgres\Query;
 
 // phpcs:ignore
 use Cycle\Database\Driver\Postgres\Query\PostgresUpsertQuery;
-use Cycle\Database\Driver\Postgres\Schema\PostgresColumn;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Tests\Functional\Driver\Common\Query\UpsertQueryTest as CommonClass;
 

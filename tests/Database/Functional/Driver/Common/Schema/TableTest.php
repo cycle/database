@@ -205,7 +205,7 @@ abstract class TableTest extends BaseTest
 
         $upsertId = $table->upsertOne(
             ['name' => 'Adam', 'email' => 'adam@email.com', 'balance' => 100],
-            'email'
+            'email',
         );
 
         $this->assertSame(2, $upsertId);
@@ -250,7 +250,7 @@ abstract class TableTest extends BaseTest
 
         $upsertId = $table->upsertOne(
             ['name' => 'Anton', 'email' => 'anton@email.com', 'balance' => 50],
-            'email'
+            'email',
         );
 
         $this->assertSame(1, $upsertId);
@@ -300,7 +300,7 @@ abstract class TableTest extends BaseTest
                 ['John', 'john@email.com', 400],
                 ['Mark', 'mark@email.com', 800],
             ],
-            'email'
+            'email',
         );
 
         $this->assertSame(4, $table->count());

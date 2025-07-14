@@ -133,7 +133,7 @@ class TableTest extends CommonClass
                 ['John', 'john@email.com', 400],
                 ['Mark', 'mark@email.com', 800],
             ],
-            'email'
+            'email',
         );
 
         $this->assertSame(4, $table->count());
