@@ -112,6 +112,7 @@ class MySQLColumn extends AbstractColumn
 
         //Additional types
         'json'        => 'json',
+        'ulid'        => ['type' => 'varchar', 'size' => 26],
         'uuid'        => ['type' => 'varchar', 'size' => 36],
     ];
     protected array $reverseMapping = [

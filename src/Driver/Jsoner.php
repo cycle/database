@@ -32,7 +32,7 @@ final class Jsoner
 
         $result = (string) $value;
 
-        if ($validate && !json_validate($result)) {
+        if ($validate && !\json_validate($result)) {
             throw new BuilderException('Invalid JSON value.');
         }
 
