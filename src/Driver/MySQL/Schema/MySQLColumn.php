@@ -42,7 +42,7 @@ class MySQLColumn extends AbstractColumn
      */
     public const DATETIME_NOW = 'CURRENT_TIMESTAMP';
 
-    public const EXCLUDE_FROM_COMPARE = ['size', 'timezone', 'userType', 'attributes', 'first', 'after'];
+    public const EXCLUDE_FROM_COMPARE = ['size', 'timezone', 'userType', 'attributes', 'first', 'after', 'unknownSize'];
     protected const INTEGER_TYPES = ['tinyint', 'smallint', 'mediumint', 'int', 'bigint'];
 
     protected array $mapping = [

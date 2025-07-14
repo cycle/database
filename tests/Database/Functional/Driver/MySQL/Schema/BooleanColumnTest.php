@@ -86,5 +86,7 @@ class BooleanColumnTest extends CommonClass
         $this->assertSame('0', $defaultValue);
         $this->assertTrue($column->compare($target));
         $this->assertTrue($target->compare($column));
+        // The size was not changed
+        $this->assertSame(4, $target->getSize());
     }
 }
