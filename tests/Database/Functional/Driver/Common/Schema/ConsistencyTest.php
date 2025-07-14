@@ -360,6 +360,64 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
+    public function testUlid(): void
+    {
+        $schema = $this->schema('table');
+        $this->assertFalse($schema->exists());
+
+        $column = $schema->ulid('target');
+
+        $schema->save();
+
+        $schema = $this->schema('table');
+        $this->assertTrue($schema->exists());
+        $this->assertTrue($schema->column('target')->compare($column));
+        $this->assertSame('string', $schema->column('target')->getType());
+
+        $this->database->table('table')->insertOne(
+            [
+                'target' => '0GWWXY2G84DFMRVWQNJ1SRYCMC',
+            ],
+        );
+
+        $this->assertEquals(
+            [
+                'target' => '0GWWXY2G84DFMRVWQNJ1SRYCMC',
+            ],
+            $this->database->table('table')->select()->fetchAll()[0],
+        );
+    }
+
+    public function testUlidPrimary(): void
+    {
+        $schema = $this->schema('table');
+        $this->assertFalse($schema->exists());
+
+        $column = $schema->ulid('target')->nullable(false);
+        $schema->setPrimaryKeys(['target']);
+        $schema->save();
+
+        $schema = $this->schema('table');
+        $this->assertTrue($schema->exists());
+
+        $this->assertTrue($schema->column('target')->compare($column));
+        $this->assertSame('string', $schema->column('target')->getType());
+        $this->assertSame(['target'], $schema->getPrimaryKeys());
+
+        $this->database->table('table')->insertOne(
+            [
+                'target' => '0GWWXY2G84DFMRVWQNJ1SRYCMC',
+            ],
+        );
+
+        $this->assertEquals(
+            [
+                'target' => '0GWWXY2G84DFMRVWQNJ1SRYCMC',
+            ],
+            $this->database->table('table')->select()->fetchAll()[0],
+        );
+    }
+
     public function testUuid(): void
     {
         $schema = $this->schema('table');
