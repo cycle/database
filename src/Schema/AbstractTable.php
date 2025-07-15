@@ -51,6 +51,7 @@ use Cycle\Database\TableInterface;
  * @method AbstractColumn binary($column)
  * @method AbstractColumn tinyBinary($column)
  * @method AbstractColumn longBinary($column)
+ * @method AbstractColumn snowflake($column)
  * @method AbstractColumn ulid($column)
  * @method AbstractColumn uuid($column)
  */

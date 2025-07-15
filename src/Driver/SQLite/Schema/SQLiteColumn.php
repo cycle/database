@@ -87,6 +87,7 @@ class SQLiteColumn extends AbstractColumn
 
         //Additional types
         'json'        => 'text',
+        'snowflake'   => 'bigint',
         'ulid'        => ['type' => 'varchar', 'size' => 26],
         'uuid'        => ['type' => 'varchar', 'size' => 36],
     ];

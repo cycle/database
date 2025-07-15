@@ -181,6 +181,7 @@ class PostgresColumn extends AbstractColumn
         //Additional types
         'json'         => 'json',
         'jsonb'        => 'jsonb',
+        'snowflake'    => 'bigint',
         'ulid'         => ['type' => 'character varying', 'size' => 26],
         'uuid'         => 'uuid',
         'point'        => 'point',
