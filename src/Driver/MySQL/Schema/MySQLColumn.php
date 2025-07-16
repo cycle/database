@@ -42,7 +42,7 @@ class MySQLColumn extends AbstractColumn
      */
     public const DATETIME_NOW = 'CURRENT_TIMESTAMP';
 
-    public const EXCLUDE_FROM_COMPARE = ['size', 'timezone', 'userType', 'attributes', 'first', 'after'];
+    public const EXCLUDE_FROM_COMPARE = ['size', 'timezone', 'userType', 'attributes', 'first', 'after', 'unknownSize'];
     protected const INTEGER_TYPES = ['tinyint', 'smallint', 'mediumint', 'int', 'bigint'];
 
     protected array $mapping = [
@@ -112,6 +112,7 @@ class MySQLColumn extends AbstractColumn
 
         //Additional types
         'json'        => 'json',
+        'ulid'        => ['type' => 'varchar', 'size' => 26],
         'uuid'        => ['type' => 'varchar', 'size' => 36],
     ];
     protected array $reverseMapping = [
@@ -160,6 +161,11 @@ class MySQLColumn extends AbstractColumn
         ['int', 'tinyint', 'smallint', 'bigint', 'varchar', 'varbinary', 'time', 'datetime', 'timestamp'],
     )]
     protected int $size = 0;
+
+    /**
+     * True if size is not defined in DB schema.
+     */
+    protected bool $unknownSize = false;
 
     /**
      * Column is auto incremental.
@@ -250,6 +256,7 @@ class MySQLColumn extends AbstractColumn
 
         // since 8.0 database does not provide size for some columns
         if ($column->size === 0) {
+            $column->unknownSize = true;
             switch ($column->type) {
                 case 'int':
                     $column->size = 11;
@@ -290,6 +297,12 @@ class MySQLColumn extends AbstractColumn
         return $column;
     }
 
+    public function size(int $value): self
+    {
+        $this->unknownSize = false;
+        return parent::__call('size', [$value]);
+    }
+
     /**
      * @psalm-return non-empty-string
      */
@@ -326,10 +339,27 @@ class MySQLColumn extends AbstractColumn
 
     public function compare(AbstractColumn $initial): bool
     {
-        $result = parent::compare($initial);
+        \assert($initial instanceof self);
+        $self = $this;
 
-        if ($this->type === 'varchar' || $this->type === 'varbinary') {
-            return $result && $this->size === $initial->size;
+        // MySQL 8.0 does not provide size for unsigned integers without zerofill
+        // so we can get wrong results in comparison of boolean columns
+        if ($self->unknownSize || $initial->unknownSize) {
+            // if one of the columns is boolean, we can safely assume that size is 1
+            if (\in_array($self->userType, ['bool', 'boolean'], true)) {
+                $initial = clone $initial;
+                $initial->size = 1;
+            } elseif (\in_array($initial->userType, ['bool', 'boolean'], true)) {
+                $self = clone $self;
+                $self->size = 1;
+            }
+        }
+
+        $result = \Closure::fromCallable([parent::class, 'compare'])->bindTo($self)($initial);
+
+
+        if ($self->type === 'varchar' || $self->type === 'varbinary') {
+            return $result && $self->size === $initial->size;
         }
 
         return $result;

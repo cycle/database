@@ -296,6 +296,7 @@
       <code><![CDATA[$param]]></code>
       <code><![CDATA[$param]]></code>
       <code><![CDATA[$param]]></code>
+      <code><![CDATA[$tokens['alias']]]></code>
       <code><![CDATA[$tokens['columns']]]></code>
       <code><![CDATA[$tokens['columns']]]></code>
       <code><![CDATA[$tokens['distinct']]]></code>
@@ -379,6 +380,7 @@
       <code><![CDATA[$identifier]]></code>
     </MoreSpecificImplementedParamType>
     <PossiblyUndefinedStringArrayOffset>
+      <code><![CDATA[$tokens['alias']]]></code>
       <code><![CDATA[$tokens['columns']]]></code>
       <code><![CDATA[$tokens['columns']]]></code>
       <code><![CDATA[$tokens['distinct']]]></code>
@@ -901,18 +903,19 @@
     </MixedAssignment>
     <PossiblyUndefinedStringArrayOffset>
       <code><![CDATA[$matches['type']]]></code>
+      <code><![CDATA[$schema['Comment']]]></code>
       <code><![CDATA[$schema['Default']]]></code>
       <code><![CDATA[$schema['Extra']]]></code>
       <code><![CDATA[$schema['Field']]]></code>
       <code><![CDATA[$schema['Null']]]></code>
       <code><![CDATA[$schema['Type']]]></code>
-      <code><![CDATA[$schema['Comment']]]></code>
     </PossiblyUndefinedStringArrayOffset>
     <RiskyTruthyFalsyComparison>
       <code><![CDATA[empty($matches['attr'])]]></code>
       <code><![CDATA[empty($matches['options'])]]></code>
     </RiskyTruthyFalsyComparison>
     <UndefinedInterfaceMethod>
+      <code><![CDATA[identifier]]></code>
       <code><![CDATA[identifier]]></code>
     </UndefinedInterfaceMethod>
   </file>
@@ -1303,10 +1306,10 @@
       <code><![CDATA[$identifier]]></code>
       <code><![CDATA[$identifier]]></code>
       <code><![CDATA[$range]]></code>
-      <code><![CDATA[$value]]></code>
-      <code><![CDATA[$value]]></code>
-      <code><![CDATA[$value]]></code>
       <code><![CDATA[$tableName]]></code>
+      <code><![CDATA[$value]]></code>
+      <code><![CDATA[$value]]></code>
+      <code><![CDATA[$value]]></code>
     </MixedAssignment>
     <MixedOperand>
       <code><![CDATA[$schema['dtd_identifier']]]></code>
@@ -1321,6 +1324,7 @@
       <code><![CDATA[$schema['column_name']]]></code>
       <code><![CDATA[$schema['data_type']]]></code>
       <code><![CDATA[$schema['datetime_precision']]]></code>
+      <code><![CDATA[$schema['description']]]></code>
       <code><![CDATA[$schema['dtd_identifier']]]></code>
       <code><![CDATA[$schema['interval_type']]]></code>
       <code><![CDATA[$schema['is_nullable']]]></code>
@@ -1330,7 +1334,6 @@
       <code><![CDATA[$schema['tableOID']]]></code>
       <code><![CDATA[$schema['typname']]]></code>
       <code><![CDATA[$schema['typtype']]]></code>
-      <code><![CDATA[$schema['description']]]></code>
     </PossiblyUndefinedStringArrayOffset>
     <RedundantCast>
       <code><![CDATA[(bool) (
@@ -2423,6 +2426,14 @@
     <PropertyNotSetInConstructor>
       <code><![CDATA[$value]]></code>
     </PropertyNotSetInConstructor>
+  </file>
+  <file src="src/Injection/SubQuery.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[SubQuery]]></code>
+    </ClassMustBeFinal>
+    <MixedPropertyTypeCoercion>
+      <code><![CDATA[$parameters->getParameters()]]></code>
+    </MixedPropertyTypeCoercion>
   </file>
   <file src="src/Query/ActiveQuery.php">
     <PossiblyNullArgument>
