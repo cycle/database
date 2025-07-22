@@ -884,6 +884,9 @@
     <DocblockTypeContradiction>
       <code><![CDATA[$size < 0]]></code>
     </DocblockTypeContradiction>
+    <InvalidArgument>
+      <code><![CDATA[[parent::class, 'compare']]]></code>
+    </InvalidArgument>
     <InvalidClassConstantType>
       <code><![CDATA[EXCLUDE_FROM_COMPARE]]></code>
     </InvalidClassConstantType>
@@ -900,7 +903,14 @@
       <code><![CDATA[$column->comment]]></code>
       <code><![CDATA[$column->type]]></code>
       <code><![CDATA[$defaultValue]]></code>
+      <code><![CDATA[$result]]></code>
     </MixedAssignment>
+    <MixedReturnStatement>
+      <code><![CDATA[$result]]></code>
+    </MixedReturnStatement>
+    <PossiblyNullFunctionCall>
+      <code><![CDATA[\Closure::fromCallable([parent::class, 'compare'])->bindTo($self)($initial)]]></code>
+    </PossiblyNullFunctionCall>
     <PossiblyUndefinedStringArrayOffset>
       <code><![CDATA[$matches['type']]]></code>
       <code><![CDATA[$schema['Comment']]]></code>

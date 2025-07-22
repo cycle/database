@@ -360,6 +360,92 @@ abstract class ConsistencyTest extends BaseTest
         $this->assertTrue($schema->column('target')->compare($column));
     }
 
+    public function testSnowflake(): void
+    {
+        $schema = $this->schema('table');
+        $this->assertFalse($schema->exists());
+
+        $column = $schema->snowflake('target');
+
+        $schema->save();
+
+        $schema = $this->schema('table');
+        $this->assertTrue($schema->exists());
+        $this->assertTrue($schema->column('target')->compare($column));
+        $this->assertSame('int', $schema->column('target')->getType());
+
+        $this->database->table('table')->insertOne(
+            [
+                'target' => 7340580095540599922,
+            ],
+        );
+
+        $this->assertEquals(
+            [
+                'target' => 7340580095540599922,
+            ],
+            $this->database->table('table')->select()->fetchAll()[0],
+        );
+    }
+
+    public function testSnowflakeCallingColumnMethod(): void
+    {
+        $schema = $this->schema('table');
+        $this->assertFalse($schema->exists());
+
+        $column = $schema->column('target')->snowflake();
+
+        $schema->save();
+
+        $schema = $this->schema('table');
+        $this->assertTrue($schema->exists());
+        $this->assertTrue($schema->column('target')->compare($column));
+        $this->assertSame('int', $schema->column('target')->getType());
+
+        $this->database->table('table')->insertOne(
+            [
+                'target' => 7340580095540599922,
+            ],
+        );
+
+        $this->assertEquals(
+            [
+                'target' => 7340580095540599922,
+            ],
+            $this->database->table('table')->select()->fetchAll()[0],
+        );
+    }
+
+    public function testSnowflakePrimary(): void
+    {
+        $schema = $this->schema('table');
+        $this->assertFalse($schema->exists());
+
+        $column = $schema->snowflake('target')->nullable(false);
+        $schema->setPrimaryKeys(['target']);
+        $schema->save();
+
+        $schema = $this->schema('table');
+        $this->assertTrue($schema->exists());
+
+        $this->assertTrue($schema->column('target')->compare($column));
+        $this->assertSame('int', $schema->column('target')->getType());
+        $this->assertSame(['target'], $schema->getPrimaryKeys());
+
+        $this->database->table('table')->insertOne(
+            [
+                'target' => 7340580095540599922,
+            ],
+        );
+
+        $this->assertEquals(
+            [
+                'target' => 7340580095540599922,
+            ],
+            $this->database->table('table')->select()->fetchAll()[0],
+        );
+    }
+
     public function testUlid(): void
     {
         $schema = $this->schema('table');

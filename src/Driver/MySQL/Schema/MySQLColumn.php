@@ -112,6 +112,7 @@ class MySQLColumn extends AbstractColumn
 
         //Additional types
         'json'        => 'json',
+        'snowflake'   => ['type' => 'bigint', 'size' => 20],
         'ulid'        => ['type' => 'varchar', 'size' => 26],
         'uuid'        => ['type' => 'varchar', 'size' => 36],
     ];
