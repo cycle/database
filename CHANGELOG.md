@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.15.0](https://github.com/cycle/database/compare/2.14.0...2.15.0) (2025-07-22)
+
+
+### Features
+
+* add `snowflake` column type alias ([#235](https://github.com/cycle/database/issues/235)) ([49a90c7](https://github.com/cycle/database/commit/49a90c7062c90f44e5e072d90f14a5a472643e8a))
+
 ## [2.14.0](https://github.com/cycle/database/compare/2.13.0...2.14.0) (2025-07-14)
 
 
