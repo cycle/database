@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.15.1](https://github.com/cycle/database/compare/2.15.0...2.15.1) (2025-12-12)
+
+
+### Bug Fixes
+
+* correct condition check for named parameters in Interpolator ([#238](https://github.com/cycle/database/issues/238)) ([283709e](https://github.com/cycle/database/commit/283709e7f7d6cba4c2a144744be261d0abb9f7d0))
+
 ## [2.15.0](https://github.com/cycle/database/compare/2.14.0...2.15.0) (2025-07-22)
 
 
