@@ -55,7 +55,7 @@ final class Interpolator
                         $value = \current($unnamed);
                         \next($unnamed);
                         return self::resolveValue($value, $options);
-                    case isset($named[$key]) || \array_key_exists($key, $named):
+                    case isset($key) && \array_key_exists($key, $named):
                         return self::resolveValue($named[$key], $options);
                     default:
                         return $match[0];
