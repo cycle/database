@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.15.2](https://github.com/cycle/database/compare/2.15.1...2.15.2) (2026-02-16)
+
+
+### Bug Fixes
+
+* Replace deprecated MySQL constant with scalar ([#237](https://github.com/cycle/database/issues/237)) ([b1a9cd7](https://github.com/cycle/database/commit/b1a9cd777c13a15b59d8d2ca90e3095a1b2e4720))
+
 ## [2.15.1](https://github.com/cycle/database/compare/2.15.0...2.15.1) (2025-12-12)
 
 
