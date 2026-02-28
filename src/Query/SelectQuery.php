@@ -326,12 +326,14 @@ class SelectQuery extends ActiveQuery implements
      *
      * @psalm-param non-empty-string $column Column to count by (every column by default).
      */
-    public function count(string $column = '*'): int
+    public function count(string $column = '*', bool $distinct = false): int
     {
         $select = clone $this;
 
         //To be escaped in compiler
-        $select->columns = ["COUNT({$column})"];
+        $select->columns = [
+            $distinct === true ? "COUNT(DISTINCT({$column}))" : "COUNT({$column})",
+        ];
         $select->orderBy = [];
         $select->groupBy = [];
 
