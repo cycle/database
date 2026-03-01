@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Unit\Query\Tokens;
 
 use PHPUnit\Framework\TestCase;
+use Cycle\Database\Query\Enum\LockMode;
+use Cycle\Database\Query\Enum\LockBehavior;
 use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\SelectQuery;
@@ -17,6 +19,7 @@ class SelectQueryTest extends TestCase
         $select
             ->from('table')
             ->columns('name', 'value')
+            ->forUpdate(LockBehavior::NoWait)
             ->where(['name' => 'Antony'])
             ->orWhere('id', '>', 1)
             ->orderBy('name', 'ASC')
@@ -34,7 +37,10 @@ class SelectQueryTest extends TestCase
 
         $this->assertEquals(
             [
-                'forUpdate' => false,
+                'forUpdate' => [
+                    'mode' => LockMode::Update,
+                    'behavior' => LockBehavior::NoWait,
+                ],
                 'from' => ['table'],
                 'join' => [],
                 'columns' => ['name', 'value'],

@@ -52,7 +52,7 @@ class SQLiteCompiler extends Compiler implements CachingCompilerInterface
     protected function selectQuery(QueryParameters $params, Quoter $q, array $tokens): string
     {
         // FOR UPDATE is not available
-        $tokens['forUpdate'] = false;
+        $tokens['forUpdate'] = null;
 
         return parent::selectQuery($params, $q, $tokens);
     }

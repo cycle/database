@@ -11,18 +11,20 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Query;
 
-use Cycle\Database\Injection\Expression;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Injection\SubQuery;
-use Cycle\Database\Query\Traits\WhereJsonTrait;
-use Cycle\Database\Driver\CompilerInterface;
-use Cycle\Database\Injection\FragmentInterface;
-use Cycle\Database\Query\Traits\HavingTrait;
+use Cycle\Database\StatementInterface;
+use Cycle\Database\Query\Enum\LockMode;
+use Cycle\Database\Injection\Expression;
+use Spiral\Pagination\PaginableInterface;
 use Cycle\Database\Query\Traits\JoinTrait;
+use Cycle\Database\Query\Enum\LockBehavior;
 use Cycle\Database\Query\Traits\TokenTrait;
 use Cycle\Database\Query\Traits\WhereTrait;
-use Cycle\Database\StatementInterface;
-use Spiral\Pagination\PaginableInterface;
+use Cycle\Database\Driver\CompilerInterface;
+use Cycle\Database\Query\Traits\HavingTrait;
+use Cycle\Database\Query\Traits\WhereJsonTrait;
+use Cycle\Database\Injection\FragmentInterface;
 
 /**
  * Builds select sql statements.
@@ -53,7 +55,10 @@ class SelectQuery extends ActiveQuery implements
     protected array $orderBy = [];
 
     protected array $groupBy = [];
-    protected bool $forUpdate = false;
+
+    /** @var array{mode: LockMode, behavior: LockBehavior}|null */
+    protected ?array $forUpdate = null;
+
     private ?int $limit = null;
     private ?int $offset = null;
 
@@ -124,12 +129,22 @@ class SelectQuery extends ActiveQuery implements
         return $this->columns;
     }
 
-    /**
-     * Select entities for the following update.
-     */
-    public function forUpdate(): self
+    public function forShare(LockBehavior $behavior = LockBehavior::Wait): self
     {
-        $this->forUpdate = true;
+        $this->forUpdate = [
+            'behavior' => $behavior,
+            'mode' => LockMode::Share,
+        ];
+
+        return $this;
+    }
+
+    public function forUpdate(LockBehavior $behavior = LockBehavior::Wait): self
+    {
+        $this->forUpdate = [
+            'behavior' => $behavior,
+            'mode' => LockMode::Update,
+        ];
 
         return $this;
     }

@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver;
 
+use Cycle\Database\Query\Enum\LockMode;
+use Cycle\Database\Query\Enum\LockBehavior;
 use Cycle\Database\Exception\CompilerException;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Injection\Parameter;
@@ -197,7 +199,7 @@ abstract class Compiler implements CompilerInterface
             $this->optional("\n", $this->excepts($params, $q, $tokens['except'])),
             $this->optional("\nORDER BY", $this->orderBy($params, $q, $tokens['orderBy'])),
             $this->optional("\n", $this->limit($params, $q, $tokens['limit'], $tokens['offset'])),
-            $this->optional(' ', $tokens['forUpdate'] ? 'FOR UPDATE' : ''),
+            $this->optional(' ', $this->forUpdate($tokens['forUpdate'])),
         );
     }
 
@@ -609,6 +611,46 @@ abstract class Compiler implements CompilerInterface
     protected function compileJsonOrderBy(string $path): string|FragmentInterface
     {
         return $path;
+    }
+
+    /**
+     * @param array{mode: LockMode, behavior: LockBehavior}|null $forUpdate
+     */
+    protected function forUpdate(?array $forUpdate): string
+    {
+        if ($forUpdate !== null) {
+            $arguments = [];
+
+            switch ($forUpdate['mode']) {
+                case LockMode::Update:
+                    $arguments[] = 'UPDATE';
+                    break;
+                case LockMode::Share:
+                    $arguments[] = 'SHARE';
+                    break;
+                case LockMode::NoKeyUpdate:
+                    $arguments[] = 'NO KEY UPDATE';
+                    break;
+                case LockMode::KeyShare:
+                    $arguments[] = 'KEY SHARE';
+                    break;
+            }
+
+            switch ($forUpdate['behavior']) {
+                case LockBehavior::Wait:
+                    break;
+                case LockBehavior::NoWait:
+                    $arguments[] = 'NOWAIT';
+                    break;
+                case LockBehavior::SkipLocked:
+                    $arguments[] = 'SKIP LOCKED';
+                    break;
+            }
+
+            return \sprintf('FOR %s', \implode(' ', $arguments));
+        }
+
+        return '';
     }
 
     private function arrayToInOperator(QueryParameters $params, Quoter $q, array $values, bool $in): string

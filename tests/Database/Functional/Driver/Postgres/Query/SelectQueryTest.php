@@ -513,4 +513,30 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery("SELECT * FROM {table} ORDER BY {logs}->>'created_at' DESC", $select);
     }
+
+    public function testSelectForUpdateLockModeUpdate(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->where('name', 'Antony')
+            ->forUpdate(noKey: true);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE {name} = ? FOR NO KEY UPDATE',
+            $select,
+        );
+    }
+
+    public function testSelectForUpdateLockModeShare(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->where('name', 'Antony')
+            ->forShare(keyOnly: true);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE {name} = ? FOR KEY SHARE',
+            $select,
+        );
+    }
 }
