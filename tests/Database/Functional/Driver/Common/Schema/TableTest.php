@@ -496,6 +496,7 @@ abstract class TableTest extends BaseTest
         );
 
         $this->assertSame(4, $table->select()->count('id', true));
+        $this->assertSame(4, $table->select()->count('DISTINCT(id)'));
     }
 
     public function setUp(): void
