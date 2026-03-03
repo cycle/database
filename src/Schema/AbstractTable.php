@@ -87,9 +87,8 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * @param DriverInterface $driver Parent driver.
      *
-     * @psalm-param non-empty-string $name Table name, must include table prefix.
-     *
      * @param string $prefix Database specific table prefix. Required for table renames.
+     * @psalm-param non-empty-string $name Table name, must include table prefix.
      */
     public function __construct(
         protected DriverInterface $driver,
@@ -612,9 +611,8 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * $table->string("name");
      * $table->text("some_column");
      *
-     * @psalm-param non-empty-string $type
-     *
      * @param array $arguments Type specific parameters.
+     * @psalm-param non-empty-string $type
      */
     public function __call(string $type, array $arguments): AbstractColumn
     {

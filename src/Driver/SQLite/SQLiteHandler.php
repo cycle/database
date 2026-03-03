@@ -198,10 +198,9 @@ class SQLiteHandler extends Handler
      *
      * @see http://stackoverflow.com/questions/4007014/alter-column-in-sqlite
      *
+     * @param array  $mapping (destination => source)
      * @psalm-param non-empty-string $source
      * @psalm-param non-empty-string $to
-     *
-     * @param array  $mapping (destination => source)
      *
      * @throws HandlerException
      */

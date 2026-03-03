@@ -145,9 +145,8 @@ class SQLServerColumn extends AbstractColumn
     protected string $enumConstraint = '';
 
     /**
-     * @psalm-param non-empty-string $table Table name.
-     *
      * @param DriverInterface $driver SQLServer columns are bit more complex.
+     * @psalm-param non-empty-string $table Table name.
      */
     public static function createInstance(
         string $table,
