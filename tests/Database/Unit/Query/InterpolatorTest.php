@@ -33,9 +33,6 @@ class InterpolatorTest extends TestCase
         );
     }
 
-    /**
-     * @requires PHP >= 8.1
-     */
     public function testEnumInterpolation(): void
     {
         $query = 'SELECT * FROM table WHERE enums = :str OR enumi = :int';
@@ -53,9 +50,6 @@ class InterpolatorTest extends TestCase
         );
     }
 
-    /**
-     * @requires PHP >= 8.1
-     */
     public function testUntypedEnumInterpolation(): void
     {
         $query = 'SELECT * FROM table WHERE enum = :enum';

@@ -174,9 +174,6 @@ abstract class TableTest extends BaseTest
         );
     }
 
-    /**
-     * @requires PHP >= 8.1
-     */
     public function testInsertTypedEnum(): void
     {
         $table = $this->database->table('table');
@@ -200,9 +197,6 @@ abstract class TableTest extends BaseTest
         );
     }
 
-    /**
-     * @requires PHP >= 8.1
-     */
     public function testInsertTypelessEnum(): void
     {
         $table = $this->database->table('table');
