@@ -22,4 +22,9 @@ class MemoryConnectionConfig extends FileConnectionConfig
     {
         parent::__construct(self::DATABASE_NAME, $options);
     }
+
+    public function formatExceptionMessage(string $message): string
+    {
+        return $message;
+    }
 }
