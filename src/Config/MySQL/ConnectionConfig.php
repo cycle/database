@@ -24,11 +24,15 @@ abstract class ConnectionConfig extends BaseConnectionConfig
      * @var array<PDOFlag, mixed>
      */
     protected const DEFAULT_PDO_OPTIONS = [
-        \PDO::ATTR_CASE               => \PDO::CASE_NATURAL,
-        \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
-        // TODO Should be moved into common driver settings.
-        \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES "UTF8"',
-        \PDO::ATTR_STRINGIFY_FETCHES  => false,
+        \PDO::ATTR_CASE => \PDO::CASE_NATURAL,
+        \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+        /**
+         * @see \PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since PHP 8.5
+         * @todo Replace with {@see \Pdo\Mysql::ATTR_INIT_COMMAND} when minimum PHP version is 8.5
+         * @todo Should be moved into common driver settings?
+         */
+        1002 => 'SET NAMES "UTF8"',
+        \PDO::ATTR_STRINGIFY_FETCHES => false,
     ];
 
     /**

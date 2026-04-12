@@ -112,10 +112,9 @@ abstract class AbstractForeignKey implements ForeignKeyInterface, ElementInterfa
      * Set foreign table name and key local column must reference to. Make sure local and foreign
      * column types are identical.
      *
-     * @@psalm-param non-empty-string $table Foreign table name with or without database prefix (see 3rd argument).
-     *
      * @param array $columns Foreign key names (id by default).
      * @param bool $forcePrefix When true foreign table will get same prefix as table being modified.
+     * @@psalm-param non-empty-string $table Foreign table name with or without database prefix (see 3rd argument).
      */
     public function references(
         string $table,

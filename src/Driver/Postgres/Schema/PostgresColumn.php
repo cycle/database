@@ -304,9 +304,8 @@ class PostgresColumn extends AbstractColumn
     protected bool $isPrimary = false;
 
     /**
-     * @psalm-param non-empty-string $table Table name.
-     *
      * @param DriverInterface $driver Postgres columns are bit more complex.
+     * @psalm-param non-empty-string $table Table name.
      */
     public static function createInstance(
         string $table,

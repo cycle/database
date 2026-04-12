@@ -315,9 +315,6 @@ abstract class TableTest extends BaseTest
         );
     }
 
-    /**
-     * @requires PHP >= 8.1
-     */
     public function testInsertTypedEnum(): void
     {
         $table = $this->database->table('table');
@@ -341,9 +338,6 @@ abstract class TableTest extends BaseTest
         );
     }
 
-    /**
-     * @requires PHP >= 8.1
-     */
     public function testInsertTypelessEnum(): void
     {
         $table = $this->database->table('table');
@@ -636,6 +630,7 @@ abstract class TableTest extends BaseTest
             ],
         );
 
+        $this->assertSame(4, $table->select()->count('id', true));
         $this->assertSame(4, $table->select()->count('DISTINCT(id)'));
     }
 

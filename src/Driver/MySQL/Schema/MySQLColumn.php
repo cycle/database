@@ -42,8 +42,9 @@ class MySQLColumn extends AbstractColumn
      */
     public const DATETIME_NOW = 'CURRENT_TIMESTAMP';
 
-    public const EXCLUDE_FROM_COMPARE = ['size', 'timezone', 'userType', 'attributes', 'first', 'after', 'unknownSize'];
+    public const EXCLUDE_FROM_COMPARE = ['size', 'timezone', 'userType', 'attributes', 'first', 'after', 'unknownSize', 'charset', 'collation'];
     protected const INTEGER_TYPES = ['tinyint', 'smallint', 'mediumint', 'int', 'bigint'];
+    protected const STRING_TYPES = ['varchar', 'char', 'text', 'tinytext', 'mediumtext', 'longtext', 'enum', 'set'];
 
     protected array $mapping = [
         //Primary sequences
@@ -193,6 +194,18 @@ class MySQLColumn extends AbstractColumn
     protected string $comment = '';
 
     /**
+     * Column character set.
+     */
+    #[ColumnAttribute(self::STRING_TYPES)]
+    protected string $charset = '';
+
+    /**
+     * Column collation.
+     */
+    #[ColumnAttribute(self::STRING_TYPES)]
+    protected string $collation = '';
+
+    /**
      * Column name to position after.
      */
     #[ColumnAttribute]
@@ -216,6 +229,14 @@ class MySQLColumn extends AbstractColumn
         $column->nullable = \strtolower($schema['Null']) === 'yes';
         $column->defaultValue = $schema['Default'];
         $column->autoIncrement = \stripos($schema['Extra'], 'auto_increment') !== false;
+
+        if (!empty($schema['Collation'])) {
+            $column->collation = $schema['Collation'];
+            $pos = \strpos($schema['Collation'], '_');
+            $column->charset = $pos !== false
+                ? \substr($schema['Collation'], 0, $pos)
+                : $schema['Collation'];
+        }
 
         if (
             !\preg_match(
@@ -322,6 +343,23 @@ class MySQLColumn extends AbstractColumn
             $statement = parent::sqlStatement($driver);
 
             $this->defaultValue = $defaultValue;
+
+            // Add CHARACTER SET and COLLATE for string-type columns
+            if ($this->charset !== '' || $this->collation !== '') {
+                $charsetClause = '';
+                if ($this->charset !== '') {
+                    $charsetClause .= ' CHARACTER SET ' . $this->charset;
+                }
+                if ($this->collation !== '') {
+                    $charsetClause .= ' COLLATE ' . $this->collation;
+                }
+                $statement = \preg_replace(
+                    '/ ((?:NOT )?NULL)\b/',
+                    $charsetClause . ' $1',
+                    $statement,
+                    1,
+                );
+            }
         }
 
         $this->comment === '' or $statement .= " COMMENT {$driver->quote($this->comment)}";
@@ -358,9 +396,16 @@ class MySQLColumn extends AbstractColumn
 
         $result = \Closure::fromCallable([parent::class, 'compare'])->bindTo($self)($initial);
 
-
         if ($self->type === 'varchar' || $self->type === 'varbinary') {
-            return $result && $self->size === $initial->size;
+            $result = $result && $self->size === $initial->size;
+        }
+
+        // Compare charset/collation only when both sides have explicit values
+        if ($result && $self->charset !== '' && $initial->charset !== '' && $self->charset !== $initial->charset) {
+            return false;
+        }
+        if ($result && $self->collation !== '' && $initial->collation !== '' && $self->collation !== $initial->collation) {
+            return false;
         }
 
         return $result;
@@ -420,6 +465,16 @@ class MySQLColumn extends AbstractColumn
         $this->type('blob');
 
         return $this;
+    }
+
+    public function getCharset(): string
+    {
+        return $this->charset;
+    }
+
+    public function getCollation(): string
+    {
+        return $this->collation;
     }
 
     public function getComment(): string

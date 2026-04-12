@@ -32,11 +32,10 @@ final class Database implements DatabaseInterface
     public const ISOLATION_READ_UNCOMMITTED = DriverInterface::ISOLATION_READ_UNCOMMITTED;
 
     /**
-     * @psalm-param non-empty-string $name Internal database name/id.
-     *
      * @param string $prefix Default database table prefix, will be used for all table identifiers.
      * @param DriverInterface $driver Driver instance responsible for database connection.
      * @param DriverInterface|null $readDriver Read-only driver connection.
+     * @psalm-param non-empty-string $name Internal database name/id.
      */
     public function __construct(
         private string $name,

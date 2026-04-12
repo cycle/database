@@ -77,9 +77,8 @@ interface DatabaseInterface
     /**
      * Execute statement and return number of affected rows.
      *
-     * @psalm-param non-empty-string $query
-     *
      * @param array $parameters Parameters to be binded into query.
+     * @psalm-param non-empty-string $query
      *
      * @throws StatementException
      */
@@ -88,9 +87,8 @@ interface DatabaseInterface
     /**
      * Execute statement and return query iterator.
      *
-     * @psalm-param non-empty-string $query
-     *
      * @param array  $parameters Parameters to be binded into query.
+     * @psalm-param non-empty-string $query
      *
      * @throws StatementException
      */

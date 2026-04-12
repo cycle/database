@@ -422,8 +422,8 @@ abstract class Compiler implements CompilerInterface
     }
 
     /**
-     * @psalm-return non-empty-string
      * @param mixed $name
+     * @psalm-return non-empty-string
      */
     protected function name(QueryParameters $params, Quoter $q, $name, bool $table = false): string
     {
@@ -439,8 +439,8 @@ abstract class Compiler implements CompilerInterface
     }
 
     /**
-     * @psalm-return non-empty-string
      * @param mixed $name
+     * @psalm-return non-empty-string
      */
     protected function nameWithAlias(
         QueryParameters $params,
@@ -477,8 +477,8 @@ abstract class Compiler implements CompilerInterface
     }
 
     /**
-     * @psalm-return non-empty-string
      * @param mixed $value
+     * @psalm-return non-empty-string
      */
     protected function value(QueryParameters $params, Quoter $q, $value): string
     {

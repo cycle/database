@@ -1,5 +1,33 @@
 # Changelog
 
+## [2.16.0](https://github.com/cycle/database/compare/2.15.2...2.16.0) (2026-03-19)
+
+
+### Features
+
+* Add charset and collation support for MySQL columns ([#246](https://github.com/cycle/database/issues/246)) ([26e33ef](https://github.com/cycle/database/commit/26e33efc15e5e8746c1e5c5d2d338a6d06929fa3))
+* Added $distinct parameter to SelectQuery::count ([#242](https://github.com/cycle/database/issues/242)) ([23842c0](https://github.com/cycle/database/commit/23842c068f76df42d76f5c19b56c2e3c4f7ac436))
+* update PHP version requirement to 8.1 ([#244](https://github.com/cycle/database/issues/244)) ([16e0874](https://github.com/cycle/database/commit/16e0874b80b1aa665ae9919e1f0e87045ce18364))
+
+
+### Styles
+
+* **php-cs-fixer:** fix coding standards ([16e0874](https://github.com/cycle/database/commit/16e0874b80b1aa665ae9919e1f0e87045ce18364))
+
+## [2.15.2](https://github.com/cycle/database/compare/2.15.1...2.15.2) (2026-02-16)
+
+
+### Bug Fixes
+
+* Replace deprecated MySQL constant with scalar ([#237](https://github.com/cycle/database/issues/237)) ([b1a9cd7](https://github.com/cycle/database/commit/b1a9cd777c13a15b59d8d2ca90e3095a1b2e4720))
+
+## [2.15.1](https://github.com/cycle/database/compare/2.15.0...2.15.1) (2025-12-12)
+
+
+### Bug Fixes
+
+* correct condition check for named parameters in Interpolator ([#238](https://github.com/cycle/database/issues/238)) ([283709e](https://github.com/cycle/database/commit/283709e7f7d6cba4c2a144744be261d0abb9f7d0))
+
 ## [2.15.0](https://github.com/cycle/database/compare/2.14.0...2.15.0) (2025-07-22)
 
 
