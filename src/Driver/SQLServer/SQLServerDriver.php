@@ -13,6 +13,8 @@ namespace Cycle\Database\Driver\SQLServer;
 
 use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Config\SQLServerDriverConfig;
+use Cycle\Database\Driver\CursorableInterface;
+use Cycle\Database\Driver\CursorOptions;
 use Cycle\Database\Driver\Driver;
 use Cycle\Database\Driver\PDOStatementInterface;
 use Cycle\Database\Driver\SQLServer\Query\SQLServerDeleteQuery;
@@ -23,8 +25,9 @@ use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Injection\ParameterInterface;
 use Cycle\Database\Query\QueryBuilder;
+use Cycle\Database\StatementInterface;
 
-class SQLServerDriver extends Driver
+class SQLServerDriver extends Driver implements CursorableInterface
 {
     /**
      * @var non-empty-string
@@ -60,6 +63,91 @@ class SQLServerDriver extends Driver
     public function getType(): string
     {
         return 'SQLServer';
+    }
+
+    /**
+     * Open a SQL Server server-side cursor for the given SELECT.
+     *
+     * Default cursor flavor is `STATIC` (snapshot in tempdb). Callers can request
+     * a different mode (KEYSET/DYNAMIC/FAST_FORWARD) by passing a
+     * {@see SQLServerCursorOptions} with a non-default {@see CursorType};
+     * note that only STATIC fulfills the snapshot-consistency contract of
+     * {@see CursorableInterface} — the others are exposed for users who accept
+     * different visibility semantics.
+     *
+     * The cursor is always `GLOBAL FORWARD_ONLY READ_ONLY`:
+     *  - `GLOBAL` — connection-scoped, survives across separate batches.
+     *    Each prepared statement is its own batch in pdo_sqlsrv; a `LOCAL`
+     *    cursor would die between DECLARE and OPEN.
+     *  - `FORWARD_ONLY READ_ONLY` — only `FETCH NEXT`, no UPDATEs via cursor.
+     *
+     * `FETCH NEXT` returns one row per round-trip, so no chunkSize knob applies.
+     *
+     * @return \Generator<int, array<array-key, mixed>>
+     *
+     * @throws DriverException
+     */
+    #[\Override]
+    public function cursor(
+        string $statement,
+        iterable $parameters = [],
+        CursorOptions $options = new SQLServerCursorOptions(),
+        int $mode = StatementInterface::FETCH_ASSOC,
+    ): \Generator {
+        $opts = SQLServerCursorOptions::from($options);
+
+        if ($this->getTransactionLevel() === 0) {
+            throw new DriverException(
+                'SQLServer cursor requires an active transaction. '
+                . 'Wrap the cursor iteration in Database::transaction() or call beginTransaction() before cursor().',
+            );
+        }
+
+        $cursorName = $opts->name ?? 'c_' . \bin2hex(\random_bytes(8));
+        $declareSql = "DECLARE [{$cursorName}] CURSOR GLOBAL FORWARD_ONLY {$opts->type->value} READ_ONLY FOR {$statement}";
+        $openSql = "OPEN [{$cursorName}]";
+        $fetchSql = "FETCH NEXT FROM [{$cursorName}]";
+        $closeSql = "CLOSE [{$cursorName}]";
+        $deallocateSql = "DEALLOCATE [{$cursorName}]";
+
+        try {
+            // Parameters are bound to DECLARE; SQL Server captures their values
+            // and substitutes them when OPEN materializes the cursor.
+            $this->statement($declareSql, $parameters);
+            $this->statement($openSql);
+
+            while (true) {
+                $fetchStatement = $this->statement($fetchSql);
+                $row = $fetchStatement->fetch($mode);
+                $fetchStatement->close();
+
+                if ($row === false) {
+                    break;
+                }
+
+                yield $row;
+            }
+        } finally {
+            try {
+                $this->statement($closeSql);
+            } catch (\Throwable) {
+                // Cursor may already be gone (e.g. transaction was rolled back) — swallow.
+            }
+            try {
+                $this->statement($deallocateSql);
+            } catch (\Throwable) {
+                // Same as above.
+            }
+
+            // Avoid polluting the prepared-statement cache with single-use SQL strings.
+            unset(
+                $this->queryCache[$declareSql],
+                $this->queryCache[$openSql],
+                $this->queryCache[$fetchSql],
+                $this->queryCache[$closeSql],
+                $this->queryCache[$deallocateSql],
+            );
+        }
     }
 
     /**
