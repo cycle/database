@@ -19,14 +19,17 @@ use Cycle\Database\Driver\Postgres\Query\PostgresDeleteQuery;
 use Cycle\Database\Driver\Postgres\Query\PostgresInsertQuery;
 use Cycle\Database\Driver\Postgres\Query\PostgresSelectQuery;
 use Cycle\Database\Driver\Postgres\Query\PostgresUpdateQuery;
+use Cycle\Database\Driver\CursorableInterface;
+use Cycle\Database\Driver\CursorOptions;
 use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Query\QueryBuilder;
+use Cycle\Database\StatementInterface;
 
 /**
  * Talks to postgres databases.
  */
-class PostgresDriver extends Driver
+class PostgresDriver extends Driver implements CursorableInterface
 {
     /**
      * Cached list of primary keys associated with their table names. Used by InsertBuilder to
@@ -194,6 +197,74 @@ class PostgresDriver extends Driver
         $this->createSavepoint($this->transactionLevel);
 
         return true;
+    }
+
+    /**
+     * Open a Postgres server-side cursor for the given SELECT and yield rows
+     * lazily. Provides snapshot consistency within the enclosing transaction.
+     *
+     * Requires an active transaction (cursor lifetime is bound to it unless
+     * {@see PostgresCursorOptions::$withHold} is set, in which case the cursor
+     * survives `COMMIT` and the result is materialized on the server). The
+     * cursor is declared with NO SCROLL — only forward fetches are performed.
+     * The cursor is closed when the generator is fully consumed or
+     * garbage-collected.
+     *
+     * @return \Generator<int, array<array-key, mixed>>
+     *
+     * @throws DriverException
+     */
+    public function cursor(
+        string $statement,
+        iterable $parameters = [],
+        CursorOptions $options = new CursorOptions(),
+        int $mode = StatementInterface::FETCH_ASSOC,
+    ): \Generator {
+        $opts = PostgresCursorOptions::from($options);
+
+        if ($opts->chunkSize < 1) {
+            throw new DriverException('Chunk size must be a positive integer.');
+        }
+
+        if ($this->getTransactionLevel() === 0) {
+            throw new DriverException(
+                'Postgres server-side cursor requires an active transaction. '
+                . 'Wrap the cursor iteration in Database::transaction() or call beginTransaction() before cursor().',
+            );
+        }
+
+        $cursorName = '"c_' . \bin2hex(\random_bytes(8)) . '"';
+        $holdClause = $opts->withHold ? ' WITH HOLD' : '';
+        $declareSql = "DECLARE {$cursorName} NO SCROLL CURSOR{$holdClause} FOR {$statement}";
+        $fetchSql = "FETCH FORWARD {$opts->chunkSize} FROM {$cursorName}";
+        $closeSql = "CLOSE {$cursorName}";
+
+        try {
+            $this->statement($declareSql, $parameters);
+
+            do {
+                $chunkStatement = $this->statement($fetchSql);
+                $rows = $chunkStatement->fetchAll($mode);
+                $chunkStatement->close();
+
+                foreach ($rows as $row) {
+                    yield $row;
+                }
+            } while (\count($rows) === $opts->chunkSize);
+        } finally {
+            try {
+                $this->statement($closeSql);
+            } catch (\Throwable) {
+                // Cursor may already be gone (e.g. transaction was rolled back) — swallow.
+            }
+
+            // Avoid polluting the prepared-statement cache with single-use SQL strings.
+            unset(
+                $this->queryCache[$declareSql],
+                $this->queryCache[$fetchSql],
+                $this->queryCache[$closeSql],
+            );
+        }
     }
 
     /**

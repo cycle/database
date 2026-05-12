@@ -13,8 +13,12 @@ namespace Cycle\Database;
 
 use Cycle\Database\Driver\Driver;
 use Cycle\Database\Driver\DriverInterface;
+use Cycle\Database\Driver\CursorableInterface;
+use Cycle\Database\Driver\CursorOptions;
+use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Query\DeleteQuery;
 use Cycle\Database\Query\InsertQuery;
+use Cycle\Database\Query\QueryParameters;
 use Cycle\Database\Query\SelectQuery;
 use Cycle\Database\Query\UpdateQuery;
 
@@ -129,6 +133,40 @@ final class Database implements DatabaseInterface
     {
         return $this->getDriver(self::READ)
             ->query($query, $parameters);
+    }
+
+    /**
+     * Open a server-side cursor for a compiled SELECT query and yield rows lazily.
+     *
+     * Not on {@see DatabaseInterface} for BC; exposed via `@method` annotation.
+     * The read driver must implement {@see CursorableInterface} (Postgres, SQLite,
+     * SQL Server); otherwise a {@see DriverException} is thrown. Cursor semantics —
+     * including snapshot consistency within the transaction — are preserved:
+     * this method intentionally has no fallback strategy.
+     *
+     * Driver-specific knobs are passed via {@see CursorOptions} subclasses
+     * (e.g. {@see \Cycle\Database\Driver\Postgres\PostgresCursorOptions},
+     * {@see \Cycle\Database\Driver\SQLServer\SQLServerCursorOptions}).
+     *
+     * @return \Generator<int, array<array-key, mixed>>
+     */
+    public function cursor(
+        SelectQuery $query,
+        CursorOptions $options = new CursorOptions(),
+        int $mode = StatementInterface::FETCH_ASSOC,
+    ): \Generator {
+        $driver = $this->getDriver(self::READ);
+        if (!$driver instanceof CursorableInterface) {
+            throw new DriverException(\sprintf(
+                'Server-side cursors are not supported for driver `%s`.',
+                $driver->getType(),
+            ));
+        }
+
+        $parameters = new QueryParameters();
+        $sql = $query->sqlStatement($parameters);
+
+        return $driver->cursor($sql, $parameters->getParameters(), $options, $mode);
     }
 
     public function insert(?string $table = null): InsertQuery

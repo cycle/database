@@ -6,6 +6,7 @@ namespace Cycle\Database\Tests\Functional\Driver\Common\Driver;
 
 use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Driver\Driver;
+use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
@@ -73,6 +74,21 @@ abstract class DriverTest extends BaseTest
         $driver->clearCache();
 
         self::assertEmpty($driver->testGetCache());
+    }
+
+    public function testCursorThrowsByDefault(): void
+    {
+        if (\in_array(static::DRIVER, ['postgres', 'sqlite', 'sqlserver'], true)) {
+            $this->markTestSkipped(\sprintf('Driver `%s` implements CursorableInterface.', static::DRIVER));
+        }
+
+        $this->expectException(DriverException::class);
+        $this->expectExceptionMessageMatches('/cursors are not supported/i');
+
+        // Database::cursor() checks CursorableInterface and throws for drivers that don't implement it.
+        \iterator_to_array(
+            $this->database->cursor($this->database->select('1')),
+        );
     }
 
     public function testWithoutCache(): void
