@@ -26,6 +26,14 @@ use Cycle\Database\Query\UpsertQuery;
  *
  * @method DatabaseInterface withoutCache() Get a new Database instance without query cache or the same instance
  *         if no cache is used. Will be added the next major release.
+ * @method \Generator cursor(SelectQuery $query, \Cycle\Database\Driver\CursorOptions $options = new \Cycle\Database\Driver\CursorOptions(), int $mode = StatementInterface::FETCH_ASSOC)
+ *         Open a server-side cursor for the SELECT query and yield rows lazily, with snapshot
+ *         consistency for the duration of the enclosing transaction. Requires the read driver to
+ *         implement {@see \Cycle\Database\Driver\CursorableInterface} (Postgres, SQLite, SQL Server)
+ *         and an active transaction. Driver-specific knobs (FETCH FORWARD batch, WITH HOLD,
+ *         SQL Server cursor type, …) are passed via driver-specific {@see CursorOptions} subclasses.
+ *         Throws {@see \Cycle\Database\Exception\DriverException} when the driver lacks cursor
+ *         support. Will be added to the interface in the next major release.
  */
 interface DatabaseInterface
 {
