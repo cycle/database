@@ -37,8 +37,7 @@ interface CursorableInterface extends DriverInterface
      *
      * @param iterable $parameters Query parameters (positional or named) bound to the SELECT.
      * @param CursorOptions $options Driver-specific cursor configuration. Drivers narrow the
-     *        type internally via their own `from()` factory (e.g.
-     *        {@see Postgres\PostgresCursorOptions::from()}).
+     *        type internally via their own `from()` factory (e.g. {@see Postgres\PostgresCursorOptions::from()}).
      * @param int $mode Row representation mode, one of {@see StatementInterface}::FETCH_*.
      * @psalm-param non-empty-string $statement
      *

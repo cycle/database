@@ -87,10 +87,11 @@ class SQLServerDriver extends Driver implements CursorableInterface
      *
      * @throws DriverException
      */
+    #[\Override]
     public function cursor(
         string $statement,
         iterable $parameters = [],
-        CursorOptions $options = new CursorOptions(),
+        CursorOptions $options = new SQLServerCursorOptions(),
         int $mode = StatementInterface::FETCH_ASSOC,
     ): \Generator {
         $opts = SQLServerCursorOptions::from($options);
@@ -102,7 +103,7 @@ class SQLServerDriver extends Driver implements CursorableInterface
             );
         }
 
-        $cursorName = 'c_' . \bin2hex(\random_bytes(8));
+        $cursorName = $opts->name ?? 'c_' . \bin2hex(\random_bytes(8));
         $declareSql = "DECLARE [{$cursorName}] CURSOR GLOBAL FORWARD_ONLY {$opts->type->value} READ_ONLY FOR {$statement}";
         $openSql = "OPEN [{$cursorName}]";
         $fetchSql = "FETCH NEXT FROM [{$cursorName}]";

@@ -214,10 +214,11 @@ class PostgresDriver extends Driver implements CursorableInterface
      *
      * @throws DriverException
      */
+    #[\Override]
     public function cursor(
         string $statement,
         iterable $parameters = [],
-        CursorOptions $options = new CursorOptions(),
+        CursorOptions $options = new PostgresCursorOptions(),
         int $mode = StatementInterface::FETCH_ASSOC,
     ): \Generator {
         $opts = PostgresCursorOptions::from($options);
@@ -233,7 +234,7 @@ class PostgresDriver extends Driver implements CursorableInterface
             );
         }
 
-        $cursorName = '"c_' . \bin2hex(\random_bytes(8)) . '"';
+        $cursorName = '"' . ($opts->name ?? 'c_' . \bin2hex(\random_bytes(8))) . '"';
         $holdClause = $opts->withHold ? ' WITH HOLD' : '';
         $declareSql = "DECLARE {$cursorName} NO SCROLL CURSOR{$holdClause} FOR {$statement}";
         $fetchSql = "FETCH FORWARD {$opts->chunkSize} FROM {$cursorName}";

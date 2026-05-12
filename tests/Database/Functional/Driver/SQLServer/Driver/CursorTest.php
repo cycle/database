@@ -39,6 +39,31 @@ class CursorTest extends CommonClass
         $this->assertSame(40, (int) $rows[4]['value']);
     }
 
+    public function testCursorUsesExplicitName(): void
+    {
+        $this->fillRows(3);
+
+        $rows = $this->database->transaction(
+            fn() => \iterator_to_array(
+                $this->database->cursor(
+                    $this->database->select()->from('sample_table')->orderBy('id'),
+                    new SQLServerCursorOptions(name: 'my_export_cursor'),
+                ),
+                false,
+            ),
+        );
+
+        $this->assertCount(3, $rows);
+    }
+
+    public function testCursorRejectsInvalidName(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/valid t-sql identifier/i');
+
+        new SQLServerCursorOptions(name: 'bad name');
+    }
+
     public function cursorTypes(): \Generator
     {
         yield 'STATIC' => [CursorType::Static];

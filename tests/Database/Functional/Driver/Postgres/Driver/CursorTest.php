@@ -73,6 +73,32 @@ class CursorTest extends CommonClass
         );
     }
 
+    public function testCursorUsesExplicitName(): void
+    {
+        $this->fillRows(3);
+        $name = 'my_export_cursor';
+
+        $rows = $this->database->transaction(
+            fn() => \iterator_to_array(
+                $this->database->cursor(
+                    $this->database->select()->from('sample_table')->orderBy('id'),
+                    new PostgresCursorOptions(name: $name),
+                ),
+                false,
+            ),
+        );
+
+        $this->assertCount(3, $rows);
+    }
+
+    public function testCursorRejectsInvalidName(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/valid postgresql identifier/i');
+
+        new PostgresCursorOptions(name: 'bad"name; DROP TABLE');
+    }
+
     public function testCursorWithHoldSurvivesCommit(): void
     {
         $this->fillRows(5);
