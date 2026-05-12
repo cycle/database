@@ -14,13 +14,13 @@ use Cycle\Database\Driver\CursorOptions;
 final class SQLServerCursorOptions extends CursorOptions
 {
     /**
-     * @param SQLServerCursorType $type Cursor flavor (snapshot semantics — see {@see SQLServerCursorType}).
-     *        The default {@see SQLServerCursorType::Static} fulfills the snapshot-consistency
+     * @param CursorType $type Cursor flavor (snapshot semantics — see {@see CursorType}).
+     *        The default {@see CursorType::Static} fulfills the snapshot-consistency
      *        contract of {@see \Cycle\Database\Driver\CursorableInterface}; other modes
      *        trade snapshot guarantees for different visibility semantics.
      */
     public function __construct(
-        public readonly SQLServerCursorType $type = SQLServerCursorType::Static,
+        public readonly CursorType $type = CursorType::Static,
     ) {
         parent::__construct();
     }

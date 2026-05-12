@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Functional\Driver\SQLServer\Driver;
 
 use Cycle\Database\Driver\SQLServer\SQLServerCursorOptions;
-use Cycle\Database\Driver\SQLServer\SQLServerCursorType;
+use Cycle\Database\Driver\SQLServer\CursorType;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Driver\CursorTest as CommonClass;
 
@@ -20,7 +20,7 @@ class CursorTest extends CommonClass
     /**
      * @dataProvider cursorTypes
      */
-    public function testCursorRespectsTypeOption(SQLServerCursorType $type): void
+    public function testCursorRespectsTypeOption(CursorType $type): void
     {
         $this->fillRows(5);
 
@@ -41,9 +41,9 @@ class CursorTest extends CommonClass
 
     public function cursorTypes(): \Generator
     {
-        yield 'STATIC' => [SQLServerCursorType::Static];
-        yield 'KEYSET' => [SQLServerCursorType::Keyset];
-        yield 'DYNAMIC' => [SQLServerCursorType::Dynamic];
-        yield 'FAST_FORWARD' => [SQLServerCursorType::FastForward];
+        yield 'STATIC' => [CursorType::Static];
+        yield 'KEYSET' => [CursorType::Keyset];
+        yield 'DYNAMIC' => [CursorType::Dynamic];
+        yield 'FAST_FORWARD' => [CursorType::FastForward];
     }
 }

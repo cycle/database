@@ -70,7 +70,7 @@ class SQLServerDriver extends Driver implements CursorableInterface
      *
      * Default cursor flavor is `STATIC` (snapshot in tempdb). Callers can request
      * a different mode (KEYSET/DYNAMIC/FAST_FORWARD) by passing a
-     * {@see SQLServerCursorOptions} with a non-default {@see SQLServerCursorType};
+     * {@see SQLServerCursorOptions} with a non-default {@see CursorType};
      * note that only STATIC fulfills the snapshot-consistency contract of
      * {@see CursorableInterface} — the others are exposed for users who accept
      * different visibility semantics.

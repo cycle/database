@@ -12,7 +12,7 @@ namespace Cycle\Database\Driver\SQLServer;
  * {@see \Cycle\Database\Driver\CursorableInterface}; other modes are exposed for
  * advanced use cases that accept different consistency trade-offs.
  */
-enum SQLServerCursorType: string
+enum CursorType: string
 {
     /**
      * `STATIC` — SQL Server copies the result set into `tempdb` at `OPEN` time;
