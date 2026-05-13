@@ -14,9 +14,11 @@ namespace Cycle\Database\Driver\SQLServer;
 use Cycle\Database\Driver\Compiler;
 use Cycle\Database\Driver\Quoter;
 use Cycle\Database\Driver\SQLServer\Injection\CompileJson;
+use Cycle\Database\Exception\CompilerException;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Injection\Parameter;
+use Cycle\Database\Query\ConflictAction;
 use Cycle\Database\Query\QueryParameters;
 
 /**
@@ -29,6 +31,18 @@ class SQLServerCompiler extends Compiler
      * in result set will be increaced by 1!
      */
     public const ROW_NUMBER = '_ROW_NUMBER_';
+
+    /**
+     * Aliases used in the generated MERGE statement.
+     *
+     * Note: SQL Server's MERGE has documented concurrency caveats even with HOLDLOCK
+     * (Aaron Bertrand: "Use Caution with SQL Server's MERGE Statement"). For high-throughput
+     * upsert workloads, a `BEGIN TRAN; UPDATE; IF @@ROWCOUNT = 0 INSERT; COMMIT` pattern
+     * may be more robust. We use MERGE here for atomicity in a single statement.
+     */
+    private const MERGE_TARGET_ALIAS = 'target';
+
+    private const MERGE_SOURCE_ALIAS = 'source';
 
     /**
      * @psalm-return non-empty-string
@@ -66,6 +80,90 @@ class SQLServerCompiler extends Compiler
             $output,
             \implode(', ', $values),
         );
+    }
+
+    /**
+     * Compile UPSERT as a MERGE statement.
+     *
+     * @psalm-return non-empty-string
+     */
+    protected function upsertQuery(QueryParameters $params, Quoter $q, array $tokens): string
+    {
+        $onConflict = SQLServerOnConflict::from($this->requireOnConflict($tokens));
+
+        if ($tokens['columns'] === []) {
+            throw new CompilerException('Upsert query must define at least one column.');
+        }
+
+        $conflictColumns = $onConflict->getTarget();
+        if ($conflictColumns === []) {
+            throw new CompilerException('Upsert query must define a conflict target.');
+        }
+
+        $values = [];
+        foreach ($tokens['values'] as $value) {
+            $values[] = $this->value($params, $q, $value);
+        }
+
+        $target = $this->quoteIdentifier(self::MERGE_TARGET_ALIAS);
+        $source = $this->quoteIdentifier(self::MERGE_SOURCE_ALIAS);
+
+        $matchOn = \implode(' AND ', \array_map(
+            function (string $column) use ($params, $q, $target, $source) {
+                $name = $this->name($params, $q, $column);
+                return \sprintf('%s.%s = %s.%s', $target, $name, $source, $name);
+            },
+            $conflictColumns,
+        ));
+
+        $insertColumns = $this->columns($params, $q, $tokens['columns']);
+        $insertValues = \implode(', ', \array_map(
+            fn(string $column) => $source . '.' . $this->name($params, $q, $column),
+            $tokens['columns'],
+        ));
+
+        $merge = \sprintf(
+            'MERGE INTO %s WITH (HOLDLOCK) AS %s USING (VALUES %s) AS %s (%s) ON %s',
+            $this->name($params, $q, $tokens['table'], true),
+            $target,
+            \implode(', ', $values),
+            $source,
+            $insertColumns,
+            $matchOn,
+        );
+
+        if ($onConflict->getAction() !== ConflictAction::Nothing) {
+            $updates = $this->upsertUpdateClause(
+                $params,
+                $q,
+                $tokens['columns'],
+                $conflictColumns,
+                $onConflict->getUpdate(),
+                self::MERGE_SOURCE_ALIAS,
+                self::MERGE_TARGET_ALIAS,
+            );
+
+            $merge .= ' WHEN MATCHED THEN UPDATE SET ' . $updates;
+        }
+
+        $merge .= \sprintf(
+            ' WHEN NOT MATCHED THEN INSERT (%s) VALUES (%s)',
+            $insertColumns,
+            $insertValues,
+        );
+
+        if (empty($tokens['return'])) {
+            return $merge . ';';
+        }
+
+        $output = \implode(', ', \array_map(
+            fn(string|FragmentInterface|null $return) => $return instanceof FragmentInterface
+                ? $this->fragment($params, $q, $return)
+                : 'INSERTED.' . $this->quoteIdentifier($return),
+            $tokens['return'],
+        ));
+
+        return \sprintf('%s OUTPUT %s;', $merge, $output);
     }
 
     /**

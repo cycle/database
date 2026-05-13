@@ -29,6 +29,7 @@ class InsertQueryTest extends TestCase
                 'table' => 'table',
                 'columns' => ['name', 'value'],
                 'values' => [new Parameter(['Antony', 1])],
+                'onConflict' => null,
             ],
             $insert->getTokens(),
         );
