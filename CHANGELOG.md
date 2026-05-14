@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.17.0](https://github.com/cycle/database/compare/2.16.0...2.17.0) (2026-05-14)
+
+
+### Features
+
+* Add server-side cursors for streaming SELECT results ([#247](https://github.com/cycle/database/issues/247)) ([2acc10e](https://github.com/cycle/database/commit/2acc10e0e709c24f35fc3d0d93cf57189ead89fb))
+
+
+### Code Refactoring
+
+* Rename `CursorableInterface` to `CursorInterface` ([89dbfda](https://github.com/cycle/database/commit/89dbfdabf3361655316870ade76155a9fa545712))
+
 ## [2.16.0](https://github.com/cycle/database/compare/2.15.2...2.16.0) (2026-03-19)
 
 
