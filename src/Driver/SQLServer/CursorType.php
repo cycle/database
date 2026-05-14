@@ -9,7 +9,7 @@ namespace Cycle\Database\Driver\SQLServer;
  *
  * Controls what the cursor sees over its lifetime versus the underlying table state.
  * Only {@see self::Static} fulfills the snapshot-consistency contract of
- * {@see \Cycle\Database\Driver\CursorableInterface}; other modes are exposed for
+ * {@see \Cycle\Database\Driver\CursorInterface}; other modes are exposed for
  * advanced use cases that accept different consistency trade-offs.
  */
 enum CursorType: string

@@ -79,13 +79,13 @@ abstract class DriverTest extends BaseTest
     public function testCursorThrowsByDefault(): void
     {
         if (\in_array(static::DRIVER, ['postgres', 'sqlite', 'sqlserver'], true)) {
-            $this->markTestSkipped(\sprintf('Driver `%s` implements CursorableInterface.', static::DRIVER));
+            $this->markTestSkipped(\sprintf('Driver `%s` implements CursorInterface.', static::DRIVER));
         }
 
         $this->expectException(DriverException::class);
         $this->expectExceptionMessageMatches('/cursors are not supported/i');
 
-        // Database::cursor() checks CursorableInterface and throws for drivers that don't implement it.
+        // Database::cursor() checks CursorInterface and throws for drivers that don't implement it.
         \iterator_to_array(
             $this->database->cursor($this->database->select('1')),
         );

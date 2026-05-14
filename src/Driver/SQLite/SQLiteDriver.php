@@ -13,7 +13,7 @@ namespace Cycle\Database\Driver\SQLite;
 
 use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Config\SQLiteDriverConfig;
-use Cycle\Database\Driver\CursorableInterface;
+use Cycle\Database\Driver\CursorInterface;
 use Cycle\Database\Driver\CursorOptions;
 use Cycle\Database\Driver\Driver;
 use Cycle\Database\Driver\SQLite\Query\SQLiteDeleteQuery;
@@ -25,7 +25,7 @@ use Cycle\Database\Query\InsertQuery;
 use Cycle\Database\Query\QueryBuilder;
 use Cycle\Database\StatementInterface;
 
-class SQLiteDriver extends Driver implements CursorableInterface
+class SQLiteDriver extends Driver implements CursorInterface
 {
     /**
      * @param SQLiteDriverConfig $config
@@ -56,7 +56,7 @@ class SQLiteDriver extends Driver implements CursorableInterface
      * SQLite has no SQL-level DECLARE CURSOR, but its core engine is already
      * row-oriented: every `PDOStatement::fetch()` advances the prepared
      * statement by exactly one row via `sqlite3_step()`, pulling it from disk
-     * without buffering the full result set. The {@see CursorableInterface}
+     * without buffering the full result set. The {@see CursorInterface}
      * contract (snapshot consistency for the duration of the enclosing
      * transaction) is therefore satisfied by the engine + an active
      * transaction:

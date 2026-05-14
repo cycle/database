@@ -19,7 +19,7 @@ use Cycle\Database\Driver\Postgres\Query\PostgresDeleteQuery;
 use Cycle\Database\Driver\Postgres\Query\PostgresInsertQuery;
 use Cycle\Database\Driver\Postgres\Query\PostgresSelectQuery;
 use Cycle\Database\Driver\Postgres\Query\PostgresUpdateQuery;
-use Cycle\Database\Driver\CursorableInterface;
+use Cycle\Database\Driver\CursorInterface;
 use Cycle\Database\Driver\CursorOptions;
 use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\StatementException;
@@ -29,7 +29,7 @@ use Cycle\Database\StatementInterface;
 /**
  * Talks to postgres databases.
  */
-class PostgresDriver extends Driver implements CursorableInterface
+class PostgresDriver extends Driver implements CursorInterface
 {
     /**
      * Cached list of primary keys associated with their table names. Used by InsertBuilder to
