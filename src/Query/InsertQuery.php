@@ -130,13 +130,9 @@ class InsertQuery extends ActiveQuery
      */
     public function onConflict(OnConflict|string|array $conflict): self
     {
-        if ($conflict instanceof OnConflict) {
-            $this->onConflict = $conflict;
-            return $this;
-        }
-
-        $columns = \is_array($conflict) ? \array_values($conflict) : [$conflict];
-        $this->onConflict = OnConflict::target($columns)->doUpdate();
+        $this->onConflict = $conflict instanceof OnConflict
+            ? $conflict
+            : OnConflict::target($conflict)->doUpdate();
 
         return $this;
     }

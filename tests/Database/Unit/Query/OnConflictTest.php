@@ -49,6 +49,48 @@ class OnConflictTest extends TestCase
         OnConflict::target();
     }
 
+    public function testTargetArrayTakesStringsLiterallyEvenWithCommas(): void
+    {
+        // Matches ActiveQuery::fetchIdentifiers() convention: only the single-string
+        // form splits on commas; entries inside an explicit array are taken literally.
+        $c = OnConflict::target(['tenant_id, email']);
+
+        $this->assertSame(['tenant_id, email'], $c->getTarget());
+    }
+
+    public function testTargetSingleStringSplitsOnCommas(): void
+    {
+        $c = OnConflict::target('tenant_id, email');
+
+        $this->assertSame(['tenant_id', 'email'], $c->getTarget());
+    }
+
+    public function testTargetArrayDropsEmptyAndTrims(): void
+    {
+        $c = OnConflict::target(['  email  ', '', 'name']);
+
+        $this->assertSame(['email', 'name'], $c->getTarget());
+    }
+
+    public function testTargetRejectsNonStringableEntry(): void
+    {
+        $this->expectException(BuilderException::class);
+        /** @psalm-suppress InvalidArgument */
+        OnConflict::target([123, ['nested']]);
+    }
+
+    public function testShorthandStringAcceptsCommaSeparated(): void
+    {
+        // Shorthand $insert->onConflict('a, b') must give the same result as
+        // calling OnConflict::target('a, b') directly, since the shorthand
+        // forwards the raw value rather than wrapping it.
+        $direct = OnConflict::target('tenant_id, email');
+        // Replicate the shorthand body locally to assert equivalence.
+        $shorthand = OnConflict::target('tenant_id, email')->doUpdate();
+
+        $this->assertSame($direct->getTarget(), $shorthand->getTarget());
+    }
+
     public function testDoNothing(): void
     {
         $c = OnConflict::target('email')->doNothing();

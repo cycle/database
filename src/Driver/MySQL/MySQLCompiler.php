@@ -68,9 +68,14 @@ class MySQLCompiler extends Compiler implements CachingCompilerInterface
         );
 
         if ($onConflict->getAction() === ConflictAction::Nothing) {
-            // MySQL has no DO NOTHING — emulate with a no-op self-assignment.
-            $first = $this->name($params, $q, $tokens['columns'][0]);
-            return $head . ' ON DUPLICATE KEY UPDATE ' . \sprintf('%s = %s', $first, $first);
+            // MySQL has no DO NOTHING — emulate with a no-op self-assignment on the
+            // conflict-target column (or the first inserted column as a fallback).
+            // Using the target column is the conventional idiom and is more predictable
+            // for schemas where the first inserted column is unrelated to the conflict.
+            $target = $onConflict->getTarget();
+            $noopColumn = $target[0] ?? $tokens['columns'][0];
+            $name = $this->name($params, $q, $noopColumn);
+            return $head . ' ON DUPLICATE KEY UPDATE ' . \sprintf('%s = %s', $name, $name);
         }
 
         $updates = $this->upsertUpdateClause(

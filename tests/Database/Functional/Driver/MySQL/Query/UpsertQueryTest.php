@@ -72,6 +72,22 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    public function testDoNothingUsesTargetWhenItIsNotFirstColumn(): void
+    {
+        // payload comes first in the inserted column list; the conventional no-op
+        // self-assignment should still reference the conflict target column, not
+        // the first inserted one.
+        $q = $this->database->insert('logs')
+            ->values(['payload' => 'p', 'request_id' => 'r1'])
+            ->onConflict(OnConflict::target('request_id')->doNothing());
+
+        $this->assertSameQuery(
+            'INSERT INTO {logs} ({payload}, {request_id}) VALUES (?, ?) AS {new_row} '
+            . 'ON DUPLICATE KEY UPDATE {request_id} = {request_id}',
+            $q,
+        );
+    }
+
     public function testCustomRowAlias(): void
     {
         $q = $this->database->insert('users')

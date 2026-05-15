@@ -18,10 +18,12 @@ use Cycle\Database\Query\QueryParameters;
  *    Default alias is {@see self::DEFAULT_ROW_ALIAS}. Customize only when it
  *    collides with a real column name your update expressions reference.
  *
- * Note: MySQL's `ON DUPLICATE KEY UPDATE` fires on ANY matching unique index,
- * not on a specific target. The {@see self::target()} columns are accepted but
- * ignored by the compiler at SQL generation time (kept for portability with
- * Postgres/SQLite).
+ * Note on target columns: MySQL's `ON DUPLICATE KEY UPDATE` fires on ANY matching
+ * unique index, so the {@see self::target()} list does NOT drive which constraint
+ * is checked. It IS however used by the compiler to compute the auto-update list
+ * when {@see self::doUpdate()} is called without an explicit column list — target
+ * columns are excluded from the auto-generated `SET col = new_row.col` clause,
+ * matching Postgres/SQLite semantics.
  */
 final class MySQLOnConflict extends OnConflict
 {

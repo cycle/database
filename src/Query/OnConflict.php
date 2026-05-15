@@ -160,7 +160,17 @@ class OnConflict
     }
 
     /**
-     * @param array<array-key, string|array<array-key, mixed>> $input
+     * Flatten variadic input from {@see self::target()} to a clean column list.
+     *
+     * Matches the {@see \Cycle\Database\Query\ActiveQuery::fetchIdentifiers()} convention:
+     *  - a single string argument is split on commas (so `target('a, b')` → `['a', 'b']`);
+     *  - inside an array argument, strings are taken literally (so `target(['a, b'])`
+     *    yields a single literal column named `'a, b'`).
+     *
+     * In both branches values are trimmed, empty entries dropped, and non-stringable
+     * values rejected with a {@see BuilderException}.
+     *
+     * @param array<array-key, mixed> $input
      * @return list<non-empty-string>
      */
     protected static function flatten(array $input): array
@@ -169,19 +179,56 @@ class OnConflict
         foreach ($input as $item) {
             if (\is_array($item)) {
                 foreach ($item as $name) {
-                    $result[] = (string) $name;
+                    self::collectLiteral($result, $name);
                 }
                 continue;
             }
-            foreach (\explode(',', $item) as $name) {
-                $name = \trim($name);
-                if ($name !== '') {
-                    $result[] = $name;
-                }
-            }
+            self::collectSplit($result, $item);
         }
 
         /** @var list<non-empty-string> $result */
         return $result;
+    }
+
+    /**
+     * String entry: split on commas, trim parts, drop empties.
+     *
+     * @param list<string> $result
+     */
+    private static function collectSplit(array &$result, mixed $name): void
+    {
+        self::assertStringable($name);
+
+        foreach (\explode(',', (string) $name) as $part) {
+            $part = \trim($part);
+            if ($part !== '') {
+                $result[] = $part;
+            }
+        }
+    }
+
+    /**
+     * Array entry: take the value literally — only trim and drop empties.
+     *
+     * @param list<string> $result
+     */
+    private static function collectLiteral(array &$result, mixed $name): void
+    {
+        self::assertStringable($name);
+
+        $name = \trim((string) $name);
+        if ($name !== '') {
+            $result[] = $name;
+        }
+    }
+
+    private static function assertStringable(mixed $name): void
+    {
+        if (!\is_string($name) && !$name instanceof \Stringable) {
+            throw new BuilderException(\sprintf(
+                'Conflict target column must be a string, %s given.',
+                \get_debug_type($name),
+            ));
+        }
     }
 }
