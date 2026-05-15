@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\MySQL;
 
+use Cycle\Database\Query\Enum\LockMode;
+use Cycle\Database\Query\Enum\LockBehavior;
 use Cycle\Database\Driver\CachingCompilerInterface;
 use Cycle\Database\Driver\Compiler;
 use Cycle\Database\Driver\MySQL\Injection\CompileJson;
@@ -68,5 +70,41 @@ class MySQLCompiler extends Compiler implements CachingCompilerInterface
     protected function compileJsonOrderBy(string $path): FragmentInterface
     {
         return new CompileJson($path);
+    }
+
+    /**
+     * @param array{mode: LockMode, behavior: LockBehavior}|null $forUpdate
+     */
+    protected function forUpdate(?array $forUpdate): string
+    {
+        if ($forUpdate !== null) {
+            $arguments = [];
+
+            switch ($forUpdate['mode']) {
+                case LockMode::Share:
+                case LockMode::KeyShare:
+                    $arguments[] = 'SHARE';
+                    break;
+                case LockMode::Update:
+                case LockMode::NoKeyUpdate:
+                    $arguments[] = 'UPDATE';
+                    break;
+            }
+
+            switch ($forUpdate['behavior']) {
+                case LockBehavior::Wait:
+                    break;
+                case LockBehavior::NoWait:
+                    $arguments[] = 'NOWAIT';
+                    break;
+                case LockBehavior::SkipLocked:
+                    $arguments[] = 'SKIP LOCKED';
+                    break;
+            }
+
+            return \sprintf('FOR %s', \implode(' ', $arguments));
+        }
+
+        return '';
     }
 }

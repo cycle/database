@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Functional\Driver\Common\Query;
 
+use Cycle\Database\Query\Enum\LockBehavior;
 use Cycle\Database\Exception\BuilderException;
 use Cycle\Database\Exception\CompilerException;
 use Cycle\Database\Exception\CompilerException\UnexpectedOperatorException;
@@ -2154,7 +2155,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
-    public function testSelectForUpdate(): void
+    public function testSelectForUpdateLockModeUpdate(): void
     {
         $select = $this->database->select()
             ->from(['users'])
@@ -2163,6 +2164,64 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
         $this->assertSameQuery(
             'SELECT * FROM {users} WHERE {name} = ? FOR UPDATE',
+            $select,
+        );
+    }
+
+    public function testSelectForUpdateLockModeShare(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->where('name', 'Antony')
+            ->forShare();
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE {name} = ? FOR SHARE',
+            $select,
+        );
+    }
+
+    public function testSelectForUpdateLockBehaviorWait(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->where('name', 'Antony')
+            ->forUpdate(
+                behavior: LockBehavior::Wait,
+            );
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE {name} = ? FOR UPDATE',
+            $select,
+        );
+    }
+
+    public function testSelectForUpdateLockBehaviorNoWait(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->where('name', 'Antony')
+            ->forUpdate(
+                behavior: LockBehavior::NoWait,
+            );
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE {name} = ? FOR UPDATE NOWAIT',
+            $select,
+        );
+    }
+
+    public function testSelectForUpdateLockBehaviorSkipLocked(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->where('name', 'Antony')
+            ->forUpdate(
+                behavior: LockBehavior::SkipLocked,
+            );
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE {name} = ? FOR UPDATE SKIP LOCKED',
             $select,
         );
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Functional\Driver\SQLServer\Query;
 
 // phpcs:ignore
+use Cycle\Database\Query\Enum\LockBehavior;
 use Cycle\Database\Tests\Functional\Driver\Common\Query\SelectQueryTest as CommonClass;
 
 /**
@@ -96,19 +97,6 @@ class SelectQueryTest extends CommonClass
             [
                 21,
             ],
-            $select,
-        );
-    }
-
-    public function testSelectForUpdate(): void
-    {
-        $select = $this->database->select()
-            ->from(['users'])
-            ->where('name', 'Antony')
-            ->forUpdate();
-
-        $this->assertSameQuery(
-            'SELECT * FROM {users} WITH(UPDLOCK,ROWLOCK) WHERE {name} = ?',
             $select,
         );
     }
@@ -558,6 +546,77 @@ class SelectQueryTest extends CommonClass
 
         $this->assertSameQuery(
             "SELECT * FROM {table} ORDER BY json_value({logs}, '$.\"created_at\"') DESC",
+            $select,
+        );
+    }
+
+    public function testSelectForUpdateLockModeUpdate(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->where('name', 'Antony')
+            ->forUpdate();
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WITH(UPDLOCK) WHERE {name} = ?',
+            $select,
+        );
+    }
+
+    public function testSelectForUpdateLockModeShare(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->where('name', 'Antony')
+            ->forShare();
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WITH(HOLDLOCK) WHERE {name} = ?',
+            $select,
+        );
+    }
+
+    public function testSelectForUpdateLockBehaviorWait(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->where('name', 'Antony')
+            ->forUpdate(
+                behavior: LockBehavior::Wait,
+            );
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WITH(UPDLOCK) WHERE {name} = ?',
+            $select,
+        );
+    }
+
+    public function testSelectForUpdateLockBehaviorNoWait(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->where('name', 'Antony')
+            ->forUpdate(
+                behavior: LockBehavior::NoWait,
+            );
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WITH(UPDLOCK,NOWAIT) WHERE {name} = ?',
+            $select,
+        );
+    }
+
+    public function testSelectForUpdateLockBehaviorSkipLocked(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->where('name', 'Antony')
+            ->forUpdate(
+                behavior: LockBehavior::SkipLocked,
+            );
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WITH(UPDLOCK,READPAST) WHERE {name} = ?',
             $select,
         );
     }

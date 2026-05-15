@@ -13,6 +13,8 @@ namespace Cycle\Database\Driver\SQLServer;
 
 use Cycle\Database\Driver\Compiler;
 use Cycle\Database\Driver\Quoter;
+use Cycle\Database\Query\Enum\LockMode;
+use Cycle\Database\Query\Enum\LockBehavior;
 use Cycle\Database\Driver\SQLServer\Injection\CompileJson;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Injection\FragmentInterface;
@@ -164,6 +166,42 @@ class SQLServerCompiler extends Compiler
         return new CompileJson($path);
     }
 
+    /**
+     * @param array{mode: LockMode, behavior: LockBehavior}|null $forUpdate
+     */
+    protected function forUpdate(?array $forUpdate): string
+    {
+        if ($forUpdate !== null) {
+            $arguments = [];
+
+            switch ($forUpdate['mode']) {
+                case LockMode::Share:
+                case LockMode::KeyShare:
+                    $arguments[] = 'HOLDLOCK';
+                    break;
+                case LockMode::Update:
+                case LockMode::NoKeyUpdate:
+                    $arguments[] = 'UPDLOCK';
+                    break;
+            }
+
+            switch ($forUpdate['behavior']) {
+                case LockBehavior::Wait:
+                    break;
+                case LockBehavior::NoWait:
+                    $arguments[] = 'NOWAIT';
+                    break;
+                case LockBehavior::SkipLocked:
+                    $arguments[] = 'READPAST';
+                    break;
+            }
+
+            return \sprintf('WITH(%s)', \implode(',', $arguments));
+        }
+
+        return '';
+    }
+
     private function baseSelect(QueryParameters $params, Quoter $q, array $tokens): string
     {
         // This statement(s) parts should be processed first to define set of table and column aliases
@@ -175,12 +213,14 @@ class SQLServerCompiler extends Compiler
             $this->nameWithAlias(new QueryParameters(), $q, $join['outer'], $join['alias'], true);
         }
 
+
+
         return \sprintf(
             "SELECT%s %s\nFROM %s%s%s%s%s%s%s%s%s%s%s",
             $this->optional(' ', $this->distinct($params, $q, $tokens['distinct'])),
             $this->columns($params, $q, $tokens['columns']),
             \implode(', ', $tables),
-            $this->optional(' ', $tokens['forUpdate'] ? 'WITH (UPDLOCK,ROWLOCK)' : '', ' '),
+            $this->optional(' ', $this->forUpdate($tokens['forUpdate']), ' '),
             $this->optional(' ', $this->joins($params, $q, $tokens['join']), ' '),
             $this->optional("\nWHERE", $this->where($params, $q, $tokens['where'])),
             $this->optional("\nGROUP BY", $this->groupBy($params, $q, $tokens['groupBy']), ' '),

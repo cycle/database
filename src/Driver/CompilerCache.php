@@ -151,11 +151,18 @@ final class CompilerCache implements CompilerInterface
      */
     protected function hashSelectQuery(QueryParameters $params, array $tokens): string
     {
+        $forUpdate = $tokens['forUpdate'];
+        if ($forUpdate !== null) {
+            $forUpdate = $forUpdate['mode']->name . '_' . $forUpdate['behavior']->name;
+        } else {
+            $forUpdate = '';
+        }
+
         // stable part of hash
         if (\is_array($tokens['distinct']) && isset($tokens['distinct']['on'])) {
-            $hash = 's_' . $tokens['forUpdate'] . '_on_' . $tokens['distinct']['on'];
+            $hash = 's_' . $forUpdate . '_on_' . $tokens['distinct']['on'];
         } else {
-            $hash = 's_' . $tokens['forUpdate'] . '_' . $tokens['distinct'];
+            $hash = 's_' . $forUpdate . '_' . $tokens['distinct'];
         }
 
         foreach ($tokens['from'] as $table) {
