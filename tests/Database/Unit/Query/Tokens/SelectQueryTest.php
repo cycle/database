@@ -67,4 +67,53 @@ class SelectQueryTest extends TestCase
             $select->getTokens(),
         );
     }
+
+    public function testWrapWhereOnEmptyIsNoop(): void
+    {
+        $select = (new SelectQuery())->from('table');
+        $select->wrapWhere();
+
+        $this->assertSame([], $select->getTokens()['where']);
+    }
+
+    public function testWrapWhereEnclosesExistingTokens(): void
+    {
+        $select = (new SelectQuery())
+            ->from('table')
+            ->where('a', 1)
+            ->orWhere('a', 2)
+            ->wrapWhere()
+            ->where('b', 3);
+
+        $this->assertEquals(
+            [
+                ['AND', '('],
+                ['AND', ['a', '=', new Parameter(1)]],
+                ['OR', ['a', '=', new Parameter(2)]],
+                ['', ')'],
+                ['AND', ['b', '=', new Parameter(3)]],
+            ],
+            $select->getTokens()['where'],
+        );
+    }
+
+    public function testWrapWhereProtectsAgainstLaterOrWhere(): void
+    {
+        // Simulates a scope condition guarded by wrapWhere against a later user `orWhere`.
+        $select = (new SelectQuery())
+            ->from('table')
+            ->where('deleted_at', null)
+            ->wrapWhere()
+            ->orWhere('id', 5);
+
+        $this->assertEquals(
+            [
+                ['AND', '('],
+                ['AND', ['deleted_at', '=', new Parameter(null)]],
+                ['', ')'],
+                ['OR', ['id', '=', new Parameter(5)]],
+            ],
+            $select->getTokens()['where'],
+        );
+    }
 }
