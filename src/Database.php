@@ -13,7 +13,7 @@ namespace Cycle\Database;
 
 use Cycle\Database\Driver\Driver;
 use Cycle\Database\Driver\DriverInterface;
-use Cycle\Database\Driver\CursorableInterface;
+use Cycle\Database\Driver\CursorInterface;
 use Cycle\Database\Driver\CursorOptions;
 use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Query\DeleteQuery;
@@ -139,7 +139,7 @@ final class Database implements DatabaseInterface
      * Open a server-side cursor for a compiled SELECT query and yield rows lazily.
      *
      * Not on {@see DatabaseInterface} for BC; exposed via `@method` annotation.
-     * The read driver must implement {@see CursorableInterface} (Postgres, SQLite,
+     * The read driver must implement {@see CursorInterface} (Postgres, SQLite,
      * SQL Server); otherwise a {@see DriverException} is thrown. Cursor semantics —
      * including snapshot consistency within the transaction — are preserved:
      * this method intentionally has no fallback strategy.
@@ -156,7 +156,7 @@ final class Database implements DatabaseInterface
         int $mode = StatementInterface::FETCH_ASSOC,
     ): \Generator {
         $driver = $this->getDriver(self::READ);
-        if (!$driver instanceof CursorableInterface) {
+        if (!$driver instanceof CursorInterface) {
             throw new DriverException(\sprintf(
                 'Server-side cursors are not supported for driver `%s`.',
                 $driver->getType(),

@@ -16,7 +16,7 @@ final class SQLServerCursorOptions extends CursorOptions
     /**
      * @param CursorType $type Cursor flavor (snapshot semantics — see {@see CursorType}).
      *        The default {@see CursorType::Static} fulfills the snapshot-consistency
-     *        contract of {@see \Cycle\Database\Driver\CursorableInterface}; other modes
+     *        contract of {@see \Cycle\Database\Driver\CursorInterface}; other modes
      *        trade snapshot guarantees for different visibility semantics.
      * @param string|null $name Optional cursor name. When null, the driver generates a random
      *        unique name per call (collision-free, suitable for reusing the same options DTO

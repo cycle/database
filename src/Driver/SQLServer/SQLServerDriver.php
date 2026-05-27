@@ -13,7 +13,7 @@ namespace Cycle\Database\Driver\SQLServer;
 
 use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Config\SQLServerDriverConfig;
-use Cycle\Database\Driver\CursorableInterface;
+use Cycle\Database\Driver\CursorInterface;
 use Cycle\Database\Driver\CursorOptions;
 use Cycle\Database\Driver\Driver;
 use Cycle\Database\Driver\PDOStatementInterface;
@@ -27,7 +27,7 @@ use Cycle\Database\Injection\ParameterInterface;
 use Cycle\Database\Query\QueryBuilder;
 use Cycle\Database\StatementInterface;
 
-class SQLServerDriver extends Driver implements CursorableInterface
+class SQLServerDriver extends Driver implements CursorInterface
 {
     /**
      * @var non-empty-string
@@ -72,7 +72,7 @@ class SQLServerDriver extends Driver implements CursorableInterface
      * a different mode (KEYSET/DYNAMIC/FAST_FORWARD) by passing a
      * {@see SQLServerCursorOptions} with a non-default {@see CursorType};
      * note that only STATIC fulfills the snapshot-consistency contract of
-     * {@see CursorableInterface} — the others are exposed for users who accept
+     * {@see CursorInterface} — the others are exposed for users who accept
      * different visibility semantics.
      *
      * The cursor is always `GLOBAL FORWARD_ONLY READ_ONLY`:

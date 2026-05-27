@@ -23,7 +23,7 @@ use Cycle\Database\StatementInterface;
  * interface. Callers that want a portable lazy iterator should build their
  * own (e.g. keyset pagination) on top of plain queries instead.
  */
-interface CursorableInterface extends DriverInterface
+interface CursorInterface extends DriverInterface
 {
     /**
      * Open a server-side cursor for the given SELECT statement and yield rows
