@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.19.0](https://github.com/cycle/database/compare/2.18.0...2.19.0) (2026-05-28)
+
+
+### Features
+
+* Add `wrapOnWhere()` method to group JOIN ON conditions ([#253](https://github.com/cycle/database/issues/253)) ([aafa2f6](https://github.com/cycle/database/commit/aafa2f62970a0c29a2964a32c48a05607943992e))
+
+
+### Tests
+
+* **OnConflict:** add tests for cache key generation with update parameters ([a064944](https://github.com/cycle/database/commit/a064944c741f4d29507ff9fa8db241386356a583))
+
 ## [2.18.0](https://github.com/cycle/database/compare/2.17.0...2.18.0) (2026-05-28)
 
 
