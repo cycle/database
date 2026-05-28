@@ -330,6 +330,49 @@ trait JoinTrait
     }
 
     /**
+     * Wrap all currently registered ON conditions of the last registered JOIN into a single
+     * nested AND-group. Mirror of {@see WhereTrait::wrapWhere()} for JOIN ON tokens.
+     *
+     * After the call, the last JOIN's ON-state holds exactly one top-level token — a nested
+     * group containing everything added before. Subsequent `onWhere/orOnWhere/...` calls
+     * append at the top level alongside this group:
+     *
+     *     $q->leftJoin('posts')->on('posts.user_id', 'users.id')
+     *       ->onWhere('posts.published', true)
+     *       ->orOnWhere('posts.featured', true)
+     *       ->wrapOnWhere()
+     *       ->onWhere('posts.archived', false);
+     *     // ... LEFT JOIN posts ON posts.user_id = users.id
+     *     //     AND (posts.published = ? OR posts.featured = ?)
+     *     //     AND posts.archived = ?
+     *
+     * No-op when no JOIN has been registered yet, or when the last JOIN has no ON tokens.
+     *
+     * Typical use case: ORM scopes attached to joined relation loaders that must stay
+     * protected from a later `orOnWhere` added by user code.
+     *
+     * @return $this|self
+     */
+    public function wrapOnWhere(): self
+    {
+        if (
+            $this->lastJoin === null
+            || !isset($this->joinTokens[$this->lastJoin]['on'])
+            || $this->joinTokens[$this->lastJoin]['on'] === []
+        ) {
+            return $this;
+        }
+
+        $this->joinTokens[$this->lastJoin]['on'] = [
+            ['AND', '('],
+            ...$this->joinTokens[$this->lastJoin]['on'],
+            ['', ')'],
+        ];
+
+        return $this;
+    }
+
+    /**
      * Convert various amount of where function arguments into valid where token.
      *
      * @param array $params Set of parameters collected from where functions.

@@ -116,4 +116,92 @@ class SelectQueryTest extends TestCase
             $select->getTokens()['where'],
         );
     }
+
+    public function testWrapOnWhereWithoutAnyJoinIsNoop(): void
+    {
+        $select = (new SelectQuery())->from('table');
+        $select->wrapOnWhere();
+
+        $this->assertSame([], $select->getTokens()['join']);
+    }
+
+    public function testWrapOnWhereWithEmptyOnTokensIsNoop(): void
+    {
+        $select = (new SelectQuery())
+            ->from('table')
+            ->leftJoin('joined');
+        $select->wrapOnWhere();
+
+        $this->assertSame([], $select->getTokens()['join'][1]['on']);
+    }
+
+    public function testWrapOnWhereEnclosesExistingOnTokens(): void
+    {
+        $select = (new SelectQuery())
+            ->from('table')
+            ->leftJoin('joined')
+            ->onWhere('joined.a', 1)
+            ->orOnWhere('joined.a', 2)
+            ->wrapOnWhere()
+            ->onWhere('joined.b', 3);
+
+        $this->assertEquals(
+            [
+                ['AND', '('],
+                ['AND', ['joined.a', '=', new Parameter(1)]],
+                ['OR', ['joined.a', '=', new Parameter(2)]],
+                ['', ')'],
+                ['AND', ['joined.b', '=', new Parameter(3)]],
+            ],
+            $select->getTokens()['join'][1]['on'],
+        );
+    }
+
+    public function testWrapOnWhereTargetsOnlyLastRegisteredJoin(): void
+    {
+        $select = (new SelectQuery())
+            ->from('table')
+            ->leftJoin('first')->onWhere('first.x', 1)->orOnWhere('first.x', 2)
+            ->leftJoin('second')->onWhere('second.y', 10)->orOnWhere('second.y', 20)
+            ->wrapOnWhere(); // affects only the second join — last registered
+
+        $joins = $select->getTokens()['join'];
+
+        $this->assertEquals(
+            [
+                ['AND', ['first.x', '=', new Parameter(1)]],
+                ['OR', ['first.x', '=', new Parameter(2)]],
+            ],
+            $joins[1]['on'],
+        );
+
+        $this->assertEquals(
+            [
+                ['AND', '('],
+                ['AND', ['second.y', '=', new Parameter(10)]],
+                ['OR', ['second.y', '=', new Parameter(20)]],
+                ['', ')'],
+            ],
+            $joins[2]['on'],
+        );
+    }
+
+    public function testWrapOnWhereDoesNotAffectWhereTokens(): void
+    {
+        $select = (new SelectQuery())
+            ->from('table')
+            ->where('a', 1)
+            ->orWhere('a', 2)
+            ->leftJoin('joined')->onWhere('joined.b', 3)->orOnWhere('joined.b', 4)
+            ->wrapOnWhere();
+
+        // WHERE stays flat — only the join's ON gets wrapped.
+        $this->assertEquals(
+            [
+                ['AND', ['a', '=', new Parameter(1)]],
+                ['OR', ['a', '=', new Parameter(2)]],
+            ],
+            $select->getTokens()['where'],
+        );
+    }
 }
