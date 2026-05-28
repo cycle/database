@@ -654,6 +654,96 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    public function testWrapOnWhereGroupsAllExistingOnTokens(): void
+    {
+        // `on()` and `onWhere()` share the same internal token list, so wrapOnWhere
+        // encloses the join key together with onWhere conditions. This is harmless
+        // (equality join key inside the group keeps the same logical result) and
+        // even more protective against later orOnWhere additions.
+        $select = $this->database->select()
+            ->from(['users'])
+            ->leftJoin('posts')
+            ->on('posts.user_id', 'users.id')
+            ->onWhere('posts.published', true)
+            ->orOnWhere('posts.featured', true)
+            ->wrapOnWhere()
+            ->onWhere('posts.archived', false);
+
+        $this->assertSameQueryWithParameters(
+            'SELECT * FROM {users} LEFT JOIN {posts}
+                ON ({posts}.{user_id} = {users}.{id}
+                    AND {posts}.{published} = ? OR {posts}.{featured} = ?)
+                AND {posts}.{archived} = ?',
+            [true, true, false],
+            $select,
+        );
+    }
+
+    public function testWrapOnWhereProtectsScopeFromLaterOrOnWhere(): void
+    {
+        // Mirrors the soft-delete-style scope on a joined relation: condition added
+        // first, then wrapped, then a user-supplied orOnWhere — without wrapOnWhere
+        // the scope would be lost on the OR arm.
+        $select = $this->database->select()
+            ->from(['users'])
+            ->leftJoin('posts')
+            ->on('posts.user_id', 'users.id')
+            ->onWhere('posts.deleted_at', null)
+            ->wrapOnWhere()
+            ->orOnWhere('posts.id', 5);
+
+        $this->assertSameQueryWithParameters(
+            'SELECT * FROM {users} LEFT JOIN {posts}
+                ON ({posts}.{user_id} = {users}.{id}
+                    AND {posts}.{deleted_at} IS NULL)
+                OR {posts}.{id} = ?',
+            [5],
+            $select,
+        );
+    }
+
+    public function testWrapOnWhereWithNoExistingOnTokensIsNoop(): void
+    {
+        // Join registered but with no on/onWhere yet — wrapOnWhere does nothing.
+        $select = $this->database->select()
+            ->from(['users'])
+            ->leftJoin('posts')
+            ->wrapOnWhere()
+            ->onWhere('posts.published', true);
+
+        $this->assertSameQueryWithParameters(
+            'SELECT * FROM {users} LEFT JOIN {posts}
+                ON {posts}.{published} = ?',
+            [true],
+            $select,
+        );
+    }
+
+    public function testWrapOnWhereTargetsOnlyLastRegisteredJoinInSql(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->leftJoin('posts')
+            ->on('posts.user_id', 'users.id')
+            ->onWhere('posts.published', true)
+            ->orOnWhere('posts.featured', true)
+            ->leftJoin('comments')
+            ->on('comments.user_id', 'users.id')
+            ->onWhere('comments.approved', true)
+            ->orOnWhere('comments.pinned', true)
+            ->wrapOnWhere(); // affects only the second join
+
+        $this->assertSameQueryWithParameters(
+            'SELECT * FROM {users}
+                LEFT JOIN {posts} ON {posts}.{user_id} = {users}.{id}
+                    AND {posts}.{published} = ? OR {posts}.{featured} = ?
+                LEFT JOIN {comments} ON ({comments}.{user_id} = {users}.{id}
+                    AND {comments}.{approved} = ? OR {comments}.{pinned} = ?)',
+            [true, true, true, true],
+            $select,
+        );
+    }
+
     public function testJoinQueryWithParameters(): void
     {
         $subSelect = $this->db('prefixed', 'prefix_')->select()
