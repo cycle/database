@@ -2565,6 +2565,251 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    public function testWrapWhereGroupsExistingConditions(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->where('name', 'Anton')
+            ->orWhere('name', 'John')
+            ->wrapWhere()
+            ->where('active', true);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE ({name} = ? OR {name} = ?) AND {active} = ?',
+            $select,
+        );
+    }
+
+    public function testWrapWhereProtectsScopeFromLaterOrWhere(): void
+    {
+        // Models a soft-delete-style scope: condition added first, then wrapped,
+        // then a user-supplied orWhere — without wrapWhere the scope would be lost.
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->where('deleted_at', null)
+            ->wrapWhere()
+            ->orWhere('id', 5);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE ({deleted_at} IS NULL) OR {id} = ?',
+            $select,
+        );
+    }
+
+    public function testWrapWhereOnEmptyWhereIsNoop(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->wrapWhere()
+            ->where('active', true);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE {active} = ?',
+            $select,
+        );
+    }
+
+    public function testWrapWhereWithMultipleAndConditions(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->where('a', 1)
+            ->where('b', 2)
+            ->where('c', 3)
+            ->wrapWhere()
+            ->where('d', 4);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE ({a} = ? AND {b} = ? AND {c} = ?) AND {d} = ?',
+            $select,
+        );
+    }
+
+    public function testWrapWhereWithMixedAndOrChain(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->where('a', 1)
+            ->andWhere('b', 2)
+            ->orWhere('c', 3)
+            ->wrapWhere()
+            ->where('d', 4);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE ({a} = ? AND {b} = ? OR {c} = ?) AND {d} = ?',
+            $select,
+        );
+    }
+
+    public function testWrapWhereWithWhereNot(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->whereNot('status', 'blocked')
+            ->orWhere('role', 'admin')
+            ->wrapWhere()
+            ->where('active', true);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE (NOT {status} = ? OR {role} = ?) AND {active} = ?',
+            $select,
+        );
+    }
+
+    public function testWrapWhereAroundClosureGroup(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->where(static function (SelectQuery $q): void {
+                $q->where('a', 1)->orWhere('b', 2);
+            })
+            ->wrapWhere()
+            ->where('c', 3);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE (({a} = ? OR {b} = ?)) AND {c} = ?',
+            $select,
+        );
+    }
+
+    public function testClosureGroupAddedAfterWrapWhere(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->where('a', 1)
+            ->orWhere('b', 2)
+            ->wrapWhere()
+            ->andWhere(static function (SelectQuery $q): void {
+                $q->where('c', 3)->orWhere('d', 4);
+            });
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE ({a} = ? OR {b} = ?) AND ({c} = ? OR {d} = ?)',
+            $select,
+        );
+    }
+
+    public function testWrapWhereCalledTwiceInARowIsIdempotentForSql(): void
+    {
+        // Double-wrap adds a redundant pair of parens but is semantically harmless.
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->where('a', 1)
+            ->orWhere('b', 2)
+            ->wrapWhere()
+            ->wrapWhere()
+            ->where('c', 3);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE (({a} = ? OR {b} = ?)) AND {c} = ?',
+            $select,
+        );
+    }
+
+    public function testWrapWhereStackedScopes(): void
+    {
+        // Models multiple stacked ORM scopes: each scope wraps the current state and
+        // appends its own AND-condition. Final SQL should always be logically equivalent
+        // to `user AND s1 AND s2`, with each layer isolated by parentheses.
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->where('a', 1)
+            ->orWhere('a', 2)
+            // first scope
+            ->wrapWhere()
+            ->where('s1', 'x')
+            // second scope
+            ->wrapWhere()
+            ->where('s2', 'y');
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE (({a} = ? OR {a} = ?) AND {s1} = ?) AND {s2} = ?',
+            $select,
+        );
+    }
+
+    public function testWrapWhereThenOrWhereNot(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->where('a', 1)
+            ->andWhere('b', 2)
+            ->wrapWhere()
+            ->orWhereNot('c', 3);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE ({a} = ? AND {b} = ?) OR NOT {c} = ?',
+            $select,
+        );
+    }
+
+    public function testWrapWhereWithArraySyntaxAndOrToken(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->where([
+                'name' => 'John',
+                '@or' => [
+                    ['status' => 'active'],
+                    ['role' => 'admin'],
+                ],
+            ])
+            ->wrapWhere()
+            ->where('deleted_at', null);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE (({name} = ? AND ({status} = ? OR {role} = ?))) AND {deleted_at} IS NULL',
+            $select,
+        );
+    }
+
+    public function testWrapWhereWithBetweenAndInOperators(): void
+    {
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->where('age', 'between', 18, 65)
+            ->orWhere('role', 'IN', new Parameter(['admin', 'editor']))
+            ->wrapWhere()
+            ->where('active', true);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE ({age} BETWEEN ? AND ? OR {role} IN (?, ?)) AND {active} = ?',
+            $select,
+        );
+    }
+
+    public function testWrapWhereWithLeadingOrWhere(): void
+    {
+        // Edge case: chain starts with orWhere — the leading boolean is suppressed by
+        // the compiler when it's the first token, so behavior should be identical to
+        // starting with where().
+        $select = $this->database
+            ->select()
+            ->from(['users'])
+            ->orWhere('a', 1)
+            ->orWhere('b', 2)
+            ->wrapWhere()
+            ->where('c', 3);
+
+        $this->assertSameQuery(
+            'SELECT * FROM {users} WHERE ({a} = ? OR {b} = ?) AND {c} = ?',
+            $select,
+        );
+    }
+
     public function testAndWhereNotWithArrayOr(): void
     {
         $select = $this->database

@@ -147,6 +147,38 @@ trait WhereTrait
     }
 
     /**
+     * Wrap all currently registered WHERE tokens into a single nested AND-group.
+     *
+     * After the call, the WHERE state holds exactly one top-level token — a nested
+     * group containing everything added before. Subsequent `where/orWhere/...` calls
+     * append at the top level, alongside this group:
+     *
+     *     $q->where('a', 1)->orWhere('a', 2)->wrapWhere()->where('b', 3);
+     *     // WHERE (a = 1 OR a = 2) AND b = 3
+     *
+     * No-op when no where tokens have been registered yet.
+     *
+     * Typical use case: ORM scopes that must stay protected from a later `orWhere`
+     * added by user code.
+     *
+     * @return $this|self
+     */
+    public function wrapWhere(): self
+    {
+        if ($this->whereTokens === []) {
+            return $this;
+        }
+
+        $this->whereTokens = [
+            ['AND', '('],
+            ...$this->whereTokens,
+            ['', ')'],
+        ];
+
+        return $this;
+    }
+
+    /**
      * Convert various amount of where function arguments into valid where token.
      *
      * @param array $params Set of parameters collected from where functions.
