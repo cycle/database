@@ -663,11 +663,11 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         $select = $this->database->select()
             ->from(['users'])
             ->leftJoin('posts')
-                ->on('posts.user_id', 'users.id')
-                ->onWhere('posts.published', true)
-                ->orOnWhere('posts.featured', true)
-                ->wrapOnWhere()
-                ->onWhere('posts.archived', false);
+            ->on('posts.user_id', 'users.id')
+            ->onWhere('posts.published', true)
+            ->orOnWhere('posts.featured', true)
+            ->wrapOnWhere()
+            ->onWhere('posts.archived', false);
 
         $this->assertSameQueryWithParameters(
             'SELECT * FROM {users} LEFT JOIN {posts}
@@ -687,10 +687,10 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         $select = $this->database->select()
             ->from(['users'])
             ->leftJoin('posts')
-                ->on('posts.user_id', 'users.id')
-                ->onWhere('posts.deleted_at', null)
-                ->wrapOnWhere()
-                ->orOnWhere('posts.id', 5);
+            ->on('posts.user_id', 'users.id')
+            ->onWhere('posts.deleted_at', null)
+            ->wrapOnWhere()
+            ->orOnWhere('posts.id', 5);
 
         $this->assertSameQueryWithParameters(
             'SELECT * FROM {users} LEFT JOIN {posts}
@@ -708,8 +708,8 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         $select = $this->database->select()
             ->from(['users'])
             ->leftJoin('posts')
-                ->wrapOnWhere()
-                ->onWhere('posts.published', true);
+            ->wrapOnWhere()
+            ->onWhere('posts.published', true);
 
         $this->assertSameQueryWithParameters(
             'SELECT * FROM {users} LEFT JOIN {posts}
@@ -724,14 +724,14 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         $select = $this->database->select()
             ->from(['users'])
             ->leftJoin('posts')
-                ->on('posts.user_id', 'users.id')
-                ->onWhere('posts.published', true)
-                ->orOnWhere('posts.featured', true)
+            ->on('posts.user_id', 'users.id')
+            ->onWhere('posts.published', true)
+            ->orOnWhere('posts.featured', true)
             ->leftJoin('comments')
-                ->on('comments.user_id', 'users.id')
-                ->onWhere('comments.approved', true)
-                ->orOnWhere('comments.pinned', true)
-                ->wrapOnWhere(); // affects only the second join
+            ->on('comments.user_id', 'users.id')
+            ->onWhere('comments.approved', true)
+            ->orOnWhere('comments.pinned', true)
+            ->wrapOnWhere(); // affects only the second join
 
         $this->assertSameQueryWithParameters(
             'SELECT * FROM {users}
