@@ -19,9 +19,14 @@ use Cycle\Database\Injection\Parameter;
  */
 class InsertQuery extends ActiveQuery
 {
+    /** @var non-empty-string */
     protected string $table;
+
+    /** @var list<non-empty-string> */
     protected array $columns = [];
+
     protected array $values = [];
+    protected ?OnConflict $onConflict = null;
 
     public function __construct(?string $table = null)
     {
@@ -111,8 +116,34 @@ class InsertQuery extends ActiveQuery
     }
 
     /**
+     * Configure conflict resolution. The query becomes an UPSERT.
+     *
+     * Accepts either a fully-built {@see OnConflict} value object, or a shorthand:
+     *  - non-empty-string - conflict target is a single column, action is DO UPDATE over every inserted column.
+     *  - array<int, non-empty-string> - conflict target is the given list of columns, action is DO UPDATE.
+     *
+     * Examples:
+     *   $insert->onConflict('email');
+     *   $insert->onConflict(['tenant_id', 'email']);
+     *   $insert->onConflict(OnConflict::target('email')->doUpdate(['name']));
+     *   $insert->onConflict(OnConflict::target('email')->doNothing());
+     */
+    public function onConflict(OnConflict|string|array $conflict): self
+    {
+        $this->onConflict = $conflict instanceof OnConflict
+            ? $conflict
+            : OnConflict::target($conflict)->doUpdate();
+
+        return $this;
+    }
+
+    /**
      * Run the query and return last insert id.
      * Returns an assoc array of values if multiple columns were specified as returning columns.
+     *
+     * For upsert queries with `DO NOTHING` resolving to the existing row, drivers without
+     * RETURNING support may return 0/null instead of the existing row's id — use a driver
+     * that supports RETURNING for reliable results.
      *
      * @return array<non-empty-string, mixed>|int|non-empty-string|null
      */
@@ -136,15 +167,26 @@ class InsertQuery extends ActiveQuery
 
     public function getType(): int
     {
-        return CompilerInterface::INSERT_QUERY;
+        return $this->onConflict !== null
+            ? CompilerInterface::UPSERT_QUERY
+            : CompilerInterface::INSERT_QUERY;
     }
 
+    /**
+     * @return array{
+     *     'table': non-empty-string,
+     *     'columns': list<non-empty-string>,
+     *     'values': array<int, Parameter>,
+     *     'onConflict': OnConflict|null
+     * }
+     */
     public function getTokens(): array
     {
         return [
-            'table'   => $this->table,
-            'columns' => $this->columns,
-            'values'  => $this->values,
+            'table'      => $this->table,
+            'columns'    => $this->columns,
+            'values'     => $this->values,
+            'onConflict' => $this->onConflict,
         ];
     }
 }

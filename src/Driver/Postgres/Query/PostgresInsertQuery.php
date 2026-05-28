@@ -95,6 +95,7 @@ class PostgresInsertQuery extends InsertQuery implements ReturningInterface
             'return' => $this->returningColumns !== [] ? $this->returningColumns : (array) $this->getPrimaryKey(),
             'columns' => $this->columns,
             'values' => $this->values,
+            'onConflict' => $this->onConflict,
         ];
     }
 

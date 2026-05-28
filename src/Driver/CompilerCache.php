@@ -18,6 +18,7 @@ use Cycle\Database\Injection\JsonExpression;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Injection\ParameterInterface;
 use Cycle\Database\Injection\SubQuery;
+use Cycle\Database\Query\OnConflict;
 use Cycle\Database\Query\QueryInterface;
 use Cycle\Database\Query\QueryParameters;
 use Cycle\Database\Query\SelectQuery;
@@ -65,6 +66,23 @@ final class CompilerCache implements CompilerInterface
 
             if (\count($tokens['values']) === 1) {
                 $queryHash = $prefix . $this->hashInsertQuery($params, $tokens);
+                if (isset($this->cache[$queryHash])) {
+                    return $this->cache[$queryHash];
+                }
+
+                return $this->cache[$queryHash] = $this->compiler->compile(
+                    new QueryParameters(),
+                    $prefix,
+                    $fragment,
+                );
+            }
+        }
+
+        if ($fragment->getType() === self::UPSERT_QUERY) {
+            $tokens = $fragment->getTokens();
+
+            if (\count($tokens['values']) === 1) {
+                $queryHash = $prefix . $this->hashUpsertQuery($params, $tokens);
                 if (isset($this->cache[$queryHash])) {
                     return $this->cache[$queryHash];
                 }
@@ -144,6 +162,23 @@ final class CompilerCache implements CompilerInterface
         }
 
         return $hash;
+    }
+
+    /**
+     * @psalm-return non-empty-string
+     */
+    protected function hashUpsertQuery(QueryParameters $params, array $tokens): string
+    {
+        $hash = 'u_' . $this->hashInsertQuery($params, $tokens);
+
+        $onConflict = $tokens['onConflict'] ?? null;
+        if (!$onConflict instanceof OnConflict) {
+            return $hash;
+        }
+
+        // Driver-specific subclasses extend getCacheKey() to append their own fields
+        // and push any embedded fragment parameters via $params.
+        return $hash . '_oc' . $onConflict->getCacheKey($params);
     }
 
     /**
