@@ -6,6 +6,7 @@ namespace Cycle\Database\Tests\Unit\Query;
 
 use Cycle\Database\Exception\BuilderException;
 use Cycle\Database\Injection\Expression;
+use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\ConflictAction;
 use Cycle\Database\Query\OnConflict;
 use Cycle\Database\Query\QueryParameters;
@@ -169,5 +170,52 @@ class OnConflictTest extends TestCase
             $a->getCacheKey(new QueryParameters()),
             $b->getCacheKey(new QueryParameters()),
         );
+    }
+
+    public function testCacheKeyPushesFragmentParametersFromUpdateMap(): void
+    {
+        $expr = new Expression('counters.n + ?', 5);
+        $c = OnConflict::target('key')->doUpdate(['n' => $expr]);
+
+        $params = new QueryParameters();
+        $key = $c->getCacheKey($params);
+
+        $this->assertCount(1, $params->getParameters());
+        $this->assertStringContainsString((string) $expr, $key);
+    }
+
+    public function testCacheKeyWrapsScalarUpdateValueAsParameter(): void
+    {
+        $c = OnConflict::target('key')->doUpdate(['n' => 42]);
+
+        $params = new QueryParameters();
+        $key = $c->getCacheKey($params);
+
+        $pushed = $params->getParameters();
+        $this->assertCount(1, $pushed);
+        $this->assertInstanceOf(Parameter::class, $pushed[0]);
+        $this->assertSame(42, $pushed[0]->getValue());
+        $this->assertStringContainsString('P?', $key);
+    }
+
+    public function testCacheKeyAcceptsExistingParameterInterfaceWithoutRewrapping(): void
+    {
+        $param = new Parameter(7);
+        $c = OnConflict::target('key')->doUpdate(['n' => $param]);
+
+        $params = new QueryParameters();
+        $key = $c->getCacheKey($params);
+
+        $pushed = $params->getParameters();
+        $this->assertCount(1, $pushed);
+        $this->assertSame($param, $pushed[0]);
+        $this->assertStringContainsString('P?', $key);
+    }
+
+    public function testFromReturnsSameInstance(): void
+    {
+        $c = OnConflict::target('email')->doUpdate(['name']);
+
+        $this->assertSame($c, OnConflict::from($c));
     }
 }
