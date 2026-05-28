@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.18.0](https://github.com/cycle/database/compare/2.17.0...2.18.0) (2026-05-28)
+
+
+### Features
+
+* Add `InsertQuery::onConflict()` method ([#249](https://github.com/cycle/database/issues/249)) ([395a7ff](https://github.com/cycle/database/commit/395a7ff42116c1d4978d5cb20f4e66786c10b906))
+* Add `SelectQuery::wrapWhere()` to group WHERE conditions ([#250](https://github.com/cycle/database/issues/250)) ([8f7c03a](https://github.com/cycle/database/commit/8f7c03a589260716d0211202e9969c4c3d0d285c))
+
 ## [2.17.0](https://github.com/cycle/database/compare/2.16.0...2.17.0) (2026-05-14)
 
 
