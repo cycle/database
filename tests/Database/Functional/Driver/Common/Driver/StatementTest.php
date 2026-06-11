@@ -292,6 +292,27 @@ abstract class StatementTest extends BaseTest
         $this->assertSame(5, $count);
     }
 
+    public function testChunksProcessLastPartialChunk(): void
+    {
+        $table = $this->database->table('sample_table');
+        $this->fillData();
+
+        $select = $table->select();
+
+        // 10 rows split by chunks of 3: the last chunk holds the single remaining row (10 % 3 == 1)
+        $visited = [];
+        $select->runChunks(
+            3,
+            function (StatementInterface $result) use (&$visited): void {
+                foreach ($result as $row) {
+                    $visited[] = $row['id'];
+                }
+            },
+        );
+
+        $this->assertSame(\range(1, 10), $visited);
+    }
+
     public function testNativeParameters(): void
     {
         $this->fillData();
