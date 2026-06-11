@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.20.0](https://github.com/cycle/database/compare/2.19.0...2.20.0) (2026-06-11)
+
+
+### Features
+
+* **SelectQuery:** refine Psalm integer types on query bounds ([#257](https://github.com/cycle/database/issues/257)) ([2cae328](https://github.com/cycle/database/commit/2cae328e5025fa4c6a8d00a01d63c0da31b35c21))
+
+
+### Bug Fixes
+
+* **SelectQuery:** process the last partial chunk in `runChunks()` ([#255](https://github.com/cycle/database/issues/255)) ([38c3403](https://github.com/cycle/database/commit/38c340327f7e2ce45d9485df77e8dc6546ddd779))
+
 ## [2.19.0](https://github.com/cycle/database/compare/2.18.0...2.19.0) (2026-05-28)
 
 
