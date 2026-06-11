@@ -305,7 +305,7 @@ class SelectQuery extends ActiveQuery implements
         $select->limit($limit);
 
         $offset = 0;
-        while ($offset + $limit <= $count) {
+        while ($offset < $count) {
             $result = $callback(
                 $select->offset($offset)->getIterator(),
                 $offset,
