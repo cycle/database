@@ -255,6 +255,9 @@ class SelectQuery extends ActiveQuery implements
         return $this;
     }
 
+    /**
+     * @return int<0, max>|null
+     */
     public function getLimit(): ?int
     {
         return $this->limit;
@@ -271,6 +274,9 @@ class SelectQuery extends ActiveQuery implements
         return $this;
     }
 
+    /**
+     * @return int<0, max>|null
+     */
     public function getOffset(): ?int
     {
         return $this->offset;
@@ -293,6 +299,8 @@ class SelectQuery extends ActiveQuery implements
      * });
      *
      * You must return FALSE from walk function to stop chunking.
+     *
+     * @param int<1, max> $limit Chunk size.
      *
      * @throws \Throwable
      */
@@ -324,7 +332,9 @@ class SelectQuery extends ActiveQuery implements
     /**
      * Count number of rows in query. Limit, offset, order by, group by values will be ignored.
      *
-     * @psalm-param non-empty-string $column Column to count by (every column by default).
+     * @param non-empty-string $column Column to count by (every column by default).
+     *
+     * @return int<0, max>
      */
     public function count(string $column = '*', bool $distinct = false): int
     {
@@ -346,7 +356,7 @@ class SelectQuery extends ActiveQuery implements
     }
 
     /**
-     * @psalm-param non-empty-string $column
+     * @param non-empty-string $column
      */
     public function avg(string $column): mixed
     {
@@ -354,7 +364,7 @@ class SelectQuery extends ActiveQuery implements
     }
 
     /**
-     * @psalm-param non-empty-string $column
+     * @param non-empty-string $column
      */
     public function max(string $column): mixed
     {
@@ -362,7 +372,7 @@ class SelectQuery extends ActiveQuery implements
     }
 
     /**
-     * @psalm-param non-empty-string $column
+     * @param non-empty-string $column
      */
     public function min(string $column): mixed
     {
@@ -370,7 +380,7 @@ class SelectQuery extends ActiveQuery implements
     }
 
     /**
-     * @psalm-param non-empty-string $column
+     * @param non-empty-string $column
      */
     public function sum(string $column): mixed
     {
@@ -436,8 +446,8 @@ class SelectQuery extends ActiveQuery implements
     }
 
     /**
-     * @psalm-param non-empty-string $method
-     * @psalm-param non-empty-string $column
+     * @param non-empty-string $method
+     * @param non-empty-string $column
      */
     private function runAggregate(string $method, string $column): mixed
     {
