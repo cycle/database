@@ -313,6 +313,69 @@ abstract class StatementTest extends BaseTest
         $this->assertSame(\range(1, 10), $visited);
     }
 
+    public function testChunksWithLimitGreaterThanCount(): void
+    {
+        $table = $this->database->table('sample_table');
+        $this->fillData();
+
+        $select = $table->select();
+
+        // chunk size larger than the total row count must still yield every row in a single chunk
+        $visited = [];
+        $chunks = 0;
+        $select->runChunks(
+            100,
+            function (StatementInterface $result) use (&$visited, &$chunks): void {
+                $chunks++;
+                foreach ($result as $row) {
+                    $visited[] = $row['id'];
+                }
+            },
+        );
+
+        $this->assertSame(1, $chunks);
+        $this->assertSame(\range(1, 10), $visited);
+    }
+
+    public function testChunksOnEmptyResultNeverInvokesCallback(): void
+    {
+        $table = $this->database->table('sample_table');
+        // no data inserted
+
+        $select = $table->select();
+
+        $invoked = false;
+        $select->runChunks(
+            5,
+            function () use (&$invoked): void {
+                $invoked = true;
+            },
+        );
+
+        $this->assertFalse($invoked);
+    }
+
+    public function testChunksPassOffsetAndCountToCallback(): void
+    {
+        $table = $this->database->table('sample_table');
+        $this->fillData();
+
+        $select = $table->select();
+
+        $offsets = [];
+        $counts = [];
+        $select->runChunks(
+            3,
+            function (StatementInterface $result, int $offset, int $count) use (&$offsets, &$counts): void {
+                $offsets[] = $offset;
+                $counts[] = $count;
+            },
+        );
+
+        $this->assertSame([0, 3, 6, 9], $offsets);
+        $this->assertSame([10, 10, 10, 10], $counts);
+    }
+
     public function testNativeParameters(): void
     {
         $this->fillData();
