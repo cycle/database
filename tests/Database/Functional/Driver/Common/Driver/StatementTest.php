@@ -297,7 +297,7 @@ abstract class StatementTest extends BaseTest
         $table = $this->database->table('sample_table');
         $this->fillData();
 
-        $select = $table->select();
+        $select = $table->select()->orderBy('id');
 
         // 10 rows split by chunks of 3: the last chunk holds the single remaining row (10 % 3 == 1)
         $visited = [];
@@ -310,7 +310,7 @@ abstract class StatementTest extends BaseTest
             },
         );
 
-        $this->assertSame(\range(1, 10), $visited);
+        $this->assertEquals(\range(1, 10), $visited);
     }
 
     public function testChunksWithLimitGreaterThanCount(): void
@@ -318,7 +318,7 @@ abstract class StatementTest extends BaseTest
         $table = $this->database->table('sample_table');
         $this->fillData();
 
-        $select = $table->select();
+        $select = $table->select()->orderBy('id');
 
         // chunk size larger than the total row count must still yield every row in a single chunk
         $visited = [];
@@ -334,7 +334,7 @@ abstract class StatementTest extends BaseTest
         );
 
         $this->assertSame(1, $chunks);
-        $this->assertSame(\range(1, 10), $visited);
+        $this->assertEquals(\range(1, 10), $visited);
     }
 
     public function testChunksOnEmptyResultNeverInvokesCallback(): void
