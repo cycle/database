@@ -57,26 +57,27 @@ class MySQLCompiler extends Compiler implements CachingCompilerInterface
             $values[] = $this->value($params, $q, $value);
         }
 
-        $rowAlias = $onConflict->getRowAlias();
-
-        $head = \sprintf(
-            'INSERT INTO %s (%s) VALUES %s AS %s',
+        $base = \sprintf(
+            'INSERT INTO %s (%s) VALUES %s',
             $this->name($params, $q, $tokens['table'], true),
             $this->columns($params, $q, $tokens['columns']),
             \implode(', ', $values),
-            $this->quoteIdentifier($rowAlias),
         );
 
         if ($onConflict->getAction() === ConflictAction::Nothing) {
             // MySQL has no DO NOTHING — emulate with a no-op self-assignment on the
             // conflict-target column (or the first inserted column as a fallback).
-            // Using the target column is the conventional idiom and is more predictable
-            // for schemas where the first inserted column is unrelated to the conflict.
+            // No row alias is emitted here: without `AS <alias>` the bare `col = col`
+            // is unambiguous; with the alias in scope MySQL rejects it as ambiguous.
             $target = $onConflict->getTarget();
             $noopColumn = $target[0] ?? $tokens['columns'][0];
             $name = $this->name($params, $q, $noopColumn);
-            return $head . ' ON DUPLICATE KEY UPDATE ' . \sprintf('%s = %s', $name, $name);
+            return $base . ' ON DUPLICATE KEY UPDATE ' . \sprintf('%s = %s', $name, $name);
         }
+
+        // DO UPDATE references the inserted row via `col = <alias>.col`, so the alias is required.
+        $rowAlias = $onConflict->getRowAlias();
+        $head = $base . ' AS ' . $this->quoteIdentifier($rowAlias);
 
         $updates = $this->upsertUpdateClause(
             $params,

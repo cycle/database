@@ -19,6 +19,7 @@ use Cycle\Database\Exception\CompilerException;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Injection\ParameterInterface;
+use Cycle\Database\Query\OnConflict;
 use Cycle\Database\Query\QueryParameters;
 
 class SQLiteCompiler extends Compiler implements CachingCompilerInterface
@@ -124,5 +125,27 @@ class SQLiteCompiler extends Compiler implements CachingCompilerInterface
     protected function compileJsonOrderBy(string $path): FragmentInterface
     {
         return new CompileJson($path);
+    }
+
+    /**
+     * SQLite inherits the Postgres `ON CONFLICT (cols) WHERE <predicate>` inference
+     * clause, so it supports an index predicate on the conflict target.
+     *
+     * @psalm-return non-empty-string
+     */
+    protected function conflictTarget(QueryParameters $params, Quoter $q, OnConflict $onConflict): string
+    {
+        $onConflict = SQLiteOnConflict::from($onConflict);
+
+        $target = '(' . $this->columns($params, $q, $onConflict->getTarget()) . ')';
+
+        $predicate = $onConflict->getIndexPredicate();
+        if ($predicate === []) {
+            return $target;
+        }
+
+        $where = \trim($this->where($params, $q, $predicate));
+
+        return $where === '' ? $target : $target . ' WHERE ' . $where;
     }
 }

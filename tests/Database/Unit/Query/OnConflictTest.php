@@ -6,6 +6,7 @@ namespace Cycle\Database\Tests\Unit\Query;
 
 use Cycle\Database\Exception\BuilderException;
 use Cycle\Database\Injection\Expression;
+use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\ConflictAction;
 use Cycle\Database\Query\OnConflict;
@@ -117,7 +118,8 @@ class OnConflictTest extends TestCase
 
     public function testDoUpdateColumnMap(): void
     {
-        $expr = new Expression('counters.n + EXCLUDED.n');
+        // EXCLUDED references use a raw Fragment (Expression would quote the keyword).
+        $expr = new Fragment('counters.n + EXCLUDED.n');
         $c = OnConflict::target('key')->doUpdate(['n' => $expr]);
 
         $this->assertSame(['n' => $expr], $c->getUpdate());

@@ -16,7 +16,10 @@ use Cycle\Database\Injection\ParameterInterface;
  *
  * Base class carries only cross-driver features (target columns, action,
  * column-level update spec). Driver-specific extensions live in subclasses:
- *  - {@see \Cycle\Database\Driver\Postgres\PostgresOnConflict}  — onConstraint(), where().
+ *  - {@see OnConflictWithPredicate} — targetWhere() (index-inference predicate),
+ *    shared base for the two drivers that inherit the Postgres inference clause:
+ *      - {@see \Cycle\Database\Driver\Postgres\PostgresOnConflict}  — also onConstraint().
+ *      - {@see \Cycle\Database\Driver\SQLite\SQLiteOnConflict}.
  *  - {@see \Cycle\Database\Driver\MySQL\MySQLOnConflict}        — withRowAlias().
  *  - {@see \Cycle\Database\Driver\SQLServer\SQLServerOnConflict} — where() (MERGE).
  */
@@ -60,8 +63,12 @@ class OnConflict
      * fields are taken from the input if it is already of this type; otherwise
      * default values are used for those fields.
      *
-     * Subclasses MUST reject other driver-specific subclasses (e.g., passing
-     * PostgresOnConflict to MySQLOnConflict::from() must throw).
+     * Subclasses MUST reject driver-specific subclasses they cannot represent
+     * (e.g., passing PostgresOnConflict to MySQLOnConflict::from() must throw).
+     * Feature-compatible siblings, however, convert without error: PostgresOnConflict
+     * and SQLiteOnConflict both understand the index-inference predicate and narrow
+     * into each other (the one exception is a Postgres constraint target, which SQLite
+     * cannot express).
      */
     public static function from(self $options): static
     {
@@ -75,6 +82,22 @@ class OnConflict
      *        null — overwrite every inserted column from the source row.
      *        list of strings — overwrite only the listed columns from the source row.
      *        column => value map — custom expressions/values per column.
+     *
+     * Referencing the inserted ("excluded") row inside a custom expression: use a raw
+     * {@see \Cycle\Database\Injection\Fragment}, NOT an {@see \Cycle\Database\Injection\Expression}.
+     * Expression quotes every identifier, and Postgres rejects the quoted "EXCLUDED"
+     * pseudo-table (`missing FROM-clause entry for table "EXCLUDED"`); a Fragment is
+     * emitted verbatim. The pseudo-table name is driver-specific — EXCLUDED on
+     * Postgres/SQLite, the row alias (default `new_row`) on MySQL — so such expressions
+     * are inherently non-portable:
+     *
+     *   // Postgres / SQLite
+     *   ->doUpdate(['hits' => new Fragment('counters.hits + EXCLUDED.hits')])
+     *   // MySQL
+     *   ->doUpdate(['hits' => new Fragment('counters.hits + new_row.hits')])
+     *
+     * Use {@see \Cycle\Database\Injection\Expression} only for expressions over real
+     * table columns (which should be quoted), not for the excluded-row reference.
      */
     public function doUpdate(?array $columnsOrMap = null): static
     {

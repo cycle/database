@@ -19,6 +19,7 @@ use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Injection\ParameterInterface;
 use Cycle\Database\Injection\SubQuery;
 use Cycle\Database\Query\OnConflict;
+use Cycle\Database\Query\OnConflictWithPredicate;
 use Cycle\Database\Query\QueryInterface;
 use Cycle\Database\Query\QueryParameters;
 use Cycle\Database\Query\SelectQuery;
@@ -174,6 +175,13 @@ final class CompilerCache implements CompilerInterface
         $onConflict = $tokens['onConflict'] ?? null;
         if (!$onConflict instanceof OnConflict) {
             return $hash;
+        }
+
+        // The index-inference predicate is rendered between the conflict target and
+        // DO UPDATE, so its parameters must be pushed before the update parameters.
+        // Reuse the regular where-hasher to keep that order identical to Compiler::where().
+        if ($onConflict instanceof OnConflictWithPredicate && ($predicate = $onConflict->getIndexPredicate()) !== []) {
+            $hash .= '_w' . $this->hashWhere($params, $predicate);
         }
 
         // Driver-specific subclasses extend getCacheKey() to append their own fields

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Functional\Driver\Common\Query;
 
 use Cycle\Database\Driver\CompilerInterface;
+use Cycle\Database\Driver\Handler;
 use Cycle\Database\Exception\CompilerException;
 use Cycle\Database\Query\InsertQuery;
 use Cycle\Database\Query\OnConflict;
@@ -59,5 +60,78 @@ abstract class UpsertQueryTest extends BaseTest
 
         $this->expectException(CompilerException::class);
         (string) $q;
+    }
+
+    // --- Runtime (execution against a live database) ---
+
+    public function testRuntimeDoUpdateUpdatesExistingRow(): void
+    {
+        $this->makeUpsertUsersTable();
+        $this->database->insert('upsert_users')->values(['email' => 'a@b.c', 'name' => 'Old'])->run();
+
+        $this->database->insert('upsert_users')
+            ->values(['email' => 'a@b.c', 'name' => 'New'])
+            ->onConflict('email')
+            ->run();
+
+        $rows = $this->database->select()->from('upsert_users')->fetchAll();
+        $this->assertCount(1, $rows, 'Conflicting row must be updated, not duplicated.');
+        $this->assertSame('New', $rows[0]['name']);
+    }
+
+    public function testRuntimeDoUpdateSelectiveColumns(): void
+    {
+        $this->makeUpsertUsersTable();
+        $this->database->insert('upsert_users')
+            ->values(['email' => 'a@b.c', 'name' => 'Old', 'tag' => 'keep'])->run();
+
+        $this->database->insert('upsert_users')
+            ->values(['email' => 'a@b.c', 'name' => 'New', 'tag' => 'drop'])
+            ->onConflict(OnConflict::target('email')->doUpdate(['name']))
+            ->run();
+
+        $rows = $this->database->select()->from('upsert_users')->fetchAll();
+        $this->assertCount(1, $rows);
+        $this->assertSame('New', $rows[0]['name']);
+        $this->assertSame('keep', $rows[0]['tag'], 'Columns outside the update list must be preserved.');
+    }
+
+    public function testRuntimeDoNothingPreservesExistingRow(): void
+    {
+        $this->makeUpsertUsersTable();
+        $this->database->insert('upsert_users')->values(['email' => 'a@b.c', 'name' => 'Old'])->run();
+
+        $this->database->insert('upsert_users')
+            ->values(['email' => 'a@b.c', 'name' => 'New'])
+            ->onConflict(OnConflict::target('email')->doNothing())
+            ->run();
+
+        $rows = $this->database->select()->from('upsert_users')->fetchAll();
+        $this->assertCount(1, $rows);
+        $this->assertSame('Old', $rows[0]['name'], 'DO NOTHING must keep the original row.');
+    }
+
+    public function testRuntimeInsertsWhenNoConflict(): void
+    {
+        $this->makeUpsertUsersTable();
+        $this->database->insert('upsert_users')->values(['email' => 'a@b.c', 'name' => 'Old'])->run();
+
+        $this->database->insert('upsert_users')
+            ->values(['email' => 'x@y.z', 'name' => 'New'])
+            ->onConflict('email')
+            ->run();
+
+        $this->assertCount(2, $this->database->select()->from('upsert_users')->fetchAll());
+    }
+
+    private function makeUpsertUsersTable(): void
+    {
+        $schema = $this->schema('upsert_users');
+        $schema->primary('id');
+        $schema->string('email');
+        $schema->string('name');
+        $schema->string('tag')->nullable(true);
+        $schema->index(['email'])->unique(true);
+        $schema->save(Handler::DO_ALL);
     }
 }
