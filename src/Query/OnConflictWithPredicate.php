@@ -6,7 +6,6 @@ namespace Cycle\Database\Query;
 
 use Cycle\Database\Exception\BuilderException;
 use Cycle\Database\Injection\Fragment;
-use Cycle\Database\Injection\FragmentInterface;
 
 /**
  * Conflict-resolution policy that supports an index-inference predicate on the
@@ -56,7 +55,7 @@ abstract class OnConflictWithPredicate extends OnConflict
      *  - simple condition — `->targetWhere('resource_key', '!=', null)` (→ `IS NOT NULL`),
      *    `->targetWhere('priority', '>', 5)`, `->targetWhere('col', $value)`;
      *  - array form — `->targetWhere(['priority' => ['>' => 5], 'resource_key' => ['!=' => null]])`;
-     *  - {@see FragmentInterface} — e.g. an {@see \Cycle\Database\Injection\Expression};
+     *  - {@see \Cycle\Database\Injection\FragmentInterface} — e.g. an {@see \Cycle\Database\Injection\Expression};
      *  - {@see \Closure} — receives an {@see OnConflictWhere} builder for multi-condition
      *    AND/OR groups: `->targetWhere(fn(OnConflictWhere $w) => $w->where(...)->orWhere(...))`.
      *

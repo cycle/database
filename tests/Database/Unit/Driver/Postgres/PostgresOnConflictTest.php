@@ -97,8 +97,9 @@ class PostgresOnConflictTest extends TestCase
         $this->assertSame('resource_key IS NOT NULL', (string) $tokens[0][1]);
     }
 
-    public function testTargetWhereAcceptsFragment(): void
+    public function testTargetWhereAcceptsFragmentInterface(): void
     {
+        // Expression is a FragmentInterface (not a Fragment) — it is stored as-is.
         $expr = new Expression('resource_key IS NOT NULL');
         $c = PostgresOnConflict::target('resource_key')->targetWhere($expr);
 
