@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.21.0](https://github.com/cycle/database/compare/2.20.0...2.21.0) (2026-06-24)
+
+
+### Features
+
+* **OnConflict:** index-inference predicate for ON CONFLICT (Postgres/SQLite) ([#258](https://github.com/cycle/database/issues/258)) ([bdd2cea](https://github.com/cycle/database/commit/bdd2cea509efbb1c63d35d14c4addb55ea0cc005))
+
+
+### Bug Fixes
+
+* **MySQL:** omit row alias on upsert DO NOTHING — the alias made the no-op `col = col` ambiguous at runtime ([bdd2cea](https://github.com/cycle/database/commit/bdd2cea509efbb1c63d35d14c4addb55ea0cc005))
+* **Postgres:** unquote EXCLUDED in upsert DO UPDATE — quoted "EXCLUDED" broke every update-branch upsert at runtime ([bdd2cea](https://github.com/cycle/database/commit/bdd2cea509efbb1c63d35d14c4addb55ea0cc005))
+
 ## [2.20.0](https://github.com/cycle/database/compare/2.19.0...2.20.0) (2026-06-11)
 
 
