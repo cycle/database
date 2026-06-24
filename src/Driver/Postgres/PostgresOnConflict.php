@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\Postgres;
 
+use Cycle\Database\Driver\SQLite\SQLiteOnConflict;
 use Cycle\Database\Exception\BuilderException;
 use Cycle\Database\Query\ConflictAction;
 use Cycle\Database\Query\OnConflict;
+use Cycle\Database\Query\OnConflictWithPredicate;
 use Cycle\Database\Query\QueryParameters;
 
 /**
@@ -14,11 +16,13 @@ use Cycle\Database\Query\QueryParameters;
  *
  * Adds:
  *  - {@see self::onConstraint()} — `ON CONFLICT ON CONSTRAINT <name>` target.
+ *  - {@see OnConflictWithPredicate::targetWhere()} — `ON CONFLICT (cols) WHERE <predicate>`
+ *    index-inference for partial unique indexes (shared with {@see SQLiteOnConflict}).
  *
  * Use {@see self::from()} inside the Postgres compiler to narrow a base
  * {@see OnConflict} instance into this type.
  */
-final class PostgresOnConflict extends OnConflict
+final class PostgresOnConflict extends OnConflictWithPredicate
 {
     /**
      * @param list<non-empty-string> $target
@@ -30,8 +34,9 @@ final class PostgresOnConflict extends OnConflict
         ConflictAction $action,
         null|array $update,
         protected ?string $constraint = null,
+        array $indexPredicate = [],
     ) {
-        parent::__construct($target, $action, $update);
+        parent::__construct($target, $action, $update, $indexPredicate);
     }
 
     /**
@@ -57,12 +62,15 @@ final class PostgresOnConflict extends OnConflict
             return $options;
         }
 
-        if ($options::class !== OnConflict::class) {
+        // Base OnConflict and the feature-compatible SQLite sibling narrow cleanly;
+        // SQLite never carries a constraint, so nothing is lost. MySQL/SQLServer reject.
+        if (!$options instanceof OnConflictWithPredicate && $options::class !== OnConflict::class) {
             throw new BuilderException(\sprintf(
-                'Cannot narrow %s to %s. Use the base OnConflict, or %s directly.',
+                'Cannot narrow %s to %s. Use the base OnConflict, %s, or %s directly.',
                 $options::class,
                 self::class,
                 self::class,
+                SQLiteOnConflict::class,
             ));
         }
 
@@ -70,6 +78,7 @@ final class PostgresOnConflict extends OnConflict
             target: $options->getTarget(),
             action: $options->getAction(),
             update: $options->getUpdate(),
+            indexPredicate: $options instanceof OnConflictWithPredicate ? $options->getIndexPredicate() : [],
         );
     }
 

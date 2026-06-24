@@ -205,11 +205,11 @@ abstract class Compiler implements CompilerInterface
         }
 
         $head = \sprintf(
-            'INSERT INTO %s (%s) VALUES %s ON CONFLICT (%s)',
+            'INSERT INTO %s (%s) VALUES %s ON CONFLICT %s',
             $this->name($params, $q, $tokens['table'], true),
             $this->columns($params, $q, $tokens['columns']),
             \implode(', ', $values),
-            $this->columns($params, $q, $target),
+            $this->conflictTarget($params, $q, $onConflict),
         );
 
         if ($onConflict->getAction() === ConflictAction::Nothing) {
@@ -226,6 +226,18 @@ abstract class Compiler implements CompilerInterface
         );
 
         return $head . ' DO UPDATE SET ' . $updates;
+    }
+
+    /**
+     * Render the conflict target after `ON CONFLICT`: `(col, ...)`, plus — on drivers
+     * that inherit the Postgres inference clause — an index predicate
+     * `(col, ...) WHERE <predicate>`. Driver compilers override to extend it.
+     *
+     * @psalm-return non-empty-string
+     */
+    protected function conflictTarget(QueryParameters $params, Quoter $q, OnConflict $onConflict): string
+    {
+        return '(' . $this->columns($params, $q, $onConflict->getTarget()) . ')';
     }
 
     /**
@@ -261,7 +273,10 @@ abstract class Compiler implements CompilerInterface
         string $sourceAlias,
         ?string $targetAlias = null,
     ): string {
-        $source = $this->quoteIdentifier($sourceAlias);
+        // EXCLUDED is a Postgres/SQLite keyword pseudo-table, not a real alias: it must
+        // stay unquoted (Postgres rejects the quoted "EXCLUDED" with "missing FROM-clause
+        // entry"). MySQL/SQLServer pass real aliases (new_row/source) that are quoted.
+        $source = $sourceAlias === 'EXCLUDED' ? 'EXCLUDED' : $this->quoteIdentifier($sourceAlias);
         $targetPrefix = $targetAlias !== null ? $this->quoteIdentifier($targetAlias) . '.' : '';
 
         if ($update === null) {

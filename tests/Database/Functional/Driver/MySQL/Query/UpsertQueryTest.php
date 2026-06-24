@@ -66,7 +66,7 @@ class UpsertQueryTest extends CommonClass
             ->onConflict(OnConflict::target('request_id')->doNothing());
 
         $this->assertSameQuery(
-            'INSERT INTO {logs} ({request_id}, {payload}) VALUES (?, ?) AS {new_row} '
+            'INSERT INTO {logs} ({request_id}, {payload}) VALUES (?, ?) '
             . 'ON DUPLICATE KEY UPDATE {request_id} = {request_id}',
             $q,
         );
@@ -82,7 +82,7 @@ class UpsertQueryTest extends CommonClass
             ->onConflict(OnConflict::target('request_id')->doNothing());
 
         $this->assertSameQuery(
-            'INSERT INTO {logs} ({payload}, {request_id}) VALUES (?, ?) AS {new_row} '
+            'INSERT INTO {logs} ({payload}, {request_id}) VALUES (?, ?) '
             . 'ON DUPLICATE KEY UPDATE {request_id} = {request_id}',
             $q,
         );

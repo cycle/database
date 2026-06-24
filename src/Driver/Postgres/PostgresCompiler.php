@@ -128,8 +128,14 @@ class PostgresCompiler extends Compiler implements CachingCompilerInterface
      */
     private function postgresConflictTarget(QueryParameters $params, Quoter $q, PostgresOnConflict $onConflict): string
     {
+        $predicate = $onConflict->getIndexPredicate();
+
         $constraint = $onConflict->getConstraint();
         if ($constraint !== null) {
+            $predicate === [] or throw new CompilerException(
+                'ON CONFLICT ON CONSTRAINT cannot be combined with an index-inference predicate (targetWhere()).',
+            );
+
             return 'ON CONSTRAINT ' . $this->quoteIdentifier($constraint);
         }
 
@@ -138,7 +144,15 @@ class PostgresCompiler extends Compiler implements CachingCompilerInterface
             'Upsert query must define a conflict target (columns or constraint).',
         );
 
-        return \sprintf('(%s)', $this->columns($params, $q, $target));
+        $result = \sprintf('(%s)', $this->columns($params, $q, $target));
+
+        if ($predicate === []) {
+            return $result;
+        }
+
+        $where = \trim($this->where($params, $q, $predicate));
+
+        return $where === '' ? $result : $result . ' WHERE ' . $where;
     }
 
     /**
