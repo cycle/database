@@ -65,6 +65,56 @@ class SQLiteCompiler extends Compiler implements CachingCompilerInterface
      */
     protected function insertQuery(QueryParameters $params, Quoter $q, array $tokens): string
     {
+        return $this->appendReturning($params, $q, $this->insertQueryBody($params, $q, $tokens), $tokens);
+    }
+
+    /**
+     * @param array{
+     *     table: non-empty-string,
+     *     columns: list<non-empty-string>,
+     *     values: list<mixed>,
+     *     onConflict: OnConflict,
+     * } $tokens
+     *
+     * @psalm-return non-empty-string
+     */
+    protected function upsertQuery(QueryParameters $params, Quoter $q, array $tokens): string
+    {
+        return $this->appendReturning($params, $q, parent::upsertQuery($params, $q, $tokens), $tokens);
+    }
+
+    protected function compileJsonOrderBy(string $path): FragmentInterface
+    {
+        return new CompileJson($path);
+    }
+
+    /**
+     * SQLite inherits the Postgres `ON CONFLICT (cols) WHERE <predicate>` inference
+     * clause, so it supports an index predicate on the conflict target.
+     *
+     * @psalm-return non-empty-string
+     */
+    protected function conflictTarget(QueryParameters $params, Quoter $q, OnConflict $onConflict): string
+    {
+        $onConflict = SQLiteOnConflict::from($onConflict);
+
+        $target = '(' . $this->columns($params, $q, $onConflict->getTarget()) . ')';
+
+        $predicate = $onConflict->getIndexPredicate();
+        if ($predicate === []) {
+            return $target;
+        }
+
+        $where = \trim($this->where($params, $q, $predicate));
+
+        return $where === '' ? $target : $target . ' WHERE ' . $where;
+    }
+
+    /**
+     * @psalm-return non-empty-string
+     */
+    private function insertQueryBody(QueryParameters $params, Quoter $q, array $tokens): string
+    {
         if ($tokens['columns'] === []) {
             return \sprintf(
                 'INSERT INTO %s DEFAULT VALUES',
@@ -120,32 +170,5 @@ class SQLiteCompiler extends Compiler implements CachingCompilerInterface
         }
 
         return \implode("\n", $statement);
-    }
-
-    protected function compileJsonOrderBy(string $path): FragmentInterface
-    {
-        return new CompileJson($path);
-    }
-
-    /**
-     * SQLite inherits the Postgres `ON CONFLICT (cols) WHERE <predicate>` inference
-     * clause, so it supports an index predicate on the conflict target.
-     *
-     * @psalm-return non-empty-string
-     */
-    protected function conflictTarget(QueryParameters $params, Quoter $q, OnConflict $onConflict): string
-    {
-        $onConflict = SQLiteOnConflict::from($onConflict);
-
-        $target = '(' . $this->columns($params, $q, $onConflict->getTarget()) . ')';
-
-        $predicate = $onConflict->getIndexPredicate();
-        if ($predicate === []) {
-            return $target;
-        }
-
-        $where = \trim($this->where($params, $q, $predicate));
-
-        return $where === '' ? $target : $target . ' WHERE ' . $where;
     }
 }

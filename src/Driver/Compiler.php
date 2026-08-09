@@ -150,6 +150,32 @@ abstract class Compiler implements CompilerInterface
     }
 
     /**
+     * Append a `RETURNING` clause to the given query when the `return` token is set.
+     *
+     * Shared by the dialects using the Postgres-compatible syntax (Postgres, SQLite); dialects
+     * with a different syntax (e.g. SQL Server `OUTPUT`) render it on their own.
+     *
+     * @psalm-return non-empty-string
+     */
+    protected function appendReturning(QueryParameters $params, Quoter $q, string $query, array $tokens): string
+    {
+        if (empty($tokens['return'])) {
+            return $query;
+        }
+
+        return \sprintf(
+            '%s RETURNING %s',
+            $query,
+            \implode(',', \array_map(
+                fn(string|FragmentInterface|null $return) => $return instanceof FragmentInterface
+                    ? $this->fragment($params, $q, $return)
+                    : $this->quoteIdentifier($return),
+                $tokens['return'],
+            )),
+        );
+    }
+
+    /**
      * @psalm-return non-empty-string
      */
     protected function insertQuery(QueryParameters $params, Quoter $q, array $tokens): string
