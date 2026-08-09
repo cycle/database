@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.22.0](https://github.com/cycle/database/compare/2.21.0...2.22.0) (2026-08-09)
+
+
+### Features
+
+* **SQLite:** support the RETURNING clause on INSERT/UPSERT ([#260](https://github.com/cycle/database/issues/260)) ([4d85c6f](https://github.com/cycle/database/commit/4d85c6ffae84cb2f9d39a2b719720d9a81b488bc))
+
 ## [2.21.0](https://github.com/cycle/database/compare/2.20.0...2.21.0) (2026-06-24)
 
 
