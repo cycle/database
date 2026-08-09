@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Functional\Driver\SQLite\Query;
 
 use Cycle\Database\Driver\Handler;
+use Cycle\Database\Driver\SQLite\Query\SQLiteInsertQuery;
 use Cycle\Database\Driver\SQLite\SQLiteOnConflict;
 use Cycle\Database\Injection\Expression;
 use Cycle\Database\Injection\Fragment;
@@ -172,6 +173,36 @@ class UpsertQueryTest extends CommonClass
         // Different key → no conflict → new row inserted.
         $upsert('k2', 'second');
         $this->assertCount(2, $this->database->select()->from('upsert_routes')->fetchAll());
+    }
+
+    public function testUpsertWithReturningColumn(): void
+    {
+        /** @var SQLiteInsertQuery $q */
+        $q = $this->database->insert('users')
+            ->values(['email' => 'a@b.c', 'name' => 'Alex'])
+            ->onConflict('email');
+        $q->returning('id');
+
+        $this->assertSameQuery(
+            'INSERT INTO {users} ({email}, {name}) VALUES (?, ?) '
+            . 'ON CONFLICT ({email}) DO UPDATE SET {name} = EXCLUDED.{name} RETURNING {id}',
+            $q,
+        );
+    }
+
+    public function testUpsertWithMultipleReturningColumns(): void
+    {
+        /** @var SQLiteInsertQuery $q */
+        $q = $this->database->insert('users')
+            ->values(['email' => 'a@b.c', 'name' => 'Alex'])
+            ->onConflict(OnConflict::target('email')->doNothing());
+        $q->returning('id', 'name');
+
+        $this->assertSameQuery(
+            'INSERT INTO {users} ({email}, {name}) VALUES (?, ?) '
+            . 'ON CONFLICT ({email}) DO NOTHING RETURNING {id}, {name}',
+            $q,
+        );
     }
 
     private function makePartialIndexTable(): void

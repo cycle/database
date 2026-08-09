@@ -154,25 +154,4 @@ class PostgresCompiler extends Compiler implements CachingCompilerInterface
 
         return $where === '' ? $result : $result . ' WHERE ' . $where;
     }
-
-    /**
-     * @psalm-return non-empty-string
-     */
-    private function appendReturning(QueryParameters $params, Quoter $q, string $query, array $tokens): string
-    {
-        if (empty($tokens['return'])) {
-            return $query;
-        }
-
-        return \sprintf(
-            '%s RETURNING %s',
-            $query,
-            \implode(',', \array_map(
-                fn(string|FragmentInterface|null $return) => $return instanceof FragmentInterface
-                    ? $this->fragment($params, $q, $return)
-                    : $this->quoteIdentifier($return),
-                $tokens['return'],
-            )),
-        );
-    }
 }

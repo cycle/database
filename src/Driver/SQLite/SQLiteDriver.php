@@ -17,11 +17,11 @@ use Cycle\Database\Driver\CursorInterface;
 use Cycle\Database\Driver\CursorOptions;
 use Cycle\Database\Driver\Driver;
 use Cycle\Database\Driver\SQLite\Query\SQLiteDeleteQuery;
+use Cycle\Database\Driver\SQLite\Query\SQLiteInsertQuery;
 use Cycle\Database\Driver\SQLite\Query\SQLiteSelectQuery;
 use Cycle\Database\Driver\SQLite\Query\SQLiteUpdateQuery;
 use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\StatementException;
-use Cycle\Database\Query\InsertQuery;
 use Cycle\Database\Query\QueryBuilder;
 use Cycle\Database\StatementInterface;
 
@@ -38,7 +38,7 @@ class SQLiteDriver extends Driver implements CursorInterface
             new SQLiteCompiler('""'),
             new QueryBuilder(
                 new SQLiteSelectQuery(),
-                new InsertQuery(),
+                new SQLiteInsertQuery(),
                 new SQLiteUpdateQuery(),
                 new SQLiteDeleteQuery(),
             ),
