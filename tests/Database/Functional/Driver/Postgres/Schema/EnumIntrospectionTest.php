@@ -87,6 +87,58 @@ class EnumIntrospectionTest extends BaseTest
         $this->assertSame(['angry', 'calm'], $schema->column('foreign_mood')->getEnumValues());
     }
 
+    /**
+     * Labels are read from `pg_enum` one row per label, so values with commas, quotes or spaces
+     * are returned verbatim. The former `enum_range()` parsing split the textual range by a comma
+     * and mangled such labels.
+     */
+    public function testLabelsWithSpecialCharacters(): void
+    {
+        $driver = $this->database->getDriver();
+
+        $driver->execute(
+            "CREATE TYPE dirty_labels AS ENUM ('it''s', 'a,b', 'with \"quotes\"', ' spaced ')",
+        );
+        $driver->execute(
+            'CREATE TABLE mixed_enums (
+                id serial NOT NULL,
+                label dirty_labels,
+                CONSTRAINT mixed_enums_pkey PRIMARY KEY (id)
+            )',
+        );
+
+        $schema = $driver->getSchema('mixed_enums');
+
+        $this->assertSame('enum', $schema->column('label')->getAbstractType());
+        $this->assertSame(
+            ["it's", 'a,b', 'with "quotes"', ' spaced '],
+            $schema->column('label')->getEnumValues(),
+        );
+    }
+
+    /**
+     * An enum type without labels has no values, so the column must not be reported as an enum.
+     * The former `enum_range()` parsing produced a single empty-string value for it.
+     */
+    public function testEmptyEnumType(): void
+    {
+        $driver = $this->database->getDriver();
+
+        $driver->execute('CREATE TYPE empty_enum AS ENUM ()');
+        $driver->execute(
+            'CREATE TABLE mixed_enums (
+                id serial NOT NULL,
+                hollow empty_enum,
+                CONSTRAINT mixed_enums_pkey PRIMARY KEY (id)
+            )',
+        );
+
+        $schema = $driver->getSchema('mixed_enums');
+
+        $this->assertNotSame('enum', $schema->column('hollow')->getAbstractType());
+        $this->assertSame([], $schema->column('hollow')->getEnumValues());
+    }
+
     public function testCompositePrimaryKeyWithEmulatedEnum(): void
     {
         $driver = $this->database->getDriver();
@@ -120,7 +172,7 @@ class EnumIntrospectionTest extends BaseTest
             }
         }
 
-        foreach (['mood', 'weather'] as $type) {
+        foreach (['mood', 'weather', 'dirty_labels', 'empty_enum'] as $type) {
             try {
                 $driver->execute("DROP TYPE IF EXISTS {$type}");
             } catch (StatementException) {
