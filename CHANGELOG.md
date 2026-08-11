@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.22.1](https://github.com/cycle/database/compare/2.22.0...2.22.1) (2026-08-11)
+
+
+### Performance Improvements
+
+* **Schema:** batch table introspection queries ([#262](https://github.com/cycle/database/issues/262)) ([7e2d488](https://github.com/cycle/database/commit/7e2d488e9860ba2160bf30fd62167426b58f4f61))
+
 ## [2.22.0](https://github.com/cycle/database/compare/2.21.0...2.22.0) (2026-08-09)
 
 
