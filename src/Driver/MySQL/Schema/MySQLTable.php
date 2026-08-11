@@ -39,6 +39,12 @@ class MySQLTable extends AbstractTable
     private ?string $version = null;
 
     /**
+     * Memoized `SHOW INDEXES` result, shared between {@see fetchIndexes()} and
+     * {@see fetchPrimaryKeys()}.
+     */
+    private ?array $indexRows = null;
+
+    /**
      * Change table engine. Such operation will be applied only at moment of table creation.
      *
      * @psalm-param non-empty-string $engine
@@ -67,6 +73,7 @@ class MySQLTable extends AbstractTable
     /**
      * Populate table schema with values from database.
      */
+    #[\Override]
     protected function initSchema(State $state): void
     {
         parent::initSchema($state);
@@ -80,6 +87,7 @@ class MySQLTable extends AbstractTable
         )->fetch()['Engine'];
     }
 
+    #[\Override]
     protected function isIndexColumnSortingSupported(): bool
     {
         if (!$this->version) {
@@ -93,6 +101,7 @@ class MySQLTable extends AbstractTable
         return \version_compare($this->version, '8.0', '>=');
     }
 
+    #[\Override]
     protected function fetchColumns(): array
     {
         $query = "SHOW FULL COLUMNS FROM {$this->driver->identifier($this->getFullName())}";
@@ -109,13 +118,18 @@ class MySQLTable extends AbstractTable
         return $result;
     }
 
+    #[\Override]
+    protected function resetIntrospectionCache(): void
+    {
+        $this->indexRows = null;
+    }
+
+    #[\Override]
     protected function fetchIndexes(): array
     {
-        $query = "SHOW INDEXES FROM {$this->driver->identifier($this->getFullName())}";
-
         //Gluing all index definitions together
         $schemas = [];
-        foreach ($this->driver->query($query) as $index) {
+        foreach ($this->indexRows() as $index) {
             if ($index['Key_name'] === 'PRIMARY') {
                 //Skipping PRIMARY index
                 continue;
@@ -132,26 +146,38 @@ class MySQLTable extends AbstractTable
         return $result;
     }
 
+    #[\Override]
     protected function fetchReferences(): array
     {
         $references = $this->driver->query(
             'SELECT * FROM `information_schema`.`referential_constraints`
             WHERE `constraint_schema` = ? AND `table_name` = ?',
             [$this->driver->getSource(), $this->getFullName()],
+        )->fetchAll();
+
+        if ($references === []) {
+            return [];
+        }
+
+        // `key_column_usage` is an expensive view, it must not be queried per constraint.
+        $usage = [];
+        $rows = $this->driver->query(
+            'SELECT * FROM `information_schema`.`key_column_usage`
+            WHERE `table_schema` = ? AND `table_name` = ? AND `referenced_table_name` IS NOT NULL
+            ORDER BY `constraint_name`, `ordinal_position`',
+            [$this->driver->getSource(), $this->getFullName()],
         );
+
+        foreach ($rows as $row) {
+            $usage[$row['CONSTRAINT_NAME']][] = $row;
+        }
 
         $result = [];
         foreach ($references as $schema) {
-            $columns = $this->driver->query(
-                'SELECT * FROM `information_schema`.`key_column_usage`
-                WHERE `constraint_name` = ? AND `table_schema` = ? AND `table_name` = ?',
-                [$schema['CONSTRAINT_NAME'], $this->driver->getSource(), $this->getFullName()],
-            )->fetchAll();
-
             $schema['COLUMN_NAME'] = [];
             $schema['REFERENCED_COLUMN_NAME'] = [];
 
-            foreach ($columns as $column) {
+            foreach ($usage[$schema['CONSTRAINT_NAME']] ?? [] as $column) {
                 $schema['COLUMN_NAME'][] = $column['COLUMN_NAME'];
                 $schema['REFERENCED_COLUMN_NAME'][] = $column['REFERENCED_COLUMN_NAME'];
             }
@@ -169,12 +195,11 @@ class MySQLTable extends AbstractTable
     /**
      * Fetching primary keys from table.
      */
+    #[\Override]
     protected function fetchPrimaryKeys(): array
     {
-        $query = "SHOW INDEXES FROM {$this->driver->identifier($this->getFullName())}";
-
         $primaryKeys = [];
-        foreach ($this->driver->query($query) as $index) {
+        foreach ($this->indexRows() as $index) {
             if ($index['Key_name'] === 'PRIMARY') {
                 $primaryKeys[] = $index['Column_name'];
             }
@@ -186,6 +211,7 @@ class MySQLTable extends AbstractTable
     /**
      * @psalm-param non-empty-string $name
      */
+    #[\Override]
     protected function createColumn(string $name): AbstractColumn
     {
         return new MySQLColumn($this->getFullName(), $name, $this->driver->getTimezone());
@@ -194,6 +220,7 @@ class MySQLTable extends AbstractTable
     /**
      * @psalm-param non-empty-string $name
      */
+    #[\Override]
     protected function createIndex(string $name): AbstractIndex
     {
         return new MySQLIndex($this->getFullName(), $name);
@@ -202,8 +229,20 @@ class MySQLTable extends AbstractTable
     /**
      * @psalm-param non-empty-string $name
      */
+    #[\Override]
     protected function createForeign(string $name): AbstractForeignKey
     {
         return new MySQLForeignKey($this->getFullName(), $this->getPrefix(), $name);
+    }
+
+    /**
+     * `SHOW INDEXES` carries both the secondary indexes and the primary key, so it is executed once
+     * per introspection and split in PHP.
+     */
+    private function indexRows(): array
+    {
+        return $this->indexRows ??= $this->driver
+            ->query("SHOW INDEXES FROM {$this->driver->identifier($this->getFullName())}")
+            ->fetchAll();
     }
 }

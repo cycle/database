@@ -145,6 +145,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         return new Comparator($this->initial, $this->current);
     }
 
+    #[\Override]
     public function exists(): bool
     {
         // Declared as dropped != actually dropped
@@ -176,6 +177,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * @psalm-return non-empty-string
      */
+    #[\Override]
     public function getName(): string
     {
         return $this->getFullName();
@@ -184,6 +186,7 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * @psalm-return non-empty-string
      */
+    #[\Override]
     public function getFullName(): string
     {
         return $this->current->getName();
@@ -228,11 +231,13 @@ abstract class AbstractTable implements TableInterface, ElementInterface
         return $this;
     }
 
+    #[\Override]
     public function getPrimaryKeys(): array
     {
         return $this->current->getPrimaryKeys();
     }
 
+    #[\Override]
     public function hasColumn(string $name): bool
     {
         return $this->current->hasColumn($name);
@@ -241,11 +246,13 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * @return AbstractColumn[]
      */
+    #[\Override]
     public function getColumns(): array
     {
         return $this->current->getColumns();
     }
 
+    #[\Override]
     public function hasIndex(array $columns = []): bool
     {
         return $this->current->hasIndex($columns);
@@ -254,11 +261,13 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * @return AbstractIndex[]
      */
+    #[\Override]
     public function getIndexes(): array
     {
         return $this->current->getIndexes();
     }
 
+    #[\Override]
     public function hasForeignKey(array $columns): bool
     {
         return $this->current->hasForeignKey($columns);
@@ -267,11 +276,13 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     /**
      * @return AbstractForeignKey[]
      */
+    #[\Override]
     public function getForeignKeys(): array
     {
         return $this->current->getForeignKeys();
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         $tables = [];
@@ -586,6 +597,9 @@ abstract class AbstractTable implements TableInterface, ElementInterface
             }
         }
 
+        // Introspection results are not valid anymore
+        $this->resetIntrospectionCache();
+
         // Syncing our schemas
         if ($reset) {
             $this->status = self::STATUS_EXISTS;
@@ -760,6 +774,8 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      */
     protected function initSchema(State $state): void
     {
+        $this->resetIntrospectionCache();
+
         foreach ($this->fetchColumns() as $column) {
             $state->registerColumn($column);
         }
@@ -779,6 +795,15 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     protected function isIndexColumnSortingSupported(): bool
     {
         return true;
+    }
+
+    /**
+     * Drop driver specific introspection results memoized for the duration of a single
+     * introspection pass. Called before the schema is read and after it has been modified.
+     */
+    protected function resetIntrospectionCache(): void
+    {
+        // Nothing to do by default.
     }
 
     /**

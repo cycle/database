@@ -305,12 +305,20 @@ class PostgresColumn extends AbstractColumn
 
     /**
      * @param DriverInterface $driver Postgres columns are bit more complex.
+     * @param array|null $checkConstraints Pre-fetched CHECK constraints of the whole table keyed by
+     *        the textual `conkey` value. When `null` the constraints are resolved with a dedicated
+     *        query (requires `tableOID` in the `$schema`).
+     * @param array|null $enumValues Pre-fetched native enum ranges keyed as `<schema>.<type>`.
+     *        When `null` the range is resolved with a dedicated query.
+     *
      * @psalm-param non-empty-string $table Table name.
      */
     public static function createInstance(
         string $table,
         array $schema,
         DriverInterface $driver,
+        ?array $checkConstraints = null,
+        ?array $enumValues = null,
     ): self {
         $column = new self($table, $schema['column_name'], $driver->getTimezone());
 
@@ -365,7 +373,7 @@ class PostgresColumn extends AbstractColumn
              * Attention, this is not default enum type emulated via CHECK.
              * This is real Postgres enum type.
              */
-            self::resolveEnum($driver, $column);
+            self::resolveEnum($driver, $schema, $column, $enumValues);
         }
 
         if ($column->type === 'timestamp' || $column->type === 'time' || $column->type === 'interval') {
@@ -382,7 +390,7 @@ class PostgresColumn extends AbstractColumn
 
         if (!empty($column->size) && \str_contains($column->type, 'char')) {
             //Potential enum with manually created constraint (check in)
-            self::resolveConstrains($driver, $schema, $column);
+            self::resolveConstrains($driver, $schema, $column, $checkConstraints);
         }
 
         if ($column->type === 'interval' && \is_string($schema['interval_type'])) {
@@ -404,6 +412,7 @@ class PostgresColumn extends AbstractColumn
         return $column;
     }
 
+    #[\Override]
     public function getConstraints(): array
     {
         $constraints = parent::getConstraints();
@@ -418,6 +427,7 @@ class PostgresColumn extends AbstractColumn
     /**
      * @psalm-return non-empty-string
      */
+    #[\Override]
     public function getAbstractType(): string
     {
         return !empty($this->enumValues) ? 'enum' : parent::getAbstractType();
@@ -459,6 +469,7 @@ class PostgresColumn extends AbstractColumn
         return $this->type('bigPrimary');
     }
 
+    #[\Override]
     public function enum(string|array $values): AbstractColumn
     {
         $this->enumValues = \array_map('strval', \is_array($values) ? $values : \func_get_args());
@@ -487,6 +498,7 @@ class PostgresColumn extends AbstractColumn
     /**
      * @psalm-return non-empty-string
      */
+    #[\Override]
     public function sqlStatement(DriverInterface $driver): string
     {
         $statement = [$driver->identifier($this->name), $this->type];
@@ -626,6 +638,7 @@ class PostgresColumn extends AbstractColumn
         return $operations;
     }
 
+    #[\Override]
     public function compare(AbstractColumn $initial): bool
     {
         if (parent::compare($initial)) {
@@ -638,6 +651,7 @@ class PostgresColumn extends AbstractColumn
         );
     }
 
+    #[\Override]
     public function getComment(): string
     {
         return $this->comment;
@@ -654,6 +668,7 @@ class PostgresColumn extends AbstractColumn
         return "COMMENT ON COLUMN {$tableName}.{$identifier} IS " . $driver->quote($this->comment);
     }
 
+    #[\Override]
     protected static function isJson(AbstractColumn $column): bool
     {
         return $column->getAbstractType() === 'json' || $column->getAbstractType() === 'jsonb';
@@ -662,6 +677,7 @@ class PostgresColumn extends AbstractColumn
     /**
      * @psalm-return non-empty-string
      */
+    #[\Override]
     protected function quoteEnum(DriverInterface $driver): string
     {
         //Postgres enums are just constrained strings
@@ -675,17 +691,24 @@ class PostgresColumn extends AbstractColumn
         DriverInterface $driver,
         array $schema,
         self $column,
+        ?array $checkConstraints = null,
     ): void {
-        $query = "SELECT conname, pg_get_constraintdef(oid) as consrc FROM pg_constraint
-        WHERE conrelid = ? AND contype = 'c' AND conkey = ?";
+        $conkey = '{' . $schema['dtd_identifier'] . '}';
 
-        $constraints = $driver->query(
-            $query,
-            [
-                $schema['tableOID'],
-                '{' . $schema['dtd_identifier'] . '}',
-            ],
-        );
+        if ($checkConstraints !== null) {
+            $constraints = $checkConstraints[$conkey] ?? [];
+        } else {
+            $query = "SELECT conname, pg_get_constraintdef(oid) as consrc FROM pg_constraint
+            WHERE conrelid = ? AND contype = 'c' AND conkey = ?";
+
+            $constraints = $driver->query(
+                $query,
+                [
+                    $schema['tableOID'],
+                    $conkey,
+                ],
+            );
+        }
 
         foreach ($constraints as $constraint) {
             $values = static::parseEnumValues($constraint['consrc']);
@@ -701,11 +724,19 @@ class PostgresColumn extends AbstractColumn
     /**
      * Resolve native ENUM type if presented.
      */
-    private static function resolveEnum(DriverInterface $driver, self $column): void
-    {
-        $range = $driver->query('SELECT enum_range(NULL::' . $column->type . ')')->fetchColumn(0);
+    private static function resolveEnum(
+        DriverInterface $driver,
+        array $schema,
+        self $column,
+        ?array $enumValues = null,
+    ): void {
+        if ($enumValues !== null) {
+            $column->enumValues = $enumValues[$schema['udt_schema'] . '.' . $schema['udt_name']] ?? [];
+        } else {
+            $range = $driver->query('SELECT enum_range(NULL::' . $column->type . ')')->fetchColumn(0);
 
-        $column->enumValues = \explode(',', \substr($range, 1, -1));
+            $column->enumValues = \explode(',', \substr($range, 1, -1));
+        }
 
         if (!empty($column->defaultValue)) {
             //In database: 'value'::enumType
