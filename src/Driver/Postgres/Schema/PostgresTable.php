@@ -31,6 +31,12 @@ class PostgresTable extends AbstractTable
     private array $sequences = [];
 
     /**
+     * Memoized result of the index introspection query, shared between {@see fetchIndexes()}
+     * and {@see fetchPrimaryKeys()}.
+     */
+    private ?array $indexRows = null;
+
+    /**
      * Sequence object name usually defined only for primary keys and required by ORM to correctly
      * resolve inserted row id.
      */
@@ -45,6 +51,7 @@ class PostgresTable extends AbstractTable
         return $this->primarySequence;
     }
 
+    #[\Override]
     public function getName(): string
     {
         return $this->removeSchemaFromTableName($this->getFullName());
@@ -53,6 +60,7 @@ class PostgresTable extends AbstractTable
     /**
      * SQLServer will reload schemas after successful save.
      */
+    #[\Override]
     public function save(int $operation = HandlerInterface::DO_ALL, bool $reset = true): void
     {
         parent::save($operation, $reset);
@@ -68,6 +76,7 @@ class PostgresTable extends AbstractTable
         }
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         $tables = [];
@@ -79,20 +88,16 @@ class PostgresTable extends AbstractTable
         return $tables;
     }
 
+    #[\Override]
+    protected function resetIntrospectionCache(): void
+    {
+        $this->indexRows = null;
+    }
+
+    #[\Override]
     protected function fetchColumns(): array
     {
         [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
-
-        //Required for constraints fetch
-        $tableOID = $this->driver->query(
-            'SELECT pgc.oid
-                FROM pg_class as pgc
-                JOIN pg_namespace as pgn
-                    ON (pgn.oid = pgc.relnamespace)
-                WHERE pgn.nspname = ?
-                AND pgc.relname = ?',
-            [$tableSchema, $tableName],
-        )->fetchColumn();
 
         $query = $this->driver->query(
             'SELECT columns.*, pg_type.*, pg_description.description
@@ -126,8 +131,13 @@ class PostgresTable extends AbstractTable
             [$tableSchema, $tableName],
         )->fetchAll(), 'column_name');
 
+        $schemas = $query->fetchAll();
+
+        $checkConstraints = $this->fetchCheckConstraints($tableSchema, $tableName, $schemas);
+        $enumValues = $this->fetchEnumValues($schemas);
+
         $result = [];
-        foreach ($query->fetchAll() as $schema) {
+        foreach ($schemas as $schema) {
             $name = $schema['column_name'];
             if (
                 \is_string($schema['column_default'])
@@ -145,31 +155,23 @@ class PostgresTable extends AbstractTable
 
             $result[] = PostgresColumn::createInstance(
                 $tableSchema . '.' . $tableName,
-                $schema + ['tableOID' => $tableOID],
+                $schema,
                 $this->driver,
+                $checkConstraints,
+                $enumValues,
             );
         }
 
         return $result;
     }
 
+    #[\Override]
     protected function fetchIndexes(bool $all = false): array
     {
         [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
 
-        $query = <<<SQL
-            SELECT i.indexname, i.indexdef, c.contype
-            FROM pg_indexes i
-            LEFT JOIN pg_namespace ns
-                ON nspname = i.schemaname
-            LEFT JOIN pg_constraint c
-                ON c.conname = i.indexname
-                AND c.connamespace = ns.oid
-            WHERE i.schemaname = ? AND i.tablename = ?
-            SQL;
-
         $result = [];
-        foreach ($this->driver->query($query, [$tableSchema, $tableName]) as $schema) {
+        foreach ($this->indexRows() as $schema) {
             if ($schema['contype'] === 'p') {
                 //Skipping primary keys
                 continue;
@@ -180,6 +182,7 @@ class PostgresTable extends AbstractTable
         return $result;
     }
 
+    #[\Override]
     protected function fetchReferences(): array
     {
         [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
@@ -222,23 +225,16 @@ class PostgresTable extends AbstractTable
         return $result;
     }
 
+    #[\Override]
     protected function fetchPrimaryKeys(): array
     {
         [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
 
-        $query = <<<SQL
-            SELECT i.indexname, i.indexdef, c.contype
-            FROM pg_indexes i
-            INNER JOIN pg_namespace ns
-                ON nspname = i.schemaname
-            INNER JOIN pg_constraint c
-                ON c.conname = i.indexname
-                AND c.connamespace = ns.oid
-            WHERE i.schemaname = ? AND i.tablename = ?
-              AND c.contype = 'p'
-            SQL;
+        foreach ($this->indexRows() as $schema) {
+            if ($schema['contype'] !== 'p') {
+                continue;
+            }
 
-        foreach ($this->driver->query($query, [$tableSchema, $tableName]) as $schema) {
             //To simplify definitions
             $index = PostgresIndex::createInstance($tableSchema . '.' . $tableName, $schema);
 
@@ -260,6 +256,7 @@ class PostgresTable extends AbstractTable
     /**
      * @psalm-param non-empty-string $name
      */
+    #[\Override]
     protected function createColumn(string $name): AbstractColumn
     {
         return new PostgresColumn(
@@ -272,6 +269,7 @@ class PostgresTable extends AbstractTable
     /**
      * @psalm-param non-empty-string $name
      */
+    #[\Override]
     protected function createIndex(string $name): AbstractIndex
     {
         return new PostgresIndex(
@@ -283,6 +281,7 @@ class PostgresTable extends AbstractTable
     /**
      * @psalm-param non-empty-string $name
      */
+    #[\Override]
     protected function createForeign(string $name): AbstractForeignKey
     {
         return new PostgresForeignKey(
@@ -295,6 +294,7 @@ class PostgresTable extends AbstractTable
     /**
      * @psalm-param non-empty-string $name
      */
+    #[\Override]
     protected function prefixTableName(string $name): string
     {
         [$schema, $name] = $this->driver->parseSchemaAndTable($name);
@@ -324,5 +324,126 @@ class PostgresTable extends AbstractTable
         }
 
         return $name;
+    }
+
+    /**
+     * Both {@see fetchIndexes()} and {@see fetchPrimaryKeys()} are based on the same data set,
+     * so it is fetched once and split by the constraint type in PHP.
+     */
+    private function indexRows(): array
+    {
+        if ($this->indexRows !== null) {
+            return $this->indexRows;
+        }
+
+        [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
+
+        $query = <<<SQL
+            SELECT i.indexname, i.indexdef, c.contype
+            FROM pg_indexes i
+            LEFT JOIN pg_namespace ns
+                ON nspname = i.schemaname
+            LEFT JOIN pg_constraint c
+                ON c.conname = i.indexname
+                AND c.connamespace = ns.oid
+            WHERE i.schemaname = ? AND i.tablename = ?
+            SQL;
+
+        return $this->indexRows = $this->driver->query($query, [$tableSchema, $tableName])->fetchAll();
+    }
+
+    /**
+     * Fetch all single-column CHECK constraints of the table at once (they are used to detect
+     * enums emulated via CHECK), keyed by the textual representation of {@see pg_constraint.conkey}.
+     *
+     * @param array $schemas Rows of the column introspection query.
+     *
+     * @return array<string, list<array>>
+     */
+    private function fetchCheckConstraints(string $tableSchema, string $tableName, array $schemas): array
+    {
+        if (!$this->hasConstrainedColumns($schemas)) {
+            return [];
+        }
+
+        $query = <<<SQL
+            SELECT c.conname, c.conkey, pg_get_constraintdef(c.oid) as consrc
+            FROM pg_constraint c
+            JOIN pg_class cl
+                ON cl.oid = c.conrelid
+            JOIN pg_namespace ns
+                ON ns.oid = cl.relnamespace
+            WHERE ns.nspname = ? AND cl.relname = ? AND c.contype = 'c'
+            SQL;
+
+        $result = [];
+        foreach ($this->driver->query($query, [$tableSchema, $tableName]) as $constraint) {
+            $result[(string) $constraint['conkey']][] = $constraint;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Only `character`-like columns with a size may carry an emulated enum constraint,
+     * see {@see PostgresColumn::createInstance()}.
+     */
+    private function hasConstrainedColumns(array $schemas): bool
+    {
+        foreach ($schemas as $schema) {
+            if (
+                $schema['character_maximum_length'] !== null
+                && \str_contains((string) $schema['data_type'], 'char')
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Fetch value ranges of all native enum types used by the table with a single query.
+     *
+     * @param array $schemas Rows of the column introspection query.
+     *
+     * @return array<string, list<string>> Keyed as `<type schema>.<type name>`.
+     */
+    private function fetchEnumValues(array $schemas): array
+    {
+        $types = [];
+        foreach ($schemas as $schema) {
+            if ($schema['data_type'] === 'USER-DEFINED' && $schema['typtype'] === 'e') {
+                $types[$schema['udt_schema'] . '.' . $schema['udt_name']] = [
+                    $schema['udt_schema'],
+                    $schema['udt_name'],
+                ];
+            }
+        }
+
+        if ($types === []) {
+            return [];
+        }
+
+        $placeholders = \implode(', ', \array_fill(0, \count($types), '(?, ?)'));
+        $parameters = \array_merge(...\array_values($types));
+
+        $query = <<<SQL
+            SELECT ns.nspname, t.typname, e.enumlabel
+            FROM pg_enum e
+            JOIN pg_type t
+                ON t.oid = e.enumtypid
+            JOIN pg_namespace ns
+                ON ns.oid = t.typnamespace
+            WHERE (ns.nspname, t.typname) IN ({$placeholders})
+            ORDER BY e.enumsortorder
+            SQL;
+
+        $result = [];
+        foreach ($this->driver->query($query, $parameters) as $row) {
+            $result[$row['nspname'] . '.' . $row['typname']][] = $row['enumlabel'];
+        }
+
+        return $result;
     }
 }

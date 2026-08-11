@@ -146,12 +146,19 @@ class SQLServerColumn extends AbstractColumn
 
     /**
      * @param DriverInterface $driver SQLServer columns are bit more complex.
+     * @param array|null $defaultConstraints Pre-fetched DEFAULT constraint names of the whole table
+     *        keyed by the constraint object id. When `null` the name is resolved with a dedicated query.
+     * @param array|null $checkConstraints Pre-fetched CHECK constraints of the whole table keyed as
+     *        `<table object id>:<column id>`. When `null` they are resolved with a dedicated query.
+     *
      * @psalm-param non-empty-string $table Table name.
      */
     public static function createInstance(
         string $table,
         array $schema,
         DriverInterface $driver,
+        ?array $defaultConstraints = null,
+        ?array $checkConstraints = null,
     ): self {
         $column = new self($table, $schema['COLUMN_NAME'], $driver->getTimezone());
 
@@ -185,12 +192,14 @@ class SQLServerColumn extends AbstractColumn
 
         if (!empty($schema['default_object_id'])) {
             //Looking for default constrain id
-            $column->defaultConstraint = $driver->query(
-                'SELECT [name] FROM [sys].[default_constraints] WHERE [object_id] = ?',
-                [
-                    $schema['default_object_id'],
-                ],
-            )->fetchColumn();
+            $column->defaultConstraint = $defaultConstraints !== null
+                ? ($defaultConstraints[(string) $schema['default_object_id']] ?? '')
+                : $driver->query(
+                    'SELECT [name] FROM [sys].[default_constraints] WHERE [object_id] = ?',
+                    [
+                        $schema['default_object_id'],
+                    ],
+                )->fetchColumn();
 
             if (!empty($column->defaultConstraint)) {
                 $column->constrainedDefault = true;
@@ -199,12 +208,13 @@ class SQLServerColumn extends AbstractColumn
 
         //Potential enum
         if ($column->type === 'varchar' && !empty($column->size)) {
-            self::resolveEnum($driver, $schema, $column);
+            self::resolveEnum($driver, $schema, $column, $checkConstraints);
         }
 
         return $column;
     }
 
+    #[\Override]
     public function getConstraints(): array
     {
         $constraints = parent::getConstraints();
@@ -220,11 +230,13 @@ class SQLServerColumn extends AbstractColumn
         return $constraints;
     }
 
+    #[\Override]
     public function getAbstractType(): string
     {
         return !empty($this->enumValues) ? 'enum' : parent::getAbstractType();
     }
 
+    #[\Override]
     public function enum(mixed $values): AbstractColumn
     {
         $this->enumValues = \array_map('strval', \is_array($values) ? $values : \func_get_args());
@@ -238,6 +250,7 @@ class SQLServerColumn extends AbstractColumn
         return $this;
     }
 
+    #[\Override]
     public function datetime(int $size = 0, mixed ...$attributes): self
     {
         $size === 0 ? $this->type('datetime') : $this->type('datetime2');
@@ -257,6 +270,7 @@ class SQLServerColumn extends AbstractColumn
      *
      * @psalm-return non-empty-string
      */
+    #[\Override]
     public function sqlStatement(DriverInterface $driver, bool $withEnum = true): string
     {
         if ($withEnum && $this->getAbstractType() === 'enum') {
@@ -352,6 +366,7 @@ class SQLServerColumn extends AbstractColumn
         return $operations;
     }
 
+    #[\Override]
     protected static function isJson(AbstractColumn $column): ?bool
     {
         // In SQL Server, we cannot determine if a column has a JSON type.
@@ -361,6 +376,7 @@ class SQLServerColumn extends AbstractColumn
     /**
      * @psalm-return non-empty-string
      */
+    #[\Override]
     protected function quoteDefault(DriverInterface $driver): string
     {
         $defaultValue = parent::quoteDefault($driver);
@@ -402,13 +418,18 @@ class SQLServerColumn extends AbstractColumn
         DriverInterface $driver,
         array $schema,
         self $column,
+        ?array $checkConstraints = null,
     ): void {
-        $query = 'SELECT object_definition([o].[object_id]) AS [definition], '
-            . "OBJECT_NAME([o].[object_id]) AS [name]\nFROM [sys].[objects] AS [o]\n"
-            . "JOIN [sys].[sysconstraints] AS [c] ON [o].[object_id] = [c].[constid]\n"
-            . "WHERE [type_desc] = 'CHECK_CONSTRAINT' AND [parent_object_id] = ? AND [c].[colid] = ?";
+        if ($checkConstraints !== null) {
+            $constraints = $checkConstraints[$schema['object_id'] . ':' . $schema['column_id']] ?? [];
+        } else {
+            $query = 'SELECT object_definition([o].[object_id]) AS [definition], '
+                . "OBJECT_NAME([o].[object_id]) AS [name]\nFROM [sys].[objects] AS [o]\n"
+                . "JOIN [sys].[sysconstraints] AS [c] ON [o].[object_id] = [c].[constid]\n"
+                . "WHERE [type_desc] = 'CHECK_CONSTRAINT' AND [parent_object_id] = ? AND [c].[colid] = ?";
 
-        $constraints = $driver->query($query, [$schema['object_id'], $schema['column_id']]);
+            $constraints = $driver->query($query, [$schema['object_id'], $schema['column_id']]);
+        }
 
         foreach ($constraints as $constraint) {
             $column->enumConstraint = $constraint['name'];

@@ -18,6 +18,19 @@ use Cycle\Database\Schema\AbstractTable;
 
 class SQLiteTable extends AbstractTable
 {
+    /**
+     * Memoized `PRAGMA TABLE_INFO` result. It is requested by {@see fetchColumns()} and
+     * {@see fetchPrimaryKeys()}, and the latter is called more than once per introspection.
+     */
+    private ?array $tableInfo = null;
+
+    #[\Override]
+    protected function resetIntrospectionCache(): void
+    {
+        $this->tableInfo = null;
+    }
+
+    #[\Override]
     protected function fetchColumns(): array
     {
         /**
@@ -52,6 +65,7 @@ class SQLiteTable extends AbstractTable
         return $result;
     }
 
+    #[\Override]
     protected function fetchIndexes(): array
     {
         $primaryKeys = $this->fetchPrimaryKeys();
@@ -84,6 +98,7 @@ class SQLiteTable extends AbstractTable
         return $result;
     }
 
+    #[\Override]
     protected function fetchReferences(): array
     {
         $query = "PRAGMA foreign_key_list({$this->driver->quote($this->getFullName())})";
@@ -116,8 +131,8 @@ class SQLiteTable extends AbstractTable
 
     /**
      * Fetching primary keys from table.
-     *
      */
+    #[\Override]
     protected function fetchPrimaryKeys(): array
     {
         $primaryKeys = [];
@@ -130,16 +145,19 @@ class SQLiteTable extends AbstractTable
         return $primaryKeys;
     }
 
+    #[\Override]
     protected function createColumn(string $name): AbstractColumn
     {
         return new SQLiteColumn($this->getFullName(), $name, $this->driver->getTimezone());
     }
 
+    #[\Override]
     protected function createIndex(string $name): AbstractIndex
     {
         return new SQLiteIndex($this->getFullName(), $name);
     }
 
+    #[\Override]
     protected function createForeign(string $name): AbstractForeignKey
     {
         return new SQLiteForeignKey($this->getFullName(), $this->getPrefix(), $name);
@@ -147,17 +165,20 @@ class SQLiteTable extends AbstractTable
 
     /**
      * @param array $include Include following parameters into each line.
-     *
      */
     private function columnSchemas(array $include = []): array
     {
-        $columns = $this->driver->query(
+        $this->tableInfo ??= $this->driver->query(
             'PRAGMA TABLE_INFO(' . $this->driver->quote($this->getFullName()) . ')',
-        );
+        )->fetchAll();
+
+        if ($include === []) {
+            return $this->tableInfo;
+        }
 
         $result = [];
 
-        foreach ($columns as $column) {
+        foreach ($this->tableInfo as $column) {
             $result[] = $column + $include;
         }
 
