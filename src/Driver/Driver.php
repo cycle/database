@@ -30,7 +30,7 @@ use Psr\Log\LoggerAwareTrait;
 /**
  * Provides low level abstraction at top of
  */
-abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInterface
+abstract class Driver implements DriverInterface, NamedInterface, DateTimeFormatInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
@@ -578,9 +578,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
             throw new DriverException($e->getMessage(), (int) $e->getCode(), $e);
         }
 
-        return $datetime->format(
-            $this->config->options['withDatetimeMicroseconds'] ? self::DATETIME_MICROSECONDS : self::DATETIME,
-        );
+        return $datetime->format($this->getDateTimeFormat());
     }
 
     /**
@@ -705,5 +703,13 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
         }
 
         return $context;
+    }
+
+    /**
+     * Returns DateTime format of the driver.
+     */
+    public function getDateTimeFormat(): string
+    {
+        return $this->config->options['withDatetimeMicroseconds'] ? self::DATETIME_MICROSECONDS : self::DATETIME;
     }
 }

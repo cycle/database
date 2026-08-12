@@ -64,6 +64,24 @@ abstract class DriverTest extends BaseTest
         yield [new class('2000-01-23T01:23:45.678+09:00') extends \DateTime {}];
     }
 
+    /**
+     * @dataProvider dateTimeFormatProvider
+     */
+    public function testGetDateTimeFormat(bool $withDatetimeMicroseconds, string $format): void
+    {
+        $options = [
+            'withDatetimeMicroseconds' => $withDatetimeMicroseconds,
+        ];
+        $driver = $this->db(driverConfig: ['options' => $options])->getDriver();
+        self::assertSame($format, $driver->getDateTimeFormat());
+    }
+
+    public function dateTimeFormatProvider(): \Traversable
+    {
+        yield [false, 'Y-m-d H:i:s'];
+        yield [true, 'Y-m-d H:i:s.u'];
+    }
+
     public function testClearCache(): void
     {
         $driver = $this->mockDriver();
