@@ -35,8 +35,7 @@ interface BulkSchemaProviderInterface
      * @param non-empty-string[] $tables Table names WITHOUT the database prefix.
      * @param string|null $prefix Database specific table prefix applied to every table.
      *
-     * @return array<non-empty-string, AbstractTable> Keyed by the input table name, in the input
-     *         order.
+     * @return array<non-empty-string, AbstractTable> Keyed by the input table name, in the input order.
      */
     public function getSchemas(array $tables, ?string $prefix = null): array;
 }
