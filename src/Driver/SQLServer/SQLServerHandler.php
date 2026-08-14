@@ -299,7 +299,8 @@ class SQLServerHandler extends Handler
             . '[information_schema].[columns].[table_name] AS [bulkTable] '
             . 'FROM [information_schema].[columns] INNER JOIN [sys].[columns] AS [sysColumns] '
             . 'ON (object_name([object_id]) = [table_name] AND [sysColumns].[name] = [COLUMN_NAME]) '
-            . "WHERE [table_name] IN ({$in})");
+            . "WHERE [table_name] IN ({$in}) "
+            . 'ORDER BY [table_name], [ORDINAL_POSITION]');
     }
 
     /**

@@ -357,6 +357,7 @@ class PostgresHandler extends Handler
                 ON (pg_description.objoid = pg_statio_all_tables.relid
                 AND pg_description.objsubid = columns.ordinal_position)
             WHERE (columns.table_schema, columns.table_name) IN ({$in})
+            ORDER BY columns.table_schema, columns.table_name, columns.ordinal_position
             SQL);
     }
 
@@ -395,6 +396,7 @@ class PostgresHandler extends Handler
                 ON c.conname = i.indexname
                 AND c.connamespace = ns.oid
             WHERE (i.schemaname, i.tablename) IN ({$in})
+            ORDER BY i.schemaname, i.tablename, i.indexname
             SQL);
     }
 
