@@ -145,6 +145,43 @@ abstract class BulkIntrospectionTest extends BaseTest
         $this->assertSameAsInDB($handler->getSchema('composite_child'), $bulk['composite_child']);
     }
 
+    /**
+     * Column ORDER is not covered by {@see \Cycle\Database\Tests\Traits\TableAssertions::assertSameAsInDB()}
+     * (it matches columns by name), while the batched catalog queries return rows in
+     * planner-dependent order unless they ORDER BY the ordinal position. The reorder shows up only
+     * when the result set is large enough for the planner to prefer a hash join, hence the dozens
+     * of tables with interleaved column types.
+     */
+    public function testColumnOrderMatchesPerTable(): void
+    {
+        $names = [];
+        for ($i = 0; $i < 30; $i++) {
+            $name = "col_order_{$i}";
+            $schema = $this->schema($name);
+            $schema->primary('id');
+            $schema->string('str_0', 64);
+            $schema->integer('int_0');
+            $schema->string('str_1', 64);
+            $schema->integer('int_1');
+            $schema->string('str_2', 64);
+            $schema->datetime('created_at');
+            $schema->string('str_3', 64);
+            $schema->save(Handler::DO_ALL);
+            $names[] = $name;
+        }
+
+        $handler = $this->bulkProvider();
+        $bulk = $handler->getSchemas($names);
+
+        foreach ($names as $name) {
+            $this->assertSame(
+                \array_keys($handler->getSchema($name)->getColumns()),
+                \array_keys($bulk[$name]->getColumns()),
+                "Column order of {$name} diverged between per-table and bulk introspection",
+            );
+        }
+    }
+
     public function testReadonlyHandlerDelegatesBulkIntrospection(): void
     {
         $this->makeSampleSchema();
