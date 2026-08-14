@@ -99,42 +99,49 @@ class PostgresTable extends AbstractTable
     {
         [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
 
-        $query = $this->driver->query(
-            'SELECT columns.*, pg_type.*, pg_description.description
-               FROM information_schema.columns
-               JOIN pg_catalog.pg_type
-                   ON (pg_type.typname = columns.udt_name)
-               JOIN pg_catalog.pg_statio_all_tables
-	               ON (pg_statio_all_tables.relname = columns.table_name
-	               AND pg_statio_all_tables.schemaname = columns.table_schema)
-               LEFT JOIN pg_catalog.pg_description
-	               ON (pg_description.objoid = pg_statio_all_tables.relid
-	               AND pg_description.objsubid = columns.ordinal_position)
-               WHERE columns.table_schema = ?
-               AND columns.table_name = ?',
-            [$tableSchema, $tableName],
-        );
+        if ($this->prefetch !== null) {
+            $schemas = $this->prefetch->data['columns'];
+            $primaryKeys = $this->prefetch->data['primaryKeys'];
+            $checkConstraints = $this->prefetch->data['checkConstraints'];
+            $enumValues = $this->prefetch->data['enumValues'];
+        } else {
+            $query = $this->driver->query(
+                'SELECT columns.*, pg_type.*, pg_description.description
+                   FROM information_schema.columns
+                   JOIN pg_catalog.pg_type
+                       ON (pg_type.typname = columns.udt_name)
+                   JOIN pg_catalog.pg_statio_all_tables
+	                   ON (pg_statio_all_tables.relname = columns.table_name
+	                   AND pg_statio_all_tables.schemaname = columns.table_schema)
+                   LEFT JOIN pg_catalog.pg_description
+	                   ON (pg_description.objoid = pg_statio_all_tables.relid
+	                   AND pg_description.objsubid = columns.ordinal_position)
+                   WHERE columns.table_schema = ?
+                   AND columns.table_name = ?',
+                [$tableSchema, $tableName],
+            );
 
-        $primaryKeys = \array_column($this->driver->query(
-            'SELECT key_column_usage.column_name
-                FROM information_schema.table_constraints
-                JOIN information_schema.key_column_usage
-                    ON (
-                            key_column_usage.table_name = table_constraints.table_name AND
-                            key_column_usage.table_schema = table_constraints.table_schema AND
-                            key_column_usage.constraint_name = table_constraints.constraint_name
-                        )
-                WHERE table_constraints.constraint_type = \'PRIMARY KEY\' AND
-                      key_column_usage.ordinal_position IS NOT NULL AND
-                      table_constraints.table_schema = ? AND
-                      table_constraints.table_name = ?',
-            [$tableSchema, $tableName],
-        )->fetchAll(), 'column_name');
+            $primaryKeys = \array_column($this->driver->query(
+                'SELECT key_column_usage.column_name
+                    FROM information_schema.table_constraints
+                    JOIN information_schema.key_column_usage
+                        ON (
+                                key_column_usage.table_name = table_constraints.table_name AND
+                                key_column_usage.table_schema = table_constraints.table_schema AND
+                                key_column_usage.constraint_name = table_constraints.constraint_name
+                            )
+                    WHERE table_constraints.constraint_type = \'PRIMARY KEY\' AND
+                          key_column_usage.ordinal_position IS NOT NULL AND
+                          table_constraints.table_schema = ? AND
+                          table_constraints.table_name = ?',
+                [$tableSchema, $tableName],
+            )->fetchAll(), 'column_name');
 
-        $schemas = $query->fetchAll();
+            $schemas = $query->fetchAll();
 
-        $checkConstraints = $this->fetchCheckConstraints($tableSchema, $tableName, $schemas);
-        $enumValues = $this->fetchEnumValues($schemas);
+            $checkConstraints = $this->fetchCheckConstraints($tableSchema, $tableName, $schemas);
+            $enumValues = $this->fetchEnumValues($schemas);
+        }
 
         $result = [];
         foreach ($schemas as $schema) {
@@ -187,21 +194,27 @@ class PostgresTable extends AbstractTable
     {
         [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
 
-        //Mindblowing
-        $query = 'SELECT tc.constraint_name, tc.constraint_schema, tc.table_name, kcu.column_name, rc.update_rule, '
-            . 'rc.delete_rule, ccu.table_name AS foreign_table_name, '
-            . "ccu.column_name AS foreign_column_name\n"
-            . "FROM information_schema.table_constraints AS tc\n"
-            . "JOIN information_schema.key_column_usage AS kcu\n"
-            . "   ON tc.constraint_name = kcu.constraint_name\n"
-            . "JOIN information_schema.constraint_column_usage AS ccu\n"
-            . "   ON ccu.constraint_name = tc.constraint_name\n"
-            . "JOIN information_schema.referential_constraints AS rc\n"
-            . "   ON rc.constraint_name = tc.constraint_name\n"
-            . "WHERE constraint_type = 'FOREIGN KEY' AND tc.table_schema = ? AND tc.table_name = ?";
+        if ($this->prefetch !== null) {
+            $rows = $this->prefetch->data['references'];
+        } else {
+            //Mindblowing
+            $query = 'SELECT tc.constraint_name, tc.constraint_schema, tc.table_name, kcu.column_name, rc.update_rule, '
+                . 'rc.delete_rule, ccu.table_name AS foreign_table_name, '
+                . "ccu.column_name AS foreign_column_name\n"
+                . "FROM information_schema.table_constraints AS tc\n"
+                . "JOIN information_schema.key_column_usage AS kcu\n"
+                . "   ON tc.constraint_name = kcu.constraint_name\n"
+                . "JOIN information_schema.constraint_column_usage AS ccu\n"
+                . "   ON ccu.constraint_name = tc.constraint_name\n"
+                . "JOIN information_schema.referential_constraints AS rc\n"
+                . "   ON rc.constraint_name = tc.constraint_name\n"
+                . "WHERE constraint_type = 'FOREIGN KEY' AND tc.table_schema = ? AND tc.table_name = ?";
+
+            $rows = $this->driver->query($query, [$tableSchema, $tableName]);
+        }
 
         $fks = [];
-        foreach ($this->driver->query($query, [$tableSchema, $tableName]) as $schema) {
+        foreach ($rows as $schema) {
             if (!isset($fks[$schema['constraint_name']])) {
                 $fks[$schema['constraint_name']] = $schema;
                 $fks[$schema['constraint_name']]['column_name'] = [$schema['column_name']];
@@ -334,6 +347,10 @@ class PostgresTable extends AbstractTable
     {
         if ($this->indexRows !== null) {
             return $this->indexRows;
+        }
+
+        if ($this->prefetch !== null) {
+            return $this->indexRows = $this->prefetch->data['indexRows'];
         }
 
         [$tableSchema, $tableName] = $this->driver->parseSchemaAndTable($this->getFullName());
