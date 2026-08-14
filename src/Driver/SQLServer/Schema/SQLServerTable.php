@@ -43,27 +43,38 @@ class SQLServerTable extends AbstractTable
     #[\Override]
     protected function fetchColumns(): array
     {
-        $query = 'SELECT * FROM [information_schema].[columns] INNER JOIN [sys].[columns] AS [sysColumns] '
-            . 'ON (object_name([object_id]) = [table_name] AND [sysColumns].[name] = [COLUMN_NAME]) '
-            . 'WHERE [table_name] = ?';
+        if ($this->prefetch !== null) {
+            $schemas = $this->prefetch->data['columns'];
 
-        $schemas = $this->driver->query($query, [$this->getFullName()])->fetchAll();
+            if ($schemas === []) {
+                return [];
+            }
 
-        if ($schemas === []) {
-            return [];
+            $defaultConstraints = $this->prefetch->data['defaultConstraints'];
+            $checkConstraints = $this->prefetch->data['checkConstraints'];
+        } else {
+            $query = 'SELECT * FROM [information_schema].[columns] INNER JOIN [sys].[columns] AS [sysColumns] '
+                . 'ON (object_name([object_id]) = [table_name] AND [sysColumns].[name] = [COLUMN_NAME]) '
+                . 'WHERE [table_name] = ?';
+
+            $schemas = $this->driver->query($query, [$this->getFullName()])->fetchAll();
+
+            if ($schemas === []) {
+                return [];
+            }
+
+            // The queries above are not scoped by the table schema, so the rows may belong to several
+            // same-named tables from different schemas. Constraints are batched per object to keep
+            // the resolution correct for every row.
+            $objectIds = [];
+            foreach ($schemas as $schema) {
+                $objectIds[(string) $schema['object_id']] = $schema['object_id'];
+            }
+            $objectIds = \array_values($objectIds);
+
+            $defaultConstraints = $this->fetchDefaultConstraints($objectIds, $schemas);
+            $checkConstraints = $this->fetchCheckConstraints($objectIds, $schemas);
         }
-
-        // The queries above are not scoped by the table schema, so the rows may belong to several
-        // same-named tables from different schemas. Constraints are batched per object to keep
-        // the resolution correct for every row.
-        $objectIds = [];
-        foreach ($schemas as $schema) {
-            $objectIds[(string) $schema['object_id']] = $schema['object_id'];
-        }
-        $objectIds = \array_values($objectIds);
-
-        $defaultConstraints = $this->fetchDefaultConstraints($objectIds, $schemas);
-        $checkConstraints = $this->fetchCheckConstraints($objectIds, $schemas);
 
         $result = [];
         foreach ($schemas as $schema) {
@@ -96,8 +107,12 @@ class SQLServerTable extends AbstractTable
             . "WHERE [t].[name] = ? AND [is_primary_key] = 0  \n"
             . 'ORDER BY [indexes].[name], [indexes].[index_id], [columns].[index_column_id]';
 
+        $rows = $this->prefetch !== null
+            ? $this->prefetch->data['indexes']
+            : $this->driver->query($query, [$this->getFullName()]);
+
         $result = $indexes = [];
-        foreach ($this->driver->query($query, [$this->getFullName()]) as $index) {
+        foreach ($rows as $index) {
             //Collecting schemas first
             $indexes[$index['indexName']][] = $index;
         }
@@ -113,11 +128,13 @@ class SQLServerTable extends AbstractTable
     #[\Override]
     protected function fetchReferences(): array
     {
-        $query = $this->driver->query('sp_fkeys @fktable_name = ?', [$this->getFullName()]);
+        $rows = $this->prefetch !== null
+            ? $this->prefetch->data['references']
+            : $this->driver->query('sp_fkeys @fktable_name = ?', [$this->getFullName()]);
 
         // join keys together
         $fks = [];
-        foreach ($query as $schema) {
+        foreach ($rows as $schema) {
             if (!isset($fks[$schema['FK_NAME']])) {
                 $fks[$schema['FK_NAME']] = $schema;
                 $fks[$schema['FK_NAME']]['PKCOLUMN_NAME'] = [$schema['PKCOLUMN_NAME']];
@@ -144,6 +161,10 @@ class SQLServerTable extends AbstractTable
     #[\Override]
     protected function fetchPrimaryKeys(): array
     {
+        if ($this->prefetch !== null) {
+            return $this->prefetch->data['primaryKeys'];
+        }
+
         $query = "SELECT [indexes].[name] AS [indexName], [cl].[name] AS [columnName]\n"
             . "FROM [sys].[indexes] AS [indexes]\n"
             . "INNER JOIN [sys].[index_columns] as [columns]\n"
