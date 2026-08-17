@@ -462,29 +462,20 @@ class PostgresHandler extends Handler
             }
         }
 
-        if ($types === []) {
-            return [];
-        }
+        $rows = $this->fetchByPairs(\array_values($types), static fn(string $in): string => <<<SQL
+            SELECT ns.nspname, t.typname, e.enumlabel
+            FROM pg_enum e
+            JOIN pg_type t
+                ON t.oid = e.enumtypid
+            JOIN pg_namespace ns
+                ON ns.oid = t.typnamespace
+            WHERE (ns.nspname, t.typname) IN ({$in})
+            ORDER BY e.enumsortorder
+            SQL);
 
         $result = [];
-        foreach (\array_chunk($types, self::BULK_CHUNK, true) as $chunk) {
-            $placeholders = \implode(', ', \array_fill(0, \count($chunk), '(?, ?)'));
-            $parameters = \array_merge(...\array_values($chunk));
-
-            $query = <<<SQL
-                SELECT ns.nspname, t.typname, e.enumlabel
-                FROM pg_enum e
-                JOIN pg_type t
-                    ON t.oid = e.enumtypid
-                JOIN pg_namespace ns
-                    ON ns.oid = t.typnamespace
-                WHERE (ns.nspname, t.typname) IN ({$placeholders})
-                ORDER BY e.enumsortorder
-                SQL;
-
-            foreach ($this->driver->query($query, $parameters) as $row) {
-                $result[$row['nspname'] . '.' . $row['typname']][] = $row['enumlabel'];
-            }
+        foreach ($rows as $row) {
+            $result[$row['nspname'] . '.' . $row['typname']][] = $row['enumlabel'];
         }
 
         return $result;

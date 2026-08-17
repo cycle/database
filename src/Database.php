@@ -120,10 +120,10 @@ final class Database implements DatabaseInterface
     }
 
     /**
-     * Introspect several tables at once. When the driver supports batched introspection this costs
-     * a constant number of queries instead of a full introspection per table; otherwise it falls
-     * back to introspecting each table on its own. The observable result is identical to calling
-     * {@see Table::getSchema()} for each table.
+     * Introspect several tables at once. When the driver supports batched introspection (currently
+     * Postgres and SQL Server) this costs a constant number of queries instead of a full
+     * introspection per table; otherwise it falls back to introspecting each table on its own. The
+     * observable result is identical to calling {@see Table::getSchema()} for each table.
      *
      * @param non-empty-string[]|null $tables Table names WITHOUT the database prefix. When `null`,
      *        every table of the database is introspected (names resolved via the driver, then fed
