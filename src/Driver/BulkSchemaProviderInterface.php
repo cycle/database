@@ -20,8 +20,8 @@ use Cycle\Database\Schema\AbstractTable;
  * The list of tables is mandatory: there is deliberately no "no list means the whole database"
  * mode, so that the queries never read catalog rows of tables the caller did not ask for. The
  * "all tables of the database" scenario is an explicit path in
- * {@see \Cycle\Database\Database::getTables()} that first resolves the names via
- * {@see HandlerInterface::getTableNames()} and then passes them here.
+ * {@see \Cycle\Database\Database::getSchemas()} called with no list, which first resolves the names
+ * via {@see HandlerInterface::getTableNames()} and then passes them here.
  */
 interface BulkSchemaProviderInterface
 {
