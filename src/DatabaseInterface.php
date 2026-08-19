@@ -33,6 +33,12 @@ use Cycle\Database\Query\UpdateQuery;
  *         SQL Server cursor type, …) are passed via driver-specific {@see CursorOptions} subclasses.
  *         Throws {@see \Cycle\Database\Exception\DriverException} when the driver lacks cursor
  *         support. Will be added to the interface in the next major release.
+ * @method array<non-empty-string, \Cycle\Database\Schema\AbstractTable> getSchemas(?array $tables = null)
+ *         Introspect several tables at once, keyed by table name. On a driver that supports batched
+ *         introspection this costs a constant number of queries instead of a full introspection per
+ *         table; otherwise it falls back to introspecting each table on its own. Pass the table
+ *         names without the database prefix, or `null` to introspect every table of the database.
+ *         Will be added to the interface in the next major release.
  */
 interface DatabaseInterface
 {
