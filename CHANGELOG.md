@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.23.0](https://github.com/cycle/database/compare/2.22.1...2.23.0) (2026-08-19)
+
+
+### Features
+
+* add `Database::getSchemas()` ([#265](https://github.com/cycle/database/issues/265)) ([6a9cf21](https://github.com/cycle/database/commit/6a9cf21423640df2f7b8c6e653e93d07a9123f42))
+
 ## [2.22.1](https://github.com/cycle/database/compare/2.22.0...2.22.1) (2026-08-11)
 
 
