@@ -11,11 +11,13 @@ declare(strict_types=1);
 
 namespace Cycle\Database;
 
+use Cycle\Database\Driver\BulkSchemaProviderInterface;
 use Cycle\Database\Driver\Driver;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\CursorInterface;
 use Cycle\Database\Driver\CursorOptions;
 use Cycle\Database\Exception\DriverException;
+use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\Query\DeleteQuery;
 use Cycle\Database\Query\InsertQuery;
 use Cycle\Database\Query\QueryParameters;
@@ -115,6 +117,43 @@ final class Database implements DatabaseInterface
     public function table(string $name): Table
     {
         return new Table($this, $name);
+    }
+
+    /**
+     * Introspect several tables at once. When the driver supports batched introspection (currently
+     * Postgres and SQL Server) this costs a constant number of queries instead of a full
+     * introspection per table; otherwise it falls back to introspecting each table on its own. The
+     * observable result is identical to calling {@see Table::getSchema()} for each table.
+     *
+     * @param non-empty-string[]|null $tables Table names WITHOUT the database prefix. When `null`,
+     *        every table of the database is introspected (names resolved via the driver, then fed
+     *        into the batched path — this is the explicit "whole database" entry point).
+     *
+     * @return array<non-empty-string, AbstractTable> Keyed by the table name.
+     */
+    public function getSchemas(?array $tables = null): array
+    {
+        $handler = $this->getDriver(self::READ)->getSchemaHandler();
+
+        if ($tables === null) {
+            $tables = [];
+            foreach ($handler->getTableNames($this->prefix) as $table) {
+                $tables[] = \str_contains($table, '.')
+                    ? \str_replace('.' . $this->prefix, '.', $table)
+                    : \substr($table, \strlen($this->prefix));
+            }
+        }
+
+        if ($handler instanceof BulkSchemaProviderInterface) {
+            return $handler->getSchemas($tables, $this->prefix);
+        }
+
+        $result = [];
+        foreach ($tables as $table) {
+            $result[$table] = $handler->getSchema($table, $this->prefix);
+        }
+
+        return $result;
     }
 
     /**

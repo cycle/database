@@ -22,7 +22,7 @@ use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\Schema\ComparatorInterface;
 use Cycle\Database\Schema\ElementInterface;
 
-abstract class Handler implements HandlerInterface
+abstract class Handler implements HandlerInterface, BulkSchemaProviderInterface
 {
     protected ?DriverInterface $driver = null;
 
@@ -32,6 +32,26 @@ abstract class Handler implements HandlerInterface
         $handler->driver = $driver;
 
         return $handler;
+    }
+
+    /**
+     * Default implementation introspects each table on its own. Drivers whose catalog can be read
+     * for a set of tables at once override this with a batched implementation; the observable result
+     * must stay identical to {@see getSchema()}.
+     *
+     * @param non-empty-string[] $tables
+     *
+     * @return array<non-empty-string, AbstractTable>
+     */
+    #[\Override]
+    public function getSchemas(array $tables, ?string $prefix = null): array
+    {
+        $result = [];
+        foreach ($tables as $table) {
+            $result[$table] = $this->getSchema($table, $prefix);
+        }
+
+        return $result;
     }
 
     /**

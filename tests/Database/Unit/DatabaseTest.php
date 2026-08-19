@@ -8,6 +8,8 @@ use Cycle\Database\Database;
 use Cycle\Database\DatabaseInterface;
 use Cycle\Database\Driver\Driver;
 use Cycle\Database\Driver\DriverInterface;
+use Cycle\Database\Driver\HandlerInterface;
+use Cycle\Database\Schema\AbstractTable;
 use PHPUnit\Framework\TestCase;
 
 final class DatabaseTest extends TestCase
@@ -108,6 +110,29 @@ final class DatabaseTest extends TestCase
         $this->assertSame($newDb->getDriver(DatabaseInterface::WRITE), $newDb->getDriver(DatabaseInterface::READ));
         $this->assertSame($driver, $newDb->getDriver(DatabaseInterface::WRITE));
         $this->assertSame($driver, $newDb->getDriver(DatabaseInterface::READ));
+    }
+
+    /**
+     * When the driver's handler does not implement BulkSchemaProviderInterface, Database::getSchemas()
+     * must fall back to a per-table getSchema() loop, applying the database prefix.
+     */
+    public function testGetSchemasFallsBackToPerTableWhenHandlerIsNotBulkProvider(): void
+    {
+        $tableA = $this->createMock(AbstractTable::class);
+        $tableB = $this->createMock(AbstractTable::class);
+
+        $handler = $this->createMock(HandlerInterface::class);
+        $handler->method('getSchema')->willReturnMap([
+            ['a', 'pre_', $tableA],
+            ['b', 'pre_', $tableB],
+        ]);
+
+        $driver = $this->createMock(DriverInterface::class);
+        $driver->method('getSchemaHandler')->willReturn($handler);
+
+        $database = new Database('default', 'pre_', $driver);
+
+        $this->assertSame(['a' => $tableA, 'b' => $tableB], $database->getSchemas(['a', 'b']));
     }
 
     private function readProperty(object $object, string $property): mixed

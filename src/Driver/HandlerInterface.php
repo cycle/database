@@ -61,14 +61,12 @@ interface HandlerInterface
     /**
      * Get all available table names.
      *
-     * @param string|null $prefix
-     *
+     * @return array<non-empty-string>
      */
     public function getTableNames(string $prefix = ''): array;
 
     /**
      * Check if given table exists in database.
-     *
      */
     public function hasTable(string $table): bool;
 
@@ -76,7 +74,6 @@ interface HandlerInterface
      * Get or create table schema.
      *
      * @throws HandlerException
-     *
      */
     public function getSchema(string $table, ?string $prefix = null): AbstractTable;
 

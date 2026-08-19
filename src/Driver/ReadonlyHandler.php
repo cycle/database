@@ -16,11 +16,31 @@ use Cycle\Database\Schema\AbstractForeignKey;
 use Cycle\Database\Schema\AbstractIndex;
 use Cycle\Database\Schema\AbstractTable;
 
-final class ReadonlyHandler implements HandlerInterface
+final class ReadonlyHandler implements HandlerInterface, BulkSchemaProviderInterface
 {
     public function __construct(
         private HandlerInterface $parent,
     ) {}
+
+    /**
+     * @param non-empty-string[] $tables
+     *
+     * @return array<non-empty-string, AbstractTable>
+     */
+    #[\Override]
+    public function getSchemas(array $tables, ?string $prefix = null): array
+    {
+        if ($this->parent instanceof BulkSchemaProviderInterface) {
+            return $this->parent->getSchemas($tables, $prefix);
+        }
+
+        $result = [];
+        foreach ($tables as $table) {
+            $result[$table] = $this->parent->getSchema($table, $prefix);
+        }
+
+        return $result;
+    }
 
     public function withDriver(DriverInterface $driver): HandlerInterface
     {

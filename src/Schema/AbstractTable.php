@@ -80,6 +80,16 @@ abstract class AbstractTable implements TableInterface, ElementInterface
     protected State $current;
 
     /**
+     * Raw introspection rows supplied by the bulk introspection path. Consumed once during the
+     * initial schema load and dropped afterwards, so that any later re-introspection (e.g. the
+     * post-save reload in {@see \Cycle\Database\Driver\Postgres\Schema\PostgresTable::save()}) hits
+     * the database as usual.
+     *
+     * @internal
+     */
+    protected ?PrefetchedIntrospection $prefetch = null;
+
+    /**
      * Indication that table is exists and current schema is fetched from database.
      */
     private int $status = self::STATUS_NEW;
@@ -88,26 +98,39 @@ abstract class AbstractTable implements TableInterface, ElementInterface
      * @param DriverInterface $driver Parent driver.
      *
      * @param string $prefix Database specific table prefix. Required for table renames.
+     * @param PrefetchedIntrospection|null $prefetch Pre-fetched introspection rows for this table.
+     *        Supplied by the bulk introspection path; when given, the table is populated from these
+     *        rows and no per-table introspection query is issued. Internal, not part of the public
+     *        API.
      * @psalm-param non-empty-string $name Table name, must include table prefix.
      */
     public function __construct(
         protected DriverInterface $driver,
         string $name,
         private string $prefix,
+        ?PrefetchedIntrospection $prefetch = null,
     ) {
         //Initializing states
         $prefixedName = $this->prefixTableName($name);
         $this->initial = new State($prefixedName);
         $this->current = new State($prefixedName);
 
-        if ($this->driver->getSchemaHandler()->hasTable($this->getFullName())) {
-            $this->status = self::STATUS_EXISTS;
+        if ($prefetch !== null) {
+            // Bulk path: existence is derived from the batched result, no extra hasTable() query.
+            $this->prefetch = $prefetch;
+            $exists = $prefetch->exists;
+        } else {
+            $exists = $this->driver->getSchemaHandler()->hasTable($this->getFullName());
         }
 
-        if ($this->exists()) {
+        if ($exists) {
+            $this->status = self::STATUS_EXISTS;
             //Initiating table schema
             $this->initSchema($this->initial);
         }
+
+        // The pre-fetched rows are valid only for the initial load above.
+        $this->prefetch = null;
 
         $this->setState($this->initial);
     }
