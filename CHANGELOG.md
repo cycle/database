@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.23.1](https://github.com/cycle/database/compare/2.23.0...2.23.1) (2026-08-19)
+
+
+### Documentation
+
+* update PHP version requirement to 8.1 in README ([c864c37](https://github.com/cycle/database/commit/c864c37a11ea6667562de1723c0c4c0680ca0083))
+
 ## [2.23.0](https://github.com/cycle/database/compare/2.22.1...2.23.0) (2026-08-19)
 
 
