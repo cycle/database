@@ -99,7 +99,7 @@ class SQLiteDriver extends Driver implements CursorInterface
 
     protected function mapException(\Throwable $exception, string $query): StatementException
     {
-        if ((int) $exception->getCode() === 23000) {
+        if (\str_starts_with(self::getSqlState($exception) ?? '', '23')) {
             return new StatementException\ConstrainException($exception, $query);
         }
 

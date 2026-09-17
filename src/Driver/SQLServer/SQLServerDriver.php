@@ -53,7 +53,16 @@ class SQLServerDriver extends Driver implements CursorInterface
             ),
         );
 
-        if ((int) $driver->getPDO()->getAttribute(\PDO::ATTR_SERVER_VERSION) < 12) {
+        // Alone among the drivers this one reaches the server before any query, to reject a version
+        // it cannot compile for. That makes it the only place where a bad host surfaces outside
+        // Driver::statement(), so the failure is classified here instead of escaping raw.
+        try {
+            $version = (int) $driver->getPDO()->getAttribute(\PDO::ATTR_SERVER_VERSION);
+        } catch (\Throwable $e) {
+            throw $driver->mapException($e, 'CONNECT');
+        }
+
+        if ($version < 12) {
             throw new DriverException('SQLServer driver supports only 12+ version of SQLServer');
         }
 
@@ -250,19 +259,34 @@ class SQLServerDriver extends Driver implements CursorInterface
 
     protected function mapException(\Throwable $exception, string $query): StatementException
     {
-        $message = \strtolower($exception->getMessage());
+        $sqlState = self::getSqlState($exception);
 
+        if ($sqlState !== null) {
+            // Class 08 covers both the ODBC driver failing to reach the server (08001) and the
+            // link dropping under an open session (08S01).
+            if (\str_starts_with($sqlState, '08')) {
+                return new StatementException\ConnectionException($exception, $query);
+            }
 
-        if (
-            \str_contains($message, '0800')
-            || \str_contains($message, '080p')
-            || \str_contains($message, 'connection')
-        ) {
-            return new StatementException\ConnectionException($exception, $query);
+            if (\str_starts_with($sqlState, '23')) {
+                return new StatementException\ConstrainException($exception, $query);
+            }
         }
 
-        if ((int) $exception->getCode() === 23000) {
-            return new StatementException\ConstrainException($exception, $query);
+        // The message is a last resort, not the first test: SQL Server names the conflicting table
+        // and prints the duplicate key value, so a table called `connections` or a uuid holding
+        // `0800` used to be enough to report a constraint violation as a dropped link. The ODBC
+        // driver also translates these strings, which leaves the needles matching nothing at all
+        // on a localized install.
+        if (self::isGenericSqlState($sqlState)) {
+            $message = \strtolower($exception->getMessage());
+
+            if (
+                \str_contains($message, 'broken pipe')
+                || \str_contains($message, 'connection')
+            ) {
+                return new StatementException\ConnectionException($exception, $query);
+            }
         }
 
         return new StatementException($exception, $query);

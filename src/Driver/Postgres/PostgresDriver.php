@@ -304,20 +304,39 @@ class PostgresDriver extends Driver implements CursorInterface
 
     protected function mapException(\Throwable $exception, string $query): StatementException
     {
-        $message = \strtolower($exception->getMessage());
+        $sqlState = self::getSqlState($exception);
 
-        if (
-            \str_contains($message, 'eof detected')
-            || \str_contains($message, 'broken pipe')
-            || \str_contains($message, '0800')
-            || \str_contains($message, '080p')
-            || \str_contains($message, 'connection')
-        ) {
-            return new StatementException\ConnectionException($exception, $query);
+        if ($sqlState !== null) {
+            // Class 08 is `connection_exception`; the 57P0x states and `too_many_connections` are
+            // the server refusing or tearing down the session rather than rejecting the statement.
+            if (
+                \str_starts_with($sqlState, '08')
+                || \in_array($sqlState, ['53300', '57P01', '57P02', '57P03'], true)
+            ) {
+                return new StatementException\ConnectionException($exception, $query);
+            }
+
+            // Class 23 is `integrity_constraint_violation`. Compared as a string so that `23P01`
+            // (exclusion violation) is not truncated to 23 the way a numeric cast leaves it.
+            if (\str_starts_with($sqlState, '23')) {
+                return new StatementException\ConstrainException($exception, $query);
+            }
         }
 
-        if ((int) $exception->getCode() >= 23000 && (int) $exception->getCode() < 24000) {
-            return new StatementException\ConstrainException($exception, $query);
+        // A socket the server or a pooler dropped mid-statement arrives as HY000 with the reason
+        // only in the text. The message is never consulted for a state the server did classify:
+        // Postgres prints the offending row in DETAIL, and a uuid or an email in it would otherwise
+        // match these needles and turn a data error into a reconnect.
+        if (self::isGenericSqlState($sqlState)) {
+            $message = \strtolower($exception->getMessage());
+
+            if (
+                \str_contains($message, 'eof detected')
+                || \str_contains($message, 'broken pipe')
+                || \str_contains($message, 'connection')
+            ) {
+                return new StatementException\ConnectionException($exception, $query);
+            }
         }
 
         return new StatementException($exception, $query);

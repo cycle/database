@@ -447,6 +447,47 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     }
 
     /**
+     * Read the SQLSTATE of a driver exception, or `null` when it carries none.
+     *
+     * PDO reports the state in three places that do not agree with each other: connection-time
+     * failures put the driver-specific number in `getCode()` and the SQLSTATE only in `errorInfo`
+     * and the message prefix, while statement failures put the SQLSTATE in all three. Reading
+     * `errorInfo` first and falling back to the prefix covers both.
+     */
+    protected static function getSqlState(\Throwable $exception): ?string
+    {
+        $errorInfo = $exception instanceof \PDOException ? $exception->errorInfo : null;
+
+        if (\is_array($errorInfo)) {
+            $state = self::toSqlState($errorInfo[0] ?? null);
+
+            if ($state !== null) {
+                return $state;
+            }
+        }
+
+        if (\preg_match('/^SQLSTATE\[([0-9A-Za-z]{5})]/', $exception->getMessage(), $matches) === 1) {
+            return $matches[1];
+        }
+
+        return self::toSqlState($exception->getCode());
+    }
+
+    /**
+     * Whether a SQLSTATE is one PDO invented rather than one the server reported.
+     *
+     * Classes `HY` and `IM` come from the ODBC/PDO layer — a dropped socket surfaces as `HY000`
+     * with no server classification behind it, so these are the only states a caller may second
+     * guess by inspecting the message.
+     */
+    protected static function isGenericSqlState(?string $sqlState): bool
+    {
+        return $sqlState === null
+            || \str_starts_with($sqlState, 'HY')
+            || \str_starts_with($sqlState, 'IM');
+    }
+
+    /**
      * Create instance of PDOStatement using provided SQL query and set of parameters and execute
      * it. Will attempt singular reconnect.
      *
@@ -705,5 +746,14 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
         }
 
         return $context;
+    }
+
+    /**
+     * A SQLSTATE is five alphanumerics; anything else in the slot is a driver-specific number that
+     * happens to share it.
+     */
+    private static function toSqlState(mixed $value): ?string
+    {
+        return \is_string($value) && \strlen($value) === 5 && \ctype_alnum($value) ? $value : null;
     }
 }

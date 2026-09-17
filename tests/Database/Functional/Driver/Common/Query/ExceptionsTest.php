@@ -66,4 +66,29 @@ abstract class ExceptionsTest extends BaseTest
             $this->assertInstanceOf(StatementException\ConstrainException::class, $e);
         }
     }
+
+    public function testConstrainExceptionWhenTheValueLooksLikeAConnectionError(): void
+    {
+        $schema = $this->database->getDriver()->getSchema('test');
+        $schema->primary('id');
+        $schema->string('value', 64);
+        $schema->index(['value'])->unique(true);
+        $schema->save();
+
+        // Every driver echoes the rejected value back in the error message, where `0800` used to
+        // be read as the SQLSTATE class of a dropped connection.
+        $value = 'f5a31835-fae5-43eb-8efa-cce00b90800a';
+
+        $this->database->getDriver()
+            ->insertQuery('', 'test')
+            ->values(['value' => $value])
+            ->run();
+
+        $this->expectException(StatementException\ConstrainException::class);
+
+        $this->database->getDriver()
+            ->insertQuery('', 'test')
+            ->values(['value' => $value])
+            ->run();
+    }
 }

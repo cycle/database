@@ -27,6 +27,19 @@ use Cycle\Database\Query\QueryBuilder;
 class MySQLDriver extends Driver
 {
     /**
+     * Integrity violations mysql files under the generic HY000 instead of class 23: a required
+     * column left out of the statement, and a row the CHECK rejected. Postgres reports the same
+     * two as 23502 and 23514, and SQL Server as 23000.
+     *
+     * Listed one by one rather than as a range, because their HY000 neighbours are DDL errors and
+     * type coercion failures that are not constraint violations at all.
+     */
+    private const CONSTRAINT_ERRNOS = [
+        1364, // ER_NO_DEFAULT_FOR_FIELD
+        3819, // ER_CHECK_CONSTRAINT_VIOLATED
+    ];
+
+    /**
      * @param MySQLDriverConfig $config
      */
     public static function create(DriverConfig $config): static
@@ -64,29 +77,63 @@ class MySQLDriver extends Driver
     }
 
     /**
-     *
-     *
-     * @see https://dev.mysql.com/doc/refman/5.6/en/error-messages-client.html#error_cr_conn_host_error
+     * @see https://dev.mysql.com/doc/refman/8.4/en/client-error-reference.html
      */
     protected function mapException(\Throwable $exception, string $query): StatementException
     {
-        if ((int) $exception->getCode() === 23000) {
+        $sqlState = self::getSqlState($exception);
+
+        if ($sqlState !== null) {
+            // 08S01 — communication link failure.
+            if (\str_starts_with($sqlState, '08')) {
+                return new StatementException\ConnectionException($exception, $query);
+            }
+
+            if (\str_starts_with($sqlState, '23')) {
+                return new StatementException\ConstrainException($exception, $query);
+            }
+        }
+
+        $errno = self::getErrno($exception);
+
+        if (\in_array($errno, self::CONSTRAINT_ERRNOS, true)) {
             return new StatementException\ConstrainException($exception, $query);
         }
 
-        $message = \strtolower($exception->getMessage());
-
-        if (
-            \str_contains($message, 'server has gone away')
-            || \str_contains($message, 'broken pipe')
-            || \str_contains($message, 'connection')
-            || \str_contains($message, 'packets out of order')
-            || \str_contains($message, 'disconnected by the server because of inactivity')
-            || ((int) $exception->getCode() > 2000 && (int) $exception->getCode() < 2100)
-        ) {
+        // 2000-2100 is the CR_* range the client library raises when it loses the socket itself,
+        // and it never overlaps the server's own error numbers.
+        if ($errno > 2000 && $errno < 2100) {
             return new StatementException\ConnectionException($exception, $query);
         }
 
+        // Last resort, and only for the states PDO made up: a server error the driver did classify
+        // prints user data (a duplicate key value, a table name) that these needles would match.
+        if (self::isGenericSqlState($sqlState)) {
+            $message = \strtolower($exception->getMessage());
+
+            if (
+                \str_contains($message, 'server has gone away')
+                || \str_contains($message, 'broken pipe')
+                || \str_contains($message, 'connection')
+                || \str_contains($message, 'packets out of order')
+                || \str_contains($message, 'disconnected by the server because of inactivity')
+            ) {
+                return new StatementException\ConnectionException($exception, $query);
+            }
+        }
+
         return new StatementException($exception, $query);
+    }
+
+    /**
+     * The mysql error number, which sits next to the SQLSTATE in `errorInfo` and moves into
+     * `getCode()` only when the failure predates any statement — a connect attempt that never
+     * reached a server has no SQLSTATE to put there instead.
+     */
+    private static function getErrno(\Throwable $exception): int
+    {
+        $errorInfo = $exception instanceof \PDOException ? $exception->errorInfo : null;
+
+        return (int) (\is_array($errorInfo) ? $errorInfo[1] ?? $exception->getCode() : $exception->getCode());
     }
 }
