@@ -173,6 +173,20 @@ final class MapExceptionTest extends TestCase
             null,
             1366,
         ];
+        yield 'unbuffered result still open is client misuse, not a lost socket' => [
+            'HY000',
+            'SQLSTATE[HY000]: General error: 2014 Cannot execute queries while other unbuffered queries are active.',
+            StatementException::class,
+            null,
+            2014,
+        ];
+        yield 'unbound parameters are client misuse, not a lost socket' => [
+            'HY000',
+            'SQLSTATE[HY000]: General error: 2031 No data supplied for parameters in prepared statement',
+            StatementException::class,
+            null,
+            2031,
+        ];
         yield 'idle connection closed by the server' => [
             'HY000',
             'SQLSTATE[HY000]: General error: 4031 The client was disconnected by the server because of inactivity. See wait_timeout and interactive_timeout for configuring this behavior.',
@@ -294,6 +308,19 @@ final class MapExceptionTest extends TestCase
         self::assertInstanceOf(
             StatementException\ConstrainException::class,
             $this->map(PostgresDriver::class, $exception),
+        );
+    }
+
+    public function testSqlStateReadFromTheMessageStillBlocksTheMySQLNeedles(): void
+    {
+        // No errorInfo, so there is no errno to gate on; the state in the prefix has to.
+        $exception = new \PDOException(
+            "SQLSTATE[42S02]: Base table or view not found: 1146 Table 'spiral.no_such_connections_table' doesn't exist",
+        );
+
+        self::assertSame(
+            StatementException::class,
+            $this->map(MySQLDriver::class, $exception)::class,
         );
     }
 

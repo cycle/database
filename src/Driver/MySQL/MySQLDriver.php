@@ -37,10 +37,14 @@ class MySQLDriver extends Driver
     ];
 
     /**
-     * Connection losses the server reports itself, so they arrive numbered rather than in the
-     * CR_* range the client library uses for a socket it lost on its own.
+     * Losses of an established connection, named one by one because their neighbours in the CR_*
+     * range are client misuse — CR_COMMANDS_OUT_OF_SYNC, CR_PARAMS_NOT_BOUND — that a reconnect
+     * cannot fix and a retry would only repeat.
      */
     private const CONNECTION_ERRNOS = [
+        2006, // CR_SERVER_GONE_ERROR
+        2013, // CR_SERVER_LOST
+        2055, // CR_SERVER_LOST_EXTENDED
         4031, // ER_CLIENT_INTERACTION_TIMEOUT — the server closed an idle connection
     ];
 
@@ -104,16 +108,19 @@ class MySQLDriver extends Driver
             return new StatementException\ConstrainException($exception, $query);
         }
 
-        // 2000-2100 is the CR_* range the client library raises when it loses the socket itself,
-        // and it never overlaps the server's own error numbers.
-        if (($errno > 2000 && $errno < 2100) || \in_array($errno, self::CONNECTION_ERRNOS, true)) {
+        // The whole CR_* range means a lost socket only before a statement exists, which is exactly
+        // when getCode() carries the number instead of a SQLSTATE. Widening this to errorInfo would
+        // pull in the client-misuse errnos the constant above names.
+        $code = (int) $exception->getCode();
+
+        if (($code > 2000 && $code < 2100) || \in_array($errno, self::CONNECTION_ERRNOS, true)) {
             return new StatementException\ConnectionException($exception, $query);
         }
 
-        // Last resort, and only for a failure the server did not number itself. Unlike the other
-        // drivers, mysql files plenty of its own errors under HY000, and their text carries table
-        // and constraint names, so the state is not a usable gate here.
-        if (!self::isServerErrno($errno)) {
+        // Last resort, and only for a failure neither the server numbered nor PDO classified.
+        // Unlike the other drivers, mysql files plenty of its own errors under HY000, and their
+        // text carries table and constraint names, so the state alone is not a usable gate here.
+        if (!self::isServerErrno($errno) && self::isGenericSqlState($sqlState)) {
             $message = \strtolower($exception->getMessage());
 
             if (
