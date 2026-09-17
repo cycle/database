@@ -54,9 +54,8 @@ class SQLServerDriver extends Driver implements CursorInterface
             ),
         );
 
-        // Alone among the drivers this one reaches the server before any query, to reject a version
-        // it cannot compile for. That makes it the only place where a bad host surfaces outside
-        // Driver::statement(), so the failure is classified here instead of escaping raw.
+        // The only driver that reaches the server before any query, so the only place a connection
+        // failure surfaces outside Driver::statement() and has to be classified by hand.
         try {
             $version = (int) $driver->getPDO()->getAttribute(\PDO::ATTR_SERVER_VERSION);
         } catch (\Throwable $e) {
@@ -263,8 +262,6 @@ class SQLServerDriver extends Driver implements CursorInterface
         $sqlState = self::getSqlState($exception);
 
         if ($sqlState !== null) {
-            // Class 08 covers both the ODBC driver failing to reach the server (08001) and the
-            // link dropping under an open session (08S01).
             if (\str_starts_with($sqlState, '08')) {
                 return new StatementException\ConnectionException($exception, $query);
             }
@@ -274,11 +271,9 @@ class SQLServerDriver extends Driver implements CursorInterface
             }
         }
 
-        // The message is a last resort, not the first test: SQL Server names the conflicting table
-        // and prints the duplicate key value, so a table called `connections` or a uuid holding
-        // `0800` used to be enough to report a constraint violation as a dropped link. The ODBC
-        // driver also translates these strings, which leaves the needles matching nothing at all
-        // on a localized install.
+        // A last resort twice over: SQL Server names the conflicting table and prints the duplicate
+        // key value, so these needles match user data, and the ODBC driver translates its own
+        // strings, so on a localized install they match nothing at all.
         if (self::isGenericSqlState($sqlState)) {
             $message = \strtolower($exception->getMessage());
 

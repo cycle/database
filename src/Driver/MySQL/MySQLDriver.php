@@ -27,12 +27,9 @@ use Cycle\Database\Query\QueryBuilder;
 class MySQLDriver extends Driver
 {
     /**
-     * Integrity violations mysql files under the generic HY000 instead of class 23: a required
-     * column left out of the statement, and a row the CHECK rejected. Postgres reports the same
-     * two as 23502 and 23514, and SQL Server as 23000.
-     *
-     * Listed one by one rather than as a range, because their HY000 neighbours are DDL errors and
-     * type coercion failures that are not constraint violations at all.
+     * Integrity violations mysql files under HY000 instead of class 23, where Postgres reports
+     * them as 23502 and 23514 and SQL Server as 23000. Listed one by one rather than as a range:
+     * their HY000 neighbours are DDL errors and type coercion failures.
      */
     private const CONSTRAINT_ERRNOS = [
         1364, // ER_NO_DEFAULT_FOR_FIELD
@@ -92,7 +89,6 @@ class MySQLDriver extends Driver
         $sqlState = self::getSqlState($exception);
 
         if ($sqlState !== null) {
-            // 08S01 — communication link failure.
             if (\str_starts_with($sqlState, '08')) {
                 return new StatementException\ConnectionException($exception, $query);
             }
@@ -114,10 +110,9 @@ class MySQLDriver extends Driver
             return new StatementException\ConnectionException($exception, $query);
         }
 
-        // Last resort, and only for a failure the server did not number itself. HY000 is not
-        // enough of a filter here the way it is for the other drivers: mysql files plenty of its
-        // own errors under that state, and their text carries table and constraint names — a
-        // constraint called `connections` would otherwise be read as a dropped socket.
+        // Last resort, and only for a failure the server did not number itself. Unlike the other
+        // drivers, mysql files plenty of its own errors under HY000, and their text carries table
+        // and constraint names, so the state is not a usable gate here.
         if (!self::isServerErrno($errno)) {
             $message = \strtolower($exception->getMessage());
 
@@ -149,8 +144,7 @@ class MySQLDriver extends Driver
 
     /**
      * Whether the number came from the server rather than the client library. The server numbers
-     * its errors from 1000 upwards but leaves 2000-2999 to the client, which is what makes the
-     * two tellable apart at all.
+     * its errors from 1000 upwards but leaves 2000-2999 to the client.
      */
     private static function isServerErrno(int $errno): bool
     {

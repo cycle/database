@@ -307,9 +307,7 @@ class PostgresDriver extends Driver implements CursorInterface
         $sqlState = self::getSqlState($exception);
 
         if ($sqlState !== null) {
-            // Class 08 is `connection_exception`; the 57P0x states and `too_many_connections` are
-            // the server refusing or tearing down the session rather than rejecting the statement.
-            // Listed rather than taken as a whole class, because 57014 `query_canceled` is a
+            // The 57 states are listed rather than taken as a class: 57014 `query_canceled` is a
             // statement timeout that leaves the session usable.
             if (
                 \str_starts_with($sqlState, '08')
@@ -318,17 +316,16 @@ class PostgresDriver extends Driver implements CursorInterface
                 return new StatementException\ConnectionException($exception, $query);
             }
 
-            // Class 23 is `integrity_constraint_violation`. Compared as a string so that `23P01`
-            // (exclusion violation) is not truncated to 23 the way a numeric cast leaves it.
+            // Compared as a string: `23P01` (exclusion violation) is not a number, and a numeric
+            // cast truncates it to 23.
             if (\str_starts_with($sqlState, '23')) {
                 return new StatementException\ConstrainException($exception, $query);
             }
         }
 
-        // A socket the server or a pooler dropped mid-statement arrives as HY000 with the reason
-        // only in the text. The message is never consulted for a state the server did classify:
-        // Postgres prints the offending row in DETAIL, and a uuid or an email in it would otherwise
-        // match these needles and turn a data error into a reconnect.
+        // A socket the server or a pooler dropped arrives as HY000, with the reason only in the
+        // text. A state the server did classify never reaches these needles: Postgres prints the
+        // offending row in DETAIL, and a uuid or an email there matches them.
         if (self::isGenericSqlState($sqlState)) {
             $message = \strtolower($exception->getMessage());
 

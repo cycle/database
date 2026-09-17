@@ -37,8 +37,7 @@ class ExceptionsTest extends CommonClass
     {
         $driver = $this->database->getDriver();
 
-        // Raw SQL because the schema builder has no CHECK support, and mysql reports the violation
-        // as HY000 rather than class 23 — the pair is why this case needs a driver-specific test.
+        // Raw SQL because the schema builder has no CHECK support.
         $driver->execute('CREATE TABLE test (id int PRIMARY KEY, pos int, CONSTRAINT c_pos CHECK (pos > 0))');
 
         $this->expectException(StatementException\ConstrainException::class);

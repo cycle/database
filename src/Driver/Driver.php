@@ -451,8 +451,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
      *
      * PDO reports the state in three places that do not agree with each other: connection-time
      * failures put the driver-specific number in `getCode()` and the SQLSTATE only in `errorInfo`
-     * and the message prefix, while statement failures put the SQLSTATE in all three. Reading
-     * `errorInfo` first and falling back to the prefix covers both.
+     * and the message prefix, while statement failures put the SQLSTATE in all three.
      */
     protected static function getSqlState(\Throwable $exception): ?string
     {

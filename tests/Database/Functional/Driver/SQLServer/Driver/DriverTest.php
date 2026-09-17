@@ -27,9 +27,8 @@ class DriverTest extends CommonClass
         $connection->password = 'definitely not the password';
         $config->connection = $connection;
 
-        // create() reaches the server to read its version, which makes it the one place a
-        // connection failure happens outside Driver::statement() and so the one place that has to
-        // classify the failure itself.
+        // create() reaches the server to read its version, which puts this connection failure
+        // outside Driver::statement() and its mapping.
         $this->expectException(StatementException::class);
 
         SQLServerDriver::create($config);

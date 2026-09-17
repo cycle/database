@@ -137,7 +137,6 @@ final class MapExceptionTest extends TestCase
             null,
             1062,
         ];
-        // mysql files these under HY000; see MySQLDriver::CONSTRAINT_ERRNOS.
         yield 'check constraint violated' => [
             'HY000',
             "SQLSTATE[HY000]: General error: 3819 Check constraint 'c_pos' is violated.",
