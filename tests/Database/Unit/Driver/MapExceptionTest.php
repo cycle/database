@@ -50,6 +50,16 @@ final class MapExceptionTest extends TestCase
             'SQLSTATE[53300]: Too many connections: 7 FATAL:  sorry, too many clients already',
             StatementException\ConnectionException::class,
         ];
+        yield 'database dropped under the session' => [
+            '57P04',
+            'SQLSTATE[57P04]: Database dropped: 7 FATAL:  terminating connection because the database it was connected to was dropped',
+            StatementException\ConnectionException::class,
+        ];
+        yield 'query canceled leaves the session usable' => [
+            '57014',
+            'SQLSTATE[57014]: Query canceled: 7 ERROR:  canceling statement due to statement timeout',
+            StatementException::class,
+        ];
         yield 'undefined table whose name contains "connections"' => [
             '42P01',
             'SQLSTATE[42P01]: Undefined table: 7 ERROR:  relation "no_such_connections_table" does not exist',
@@ -148,6 +158,28 @@ final class MapExceptionTest extends TestCase
             StatementException::class,
             null,
             3822,
+        ];
+        // mysql puts its own errors under HY000 too, so the state alone cannot license the needles.
+        yield 'DDL error naming a constraint called connections' => [
+            'HY000',
+            "SQLSTATE[HY000]: General error: 3822 Duplicate check constraint name 'connections'.",
+            StatementException::class,
+            null,
+            3822,
+        ];
+        yield 'coercion failure naming a column called connection_id' => [
+            'HY000',
+            "SQLSTATE[HY000]: General error: 1366 Incorrect integer value: 'zz' for column 'connection_id' at row 1",
+            StatementException::class,
+            null,
+            1366,
+        ];
+        yield 'idle connection closed by the server' => [
+            'HY000',
+            'SQLSTATE[HY000]: General error: 4031 The client was disconnected by the server because of inactivity. See wait_timeout and interactive_timeout for configuring this behavior.',
+            StatementException\ConnectionException::class,
+            null,
+            4031,
         ];
         yield 'incorrect integer value is a coercion failure, not a violation' => [
             'HY000',

@@ -40,6 +40,14 @@ class MySQLDriver extends Driver
     ];
 
     /**
+     * Connection losses the server reports itself, so they arrive numbered rather than in the
+     * CR_* range the client library uses for a socket it lost on its own.
+     */
+    private const CONNECTION_ERRNOS = [
+        4031, // ER_CLIENT_INTERACTION_TIMEOUT — the server closed an idle connection
+    ];
+
+    /**
      * @param MySQLDriverConfig $config
      */
     public static function create(DriverConfig $config): static
@@ -102,13 +110,15 @@ class MySQLDriver extends Driver
 
         // 2000-2100 is the CR_* range the client library raises when it loses the socket itself,
         // and it never overlaps the server's own error numbers.
-        if ($errno > 2000 && $errno < 2100) {
+        if (($errno > 2000 && $errno < 2100) || \in_array($errno, self::CONNECTION_ERRNOS, true)) {
             return new StatementException\ConnectionException($exception, $query);
         }
 
-        // Last resort, and only for the states PDO made up: a server error the driver did classify
-        // prints user data (a duplicate key value, a table name) that these needles would match.
-        if (self::isGenericSqlState($sqlState)) {
+        // Last resort, and only for a failure the server did not number itself. HY000 is not
+        // enough of a filter here the way it is for the other drivers: mysql files plenty of its
+        // own errors under that state, and their text carries table and constraint names — a
+        // constraint called `connections` would otherwise be read as a dropped socket.
+        if (!self::isServerErrno($errno)) {
             $message = \strtolower($exception->getMessage());
 
             if (
@@ -135,5 +145,15 @@ class MySQLDriver extends Driver
         $errorInfo = $exception instanceof \PDOException ? $exception->errorInfo : null;
 
         return (int) (\is_array($errorInfo) ? $errorInfo[1] ?? $exception->getCode() : $exception->getCode());
+    }
+
+    /**
+     * Whether the number came from the server rather than the client library. The server numbers
+     * its errors from 1000 upwards but leaves 2000-2999 to the client, which is what makes the
+     * two tellable apart at all.
+     */
+    private static function isServerErrno(int $errno): bool
+    {
+        return $errno >= 1000 && ($errno < 2000 || $errno >= 3000);
     }
 }

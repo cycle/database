@@ -38,6 +38,7 @@ class SQLServerDriver extends Driver implements CursorInterface
      * @param SQLServerDriverConfig $config
      *
      * @throws DriverException
+     * @throws StatementException The server could not be reached to check its version.
      */
     public static function create(DriverConfig $config): static
     {

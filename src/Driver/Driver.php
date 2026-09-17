@@ -754,6 +754,6 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
      */
     private static function toSqlState(mixed $value): ?string
     {
-        return \is_string($value) && \strlen($value) === 5 && \ctype_alnum($value) ? $value : null;
+        return \is_string($value) && \preg_match('/^[0-9A-Za-z]{5}$/', $value) === 1 ? $value : null;
     }
 }

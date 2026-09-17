@@ -309,9 +309,11 @@ class PostgresDriver extends Driver implements CursorInterface
         if ($sqlState !== null) {
             // Class 08 is `connection_exception`; the 57P0x states and `too_many_connections` are
             // the server refusing or tearing down the session rather than rejecting the statement.
+            // Listed rather than taken as a whole class, because 57014 `query_canceled` is a
+            // statement timeout that leaves the session usable.
             if (
                 \str_starts_with($sqlState, '08')
-                || \in_array($sqlState, ['53300', '57P01', '57P02', '57P03'], true)
+                || \in_array($sqlState, ['53300', '57P01', '57P02', '57P03', '57P04', '57P05'], true)
             ) {
                 return new StatementException\ConnectionException($exception, $query);
             }
