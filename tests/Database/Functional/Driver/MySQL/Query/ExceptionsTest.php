@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Functional\Driver\MySQL\Query;
 
+use Cycle\Database\Exception\StatementException;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Query\ExceptionsTest as CommonClass;
 use Spiral\Database\Exception\StatementException\ConnectionException;
@@ -30,5 +31,28 @@ class ExceptionsTest extends CommonClass
             $this->assertInstanceOf(ConnectionException::class, $e);
             return;
         }
+    }
+
+    public function testCheckViolationIsAConstrainException(): void
+    {
+        $driver = $this->database->getDriver();
+
+        // Raw SQL because the schema builder has no CHECK support.
+        $driver->execute('CREATE TABLE test (id int PRIMARY KEY, pos int, CONSTRAINT c_pos CHECK (pos > 0))');
+
+        $this->expectException(StatementException\ConstrainException::class);
+
+        $driver->execute('INSERT INTO test VALUES (1, -1)');
+    }
+
+    public function testMissingRequiredColumnIsAConstrainException(): void
+    {
+        $driver = $this->database->getDriver();
+
+        $driver->execute('CREATE TABLE test (id int PRIMARY KEY, value varchar(8) NOT NULL)');
+
+        $this->expectException(StatementException\ConstrainException::class);
+
+        $driver->execute('INSERT INTO test (id) VALUES (1)');
     }
 }

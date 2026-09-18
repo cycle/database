@@ -304,20 +304,38 @@ class PostgresDriver extends Driver implements CursorInterface
 
     protected function mapException(\Throwable $exception, string $query): StatementException
     {
-        $message = \strtolower($exception->getMessage());
+        $sqlState = self::getSqlState($exception);
 
-        if (
-            \str_contains($message, 'eof detected')
-            || \str_contains($message, 'broken pipe')
-            || \str_contains($message, '0800')
-            || \str_contains($message, '080p')
-            || \str_contains($message, 'connection')
-        ) {
-            return new StatementException\ConnectionException($exception, $query);
+        if ($sqlState !== null) {
+            // The 57 states are listed rather than taken as a class: 57014 `query_canceled` is a
+            // statement timeout that leaves the session usable.
+            if (
+                \str_starts_with($sqlState, '08')
+                || \in_array($sqlState, ['53300', '57P01', '57P02', '57P03', '57P04', '57P05'], true)
+            ) {
+                return new StatementException\ConnectionException($exception, $query);
+            }
+
+            // Compared as a string: `23P01` (exclusion violation) is not a number, and a numeric
+            // cast truncates it to 23.
+            if (\str_starts_with($sqlState, '23')) {
+                return new StatementException\ConstrainException($exception, $query);
+            }
         }
 
-        if ((int) $exception->getCode() >= 23000 && (int) $exception->getCode() < 24000) {
-            return new StatementException\ConstrainException($exception, $query);
+        // A socket the server or a pooler dropped arrives as HY000, with the reason only in the
+        // text. A state the server did classify never reaches these needles: Postgres prints the
+        // offending row in DETAIL, and a uuid or an email there matches them.
+        if (self::isGenericSqlState($sqlState)) {
+            $message = \strtolower($exception->getMessage());
+
+            if (
+                \str_contains($message, 'eof detected')
+                || \str_contains($message, 'broken pipe')
+                || \str_contains($message, 'connection')
+            ) {
+                return new StatementException\ConnectionException($exception, $query);
+            }
         }
 
         return new StatementException($exception, $query);

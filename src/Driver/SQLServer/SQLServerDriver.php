@@ -16,6 +16,7 @@ use Cycle\Database\Config\SQLServerDriverConfig;
 use Cycle\Database\Driver\CursorInterface;
 use Cycle\Database\Driver\CursorOptions;
 use Cycle\Database\Driver\Driver;
+use Cycle\Database\Driver\PDOInterface;
 use Cycle\Database\Driver\PDOStatementInterface;
 use Cycle\Database\Driver\SQLServer\Query\SQLServerDeleteQuery;
 use Cycle\Database\Driver\SQLServer\Query\SQLServerInsertQuery;
@@ -36,12 +37,10 @@ class SQLServerDriver extends Driver implements CursorInterface
 
     /**
      * @param SQLServerDriverConfig $config
-     *
-     * @throws DriverException
      */
     public static function create(DriverConfig $config): static
     {
-        $driver = new static(
+        return new static(
             $config,
             new SQLServerHandler(),
             new SQLServerCompiler('[]'),
@@ -52,12 +51,6 @@ class SQLServerDriver extends Driver implements CursorInterface
                 new SQLServerDeleteQuery(),
             ),
         );
-
-        if ((int) $driver->getPDO()->getAttribute(\PDO::ATTR_SERVER_VERSION) < 12) {
-            throw new DriverException('SQLServer driver supports only 12+ version of SQLServer');
-        }
-
-        return $driver;
     }
 
     public function getType(): string
@@ -248,20 +241,34 @@ class SQLServerDriver extends Driver implements CursorInterface
         $this->execute('ROLLBACK TRANSACTION ' . $this->identifier("SVP{$level}"));
     }
 
+    /**
+     * @throws DriverException The server is older than SQL Server 2014 (internal version 12).
+     */
+    protected function createPDO(): \PDO|PDOInterface
+    {
+        $pdo = parent::createPDO();
+
+        // Here rather than in create(): a factory must not reach the server, and a connection that
+        // fails here surfaces where mapException() classifies it, as it does for every other driver.
+        if ((int) $pdo->getAttribute(\PDO::ATTR_SERVER_VERSION) < 12) {
+            throw new DriverException('SQLServer driver supports only 12+ version of SQLServer');
+        }
+
+        return $pdo;
+    }
+
     protected function mapException(\Throwable $exception, string $query): StatementException
     {
-        $message = \strtolower($exception->getMessage());
+        // No message fallback, unlike the other drivers: the ODBC layer files every transport failure
+        // under class 08 itself, so an HY000 that mentions a connection is client misuse such as
+        // "Connection is busy with results for another command", which a reconnect would only mask.
+        $sqlState = self::getSqlState($exception) ?? '';
 
-
-        if (
-            \str_contains($message, '0800')
-            || \str_contains($message, '080p')
-            || \str_contains($message, 'connection')
-        ) {
+        if (\str_starts_with($sqlState, '08')) {
             return new StatementException\ConnectionException($exception, $query);
         }
 
-        if ((int) $exception->getCode() === 23000) {
+        if (\str_starts_with($sqlState, '23')) {
             return new StatementException\ConstrainException($exception, $query);
         }
 

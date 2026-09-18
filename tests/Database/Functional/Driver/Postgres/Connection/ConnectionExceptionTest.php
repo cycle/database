@@ -23,11 +23,13 @@ class ConnectionExceptionTest extends CommonClass
         return [
             [new \Exception('eof detected')],
             [new \Exception('broken pipe')],
-            [new \Exception('0800')],
-            [new \Exception('080P')],
             [new \Exception('Bad connection')],
             /** Case from {@link https://github.com/cycle/database/issues/75} */
             [new \Exception('server closed the connection unexpectedly')],
+            [new \Exception('SQLSTATE[08006] [7] connection to server at "127.0.0.1", port 5432 failed')],
+            [new \Exception('SQLSTATE[08P01]: Protocol violation: 7 ERROR:  invalid message format')],
+            [new \Exception('SQLSTATE[57P01]: Admin shutdown: 7 FATAL:  terminating connection due to administrator command')],
+            [new \Exception('SQLSTATE[53300]: Too many connections: 7 FATAL:  sorry, too many clients already')],
         ];
     }
 }
