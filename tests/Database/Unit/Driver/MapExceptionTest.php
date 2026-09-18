@@ -113,9 +113,17 @@ final class MapExceptionTest extends TestCase
             "SQLSTATE[42S02]: [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Invalid object name 'no_such_connections_table'.",
             StatementException::class,
         ];
+        // Raised with MARS off while another result set is still open. A reconnect would drop that
+        // result set and let the retry succeed, hiding the misuse.
+        yield 'connection busy with another result set is client misuse, not a lost link' => [
+            'HY000',
+            'SQLSTATE[HY000]: [Microsoft][ODBC Driver 18 for SQL Server]Connection is busy with results for another command',
+            StatementException::class,
+            null,
+            0,
+        ];
 
-        // The ODBC driver translates its own strings, so on a localized install the SQLSTATE is the
-        // only part of these that any needle could match.
+        // The ODBC driver translates its own strings; the SQLSTATE is the only part that does not move.
         yield 'connection refused, localized' => [
             '08001',
             'SQLSTATE[08001]: [Microsoft][ODBC Driver 18 for SQL Server]Поставщик TCP: Подключение не установлено, т.к. конечный компьютер отверг запрос на подключение.',

@@ -259,30 +259,17 @@ class SQLServerDriver extends Driver implements CursorInterface
 
     protected function mapException(\Throwable $exception, string $query): StatementException
     {
-        $sqlState = self::getSqlState($exception);
+        // No message fallback, unlike the other drivers: the ODBC layer files every transport failure
+        // under class 08 itself, so an HY000 that mentions a connection is client misuse such as
+        // "Connection is busy with results for another command", which a reconnect would only mask.
+        $sqlState = self::getSqlState($exception) ?? '';
 
-        if ($sqlState !== null) {
-            if (\str_starts_with($sqlState, '08')) {
-                return new StatementException\ConnectionException($exception, $query);
-            }
-
-            if (\str_starts_with($sqlState, '23')) {
-                return new StatementException\ConstrainException($exception, $query);
-            }
+        if (\str_starts_with($sqlState, '08')) {
+            return new StatementException\ConnectionException($exception, $query);
         }
 
-        // A last resort twice over: SQL Server names the conflicting table and prints the duplicate
-        // key value, so these needles match user data, and the ODBC driver translates its own
-        // strings, so on a localized install they match nothing at all.
-        if (self::isGenericSqlState($sqlState)) {
-            $message = \strtolower($exception->getMessage());
-
-            if (
-                \str_contains($message, 'broken pipe')
-                || \str_contains($message, 'connection')
-            ) {
-                return new StatementException\ConnectionException($exception, $query);
-            }
+        if (\str_starts_with($sqlState, '23')) {
+            return new StatementException\ConstrainException($exception, $query);
         }
 
         return new StatementException($exception, $query);
