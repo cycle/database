@@ -18,7 +18,7 @@ class DriverTest extends CommonClass
 {
     public const DRIVER = 'sqlserver';
 
-    public function testCreateReportsAFailedConnectionAsALibraryException(): void
+    public function testCreateDoesNotReachTheServer(): void
     {
         $config = clone self::$config[static::DRIVER];
         \assert($config instanceof DriverConfig);
@@ -27,10 +27,13 @@ class DriverTest extends CommonClass
         $connection->password = 'definitely not the password';
         $config->connection = $connection;
 
-        // create() reaches the server to read its version, which puts this connection failure
-        // outside Driver::statement() and its mapping.
+        $driver = SQLServerDriver::create($config);
+
+        self::assertFalse($driver->isConnected());
+
+        // The failure arrives with the first statement, mapped like a failed connection on any driver.
         $this->expectException(StatementException::class);
 
-        SQLServerDriver::create($config);
+        $driver->query('SELECT 1');
     }
 }

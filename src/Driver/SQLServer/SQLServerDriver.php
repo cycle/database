@@ -16,6 +16,7 @@ use Cycle\Database\Config\SQLServerDriverConfig;
 use Cycle\Database\Driver\CursorInterface;
 use Cycle\Database\Driver\CursorOptions;
 use Cycle\Database\Driver\Driver;
+use Cycle\Database\Driver\PDOInterface;
 use Cycle\Database\Driver\PDOStatementInterface;
 use Cycle\Database\Driver\SQLServer\Query\SQLServerDeleteQuery;
 use Cycle\Database\Driver\SQLServer\Query\SQLServerInsertQuery;
@@ -36,13 +37,10 @@ class SQLServerDriver extends Driver implements CursorInterface
 
     /**
      * @param SQLServerDriverConfig $config
-     *
-     * @throws DriverException
-     * @throws StatementException The server could not be reached to check its version.
      */
     public static function create(DriverConfig $config): static
     {
-        $driver = new static(
+        return new static(
             $config,
             new SQLServerHandler(),
             new SQLServerCompiler('[]'),
@@ -53,20 +51,6 @@ class SQLServerDriver extends Driver implements CursorInterface
                 new SQLServerDeleteQuery(),
             ),
         );
-
-        // The only driver that reaches the server before any query, so the only place a connection
-        // failure surfaces outside Driver::statement() and has to be classified by hand.
-        try {
-            $version = (int) $driver->getPDO()->getAttribute(\PDO::ATTR_SERVER_VERSION);
-        } catch (\Throwable $e) {
-            throw $driver->mapException($e, 'CONNECT');
-        }
-
-        if ($version < 12) {
-            throw new DriverException('SQLServer driver supports only 12+ version of SQLServer');
-        }
-
-        return $driver;
     }
 
     public function getType(): string
@@ -255,6 +239,22 @@ class SQLServerDriver extends Driver implements CursorInterface
         $this->logger?->info("Transaction: rollback savepoint 'SVP{$level}'");
 
         $this->execute('ROLLBACK TRANSACTION ' . $this->identifier("SVP{$level}"));
+    }
+
+    /**
+     * @throws DriverException The server is older than SQL Server 2014 (internal version 12).
+     */
+    protected function createPDO(): \PDO|PDOInterface
+    {
+        $pdo = parent::createPDO();
+
+        // Here rather than in create(): a factory must not reach the server, and a connection that
+        // fails here surfaces where mapException() classifies it, as it does for every other driver.
+        if ((int) $pdo->getAttribute(\PDO::ATTR_SERVER_VERSION) < 12) {
+            throw new DriverException('SQLServer driver supports only 12+ version of SQLServer');
+        }
+
+        return $pdo;
     }
 
     protected function mapException(\Throwable $exception, string $query): StatementException

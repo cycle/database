@@ -75,8 +75,8 @@ abstract class ExceptionsTest extends BaseTest
         $schema->index(['value'])->unique(true);
         $schema->save();
 
-        // Every driver echoes the rejected value back in its error message, and `0800` inside this
-        // uuid reads as the SQLSTATE class of a dropped connection.
+        // Every server but SQLite echoes the rejected value back in its error message, and `0800`
+        // inside this uuid reads as the SQLSTATE class of a dropped connection.
         $value = 'f5a31835-fae5-43eb-8efa-cce00b90800a';
 
         $this->database->getDriver()

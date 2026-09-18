@@ -376,7 +376,8 @@ final class MapExceptionTest extends TestCase
     }
 
     /**
-     * PDO assigns the SQLSTATE string to a property typed as int, which no constructor accepts.
+     * PDO stores the SQLSTATE string in the untyped `code` property, which the int-typed
+     * constructor parameter cannot receive.
      */
     private function setCode(\PDOException $exception, int|string $code): void
     {
