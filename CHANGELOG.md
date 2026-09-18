@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.23.2](https://github.com/cycle/database/compare/2.23.1...2.23.2) (2026-09-18)
+
+
+### Bug Fixes
+
+* **Driver:** classify exceptions by SQLSTATE before the message ([#270](https://github.com/cycle/database/issues/270)) ([8a83940](https://github.com/cycle/database/commit/8a8394048fe197bb08533c5efffca1f7c384c779)), closes [#268](https://github.com/cycle/database/issues/268)
+
+
+### Documentation
+
+* **DatabaseInterface:** annotate getSchemas() as a magic method ([ef2144e](https://github.com/cycle/database/commit/ef2144e13c5b242e455308c84881213a2152aeb8))
+
 ## [2.23.1](https://github.com/cycle/database/compare/2.23.0...2.23.1) (2026-08-19)
 
 
