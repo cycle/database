@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.23.3](https://github.com/cycle/database/compare/2.23.2...2.23.3) (2026-09-27)
+
+
+### Bug Fixes
+
+* **Postgres:** escape apostrophes in JSON path segments ([#271](https://github.com/cycle/database/issues/271)) ([da09e24](https://github.com/cycle/database/commit/da09e24964b3921f9c4952b3cdc915a98f8daba0))
+
 ## [2.23.2](https://github.com/cycle/database/compare/2.23.1...2.23.2) (2026-09-18)
 
 
