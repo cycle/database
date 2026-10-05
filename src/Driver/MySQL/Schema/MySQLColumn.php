@@ -514,11 +514,25 @@ class MySQLColumn extends AbstractColumn
         string $type,
         string|int|\DateTimeInterface $value,
     ): \DateTimeInterface|FragmentInterface|string {
-        if ($value === 'current_timestamp()') {
+        // MySQL reflects the default as CURRENT_TIMESTAMP(6) on a datetime(6), MariaDB as current_timestamp(6).
+        if (\is_string($value) && \preg_match('/^current_timestamp(?:\(\d*\))?$/i', $value) === 1) {
             $value = self::DATETIME_NOW;
         }
 
         return parent::formatDatetime($type, $value);
+    }
+
+    #[\Override]
+    protected function quoteDefault(DriverInterface $driver): string
+    {
+        $defaultValue = parent::quoteDefault($driver);
+
+        // MySQL requires CURRENT_TIMESTAMP to carry the column's fractional seconds precision.
+        if ($this->size > 0 && $defaultValue === self::DATETIME_NOW && \in_array($this->type, ['datetime', 'timestamp'], true)) {
+            return self::DATETIME_NOW . "({$this->size})";
+        }
+
+        return $defaultValue;
     }
 
     private function sqlStatementInteger(DriverInterface $driver): string
