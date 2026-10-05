@@ -91,7 +91,25 @@ class DatabaseManagerTest extends TestCase
         $this->assertSame($this->logger, $property->getValue($driver));
     }
 
-    public function testDatabaseManagerWithLoggerAndWithLoggerFactoryShouldReturnLoggerFromFactory(): void
+    public function testDatabaseManagerWithLoggerAndWithLoggerFactoryShouldReturnLogger(): void
+    {
+        $manager = new DatabaseManager(
+            $this->getDatabaseConfig(),
+            $this->loggerFactory,
+        );
+
+        $this->loggerFactory->expects($this->never())->method('getLogger');
+
+        $manager->setLogger($this->logger);
+        $driver = $manager->driver('test');
+
+        $refl = new \ReflectionClass($driver);
+        $property = $refl->getProperty('logger');
+        $property->setAccessible(true);
+        $this->assertSame($this->logger, $property->getValue($driver));
+    }
+
+    public function testDatabaseManagerWithoutLoggerAndWithLoggerFactoryShouldReturnLoggerFromFactory(): void
     {
         $manager = new DatabaseManager(
             $this->getDatabaseConfig(),
@@ -105,7 +123,6 @@ class DatabaseManagerTest extends TestCase
             ->with($this->isInstanceOf(TestDriver::class))
             ->willReturn($loggerFromFactory);
 
-        $manager->setLogger($this->logger);
         $driver = $manager->driver('test');
 
         $refl = new \ReflectionClass($driver);

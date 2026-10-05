@@ -44,17 +44,20 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
     ) {}
 
     /**
-     * Set logger for all drivers
+     * Takes precedence over the logger factory, for drivers created later too.
+     * Drivers cloned by {@see Database::withoutCache()} before this call keep their previous logger.
      */
     public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
 
-        // Assign the logger to all initialized drivers
         foreach ($this->drivers as $driver) {
-            if ($driver instanceof LoggerAwareInterface) {
-                $driver->setLogger($this->logger);
-            }
+            $this->applyLogger($driver, $logger);
+        }
+
+        foreach ($this->databases as $database) {
+            $this->applyLogger($database->getDriver(DatabaseInterface::WRITE), $logger);
+            $this->applyLogger($database->getDriver(DatabaseInterface::READ), $logger);
         }
     }
 
@@ -120,6 +123,11 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
         );
 
         $this->databases[$database->getName()] = $database;
+
+        if ($this->logger !== null) {
+            $this->applyLogger($database->getDriver(DatabaseInterface::WRITE), $this->logger);
+            $this->applyLogger($database->getDriver(DatabaseInterface::READ), $this->logger);
+        }
     }
 
     /**
@@ -160,11 +168,9 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
         $driverObject = $this->config->getDriver($driver);
         $this->drivers[$driver] = $driverObject;
 
-        if ($driverObject instanceof LoggerAwareInterface) {
-            $logger = $this->getLoggerForDriver($driverObject);
-            if (!$logger instanceof NullLogger) {
-                $driverObject->setLogger($logger);
-            }
+        $logger = $this->getLoggerForDriver($driverObject);
+        if ($logger !== null) {
+            $this->applyLogger($driverObject, $logger);
         }
 
         return $this->drivers[$driver];
@@ -183,6 +189,10 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
 
         $this->drivers[$name] = $driver;
 
+        if ($this->logger !== null) {
+            $this->applyLogger($driver, $this->logger);
+        }
+
         return $this;
     }
 
@@ -199,12 +209,22 @@ final class DatabaseManager implements DatabaseProviderInterface, LoggerAwareInt
         );
     }
 
-    private function getLoggerForDriver(DriverInterface $driver): LoggerInterface
+    private function getLoggerForDriver(DriverInterface $driver): ?LoggerInterface
     {
-        if (!$this->loggerFactory) {
-            return $this->logger ??= new NullLogger();
+        if ($this->logger !== null) {
+            return $this->logger;
         }
 
-        return $this->loggerFactory->getLogger($driver);
+        $logger = $this->loggerFactory?->getLogger($driver);
+
+        // A driver without a logger skips building the log context of every query.
+        return $logger instanceof NullLogger ? null : $logger;
+    }
+
+    private function applyLogger(DriverInterface $driver, LoggerInterface $logger): void
+    {
+        if ($driver instanceof LoggerAwareInterface) {
+            $driver->setLogger($logger);
+        }
     }
 }
