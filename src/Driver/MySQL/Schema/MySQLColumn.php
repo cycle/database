@@ -42,7 +42,7 @@ class MySQLColumn extends AbstractColumn
      */
     public const DATETIME_NOW = 'CURRENT_TIMESTAMP';
 
-    public const EXCLUDE_FROM_COMPARE = ['size', 'timezone', 'userType', 'attributes', 'first', 'after', 'unknownSize', 'charset', 'collation'];
+    public const EXCLUDE_FROM_COMPARE = ['size', 'timezone', 'userType', 'attributes', 'first', 'after', 'unknownSize', 'charset', 'collation', 'isPrimary'];
     protected const INTEGER_TYPES = ['tinyint', 'smallint', 'mediumint', 'int', 'bigint'];
     protected const STRING_TYPES = ['varchar', 'char', 'text', 'tinytext', 'mediumtext', 'longtext', 'enum', 'set'];
 
@@ -53,18 +53,21 @@ class MySQLColumn extends AbstractColumn
             'size'          => 11,
             'autoIncrement' => true,
             'nullable'      => false,
+            'isPrimary'     => true,
         ],
         'smallPrimary'  => [
             'type'          => 'smallint',
             'size'          => 6,
             'autoIncrement' => true,
             'nullable'      => false,
+            'isPrimary'     => true,
         ],
         'bigPrimary'  => [
             'type'          => 'bigint',
             'size'          => 20,
             'autoIncrement' => true,
             'nullable'      => false,
+            'isPrimary'     => true,
         ],
 
         //Enum type (mapped via method)
@@ -118,8 +121,9 @@ class MySQLColumn extends AbstractColumn
         'uuid'        => ['type' => 'varchar', 'size' => 36],
     ];
     protected array $reverseMapping = [
-        'primary'     => [['type' => 'int', 'autoIncrement' => true]],
-        'bigPrimary'  => ['serial', ['type' => 'bigint', 'size' => 20, 'autoIncrement' => true]],
+        'primary'     => [['type' => 'int', 'autoIncrement' => true, 'isPrimary' => true]],
+        'smallPrimary' => [['type' => 'smallint', 'autoIncrement' => true, 'isPrimary' => true]],
+        'bigPrimary'  => ['serial', ['type' => 'bigint', 'size' => 20, 'autoIncrement' => true, 'isPrimary' => true]],
         'enum'        => ['enum'],
         'set'         => ['set'],
         'boolean'     => ['bool', 'boolean', ['type' => 'tinyint', 'size' => 1]],
@@ -218,11 +222,23 @@ class MySQLColumn extends AbstractColumn
     protected bool $first = false;
 
     /**
+     * Internal field to determine if the auto-increment column is PK.
+     */
+    protected bool $isPrimary = false;
+
+    /**
+     * @param array $primaryKeys Primary key columns of the table.
+     *
      * @psalm-param non-empty-string $table
      */
-    public static function createInstance(string $table, array $schema, ?\DateTimeZone $timezone = null): self
-    {
+    public static function createInstance(
+        string $table,
+        array $schema,
+        ?\DateTimeZone $timezone = null,
+        array $primaryKeys = [],
+    ): self {
         $column = new self($table, $schema['Field'], $timezone);
+        $column->isPrimary = \in_array($schema['Field'], $primaryKeys, true);
 
         $column->type = $schema['Type'];
         $column->comment = $schema['Comment'];

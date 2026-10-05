@@ -64,6 +64,19 @@ class MySQLHandler extends Handler
         );
     }
 
+    #[\Override]
+    public function createTable(AbstractTable $table): void
+    {
+        $this->run($this->createStatement($table));
+
+        $inline = $this->autoIncrementIndexes($table);
+        foreach ($table->getIndexes() as $index) {
+            if (!\in_array($index, $inline, true)) {
+                $this->createIndex($table, $index);
+            }
+        }
+    }
+
     public function alterColumn(
         AbstractTable $table,
         AbstractColumn $initial,
@@ -130,7 +143,57 @@ class MySQLHandler extends Handler
     {
         $table instanceof MySQLTable or throw new SchemaException('MySQLHandler can process only MySQL tables');
 
-        return parent::createStatement($table) . " ENGINE {$table->getEngine()}";
+        $statement = parent::createStatement($table);
+
+        // MySQL rejects an AUTO_INCREMENT column without a key, so an index created after the table is too late.
+        $indexes = \array_map(
+            fn(AbstractIndex $index): string => $index->sqlStatement($this->getDriver(), false),
+            $this->autoIncrementIndexes($table),
+        );
+        if ($indexes !== []) {
+            // The parent statement ends with "\n)".
+            $statement = \substr($statement, 0, -2) . ",\n    " . \implode(",\n    ", $indexes) . "\n)";
+        }
+
+        return $statement . " ENGINE {$table->getEngine()}";
+    }
+
+    /**
+     * Indexes covering AUTO_INCREMENT columns that do not lead the primary key.
+     *
+     * @return list<AbstractIndex>
+     *
+     * @throws SchemaException When such a column is neither in the primary key nor in an index.
+     */
+    protected function autoIncrementIndexes(AbstractTable $table): array
+    {
+        $primaryKeys = $table->getPrimaryKeys();
+
+        $result = [];
+        foreach ($table->getColumns() as $column) {
+            if (
+                ($column->getAttributes()['autoIncrement'] ?? false) !== true
+                || ($primaryKeys[0] ?? null) === $column->getName()
+            ) {
+                continue;
+            }
+
+            $found = \in_array($column->getName(), $primaryKeys, true);
+            foreach ($table->getIndexes() as $index) {
+                if (\in_array($column->getName(), $index->getColumns(), true)) {
+                    $found = true;
+                    \in_array($index, $result, true) or $result[] = $index;
+                }
+            }
+
+            $found or throw new SchemaException(\sprintf(
+                'AUTO_INCREMENT column `%s` of table `%s` must be in the primary key or in an index',
+                $column->getName(),
+                $table->getFullName(),
+            ));
+        }
+
+        return $result;
     }
 
     /**

@@ -106,12 +106,15 @@ class MySQLTable extends AbstractTable
     {
         $query = "SHOW FULL COLUMNS FROM {$this->driver->identifier($this->getFullName())}";
 
+        $primaryKeys = $this->fetchPrimaryKeys();
+
         $result = [];
         foreach ($this->driver->query($query) as $schema) {
             $result[] = MySQLColumn::createInstance(
                 $this->getFullName(),
                 $schema,
                 $this->driver->getTimezone(),
+                $primaryKeys,
             );
         }
 
