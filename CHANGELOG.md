@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.23.4](https://github.com/cycle/database/compare/2.23.3...2.23.4) (2026-10-22)
+
+
+### Bug Fixes
+
+* **DatabaseManager:** make setLogger() reach every driver ([#273](https://github.com/cycle/database/issues/273)) ([73a8306](https://github.com/cycle/database/commit/73a8306c0ed267daf239149ec23206c0ea26b7cc))
+* **MySQL:** keep auto-increment columns out of the primary key ([#275](https://github.com/cycle/database/issues/275)) ([90219cf](https://github.com/cycle/database/commit/90219cf85c1c294757871797b73961633ddb7d77)), closes [#274](https://github.com/cycle/database/issues/274)
+
+
+### Continuous Integration
+
+* run cs-fix on the minimum supported PHP ([#280](https://github.com/cycle/database/issues/280)) ([6b6d5b4](https://github.com/cycle/database/commit/6b6d5b4304e77f5b61c1739fc46c9dd0010079fc))
+
 ## [2.23.3](https://github.com/cycle/database/compare/2.23.2...2.23.3) (2026-09-27)
 
 
