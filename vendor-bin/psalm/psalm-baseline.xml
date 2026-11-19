@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="6.6.1@dae5a05eac03b55e8f50ae00f4cd2ba5d5588d59">
+<files psalm-version="7.11.0@9e0d0f88bc0a4233357a9aeb4b32da060644e196">
   <file src="src/Config/ConnectionConfig.php">
     <MixedAssignment>
       <code><![CDATA[$options[$key]]]></code>
@@ -14,10 +14,6 @@
     <DeprecatedTrait>
       <code><![CDATA[AliasTrait]]></code>
     </DeprecatedTrait>
-    <InvalidArrayOffset>
-      <code><![CDATA[$result[$database]]]></code>
-      <code><![CDATA[$result[$driver]]]></code>
-    </InvalidArrayOffset>
     <MixedArgument>
       <code><![CDATA[$config['connection'] ?? $config['write'] ?? $config['driver']]]></code>
       <code><![CDATA[$config['readConnection'] ?? $config['read'] ?? $config['readDriver'] ?? null]]></code>
@@ -25,6 +21,10 @@
       <code><![CDATA[$this->config['connections'] ?? $this->config['drivers'] ?? []]]></code>
       <code><![CDATA[$this->config['databases'] ?? []]]></code>
     </MixedArgument>
+    <MixedArgumentTypeCoercion>
+      <code><![CDATA[$database]]></code>
+      <code><![CDATA[$driver]]></code>
+    </MixedArgumentTypeCoercion>
     <MixedArrayAccess>
       <code><![CDATA[$config['connection']]]></code>
       <code><![CDATA[$config['driver']]]></code>
@@ -45,20 +45,10 @@
       <code><![CDATA[$this->config['default'] ?? 'default']]></code>
       <code><![CDATA[$this->config['default'] ?? 'default']]></code>
     </MixedReturnStatement>
-    <NoValue>
-      <code><![CDATA[$database]]></code>
-      <code><![CDATA[$database]]></code>
-      <code><![CDATA[$driver]]></code>
-      <code><![CDATA[$driver]]></code>
-    </NoValue>
     <PossiblyUndefinedStringArrayOffset>
       <code><![CDATA[$this->config['databases']]]></code>
       <code><![CDATA[$this->config['drivers']]]></code>
     </PossiblyUndefinedStringArrayOffset>
-    <UnusedForeachValue>
-      <code><![CDATA[$database]]></code>
-      <code><![CDATA[$driver]]></code>
-    </UnusedForeachValue>
   </file>
   <file src="src/Config/MySQL/ConnectionConfig.php">
     <ArgumentTypeCoercion>
@@ -66,18 +56,29 @@
     </ArgumentTypeCoercion>
     <InvalidConstantAssignmentValue>
       <code><![CDATA[DEFAULT_PDO_OPTIONS = [
-        \PDO::ATTR_CASE               => \PDO::CASE_NATURAL,
-        \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
-        // TODO Should be moved into common driver settings.
-        \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES "UTF8"',
-        \PDO::ATTR_STRINGIFY_FETCHES  => false,
+        \PDO::ATTR_CASE => \PDO::CASE_NATURAL,
+        \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+        /**
+         * @see \PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since PHP 8.5
+         * @todo Replace with {@see \Pdo\Mysql::ATTR_INIT_COMMAND} when minimum PHP version is 8.5
+         * @todo Should be moved into common driver settings?
+         */
+        1002 => 'SET NAMES "UTF8"',
+        \PDO::ATTR_STRINGIFY_FETCHES => false,
     ]]]></code>
     </InvalidConstantAssignmentValue>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getName(): string]]></code>
+    </MissingOverrideAttribute>
   </file>
   <file src="src/Config/MySQL/DsnConnectionConfig.php">
     <ClassMustBeFinal>
       <code><![CDATA[DsnConnectionConfig]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getDsn(): string]]></code>
+      <code><![CDATA[public function getSourceString(): string]]></code>
+    </MissingOverrideAttribute>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$options]]></code>
     </MixedArgumentTypeCoercion>
@@ -89,6 +90,10 @@
     <InvalidArgument>
       <code><![CDATA[$config]]></code>
     </InvalidArgument>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getDsn(): string]]></code>
+      <code><![CDATA[public function getSourceString(): string]]></code>
+    </MissingOverrideAttribute>
   </file>
   <file src="src/Config/MySQL/TcpConnectionConfig.php">
     <ClassMustBeFinal>
@@ -97,6 +102,10 @@
     <InvalidArgument>
       <code><![CDATA[$config]]></code>
     </InvalidArgument>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getDsn(): string]]></code>
+      <code><![CDATA[public function getSourceString(): string]]></code>
+    </MissingOverrideAttribute>
     <PropertyTypeCoercion>
       <code><![CDATA[(int) $port]]></code>
     </PropertyTypeCoercion>
@@ -124,6 +133,9 @@
     </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/Config/Postgres/ConnectionConfig.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getName(): string]]></code>
+    </MissingOverrideAttribute>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$options]]></code>
     </MixedArgumentTypeCoercion>
@@ -132,6 +144,10 @@
     <ClassMustBeFinal>
       <code><![CDATA[DsnConnectionConfig]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getDsn(): string]]></code>
+      <code><![CDATA[public function getSourceString(): string]]></code>
+    </MissingOverrideAttribute>
   </file>
   <file src="src/Config/Postgres/TcpConnectionConfig.php">
     <ClassMustBeFinal>
@@ -140,6 +156,10 @@
     <InvalidArgument>
       <code><![CDATA[$config]]></code>
     </InvalidArgument>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getDsn(): string]]></code>
+      <code><![CDATA[public function getSourceString(): string]]></code>
+    </MissingOverrideAttribute>
     <PropertyTypeCoercion>
       <code><![CDATA[(int) $port]]></code>
     </PropertyTypeCoercion>
@@ -177,6 +197,9 @@
     </UnsafeInstantiation>
   </file>
   <file src="src/Config/SQLServer/ConnectionConfig.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getName(): string]]></code>
+    </MissingOverrideAttribute>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$options]]></code>
     </MixedArgumentTypeCoercion>
@@ -185,6 +208,10 @@
     <ClassMustBeFinal>
       <code><![CDATA[DsnConnectionConfig]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getDsn(): string]]></code>
+      <code><![CDATA[public function getSourceString(): string]]></code>
+    </MissingOverrideAttribute>
   </file>
   <file src="src/Config/SQLServer/TcpConnectionConfig.php">
     <ClassMustBeFinal>
@@ -199,6 +226,10 @@
     <MismatchingDocblockPropertyType>
       <code><![CDATA[IsolationLevelType|null]]></code>
     </MismatchingDocblockPropertyType>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getDsn(): string]]></code>
+      <code><![CDATA[public function getSourceString(): string]]></code>
+    </MissingOverrideAttribute>
     <PropertyTypeCoercion>
       <code><![CDATA[$port !== null ? (int) $port : null]]></code>
     </PropertyTypeCoercion>
@@ -212,6 +243,9 @@
     </MixedArgumentTypeCoercion>
   </file>
   <file src="src/Config/SQLite/ConnectionConfig.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getName(): string]]></code>
+    </MissingOverrideAttribute>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$options]]></code>
     </MixedArgumentTypeCoercion>
@@ -220,6 +254,16 @@
     <ClassMustBeFinal>
       <code><![CDATA[DsnConnectionConfig]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getDsn(): string]]></code>
+      <code><![CDATA[public function getSourceString(): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Config/SQLite/FileConnectionConfig.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getDsn(): string]]></code>
+      <code><![CDATA[public function getSourceString(): string]]></code>
+    </MissingOverrideAttribute>
   </file>
   <file src="src/Config/SQLite/MemoryConnectionConfig.php">
     <ClassMustBeFinal>
@@ -242,15 +286,32 @@
   <file src="src/Database.php">
     <ArgumentTypeCoercion>
       <code><![CDATA[$table]]></code>
+      <code><![CDATA[$tables]]></code>
     </ArgumentTypeCoercion>
-    <MixedArgument>
-      <code><![CDATA[$table]]></code>
-    </MixedArgument>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function begin(?string $isolationLevel = null): bool]]></code>
+      <code><![CDATA[public function commit(): bool]]></code>
+      <code><![CDATA[public function delete(?string $table = null, array $where = []): DeleteQuery]]></code>
+      <code><![CDATA[public function execute(string $query, array $parameters = []): int]]></code>
+      <code><![CDATA[public function getDriver(int $type = DatabaseInterface::WRITE): DriverInterface]]></code>
+      <code><![CDATA[public function getName(): string]]></code>
+      <code><![CDATA[public function getPrefix(): string]]></code>
+      <code><![CDATA[public function getTables(): array]]></code>
+      <code><![CDATA[public function getType(): string]]></code>
+      <code><![CDATA[public function hasTable(string $name): bool]]></code>
+      <code><![CDATA[public function insert(?string $table = null): InsertQuery]]></code>
+      <code><![CDATA[public function query(string $query, array $parameters = []): StatementInterface]]></code>
+      <code><![CDATA[public function rollback(): bool]]></code>
+      <code><![CDATA[public function select(mixed $columns = '*'): SelectQuery]]></code>
+      <code><![CDATA[public function table(string $name): Table]]></code>
+      <code><![CDATA[public function transaction(]]></code>
+      <code><![CDATA[public function update(?string $table = null, array $values = [], array $where = []): UpdateQuery]]></code>
+      <code><![CDATA[public function withPrefix(string $prefix, bool $add = true): DatabaseInterface]]></code>
+    </MissingOverrideAttribute>
     <MixedAssignment>
       <code><![CDATA[$database->driver]]></code>
       <code><![CDATA[$database->readDriver]]></code>
       <code><![CDATA[$database->readDriver]]></code>
-      <code><![CDATA[$table]]></code>
     </MixedAssignment>
     <PossiblyNullReference>
       <code><![CDATA[withoutCache]]></code>
@@ -266,6 +327,10 @@
       <code><![CDATA[$database->getDriver()]]></code>
       <code><![CDATA[$database->getName()]]></code>
     </ArgumentTypeCoercion>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function database(?string $database = null): DatabaseInterface]]></code>
+      <code><![CDATA[public function setLogger(LoggerInterface $logger): void]]></code>
+    </MissingOverrideAttribute>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$name]]></code>
       <code><![CDATA[$name]]></code>
@@ -277,8 +342,19 @@
   <file src="src/Driver/Compiler.php">
     <ArgumentTypeCoercion>
       <code><![CDATA[$alias]]></code>
+      <code><![CDATA[$return]]></code>
+      <code><![CDATA[$sourceAlias]]></code>
+      <code><![CDATA[$targetAlias]]></code>
       <code><![CDATA[(string) $name]]></code>
     </ArgumentTypeCoercion>
+    <InvalidOperand>
+      <code><![CDATA[$tokens['limit'] === null]]></code>
+      <code><![CDATA[$tokens['offset'] === null]]></code>
+    </InvalidOperand>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function compile(]]></code>
+      <code><![CDATA[public function quoteIdentifier(string $identifier): string]]></code>
+    </MissingOverrideAttribute>
     <MixedArgument>
       <code><![CDATA[$boolean]]></code>
       <code><![CDATA[$context]]></code>
@@ -309,6 +385,7 @@
       <code><![CDATA[$tokens['limit']]]></code>
       <code><![CDATA[$tokens['offset']]]></code>
       <code><![CDATA[$tokens['orderBy']]]></code>
+      <code><![CDATA[$tokens['return']]]></code>
       <code><![CDATA[$tokens['union']]]></code>
       <code><![CDATA[$tokens['where']]]></code>
       <code><![CDATA[$tokens['where']]]></code>
@@ -318,6 +395,9 @@
       <code><![CDATA[static::ORDER_OPTIONS]]></code>
       <code><![CDATA[static::ORDER_OPTIONS]]></code>
     </MixedArgument>
+    <MixedArgumentTypeCoercion>
+      <code><![CDATA[$tokens]]></code>
+    </MixedArgumentTypeCoercion>
     <MixedArrayAccess>
       <code><![CDATA[$boolean]]></code>
       <code><![CDATA[$context]]></code>
@@ -367,6 +447,8 @@
       <code><![CDATA[$value]]></code>
       <code><![CDATA[$value]]></code>
       <code><![CDATA[$value]]></code>
+      <code><![CDATA[$value]]></code>
+      <code><![CDATA[$value]]></code>
       <code><![CDATA[[$boolean, $context]]]></code>
     </MixedAssignment>
     <MixedOperand>
@@ -379,6 +461,9 @@
     <MoreSpecificImplementedParamType>
       <code><![CDATA[$identifier]]></code>
     </MoreSpecificImplementedParamType>
+    <PossiblyNullArgument>
+      <code><![CDATA[$return]]></code>
+    </PossiblyNullArgument>
     <PossiblyUndefinedStringArrayOffset>
       <code><![CDATA[$tokens['alias']]]></code>
       <code><![CDATA[$tokens['columns']]]></code>
@@ -414,6 +499,9 @@
       <code><![CDATA[$tokens['where']]]></code>
       <code><![CDATA[$tokens['where']]]></code>
     </PossiblyUndefinedStringArrayOffset>
+    <RedundantConditionGivenDocblockType>
+      <code><![CDATA[requireOnConflict]]></code>
+    </RedundantConditionGivenDocblockType>
     <UndefinedInterfaceMethod>
       <code><![CDATA[getPrefix]]></code>
       <code><![CDATA[getPrefix]]></code>
@@ -425,9 +513,16 @@
       <code><![CDATA[$context]]></code>
       <code><![CDATA[$value]]></code>
     </InvalidOperand>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function compile(QueryParameters $params, string $prefix, FragmentInterface $fragment): string]]></code>
+      <code><![CDATA[public function quoteIdentifier(string $identifier): string]]></code>
+    </MissingOverrideAttribute>
     <MixedArgument>
+      <code><![CDATA[$context[0]]]></code>
       <code><![CDATA[$context[0]->getTokens()]]></code>
+      <code><![CDATA[$context[2]]]></code>
       <code><![CDATA[$context[2]->getTokens()]]></code>
+      <code><![CDATA[$context[3]]]></code>
       <code><![CDATA[$context[3]->getTokens()]]></code>
       <code><![CDATA[$except[1]->getTokens()]]></code>
       <code><![CDATA[$fragmentParam]]></code>
@@ -452,6 +547,7 @@
       <code><![CDATA[$tokens['orderBy']]]></code>
       <code><![CDATA[$tokens['table']]]></code>
       <code><![CDATA[$tokens['values']]]></code>
+      <code><![CDATA[$tokens['values']]]></code>
       <code><![CDATA[$tokens['where']]]></code>
       <code><![CDATA[$union[1]->getTokens()]]></code>
     </MixedArgument>
@@ -461,6 +557,7 @@
     <MixedArrayAccess>
       <code><![CDATA[$boolean]]></code>
       <code><![CDATA[$context]]></code>
+      <code><![CDATA[$context[0]]]></code>
       <code><![CDATA[$context[0]]]></code>
       <code><![CDATA[$context[0]]]></code>
       <code><![CDATA[$context[0]]]></code>
@@ -482,7 +579,9 @@
       <code><![CDATA[$context[2]]]></code>
       <code><![CDATA[$context[2]]]></code>
       <code><![CDATA[$context[2]]]></code>
+      <code><![CDATA[$context[2]]]></code>
       <code><![CDATA[$context[2]->getTokens()['parameters']]]></code>
+      <code><![CDATA[$context[3]]]></code>
       <code><![CDATA[$context[3]]]></code>
       <code><![CDATA[$context[3]]]></code>
       <code><![CDATA[$context[3]]]></code>
@@ -609,6 +708,7 @@
     <MixedReturnStatement>
       <code><![CDATA[$this->cache[$queryHash]]]></code>
       <code><![CDATA[$this->cache[$queryHash]]]></code>
+      <code><![CDATA[$this->cache[$queryHash]]]></code>
     </MixedReturnStatement>
     <MoreSpecificImplementedParamType>
       <code><![CDATA[$identifier]]></code>
@@ -638,6 +738,7 @@
       <code><![CDATA[$tokens['union']]]></code>
       <code><![CDATA[$tokens['values']]]></code>
       <code><![CDATA[$tokens['values']]]></code>
+      <code><![CDATA[$tokens['values']]]></code>
       <code><![CDATA[$tokens['where']]]></code>
       <code><![CDATA[$value->getTokens()['parameters']]]></code>
     </PossiblyUndefinedStringArrayOffset>
@@ -649,6 +750,26 @@
     <InvalidNullableReturnType>
       <code><![CDATA[\PDO|PDOInterface]]></code>
     </InvalidNullableReturnType>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function beginTransaction(?string $isolationLevel = null): bool]]></code>
+      <code><![CDATA[public function commitTransaction(): bool]]></code>
+      <code><![CDATA[public function connect(): void]]></code>
+      <code><![CDATA[public function disconnect(): void]]></code>
+      <code><![CDATA[public function execute(string $query, array $parameters = []): int]]></code>
+      <code><![CDATA[public function getName(): string]]></code>
+      <code><![CDATA[public function getQueryBuilder(): BuilderInterface]]></code>
+      <code><![CDATA[public function getQueryCompiler(): CompilerInterface]]></code>
+      <code><![CDATA[public function getSchemaHandler(): HandlerInterface]]></code>
+      <code><![CDATA[public function getTimezone(): \DateTimeZone]]></code>
+      <code><![CDATA[public function getTransactionLevel(): int]]></code>
+      <code><![CDATA[public function isConnected(): bool]]></code>
+      <code><![CDATA[public function isReadonly(): bool]]></code>
+      <code><![CDATA[public function lastInsertID(?string $sequence = null)]]></code>
+      <code><![CDATA[public function query(string $statement, array $parameters = []): StatementInterface]]></code>
+      <code><![CDATA[public function quote(mixed $value, int $type = \PDO::PARAM_STR): string]]></code>
+      <code><![CDATA[public function rollbackTransaction(): bool]]></code>
+      <code><![CDATA[public function withName(string $name): static]]></code>
+    </MissingOverrideAttribute>
     <MixedArgument>
       <code><![CDATA[$arguments[0]]]></code>
       <code><![CDATA[$arguments[0]]]></code>
@@ -657,6 +778,7 @@
       <code><![CDATA[$arguments[1] ?? null]]></code>
       <code><![CDATA[$type]]></code>
       <code><![CDATA[$value]]></code>
+      <code><![CDATA[$value->getTimestamp()]]></code>
     </MixedArgument>
     <MixedAssignment>
       <code><![CDATA[$name]]></code>
@@ -665,6 +787,9 @@
       <code><![CDATA[$parameter]]></code>
       <code><![CDATA[$type]]></code>
     </MixedAssignment>
+    <MixedMethodCall>
+      <code><![CDATA[getTimestamp]]></code>
+    </MixedMethodCall>
     <NullableReturnStatement>
       <code><![CDATA[$this->pdo]]></code>
     </NullableReturnStatement>
@@ -679,11 +804,37 @@
     <StringIncrement>
       <code><![CDATA[$index]]></code>
     </StringIncrement>
+    <TaintedSql>
+      <code><![CDATA[$query]]></code>
+      <code><![CDATA[$query]]></code>
+      <code><![CDATA[$query]]></code>
+      <code><![CDATA[$query]]></code>
+    </TaintedSql>
+    <TypeDoesNotContainType>
+      <code><![CDATA[$connection instanceof PDOConnectionConfig]]></code>
+      <code><![CDATA[(new \DateTimeImmutable('now', $this->getTimezone()))->setTimestamp($value->getTimestamp())]]></code>
+    </TypeDoesNotContainType>
   </file>
   <file src="src/Driver/Handler.php">
     <InvalidNullableReturnType>
       <code><![CDATA[DriverInterface]]></code>
     </InvalidNullableReturnType>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function alterForeignKey(]]></code>
+      <code><![CDATA[public function alterIndex(]]></code>
+      <code><![CDATA[public function createColumn(AbstractTable $table, AbstractColumn $column): void]]></code>
+      <code><![CDATA[public function createForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void]]></code>
+      <code><![CDATA[public function createIndex(AbstractTable $table, AbstractIndex $index): void]]></code>
+      <code><![CDATA[public function createTable(AbstractTable $table): void]]></code>
+      <code><![CDATA[public function dropColumn(AbstractTable $table, AbstractColumn $column): void]]></code>
+      <code><![CDATA[public function dropConstrain(AbstractTable $table, string $constraint): void]]></code>
+      <code><![CDATA[public function dropForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void]]></code>
+      <code><![CDATA[public function dropIndex(AbstractTable $table, AbstractIndex $index): void]]></code>
+      <code><![CDATA[public function dropTable(AbstractTable $table): void]]></code>
+      <code><![CDATA[public function renameTable(string $table, string $name): void]]></code>
+      <code><![CDATA[public function syncTable(AbstractTable $table, int $operation = self::DO_ALL): void]]></code>
+      <code><![CDATA[public function withDriver(DriverInterface $driver): HandlerInterface]]></code>
+    </MissingOverrideAttribute>
     <MixedArgument>
       <code><![CDATA[$constraint]]></code>
     </MixedArgument>
@@ -729,16 +880,22 @@
       <code><![CDATA[identifier]]></code>
       <code><![CDATA[identifier]]></code>
     </PossiblyNullReference>
+    <RedundantCondition>
+      <code><![CDATA[$element instanceof ElementInterface]]></code>
+    </RedundantCondition>
     <UndefinedInterfaceMethod>
       <code><![CDATA[identifier]]></code>
       <code><![CDATA[identifier]]></code>
       <code><![CDATA[identifier]]></code>
     </UndefinedInterfaceMethod>
-  </file>
-  <file src="src/Driver/HandlerInterface.php">
-    <MismatchingDocblockParamType>
-      <code><![CDATA[string|null]]></code>
-    </MismatchingDocblockParamType>
+    <UnnecessaryVarAnnotation>
+      <code><![CDATA[AbstractColumn]]></code>
+      <code><![CDATA[AbstractColumn]]></code>
+      <code><![CDATA[AbstractForeignKey]]></code>
+      <code><![CDATA[AbstractForeignKey]]></code>
+      <code><![CDATA[AbstractIndex]]></code>
+      <code><![CDATA[AbstractIndex]]></code>
+    </UnnecessaryVarAnnotation>
   </file>
   <file src="src/Driver/MySQL/Exception/MySQLException.php">
     <ClassMustBeFinal>
@@ -749,21 +906,49 @@
     <ClassMustBeFinal>
       <code><![CDATA[CompileJson]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function compile(string $statement): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Driver/MySQL/Injection/CompileJsonContains.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function compile(string $statement): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Driver/MySQL/Injection/CompileJsonContainsKey.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function compile(string $statement): string]]></code>
+    </MissingOverrideAttribute>
   </file>
   <file src="src/Driver/MySQL/Injection/CompileJsonDoesntContain.php">
     <ClassMustBeFinal>
       <code><![CDATA[CompileJsonDoesntContain]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function compile(string $statement): string]]></code>
+    </MissingOverrideAttribute>
   </file>
   <file src="src/Driver/MySQL/Injection/CompileJsonDoesntContainKey.php">
     <ClassMustBeFinal>
       <code><![CDATA[CompileJsonDoesntContainKey]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function compile(string $statement): string]]></code>
+    </MissingOverrideAttribute>
   </file>
   <file src="src/Driver/MySQL/Injection/CompileJsonLength.php">
     <ClassMustBeFinal>
       <code><![CDATA[CompileJsonLength]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function compile(string $statement): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Driver/MySQL/Injection/MySQLJsonExpression.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function getQuotes(): string]]></code>
+      <code><![CDATA[protected function quoteStringLiteral(string $value, string $quote = "'"): string]]></code>
+    </MissingOverrideAttribute>
   </file>
   <file src="src/Driver/MySQL/MySQLCompiler.php">
     <ArgumentTypeCoercion>
@@ -772,10 +957,22 @@
     <ClassMustBeFinal>
       <code><![CDATA[MySQLCompiler]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function compileJsonOrderBy(string $path): FragmentInterface]]></code>
+      <code><![CDATA[protected function insertQuery(QueryParameters $params, Quoter $q, array $tokens): string]]></code>
+      <code><![CDATA[protected function limit(QueryParameters $params, Quoter $q, ?int $limit = null, ?int $offset = null): string]]></code>
+      <code><![CDATA[protected function upsertQuery(QueryParameters $params, Quoter $q, array $tokens): string]]></code>
+    </MissingOverrideAttribute>
+    <MixedAssignment>
+      <code><![CDATA[$value]]></code>
+    </MixedAssignment>
     <PossiblyUndefinedStringArrayOffset>
       <code><![CDATA[$tokens['columns']]]></code>
       <code><![CDATA[$tokens['table']]]></code>
     </PossiblyUndefinedStringArrayOffset>
+    <RedundantConditionGivenDocblockType>
+      <code><![CDATA[requireOnConflict]]></code>
+    </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/Driver/MySQL/MySQLDriver.php">
     <ClassMustBeFinal>
@@ -784,6 +981,12 @@
     <InvalidArgument>
       <code><![CDATA[$config]]></code>
     </InvalidArgument>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function mapException(\Throwable $exception, string $query): StatementException]]></code>
+      <code><![CDATA[public function getTransactionLevel(): int]]></code>
+      <code><![CDATA[public function getType(): string]]></code>
+      <code><![CDATA[public static function create(DriverConfig $config): static]]></code>
+    </MissingOverrideAttribute>
     <MoreSpecificImplementedParamType>
       <code><![CDATA[$config]]></code>
     </MoreSpecificImplementedParamType>
@@ -805,6 +1008,18 @@
     <ClassMustBeFinal>
       <code><![CDATA[MySQLHandler]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function assertValid(AbstractColumn $column): void]]></code>
+      <code><![CDATA[protected function createStatement(AbstractTable $table): string]]></code>
+      <code><![CDATA[public function alterColumn(]]></code>
+      <code><![CDATA[public function alterIndex(AbstractTable $table, AbstractIndex $initial, AbstractIndex $index): void]]></code>
+      <code><![CDATA[public function dropForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void]]></code>
+      <code><![CDATA[public function dropIndex(AbstractTable $table, AbstractIndex $index): void]]></code>
+      <code><![CDATA[public function eraseTable(AbstractTable $table): void]]></code>
+      <code><![CDATA[public function getSchema(string $table, ?string $prefix = null): AbstractTable]]></code>
+      <code><![CDATA[public function getTableNames(string $prefix = ''): array]]></code>
+      <code><![CDATA[public function hasTable(string $table): bool]]></code>
+    </MissingOverrideAttribute>
     <MixedArgument>
       <code><![CDATA[$row[0]]]></code>
     </MixedArgument>
@@ -816,13 +1031,15 @@
       <code><![CDATA[$result[]]]></code>
       <code><![CDATA[$row]]></code>
     </MixedAssignment>
+    <MixedReturnTypeCoercion>
+      <code><![CDATA[$result]]></code>
+      <code><![CDATA[array]]></code>
+    </MixedReturnTypeCoercion>
     <MoreSpecificImplementedParamType>
-      <code><![CDATA[$prefix]]></code>
       <code><![CDATA[$table]]></code>
       <code><![CDATA[$table]]></code>
     </MoreSpecificImplementedParamType>
     <PossiblyNullArgument>
-      <code><![CDATA[$prefix]]></code>
       <code><![CDATA[$this->driver]]></code>
       <code><![CDATA[$this->driver]]></code>
       <code><![CDATA[$this->driver]]></code>
@@ -841,6 +1058,15 @@
       <code><![CDATA[getSource]]></code>
       <code><![CDATA[identifier]]></code>
     </UndefinedInterfaceMethod>
+  </file>
+  <file src="src/Driver/MySQL/MySQLOnConflict.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getCacheKey(QueryParameters $params): string]]></code>
+      <code><![CDATA[public static function from(OnConflict $options): static]]></code>
+    </MissingOverrideAttribute>
+    <TypeDoesNotContainType>
+      <code><![CDATA[$alias === '']]></code>
+    </TypeDoesNotContainType>
   </file>
   <file src="src/Driver/MySQL/Query/MySQLDeleteQuery.php">
     <ClassMustBeFinal>
@@ -890,27 +1116,38 @@
     <InvalidClassConstantType>
       <code><![CDATA[EXCLUDE_FROM_COMPARE]]></code>
     </InvalidClassConstantType>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function formatDatetime(]]></code>
+      <code><![CDATA[protected static function isEnum(AbstractColumn $column): bool]]></code>
+      <code><![CDATA[public function compare(AbstractColumn $initial): bool]]></code>
+      <code><![CDATA[public function getComment(): string]]></code>
+      <code><![CDATA[public function sqlStatement(DriverInterface $driver): string]]></code>
+    </MissingOverrideAttribute>
     <MixedArgument>
       <code><![CDATA[$column->defaultValue]]></code>
       <code><![CDATA[$column->type]]></code>
       <code><![CDATA[$driver->identifier($this->name)]]></code>
+      <code><![CDATA[$schema['Collation']]]></code>
+      <code><![CDATA[$schema['Collation']]]></code>
       <code><![CDATA[$schema['Extra']]]></code>
       <code><![CDATA[$schema['Field']]]></code>
       <code><![CDATA[$schema['Null']]]></code>
       <code><![CDATA[\is_array($values) ? $values : \func_get_args()]]></code>
     </MixedArgument>
     <MixedAssignment>
+      <code><![CDATA[$column->charset]]></code>
+      <code><![CDATA[$column->collation]]></code>
       <code><![CDATA[$column->comment]]></code>
       <code><![CDATA[$column->type]]></code>
       <code><![CDATA[$defaultValue]]></code>
-      <code><![CDATA[$result]]></code>
     </MixedAssignment>
-    <MixedReturnStatement>
-      <code><![CDATA[$result]]></code>
-    </MixedReturnStatement>
     <PossiblyNullFunctionCall>
       <code><![CDATA[\Closure::fromCallable([parent::class, 'compare'])->bindTo($self)($initial)]]></code>
     </PossiblyNullFunctionCall>
+    <PossiblyNullOperand>
+      <code><![CDATA[$statement]]></code>
+      <code><![CDATA[$statement]]></code>
+    </PossiblyNullOperand>
     <PossiblyUndefinedStringArrayOffset>
       <code><![CDATA[$matches['type']]]></code>
       <code><![CDATA[$schema['Comment']]]></code>
@@ -936,6 +1173,9 @@
     <ClassMustBeFinal>
       <code><![CDATA[MySQLForeignKey]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function hasIndex(): bool]]></code>
+    </MissingOverrideAttribute>
     <MixedArgument>
       <code><![CDATA[$schema['CONSTRAINT_NAME']]]></code>
     </MixedArgument>
@@ -995,6 +1235,7 @@
       <code><![CDATA[$index['Key_name']]]></code>
       <code><![CDATA[$index['Key_name']]]></code>
       <code><![CDATA[$index['Key_name']]]></code>
+      <code><![CDATA[$row['CONSTRAINT_NAME']]]></code>
       <code><![CDATA[$schema['CONSTRAINT_NAME']]]></code>
       <code><![CDATA[$this->driver->query(
             'SHOW TABLE STATUS WHERE `Name` = ?',
@@ -1012,12 +1253,15 @@
     </MixedArrayAssignment>
     <MixedArrayOffset>
       <code><![CDATA[$schemas[$index['Key_name']]]]></code>
+      <code><![CDATA[$usage[$row['CONSTRAINT_NAME']]]]></code>
+      <code><![CDATA[$usage[$schema['CONSTRAINT_NAME']]]]></code>
     </MixedArrayOffset>
     <MixedAssignment>
       <code><![CDATA[$column]]></code>
       <code><![CDATA[$index]]></code>
       <code><![CDATA[$index]]></code>
       <code><![CDATA[$primaryKeys[]]]></code>
+      <code><![CDATA[$row]]></code>
       <code><![CDATA[$schema]]></code>
       <code><![CDATA[$schema]]></code>
       <code><![CDATA[$schema['COLUMN_NAME'][]]]></code>
@@ -1025,6 +1269,7 @@
       <code><![CDATA[$schemas[$index['Key_name']][]]]></code>
       <code><![CDATA[$this->engine]]></code>
       <code><![CDATA[$this->version]]></code>
+      <code><![CDATA[$usage[$row['CONSTRAINT_NAME']][]]]></code>
     </MixedAssignment>
     <RiskyTruthyFalsyComparison>
       <code><![CDATA[!$this->version]]></code>
@@ -1032,7 +1277,6 @@
     <UndefinedInterfaceMethod>
       <code><![CDATA[getSource]]></code>
       <code><![CDATA[getSource]]></code>
-      <code><![CDATA[identifier]]></code>
       <code><![CDATA[identifier]]></code>
       <code><![CDATA[identifier]]></code>
     </UndefinedInterfaceMethod>
@@ -1069,13 +1313,22 @@
     <ClassMustBeFinal>
       <code><![CDATA[CompileJson]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function compile(string $statement): string]]></code>
+    </MissingOverrideAttribute>
   </file>
   <file src="src/Driver/Postgres/Injection/CompileJsonContains.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function compile(string $statement): string]]></code>
+    </MissingOverrideAttribute>
     <RiskyTruthyFalsyComparison>
       <code><![CDATA[empty($attribute)]]></code>
     </RiskyTruthyFalsyComparison>
   </file>
   <file src="src/Driver/Postgres/Injection/CompileJsonContainsKey.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function compile(string $statement): string]]></code>
+    </MissingOverrideAttribute>
     <PossiblyInvalidOperand>
       <code><![CDATA[$attribute]]></code>
     </PossiblyInvalidOperand>
@@ -1087,29 +1340,42 @@
     <ClassMustBeFinal>
       <code><![CDATA[CompileJsonDoesntContain]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function compile(string $statement): string]]></code>
+    </MissingOverrideAttribute>
   </file>
   <file src="src/Driver/Postgres/Injection/CompileJsonDoesntContainKey.php">
     <ClassMustBeFinal>
       <code><![CDATA[CompileJsonDoesntContainKey]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function compile(string $statement): string]]></code>
+    </MissingOverrideAttribute>
   </file>
   <file src="src/Driver/Postgres/Injection/CompileJsonLength.php">
     <ClassMustBeFinal>
       <code><![CDATA[CompileJsonLength]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function compile(string $statement): string]]></code>
+    </MissingOverrideAttribute>
   </file>
   <file src="src/Driver/Postgres/Injection/PostgresJsonExpression.php">
     <ArgumentTypeCoercion>
       <code><![CDATA[$pathAttribute]]></code>
+      <code><![CDATA[$quote]]></code>
     </ArgumentTypeCoercion>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function getPath(string $statement, string $quote = "'"): string]]></code>
+    </MissingOverrideAttribute>
     <RiskyTruthyFalsyComparison>
       <code><![CDATA[\filter_var($attribute, FILTER_VALIDATE_INT)]]></code>
     </RiskyTruthyFalsyComparison>
   </file>
   <file src="src/Driver/Postgres/PostgresCompiler.php">
     <ArgumentTypeCoercion>
+      <code><![CDATA[$constraint]]></code>
       <code><![CDATA[$path]]></code>
-      <code><![CDATA[$return]]></code>
     </ArgumentTypeCoercion>
     <ClassMustBeFinal>
       <code><![CDATA[PostgresCompiler]]></code>
@@ -1117,12 +1383,19 @@
     <InvalidClassConstantType>
       <code><![CDATA[ORDER_OPTIONS]]></code>
     </InvalidClassConstantType>
-    <MixedArgument>
-      <code><![CDATA[$tokens['return']]]></code>
-    </MixedArgument>
-    <PossiblyNullArgument>
-      <code><![CDATA[$return]]></code>
-    </PossiblyNullArgument>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function compileJsonOrderBy(string $path): FragmentInterface]]></code>
+      <code><![CDATA[protected function distinct(QueryParameters $params, Quoter $q, string|bool|array $distinct): string]]></code>
+      <code><![CDATA[protected function insertQuery(QueryParameters $params, Quoter $q, array $tokens): string]]></code>
+      <code><![CDATA[protected function limit(QueryParameters $params, Quoter $q, ?int $limit = null, ?int $offset = null): string]]></code>
+      <code><![CDATA[protected function upsertQuery(QueryParameters $params, Quoter $q, array $tokens): string]]></code>
+    </MissingOverrideAttribute>
+    <MixedAssignment>
+      <code><![CDATA[$value]]></code>
+    </MixedAssignment>
+    <RedundantConditionGivenDocblockType>
+      <code><![CDATA[requireOnConflict]]></code>
+    </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/Driver/Postgres/PostgresDriver.php">
     <ArgumentTypeCoercion>
@@ -1131,6 +1404,9 @@
     <ClassMustBeFinal>
       <code><![CDATA[PostgresDriver]]></code>
     </ClassMustBeFinal>
+    <DocblockTypeContradiction>
+      <code><![CDATA[$opts->chunkSize < 1]]></code>
+    </DocblockTypeContradiction>
     <InvalidArgument>
       <code><![CDATA[$config]]></code>
     </InvalidArgument>
@@ -1138,18 +1414,28 @@
       <code><![CDATA[[]]]></code>
       <code><![CDATA[[]]]></code>
     </InvalidPropertyAssignmentValue>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function createPDO(): \PDO|PDOInterface]]></code>
+      <code><![CDATA[protected function mapException(\Throwable $exception, string $query): StatementException]]></code>
+      <code><![CDATA[public function beginTransaction(?string $isolationLevel = null): bool]]></code>
+      <code><![CDATA[public function getType(): string]]></code>
+      <code><![CDATA[public static function create(DriverConfig $config): static]]></code>
+    </MissingOverrideAttribute>
+    <MixedAssignment>
+      <code><![CDATA[$row]]></code>
+    </MixedAssignment>
     <MixedReturnStatement>
       <code><![CDATA[$this->primaryKeys[$name]]]></code>
     </MixedReturnStatement>
+    <MixedReturnTypeCoercion>
+      <code><![CDATA[\Generator<int, array<array-key, mixed>>]]></code>
+    </MixedReturnTypeCoercion>
     <MoreSpecificImplementedParamType>
       <code><![CDATA[$config]]></code>
     </MoreSpecificImplementedParamType>
     <PossiblyUndefinedArrayOffset>
       <code><![CDATA[$table]]></code>
     </PossiblyUndefinedArrayOffset>
-    <RedundantCondition>
-      <code><![CDATA[$this->searchSchemas !== []]]></code>
-    </RedundantCondition>
     <UnsafeInstantiation>
       <code><![CDATA[new static(
             $config,
@@ -1166,46 +1452,122 @@
   </file>
   <file src="src/Driver/Postgres/PostgresHandler.php">
     <ArgumentTypeCoercion>
+      <code><![CDATA[$build($placeholders)]]></code>
       <code><![CDATA[$name]]></code>
     </ArgumentTypeCoercion>
     <ClassMustBeFinal>
       <code><![CDATA[PostgresHandler]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function assertValid(AbstractColumn $column): void]]></code>
+      <code><![CDATA[protected function run(string $statement, array $parameters = []): int]]></code>
+      <code><![CDATA[public function alterColumn(]]></code>
+      <code><![CDATA[public function createTable(AbstractTable $table): void]]></code>
+      <code><![CDATA[public function eraseTable(AbstractTable $table, bool $restartIdentity = false): void]]></code>
+      <code><![CDATA[public function getSchema(string $table, ?string $prefix = null): AbstractTable]]></code>
+      <code><![CDATA[public function getTableNames(string $prefix = ''): array]]></code>
+      <code><![CDATA[public function hasTable(string $table): bool]]></code>
+      <code><![CDATA[public function renameTable(string $table, string $name): void]]></code>
+    </MissingOverrideAttribute>
     <MixedArgument>
       <code><![CDATA[$column->getDefaultValue()]]></code>
       <code><![CDATA[$row['table_name']]]></code>
     </MixedArgument>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$operations]]></code>
+      <code><![CDATA[$this->fetchBulkCheckConstraints($this->constrainedPairs($columns))]]></code>
+      <code><![CDATA[$this->fetchBulkColumns($pairs)]]></code>
+      <code><![CDATA[$this->fetchBulkIndexRows($pairs)]]></code>
+      <code><![CDATA[$this->fetchBulkPrimaryKeys($pairs)]]></code>
+      <code><![CDATA[$this->fetchBulkReferences($pairs)]]></code>
+      <code><![CDATA[\array_values($types)]]></code>
     </MixedArgumentTypeCoercion>
     <MixedArrayAccess>
       <code><![CDATA[$row['table_name']]]></code>
       <code><![CDATA[$row['table_name']]]></code>
       <code><![CDATA[$row['table_schema']]]></code>
+      <code><![CDATA[$schema['character_maximum_length']]]></code>
+      <code><![CDATA[$schema['data_type']]]></code>
+      <code><![CDATA[$schema['data_type']]]></code>
+      <code><![CDATA[$schema['typtype']]]></code>
+      <code><![CDATA[$schema['udt_name']]]></code>
+      <code><![CDATA[$schema['udt_name']]]></code>
+      <code><![CDATA[$schema['udt_schema']]]></code>
+      <code><![CDATA[$schema['udt_schema']]]></code>
     </MixedArrayAccess>
     <MixedAssignment>
+      <code><![CDATA[$result[$row['nspname'] . '.' . $row['typname']][]]]></code>
+      <code><![CDATA[$result[$row['table_schema'] . '.' . $row['table_name']][]]]></code>
       <code><![CDATA[$row]]></code>
+      <code><![CDATA[$row]]></code>
+      <code><![CDATA[$rows[]]]></code>
+      <code><![CDATA[$schema]]></code>
+      <code><![CDATA[$schema]]></code>
     </MixedAssignment>
     <MixedOperand>
+      <code><![CDATA[$row[$schemaKey]]]></code>
+      <code><![CDATA[$row[$tableKey]]]></code>
+      <code><![CDATA[$row['nspname']]]></code>
+      <code><![CDATA[$row['nspname']]]></code>
+      <code><![CDATA[$row['relname']]]></code>
+      <code><![CDATA[$row['table_name']]]></code>
+      <code><![CDATA[$row['table_name']]]></code>
       <code><![CDATA[$row['table_name']]]></code>
       <code><![CDATA[$row['table_schema']]]></code>
+      <code><![CDATA[$row['table_schema']]]></code>
+      <code><![CDATA[$row['table_schema']]]></code>
+      <code><![CDATA[$row['typname']]]></code>
+      <code><![CDATA[$schema['udt_name']]]></code>
+      <code><![CDATA[$schema['udt_schema']]]></code>
     </MixedOperand>
+    <MixedReturnTypeCoercion>
+      <code><![CDATA[$result]]></code>
+      <code><![CDATA[$result]]></code>
+      <code><![CDATA[$rows]]></code>
+      <code><![CDATA[array<array-key, array>]]></code>
+      <code><![CDATA[array<string, list<string>>]]></code>
+      <code><![CDATA[array<string, list<string>>]]></code>
+    </MixedReturnTypeCoercion>
     <MoreSpecificImplementedParamType>
       <code><![CDATA[$name]]></code>
-      <code><![CDATA[$prefix]]></code>
       <code><![CDATA[$table]]></code>
       <code><![CDATA[$table]]></code>
       <code><![CDATA[$table]]></code>
     </MoreSpecificImplementedParamType>
-    <PossiblyNullArgument>
-      <code><![CDATA[$prefix]]></code>
-    </PossiblyNullArgument>
+    <PossiblyUndefinedArrayOffset>
+      <code><![CDATA[$t]]></code>
+    </PossiblyUndefinedArrayOffset>
+    <PossiblyUndefinedStringArrayOffset>
+      <code><![CDATA[$row['column_name']]]></code>
+      <code><![CDATA[$row['conkey']]]></code>
+      <code><![CDATA[$row['enumlabel']]]></code>
+      <code><![CDATA[$row['nspname']]]></code>
+      <code><![CDATA[$row['nspname']]]></code>
+      <code><![CDATA[$row['relname']]]></code>
+      <code><![CDATA[$row['table_name']]]></code>
+      <code><![CDATA[$row['table_name']]]></code>
+      <code><![CDATA[$row['table_schema']]]></code>
+      <code><![CDATA[$row['table_schema']]]></code>
+      <code><![CDATA[$row['typname']]]></code>
+    </PossiblyUndefinedStringArrayOffset>
+    <RedundantCastGivenDocblockType>
+      <code><![CDATA[(string) $full]]></code>
+    </RedundantCastGivenDocblockType>
     <RedundantConditionGivenDocblockType>
       <code><![CDATA[$this->driver instanceof PostgresDriver]]></code>
     </RedundantConditionGivenDocblockType>
     <UnusedFunctionCall>
       <code><![CDATA[\json_decode]]></code>
     </UnusedFunctionCall>
+  </file>
+  <file src="src/Driver/Postgres/PostgresOnConflict.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getCacheKey(QueryParameters $params): string]]></code>
+      <code><![CDATA[public static function from(OnConflict $options): static]]></code>
+    </MissingOverrideAttribute>
+    <TypeDoesNotContainType>
+      <code><![CDATA[$name === '']]></code>
+    </TypeDoesNotContainType>
   </file>
   <file src="src/Driver/Postgres/Query/PostgresDeleteQuery.php">
     <ClassMustBeFinal>
@@ -1219,11 +1581,27 @@
     <DeprecatedProperty>
       <code><![CDATA[$this->returning]]></code>
     </DeprecatedProperty>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getTokens(): array]]></code>
+      <code><![CDATA[public function returning(string|FragmentInterface ...$columns): self]]></code>
+      <code><![CDATA[public function run(): mixed]]></code>
+      <code><![CDATA[public function withDriver(DriverInterface $driver, ?string $prefix = null): QueryInterface]]></code>
+    </MissingOverrideAttribute>
     <MixedReturnStatement>
       <code><![CDATA[$result->fetch(StatementInterface::FETCH_ASSOC)]]></code>
       <code><![CDATA[$result->fetchColumn()]]></code>
       <code><![CDATA[$result->fetchColumn()]]></code>
     </MixedReturnStatement>
+    <MixedReturnTypeCoercion>
+      <code><![CDATA[[
+            'table' => $this->table,
+            'return' => $this->returningColumns !== [] ? $this->returningColumns : (array) $this->getPrimaryKey(),
+            'columns' => $this->columns,
+            'values' => $this->values,
+            'onConflict' => $this->onConflict,
+        ]]]></code>
+      <code><![CDATA[array]]></code>
+    </MixedReturnTypeCoercion>
     <NonInvariantDocblockPropertyType>
       <code><![CDATA[$driver]]></code>
     </NonInvariantDocblockPropertyType>
@@ -1309,10 +1687,12 @@
     <MixedAssignment>
       <code><![CDATA[$column]]></code>
       <code><![CDATA[$column->constrainName]]></code>
+      <code><![CDATA[$column->enumValues]]></code>
       <code><![CDATA[$column->type]]></code>
       <code><![CDATA[$column->type]]></code>
       <code><![CDATA[$constrain]]></code>
       <code><![CDATA[$constraint]]></code>
+      <code><![CDATA[$constraints]]></code>
       <code><![CDATA[$identifier]]></code>
       <code><![CDATA[$identifier]]></code>
       <code><![CDATA[$range]]></code>
@@ -1323,6 +1703,8 @@
     </MixedAssignment>
     <MixedOperand>
       <code><![CDATA[$schema['dtd_identifier']]]></code>
+      <code><![CDATA[$schema['udt_name']]]></code>
+      <code><![CDATA[$schema['udt_schema']]]></code>
     </MixedOperand>
     <PossiblyFalseOperand>
       <code><![CDATA[\strpos($column->defaultValue, $column->type)]]></code>
@@ -1344,6 +1726,8 @@
       <code><![CDATA[$schema['tableOID']]]></code>
       <code><![CDATA[$schema['typname']]]></code>
       <code><![CDATA[$schema['typtype']]]></code>
+      <code><![CDATA[$schema['udt_name']]]></code>
+      <code><![CDATA[$schema['udt_schema']]]></code>
     </PossiblyUndefinedStringArrayOffset>
     <RedundantCast>
       <code><![CDATA[(bool) (
@@ -1403,6 +1787,10 @@
     <MixedArrayOffset>
       <code><![CDATA[$index->sort[$column]]]></code>
     </MixedArrayOffset>
+    <MixedAssignment>
+      <code><![CDATA[$column]]></code>
+      <code><![CDATA[$order]]></code>
+    </MixedAssignment>
     <PossiblyUndefinedStringArrayOffset>
       <code><![CDATA[$schema['indexdef']]]></code>
       <code><![CDATA[$schema['indexname']]]></code>
@@ -1424,12 +1812,20 @@
       <code><![CDATA[string]]></code>
     </LessSpecificImplementedReturnType>
     <MixedArgument>
+      <code><![CDATA[$checkConstraints]]></code>
+      <code><![CDATA[$enumValues]]></code>
+      <code><![CDATA[$primaryKeys]]></code>
       <code><![CDATA[$schema]]></code>
       <code><![CDATA[$schema]]></code>
       <code><![CDATA[$schema]]></code>
-      <code><![CDATA[$schema + ['tableOID' => $tableOID]]]></code>
+      <code><![CDATA[$schema]]></code>
     </MixedArgument>
     <MixedArrayAccess>
+      <code><![CDATA[$constraint['conkey']]]></code>
+      <code><![CDATA[$row['enumlabel']]]></code>
+      <code><![CDATA[$row['nspname']]]></code>
+      <code><![CDATA[$row['typname']]]></code>
+      <code><![CDATA[$schema['character_maximum_length']]]></code>
       <code><![CDATA[$schema['column_default']]]></code>
       <code><![CDATA[$schema['column_name']]]></code>
       <code><![CDATA[$schema['column_name']]]></code>
@@ -1442,8 +1838,16 @@
       <code><![CDATA[$schema['constraint_name']]]></code>
       <code><![CDATA[$schema['constraint_name']]]></code>
       <code><![CDATA[$schema['contype']]]></code>
+      <code><![CDATA[$schema['contype']]]></code>
+      <code><![CDATA[$schema['data_type']]]></code>
+      <code><![CDATA[$schema['data_type']]]></code>
       <code><![CDATA[$schema['foreign_column_name']]]></code>
       <code><![CDATA[$schema['foreign_column_name']]]></code>
+      <code><![CDATA[$schema['typtype']]]></code>
+      <code><![CDATA[$schema['udt_name']]]></code>
+      <code><![CDATA[$schema['udt_name']]]></code>
+      <code><![CDATA[$schema['udt_schema']]]></code>
+      <code><![CDATA[$schema['udt_schema']]]></code>
     </MixedArrayAccess>
     <MixedArrayAssignment>
       <code><![CDATA[$fks[$schema['constraint_name']]['column_name']]]></code>
@@ -1463,28 +1867,59 @@
       <code><![CDATA[$this->sequences[$name]]]></code>
     </MixedArrayOffset>
     <MixedAssignment>
+      <code><![CDATA[$checkConstraints]]></code>
       <code><![CDATA[$column]]></code>
+      <code><![CDATA[$constraint]]></code>
+      <code><![CDATA[$enumValues]]></code>
       <code><![CDATA[$fks[$schema['constraint_name']]]]></code>
       <code><![CDATA[$fks[$schema['constraint_name']]['column_name'][]]]></code>
       <code><![CDATA[$fks[$schema['constraint_name']]['foreign_column_name'][]]]></code>
       <code><![CDATA[$name]]></code>
+      <code><![CDATA[$primaryKeys]]></code>
+      <code><![CDATA[$result[$row['nspname'] . '.' . $row['typname']][]]]></code>
+      <code><![CDATA[$result[(string) $constraint['conkey']][]]]></code>
+      <code><![CDATA[$row]]></code>
+      <code><![CDATA[$rows]]></code>
       <code><![CDATA[$schema]]></code>
       <code><![CDATA[$schema]]></code>
       <code><![CDATA[$schema]]></code>
       <code><![CDATA[$schema]]></code>
       <code><![CDATA[$schema]]></code>
-      <code><![CDATA[$tableOID]]></code>
+      <code><![CDATA[$schema]]></code>
+      <code><![CDATA[$schema]]></code>
+      <code><![CDATA[$schemas]]></code>
+      <code><![CDATA[$this->indexRows]]></code>
       <code><![CDATA[$this->primarySequence]]></code>
     </MixedAssignment>
     <MixedOperand>
-      <code><![CDATA[$schema]]></code>
+      <code><![CDATA[$row['nspname']]]></code>
+      <code><![CDATA[$row['typname']]]></code>
+      <code><![CDATA[$schema['udt_name']]]></code>
+      <code><![CDATA[$schema['udt_schema']]]></code>
     </MixedOperand>
+    <MixedReturnStatement>
+      <code><![CDATA[$this->indexRows = $this->prefetch->data['indexRows']]]></code>
+    </MixedReturnStatement>
+    <MixedReturnTypeCoercion>
+      <code><![CDATA[$result]]></code>
+      <code><![CDATA[$result]]></code>
+      <code><![CDATA[array<string, list<array>>]]></code>
+      <code><![CDATA[array<string, list<string>>]]></code>
+    </MixedReturnTypeCoercion>
     <MoreSpecificImplementedParamType>
       <code><![CDATA[$name]]></code>
     </MoreSpecificImplementedParamType>
     <PossiblyUndefinedArrayOffset>
       <code><![CDATA[$name]]></code>
     </PossiblyUndefinedArrayOffset>
+    <PossiblyUndefinedStringArrayOffset>
+      <code><![CDATA[$this->prefetch->data['checkConstraints']]]></code>
+      <code><![CDATA[$this->prefetch->data['columns']]]></code>
+      <code><![CDATA[$this->prefetch->data['enumValues']]]></code>
+      <code><![CDATA[$this->prefetch->data['indexRows']]]></code>
+      <code><![CDATA[$this->prefetch->data['primaryKeys']]]></code>
+      <code><![CDATA[$this->prefetch->data['references']]]></code>
+    </PossiblyUndefinedStringArrayOffset>
   </file>
   <file src="src/Driver/Quoter.php">
     <ArgumentTypeCoercion>
@@ -1517,10 +1952,30 @@
     </NullableReturnStatement>
   </file>
   <file src="src/Driver/ReadonlyHandler.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function alterColumn(AbstractTable $table, AbstractColumn $initial, AbstractColumn $column): void {}]]></code>
+      <code><![CDATA[public function alterForeignKey(]]></code>
+      <code><![CDATA[public function alterIndex(AbstractTable $table, AbstractIndex $initial, AbstractIndex $index): void {}]]></code>
+      <code><![CDATA[public function createColumn(AbstractTable $table, AbstractColumn $column): void {}]]></code>
+      <code><![CDATA[public function createForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void {}]]></code>
+      <code><![CDATA[public function createIndex(AbstractTable $table, AbstractIndex $index): void {}]]></code>
+      <code><![CDATA[public function createTable(AbstractTable $table): void {}]]></code>
+      <code><![CDATA[public function dropColumn(AbstractTable $table, AbstractColumn $column): void {}]]></code>
+      <code><![CDATA[public function dropConstrain(AbstractTable $table, string $constraint): void {}]]></code>
+      <code><![CDATA[public function dropForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void {}]]></code>
+      <code><![CDATA[public function dropIndex(AbstractTable $table, AbstractIndex $index): void {}]]></code>
+      <code><![CDATA[public function dropTable(AbstractTable $table): void {}]]></code>
+      <code><![CDATA[public function eraseTable(AbstractTable $table): void]]></code>
+      <code><![CDATA[public function getSchema(string $table, ?string $prefix = null): AbstractTable]]></code>
+      <code><![CDATA[public function getTableNames(string $prefix = ''): array]]></code>
+      <code><![CDATA[public function hasTable(string $table): bool]]></code>
+      <code><![CDATA[public function renameTable(string $table, string $name): void {}]]></code>
+      <code><![CDATA[public function syncTable(AbstractTable $table, int $operation = self::DO_ALL): void {}]]></code>
+      <code><![CDATA[public function withDriver(DriverInterface $driver): HandlerInterface]]></code>
+    </MissingOverrideAttribute>
     <MoreSpecificImplementedParamType>
       <code><![CDATA[$constraint]]></code>
       <code><![CDATA[$name]]></code>
-      <code><![CDATA[$prefix]]></code>
       <code><![CDATA[$table]]></code>
       <code><![CDATA[$table]]></code>
       <code><![CDATA[$table]]></code>
@@ -1530,35 +1985,63 @@
     <ClassMustBeFinal>
       <code><![CDATA[CompileJson]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function compile(string $statement): string]]></code>
+    </MissingOverrideAttribute>
   </file>
   <file src="src/Driver/SQLServer/Injection/CompileJsonContains.php">
     <ClassMustBeFinal>
       <code><![CDATA[CompileJsonContains]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function compile(string $statement): string]]></code>
+    </MissingOverrideAttribute>
   </file>
   <file src="src/Driver/SQLServer/Injection/CompileJsonContainsKey.php">
     <ArgumentTypeCoercion>
       <code><![CDATA[\array_pop($path)]]></code>
       <code><![CDATA[\implode('->', $path)]]></code>
+      <code><![CDATA[\implode('->', $path)]]></code>
     </ArgumentTypeCoercion>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function compile(string $statement): string]]></code>
+    </MissingOverrideAttribute>
     <PossiblyNullArgument>
-      <code><![CDATA[\array_pop($key)]]></code>
+      <code><![CDATA[$index]]></code>
     </PossiblyNullArgument>
+    <PossiblyNullOperand>
+      <code><![CDATA[\array_shift($key)]]></code>
+    </PossiblyNullOperand>
   </file>
   <file src="src/Driver/SQLServer/Injection/CompileJsonDoesntContain.php">
     <ClassMustBeFinal>
       <code><![CDATA[CompileJsonDoesntContain]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function compile(string $statement): string]]></code>
+    </MissingOverrideAttribute>
   </file>
   <file src="src/Driver/SQLServer/Injection/CompileJsonDoesntContainKey.php">
     <ClassMustBeFinal>
       <code><![CDATA[CompileJsonDoesntContainKey]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function compile(string $statement): string]]></code>
+    </MissingOverrideAttribute>
   </file>
   <file src="src/Driver/SQLServer/Injection/CompileJsonLength.php">
     <ClassMustBeFinal>
       <code><![CDATA[CompileJsonLength]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function compile(string $statement): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Driver/SQLServer/Injection/SQLServerJsonExpression.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function getQuotes(): string]]></code>
+      <code><![CDATA[protected function getStringLiteralPrefix(): string]]></code>
+    </MissingOverrideAttribute>
   </file>
   <file src="src/Driver/SQLServer/Query/SQLServerDeleteQuery.php">
     <ClassMustBeFinal>
@@ -1569,6 +2052,20 @@
     <ClassMustBeFinal>
       <code><![CDATA[SQLServerInsertQuery]]></code>
     </ClassMustBeFinal>
+    <InvalidReturnStatement>
+      <code><![CDATA[parent::getTokens() + [
+            'return' => $this->returningColumns,
+        ]]]></code>
+    </InvalidReturnStatement>
+    <InvalidReturnType>
+      <code><![CDATA[array]]></code>
+    </InvalidReturnType>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getTokens(): array]]></code>
+      <code><![CDATA[public function returning(string|FragmentInterface ...$columns): self]]></code>
+      <code><![CDATA[public function run(): mixed]]></code>
+      <code><![CDATA[public function withDriver(DriverInterface $driver, ?string $prefix = null): QueryInterface]]></code>
+    </MissingOverrideAttribute>
     <MixedReturnStatement>
       <code><![CDATA[$result->fetch(StatementInterface::FETCH_ASSOC)]]></code>
       <code><![CDATA[$result->fetchColumn()]]></code>
@@ -1594,44 +2091,6 @@
     </ClassMustBeFinal>
   </file>
   <file src="src/Driver/SQLServer/Query/Traits/WhereJsonTrait.php">
-    <MethodSignatureMismatch>
-      <code><![CDATA[public function orWhereJson(string $column, mixed $value): static]]></code>
-      <code><![CDATA[public function orWhereJson(string $column, mixed $value): static]]></code>
-      <code><![CDATA[public function orWhereJson(string $column, mixed $value): static]]></code>
-      <code><![CDATA[public function orWhereJsonContains(]]></code>
-      <code><![CDATA[public function orWhereJsonContains(]]></code>
-      <code><![CDATA[public function orWhereJsonContains(]]></code>
-      <code><![CDATA[public function orWhereJsonContainsKey(string $column): static]]></code>
-      <code><![CDATA[public function orWhereJsonContainsKey(string $column): static]]></code>
-      <code><![CDATA[public function orWhereJsonContainsKey(string $column): static]]></code>
-      <code><![CDATA[public function orWhereJsonDoesntContain(]]></code>
-      <code><![CDATA[public function orWhereJsonDoesntContain(]]></code>
-      <code><![CDATA[public function orWhereJsonDoesntContain(]]></code>
-      <code><![CDATA[public function orWhereJsonDoesntContainKey(string $column): static]]></code>
-      <code><![CDATA[public function orWhereJsonDoesntContainKey(string $column): static]]></code>
-      <code><![CDATA[public function orWhereJsonDoesntContainKey(string $column): static]]></code>
-      <code><![CDATA[public function orWhereJsonLength(string $column, int $length, string $operator = '='): static]]></code>
-      <code><![CDATA[public function orWhereJsonLength(string $column, int $length, string $operator = '='): static]]></code>
-      <code><![CDATA[public function orWhereJsonLength(string $column, int $length, string $operator = '='): static]]></code>
-      <code><![CDATA[public function whereJson(string $column, mixed $value): static]]></code>
-      <code><![CDATA[public function whereJson(string $column, mixed $value): static]]></code>
-      <code><![CDATA[public function whereJson(string $column, mixed $value): static]]></code>
-      <code><![CDATA[public function whereJsonContains(string $column, mixed $value, bool $encode = true, bool $validate = true): static]]></code>
-      <code><![CDATA[public function whereJsonContains(string $column, mixed $value, bool $encode = true, bool $validate = true): static]]></code>
-      <code><![CDATA[public function whereJsonContains(string $column, mixed $value, bool $encode = true, bool $validate = true): static]]></code>
-      <code><![CDATA[public function whereJsonContainsKey(string $column): static]]></code>
-      <code><![CDATA[public function whereJsonContainsKey(string $column): static]]></code>
-      <code><![CDATA[public function whereJsonContainsKey(string $column): static]]></code>
-      <code><![CDATA[public function whereJsonDoesntContain(]]></code>
-      <code><![CDATA[public function whereJsonDoesntContain(]]></code>
-      <code><![CDATA[public function whereJsonDoesntContain(]]></code>
-      <code><![CDATA[public function whereJsonDoesntContainKey(string $column): static]]></code>
-      <code><![CDATA[public function whereJsonDoesntContainKey(string $column): static]]></code>
-      <code><![CDATA[public function whereJsonDoesntContainKey(string $column): static]]></code>
-      <code><![CDATA[public function whereJsonLength(string $column, int $length, string $operator = '='): static]]></code>
-      <code><![CDATA[public function whereJsonLength(string $column, int $length, string $operator = '='): static]]></code>
-      <code><![CDATA[public function whereJsonLength(string $column, int $length, string $operator = '='): static]]></code>
-    </MethodSignatureMismatch>
     <MoreSpecificImplementedParamType>
       <code><![CDATA[$length]]></code>
       <code><![CDATA[$length]]></code>
@@ -1655,10 +2114,21 @@
     <ArgumentTypeCoercion>
       <code><![CDATA[$path]]></code>
       <code><![CDATA[$return]]></code>
+      <code><![CDATA[$return]]></code>
     </ArgumentTypeCoercion>
     <ClassMustBeFinal>
       <code><![CDATA[SQLServerCompiler]]></code>
     </ClassMustBeFinal>
+    <InvalidArrayOffset>
+      <code><![CDATA[$tokens['return']]]></code>
+    </InvalidArrayOffset>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function compileJsonOrderBy(string $path): FragmentInterface]]></code>
+      <code><![CDATA[protected function insertQuery(QueryParameters $params, Quoter $q, array $tokens): string]]></code>
+      <code><![CDATA[protected function limit(]]></code>
+      <code><![CDATA[protected function selectQuery(QueryParameters $params, Quoter $q, array $tokens): string]]></code>
+      <code><![CDATA[protected function upsertQuery(QueryParameters $params, Quoter $q, array $tokens): string]]></code>
+    </MissingOverrideAttribute>
     <MixedArgument>
       <code><![CDATA[$join['alias']]]></code>
       <code><![CDATA[$limit]]></code>
@@ -1674,6 +2144,7 @@
       <code><![CDATA[$tokens['limit']]]></code>
       <code><![CDATA[$tokens['offset']]]></code>
       <code><![CDATA[$tokens['orderBy']]]></code>
+      <code><![CDATA[$tokens['return']]]></code>
       <code><![CDATA[$tokens['return']]]></code>
       <code><![CDATA[$tokens['union']]]></code>
       <code><![CDATA[$tokens['where']]]></code>
@@ -1691,11 +2162,13 @@
       <code><![CDATA[$offset]]></code>
       <code><![CDATA[$table]]></code>
       <code><![CDATA[$value]]></code>
+      <code><![CDATA[$value]]></code>
     </MixedAssignment>
     <MixedReturnStatement>
       <code><![CDATA[\call_user_func_array([$this, 'baseSelect'], \func_get_args())]]></code>
     </MixedReturnStatement>
     <PossiblyNullArgument>
+      <code><![CDATA[$return]]></code>
       <code><![CDATA[$return]]></code>
     </PossiblyNullArgument>
     <PossiblyNullOperand>
@@ -1725,6 +2198,9 @@
       <code><![CDATA[$tokens['values']]]></code>
       <code><![CDATA[$tokens['where']]]></code>
     </PossiblyUndefinedStringArrayOffset>
+    <RedundantConditionGivenDocblockType>
+      <code><![CDATA[requireOnConflict]]></code>
+    </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/Driver/SQLServer/SQLServerDriver.php">
     <ClassMustBeFinal>
@@ -1733,6 +2209,16 @@
     <InvalidArgument>
       <code><![CDATA[$config]]></code>
     </InvalidArgument>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function bindParameters(]]></code>
+      <code><![CDATA[protected function createPDO(): \PDO|PDOInterface]]></code>
+      <code><![CDATA[protected function createSavepoint(int $level): void]]></code>
+      <code><![CDATA[protected function mapException(\Throwable $exception, string $query): StatementException]]></code>
+      <code><![CDATA[protected function releaseSavepoint(int $level): void]]></code>
+      <code><![CDATA[protected function rollbackSavepoint(int $level): void]]></code>
+      <code><![CDATA[public function getType(): string]]></code>
+      <code><![CDATA[public static function create(DriverConfig $config): static]]></code>
+    </MissingOverrideAttribute>
     <MixedArgument>
       <code><![CDATA[$type]]></code>
     </MixedArgument>
@@ -1740,13 +2226,17 @@
       <code><![CDATA[$name]]></code>
       <code><![CDATA[$parameter]]></code>
       <code><![CDATA[$parameter]]></code>
+      <code><![CDATA[$row]]></code>
       <code><![CDATA[$type]]></code>
     </MixedAssignment>
+    <MixedReturnTypeCoercion>
+      <code><![CDATA[\Generator<int, array<array-key, mixed>>]]></code>
+    </MixedReturnTypeCoercion>
     <MoreSpecificImplementedParamType>
       <code><![CDATA[$config]]></code>
     </MoreSpecificImplementedParamType>
     <RiskyCast>
-      <code><![CDATA[$driver->getPDO()->getAttribute(\PDO::ATTR_SERVER_VERSION)]]></code>
+      <code><![CDATA[$pdo->getAttribute(\PDO::ATTR_SERVER_VERSION)]]></code>
     </RiskyCast>
     <StringIncrement>
       <code><![CDATA[$index]]></code>
@@ -1766,35 +2256,87 @@
     </UnsafeInstantiation>
   </file>
   <file src="src/Driver/SQLServer/SQLServerHandler.php">
+    <ArgumentTypeCoercion>
+      <code><![CDATA[$build($placeholders)]]></code>
+    </ArgumentTypeCoercion>
     <ClassMustBeFinal>
       <code><![CDATA[SQLServerHandler]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function alterColumn(]]></code>
+      <code><![CDATA[public function createColumn(AbstractTable $table, AbstractColumn $column): void]]></code>
+      <code><![CDATA[public function dropIndex(AbstractTable $table, AbstractIndex $index): void]]></code>
+      <code><![CDATA[public function eraseTable(AbstractTable $table): void]]></code>
+      <code><![CDATA[public function getSchema(string $table, ?string $prefix = null): AbstractTable]]></code>
+      <code><![CDATA[public function getTableNames(string $prefix = ''): array]]></code>
+      <code><![CDATA[public function hasTable(string $table): bool]]></code>
+      <code><![CDATA[public function renameTable(string $table, string $name): void]]></code>
+    </MissingOverrideAttribute>
     <MixedArgument>
       <code><![CDATA[$constraint]]></code>
       <code><![CDATA[$name[0]]]></code>
-      <code><![CDATA[$table]]></code>
-      <code><![CDATA[$table]]></code>
+      <code><![CDATA[$row]]></code>
     </MixedArgument>
+    <MixedArgumentTypeCoercion>
+      <code><![CDATA[$this->fetchBulkColumns($names)]]></code>
+      <code><![CDATA[$this->fetchBulkIndexes($names)]]></code>
+      <code><![CDATA[$this->fetchBulkPrimaryKeys($names)]]></code>
+      <code><![CDATA[$this->fetchBulkReferences($names)]]></code>
+    </MixedArgumentTypeCoercion>
     <MixedArrayAccess>
       <code><![CDATA[$name[0]]]></code>
       <code><![CDATA[$name[0]]]></code>
+      <code><![CDATA[$row['object_id']]]></code>
+      <code><![CDATA[$row['object_id']]]></code>
     </MixedArrayAccess>
+    <MixedArrayOffset>
+      <code><![CDATA[$result[$row['FKTABLE_NAME']]]]></code>
+      <code><![CDATA[$result[$row['bulkTable']]]]></code>
+      <code><![CDATA[$result[$row['bulkTable']]]]></code>
+      <code><![CDATA[$result[$row['table_name']]]]></code>
+    </MixedArrayOffset>
     <MixedAssignment>
       <code><![CDATA[$constraint]]></code>
+      <code><![CDATA[$ids[(string) $row['object_id']]]]></code>
       <code><![CDATA[$name]]></code>
-      <code><![CDATA[$table]]></code>
-      <code><![CDATA[$table]]></code>
+      <code><![CDATA[$result[$row['bulkTable']][]]]></code>
+      <code><![CDATA[$result[(string) $row['object_id']]]]></code>
+      <code><![CDATA[$row]]></code>
+      <code><![CDATA[$row]]></code>
+      <code><![CDATA[$row]]></code>
+      <code><![CDATA[$rows[]]]></code>
       <code><![CDATA[$tables[]]]></code>
     </MixedAssignment>
+    <MixedOperand>
+      <code><![CDATA[$row['colid']]]></code>
+      <code><![CDATA[$row['parentId']]]></code>
+    </MixedOperand>
+    <MixedReturnTypeCoercion>
+      <code><![CDATA[$result]]></code>
+      <code><![CDATA[$result]]></code>
+      <code><![CDATA[$result]]></code>
+      <code><![CDATA[$result]]></code>
+      <code><![CDATA[$result]]></code>
+      <code><![CDATA[$rows]]></code>
+      <code><![CDATA[$tables]]></code>
+      <code><![CDATA[\array_values($ids)]]></code>
+      <code><![CDATA[array]]></code>
+      <code><![CDATA[array<array-key, array>]]></code>
+      <code><![CDATA[array<array-key, string>]]></code>
+      <code><![CDATA[array<string, list<array>>]]></code>
+      <code><![CDATA[array<string, list<array>>]]></code>
+      <code><![CDATA[array<string, list<string>>]]></code>
+      <code><![CDATA[array<string, true>]]></code>
+      <code><![CDATA[list<int|string>]]></code>
+    </MixedReturnTypeCoercion>
     <MoreSpecificImplementedParamType>
       <code><![CDATA[$name]]></code>
-      <code><![CDATA[$prefix]]></code>
       <code><![CDATA[$table]]></code>
       <code><![CDATA[$table]]></code>
       <code><![CDATA[$table]]></code>
     </MoreSpecificImplementedParamType>
     <PossiblyNullArgument>
-      <code><![CDATA[$prefix]]></code>
+      <code><![CDATA[$this->driver]]></code>
       <code><![CDATA[$this->driver]]></code>
       <code><![CDATA[$this->driver]]></code>
       <code><![CDATA[$this->driver]]></code>
@@ -1804,13 +2346,34 @@
       <code><![CDATA[identifier]]></code>
       <code><![CDATA[query]]></code>
       <code><![CDATA[query]]></code>
+      <code><![CDATA[query]]></code>
     </PossiblyNullReference>
+    <PossiblyUndefinedStringArrayOffset>
+      <code><![CDATA[$c['DATA_TYPE']]]></code>
+      <code><![CDATA[$row['FKTABLE_NAME']]]></code>
+      <code><![CDATA[$row['bulkTable']]]></code>
+      <code><![CDATA[$row['bulkTable']]]></code>
+      <code><![CDATA[$row['colid']]]></code>
+      <code><![CDATA[$row['columnName']]]></code>
+      <code><![CDATA[$row['name']]]></code>
+      <code><![CDATA[$row['object_id']]]></code>
+      <code><![CDATA[$row['parentId']]]></code>
+      <code><![CDATA[$row['table_name']]]></code>
+    </PossiblyUndefinedStringArrayOffset>
+    <RedundantFunctionCall>
+      <code><![CDATA[\array_values]]></code>
+    </RedundantFunctionCall>
     <TypeDoesNotContainType>
       <code><![CDATA[$column->getName() === $foreign->getColumns()]]></code>
     </TypeDoesNotContainType>
     <UndefinedInterfaceMethod>
       <code><![CDATA[identifier]]></code>
     </UndefinedInterfaceMethod>
+  </file>
+  <file src="src/Driver/SQLServer/SQLServerOnConflict.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public static function from(OnConflict $options): static]]></code>
+    </MissingOverrideAttribute>
   </file>
   <file src="src/Driver/SQLServer/Schema/SQLServerColumn.php">
     <ClassMustBeFinal>
@@ -1850,9 +2413,14 @@
       <code><![CDATA[$column->type]]></code>
       <code><![CDATA[$constrain]]></code>
       <code><![CDATA[$constraint]]></code>
+      <code><![CDATA[$constraints]]></code>
       <code><![CDATA[$value]]></code>
       <code><![CDATA[$value]]></code>
     </MixedAssignment>
+    <MixedOperand>
+      <code><![CDATA[$schema['column_id']]]></code>
+      <code><![CDATA[$schema['object_id']]]></code>
+    </MixedOperand>
     <PossiblyUndefinedStringArrayOffset>
       <code><![CDATA[$schema['CHARACTER_MAXIMUM_LENGTH']]]></code>
       <code><![CDATA[$schema['COLUMN_DEFAULT']]]></code>
@@ -1863,7 +2431,9 @@
       <code><![CDATA[$schema['NUMERIC_PRECISION']]]></code>
       <code><![CDATA[$schema['NUMERIC_SCALE']]]></code>
       <code><![CDATA[$schema['column_id']]]></code>
+      <code><![CDATA[$schema['column_id']]]></code>
       <code><![CDATA[$schema['is_identity']]]></code>
+      <code><![CDATA[$schema['object_id']]]></code>
       <code><![CDATA[$schema['object_id']]]></code>
     </PossiblyUndefinedStringArrayOffset>
     <RedundantCast>
@@ -1940,11 +2510,18 @@
       <code><![CDATA[SQlServerForeignKey]]></code>
     </InvalidClass>
     <MixedArgument>
+      <code><![CDATA[$checkConstraints]]></code>
+      <code><![CDATA[$defaultConstraints]]></code>
       <code><![CDATA[$schema]]></code>
       <code><![CDATA[$schema]]></code>
     </MixedArgument>
     <MixedArrayAccess>
+      <code><![CDATA[$constraint['colid']]]></code>
+      <code><![CDATA[$constraint['name']]]></code>
+      <code><![CDATA[$constraint['object_id']]]></code>
+      <code><![CDATA[$constraint['parentId']]]></code>
       <code><![CDATA[$index['indexName']]]></code>
+      <code><![CDATA[$schema['DATA_TYPE']]]></code>
       <code><![CDATA[$schema['FKCOLUMN_NAME']]]></code>
       <code><![CDATA[$schema['FKCOLUMN_NAME']]]></code>
       <code><![CDATA[$schema['FK_NAME']]]></code>
@@ -1956,6 +2533,8 @@
       <code><![CDATA[$schema['PKCOLUMN_NAME']]]></code>
       <code><![CDATA[$schema['PKCOLUMN_NAME']]]></code>
       <code><![CDATA[$schema['columnName']]]></code>
+      <code><![CDATA[$schema['object_id']]]></code>
+      <code><![CDATA[$schema['object_id']]]></code>
     </MixedArrayAccess>
     <MixedArrayAssignment>
       <code><![CDATA[$fks[$schema['FK_NAME']]['FKCOLUMN_NAME']]]></code>
@@ -1973,37 +2552,118 @@
       <code><![CDATA[$indexes[$index['indexName']]]]></code>
     </MixedArrayOffset>
     <MixedAssignment>
+      <code><![CDATA[$checkConstraints]]></code>
+      <code><![CDATA[$constraint]]></code>
+      <code><![CDATA[$constraint]]></code>
+      <code><![CDATA[$defaultConstraints]]></code>
       <code><![CDATA[$fks[$schema['FK_NAME']]]]></code>
       <code><![CDATA[$fks[$schema['FK_NAME']]['FKCOLUMN_NAME'][]]]></code>
       <code><![CDATA[$fks[$schema['FK_NAME']]['PKCOLUMN_NAME'][]]]></code>
       <code><![CDATA[$index]]></code>
       <code><![CDATA[$indexes[$index['indexName']][]]]></code>
+      <code><![CDATA[$objectIds[(string) $schema['object_id']]]]></code>
+      <code><![CDATA[$result[$constraint['parentId'] . ':' . $constraint['colid']][]]]></code>
+      <code><![CDATA[$result[(string) $constraint['object_id']]]]></code>
       <code><![CDATA[$result[]]]></code>
+      <code><![CDATA[$rows]]></code>
+      <code><![CDATA[$rows]]></code>
       <code><![CDATA[$schema]]></code>
       <code><![CDATA[$schema]]></code>
       <code><![CDATA[$schema]]></code>
       <code><![CDATA[$schema]]></code>
+      <code><![CDATA[$schema]]></code>
+      <code><![CDATA[$schema]]></code>
+      <code><![CDATA[$schema]]></code>
+      <code><![CDATA[$schemas]]></code>
     </MixedAssignment>
+    <MixedOperand>
+      <code><![CDATA[$constraint['colid']]]></code>
+      <code><![CDATA[$constraint['parentId']]]></code>
+    </MixedOperand>
+    <MixedReturnStatement>
+      <code><![CDATA[$this->prefetch->data['primaryKeys']]]></code>
+    </MixedReturnStatement>
+    <MixedReturnTypeCoercion>
+      <code><![CDATA[$result]]></code>
+      <code><![CDATA[$result]]></code>
+      <code><![CDATA[array<array-key, list<array>>]]></code>
+      <code><![CDATA[array<array-key, string>]]></code>
+    </MixedReturnTypeCoercion>
+    <PossiblyUndefinedStringArrayOffset>
+      <code><![CDATA[$this->prefetch->data['checkConstraints']]]></code>
+      <code><![CDATA[$this->prefetch->data['columns']]]></code>
+      <code><![CDATA[$this->prefetch->data['defaultConstraints']]]></code>
+      <code><![CDATA[$this->prefetch->data['indexes']]]></code>
+      <code><![CDATA[$this->prefetch->data['primaryKeys']]]></code>
+      <code><![CDATA[$this->prefetch->data['references']]]></code>
+    </PossiblyUndefinedStringArrayOffset>
   </file>
   <file src="src/Driver/SQLite/Injection/CompileJson.php">
     <ClassMustBeFinal>
       <code><![CDATA[CompileJson]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function compile(string $statement): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Driver/SQLite/Injection/CompileJsonContainsKey.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function compile(string $statement): string]]></code>
+    </MissingOverrideAttribute>
   </file>
   <file src="src/Driver/SQLite/Injection/CompileJsonDoesntContainKey.php">
     <ClassMustBeFinal>
       <code><![CDATA[CompileJsonDoesntContainKey]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function compile(string $statement): string]]></code>
+    </MissingOverrideAttribute>
   </file>
   <file src="src/Driver/SQLite/Injection/CompileJsonLength.php">
     <ClassMustBeFinal>
       <code><![CDATA[CompileJsonLength]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function compile(string $statement): string]]></code>
+    </MissingOverrideAttribute>
   </file>
   <file src="src/Driver/SQLite/Query/SQLiteDeleteQuery.php">
     <ClassMustBeFinal>
       <code><![CDATA[SQLiteDeleteQuery]]></code>
     </ClassMustBeFinal>
+  </file>
+  <file src="src/Driver/SQLite/Query/SQLiteInsertQuery.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[SQLiteInsertQuery]]></code>
+    </ClassMustBeFinal>
+    <InvalidReturnStatement>
+      <code><![CDATA[parent::getTokens() + [
+            'return' => $this->returningColumns,
+        ]]]></code>
+    </InvalidReturnStatement>
+    <InvalidReturnType>
+      <code><![CDATA[array]]></code>
+    </InvalidReturnType>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getTokens(): array]]></code>
+      <code><![CDATA[public function returning(string|FragmentInterface ...$columns): self]]></code>
+      <code><![CDATA[public function run(): mixed]]></code>
+      <code><![CDATA[public function withDriver(DriverInterface $driver, ?string $prefix = null): QueryInterface]]></code>
+    </MissingOverrideAttribute>
+    <MixedReturnStatement>
+      <code><![CDATA[\count($this->returningColumns) === 1
+                ? $result->fetchColumn()
+                : $result->fetch(StatementInterface::FETCH_ASSOC)]]></code>
+    </MixedReturnStatement>
+    <NonInvariantDocblockPropertyType>
+      <code><![CDATA[$driver]]></code>
+    </NonInvariantDocblockPropertyType>
+    <PossiblyNullReference>
+      <code><![CDATA[isReadonly]]></code>
+    </PossiblyNullReference>
+    <PropertyTypeCoercion>
+      <code><![CDATA[\array_values($columns)]]></code>
+    </PropertyTypeCoercion>
   </file>
   <file src="src/Driver/SQLite/Query/SQLiteSelectQuery.php">
     <ClassMustBeFinal>
@@ -2034,6 +2694,14 @@
     <ClassMustBeFinal>
       <code><![CDATA[SQLiteCompiler]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function compileJsonOrderBy(string $path): FragmentInterface]]></code>
+      <code><![CDATA[protected function conflictTarget(QueryParameters $params, Quoter $q, OnConflict $onConflict): string]]></code>
+      <code><![CDATA[protected function insertQuery(QueryParameters $params, Quoter $q, array $tokens): string]]></code>
+      <code><![CDATA[protected function limit(QueryParameters $params, Quoter $q, ?int $limit = null, ?int $offset = null): string]]></code>
+      <code><![CDATA[protected function selectQuery(QueryParameters $params, Quoter $q, array $tokens): string]]></code>
+      <code><![CDATA[protected function upsertQuery(QueryParameters $params, Quoter $q, array $tokens): string]]></code>
+    </MissingOverrideAttribute>
     <MixedArgument>
       <code><![CDATA[$tokens['columns']]]></code>
       <code><![CDATA[$tokens['values']]]></code>
@@ -2061,6 +2729,19 @@
     <InvalidArgument>
       <code><![CDATA[$config]]></code>
     </InvalidArgument>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function mapException(\Throwable $exception, string $query): StatementException]]></code>
+      <code><![CDATA[protected function setIsolationLevel(string $level): void]]></code>
+      <code><![CDATA[public function cursor(]]></code>
+      <code><![CDATA[public function getType(): string]]></code>
+      <code><![CDATA[public static function create(DriverConfig $config): static]]></code>
+    </MissingOverrideAttribute>
+    <MixedAssignment>
+      <code><![CDATA[$row]]></code>
+    </MixedAssignment>
+    <MixedReturnTypeCoercion>
+      <code><![CDATA[\Generator<int, array<array-key, mixed>>]]></code>
+    </MixedReturnTypeCoercion>
     <MoreSpecificImplementedParamType>
       <code><![CDATA[$config]]></code>
     </MoreSpecificImplementedParamType>
@@ -2071,7 +2752,7 @@
             new SQLiteCompiler('""'),
             new QueryBuilder(
                 new SQLiteSelectQuery(),
-                new InsertQuery(),
+                new SQLiteInsertQuery(),
                 new SQLiteUpdateQuery(),
                 new SQLiteDeleteQuery(),
             ),
@@ -2085,6 +2766,22 @@
     <ClassMustBeFinal>
       <code><![CDATA[SQLiteHandler]]></code>
     </ClassMustBeFinal>
+    <LessSpecificImplementedReturnType>
+      <code><![CDATA[string[]]]></code>
+    </LessSpecificImplementedReturnType>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function alterColumn(]]></code>
+      <code><![CDATA[public function alterForeignKey(]]></code>
+      <code><![CDATA[public function createColumn(AbstractTable $table, AbstractColumn $column): void]]></code>
+      <code><![CDATA[public function createForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void]]></code>
+      <code><![CDATA[public function dropColumn(AbstractTable $table, AbstractColumn $column): void]]></code>
+      <code><![CDATA[public function dropForeignKey(AbstractTable $table, AbstractForeignKey $foreignKey): void]]></code>
+      <code><![CDATA[public function eraseTable(AbstractTable $table): void]]></code>
+      <code><![CDATA[public function getSchema(string $table, ?string $prefix = null): AbstractTable]]></code>
+      <code><![CDATA[public function getTableNames(string $prefix = ''): array]]></code>
+      <code><![CDATA[public function hasTable(string $table): bool]]></code>
+      <code><![CDATA[public function syncTable(AbstractTable $table, int $operation = self::DO_ALL): void]]></code>
+    </MissingOverrideAttribute>
     <MixedArgument>
       <code><![CDATA[$table['name']]]></code>
       <code><![CDATA[$targetColumns]]></code>
@@ -2107,7 +2804,6 @@
       <code><![CDATA[string[]]]></code>
     </MixedReturnTypeCoercion>
     <MoreSpecificImplementedParamType>
-      <code><![CDATA[$prefix]]></code>
       <code><![CDATA[$table]]></code>
     </MoreSpecificImplementedParamType>
     <PossiblyNullArgument>
@@ -2123,6 +2819,11 @@
       <code><![CDATA[identifier]]></code>
     </UndefinedInterfaceMethod>
   </file>
+  <file src="src/Driver/SQLite/SQLiteOnConflict.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public static function from(OnConflict $options): static]]></code>
+    </MissingOverrideAttribute>
+  </file>
   <file src="src/Driver/SQLite/Schema/SQLiteColumn.php">
     <ClassMustBeFinal>
       <code><![CDATA[SQLiteColumn]]></code>
@@ -2130,6 +2831,13 @@
     <InvalidClassConstantType>
       <code><![CDATA[EXCLUDE_FROM_COMPARE]]></code>
     </InvalidClassConstantType>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function quoteEnum(DriverInterface $driver): string]]></code>
+      <code><![CDATA[protected static function isEnum(AbstractColumn $column): bool]]></code>
+      <code><![CDATA[protected static function isJson(AbstractColumn $column): ?bool]]></code>
+      <code><![CDATA[public function getAbstractType(): string]]></code>
+      <code><![CDATA[public function sqlStatement(DriverInterface $driver): string]]></code>
+    </MissingOverrideAttribute>
     <MixedArgument>
       <code><![CDATA[$columnSchema]]></code>
       <code><![CDATA[$schema['name']]]></code>
@@ -2167,6 +2875,11 @@
     <ClassMustBeFinal>
       <code><![CDATA[SQLiteForeignKey]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function compare(AbstractForeignKey $initial): bool]]></code>
+      <code><![CDATA[public function getName(): string]]></code>
+      <code><![CDATA[public function sqlStatement(DriverInterface $driver): string]]></code>
+    </MissingOverrideAttribute>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$this->columns]]></code>
     </MixedArgumentTypeCoercion>
@@ -2196,6 +2909,9 @@
     <ClassMustBeFinal>
       <code><![CDATA[SQLiteIndex]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function sqlStatement(DriverInterface $driver, bool $includeTable = true): string]]></code>
+    </MissingOverrideAttribute>
     <MixedArgument>
       <code><![CDATA[$schema['name']]]></code>
     </MixedArgument>
@@ -2227,9 +2943,6 @@
       <code><![CDATA[$schema['name']]]></code>
       <code><![CDATA[$schema['unique']]]></code>
     </PossiblyUndefinedStringArrayOffset>
-    <RiskyTruthyFalsyComparison>
-      <code><![CDATA[$order = $this->sort[$column] ?? null]]></code>
-    </RiskyTruthyFalsyComparison>
     <UndefinedInterfaceMethod>
       <code><![CDATA[identifier]]></code>
       <code><![CDATA[identifier]]></code>
@@ -2303,6 +3016,16 @@
     </UndefinedInterfaceMethod>
   </file>
   <file src="src/Driver/Statement.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function close(): void]]></code>
+      <code><![CDATA[public function columnCount(): int]]></code>
+      <code><![CDATA[public function fetch(int $mode = self::FETCH_ASSOC): mixed]]></code>
+      <code><![CDATA[public function fetchAll(int $mode = self::FETCH_ASSOC): array]]></code>
+      <code><![CDATA[public function fetchColumn(?int $columnNumber = null): mixed]]></code>
+      <code><![CDATA[public function getIterator(): \Generator]]></code>
+      <code><![CDATA[public function getQueryString(): string]]></code>
+      <code><![CDATA[public function rowCount(): int]]></code>
+    </MissingOverrideAttribute>
     <MissingTemplateParam>
       <code><![CDATA[\IteratorAggregate]]></code>
     </MissingTemplateParam>
@@ -2337,6 +3060,9 @@
     <ClassMustBeFinal>
       <code><![CDATA[HandlerException]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getQuery(): string]]></code>
+    </MissingOverrideAttribute>
     <MixedReturnStatement>
       <code><![CDATA[$this->getPrevious()->getQuery()]]></code>
     </MixedReturnStatement>
@@ -2360,6 +3086,11 @@
       <code><![CDATA[ReadonlyConnectionException]]></code>
     </ClassMustBeFinal>
   </file>
+  <file src="src/Exception/StatementException.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getQuery(): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
   <file src="src/Exception/StatementException/ConnectionException.php">
     <ClassMustBeFinal>
       <code><![CDATA[ConnectionException]]></code>
@@ -2374,6 +3105,10 @@
     <ClassMustBeFinal>
       <code><![CDATA[Expression]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getTokens(): array]]></code>
+      <code><![CDATA[public function getType(): int]]></code>
+    </MissingOverrideAttribute>
     <MixedArgument>
       <code><![CDATA[$an_array['expression'] ?? $an_array['statement']]]></code>
       <code><![CDATA[$an_array['parameters'] ?? []]]></code>
@@ -2389,6 +3124,11 @@
     <ClassMustBeFinal>
       <code><![CDATA[Fragment]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function __toString(): string]]></code>
+      <code><![CDATA[public function getTokens(): array]]></code>
+      <code><![CDATA[public function getType(): int]]></code>
+    </MissingOverrideAttribute>
     <MixedArgument>
       <code><![CDATA[$an_array['fragment'] ?? $an_array['statement']]]></code>
       <code><![CDATA[$an_array['parameters'] ?? []]]></code>
@@ -2406,6 +3146,10 @@
       <code><![CDATA[$parts[1]]]></code>
       <code><![CDATA[$segment]]></code>
     </ArgumentTypeCoercion>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getTokens(): array]]></code>
+      <code><![CDATA[public function getType(): int]]></code>
+    </MissingOverrideAttribute>
     <MixedArgument>
       <code><![CDATA[$an_array['expression'] ?? $an_array['statement']]]></code>
       <code><![CDATA[$an_array['parameters'] ?? []]]></code>
@@ -2416,9 +3160,6 @@
     <PossiblyFalseArgument>
       <code><![CDATA[\strpos($path, $parts[0])]]></code>
     </PossiblyFalseArgument>
-    <PossiblyNullArgument>
-      <code><![CDATA[$value]]></code>
-    </PossiblyNullArgument>
     <PossiblyUndefinedStringArrayOffset>
       <code><![CDATA[$an_array['statement']]]></code>
     </PossiblyUndefinedStringArrayOffset>
@@ -2433,6 +3174,12 @@
     <ClassMustBeFinal>
       <code><![CDATA[Parameter]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getType(): int]]></code>
+      <code><![CDATA[public function getValue(): mixed]]></code>
+      <code><![CDATA[public function isArray(): bool]]></code>
+      <code><![CDATA[public function isNull(): bool]]></code>
+    </MissingOverrideAttribute>
     <PropertyNotSetInConstructor>
       <code><![CDATA[$value]]></code>
     </PropertyNotSetInConstructor>
@@ -2441,21 +3188,44 @@
     <ClassMustBeFinal>
       <code><![CDATA[SubQuery]]></code>
     </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getTokens(): array]]></code>
+      <code><![CDATA[public function getType(): int]]></code>
+    </MissingOverrideAttribute>
     <MixedPropertyTypeCoercion>
       <code><![CDATA[$parameters->getParameters()]]></code>
     </MixedPropertyTypeCoercion>
   </file>
   <file src="src/Query/ActiveQuery.php">
+    <InvalidReturnStatement>
+      <code><![CDATA[$query]]></code>
+    </InvalidReturnStatement>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function __toString(): string]]></code>
+      <code><![CDATA[public function getDriver(): ?DriverInterface]]></code>
+      <code><![CDATA[public function getPrefix(): ?string]]></code>
+      <code><![CDATA[public function withDriver(DriverInterface $driver, ?string $prefix = null): QueryInterface]]></code>
+    </MissingOverrideAttribute>
     <PossiblyNullArgument>
       <code><![CDATA[$this->prefix]]></code>
     </PossiblyNullArgument>
   </file>
   <file src="src/Query/DeleteQuery.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getTokens(): array]]></code>
+      <code><![CDATA[public function getType(): int]]></code>
+      <code><![CDATA[public function run(): int]]></code>
+    </MissingOverrideAttribute>
     <PossiblyNullReference>
       <code><![CDATA[execute]]></code>
     </PossiblyNullReference>
   </file>
   <file src="src/Query/InsertQuery.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getTokens(): array]]></code>
+      <code><![CDATA[public function getType(): int]]></code>
+      <code><![CDATA[public function run(): mixed]]></code>
+    </MissingOverrideAttribute>
     <MixedArgument>
       <code><![CDATA[$rowsets[\key($rowsets)]]]></code>
       <code><![CDATA[$values]]></code>
@@ -2464,12 +3234,33 @@
       <code><![CDATA[$lastID]]></code>
       <code><![CDATA[$values]]></code>
     </MixedAssignment>
+    <MixedPropertyTypeCoercion>
+      <code><![CDATA[\array_keys($rowsets)]]></code>
+      <code><![CDATA[\array_keys($rowsets[\key($rowsets)])]]></code>
+    </MixedPropertyTypeCoercion>
     <MixedReturnStatement>
       <code><![CDATA[$lastID]]></code>
     </MixedReturnStatement>
+    <MixedReturnTypeCoercion>
+      <code><![CDATA[[
+            'table'      => $this->table,
+            'columns'    => $this->columns,
+            'values'     => $this->values,
+            'onConflict' => $this->onConflict,
+        ]]]></code>
+      <code><![CDATA[array{
+     *     'table': non-empty-string,
+     *     'columns': list<non-empty-string>,
+     *     'values': array<int, Parameter>,
+     *     'onConflict': OnConflict|null
+     * }]]></code>
+    </MixedReturnTypeCoercion>
     <PossiblyNullReference>
       <code><![CDATA[execute]]></code>
     </PossiblyNullReference>
+    <PropertyTypeCoercion>
+      <code><![CDATA[$table ?? '']]></code>
+    </PropertyTypeCoercion>
   </file>
   <file src="src/Query/Interpolator.php">
     <InvalidNullableReturnType>
@@ -2504,7 +3295,7 @@
                         $value = \current($unnamed);
                         \next($unnamed);
                         return self::resolveValue($value, $options);
-                    case isset($named[$key]) || \array_key_exists($key, $named):
+                    case isset($key) && \array_key_exists($key, $named):
                         return self::resolveValue($named[$key], $options);
                     default:
                         return $match[0];
@@ -2513,18 +3304,46 @@
             $query,
         )]]></code>
     </NullableReturnStatement>
-    <PossiblyNullArgument>
-      <code><![CDATA[$key]]></code>
-    </PossiblyNullArgument>
-    <RiskyTruthyFalsyComparison>
-      <code><![CDATA[$options['withDatetimeMicroseconds'] ?? false]]></code>
-    </RiskyTruthyFalsyComparison>
     <TooManyArguments>
       <code><![CDATA[self::escapeStringValue($parameter, "'")]]></code>
       <code><![CDATA[self::escapeStringValue((string) $parameter, "'")]]></code>
     </TooManyArguments>
   </file>
+  <file src="src/Query/OnConflict.php">
+    <InvalidOperand>
+      <code><![CDATA[$value]]></code>
+    </InvalidOperand>
+    <MixedArgument>
+      <code><![CDATA[$fragmentParam]]></code>
+    </MixedArgument>
+    <MixedArgumentTypeCoercion>
+      <code><![CDATA[$this->update]]></code>
+    </MixedArgumentTypeCoercion>
+    <MixedAssignment>
+      <code><![CDATA[$fragmentParam]]></code>
+      <code><![CDATA[$item]]></code>
+      <code><![CDATA[$name]]></code>
+      <code><![CDATA[$value]]></code>
+    </MixedAssignment>
+    <PossiblyUndefinedStringArrayOffset>
+      <code><![CDATA[$value->getTokens()['parameters']]]></code>
+    </PossiblyUndefinedStringArrayOffset>
+    <UnsafeInstantiation>
+      <code><![CDATA[new static(
+            target: $resolved,
+            action: ConflictAction::Update,
+            update: null,
+        )]]></code>
+    </UnsafeInstantiation>
+  </file>
   <file src="src/Query/QueryBuilder.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function deleteQuery(]]></code>
+      <code><![CDATA[public function insertQuery(]]></code>
+      <code><![CDATA[public function selectQuery(]]></code>
+      <code><![CDATA[public function updateQuery(]]></code>
+      <code><![CDATA[public function withDriver(DriverInterface $driver): BuilderInterface]]></code>
+    </MissingOverrideAttribute>
     <MixedMethodCall>
       <code><![CDATA[columns]]></code>
       <code><![CDATA[values]]></code>
@@ -2556,6 +3375,15 @@
       <code><![CDATA[$this->orderBy]]></code>
       <code><![CDATA[$this->orderBy]]></code>
     </InvalidPropertyAssignmentValue>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function count(string $column = '*', bool $distinct = false): int]]></code>
+      <code><![CDATA[public function getIterator(): StatementInterface]]></code>
+      <code><![CDATA[public function getTokens(): array]]></code>
+      <code><![CDATA[public function getType(): int]]></code>
+      <code><![CDATA[public function limit(?int $limit = null): self]]></code>
+      <code><![CDATA[public function offset(?int $offset = null): self]]></code>
+      <code><![CDATA[public function run(): StatementInterface]]></code>
+    </MissingOverrideAttribute>
     <MissingTemplateParam>
       <code><![CDATA[\IteratorAggregate]]></code>
     </MissingTemplateParam>
@@ -2581,6 +3409,9 @@
     </MissingClosureParamType>
   </file>
   <file src="src/Query/Traits/JoinTrait.php">
+    <InvalidOperand>
+      <code><![CDATA[$this->joinTokens[$this->lastJoin]['on']]]></code>
+    </InvalidOperand>
     <MissingClosureParamType>
       <code><![CDATA[$parameter]]></code>
       <code><![CDATA[$parameter]]></code>
@@ -2612,6 +3443,12 @@
       <code><![CDATA[$this->joinTokens]]></code>
       <code><![CDATA[$this->joinTokens]]></code>
       <code><![CDATA[$this->joinTokens]]></code>
+      <code><![CDATA[$this->joinTokens]]></code>
+      <code><![CDATA[$this->joinTokens]]></code>
+      <code><![CDATA[$this->joinTokens]]></code>
+      <code><![CDATA[$this->joinTokens]]></code>
+      <code><![CDATA[$this->joinTokens]]></code>
+      <code><![CDATA[$this->joinTokens]]></code>
     </PossiblyNullArrayOffset>
     <PossiblyNullOperand>
       <code><![CDATA[$this->lastJoin]]></code>
@@ -2633,11 +3470,15 @@
       <code><![CDATA[$boolean]]></code>
       <code><![CDATA[$boolean]]></code>
       <code><![CDATA[$boolean]]></code>
+      <code><![CDATA[$boolean]]></code>
+      <code><![CDATA[$this->booleanToToken($boolean)]]></code>
       <code><![CDATA[$this->booleanToToken($boolean)]]></code>
       <code><![CDATA[$this->booleanToToken($boolean)]]></code>
       <code><![CDATA[$this->booleanToToken($boolean)]]></code>
     </ArgumentTypeCoercion>
     <MixedArgument>
+      <code><![CDATA[$nested]]></code>
+      <code><![CDATA[$nested]]></code>
       <code><![CDATA[$nested]]></code>
       <code><![CDATA[$nested]]></code>
       <code><![CDATA[$nested]]></code>
@@ -2654,10 +3495,16 @@
       <code><![CDATA[$key]]></code>
       <code><![CDATA[$key]]></code>
       <code><![CDATA[$key]]></code>
+      <code><![CDATA[$key]]></code>
+      <code><![CDATA[$key]]></code>
     </MixedArgumentTypeCoercion>
     <MixedAssignment>
       <code><![CDATA[$complex]]></code>
+      <code><![CDATA[$name]]></code>
+      <code><![CDATA[$name]]></code>
       <code><![CDATA[$nested]]></code>
+      <code><![CDATA[$operator]]></code>
+      <code><![CDATA[$value]]></code>
     </MixedAssignment>
   </file>
   <file src="src/Query/Traits/WhereJsonTrait.php">
@@ -2673,6 +3520,11 @@
     </MissingClosureParamType>
   </file>
   <file src="src/Query/UpdateQuery.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getTokens(): array]]></code>
+      <code><![CDATA[public function getType(): int]]></code>
+      <code><![CDATA[public function run(): int]]></code>
+    </MissingOverrideAttribute>
     <PossiblyNullReference>
       <code><![CDATA[execute]]></code>
     </PossiblyNullReference>
@@ -2695,6 +3547,18 @@
     <InvalidReturnType>
       <code><![CDATA[\DateTimeInterface|FragmentInterface|string]]></code>
     </InvalidReturnType>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getAbstractType(): string]]></code>
+      <code><![CDATA[public function getDefaultValue(): mixed]]></code>
+      <code><![CDATA[public function getInternalType(): string]]></code>
+      <code><![CDATA[public function getPrecision(): int]]></code>
+      <code><![CDATA[public function getScale(): int]]></code>
+      <code><![CDATA[public function getSize(): int]]></code>
+      <code><![CDATA[public function getType(): string]]></code>
+      <code><![CDATA[public function hasDefaultValue(): bool]]></code>
+      <code><![CDATA[public function isNullable(): bool]]></code>
+      <code><![CDATA[public function sqlStatement(DriverInterface $driver): string]]></code>
+    </MissingOverrideAttribute>
     <MixedArgument>
       <code><![CDATA[$candidate['type']]]></code>
       <code><![CDATA[$candidates]]></code>
@@ -2756,9 +3620,6 @@
     <PossiblyInvalidArgument>
       <code><![CDATA[$value]]></code>
     </PossiblyInvalidArgument>
-    <PossiblyInvalidCast>
-      <code><![CDATA[$value]]></code>
-    </PossiblyInvalidCast>
     <UndefinedInterfaceMethod>
       <code><![CDATA[identifier]]></code>
     </UndefinedInterfaceMethod>
@@ -2767,6 +3628,14 @@
     <InvalidArgument>
       <code><![CDATA[[$driver, 'identifier']]]></code>
     </InvalidArgument>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getColumns(): array]]></code>
+      <code><![CDATA[public function getDeleteRule(): string]]></code>
+      <code><![CDATA[public function getForeignKeys(): array]]></code>
+      <code><![CDATA[public function getForeignTable(): string]]></code>
+      <code><![CDATA[public function getUpdateRule(): string]]></code>
+      <code><![CDATA[public function sqlStatement(DriverInterface $driver): string]]></code>
+    </MissingOverrideAttribute>
     <MixedArgument>
       <code><![CDATA[static::EXCLUDE_FROM_COMPARE]]></code>
     </MixedArgument>
@@ -2789,6 +3658,12 @@
     </UndefinedInterfaceMethod>
   </file>
   <file src="src/Schema/AbstractIndex.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getColumns(): array]]></code>
+      <code><![CDATA[public function getSort(): array]]></code>
+      <code><![CDATA[public function isUnique(): bool]]></code>
+      <code><![CDATA[public function sqlStatement(DriverInterface $driver, bool $includeTable = true): string]]></code>
+    </MissingOverrideAttribute>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$columns]]></code>
       <code><![CDATA[$statement]]></code>
@@ -2804,10 +3679,6 @@
       <code><![CDATA[$quoted]]></code>
       <code><![CDATA[$statement[]]]></code>
     </MixedAssignment>
-    <RiskyTruthyFalsyComparison>
-      <code><![CDATA[$order = $self->sort[$column] ?? null]]></code>
-      <code><![CDATA[$order = $this->sort[$column] ?? null]]></code>
-    </RiskyTruthyFalsyComparison>
     <UndefinedInterfaceMethod>
       <code><![CDATA[identifier]]></code>
       <code><![CDATA[identifier]]></code>
@@ -2820,6 +3691,9 @@
       <code><![CDATA[$name]]></code>
       <code><![CDATA[$name]]></code>
     </ArgumentTypeCoercion>
+    <ImplicitToStringCast>
+      <code><![CDATA[$this->prefix]]></code>
+    </ImplicitToStringCast>
     <InvalidNullableReturnType>
       <code><![CDATA[AbstractColumn]]></code>
       <code><![CDATA[AbstractForeignKey]]></code>
@@ -2852,8 +3726,10 @@
       <code><![CDATA[$column]]></code>
       <code><![CDATA[$column]]></code>
       <code><![CDATA[$column]]></code>
+      <code><![CDATA[$column]]></code>
       <code><![CDATA[$expression]]></code>
       <code><![CDATA[$normalized[]]]></code>
+      <code><![CDATA[$order]]></code>
       <code><![CDATA[$pair]]></code>
       <code><![CDATA[$sort[$column]]]></code>
       <code><![CDATA[[$name, $initial]]]></code>
@@ -2883,6 +3759,13 @@
     <TypeDoesNotContainType>
       <code><![CDATA[$column->getName() === $foreign->getColumns()]]></code>
     </TypeDoesNotContainType>
+    <UnnecessaryVarAnnotation>
+      <code><![CDATA[AbstractColumn]]></code>
+      <code><![CDATA[AbstractColumn]]></code>
+    </UnnecessaryVarAnnotation>
+    <WeakHash>
+      <code><![CDATA[\md5($name)]]></code>
+    </WeakHash>
   </file>
   <file src="src/Schema/Attribute/ColumnAttribute.php">
     <ClassMustBeFinal>
@@ -2890,6 +3773,20 @@
     </ClassMustBeFinal>
   </file>
   <file src="src/Schema/Comparator.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function addedColumns(): array]]></code>
+      <code><![CDATA[public function addedForeignKeys(): array]]></code>
+      <code><![CDATA[public function addedIndexes(): array]]></code>
+      <code><![CDATA[public function alteredColumns(): array]]></code>
+      <code><![CDATA[public function alteredForeignKeys(): array]]></code>
+      <code><![CDATA[public function alteredIndexes(): array]]></code>
+      <code><![CDATA[public function droppedColumns(): array]]></code>
+      <code><![CDATA[public function droppedForeignKeys(): array]]></code>
+      <code><![CDATA[public function droppedIndexes(): array]]></code>
+      <code><![CDATA[public function hasChanges(): bool]]></code>
+      <code><![CDATA[public function isPrimaryChanged(): bool]]></code>
+      <code><![CDATA[public function isRenamed(): bool]]></code>
+    </MissingOverrideAttribute>
     <PossiblyNullArgument>
       <code><![CDATA[$initial]]></code>
       <code><![CDATA[$initial]]></code>
@@ -2955,6 +3852,21 @@
     <InvalidReturnType>
       <code><![CDATA[int|string|null]]></code>
     </InvalidReturnType>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function count(): int]]></code>
+      <code><![CDATA[public function exists(): bool]]></code>
+      <code><![CDATA[public function getColumns(): array]]></code>
+      <code><![CDATA[public function getDependencies(): array]]></code>
+      <code><![CDATA[public function getForeignKeys(): array]]></code>
+      <code><![CDATA[public function getFullName(): string]]></code>
+      <code><![CDATA[public function getIndexes(): array]]></code>
+      <code><![CDATA[public function getIterator(): SelectQuery]]></code>
+      <code><![CDATA[public function getName(): string]]></code>
+      <code><![CDATA[public function getPrimaryKeys(): array]]></code>
+      <code><![CDATA[public function hasColumn(string $name): bool]]></code>
+      <code><![CDATA[public function hasForeignKey(array $columns): bool]]></code>
+      <code><![CDATA[public function hasIndex(array $columns = []): bool]]></code>
+    </MissingOverrideAttribute>
     <MissingTemplateParam>
       <code><![CDATA[\IteratorAggregate]]></code>
     </MissingTemplateParam>

@@ -54,14 +54,12 @@
         "symfony/polyfill-php83": "^1.43"
     },
     "require-dev": {
+        "bamarni/composer-bin-plugin": "^1.9",
         "buggregator/trap": "^1.15",
         "ergebnis/composer-normalize": "^2.58",
-        "infection/infection": ">=0.26.10",
         "mockery/mockery": "^1.6",
         "phpunit/phpunit": "^9.6",
-        "spiral/code-style": "^2.2.0",
-        "spiral/tokenizer": "^3.14",
-        "vimeo/psalm": "^5.26 || ^6.6"
+        "spiral/tokenizer": "^3.14"
     },
     "conflict": {
         "spiral/database": "*"
@@ -84,16 +82,28 @@
     },
     "config": {
         "allow-plugins": {
-            "ergebnis/composer-normalize": true,
-            "infection/extension-installer": true
+            "bamarni/composer-bin-plugin": true,
+            "ergebnis/composer-normalize": true
         },
         "sort-packages": true
     },
+    "extra": {
+        "bamarni-bin": {
+            "bin-links": true,
+            "forward-command": false,
+            "target-directory": "vendor-bin"
+        }
+    },
     "scripts": {
-        "cs:diff": "php-cs-fixer fix --dry-run -v --diff",
-        "cs:fix": "php-cs-fixer fix -v",
-        "psalm": "psalm",
-        "psalm:baseline": "psalm --set-baseline=psalm-baseline.xml",
+        "cs:diff": "php-cs-fixer fix --dry-run -v --diff --config=vendor-bin/code-style/.php-cs-fixer.dist.php",
+        "cs:fix": "php-cs-fixer fix -v --config=vendor-bin/code-style/.php-cs-fixer.dist.php",
+        "infect": [
+            "@putenv XDEBUG_MODE=coverage",
+            "infection --threads=max --configuration=infection.json.dist"
+        ],
+        "psalm": "psalm -c vendor-bin/psalm/psalm.xml",
+        "psalm:baseline": "psalm -c vendor-bin/psalm/psalm.xml --set-baseline=vendor-bin/psalm/psalm-baseline.xml",
+        "psalm:ci": "psalm -c vendor-bin/psalm/psalm.xml --output-format=github --shepherd --show-info=false --stats --threads=4",
         "test": "phpunit --color=always"
     }
 }

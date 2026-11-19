@@ -5,3 +5,5 @@
 /tests/runtime/*
 /.env
 *.db
+/vendor-bin/*/vendor/
+/vendor-bin/*/composer.lock
