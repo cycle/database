@@ -378,7 +378,7 @@ class SelectQueryTest extends CommonClass
             ->whereJsonContainsKey('settings->phones[1]');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE 1 IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"'))",
+            "SELECT * FROM {table} WHERE '1' IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"'))",
             $select,
         );
     }
@@ -391,7 +391,7 @@ class SelectQueryTest extends CommonClass
             ->whereJsonContainsKey('settings->phones[1]->numbers[3]');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE 3 IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"'))",
+            "SELECT * FROM {table} WHERE '3' IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"'))",
             $select,
         );
     }
@@ -445,7 +445,7 @@ class SelectQueryTest extends CommonClass
             ->whereJsonDoesntContainKey('settings->phones[1]');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE NOT 1 IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"'))",
+            "SELECT * FROM {table} WHERE NOT '1' IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"'))",
             $select,
         );
     }
@@ -458,7 +458,7 @@ class SelectQueryTest extends CommonClass
             ->whereJsonDoesntContainKey('settings->phones[1]->numbers[3]');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE NOT 3 IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"'))",
+            "SELECT * FROM {table} WHERE NOT '3' IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"'))",
             $select,
         );
     }

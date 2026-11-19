@@ -280,7 +280,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonContainsKey('settings->phones[1]');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE 1 IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"'))",
+            "UPDATE {table} SET {some} = ? WHERE '1' IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"'))",
             $select,
         );
     }
@@ -293,7 +293,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonContainsKey('settings->phones[1]->numbers[3]');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE 3 IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"'))",
+            "UPDATE {table} SET {some} = ? WHERE '3' IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"'))",
             $select,
         );
     }
@@ -347,7 +347,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonDoesntContainKey('settings->phones[1]');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE NOT 1 IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"'))",
+            "UPDATE {table} SET {some} = ? WHERE NOT '1' IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"'))",
             $select,
         );
     }
@@ -360,7 +360,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonDoesntContainKey('settings->phones[1]->numbers[3]');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE NOT 3 IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"'))",
+            "UPDATE {table} SET {some} = ? WHERE NOT '3' IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"'))",
             $select,
         );
     }

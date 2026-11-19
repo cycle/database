@@ -31,19 +31,19 @@ final class CompileJsonContainsKeyTest extends TestCase
             "settings->x' IN ('y') OR 1=1 OR 'a",
             "'x'' IN (''y'') OR 1=1 OR ''a' IN (SELECT [key] FROM openjson([settings]))",
         ];
-        yield 'integer array index' => [
+        yield 'array index' => [
             'settings->phones[1]',
-            "1 IN (SELECT [key] FROM openjson([settings], '$.\"phones\"'))",
+            "'1' IN (SELECT [key] FROM openjson([settings], '$.\"phones\"'))",
         ];
-        yield 'nested integer array index' => [
+        yield 'nested array index' => [
             'settings->phones[1]->numbers[3]',
-            "3 IN (SELECT [key] FROM openjson([settings], '$.\"phones\"[1].\"numbers\"'))",
+            "'3' IN (SELECT [key] FROM openjson([settings], '$.\"phones\"[1].\"numbers\"'))",
         ];
         yield 'chained array indexes' => [
             'settings->matrix[1][2]',
-            "2 IN (SELECT [key] FROM openjson([settings], '$.\"matrix\"[1]'))",
+            "'2' IN (SELECT [key] FROM openjson([settings], '$.\"matrix\"[1]'))",
         ];
-        yield 'non-integer array index' => [
+        yield 'array index that tries to close the literal' => [
             'settings->phones[0 IN (0) OR 1=1 OR 0]',
             "'0 IN (0) OR 1=1 OR 0' IN (SELECT [key] FROM openjson([settings], '$.\"phones\"'))",
         ];
