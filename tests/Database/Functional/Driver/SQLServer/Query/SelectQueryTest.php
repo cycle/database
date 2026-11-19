@@ -122,7 +122,7 @@ class SelectQueryTest extends CommonClass
             ->whereJson('settings->theme', 'dark');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE {id} = ? AND json_value({settings}, '$.\"theme\"') = ?",
+            "SELECT * FROM {table} WHERE {id} = ? AND json_value({settings}, N'$.\"theme\"') = ?",
             $select,
         );
         $this->assertSameParameters([1, 'dark'], $select);
@@ -137,7 +137,7 @@ class SelectQueryTest extends CommonClass
             ->orWhereJson('settings->theme', 'dark');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE {id} = ? OR json_value({settings}, '$.\"theme\"') = ?",
+            "SELECT * FROM {table} WHERE {id} = ? OR json_value({settings}, N'$.\"theme\"') = ?",
             $select,
         );
         $this->assertSameParameters([1, 'dark'], $select);
@@ -151,7 +151,7 @@ class SelectQueryTest extends CommonClass
             ->whereJson('settings->phone->work', '+1234567890');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE json_value({settings}, '$.\"phone\".\"work\"') = ?",
+            "SELECT * FROM {table} WHERE json_value({settings}, N'$.\"phone\".\"work\"') = ?",
             $select,
         );
         $this->assertSameParameters(['+1234567890'], $select);
@@ -165,7 +165,7 @@ class SelectQueryTest extends CommonClass
             ->whereJson('settings->phones[1]', '+1234567890');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE json_value({settings}, '$.\"phones\"[1]') = ?",
+            "SELECT * FROM {table} WHERE json_value({settings}, N'$.\"phones\"[1]') = ?",
             $select,
         );
         $this->assertSameParameters(['+1234567890'], $select);
@@ -179,7 +179,7 @@ class SelectQueryTest extends CommonClass
             ->whereJson('settings->phones[1]->numbers[3]', '+1234567890');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE json_value({settings}, '$.\"phones\"[1].\"numbers\"[3]') = ?",
+            "SELECT * FROM {table} WHERE json_value({settings}, N'$.\"phones\"[1].\"numbers\"[3]') = ?",
             $select,
         );
         $this->assertSameParameters(['+1234567890'], $select);
@@ -194,7 +194,7 @@ class SelectQueryTest extends CommonClass
             ->whereJsonContains('settings->languages', 'en');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE {id} = ? AND ? IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
+            "SELECT * FROM {table} WHERE {id} = ? AND ? IN (SELECT [value] FROM openjson({settings}, N'$.\"languages\"'))",
             $select,
         );
         $this->assertSameParameters([1, 'en'], $select);
@@ -209,7 +209,7 @@ class SelectQueryTest extends CommonClass
             ->orWhereJsonContains('settings->languages', 'en');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE {id} = ? OR ? IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
+            "SELECT * FROM {table} WHERE {id} = ? OR ? IN (SELECT [value] FROM openjson({settings}, N'$.\"languages\"'))",
             $select,
         );
         $this->assertSameParameters([1, 'en'], $select);
@@ -223,7 +223,7 @@ class SelectQueryTest extends CommonClass
             ->whereJsonContains('settings->phones->work', '+1234567890');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE ? IN (SELECT [value] FROM openjson({settings}, '$.\"phones\".\"work\"'))",
+            "SELECT * FROM {table} WHERE ? IN (SELECT [value] FROM openjson({settings}, N'$.\"phones\".\"work\"'))",
             $select,
         );
         $this->assertSameParameters(['+1234567890'], $select);
@@ -237,7 +237,7 @@ class SelectQueryTest extends CommonClass
             ->whereJsonContains('settings->phones[1]', '+1234567890');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE ? IN (SELECT [value] FROM openjson({settings}, '$.\"phones\"[1]'))",
+            "SELECT * FROM {table} WHERE ? IN (SELECT [value] FROM openjson({settings}, N'$.\"phones\"[1]'))",
             $select,
         );
         $this->assertSameParameters(['+1234567890'], $select);
@@ -251,7 +251,7 @@ class SelectQueryTest extends CommonClass
             ->whereJsonContains('settings->phones[1]->numbers[3]', '+1234567890');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE ? IN (SELECT [value] FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"[3]'))",
+            "SELECT * FROM {table} WHERE ? IN (SELECT [value] FROM openjson({settings}, N'$.\"phones\"[1].\"numbers\"[3]'))",
             $select,
         );
         $this->assertSameParameters(['+1234567890'], $select);
@@ -266,7 +266,7 @@ class SelectQueryTest extends CommonClass
             ->whereJsonDoesntContain('settings->languages', 'en');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE {id} = ? AND ? NOT IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
+            "SELECT * FROM {table} WHERE {id} = ? AND ? NOT IN (SELECT [value] FROM openjson({settings}, N'$.\"languages\"'))",
             $select,
         );
         $this->assertSameParameters([1, 'en'], $select);
@@ -281,7 +281,7 @@ class SelectQueryTest extends CommonClass
             ->orWhereJsonDoesntContain('settings->languages', 'en');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE {id} = ? OR ? NOT IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
+            "SELECT * FROM {table} WHERE {id} = ? OR ? NOT IN (SELECT [value] FROM openjson({settings}, N'$.\"languages\"'))",
             $select,
         );
         $this->assertSameParameters([1, 'en'], $select);
@@ -295,7 +295,7 @@ class SelectQueryTest extends CommonClass
             ->whereJsonDoesntContain('settings->phones->work', '+1234567890');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE ? NOT IN (SELECT [value] FROM openjson({settings}, '$.\"phones\".\"work\"'))",
+            "SELECT * FROM {table} WHERE ? NOT IN (SELECT [value] FROM openjson({settings}, N'$.\"phones\".\"work\"'))",
             $select,
         );
         $this->assertSameParameters(['+1234567890'], $select);
@@ -309,7 +309,7 @@ class SelectQueryTest extends CommonClass
             ->whereJsonDoesntContain('settings->phones[1]', '+1234567890');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE ? NOT IN (SELECT [value] FROM openjson({settings}, '$.\"phones\"[1]'))",
+            "SELECT * FROM {table} WHERE ? NOT IN (SELECT [value] FROM openjson({settings}, N'$.\"phones\"[1]'))",
             $select,
         );
         $this->assertSameParameters(['+1234567890'], $select);
@@ -323,7 +323,7 @@ class SelectQueryTest extends CommonClass
             ->whereJsonDoesntContain('settings->phones[1]->numbers[3]', '+1234567890');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE ? NOT IN (SELECT [value] FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"[3]'))",
+            "SELECT * FROM {table} WHERE ? NOT IN (SELECT [value] FROM openjson({settings}, N'$.\"phones\"[1].\"numbers\"[3]'))",
             $select,
         );
         $this->assertSameParameters(['+1234567890'], $select);
@@ -338,7 +338,7 @@ class SelectQueryTest extends CommonClass
             ->whereJsonContainsKey('settings->languages');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE {id} = ? AND 'languages' IN (SELECT [key] FROM openjson({settings}))",
+            "SELECT * FROM {table} WHERE {id} = ? AND N'languages' IN (SELECT [key] FROM openjson({settings}))",
             $select,
         );
     }
@@ -352,7 +352,7 @@ class SelectQueryTest extends CommonClass
             ->orWhereJsonContainsKey('settings->languages');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE {id} = ? OR 'languages' IN (SELECT [key] FROM openjson({settings}))",
+            "SELECT * FROM {table} WHERE {id} = ? OR N'languages' IN (SELECT [key] FROM openjson({settings}))",
             $select,
         );
     }
@@ -365,7 +365,7 @@ class SelectQueryTest extends CommonClass
             ->whereJsonContainsKey('settings->phones->work');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE 'work' IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"'))",
+            "SELECT * FROM {table} WHERE N'work' IN (SELECT [key] FROM openjson({settings}, N'$.\"phones\"'))",
             $select,
         );
     }
@@ -378,7 +378,7 @@ class SelectQueryTest extends CommonClass
             ->whereJsonContainsKey('settings->phones[1]');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE '1' IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"'))",
+            "SELECT * FROM {table} WHERE N'1' IN (SELECT [key] FROM openjson({settings}, N'$.\"phones\"'))",
             $select,
         );
     }
@@ -391,7 +391,7 @@ class SelectQueryTest extends CommonClass
             ->whereJsonContainsKey('settings->phones[1]->numbers[3]');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE '3' IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"'))",
+            "SELECT * FROM {table} WHERE N'3' IN (SELECT [key] FROM openjson({settings}, N'$.\"phones\"[1].\"numbers\"'))",
             $select,
         );
     }
@@ -405,7 +405,7 @@ class SelectQueryTest extends CommonClass
             ->whereJsonDoesntContainKey('settings->languages');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE {id} = ? AND NOT 'languages' IN (SELECT [key] FROM openjson({settings}))",
+            "SELECT * FROM {table} WHERE {id} = ? AND NOT N'languages' IN (SELECT [key] FROM openjson({settings}))",
             $select,
         );
     }
@@ -419,7 +419,7 @@ class SelectQueryTest extends CommonClass
             ->orWhereJsonDoesntContainKey('settings->languages');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE {id} = ? OR NOT 'languages' IN (SELECT [key] FROM openjson({settings}))",
+            "SELECT * FROM {table} WHERE {id} = ? OR NOT N'languages' IN (SELECT [key] FROM openjson({settings}))",
             $select,
         );
     }
@@ -432,7 +432,7 @@ class SelectQueryTest extends CommonClass
             ->whereJsonDoesntContainKey('settings->phones->work');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE NOT 'work' IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"'))",
+            "SELECT * FROM {table} WHERE NOT N'work' IN (SELECT [key] FROM openjson({settings}, N'$.\"phones\"'))",
             $select,
         );
     }
@@ -445,7 +445,7 @@ class SelectQueryTest extends CommonClass
             ->whereJsonDoesntContainKey('settings->phones[1]');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE NOT '1' IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"'))",
+            "SELECT * FROM {table} WHERE NOT N'1' IN (SELECT [key] FROM openjson({settings}, N'$.\"phones\"'))",
             $select,
         );
     }
@@ -458,7 +458,7 @@ class SelectQueryTest extends CommonClass
             ->whereJsonDoesntContainKey('settings->phones[1]->numbers[3]');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE NOT '3' IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"'))",
+            "SELECT * FROM {table} WHERE NOT N'3' IN (SELECT [key] FROM openjson({settings}, N'$.\"phones\"[1].\"numbers\"'))",
             $select,
         );
     }
@@ -471,7 +471,7 @@ class SelectQueryTest extends CommonClass
             ->whereJsonLength('settings->languages', 1, '>=');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE(SELECT count(*) FROM openjson({settings}, '$.\"languages\"')) >= ?",
+            "SELECT * FROM {table} WHERE(SELECT count(*) FROM openjson({settings}, N'$.\"languages\"')) >= ?",
             $select,
         );
         $this->assertSameParameters([1], $select);
@@ -486,7 +486,7 @@ class SelectQueryTest extends CommonClass
             ->whereJsonLength('settings->languages', 3);
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE {id} = ? AND (SELECT count(*) FROM openjson({settings}, '$.\"languages\"')) = ?",
+            "SELECT * FROM {table} WHERE {id} = ? AND (SELECT count(*) FROM openjson({settings}, N'$.\"languages\"')) = ?",
             $select,
         );
         $this->assertSameParameters([1, 3], $select);
@@ -501,7 +501,7 @@ class SelectQueryTest extends CommonClass
             ->orWhereJsonLength('settings->languages', 4);
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE {id}= ? OR (SELECT count(*) FROM openjson({settings}, '$.\"languages\"')) = ?",
+            "SELECT * FROM {table} WHERE {id}= ? OR (SELECT count(*) FROM openjson({settings}, N'$.\"languages\"')) = ?",
             $select,
         );
         $this->assertSameParameters([1, 4], $select);
@@ -515,7 +515,7 @@ class SelectQueryTest extends CommonClass
             ->whereJsonLength('settings->personal->languages', 1);
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE (SELECT count(*) FROM openjson({settings}, '$.\"personal\".\"languages\"')) = ?",
+            "SELECT * FROM {table} WHERE (SELECT count(*) FROM openjson({settings}, N'$.\"personal\".\"languages\"')) = ?",
             $select,
         );
         $this->assertSameParameters([1], $select);
@@ -529,7 +529,7 @@ class SelectQueryTest extends CommonClass
             ->whereJsonLength('settings->phones[1]', 2);
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE (SELECT count(*) FROM openjson({settings}, '$.\"phones\"[1]')) = ?",
+            "SELECT * FROM {table} WHERE (SELECT count(*) FROM openjson({settings}, N'$.\"phones\"[1]')) = ?",
             $select,
         );
         $this->assertSameParameters([2], $select);
@@ -543,7 +543,7 @@ class SelectQueryTest extends CommonClass
             ->whereJsonLength('settings->phones[1]->numbers[3]', 5);
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} WHERE (SELECT count(*) FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"[3]')) = ?",
+            "SELECT * FROM {table} WHERE (SELECT count(*) FROM openjson({settings}, N'$.\"phones\"[1].\"numbers\"[3]')) = ?",
             $select,
         );
         $this->assertSameParameters([5], $select);
@@ -557,7 +557,7 @@ class SelectQueryTest extends CommonClass
             ->orderBy('logs->created_at', 'DESC');
 
         $this->assertSameQuery(
-            "SELECT * FROM {table} ORDER BY json_value({logs}, '$.\"created_at\"') DESC",
+            "SELECT * FROM {table} ORDER BY json_value({logs}, N'$.\"created_at\"') DESC",
             $select,
         );
     }

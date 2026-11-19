@@ -142,6 +142,14 @@ abstract class JsonExpression implements FragmentInterface
     }
 
     /**
+     * Prefix of a string literal written into the SQL text, such as the JSON path.
+     */
+    protected function getStringLiteralPrefix(): string
+    {
+        return '';
+    }
+
+    /**
      * Transforms a string like "options->languages" into a correct path like $."options"."languages".
      *
      * @param non-empty-string $value
@@ -156,7 +164,7 @@ abstract class JsonExpression implements FragmentInterface
         $segments = \explode($delimiter, $value);
         $path = \implode('.', \array_map(fn(string $segment): string => $this->wrapPathSegment($segment), $segments));
 
-        return "'$" . (\str_starts_with($path, '[') ? '' : '.') . $path . "'";
+        return $this->getStringLiteralPrefix() . "'$" . (\str_starts_with($path, '[') ? '' : '.') . $path . "'";
     }
 
     /**

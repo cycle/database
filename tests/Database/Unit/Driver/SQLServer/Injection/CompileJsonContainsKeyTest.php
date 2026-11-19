@@ -17,39 +17,39 @@ final class CompileJsonContainsKeyTest extends TestCase
     {
         yield 'plain key' => [
             'settings->languages',
-            "'languages' IN (SELECT [key] FROM openjson([settings]))",
+            "N'languages' IN (SELECT [key] FROM openjson([settings]))",
         ];
         yield 'nested key' => [
             'settings->phones->work',
-            "'work' IN (SELECT [key] FROM openjson([settings], '$.\"phones\"'))",
+            "N'work' IN (SELECT [key] FROM openjson([settings], N'$.\"phones\"'))",
         ];
         yield 'key with an apostrophe' => [
             "settings->it's",
-            "'it''s' IN (SELECT [key] FROM openjson([settings]))",
+            "N'it''s' IN (SELECT [key] FROM openjson([settings]))",
         ];
         yield 'key that tries to close the literal' => [
             "settings->x' IN ('y') OR 1=1 OR 'a",
-            "'x'' IN (''y'') OR 1=1 OR ''a' IN (SELECT [key] FROM openjson([settings]))",
+            "N'x'' IN (''y'') OR 1=1 OR ''a' IN (SELECT [key] FROM openjson([settings]))",
         ];
         yield 'array index' => [
             'settings->phones[1]',
-            "'1' IN (SELECT [key] FROM openjson([settings], '$.\"phones\"'))",
+            "N'1' IN (SELECT [key] FROM openjson([settings], N'$.\"phones\"'))",
         ];
         yield 'nested array index' => [
             'settings->phones[1]->numbers[3]',
-            "'3' IN (SELECT [key] FROM openjson([settings], '$.\"phones\"[1].\"numbers\"'))",
+            "N'3' IN (SELECT [key] FROM openjson([settings], N'$.\"phones\"[1].\"numbers\"'))",
         ];
         yield 'chained array indexes' => [
             'settings->matrix[1][2]',
-            "'2' IN (SELECT [key] FROM openjson([settings], '$.\"matrix\"[1]'))",
+            "N'2' IN (SELECT [key] FROM openjson([settings], N'$.\"matrix\"[1]'))",
         ];
         yield 'array index that tries to close the literal' => [
             'settings->phones[0 IN (0) OR 1=1 OR 0]',
-            "'0 IN (0) OR 1=1 OR 0' IN (SELECT [key] FROM openjson([settings], '$.\"phones\"'))",
+            "N'0 IN (0) OR 1=1 OR 0' IN (SELECT [key] FROM openjson([settings], N'$.\"phones\"'))",
         ];
         yield 'array index with an apostrophe' => [
             "settings->phones[it's]",
-            "'it''s' IN (SELECT [key] FROM openjson([settings], '$.\"phones\"'))",
+            "N'it''s' IN (SELECT [key] FROM openjson([settings], N'$.\"phones\"'))",
         ];
     }
 

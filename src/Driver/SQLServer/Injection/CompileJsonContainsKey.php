@@ -50,6 +50,6 @@ class CompileJsonContainsKey extends SQLServerJsonExpression
      */
     private function quoteKey(string $key): string
     {
-        return "'" . \str_replace("'", "''", $key) . "'";
+        return $this->getStringLiteralPrefix() . "'" . \str_replace("'", "''", $key) . "'";
     }
 }

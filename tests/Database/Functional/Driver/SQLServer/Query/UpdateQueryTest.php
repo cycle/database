@@ -24,7 +24,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJson('settings->theme', 'dark');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE {id} = ? AND json_value({settings}, '$.\"theme\"') = ?",
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? AND json_value({settings}, N'$.\"theme\"') = ?",
             $select,
         );
         $this->assertSameParameters(['value', 1, 'dark'], $select);
@@ -39,7 +39,7 @@ class UpdateQueryTest extends CommonClass
             ->orWhereJson('settings->theme', 'dark');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE {id} = ? OR json_value({settings}, '$.\"theme\"') = ?",
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? OR json_value({settings}, N'$.\"theme\"') = ?",
             $select,
         );
         $this->assertSameParameters(['value', 1, 'dark'], $select);
@@ -53,7 +53,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJson('settings->phone->work', '+1234567890');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE json_value({settings}, '$.\"phone\".\"work\"') = ?",
+            "UPDATE {table} SET {some} = ? WHERE json_value({settings}, N'$.\"phone\".\"work\"') = ?",
             $select,
         );
         $this->assertSameParameters(['value', '+1234567890'], $select);
@@ -67,7 +67,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJson('settings->phones[1]', '+1234567890');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE json_value({settings}, '$.\"phones\"[1]') = ?",
+            "UPDATE {table} SET {some} = ? WHERE json_value({settings}, N'$.\"phones\"[1]') = ?",
             $select,
         );
         $this->assertSameParameters(['value', '+1234567890'], $select);
@@ -81,7 +81,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJson('settings->phones[1]->numbers[3]', '+1234567890');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE json_value({settings}, '$.\"phones\"[1].\"numbers\"[3]') = ?",
+            "UPDATE {table} SET {some} = ? WHERE json_value({settings}, N'$.\"phones\"[1].\"numbers\"[3]') = ?",
             $select,
         );
         $this->assertSameParameters(['value', '+1234567890'], $select);
@@ -96,7 +96,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonContains('settings->languages', 'en');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE {id} = ? AND ? IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? AND ? IN (SELECT [value] FROM openjson({settings}, N'$.\"languages\"'))",
             $select,
         );
         $this->assertSameParameters(['value', 1, 'en'], $select);
@@ -111,7 +111,7 @@ class UpdateQueryTest extends CommonClass
             ->orWhereJsonContains('settings->languages', 'en');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE {id} = ? OR ? IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? OR ? IN (SELECT [value] FROM openjson({settings}, N'$.\"languages\"'))",
             $select,
         );
         $this->assertSameParameters(['value', 1, 'en'], $select);
@@ -125,7 +125,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonContains('settings->phones->work', '+1234567890');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE ? IN (SELECT [value] FROM openjson({settings}, '$.\"phones\".\"work\"'))",
+            "UPDATE {table} SET {some} = ? WHERE ? IN (SELECT [value] FROM openjson({settings}, N'$.\"phones\".\"work\"'))",
             $select,
         );
         $this->assertSameParameters(['value', '+1234567890'], $select);
@@ -139,7 +139,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonContains('settings->phones[1]', '+1234567890');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE ? IN (SELECT [value] FROM openjson({settings}, '$.\"phones\"[1]'))",
+            "UPDATE {table} SET {some} = ? WHERE ? IN (SELECT [value] FROM openjson({settings}, N'$.\"phones\"[1]'))",
             $select,
         );
         $this->assertSameParameters(['value', '+1234567890'], $select);
@@ -153,7 +153,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonContains('settings->phones[1]->numbers[3]', '+1234567890');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE ? IN (SELECT [value] FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"[3]'))",
+            "UPDATE {table} SET {some} = ? WHERE ? IN (SELECT [value] FROM openjson({settings}, N'$.\"phones\"[1].\"numbers\"[3]'))",
             $select,
         );
         $this->assertSameParameters(['value', '+1234567890'], $select);
@@ -168,7 +168,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonDoesntContain('settings->languages', 'en');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE {id} = ? AND ? NOT IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? AND ? NOT IN (SELECT [value] FROM openjson({settings}, N'$.\"languages\"'))",
             $select,
         );
         $this->assertSameParameters(['value', 1, 'en'], $select);
@@ -183,7 +183,7 @@ class UpdateQueryTest extends CommonClass
             ->orWhereJsonDoesntContain('settings->languages', 'en');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE {id} = ? OR ? NOT IN (SELECT [value] FROM openjson({settings}, '$.\"languages\"'))",
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? OR ? NOT IN (SELECT [value] FROM openjson({settings}, N'$.\"languages\"'))",
             $select,
         );
         $this->assertSameParameters(['value', 1, 'en'], $select);
@@ -197,7 +197,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonDoesntContain('settings->phones->work', '+1234567890');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE ? NOT IN (SELECT [value] FROM openjson({settings}, '$.\"phones\".\"work\"'))",
+            "UPDATE {table} SET {some} = ? WHERE ? NOT IN (SELECT [value] FROM openjson({settings}, N'$.\"phones\".\"work\"'))",
             $select,
         );
         $this->assertSameParameters(['value', '+1234567890'], $select);
@@ -211,7 +211,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonDoesntContain('settings->phones[1]', '+1234567890');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE ? NOT IN (SELECT [value] FROM openjson({settings}, '$.\"phones\"[1]'))",
+            "UPDATE {table} SET {some} = ? WHERE ? NOT IN (SELECT [value] FROM openjson({settings}, N'$.\"phones\"[1]'))",
             $select,
         );
         $this->assertSameParameters(['value', '+1234567890'], $select);
@@ -225,7 +225,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonDoesntContain('settings->phones[1]->numbers[3]', '+1234567890');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE ? NOT IN (SELECT [value] FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"[3]'))",
+            "UPDATE {table} SET {some} = ? WHERE ? NOT IN (SELECT [value] FROM openjson({settings}, N'$.\"phones\"[1].\"numbers\"[3]'))",
             $select,
         );
         $this->assertSameParameters(['value', '+1234567890'], $select);
@@ -240,7 +240,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonContainsKey('settings->languages');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE {id} = ? AND 'languages' IN (SELECT [key] FROM openjson({settings}))",
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? AND N'languages' IN (SELECT [key] FROM openjson({settings}))",
             $select,
         );
     }
@@ -254,7 +254,7 @@ class UpdateQueryTest extends CommonClass
             ->orWhereJsonContainsKey('settings->languages');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE {id} = ? OR 'languages' IN (SELECT [key] FROM openjson({settings}))",
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? OR N'languages' IN (SELECT [key] FROM openjson({settings}))",
             $select,
         );
     }
@@ -267,7 +267,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonContainsKey('settings->phones->work');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE 'work' IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"'))",
+            "UPDATE {table} SET {some} = ? WHERE N'work' IN (SELECT [key] FROM openjson({settings}, N'$.\"phones\"'))",
             $select,
         );
     }
@@ -280,7 +280,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonContainsKey('settings->phones[1]');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE '1' IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"'))",
+            "UPDATE {table} SET {some} = ? WHERE N'1' IN (SELECT [key] FROM openjson({settings}, N'$.\"phones\"'))",
             $select,
         );
     }
@@ -293,7 +293,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonContainsKey('settings->phones[1]->numbers[3]');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE '3' IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"'))",
+            "UPDATE {table} SET {some} = ? WHERE N'3' IN (SELECT [key] FROM openjson({settings}, N'$.\"phones\"[1].\"numbers\"'))",
             $select,
         );
     }
@@ -307,7 +307,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonDoesntContainKey('settings->languages');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE{id} = ? AND NOT 'languages' IN (SELECT [key] FROM openjson({settings}))",
+            "UPDATE {table} SET {some} = ? WHERE{id} = ? AND NOT N'languages' IN (SELECT [key] FROM openjson({settings}))",
             $select,
         );
     }
@@ -321,7 +321,7 @@ class UpdateQueryTest extends CommonClass
             ->orWhereJsonDoesntContainKey('settings->languages');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE {id} = ? OR NOT 'languages' IN (SELECT [key] FROM openjson({settings}))",
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? OR NOT N'languages' IN (SELECT [key] FROM openjson({settings}))",
             $select,
         );
     }
@@ -334,7 +334,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonDoesntContainKey('settings->phones->work');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE NOT 'work' IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"'))",
+            "UPDATE {table} SET {some} = ? WHERE NOT N'work' IN (SELECT [key] FROM openjson({settings}, N'$.\"phones\"'))",
             $select,
         );
     }
@@ -347,7 +347,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonDoesntContainKey('settings->phones[1]');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE NOT '1' IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"'))",
+            "UPDATE {table} SET {some} = ? WHERE NOT N'1' IN (SELECT [key] FROM openjson({settings}, N'$.\"phones\"'))",
             $select,
         );
     }
@@ -360,7 +360,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonDoesntContainKey('settings->phones[1]->numbers[3]');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE NOT '3' IN (SELECT [key] FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"'))",
+            "UPDATE {table} SET {some} = ? WHERE NOT N'3' IN (SELECT [key] FROM openjson({settings}, N'$.\"phones\"[1].\"numbers\"'))",
             $select,
         );
     }
@@ -373,7 +373,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonLength('settings->languages', 1, '>=');
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE (SELECT count(*) FROM openjson({settings}, '$.\"languages\"')) >= ?",
+            "UPDATE {table} SET {some} = ? WHERE (SELECT count(*) FROM openjson({settings}, N'$.\"languages\"')) >= ?",
             $select,
         );
         $this->assertSameParameters(['value', 1], $select);
@@ -388,7 +388,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonLength('settings->languages', 3);
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE {id} = ? AND (SELECT count(*) FROM openjson({settings}, '$.\"languages\"')) = ?",
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? AND (SELECT count(*) FROM openjson({settings}, N'$.\"languages\"')) = ?",
             $select,
         );
         $this->assertSameParameters(['value', 1, 3], $select);
@@ -403,7 +403,7 @@ class UpdateQueryTest extends CommonClass
             ->orWhereJsonLength('settings->languages', 4);
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE {id} = ? OR (SELECT count(*) FROM openjson({settings}, '$.\"languages\"')) = ?",
+            "UPDATE {table} SET {some} = ? WHERE {id} = ? OR (SELECT count(*) FROM openjson({settings}, N'$.\"languages\"')) = ?",
             $select,
         );
         $this->assertSameParameters(['value', 1, 4], $select);
@@ -417,7 +417,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonLength('settings->personal->languages', 1);
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE (SELECT count(*) FROM openjson({settings}, '$.\"personal\".\"languages\"')) = ?",
+            "UPDATE {table} SET {some} = ? WHERE (SELECT count(*) FROM openjson({settings}, N'$.\"personal\".\"languages\"')) = ?",
             $select,
         );
         $this->assertSameParameters(['value', 1], $select);
@@ -431,7 +431,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonLength('settings->phones[1]', 2);
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE (SELECT count(*) FROM openjson({settings}, '$.\"phones\"[1]')) = ?",
+            "UPDATE {table} SET {some} = ? WHERE (SELECT count(*) FROM openjson({settings}, N'$.\"phones\"[1]')) = ?",
             $select,
         );
         $this->assertSameParameters(['value', 2], $select);
@@ -445,7 +445,7 @@ class UpdateQueryTest extends CommonClass
             ->whereJsonLength('settings->phones[1]->numbers[3]', 5);
 
         $this->assertSameQuery(
-            "UPDATE {table} SET {some} = ? WHERE (SELECT count(*) FROM openjson({settings}, '$.\"phones\"[1].\"numbers\"[3]')) = ?",
+            "UPDATE {table} SET {some} = ? WHERE (SELECT count(*) FROM openjson({settings}, N'$.\"phones\"[1].\"numbers\"[3]')) = ?",
             $select,
         );
         $this->assertSameParameters(['value', 5], $select);

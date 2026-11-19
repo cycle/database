@@ -19,4 +19,13 @@ abstract class SQLServerJsonExpression extends JsonExpression
     {
         return '[]';
     }
+
+    /**
+     * Without N a literal is varchar in the database code page: characters outside it turn into "?",
+     * and JSON keys and paths with them never match.
+     */
+    protected function getStringLiteralPrefix(): string
+    {
+        return 'N';
+    }
 }

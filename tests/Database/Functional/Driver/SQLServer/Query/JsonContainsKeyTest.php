@@ -39,6 +39,8 @@ class JsonContainsKeyTest extends BaseTest
         yield 'key with an apostrophe' => ["data->it's", [10]];
         yield 'array index' => ['data->tags[1]', [10]];
         yield 'chained array indexes' => ['data->matrix[1][2]', [10]];
+        yield 'non-latin key' => ['data->ключ', [10]];
+        yield 'non-latin nested key' => ['data->ключ->вложенный', [10]];
     }
 
     /**
@@ -87,19 +89,23 @@ class JsonContainsKeyTest extends BaseTest
         $this->assertSame($expected, \array_map('intval', \array_column($select->fetchAll(), 'tenant_id')));
     }
 
+    public function testWhereJsonWithNonLatinPath(): void
+    {
+        $select = $this->database->select('tenant_id')->from('documents')->whereJson('data->ключ->вложенный', 'да');
+
+        $this->assertSame([10], \array_map('intval', \array_column($select->fetchAll(), 'tenant_id')));
+    }
+
     public function setUp(): void
     {
         parent::setUp();
 
-        $schema = $this->schema('documents');
-        $schema->primary('id');
-        $schema->integer('tenant_id');
-        $schema->json('data');
-        $schema->save();
+        // nvarchar, not the varchar that the `json` type maps to: only it keeps non-latin keys intact.
+        $this->database->execute('CREATE TABLE documents (id INT IDENTITY PRIMARY KEY, tenant_id INT, data NVARCHAR(MAX))');
 
         // In tenant 20 `tags` is an object, so its keys are not numeric.
         $this->database->insert('documents')->columns(['tenant_id', 'data'])->values([
-            [10, '{"tags": ["a", "b"], "matrix": [[0], [0, 1, 2]], "it\'s": "yes"}'],
+            [10, '{"tags": ["a", "b"], "matrix": [[0], [0, 1, 2]], "it\'s": "yes", "ключ": {"вложенный": "да"}}'],
             [20, '{"tags": {"work": "confidential"}, "matrix": [[0, 1, 2]]}'],
         ])->run();
     }
