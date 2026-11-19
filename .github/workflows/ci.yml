@@ -7,6 +7,13 @@ on:  # yamllint disable-line rule:truthy
 
 name: 🔍 Integration
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   commit-linting:
     timeout-minutes: 4
@@ -16,10 +23,12 @@ jobs:
       pull-requests: read
     steps:
       - name: 📦 Check out the codebase
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: 🧐 Lint commits using "commitlint"
-        uses: wagoid/commitlint-github-action@v6.0.1
+        uses: wagoid/commitlint-github-action@v6
         with:
           configFile: ${{ github.workspace }}/.github/.commitlint.config.mjs
           failOnWarnings: false
@@ -29,9 +38,6 @@ jobs:
   coding-standards:
     timeout-minutes: 4
     runs-on: ${{ matrix.os }}
-    concurrency:
-      cancel-in-progress: true
-      group: coding-standards-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
     strategy:
       fail-fast: true
       matrix:
@@ -44,10 +50,12 @@ jobs:
 
     steps:
       - name: 📦 Check out the codebase
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: 🧐 Lint YAML files
-        uses: ibiqlik/action-yamllint@v3.1.1
+        uses: ibiqlik/action-yamllint@v3
         with:
           config_file: .yamllint.yaml
           file_or_dir: '.'
