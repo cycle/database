@@ -21,6 +21,7 @@ final class JsonExpressionTest extends TestCase
         yield ['foo [1]', ['foo', '1']];
         yield ['foo[string-key]', ['foo', 'string-key']];
         yield ['foo [string-key]', ['foo', 'string-key']];
+        yield ['foo[1][2]', ['foo', '1', '2']];
     }
 
     public static function parseArraySyntaxInvalidDataProvider(): \Traversable
@@ -38,6 +39,7 @@ final class JsonExpressionTest extends TestCase
         yield ['foo [1]', '"foo"[1]'];
         yield ['foo[string-key]', '"foo"[string-key]'];
         yield ['foo [string-key]', '"foo"[string-key]'];
+        yield ['foo[1][2]', '"foo"[1][2]'];
     }
 
     public static function wrapPathDataProvider(): \Traversable
@@ -49,6 +51,7 @@ final class JsonExpressionTest extends TestCase
         yield ['phones[1]->numbers[3]', '$."phones"[1]."numbers"[3]'];
         yield ['phones [1]->numbers [3]', '$."phones"[1]."numbers"[3]'];
         yield ['options->languages[fr]', '$."options"."languages"[fr]'];
+        yield ['matrix[1][2]->cell', '$."matrix"[1][2]."cell"'];
     }
 
     public static function pathDataProvider(): \Traversable

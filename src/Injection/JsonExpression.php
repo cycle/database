@@ -166,12 +166,12 @@ abstract class JsonExpression implements FragmentInterface
      */
     private function wrapPathSegment(string $segment): string
     {
-        $parts = $this->parseArraySyntax($segment);
+        $indexes = $this->parseArraySyntax($segment);
+        $key = \array_shift($indexes);
 
-        if (isset($parts[1])) {
-            return \sprintf('"%s"[%s]', $parts[0], $parts[1]);
-        }
-
-        return \sprintf('"%s"', $segment);
+        return \sprintf('"%s"', $key) . \implode('', \array_map(
+            static fn(string $index): string => "[$index]",
+            $indexes,
+        ));
     }
 }
