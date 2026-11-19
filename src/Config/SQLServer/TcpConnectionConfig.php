@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Config\SQLServer;
 
-use Cycle\Database\Config\ProvidesSourceString;
 use Cycle\Database\Config\PDOConnectionConfig;
+use Cycle\Database\Config\ProvidesSourceString;
 
 /**
  * @psalm-type IsolationLevelType = \PDO::SQLSRV_TXN_*

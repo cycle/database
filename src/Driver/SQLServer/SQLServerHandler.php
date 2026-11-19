@@ -39,7 +39,7 @@ class SQLServerHandler extends Handler
      * Introspect a set of tables with a constant number of queries. The per-table `table_name = ?`
      * filters become `table_name IN (...)`, and the foreign keys — normally read with one
      * `sp_fkeys` call per table — are read for the whole set from `sys.foreign_keys` in a shape that
-     * matches the `sp_fkeys` rows consumed by {@see \Cycle\Database\Driver\SQLServer\Schema\SQLServerForeignKey}.
+     * matches the `sp_fkeys` rows consumed by {@see Schema\SQLServerForeignKey}.
      *
      * @param non-empty-string[] $tables
      *
@@ -342,7 +342,7 @@ class SQLServerHandler extends Handler
 
     /**
      * Read the foreign keys of the whole set from `sys.foreign_keys`, reproducing the columns of the
-     * `sp_fkeys` result consumed by {@see \Cycle\Database\Driver\SQLServer\Schema\SQLServerForeignKey}.
+     * `sp_fkeys` result consumed by {@see Schema\SQLServerForeignKey}.
      * The referential rule is emitted with `sp_fkeys` semantics (`0` = CASCADE, non-zero = NO ACTION).
      *
      * @param list<string> $names

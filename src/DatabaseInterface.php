@@ -28,10 +28,10 @@ use Cycle\Database\Query\UpdateQuery;
  * @method \Generator cursor(SelectQuery $query, \Cycle\Database\Driver\CursorOptions $options = new \Cycle\Database\Driver\CursorOptions(), int $mode = StatementInterface::FETCH_ASSOC)
  *         Open a server-side cursor for the SELECT query and yield rows lazily, with snapshot
  *         consistency for the duration of the enclosing transaction. Requires the read driver to
- *         implement {@see \Cycle\Database\Driver\CursorInterface} (Postgres, SQLite, SQL Server)
+ *         implement {@see Driver\CursorInterface} (Postgres, SQLite, SQL Server)
  *         and an active transaction. Driver-specific knobs (FETCH FORWARD batch, WITH HOLD,
  *         SQL Server cursor type, …) are passed via driver-specific {@see CursorOptions} subclasses.
- *         Throws {@see \Cycle\Database\Exception\DriverException} when the driver lacks cursor
+ *         Throws {@see Exception\DriverException} when the driver lacks cursor
  *         support. Will be added to the interface in the next major release.
  * @method array<non-empty-string, \Cycle\Database\Schema\AbstractTable> getSchemas(?array $tables = null)
  *         Introspect several tables at once, keyed by table name. On a driver that supports batched

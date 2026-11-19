@@ -303,7 +303,7 @@ abstract class StatementTest extends BaseTest
         $visited = [];
         $select->runChunks(
             3,
-            function (StatementInterface $result) use (&$visited): void {
+            static function (StatementInterface $result) use (&$visited): void {
                 foreach ($result as $row) {
                     $visited[] = $row['id'];
                 }
@@ -325,7 +325,7 @@ abstract class StatementTest extends BaseTest
         $chunks = 0;
         $select->runChunks(
             100,
-            function (StatementInterface $result) use (&$visited, &$chunks): void {
+            static function (StatementInterface $result) use (&$visited, &$chunks): void {
                 $chunks++;
                 foreach ($result as $row) {
                     $visited[] = $row['id'];
@@ -347,7 +347,7 @@ abstract class StatementTest extends BaseTest
         $invoked = false;
         $select->runChunks(
             5,
-            function () use (&$invoked): void {
+            static function () use (&$invoked): void {
                 $invoked = true;
             },
         );
@@ -366,7 +366,7 @@ abstract class StatementTest extends BaseTest
         $counts = [];
         $select->runChunks(
             3,
-            function (StatementInterface $result, int $offset, int $count) use (&$offsets, &$counts): void {
+            static function (StatementInterface $result, int $offset, int $count) use (&$offsets, &$counts): void {
                 $offsets[] = $offset;
                 $counts[] = $count;
             },

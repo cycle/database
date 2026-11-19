@@ -11,10 +11,10 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver\Postgres\Schema;
 
-use Cycle\Database\Injection\Fragment;
-use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Exception\SchemaException;
+use Cycle\Database\Injection\Fragment;
+use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Schema\Attribute\ColumnAttribute;
 
 /**

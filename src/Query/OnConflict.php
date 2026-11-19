@@ -185,7 +185,7 @@ class OnConflict
     /**
      * Flatten variadic input from {@see self::target()} to a clean column list.
      *
-     * Matches the {@see \Cycle\Database\Query\ActiveQuery::fetchIdentifiers()} convention:
+     * Matches the {@see ActiveQuery::fetchIdentifiers()} convention:
      *  - a single string argument is split on commas (so `target('a, b')` → `['a', 'b']`);
      *  - inside an array argument, strings are taken literally (so `target(['a, b'])`
      *    yields a single literal column named `'a, b'`).

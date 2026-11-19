@@ -48,7 +48,7 @@ abstract class OnConflictWithPredicate extends OnConflict
      *
      * This is NOT the `DO UPDATE ... WHERE` condition on the update branch.
      *
-     * Accepts the same argument shapes as {@see \Cycle\Database\Query\Traits\WhereTrait::where()},
+     * Accepts the same argument shapes as {@see Traits\WhereTrait::where()},
      * plus a raw-SQL shorthand:
      *  - single raw string — emitted verbatim, identifiers NOT quoted (the one shape
      *    `where()` cannot take): `->targetWhere('resource_key IS NOT NULL')`;
@@ -61,7 +61,7 @@ abstract class OnConflictWithPredicate extends OnConflict
      *
      * Identifiers in every non-raw-string form are quoted; values are bound as parameters.
      *
-     * @param mixed ...$args See {@see \Cycle\Database\Query\Traits\WhereTrait::where()}.
+     * @param mixed ...$args See {@see Traits\WhereTrait::where()}.
      */
     public function targetWhere(mixed ...$args): static
     {

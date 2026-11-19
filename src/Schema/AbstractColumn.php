@@ -11,16 +11,16 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Schema;
 
-use Cycle\Database\Driver\Jsoner;
-use Cycle\Database\Schema\Attribute\ColumnAttribute;
-use Cycle\Database\Schema\Traits\ColumnAttributesTrait;
 use Cycle\Database\ColumnInterface;
 use Cycle\Database\Driver\DriverInterface;
+use Cycle\Database\Driver\Jsoner;
 use Cycle\Database\Exception\DefaultValueException;
 use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Query\QueryParameters;
+use Cycle\Database\Schema\Attribute\ColumnAttribute;
+use Cycle\Database\Schema\Traits\ColumnAttributesTrait;
 use Cycle\Database\Schema\Traits\ElementTrait;
 
 /**

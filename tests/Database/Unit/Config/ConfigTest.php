@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Unit\Config;
 
-use PHPUnit\Framework\TestCase;
 use Cycle\Database\Config\DatabaseConfig;
+use Cycle\Database\Config\MySQL\TcpConnectionConfig;
 use Cycle\Database\Config\MySQLDriverConfig;
 use Cycle\Database\Config\SQLiteDriverConfig;
-use Cycle\Database\Config\MySQL\TcpConnectionConfig;
 use Cycle\Database\Driver\MySQL\MySQLDriver;
 use Cycle\Database\Driver\SQLite\SQLiteDriver;
 use Cycle\Database\Exception\ConfigException;
+use PHPUnit\Framework\TestCase;
 
 class ConfigTest extends TestCase
 {
