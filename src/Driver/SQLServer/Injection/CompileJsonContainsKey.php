@@ -20,8 +20,8 @@ class CompileJsonContainsKey extends SQLServerJsonExpression
 
         if (\count($key) === 1) {
             return \sprintf(
-                '\'%s\' IN (SELECT [key] FROM openjson(%s%s))',
-                \array_shift($key),
+                '%s IN (SELECT [key] FROM openjson(%s%s))',
+                $this->quoteKey(\array_shift($key)),
                 $this->getField($statement),
                 $this->getPath(\implode('->', $path)),
             );
@@ -31,9 +31,35 @@ class CompileJsonContainsKey extends SQLServerJsonExpression
 
         return \sprintf(
             '%s IN (SELECT [key] FROM openjson(%s%s))',
-            \array_pop($key),
+            $this->quoteArrayIndex(\array_pop($key)),
             $this->getField($statement),
             $this->getPath(\implode('->', $path)),
         );
+    }
+
+    /**
+     * The key is written into the SQL text, so apostrophes are doubled to keep it inside the string literal.
+     *
+     * @param non-empty-string $key
+     *
+     * @return non-empty-string
+     */
+    private function quoteKey(string $key): string
+    {
+        return "'" . \str_replace("'", "''", $key) . "'";
+    }
+
+    /**
+     * Integer indexes stay numeric; anything else is quoted like a key.
+     *
+     * @param non-empty-string $index
+     *
+     * @return non-empty-string
+     */
+    private function quoteArrayIndex(string $index): string
+    {
+        $integer = \filter_var($index, FILTER_VALIDATE_INT);
+
+        return $integer !== false ? (string) $integer : $this->quoteKey($index);
     }
 }
