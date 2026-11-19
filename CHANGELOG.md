@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.23.4](https://github.com/cycle/database/compare/2.23.3...2.23.4) (2026-11-19)
+
+
+### Bug Fixes
+
+* **DatabaseManager:** make setLogger() reach every driver ([#273](https://github.com/cycle/database/issues/273)) ([73a8306](https://github.com/cycle/database/commit/73a8306c0ed267daf239149ec23206c0ea26b7cc))
+* **JSON:** keep every array index in JSON paths ([38a8f84](https://github.com/cycle/database/commit/38a8f84b0f152ca10c640dba4eadf7b42ed18275))
+* **MySQL:** keep auto-increment columns out of the primary key ([#275](https://github.com/cycle/database/issues/275)) ([90219cf](https://github.com/cycle/database/commit/90219cf85c1c294757871797b73961633ddb7d77)), closes [#274](https://github.com/cycle/database/issues/274)
+* **SQLServer:** compare array indexes as strings in JSON contains-key conditions ([402ce34](https://github.com/cycle/database/commit/402ce34c44c1f3c7ae6ffb70f30f9119597b764c))
+* **SQLServer:** escape the key in JSON contains-key conditions ([9f39569](https://github.com/cycle/database/commit/9f39569670803816b095052689ca6f4791e53f56))
+* **SQLServer:** keep every array index in JSON contains-key conditions ([94b3501](https://github.com/cycle/database/commit/94b35010def69279ddc3b4b36815724e90dc5d42))
+* **SQLServer:** write JSON paths and keys as Unicode literals ([61f0d0e](https://github.com/cycle/database/commit/61f0d0e5188c7a8722f4948060231b9d28f9b752))
+
+
+### Continuous Integration
+
+* run cs-fix on the minimum supported PHP ([#280](https://github.com/cycle/database/issues/280)) ([6b6d5b4](https://github.com/cycle/database/commit/6b6d5b4304e77f5b61c1739fc46c9dd0010079fc))
+
 ## [2.23.3](https://github.com/cycle/database/compare/2.23.2...2.23.3) (2026-09-27)
 
 
