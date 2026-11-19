@@ -39,6 +39,11 @@ final class JsonExpressionTest extends TestCase
         yield ['foo [1]', '"foo"[1]'];
         yield ['foo[string-key]', '"foo"[string-key]'];
         yield ['foo [string-key]', '"foo"[string-key]'];
+        yield ['a"b', '"a\"b"'];
+        yield ['a\\b', '"a\\\\b"'];
+        yield ['a"."b[0]', '"a\".\"b"[0]'];
+        yield ["a\nb", '"a\nb"'];
+        yield ['ключ/x', '"ключ/x"'];
         yield ['foo[1][2]', '"foo"[1][2]'];
     }
 

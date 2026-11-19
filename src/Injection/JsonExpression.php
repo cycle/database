@@ -187,7 +187,10 @@ abstract class JsonExpression implements FragmentInterface
         $indexes = $this->parseArraySyntax($segment);
         $key = \array_shift($indexes);
 
-        return \sprintf('"%s"', $key) . \implode('', \array_map(
+        // A quoted path member is read as a JSON string.
+        $key = \json_encode($key, \JSON_UNESCAPED_UNICODE | \JSON_UNESCAPED_SLASHES | \JSON_THROW_ON_ERROR);
+
+        return $key . \implode('', \array_map(
             static fn(string $index): string => "[$index]",
             $indexes,
         ));
