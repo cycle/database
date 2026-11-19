@@ -55,10 +55,12 @@
     },
     "require-dev": {
         "bamarni/composer-bin-plugin": "^1.9",
-        "buggregator/trap": "^1.15",
+        "buggregator/trap": "^1.20",
         "ergebnis/composer-normalize": "^2.58",
+        "llm/skills": "^1.20",
         "mockery/mockery": "^1.6",
         "phpunit/phpunit": "^9.6",
+        "roxblnfk/unpoly": "^1.8",
         "spiral/tokenizer": "^3.14"
     },
     "conflict": {
@@ -83,7 +85,8 @@
     "config": {
         "allow-plugins": {
             "bamarni/composer-bin-plugin": true,
-            "ergebnis/composer-normalize": true
+            "ergebnis/composer-normalize": true,
+            "llm/skills": true
         },
         "sort-packages": true
     },

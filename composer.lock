@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "81c029af3d6f41fb1d96ab854d6ab5e8",
+    "content-hash": "1870cfc8f1575fc36d4a1698bf72db01",
     "packages": [
         {
             "name": "psr/container",
@@ -1597,6 +1597,73 @@
             "published-time": "2025-09-08T16:46:06+00:00"
         },
         {
+            "name": "internal/path",
+            "version": "1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-internal/path.git",
+                "reference": "e59fc0d530891483b5f47417ccfecb3d02b2218c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-internal/path/zipball/e59fc0d530891483b5f47417ccfecb3d02b2218c",
+                "reference": "e59fc0d530891483b5f47417ccfecb3d02b2218c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1"
+            },
+            "require-dev": {
+                "buggregator/trap": "^1.15",
+                "infection/infection": "^0.33.2",
+                "llm/skills": "^1.7",
+                "roxblnfk/unpoly": "^1.8.1",
+                "spiral/code-style": "^2.3.1",
+                "testo/bridge-infection": "^0.1.6",
+                "testo/testo": "^0.10.21",
+                "vimeo/psalm": "^7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Internal\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Aleksei Gagarin",
+                    "homepage": "https://github.com/roxblnfk"
+                }
+            ],
+            "description": "Type-safe, immutable file path library with cross-platform support and automatic normalization.",
+            "keywords": [
+                "cross-platform",
+                "file",
+                "filepath",
+                "filesystem",
+                "helper",
+                "path",
+                "unix",
+                "windows"
+            ],
+            "support": {
+                "issues": "https://github.com/php-internal/path/issues",
+                "source": "https://github.com/php-internal/path/tree/1.4.0"
+            },
+            "funding": [
+                {
+                    "url": "https://boosty.to/roxblnfk",
+                    "type": "boosty"
+                }
+            ],
+            "time": "2026-09-08T10:51:37+00:00",
+            "published-time": "2026-09-08T10:51:51+00:00"
+        },
+        {
             "name": "justinrainbow/json-schema",
             "version": "6.14.0",
             "source": {
@@ -1661,6 +1728,86 @@
             },
             "time": "2026-10-24T08:53:34+00:00",
             "published-time": "2026-10-24T08:53:38+00:00"
+        },
+        {
+            "name": "llm/skills",
+            "version": "1.20.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/roxblnfk/skills.git",
+                "reference": "9b66d818485da7109f9d0ce8f11228e1c789055b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/roxblnfk/skills/zipball/9b66d818485da7109f9d0ce8f11228e1c789055b",
+                "reference": "9b66d818485da7109f9d0ce8f11228e1c789055b",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^2.0",
+                "internal/path": "^1.4",
+                "php": ">=8.2"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": "^1.8",
+                "buggregator/trap": "^1.16",
+                "composer/composer": "^2.10.3",
+                "roxblnfk/unpoly": "^1.8",
+                "testo/bridge-infection": "0.1 - 1",
+                "testo/testo": "0.10 - 1"
+            },
+            "suggest": {
+                "ext-intl": "Detects skill names that differ only in Unicode composition; without it or its Symfony polyfill non-ASCII skill names are skipped",
+                "ext-mbstring": "Detects skill names that differ only in non-ASCII letter case; without it non-ASCII skill names are skipped"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "LLM\\Skills\\Composer\\SkillsPlugin",
+                "bamarni-bin": {
+                    "bin-links": true,
+                    "forward-command": false,
+                    "target-directory": "tools"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LLM\\Skills\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Aleksei Gagarin",
+                    "email": "roxblnfk@gmail.com"
+                }
+            ],
+            "description": "AI skills discovery and management system for LLM agents",
+            "keywords": [
+                "agents",
+                "ai",
+                "ai-agents",
+                "ai-skills",
+                "claude-code",
+                "dev",
+                "llm",
+                "llm-agents",
+                "skills"
+            ],
+            "support": {
+                "issues": "https://github.com/roxblnfk/skills/issues",
+                "source": "https://github.com/roxblnfk/skills"
+            },
+            "funding": [
+                {
+                    "url": "https://boosty.to/roxblnfk",
+                    "type": "boosty"
+                }
+            ],
+            "time": "2026-11-18T19:02:58+00:00",
+            "published-time": "2026-11-18T19:03:19+00:00"
         },
         {
             "name": "marc-mabe/php-enum",
@@ -2666,6 +2813,62 @@
             },
             "time": "2023-04-04T09:54:51+00:00",
             "published-time": "2023-04-04T09:55:35+00:00"
+        },
+        {
+            "name": "roxblnfk/unpoly",
+            "version": "1.8.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/roxblnfk/unpoly.git",
+                "reference": "680f8ed460513935aa896391402afe0e4660c3bf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/roxblnfk/unpoly/zipball/680f8ed460513935aa896391402afe0e4660c3bf",
+                "reference": "680f8ed460513935aa896391402afe0e4660c3bf",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.2"
+            },
+            "replace": {
+                "symfony/polyfill-php72": "*",
+                "symfony/polyfill-php73": "*",
+                "symfony/polyfill-php74": "*",
+                "symfony/polyfill-php80": "*",
+                "symfony/polyfill-php81": "*",
+                "symfony/polyfill-php82": "*"
+            },
+            "type": "metapackage",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Aleksei Gagarin (roxblnfk)",
+                    "homepage": "https://github.com/roxblnfk"
+                }
+            ],
+            "description": "Remove unnecessary PHP polyfills",
+            "keywords": [
+                "cleaning",
+                "php",
+                "polyfill",
+                "polyfill-php"
+            ],
+            "support": {
+                "issues": "https://github.com/roxblnfk/unpoly/issues",
+                "source": "https://github.com/roxblnfk/unpoly/tree/1.8.2"
+            },
+            "funding": [
+                {
+                    "url": "https://patreon.com/roxblnfk",
+                    "type": "patreon"
+                }
+            ],
+            "time": "2024-02-06T20:28:31+00:00",
+            "published-time": "2024-02-06T19:59:52+00:00"
         },
         {
             "name": "sebastian/cli-parser",
