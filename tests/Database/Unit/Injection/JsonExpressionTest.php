@@ -52,6 +52,18 @@ final class JsonExpressionTest extends TestCase
         yield ['phones [1]->numbers [3]', '$."phones"[1]."numbers"[3]'];
         yield ['options->languages[fr]', '$."options"."languages"[fr]'];
         yield ['matrix[1][2]->cell', '$."matrix"[1][2]."cell"'];
+        yield ["options->it's", '$."options"."it\'\'s"'];
+        yield ["options->a+'b", '$."options"."a+\'\'b"'];
+        yield ["options->phones[it's]", '$."options"."phones"[it\'\'s]'];
+    }
+
+    public static function quoteStringLiteralDataProvider(): \Traversable
+    {
+        yield ['plain', "'", "'plain'"];
+        yield ["it's", "'", "'it''s'"];
+        yield ["a+'b", "'", "'a+''b'"];
+        yield ["''", "'", "''''''"];
+        yield ['a"b', '"', '"a""b"'];
     }
 
     public static function pathDataProvider(): \Traversable
@@ -139,6 +151,18 @@ final class JsonExpressionTest extends TestCase
         $ref->setAccessible(true);
 
         $this->assertSame(\sprintf("'%s'", $expected), $ref->invoke($expression, $value));
+    }
+
+    /**
+     * @dataProvider quoteStringLiteralDataProvider
+     */
+    public function testQuoteStringLiteral(string $value, string $quote, string $expected): void
+    {
+        $expression = $this->createExpression();
+        $ref = new \ReflectionMethod($expression, 'quoteStringLiteral');
+        $ref->setAccessible(true);
+
+        $this->assertSame($expected, $ref->invoke($expression, $value, $quote));
     }
 
     public function testDefaultQuotes(): void
