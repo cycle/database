@@ -39,6 +39,10 @@ final class CompileJsonContainsKeyTest extends TestCase
             'settings->phones[1]->numbers[3]',
             "3 IN (SELECT [key] FROM openjson([settings], '$.\"phones\"[1].\"numbers\"'))",
         ];
+        yield 'chained array indexes' => [
+            'settings->matrix[1][2]',
+            "2 IN (SELECT [key] FROM openjson([settings], '$.\"matrix\"[1]'))",
+        ];
         yield 'non-integer array index' => [
             'settings->phones[0 IN (0) OR 1=1 OR 0]',
             "'0 IN (0) OR 1=1 OR 0' IN (SELECT [key] FROM openjson([settings], '$.\"phones\"'))",

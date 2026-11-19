@@ -27,11 +27,15 @@ class CompileJsonContainsKey extends SQLServerJsonExpression
             );
         }
 
-        $path[] = \array_shift($key);
+        $index = \array_pop($key);
+        $path[] = \array_shift($key) . \implode('', \array_map(
+            static fn(string $parent): string => "[$parent]",
+            $key,
+        ));
 
         return \sprintf(
             '%s IN (SELECT [key] FROM openjson(%s%s))',
-            $this->quoteArrayIndex(\array_pop($key)),
+            $this->quoteArrayIndex($index),
             $this->getField($statement),
             $this->getPath(\implode('->', $path)),
         );
