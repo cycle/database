@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.23.5](https://github.com/cycle/database/compare/2.23.4...2.23.5) (2026-11-19)
+
+
+### Bug Fixes
+
+* **JSON:** escape JSON path keys as JSON strings ([390e414](https://github.com/cycle/database/commit/390e414a5271d3478b0e8208fef4103a89b6b3b7))
+* **JSON:** keep a plus sign before an apostrophe in JSON paths ([#284](https://github.com/cycle/database/issues/284)) ([cd788b2](https://github.com/cycle/database/commit/cd788b2d648f355b02eda0a464b0e261b4be4eb5))
+* **MySQL:** write JSON paths with a backslash as hex literals ([5924b9d](https://github.com/cycle/database/commit/5924b9df07f5b74d78b9fb99f84b0a1dadb51438))
+
 ## [2.23.4](https://github.com/cycle/database/compare/2.23.3...2.23.4) (2026-11-19)
 
 
