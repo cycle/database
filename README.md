@@ -1,41 +1,51 @@
-# Cycle DBAL
+<div align="center">
+    <a href="https://cycle-orm.dev" target="_blank">
+        <picture>
+            <source media="(prefers-color-scheme: dark)" srcset="https://github.com/cycle/.github/blob/main/logo/words-vector-dark.svg?raw=true">
+            <img width="50%" align="center" src="https://github.com/cycle/.github/blob/main/logo/words-vector-light.svg?raw=true" alt="CycleORM Logo">
+        </picture>
+    </a>
+</div>
 
-[![Latest Stable Version](https://poser.pugx.org/cycle/database/v/stable)](https://packagist.org/packages/cycle/database)
-[![Build Status](https://github.com/cycle/database/workflows/build/badge.svg)](https://github.com/cycle/database/actions)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/cycle/database/badges/quality-score.png?b=2.x)](https://scrutinizer-ci.com/g/cycle/database/?branch=2.x)
-[![Codecov](https://codecov.io/gh/cycle/database/branch/2.x/graph/badge.svg)](https://codecov.io/gh/cycle/database/)
+<p align="center">Cycle DBAL: database abstraction layer, schema introspection, migrations and pagination</p>
 
-Secure, multiple SQL dialects (MySQL, PostgreSQL, SQLite, SQLServer), schema introspection, schema declaration, smart
-identifier wrappers, database partitions, query builders, nested queries.
+<div align="center">
 
-## Documentation
+[![Documentation](https://img.shields.io/badge/Documentation-blue?style=for-the-badge&logo=gitbook&logoColor=white)](https://cycle-orm.dev/docs/database-configuration)
+[![Sponsor](https://img.shields.io/static/v1?style=for-the-badge&label=&message=Sponsor&logo=githubsponsors&logoColor=white&color=%23EA4AAA)](https://github.com/sponsors/cycle)
 
-* [Installation and Configuration](https://cycle-orm.dev/docs/database-configuration)
-* [Access Database](https://cycle-orm.dev/docs/database-access)
-* [Database Isolation](https://cycle-orm.dev/docs/database-isolation)
-* [Query Builders](https://cycle-orm.dev/docs/database-query-builders)
-* [Transactions](https://cycle-orm.dev/docs/database-transactions)
-* [Schema Introspection](https://cycle-orm.dev/docs/database-introspection)
-* [Schema Declaration](https://cycle-orm.dev/docs/database-declaration)
-* [Migrations](https://cycle-orm.dev/docs/database-migrations)
-* [Errata](https://cycle-orm.dev/docs/database-errata)
+[![Psalm Level](https://shepherd.dev/github/cycle/database/level.svg)](https://shepherd.dev/github/cycle/database)
+[![Type Coverage](https://shepherd.dev/github/cycle/database/coverage.svg)](https://shepherd.dev/github/cycle/database)
+[![Codecov](https://codecov.io/gh/cycle/database/branch/2.x/graph/badge.svg)](https://codecov.io/gh/cycle/database)
+[![Discord](https://img.shields.io/discord/538114875570913290?style=flat-square&logo=discord&labelColor=7289d9&logoColor=white&color=39456d)](https://discord.gg/spiralphp)
 
-## Requirements
+</div>
+
+<br />
+
+Secure, multiple SQL dialects (MySQL, PostgreSQL, SQLite, SQLServer), schema introspection, schema declaration, smart identifier wrappers, database partitions, query builders, nested queries.
+
+## Get Started
+
+### Requirements
 
 Make sure that your server is configured with following PHP version and extensions:
 
-* PHP 8.1+
+* PHP 8.2+
 * PDO Extension with desired database drivers
 
-## Installation
-
-To install the component:
+### Installation
 
 ```bash
 composer require cycle/database
 ```
 
-## Example
+[![PHP](https://img.shields.io/packagist/php-v/cycle/database.svg?style=flat-square&logo=php)](https://packagist.org/packages/cycle/database)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/cycle/database.svg?style=flat-square&logo=packagist)](https://packagist.org/packages/cycle/database)
+[![License](https://img.shields.io/packagist/l/cycle/database.svg?style=flat-square)](LICENSE.md)
+[![Total Downloads](https://img.shields.io/packagist/dt/cycle/database.svg?style=flat-square)](https://packagist.org/packages/cycle/database/stats)
+
+### Example
 
 Given example demonstrates the connection to SQLite database, creation of table schema, data insertion and selection:
 
@@ -84,7 +94,14 @@ foreach ($users->select()->where(['name' => 'test']) as $u) {
 }
 ```
 
-## License:
+## Documentation
 
-MIT License (MIT). Please see [`LICENSE`](./LICENSE.md) for more information. Maintained
-by [Spiral Scout](https://spiralscout.com).
+* [Installation and Configuration](https://cycle-orm.dev/docs/database-configuration)
+* [Access Database](https://cycle-orm.dev/docs/database-access)
+* [Database Isolation](https://cycle-orm.dev/docs/database-isolation)
+* [Query Builders](https://cycle-orm.dev/docs/database-query-builders)
+* [Transactions](https://cycle-orm.dev/docs/database-transactions)
+* [Schema Introspection](https://cycle-orm.dev/docs/database-introspection)
+* [Schema Declaration](https://cycle-orm.dev/docs/database-declaration)
+* [Migrations](https://cycle-orm.dev/docs/database-migrations)
+* [Errata](https://cycle-orm.dev/docs/database-errata)
