@@ -150,6 +150,18 @@ abstract class JsonExpression implements FragmentInterface
     }
 
     /**
+     * Writes a value into the SQL text as a string literal, doubling the quote inside it.
+     *
+     * @param non-empty-string $quote
+     *
+     * @return non-empty-string
+     */
+    protected function quoteStringLiteral(string $value, string $quote = "'"): string
+    {
+        return $this->getStringLiteralPrefix() . $quote . \str_replace($quote, $quote . $quote, $value) . $quote;
+    }
+
+    /**
      * Transforms a string like "options->languages" into a correct path like $."options"."languages".
      *
      * @param non-empty-string $value
@@ -159,12 +171,10 @@ abstract class JsonExpression implements FragmentInterface
      */
     private function wrapPath(string $value, string $delimiter = '->'): string
     {
-        $value = \preg_replace("/(\\+)?'/", "''", $value);
-
         $segments = \explode($delimiter, $value);
         $path = \implode('.', \array_map(fn(string $segment): string => $this->wrapPathSegment($segment), $segments));
 
-        return $this->getStringLiteralPrefix() . "'$" . (\str_starts_with($path, '[') ? '' : '.') . $path . "'";
+        return $this->quoteStringLiteral('$' . (\str_starts_with($path, '[') ? '' : '.') . $path);
     }
 
     /**

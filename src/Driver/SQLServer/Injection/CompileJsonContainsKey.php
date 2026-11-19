@@ -21,7 +21,7 @@ class CompileJsonContainsKey extends SQLServerJsonExpression
         if (\count($key) === 1) {
             return \sprintf(
                 '%s IN (SELECT [key] FROM openjson(%s%s))',
-                $this->quoteKey(\array_shift($key)),
+                $this->quoteStringLiteral(\array_shift($key)),
                 $this->getField($statement),
                 $this->getPath(\implode('->', $path)),
             );
@@ -35,21 +35,9 @@ class CompileJsonContainsKey extends SQLServerJsonExpression
 
         return \sprintf(
             '%s IN (SELECT [key] FROM openjson(%s%s))',
-            $this->quoteKey($index),
+            $this->quoteStringLiteral($index),
             $this->getField($statement),
             $this->getPath(\implode('->', $path)),
         );
-    }
-
-    /**
-     * The key is written into the SQL text, so apostrophes are doubled to keep it inside the string literal.
-     *
-     * @param non-empty-string $key
-     *
-     * @return non-empty-string
-     */
-    private function quoteKey(string $key): string
-    {
-        return $this->getStringLiteralPrefix() . "'" . \str_replace("'", "''", $key) . "'";
     }
 }
