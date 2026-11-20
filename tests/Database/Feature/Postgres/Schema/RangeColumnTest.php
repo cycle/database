@@ -9,7 +9,6 @@ use Cycle\Testing\Database\DatabaseTestCase;
 use Testo\Assert;
 use Testo\Test;
 
-
 final class RangeColumnTest extends DatabaseTestCase
 {
     #[Test]

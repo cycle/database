@@ -10,7 +10,6 @@ use Cycle\Testing\Database\Driver;
 use Testo\Assert;
 use Testo\Test;
 
-
 #[ExceptDriver(Driver::SQLite, Driver::SQLServer)]
 final class CommentTest extends DatabaseTestCase
 {
