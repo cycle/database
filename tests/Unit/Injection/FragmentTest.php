@@ -8,6 +8,7 @@ use Cycle\Database\Driver\SQLite\SQLiteCompiler;
 use Cycle\Database\Injection\Expression;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Injection\FragmentInterface;
+use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\QueryParameters;
 use Testo\Assert;
 use Testo\Test;
@@ -63,5 +64,13 @@ final class FragmentTest
             'fragment' => 'some sql',
             'parameters' => [],
         ]);
+    }
+
+    public function keepsAGivenParameterInstance(): void
+    {
+        $parameter = new Parameter(1);
+
+        Assert::same((new Fragment('a = ?', $parameter))->getTokens()['parameters'], [$parameter]);
+        Assert::same((new Expression('a = ?', $parameter))->getTokens()['parameters'], [$parameter]);
     }
 }
