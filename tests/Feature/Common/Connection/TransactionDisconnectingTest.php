@@ -6,8 +6,8 @@ namespace Cycle\Database\Tests\Feature\Common\Connection;
 
 use Cycle\Database\Exception\StatementException\ConnectionException;
 use Cycle\Testing\Database\Attribute\ExceptDriver;
-use Cycle\Testing\Database\Mock\WrapDriverInterface;
 use Cycle\Testing\Database\Driver;
+use Cycle\Testing\Database\Mock\WrapDriverInterface;
 use Testo\Assert;
 use Testo\Test;
 
