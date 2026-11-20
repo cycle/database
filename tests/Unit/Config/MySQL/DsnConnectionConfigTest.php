@@ -34,4 +34,11 @@ final class DsnConnectionConfigTest
         Assert::array($recoveredConfig->getOptions())->hasKeys($testOptionKey);
         Assert::same($recoveredConfig->getOptions()[$testOptionKey], $testOptionValue);
     }
+
+    public function sourceStringIsTheDatabaseNamedInDsn(): void
+    {
+        $config = new DsnConnectionConfig('mysql:host=db;DBNAME=shop;charset=utf8mb4');
+
+        Assert::same($config->getSourceString(), 'shop');
+    }
 }

@@ -6,6 +6,7 @@ namespace Cycle\Database\Tests\Unit\Injection;
 
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Injection\ParameterInterface;
+use Cycle\Database\Injection\ValueInterface;
 use Testo\Assert;
 use Testo\Test;
 
@@ -65,6 +66,26 @@ final class ParameterTest
 
         $parameter = new Parameter(['1', '2', '3']);
         Assert::same($parameter->getType(), \PDO::PARAM_STR);
+    }
+
+    public function valueObjectSuppliesRawValueAndType(): void
+    {
+        $value = new class implements ValueInterface {
+            public function rawValue(): string
+            {
+                return '\x01\x02';
+            }
+
+            public function rawType(): int
+            {
+                return \PDO::PARAM_LOB;
+            }
+        };
+
+        $parameter = new Parameter($value, \PDO::PARAM_INT);
+
+        Assert::same($parameter->getValue(), '\x01\x02');
+        Assert::same($parameter->getType(), \PDO::PARAM_LOB);
     }
 
     public function testDebugInfo(): void
