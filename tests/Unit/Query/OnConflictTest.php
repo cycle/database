@@ -208,6 +208,11 @@ final class OnConflictTest
         Assert::string($key)->contains('P?');
     }
 
+    public function testTargetMixesArraysAndStrings(): void
+    {
+        Assert::same(OnConflict::target(['a'], 'b, c')->getTarget(), ['a', 'b', 'c']);
+    }
+
     public function testFromReturnsSameInstance(): void
     {
         $c = OnConflict::target('email')->doUpdate(['name']);

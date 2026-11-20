@@ -280,4 +280,49 @@ final class ConfigTest
 
         Assert::same(\array_keys($config->getDrivers()), ['test', 'test2']);
     }
+
+    public function testConnectionsTakePrecedenceOverDrivers(): void
+    {
+        $config = new DatabaseConfig([
+            'connections' => ['test' => new SQLiteDriverConfig(timezone: 'Asia/Tokyo')],
+            'drivers' => [
+                'test' => new SQLiteDriverConfig(timezone: 'Europe/Paris'),
+                'legacy' => new SQLiteDriverConfig(),
+            ],
+        ]);
+
+        Assert::same(\array_keys($config->getDrivers()), ['test']);
+        Assert::same($config->getDriver('test')->getTimezone()->getName(), 'Asia/Tokyo');
+    }
+
+    public function testDatabaseKeysTakePrecedenceOverTheirAliases(): void
+    {
+        $config = new DatabaseConfig([
+            'databases' => [
+                'test' => [
+                    'tablePrefix' => 'new_',
+                    'prefix' => 'old_',
+                    'connection' => 'primary',
+                    'write' => 'writer',
+                    'driver' => 'legacy',
+                    'readConnection' => 'replica',
+                    'read' => 'reader',
+                    'readDriver' => 'legacy_reader',
+                ],
+                'fallback' => [
+                    'prefix' => 'old_',
+                    'write' => 'writer',
+                    'driver' => 'legacy',
+                    'read' => 'reader',
+                    'readDriver' => 'legacy_reader',
+                ],
+            ],
+        ]);
+
+        $test = $config->getDatabase('test');
+        $fallback = $config->getDatabase('fallback');
+
+        Assert::same([$test->getPrefix(), $test->getDriver(), $test->getReadDriver()], ['new_', 'primary', 'replica']);
+        Assert::same([$fallback->getPrefix(), $fallback->getDriver(), $fallback->getReadDriver()], ['old_', 'writer', 'reader']);
+    }
 }
