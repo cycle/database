@@ -11,10 +11,11 @@ use Cycle\Database\Tests\Utils\DontGenerateAttribute;
 #[DontGenerateAttribute]
 abstract class CommentTest extends BaseTest
 {
+    #[\Testo\Test]
     public function testAddComment(): void
     {
         $schema = $this->schema('table');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $column = $schema->string('target');
         $column->comment('foo');
@@ -22,17 +23,18 @@ abstract class CommentTest extends BaseTest
         $schema->save();
 
         $schema = $this->schema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $column2 = $schema->column('target');
-        $this->assertTrue($column2->compare($column));
-        self::assertSame('foo', $column2->getComment());
+        \Testo\Assert::true($column2->compare($column));
+        \Testo\Assert::same($column2->getComment(), 'foo');
     }
 
+    #[\Testo\Test]
     public function testChangeComment(): void
     {
         $schema = $this->schema('table');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $column = $schema->string('target');
         $column->comment('foo');
@@ -40,17 +42,18 @@ abstract class CommentTest extends BaseTest
         $schema->save();
 
         $schema = $this->schema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $column2 = $schema->column('target');
         $column2->comment('bar');
 
         $schema->save();
 
-        $this->assertTrue($schema->column('target')->compare($column2));
-        self::assertSame('bar', $schema->column('target')->getComment());
+        \Testo\Assert::true($schema->column('target')->compare($column2));
+        \Testo\Assert::same($schema->column('target')->getComment(), 'bar');
     }
 
+    #[\Testo\Test]
     public function testChangeCommentToEmpty(): void
     {
         $schema = $this->schema('table');
@@ -60,10 +63,10 @@ abstract class CommentTest extends BaseTest
         $schema->save();
 
         $schema = $this->schema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $column2 = $schema->column('target');
-        self::assertSame('foo', $column2->getComment());
+        \Testo\Assert::same($column2->getComment(), 'foo');
 
         $column2->comment('');
 
@@ -71,9 +74,10 @@ abstract class CommentTest extends BaseTest
 
         $schema = $this->schema('table');
         $column3 = $schema->column('target');
-        self::assertSame('', $column3->getComment());
+        \Testo\Assert::same($column3->getComment(), '');
     }
 
+    #[\Testo\Test]
     public function testCommentWithAutoIncrement(): void
     {
         $schema = $this->schema('table');
@@ -83,13 +87,14 @@ abstract class CommentTest extends BaseTest
         $schema->save();
 
         $schema = $this->schema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $column2 = $schema->column('target');
-        $this->assertTrue($column2->compare($column));
-        self::assertSame('foo', $column2->getComment());
+        \Testo\Assert::true($column2->compare($column));
+        \Testo\Assert::same($column2->getComment(), 'foo');
     }
 
+    #[\Testo\Test]
     public function testSQLInjection(): void
     {
         $schema = $this->schema('table');
@@ -99,13 +104,14 @@ abstract class CommentTest extends BaseTest
         $schema->save();
 
         $schema = $this->schema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $column2 = $schema->column('target');
-        $this->assertTrue($column2->compare($column));
-        self::assertSame('f"o\'o`', $column2->getComment());
+        \Testo\Assert::true($column2->compare($column));
+        \Testo\Assert::same($column2->getComment(), 'f"o\'o`');
     }
 
+    #[\Testo\Test]
     public function testSQLInjectionIntegers(): void
     {
         $schema = $this->schema('table');
@@ -115,10 +121,10 @@ abstract class CommentTest extends BaseTest
         $schema->save();
 
         $schema = $this->schema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $column2 = $schema->column('target');
-        $this->assertTrue($column2->compare($column));
-        self::assertSame('f"o\'o`', $column2->getComment());
+        \Testo\Assert::true($column2->compare($column));
+        \Testo\Assert::same($column2->getComment(), 'f"o\'o`');
     }
 }

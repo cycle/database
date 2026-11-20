@@ -9,6 +9,7 @@ use Cycle\Database\Tests\Unit\Config\BaseConfigTest;
 
 final class TcpConnectionConfigTest extends BaseConfigTest
 {
+    #[\Testo\Test]
     public function testSetState(): void
     {
         $testOptionKey = 'option-1';
@@ -39,38 +40,34 @@ final class TcpConnectionConfigTest extends BaseConfigTest
         /** @var TcpConnectionConfig $recoveredConfig */
         eval('$recoveredConfig = ' . $exported . ';');
 
-        $this->assertSame(
-            \sprintf(
-                'sqlsrv:APP=%s;ConnectionPooling=%s;Database=%s;Encrypt=%s;Failover_Partner=%s;LoginTimeout=%s;MultipleActiveResultSets=%s;QuotedId=%s;Server=%s,%s;TraceFile=%s;TraceOn=%s;TransactionIsolation=%s;TrustServerCertificate=%s;WSID=%s',
-                $app,
-                (int) $pooling,
-                $database,
-                (int) $encrypt,
-                $failover,
-                $timeout,
-                (int) $mars,
-                (int) $quoted,
-                $host,
-                $port,
-                $traceFile,
-                (int) $trace,
-                $isolation,
-                (int) $trustServerCertificate,
-                $wsid,
-            ),
-            $recoveredConfig->getDsn(),
-        );
-        $this->assertSame($database, $recoveredConfig->getSourceString());
-        $this->assertSame($user, $recoveredConfig->getUsername());
-        $this->assertSame($password, $recoveredConfig->getPassword());
-        $this->assertArrayHasKey($testOptionKey, $recoveredConfig->getOptions());
-        $this->assertSame($testOptionValue, $recoveredConfig->getOptions()[$testOptionKey]);
+        \Testo\Assert::same($recoveredConfig->getDsn(), \sprintf(
+            'sqlsrv:APP=%s;ConnectionPooling=%s;Database=%s;Encrypt=%s;Failover_Partner=%s;LoginTimeout=%s;MultipleActiveResultSets=%s;QuotedId=%s;Server=%s,%s;TraceFile=%s;TraceOn=%s;TransactionIsolation=%s;TrustServerCertificate=%s;WSID=%s',
+            $app,
+            (int) $pooling,
+            $database,
+            (int) $encrypt,
+            $failover,
+            $timeout,
+            (int) $mars,
+            (int) $quoted,
+            $host,
+            $port,
+            $traceFile,
+            (int) $trace,
+            $isolation,
+            (int) $trustServerCertificate,
+            $wsid,
+        ));
+        \Testo\Assert::same($recoveredConfig->getSourceString(), $database);
+        \Testo\Assert::same($recoveredConfig->getUsername(), $user);
+        \Testo\Assert::same($recoveredConfig->getPassword(), $password);
+        \Testo\Assert::array($recoveredConfig->getOptions())->hasKeys($testOptionKey);
+        \Testo\Assert::same($recoveredConfig->getOptions()[$testOptionKey], $testOptionValue);
     }
 
-    /**
-     * @dataProvider portDataProvider
-     * @dataProvider nullPortDataProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('portDataProvider')]
+    #[\Testo\Data\DataProvider('nullPortDataProvider')]
     public function testPort(int|string|null $port, ?int $expected): void
     {
         $config = new TcpConnectionConfig(
@@ -78,7 +75,7 @@ final class TcpConnectionConfigTest extends BaseConfigTest
             port: $port,
         );
 
-        $this->assertSame($expected, $config->port);
+        \Testo\Assert::same($config->port, $expected);
     }
 
     public function nullPortDataProvider(): \Traversable

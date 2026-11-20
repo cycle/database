@@ -17,15 +17,17 @@ use Spiral\Pagination\PaginableInterface;
 
 abstract class SelectQueryTest extends BaseTest
 {
+    #[\Testo\Test]
     public function testQueryInstance(): void
     {
-        $this->assertInstanceOf(SelectQuery::class, $this->database->select());
-        $this->assertInstanceOf(SelectQuery::class, $this->database->table('table')->select());
-        $this->assertInstanceOf(SelectQuery::class, $this->database->table->select());
-        $this->assertInstanceOf(\IteratorAggregate::class, $this->database->table->select());
-        $this->assertInstanceOf(PaginableInterface::class, $this->database->table->select());
+        \Testo\Assert::instanceOf($this->database->select(), SelectQuery::class);
+        \Testo\Assert::instanceOf($this->database->table('table')->select(), SelectQuery::class);
+        \Testo\Assert::instanceOf($this->database->table->select(), SelectQuery::class);
+        \Testo\Assert::instanceOf($this->database->table->select(), \IteratorAggregate::class);
+        \Testo\Assert::instanceOf($this->database->table->select(), PaginableInterface::class);
     }
 
+    #[\Testo\Test]
     public function testCompileQuery(): void
     {
         $select = $this->db()
@@ -38,9 +40,10 @@ abstract class SelectQueryTest extends BaseTest
             (string) $select,
         );
 
-        $this->assertIsArray($select->__debugInfo());
+        \Testo\Assert::array($select->__debugInfo());
     }
 
+    #[\Testo\Test]
     public function testCompileQueryExtraParam(): void
     {
         $select = $this->db()
@@ -56,6 +59,7 @@ abstract class SelectQueryTest extends BaseTest
         $this->assertSameParameters(['string', 'string'], $select);
     }
 
+    #[\Testo\Test]
     public function testSimpleWhere(): void
     {
         $select = $this->database->select()->from('table')->where('id', 1);
@@ -69,6 +73,7 @@ abstract class SelectQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testArrayWhere(): void
     {
         $select = $this->database
@@ -80,6 +85,7 @@ abstract class SelectQueryTest extends BaseTest
         $this->assertSameParameters([1, 2, 3, 4], $select);
     }
 
+    #[\Testo\Test]
     public function testCompileNestedQuery(): void
     {
         $select = $this->db()
@@ -109,6 +115,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testSelectFromSelect(): void
     {
         $select = $this->db()
@@ -130,13 +137,14 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testSimpleSelection(): void
     {
         $select = $this->database->select()->from('table');
-        $this->assertSame($this->database->getDriver(), $select->getDriver());
+        \Testo\Assert::same($select->getDriver(), $this->database->getDriver());
 
-        $this->assertSame(['table'], $select->getTables());
-        $this->assertSame(['*'], $select->getColumns());
+        \Testo\Assert::same($select->getTables(), ['table']);
+        \Testo\Assert::same($select->getColumns(), ['*']);
 
         $this->assertSameQuery(
             'SELECT * FROM {table}',
@@ -144,6 +152,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testMultipleTablesSelection(): void
     {
         $select = $this->database->select()->from(['tableA', 'tableB']);
@@ -154,6 +163,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testSelectDistinct(): void
     {
         $select = $this->database->select()->distinct()->from(['table']);
@@ -164,6 +174,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testSelectWithSimpleWhere(): void
     {
         $select = $this->database->select()->distinct()->from(['users'])->where('name', 'Anton');
@@ -174,6 +185,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testSelectWithSimpleWhereNull(): void
     {
         $select = $this->database->select()->distinct()->from(['users'])->where('name', null);
@@ -184,6 +196,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testDeadWhere(): void
     {
         $select = $this->database->select()->distinct()
@@ -198,6 +211,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testSelectWithSimpleWhereNotNull(): void
     {
         $select = $this->database->select()->distinct()->from(['users'])->where('name', '!=', null);
@@ -207,6 +221,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $this->assertSameQuery('SELECT DISTINCT * FROM {users} WHERE NOT {name} IS NULL', $select);
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereWithOperator(): void
     {
         $select = $this->database->select()->distinct()->from(['users'])
@@ -218,6 +233,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereWithBetween(): void
     {
         $select = $this->database->select()->distinct()->from(['users'])
@@ -229,6 +245,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereWithNotBetween(): void
     {
         $select = $this->database->select()->distinct()->from(['users'])->where('balance', 'NOT BETWEEN', 0, 1000);
@@ -238,14 +255,16 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $this->assertSameQuery('SELECT DISTINCT * FROM {users} WHERE NOT {balance} BETWEEN ? AND ?', $select);
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereBetweenBadValue(): void
     {
         $this->expectExceptionMessage('Between statements expects exactly 2 values');
-        $this->expectException(BuilderException::class);
+        \Testo\Expect::exception(BuilderException::class);
 
         $this->database->select()->distinct()->from(['users'])->where('balance', 'BETWEEN', 0);
     }
 
+    #[\Testo\Test]
     public function testSelectWithFullySpecificColumnNameInWhere(): void
     {
         $select = $this->database->select()->distinct()->from(['users'])
@@ -257,6 +276,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testPrefixedSelectWithFullySpecificColumnNameInWhere(): void
     {
         $select = $this->db('prefixed', 'prefix_')
@@ -271,6 +291,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testPrefixedSelectWithFullySpecificColumnNameInWhereButAliased(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()->distinct()->from(['users as u'])
@@ -284,6 +305,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     //Simple combinations testing
 
+    #[\Testo\Test]
     public function testSelectWithWhereAndWhere(): void
     {
         $select = $this->database->select()->distinct()
@@ -297,6 +319,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereAndFallbackWhere(): void
     {
         $select = $this->database->select()->distinct()
@@ -310,6 +333,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereOrWhere(): void
     {
         $select = $this->database->select()->distinct()
@@ -323,9 +347,10 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testSelectInvalidArrayArgument(): void
     {
-        $this->expectException(UnexpectedOperatorException::class);
+        \Testo\Expect::exception(UnexpectedOperatorException::class);
 
         $this->database->select()->distinct()
             ->from(['users'])
@@ -334,6 +359,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             ->sqlStatement();
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereOrWhereAndWhere(): void
     {
         $select = $this->database->select()->distinct()
@@ -350,6 +376,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     // Combinations thought closures
 
+    #[\Testo\Test]
     public function testWhereOfOrWhere(): void
     {
         $select = $this->database->select()
@@ -377,6 +404,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testWhereOfAndWhere(): void
     {
         $select = $this->database->select()
@@ -395,6 +423,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testOrWhereOfOrWhere(): void
     {
         $select = $this->database->select()
@@ -413,6 +442,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testOrWhereOfAndWhere(): void
     {
         $select = $this->database
@@ -434,6 +464,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     //Short where form
 
+    #[\Testo\Test]
     public function testShortWhere(): void
     {
         $select = $this->database->select()
@@ -446,6 +477,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testShortWhereWithCondition(): void
     {
         $select = $this->database
@@ -466,6 +498,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testShortWhereWithBetweenCondition(): void
     {
         $select = $this->database
@@ -485,6 +518,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testShortWhereWithNotBetweenCondition(): void
     {
         $select = $this->database
@@ -504,10 +538,10 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testShortWhereWithBetweenConditionBadArguments(): void
     {
-        $this->expectException(BuilderException::class);
-        $this->expectExceptionMessage('Exactly 2 array values are required for between statement');
+        \Testo\Expect::exception(BuilderException::class)->withMessageContaining('Exactly 2 array values are required for between statement');
 
         $select = $this->database
             ->select()
@@ -521,6 +555,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             );
     }
 
+    #[\Testo\Test]
     public function testShortWhereMultiple(): void
     {
         $select = $this->database
@@ -539,6 +574,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testShortWhereMultipleButNotInAGroup(): void
     {
         $select = $this->database
@@ -553,6 +589,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testShortWhereOrWhere(): void
     {
         $select = $this->database
@@ -567,6 +604,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testAndShortWhereOR(): void
     {
         $select = $this->database
@@ -588,6 +626,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testAndShortWhereOrNot(): void
     {
         $select = $this->database
@@ -609,6 +648,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testOrShortWhereOR(): void
     {
         $select = $this->database
@@ -630,6 +670,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testOrShortWhereOrNot(): void
     {
         $select = $this->database
@@ -651,6 +692,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testAndShortWhereAND(): void
     {
         $select = $this->database
@@ -672,6 +714,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testAndShortWhereAndNot(): void
     {
         $select = $this->database
@@ -693,6 +736,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testOrShortWhereAND(): void
     {
         $select = $this->database
@@ -714,6 +758,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testOrShortWhereAndNot(): void
     {
         $select = $this->database
@@ -735,10 +780,10 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testBadShortExpression(): void
     {
-        $this->expectException(BuilderException::class);
-        $this->expectExceptionMessage('Nested conditions should have defined operator');
+        \Testo\Expect::exception(BuilderException::class)->withMessageContaining('Nested conditions should have defined operator');
 
         $select = $this->database
             ->select()
@@ -752,6 +797,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     //Order By
 
+    #[\Testo\Test]
     public function testOrderByAsc(): void
     {
         $select = $this->database
@@ -766,6 +812,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testOrderByAsc2(): void
     {
         $select = $this->database
@@ -780,6 +827,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testOrderByAsc3(): void
     {
         $select = $this->database
@@ -794,6 +842,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testOrderByDesc(): void
     {
         $select = $this->database
@@ -808,6 +857,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testOrderByDesc3(): void
     {
         $select = $this->database
@@ -822,6 +872,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testOrderByTwiceBySameName(): void
     {
         $select = $this->database
@@ -837,6 +888,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testOrderByTwiceBySameNameArray(): void
     {
         $select = $this->database
@@ -852,6 +904,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testMultipleOrderBy(): void
     {
         $select = $this->database
@@ -867,6 +920,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testMultipleOrderByViaArray(): void
     {
         $select = $this->database
@@ -886,6 +940,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testMultipleOrderByFullySpecified(): void
     {
         $select = $this->database
@@ -900,6 +955,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testMultipleOrderByFullySpecifiedPrefixed(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
@@ -913,6 +969,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testMultipleOrderByFullySpecifiedAliasedAndPrefixed(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
@@ -926,6 +983,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testOrderByWithExpressionAndParameter(): void
     {
         $select = $this->database
@@ -937,6 +995,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $this->assertSameParameters(['*'], $select);
     }
 
+    #[\Testo\Test]
     public function testOrderByWithFragmentAndParameter(): void
     {
         $select = $this->database
@@ -948,6 +1007,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $this->assertSameParameters(['*'], $select);
     }
 
+    #[\Testo\Test]
     public function testOrderByWithFragmentAndParameterInArray(): void
     {
         $select = $this->database
@@ -967,6 +1027,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     //Group By
 
+    #[\Testo\Test]
     public function testGroupBy(): void
     {
         $select = $this->database
@@ -981,6 +1042,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testMultipleGroupBy(): void
     {
         $select = $this->database
@@ -996,6 +1058,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testMultipleGroupByFullySpecified(): void
     {
         $select = $this->database
@@ -1010,6 +1073,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testMultipleGroupByFullySpecifiedPrefixed(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
@@ -1023,6 +1087,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testMultipleGroupByFullySpecifiedAliasedAndPrefixed(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
@@ -1038,6 +1103,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     //Column Tweaking
 
+    #[\Testo\Test]
     public function testAllColumns(): void
     {
         $select = $this->database
@@ -1051,6 +1117,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testAllColumns1(): void
     {
         $select = $this->database
@@ -1064,6 +1131,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testAllColumns2(): void
     {
         $select = $this->database
@@ -1077,6 +1145,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testAllColumns3(): void
     {
         $select = $this->database
@@ -1090,6 +1159,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testAllColumns4(): void
     {
         $select = $this->database
@@ -1104,6 +1174,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testAllColumns5(): void
     {
         $select = $this->database
@@ -1118,6 +1189,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testAllColumnsWithPrefix(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
@@ -1131,6 +1203,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testAllColumnsWithPrefixAliased(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
@@ -1144,6 +1217,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testOneColumn(): void
     {
         $select = $this->database->select()
@@ -1157,6 +1231,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testOneFullySpecifiedColumn(): void
     {
         $select = $this->database->select()
@@ -1170,6 +1245,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testOneFullySpecifiedColumnWithPrefix(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
@@ -1183,6 +1259,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testOneFullySpecifiedColumnWithPrefixButAliased(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
@@ -1196,6 +1273,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testColumnWithAlias(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
@@ -1209,6 +1287,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testColumnWithAliasWithoutTableAlias(): void
     {
         $select = $this->db('prefixed', 'prefix_')
@@ -1223,6 +1302,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testMultipleColumns(): void
     {
         $select = $this->database->select()
@@ -1236,6 +1316,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testColumnsWithFunctions(): void
     {
         $select = $this->database->select()
@@ -1252,6 +1333,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     //HAVING, Generic behaviours
 
+    #[\Testo\Test]
     public function testHavingSelectWithSimpleHaving(): void
     {
         $select = $this->database->select()->distinct()->from(['users'])->having('name', 'Anton');
@@ -1262,6 +1344,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testHavingSelectWithHavingWithOperator(): void
     {
         $select = $this->database->select()->distinct()->from(['users'])
@@ -1273,6 +1356,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testHavingSelectWithHavingWithBetween(): void
     {
         $select = $this->database->select()->distinct()->from(['users'])
@@ -1284,6 +1368,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testHavingSelectWithHavingWithNotBetween(): void
     {
         $select = $this->database->select()->distinct()->from(['users'])
@@ -1295,14 +1380,15 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testHavingSelectWithHavingBetweenBadValue(): void
     {
-        $this->expectException(BuilderException::class);
-        $this->expectExceptionMessage('Between statements expects exactly 2 values');
+        \Testo\Expect::exception(BuilderException::class)->withMessageContaining('Between statements expects exactly 2 values');
         $select = $this->database->select()->distinct()->from(['users'])
             ->having('balance', 'BETWEEN', 0);
     }
 
+    #[\Testo\Test]
     public function testHavingSelectWithFullySpecificColumnNameInHaving(): void
     {
         $select = $this->database->select()->distinct()->from(['users'])
@@ -1314,6 +1400,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testHavingPrefixedSelectWithFullySpecificColumnNameInHaving(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()->distinct()->from(['users'])
@@ -1325,6 +1412,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testHavingPrefixedSelectWithFullySpecificColumnNameInHavingButAliased(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()->distinct()->from(['users as u'])
@@ -1338,6 +1426,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     //HAVING, Simple combinations testing
 
+    #[\Testo\Test]
     public function testHavingSelectWithHavingAndHaving(): void
     {
         $select = $this->database->select()->distinct()
@@ -1351,6 +1440,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testHavingSelectWithHavingAndFallbackHaving(): void
     {
         $select = $this->database->select()->distinct()
@@ -1364,6 +1454,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testHavingSelectWithHavingOrHaving(): void
     {
         $select = $this->database->select()->distinct()
@@ -1377,6 +1468,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testHavingSelectWithHavingOrHavingAndHaving(): void
     {
         $select = $this->database->select()->distinct()
@@ -1393,6 +1485,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     //HAVING, Combinations thought closures
 
+    #[\Testo\Test]
     public function testHavingHavingOfOrHaving(): void
     {
         $select = $this->database
@@ -1411,6 +1504,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testHavingHavingOfAndHaving(): void
     {
         $select = $this->database
@@ -1429,6 +1523,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testHavingOrHavingOfOrHaving(): void
     {
         $select = $this->database
@@ -1447,6 +1542,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testHavingOrHavingOfAndHaving(): void
     {
         $select = $this->database
@@ -1468,6 +1564,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     //HAVING, Short having form
 
+    #[\Testo\Test]
     public function testHavingShortHaving(): void
     {
         $select = $this->database->select()
@@ -1480,6 +1577,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testHavingShortHavingWithCondition(): void
     {
         $select = $this->database
@@ -1500,6 +1598,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testHavingShortHavingWithBetweenCondition(): void
     {
         $select = $this->database->select()
@@ -1518,6 +1617,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testHavingShortHavingWithNotBetweenCondition(): void
     {
         $select = $this->database->select()
@@ -1536,10 +1636,10 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testHavingShortHavingWithBetweenConditionBadArguments(): void
     {
-        $this->expectException(BuilderException::class);
-        $this->expectExceptionMessage('Exactly 2 array values are required for between statement');
+        \Testo\Expect::exception(BuilderException::class)->withMessageContaining('Exactly 2 array values are required for between statement');
 
         $select = $this->database->select()
             ->from(['users'])
@@ -1552,6 +1652,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             );
     }
 
+    #[\Testo\Test]
     public function testHavingShortHavingMultiple(): void
     {
         $select = $this->database->select()
@@ -1569,6 +1670,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testHavingShortHavingMultipleButNotInAGroup(): void
     {
         $select = $this->database->select()
@@ -1582,6 +1684,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testHavingShortHavingOrHaving(): void
     {
         $select = $this->database->select()
@@ -1595,6 +1698,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testHavingAndShortHavingOR(): void
     {
         $select = $this->database->select()
@@ -1615,6 +1719,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testHavingOrShortHavingOR(): void
     {
         $select = $this->database->select()
@@ -1635,6 +1740,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testHavingAndShortHavingAND(): void
     {
         $select = $this->database->select()
@@ -1655,6 +1761,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testHavingOrShortHavingAND(): void
     {
         $select = $this->database->select()
@@ -1677,6 +1784,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     //Limit and offset, ATTENTION THIS SECTION IS DRIVER SPECIFIC!
 
+    #[\Testo\Test]
     public function testLimitNoOffset(): void
     {
         $select = $this->database->select()->from(['users'])->limit(10);
@@ -1694,6 +1802,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testLimitAndOffset(): void
     {
         $select = $this->database->select()->from(['users'])->limit(10)->offset(20);
@@ -1713,6 +1822,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testOffsetNoLimit(): void
     {
         $select = $this->database->select()->from(['users'])->offset(20);
@@ -1731,6 +1841,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     }
 
     //Attention, this is proper way!
+    #[\Testo\Test]
     public function testLimitAndOffsetAndOrderBy(): void
     {
         $select = $this->database->select()
@@ -1755,6 +1866,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     //Fragments
 
+    #[\Testo\Test]
     public function testColumnNameAsFragment(): void
     {
         $select = $this->database->select(new Fragment('_ROW_ID_'))->from(['users']);
@@ -1765,6 +1877,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testWhereValueAsFragment(): void
     {
         $select = $this->database->select()
@@ -1777,6 +1890,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testShortWhereValueAsFragment(): void
     {
         $select = $this->database->select()
@@ -1789,6 +1903,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testWhereOperatorAsFragment(): void
     {
         $select = $this->database->select()
@@ -1801,6 +1916,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testOrderByFragment(): void
     {
         $select = $this->database->select()
@@ -1813,6 +1929,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testOrderByNullableDirection(): void
     {
         $select = $this->database->select()
@@ -1825,9 +1942,10 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testOrderByWrongDirection(): void
     {
-        $this->expectException(CompilerException::class);
+        \Testo\Expect::exception(CompilerException::class);
 
         $this->database->select()
             ->from(['users'])
@@ -1836,6 +1954,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     }
 
     //Please not this example
+    #[\Testo\Test]
     public function testGroupByFragment(): void
     {
         $select = $this->database->select()
@@ -1851,6 +1970,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
 
     //Expressions
 
+    #[\Testo\Test]
     public function testColumnNameAsExpression(): void
     {
         $select = $this->database->select(new Expression('name'))->from(['users']);
@@ -1861,6 +1981,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testColumnNameAndTableAsExpression(): void
     {
         $select = $this->database->select(new Expression('users.name'))->from(['users']);
@@ -1871,6 +1992,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testColumnNameAndTableAsExpressionPrefixed(): void
     {
         $select = $this->db('prefixed', 'prefix_')
@@ -1883,6 +2005,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testColumnNameAndTableAsExpressionPrefixedAliased(): void
     {
         $select = $this->db('prefixed', 'prefix_')
@@ -1895,6 +2018,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testWhereValueAsExpression(): void
     {
         $select = $this->database->select()->from(['users'])
@@ -1906,6 +2030,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testWhereValueAndTableAsExpression(): void
     {
         $select = $this->database->select()->from(['users'])
@@ -1917,6 +2042,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testWhereValueAndTableAsExpressionPrefixed(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()->from(['users'])
@@ -1928,6 +2054,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testWhereValueAndTableAsExpressionPrefixedAliased(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()->from(['users as u'])
@@ -1939,6 +2066,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testShortWhereValueAsExpressionPrefixed(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()->from(['users'])
@@ -1954,6 +2082,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testOrderByExpression(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()->from(['users'])
@@ -1965,6 +2094,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testGroupByExpression(): void
     {
         $select = $this->database->select()
@@ -1977,6 +2107,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testGroupByExpressionWithPrefix(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
@@ -1990,6 +2121,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     }
 
     //Parameters (writing only)
+    #[\Testo\Test]
     public function testWhereValueAsParameter(): void
     {
         $p = new Parameter(12);
@@ -2004,6 +2136,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testShortWhereValueAsParameter(): void
     {
         $p = new Parameter(12);
@@ -2018,6 +2151,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testInOperatorWithArrayParameter(): void
     {
         $select = $this->database->select()
@@ -2031,6 +2165,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testInOperatorWithBadArrayParameter(): void
     {
         $select = $this->database->select()
@@ -2052,9 +2187,10 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testBadArrayParameterInShortWhere(): void
     {
-        $this->expectException(UnexpectedOperatorException::class);
+        \Testo\Expect::exception(UnexpectedOperatorException::class);
 
         $this->database
             ->select()
@@ -2066,6 +2202,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
             )->sqlStatement();
     }
 
+    #[\Testo\Test]
     public function testGoodArrayParameter(): void
     {
         $p = new Parameter(['active', 'blocked']);
@@ -2087,6 +2224,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testGoodArrayParameterInShortWhere(): void
     {
         $p = new Parameter(['active', 'blocked']);
@@ -2112,6 +2250,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testInAndNotInWithArrayInShortWhere(): void
     {
         $status = ['active', 'blocked'];
@@ -2132,6 +2271,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testDirectIsNull(): void
     {
         $select = $this->database->select()->from(['users'])
@@ -2143,6 +2283,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testDirectIsNot(): void
     {
         $select = $this->database->select()->from(['users'])
@@ -2154,6 +2295,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testSelectForUpdate(): void
     {
         $select = $this->database->select()
@@ -2167,6 +2309,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testSelectWithParametricExpression(): void
     {
         $select = $this->database->select()
@@ -2188,6 +2331,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testSelectWithParametricExpression2(): void
     {
         $select = $this->database->select()
@@ -2214,6 +2358,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testSelectWithParametricExpression3(): void
     {
         $select = $this->database->select()
@@ -2241,6 +2386,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testSelectWithFragmentedColumns(): void
     {
         $rankQ = \sprintf(
@@ -2303,6 +2449,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testWhereInWithoutSpecifiedOperator(): void
     {
         $select = $this->database
@@ -2321,6 +2468,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testWhereInWithEqualSpecifiedOperator(): void
     {
         $select = $this->database
@@ -2349,6 +2497,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testWhereInWithNotEqualSpecifiedOperator(): void
     {
         $select = $this->database
@@ -2377,6 +2526,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testFragmentInWhereInClause(): void
     {
         $select = $this->database
@@ -2406,6 +2556,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     /**
      * Issue https://github.com/cycle/database/issues/49
      */
+    #[\Testo\Test]
     public function testLeftJoinQuoting(): void
     {
         $select = $this->database
@@ -2421,6 +2572,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
     }
 
     // WHERE NOT
+    #[\Testo\Test]
     public function testSimpleWhereNot(): void
     {
         $select = $this->db()
@@ -2431,6 +2583,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $this->assertSameQuery('SELECT * FROM {table} WHERE NOT {name} = \'John Doe\'', (string) $select);
     }
 
+    #[\Testo\Test]
     public function testArrayWhereNot(): void
     {
         $select = $this->database->select()
@@ -2441,6 +2594,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $this->assertSameParameters([1, 2, 3, 4], $select);
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereNotWithOperator(): void
     {
         $select = $this->database->select()->distinct()->from(['users'])->whereNot('name', 'LIKE', 'Anton%');
@@ -2448,6 +2602,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $this->assertSameQuery('SELECT DISTINCT * FROM {users} WHERE NOT {name} LIKE ?', $select);
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereNotWithBetween(): void
     {
         $select = $this->database->select()->distinct()->from(['users'])->whereNot('balance', 'BETWEEN', 0, 1000);
@@ -2455,6 +2610,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $this->assertSameQuery('SELECT DISTINCT * FROM {users} WHERE NOT {balance} BETWEEN ? AND ?', $select);
     }
 
+    #[\Testo\Test]
     public function testWhereWithOrWhereNot(): void
     {
         $select = $this->db()
@@ -2469,6 +2625,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testWhereWithAndWhereNot(): void
     {
         $select = $this->db()
@@ -2483,6 +2640,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testWhereNotAndOrWhere(): void
     {
         $select = $this->db()
@@ -2497,6 +2655,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testCompileNestedQueryWithWhereNot(): void
     {
         $select = $this->db()
@@ -2514,6 +2673,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $this->assertSameParameters(['Antony', 123], $select);
     }
 
+    #[\Testo\Test]
     public function testPrefixedSelectWithFullySpecificColumnNameInWhereNot(): void
     {
         $select = $this->db('prefixed', 'prefix_')
@@ -2525,6 +2685,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $this->assertSameQuery('SELECT DISTINCT * FROM {prefix_users} WHERE NOT {prefix_users}.{balance} = ?', $select);
     }
 
+    #[\Testo\Test]
     public function testPrefixedSelectWithFullySpecificColumnNameInWhereNotButAliased(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()->distinct()->from(['users as u'])
@@ -2536,6 +2697,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testShortWhereNotMultiple(): void
     {
         $select = $this->database
@@ -2549,6 +2711,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         $this->assertSameQuery('SELECT * FROM {users} WHERE NOT ({name} = ? AND {value} = ?)', $select);
     }
 
+    #[\Testo\Test]
     public function testWhereNotWithSequenceCalls(): void
     {
         $select = $this->database
@@ -2565,6 +2728,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testWrapWhereGroupsExistingConditions(): void
     {
         $select = $this->database
@@ -2581,6 +2745,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testWrapWhereProtectsScopeFromLaterOrWhere(): void
     {
         // Models a soft-delete-style scope: condition added first, then wrapped,
@@ -2598,6 +2763,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testWrapWhereOnEmptyWhereIsNoop(): void
     {
         $select = $this->database
@@ -2612,6 +2778,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testWrapWhereWithMultipleAndConditions(): void
     {
         $select = $this->database
@@ -2629,6 +2796,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testWrapWhereWithMixedAndOrChain(): void
     {
         $select = $this->database
@@ -2646,6 +2814,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testWrapWhereWithWhereNot(): void
     {
         $select = $this->database
@@ -2662,6 +2831,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testWrapWhereAroundClosureGroup(): void
     {
         $select = $this->database
@@ -2679,6 +2849,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testClosureGroupAddedAfterWrapWhere(): void
     {
         $select = $this->database
@@ -2697,6 +2868,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testWrapWhereCalledTwiceInARowIsIdempotentForSql(): void
     {
         // Double-wrap adds a redundant pair of parens but is semantically harmless.
@@ -2715,6 +2887,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testWrapWhereStackedScopes(): void
     {
         // Models multiple stacked ORM scopes: each scope wraps the current state and
@@ -2738,6 +2911,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testWrapWhereThenOrWhereNot(): void
     {
         $select = $this->database
@@ -2754,6 +2928,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testWrapWhereWithArraySyntaxAndOrToken(): void
     {
         $select = $this->database
@@ -2775,6 +2950,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testWrapWhereWithBetweenAndInOperators(): void
     {
         $select = $this->database
@@ -2791,6 +2967,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testWrapWhereWithLeadingOrWhere(): void
     {
         // Edge case: chain starts with orWhere — the leading boolean is suppressed by
@@ -2810,6 +2987,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testAndWhereNotWithArrayOr(): void
     {
         $select = $this->database
@@ -2829,6 +3007,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testAndWhereNotWithArrayAnd(): void
     {
         $select = $this->database
@@ -2848,6 +3027,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testOrWhereNotWithArrayOr(): void
     {
         $select = $this->database
@@ -2867,6 +3047,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testOrWhereNotWithArrayAnd(): void
     {
         $select = $this->database
@@ -2886,6 +3067,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testSelectFromSubQuery(): void
     {
         $innerSelect = $this->database
@@ -2917,6 +3099,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testSelectFromTwoSubQuery(): void
     {
         $innerSelect1 = $this->database
@@ -2955,6 +3138,7 @@ WHERE {name} = \'Antony\' AND {id} IN (SELECT{id}FROM {other}WHERE {x} = 123)',
         );
     }
 
+    #[\Testo\Test]
     public function testSelectSelectSubQuery(): void
     {
         $innerSelect = $this->database

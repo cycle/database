@@ -13,74 +13,84 @@ use Cycle\Database\Query\OnConflict;
 use Cycle\Database\Query\QueryParameters;
 use PHPUnit\Framework\TestCase;
 
-class OnConflictTest extends TestCase
+class OnConflictTest
 {
+    #[\Testo\Test]
     public function testTargetSingleColumn(): void
     {
         $c = OnConflict::target('email');
 
-        $this->assertSame(['email'], $c->getTarget());
-        $this->assertSame(ConflictAction::Update, $c->getAction());
-        $this->assertNull($c->getUpdate());
+        \Testo\Assert::same($c->getTarget(), ['email']);
+        \Testo\Assert::same($c->getAction(), ConflictAction::Update);
+        \Testo\Assert::null($c->getUpdate());
     }
 
+    #[\Testo\Test]
     public function testTargetMultipleColumnsVariadic(): void
     {
         $c = OnConflict::target('tenant_id', 'email');
 
-        $this->assertSame(['tenant_id', 'email'], $c->getTarget());
+        \Testo\Assert::same($c->getTarget(), ['tenant_id', 'email']);
     }
 
+    #[\Testo\Test]
     public function testTargetCommaSeparatedString(): void
     {
         $c = OnConflict::target('tenant_id, email');
 
-        $this->assertSame(['tenant_id', 'email'], $c->getTarget());
+        \Testo\Assert::same($c->getTarget(), ['tenant_id', 'email']);
     }
 
+    #[\Testo\Test]
     public function testTargetArray(): void
     {
         $c = OnConflict::target(['tenant_id', 'email']);
 
-        $this->assertSame(['tenant_id', 'email'], $c->getTarget());
+        \Testo\Assert::same($c->getTarget(), ['tenant_id', 'email']);
     }
 
+    #[\Testo\Test]
     public function testTargetEmptyRejected(): void
     {
-        $this->expectException(BuilderException::class);
+        \Testo\Expect::exception(BuilderException::class);
         OnConflict::target();
     }
 
+    #[\Testo\Test]
     public function testTargetArrayTakesStringsLiterallyEvenWithCommas(): void
     {
         // Matches ActiveQuery::fetchIdentifiers() convention: only the single-string
         // form splits on commas; entries inside an explicit array are taken literally.
         $c = OnConflict::target(['tenant_id, email']);
 
-        $this->assertSame(['tenant_id, email'], $c->getTarget());
+        \Testo\Assert::same($c->getTarget(), ['tenant_id, email']);
     }
 
+    #[\Testo\Test]
     public function testTargetSingleStringSplitsOnCommas(): void
     {
         $c = OnConflict::target('tenant_id, email');
 
-        $this->assertSame(['tenant_id', 'email'], $c->getTarget());
+        \Testo\Assert::same($c->getTarget(), ['tenant_id', 'email']);
     }
 
+    #[\Testo\Test]
     public function testTargetArrayDropsEmptyAndTrims(): void
     {
         $c = OnConflict::target(['  email  ', '', 'name']);
 
-        $this->assertSame(['email', 'name'], $c->getTarget());
+        \Testo\Assert::same($c->getTarget(), ['email', 'name']);
     }
 
+    #[\Testo\Test]
     public function testTargetRejectsNonStringableEntry(): void
     {
-        $this->expectException(BuilderException::class);
+        \Testo\Expect::exception(BuilderException::class);
         /** @psalm-suppress InvalidArgument */
         OnConflict::target([123, ['nested']]);
     }
 
+    #[\Testo\Test]
     public function testShorthandStringAcceptsCommaSeparated(): void
     {
         // Shorthand $insert->onConflict('a, b') must give the same result as
@@ -90,90 +100,90 @@ class OnConflictTest extends TestCase
         // Replicate the shorthand body locally to assert equivalence.
         $shorthand = OnConflict::target('tenant_id, email')->doUpdate();
 
-        $this->assertSame($direct->getTarget(), $shorthand->getTarget());
+        \Testo\Assert::same($shorthand->getTarget(), $direct->getTarget());
     }
 
+    #[\Testo\Test]
     public function testDoNothing(): void
     {
         $c = OnConflict::target('email')->doNothing();
 
-        $this->assertSame(ConflictAction::Nothing, $c->getAction());
-        $this->assertNull($c->getUpdate());
+        \Testo\Assert::same($c->getAction(), ConflictAction::Nothing);
+        \Testo\Assert::null($c->getUpdate());
     }
 
+    #[\Testo\Test]
     public function testDoUpdateAllColumns(): void
     {
         $c = OnConflict::target('email')->doUpdate();
 
-        $this->assertSame(ConflictAction::Update, $c->getAction());
-        $this->assertNull($c->getUpdate());
+        \Testo\Assert::same($c->getAction(), ConflictAction::Update);
+        \Testo\Assert::null($c->getUpdate());
     }
 
+    #[\Testo\Test]
     public function testDoUpdateColumnList(): void
     {
         $c = OnConflict::target('email')->doUpdate(['name', 'updated_at']);
 
-        $this->assertSame(['name', 'updated_at'], $c->getUpdate());
+        \Testo\Assert::same($c->getUpdate(), ['name', 'updated_at']);
     }
 
+    #[\Testo\Test]
     public function testDoUpdateColumnMap(): void
     {
         // EXCLUDED references use a raw Fragment (Expression would quote the keyword).
         $expr = new Fragment('counters.n + EXCLUDED.n');
         $c = OnConflict::target('key')->doUpdate(['n' => $expr]);
 
-        $this->assertSame(['n' => $expr], $c->getUpdate());
+        \Testo\Assert::same($c->getUpdate(), ['n' => $expr]);
     }
 
+    #[\Testo\Test]
     public function testImmutability(): void
     {
         $base = OnConflict::target('email');
         $withUpdate = $base->doUpdate(['name']);
         $withNothing = $base->doNothing();
 
-        $this->assertNull($base->getUpdate());
-        $this->assertSame(ConflictAction::Update, $base->getAction());
+        \Testo\Assert::null($base->getUpdate());
+        \Testo\Assert::same($base->getAction(), ConflictAction::Update);
 
-        $this->assertSame(['name'], $withUpdate->getUpdate());
-        $this->assertSame(ConflictAction::Update, $withUpdate->getAction());
+        \Testo\Assert::same($withUpdate->getUpdate(), ['name']);
+        \Testo\Assert::same($withUpdate->getAction(), ConflictAction::Update);
 
-        $this->assertNull($withNothing->getUpdate());
-        $this->assertSame(ConflictAction::Nothing, $withNothing->getAction());
+        \Testo\Assert::null($withNothing->getUpdate());
+        \Testo\Assert::same($withNothing->getAction(), ConflictAction::Nothing);
     }
 
+    #[\Testo\Test]
     public function testCacheKeyStableForSameShape(): void
     {
         $a = OnConflict::target('email')->doUpdate(['name']);
         $b = OnConflict::target('email')->doUpdate(['name']);
 
-        $this->assertSame(
-            $a->getCacheKey(new QueryParameters()),
-            $b->getCacheKey(new QueryParameters()),
-        );
+        \Testo\Assert::same($b->getCacheKey(new QueryParameters()), $a->getCacheKey(new QueryParameters()));
     }
 
+    #[\Testo\Test]
     public function testCacheKeyDiffersForDifferentAction(): void
     {
         $update = OnConflict::target('email')->doUpdate();
         $nothing = OnConflict::target('email')->doNothing();
 
-        $this->assertNotSame(
-            $update->getCacheKey(new QueryParameters()),
-            $nothing->getCacheKey(new QueryParameters()),
-        );
+        \Testo\Assert::notSame($nothing->getCacheKey(new QueryParameters()), $update->getCacheKey(new QueryParameters()));
     }
 
+    #[\Testo\Test]
     public function testCacheKeyDiffersForDifferentUpdateColumns(): void
     {
         $a = OnConflict::target('email')->doUpdate(['name']);
         $b = OnConflict::target('email')->doUpdate(['name', 'visits']);
 
-        $this->assertNotSame(
-            $a->getCacheKey(new QueryParameters()),
-            $b->getCacheKey(new QueryParameters()),
-        );
+        \Testo\Assert::notSame($b->getCacheKey(new QueryParameters()), $a->getCacheKey(new QueryParameters()));
     }
 
+    #[\Testo\Test]
     public function testCacheKeyPushesFragmentParametersFromUpdateMap(): void
     {
         $expr = new Expression('counters.n + ?', 5);
@@ -182,10 +192,11 @@ class OnConflictTest extends TestCase
         $params = new QueryParameters();
         $key = $c->getCacheKey($params);
 
-        $this->assertCount(1, $params->getParameters());
-        $this->assertStringContainsString((string) $expr, $key);
+        \Testo\Assert::count($params->getParameters(), 1);
+        \Testo\Assert::string($key)->contains((string) $expr);
     }
 
+    #[\Testo\Test]
     public function testCacheKeyWrapsScalarUpdateValueAsParameter(): void
     {
         $c = OnConflict::target('key')->doUpdate(['n' => 42]);
@@ -194,12 +205,13 @@ class OnConflictTest extends TestCase
         $key = $c->getCacheKey($params);
 
         $pushed = $params->getParameters();
-        $this->assertCount(1, $pushed);
-        $this->assertInstanceOf(Parameter::class, $pushed[0]);
-        $this->assertSame(42, $pushed[0]->getValue());
-        $this->assertStringContainsString('P?', $key);
+        \Testo\Assert::count($pushed, 1);
+        \Testo\Assert::instanceOf($pushed[0], Parameter::class);
+        \Testo\Assert::same($pushed[0]->getValue(), 42);
+        \Testo\Assert::string($key)->contains('P?');
     }
 
+    #[\Testo\Test]
     public function testCacheKeyAcceptsExistingParameterInterfaceWithoutRewrapping(): void
     {
         $param = new Parameter(7);
@@ -209,15 +221,16 @@ class OnConflictTest extends TestCase
         $key = $c->getCacheKey($params);
 
         $pushed = $params->getParameters();
-        $this->assertCount(1, $pushed);
-        $this->assertSame($param, $pushed[0]);
-        $this->assertStringContainsString('P?', $key);
+        \Testo\Assert::count($pushed, 1);
+        \Testo\Assert::same($pushed[0], $param);
+        \Testo\Assert::string($key)->contains('P?');
     }
 
+    #[\Testo\Test]
     public function testFromReturnsSameInstance(): void
     {
         $c = OnConflict::target('email')->doUpdate(['name']);
 
-        $this->assertSame($c, OnConflict::from($c));
+        \Testo\Assert::same(OnConflict::from($c), $c);
     }
 }

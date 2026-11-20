@@ -7,10 +7,7 @@ namespace Cycle\Database\Tests\Functional\Driver\SQLServer\Schema;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Schema\ReflectorTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-sqlserver
- */
+#[\Testo\Filter\Group('driver', 'driver-sqlserver')]
 class ReflectorTest extends CommonClass
 {
     public const DRIVER = 'sqlserver';

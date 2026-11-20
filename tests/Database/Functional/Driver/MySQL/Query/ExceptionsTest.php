@@ -9,14 +9,12 @@ use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Tests\Functional\Driver\Common\Query\ExceptionsTest as CommonClass;
 use Spiral\Database\Exception\StatementException\ConnectionException;
 
-/**
- * @group driver
- * @group driver-mysql
- */
+#[\Testo\Filter\Group('driver', 'driver-mysql')]
 class ExceptionsTest extends CommonClass
 {
     public const DRIVER = 'mysql';
 
+    #[\Testo\Test]
     public function testPacketsOutOfOrderConsideredAsConnectionException(): void
     {
         // Prepare connection to generate "Packets out of order. Expected 1 received 0. Packet size=145"
@@ -28,11 +26,12 @@ class ExceptionsTest extends CommonClass
             $result = $this->database->query('SELECT version() AS version')->fetchAll();
             $this->assertNotEmpty($result[0]['version'] ?? '', 'Expected result from second query');
         } catch (\RuntimeException $e) {
-            $this->assertInstanceOf(ConnectionException::class, $e);
+            \Testo\Assert::instanceOf($e, ConnectionException::class);
             return;
         }
     }
 
+    #[\Testo\Test]
     public function testCheckViolationIsAConstrainException(): void
     {
         $driver = $this->database->getDriver();
@@ -40,18 +39,19 @@ class ExceptionsTest extends CommonClass
         // Raw SQL because the schema builder has no CHECK support.
         $driver->execute('CREATE TABLE test (id int PRIMARY KEY, pos int, CONSTRAINT c_pos CHECK (pos > 0))');
 
-        $this->expectException(StatementException\ConstrainException::class);
+        \Testo\Expect::exception(StatementException\ConstrainException::class);
 
         $driver->execute('INSERT INTO test VALUES (1, -1)');
     }
 
+    #[\Testo\Test]
     public function testMissingRequiredColumnIsAConstrainException(): void
     {
         $driver = $this->database->getDriver();
 
         $driver->execute('CREATE TABLE test (id int PRIMARY KEY, value varchar(8) NOT NULL)');
 
-        $this->expectException(StatementException\ConstrainException::class);
+        \Testo\Expect::exception(StatementException\ConstrainException::class);
 
         $driver->execute('INSERT INTO test (id) VALUES (1)');
     }

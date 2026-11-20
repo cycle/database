@@ -9,8 +9,9 @@ use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\DeleteQuery;
 use PHPUnit\Framework\TestCase;
 
-class DeleteQueryTest extends TestCase
+class DeleteQueryTest
 {
+    #[\Testo\Test]
     public function testBuildQuery(): void
     {
         $delete = new DeleteQuery();
@@ -19,26 +20,20 @@ class DeleteQueryTest extends TestCase
             ->where(['name' => 'Antony'])
             ->orWhere('id', '>', 1);
 
-        $this->assertSame(
-            CompilerInterface::DELETE_QUERY,
-            $delete->getType(),
-        );
+        \Testo\Assert::same($delete->getType(), CompilerInterface::DELETE_QUERY);
 
-        $this->assertEquals(
-            [
-                'table' => 'table',
-                'where' => [
-                    [
-                        'AND',
-                        ['name', '=', new Parameter('Antony')],
-                    ],
-                    [
-                        'OR',
-                        ['id', '>', new Parameter(1)],
-                    ],
+        \Testo\Assert::equals($delete->getTokens(), [
+            'table' => 'table',
+            'where' => [
+                [
+                    'AND',
+                    ['name', '=', new Parameter('Antony')],
+                ],
+                [
+                    'OR',
+                    ['id', '>', new Parameter(1)],
                 ],
             ],
-            $delete->getTokens(),
-        );
+        ]);
     }
 }

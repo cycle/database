@@ -7,14 +7,12 @@ namespace Cycle\Database\Tests\Functional\Driver\SQLServer\Query;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Query\DeleteQueryTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-sqlserver
- */
+#[\Testo\Filter\Group('driver', 'driver-sqlserver')]
 class DeleteQueryTest extends CommonClass
 {
     public const DRIVER = 'sqlserver';
 
+    #[\Testo\Test]
     public function testDeleteWithWhereJson(): void
     {
         $select = $this->database
@@ -29,6 +27,7 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters([1, 'dark'], $select);
     }
 
+    #[\Testo\Test]
     public function testDeleteWithOrWhereJson(): void
     {
         $select = $this->database
@@ -43,6 +42,7 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters([1, 'dark'], $select);
     }
 
+    #[\Testo\Test]
     public function testDeleteWithWhereJsonNested(): void
     {
         $select = $this->database
@@ -56,6 +56,7 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters(['+1234567890'], $select);
     }
 
+    #[\Testo\Test]
     public function testDeleteWithWhereJsonArray(): void
     {
         $select = $this->database
@@ -69,6 +70,7 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters(['+1234567890'], $select);
     }
 
+    #[\Testo\Test]
     public function testDeleteWithWhereJsonNestedArray(): void
     {
         $select = $this->database
@@ -82,6 +84,7 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters(['+1234567890'], $select);
     }
 
+    #[\Testo\Test]
     public function testDeleteWithWhereJsonContains(): void
     {
         $select = $this->database
@@ -96,6 +99,7 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters([1, 'en'], $select);
     }
 
+    #[\Testo\Test]
     public function testDeleteWithOrWhereJsonContains(): void
     {
         $select = $this->database
@@ -110,6 +114,7 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters([1, 'en'], $select);
     }
 
+    #[\Testo\Test]
     public function testDeleteWithWhereJsonContainsNested(): void
     {
         $select = $this->database
@@ -123,6 +128,7 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters(['+1234567890'], $select);
     }
 
+    #[\Testo\Test]
     public function testDeleteWithWhereJsonContainsArray(): void
     {
         $select = $this->database
@@ -136,6 +142,7 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters(['+1234567890'], $select);
     }
 
+    #[\Testo\Test]
     public function testDeleteWithWhereJsonContainsNestedArray(): void
     {
         $select = $this->database
@@ -149,6 +156,7 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters(['+1234567890'], $select);
     }
 
+    #[\Testo\Test]
     public function testDeleteWithWhereJsonDoesntContain(): void
     {
         $select = $this->database
@@ -163,6 +171,7 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters([1, 'en'], $select);
     }
 
+    #[\Testo\Test]
     public function testDeleteWithOrWhereJsonDoesntContain(): void
     {
         $select = $this->database
@@ -177,6 +186,7 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters([1, 'en'], $select);
     }
 
+    #[\Testo\Test]
     public function testDeleteWithWhereJsonDoesntContainNested(): void
     {
         $select = $this->database
@@ -190,6 +200,7 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters(['+1234567890'], $select);
     }
 
+    #[\Testo\Test]
     public function testDeleteWithWhereJsonDoesntContainArray(): void
     {
         $select = $this->database
@@ -203,6 +214,7 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters(['+1234567890'], $select);
     }
 
+    #[\Testo\Test]
     public function testDeleteWithWhereJsonDoesntContainNestedArray(): void
     {
         $select = $this->database
@@ -216,6 +228,7 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters(['+1234567890'], $select);
     }
 
+    #[\Testo\Test]
     public function testDeleteWithWhereJsonContainsKey(): void
     {
         $select = $this->database
@@ -229,6 +242,7 @@ class DeleteQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testDeleteWithOrWhereJsonContainsKey(): void
     {
         $select = $this->database
@@ -242,6 +256,7 @@ class DeleteQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testDeleteWithWhereJsonContainsKeyNested(): void
     {
         $select = $this->database
@@ -254,6 +269,7 @@ class DeleteQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testDeleteWithWhereJsonContainsKeyArray(): void
     {
         $select = $this->database
@@ -266,6 +282,7 @@ class DeleteQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testDeleteWithWhereJsonContainsKeyNestedArray(): void
     {
         $select = $this->database
@@ -278,6 +295,7 @@ class DeleteQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testDeleteWithWhereJsonDoesntContainKey(): void
     {
         $select = $this->database
@@ -291,6 +309,7 @@ class DeleteQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testDeleteWithOrWhereJsonDoesntContainKey(): void
     {
         $select = $this->database
@@ -304,6 +323,7 @@ class DeleteQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testDeleteWithWhereJsonDoesntContainKeyNested(): void
     {
         $select = $this->database
@@ -316,6 +336,7 @@ class DeleteQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testDeleteWithWhereJsonDoesntContainKeyArray(): void
     {
         $select = $this->database
@@ -328,6 +349,7 @@ class DeleteQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testDeleteWithWhereJsonDoesntContainKeyNestedArray(): void
     {
         $select = $this->database
@@ -340,6 +362,7 @@ class DeleteQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testDeleteWithWhereJsonLengthAndCustomOperator(): void
     {
         $select = $this->database
@@ -353,6 +376,7 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters([1], $select);
     }
 
+    #[\Testo\Test]
     public function testDeleteWithWhereJsonLength(): void
     {
         $select = $this->database
@@ -367,6 +391,7 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters([1, 3], $select);
     }
 
+    #[\Testo\Test]
     public function testDeleteWithOrWhereJsonJsonLength(): void
     {
         $select = $this->database
@@ -381,6 +406,7 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters([1, 4], $select);
     }
 
+    #[\Testo\Test]
     public function testDeleteWithWhereJsonLengthNested(): void
     {
         $select = $this->database
@@ -394,6 +420,7 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters([1], $select);
     }
 
+    #[\Testo\Test]
     public function testDeleteWithWhereJsonLengthArray(): void
     {
         $select = $this->database
@@ -407,6 +434,7 @@ class DeleteQueryTest extends CommonClass
         $this->assertSameParameters([2], $select);
     }
 
+    #[\Testo\Test]
     public function testDeleteWithWhereJsonLengthNestedArray(): void
     {
         $select = $this->database

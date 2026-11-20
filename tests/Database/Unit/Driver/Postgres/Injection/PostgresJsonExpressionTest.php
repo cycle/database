@@ -9,7 +9,7 @@ use Cycle\Database\Driver\Quoter;
 use Cycle\Database\Exception\DriverException;
 use PHPUnit\Framework\TestCase;
 
-final class PostgresJsonExpressionTest extends TestCase
+final class PostgresJsonExpressionTest
 {
     public static function pathDataProvider(): \Traversable
     {
@@ -27,37 +27,36 @@ final class PostgresJsonExpressionTest extends TestCase
         yield ['options->personal->phones->3', 3];
     }
 
-    /**
-     * @dataProvider pathDataProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('pathDataProvider')]
     public function testGetPath(string $statement, string $expected): void
     {
         $expression = $this->createExpression();
         $ref = new \ReflectionMethod($expression, 'getPath');
         $ref->setAccessible(true);
 
-        $this->assertSame($expected, $ref->invoke($expression, $statement));
+        \Testo\Assert::same($ref->invoke($expression, $statement), $expected);
     }
 
-    /**
-     * @dataProvider attributeDataProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('attributeDataProvider')]
     public function testGetAttribute(string $statement, string|int $expected): void
     {
         $expression = $this->createExpression();
         $ref = new \ReflectionMethod($expression, 'getAttribute');
         $ref->setAccessible(true);
 
-        $this->assertSame($expected, $ref->invoke($expression, $statement));
+        \Testo\Assert::same($ref->invoke($expression, $statement), $expected);
     }
 
+    #[\Testo\Test]
     public function testGetAttributeException(): void
     {
         $expression = $this->createExpression();
         $ref = new \ReflectionMethod($expression, 'getAttribute');
         $ref->setAccessible(true);
 
-        $this->expectException(DriverException::class);
+        \Testo\Expect::exception(DriverException::class);
         $ref->invoke($expression, 'options');
     }
 

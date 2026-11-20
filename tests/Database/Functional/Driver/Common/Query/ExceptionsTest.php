@@ -13,21 +13,20 @@ use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
  */
 abstract class ExceptionsTest extends BaseTest
 {
+    #[\Testo\Test]
     public function testSelectionException(): void
     {
         $select = $this->database->select()->from('udnefinedTable');
         try {
             $select->run();
         } catch (StatementException $e) {
-            $this->assertInstanceOf(\PDOException::class, $e->getPrevious());
+            \Testo\Assert::instanceOf($e->getPrevious(), \PDOException::class);
 
-            $this->assertSame(
-                $e->getQuery(),
-                $select->sqlStatement(),
-            );
+            \Testo\Assert::same($select->sqlStatement(), $e->getQuery());
         }
     }
 
+    #[\Testo\Test]
     public function testHandlerException(): void
     {
         $select = $this->database->select()->from('udnefinedTable');
@@ -36,15 +35,13 @@ abstract class ExceptionsTest extends BaseTest
         } catch (StatementException $e) {
             $h = new HandlerException($e);
 
-            $this->assertInstanceOf(StatementException::class, $h->getPrevious());
+            \Testo\Assert::instanceOf($h->getPrevious(), StatementException::class);
 
-            $this->assertSame(
-                $h->getQuery(),
-                $select->sqlStatement(),
-            );
+            \Testo\Assert::same($select->sqlStatement(), $h->getQuery());
         }
     }
 
+    #[\Testo\Test]
     public function testInsertNotNullable(): void
     {
         $schema = $this->database->getDriver()->getSchema('test');
@@ -63,10 +60,11 @@ abstract class ExceptionsTest extends BaseTest
                 ->values(['value' => null])
                 ->run();
         } catch (StatementException\ConstrainException $e) {
-            $this->assertInstanceOf(StatementException\ConstrainException::class, $e);
+            \Testo\Assert::instanceOf($e, StatementException\ConstrainException::class);
         }
     }
 
+    #[\Testo\Test]
     public function testConstrainExceptionWhenTheValueLooksLikeAConnectionError(): void
     {
         $schema = $this->database->getDriver()->getSchema('test');
@@ -84,7 +82,7 @@ abstract class ExceptionsTest extends BaseTest
             ->values(['value' => $value])
             ->run();
 
-        $this->expectException(StatementException\ConstrainException::class);
+        \Testo\Expect::exception(StatementException\ConstrainException::class);
 
         $this->database->getDriver()
             ->insertQuery('', 'test')

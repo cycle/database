@@ -18,6 +18,7 @@ use Cycle\Database\Schema\AbstractTable;
 
 trait TableAssertions
 {
+    #[\Testo\Common\Attribute\AssertMethod]
     protected function assertSameAsInDB(AbstractTable $current, ?AbstractTable $target = null): void
     {
         $source = $current->getState();
@@ -26,52 +27,26 @@ trait TableAssertions
             : $this->fetchSchema($current)->getState();
 
         // testing changes
-        $this->assertSame(
-            $source->getName(),
-            $target->getName(),
-            'Table name changed',
-        );
+        \Testo\Assert::same($target->getName(), $source->getName(), 'Table name changed');
 
-        $this->assertSame(
-            $source->getPrimaryKeys(),
-            $target->getPrimaryKeys(),
-            'Primary keys changed',
-        );
+        \Testo\Assert::same($target->getPrimaryKeys(), $source->getPrimaryKeys(), 'Primary keys changed');
 
-        $this->assertSame(
-            \count($source->getColumns()),
-            \count($target->getColumns()),
-            'Column number has changed',
-        );
+        \Testo\Assert::same(\count($target->getColumns()), \count($source->getColumns()), 'Column number has changed');
 
-        $this->assertSame(
-            \count($source->getIndexes()),
-            \count($target->getIndexes()),
-            'Index number has changed',
-        );
+        \Testo\Assert::same(\count($target->getIndexes()), \count($source->getIndexes()), 'Index number has changed');
 
-        $this->assertSame(
-            \count($source->getForeignKeys()),
-            \count($target->getForeignKeys()),
-            'FK number has changed',
-        );
+        \Testo\Assert::same(\count($target->getForeignKeys()), \count($source->getForeignKeys()), 'FK number has changed');
 
         // columns
 
         foreach ($source->getColumns() as $column) {
-            $this->assertTrue(
-                $target->hasColumn($column->getName()),
-                "Column {$column} has been removed",
-            );
+            \Testo\Assert::true($target->hasColumn($column->getName()), "Column {$column} has been removed");
 
             $this->compareColumns($column, $target->findColumn($column->getName()));
         }
 
         foreach ($target->getColumns() as $column) {
-            $this->assertTrue(
-                $source->hasColumn($column->getName()),
-                "Column {$column} has been added",
-            );
+            \Testo\Assert::true($source->hasColumn($column->getName()), "Column {$column} has been added");
 
             $this->compareColumns($column, $source->findColumn($column->getName()));
         }
@@ -79,38 +54,26 @@ trait TableAssertions
         // indexes
 
         foreach ($source->getIndexes() as $index) {
-            $this->assertTrue(
-                $target->hasIndex($index->getColumnsWithSort()),
-                "Index {$index->getName()} has been removed",
-            );
+            \Testo\Assert::true($target->hasIndex($index->getColumnsWithSort()), "Index {$index->getName()} has been removed");
 
             $this->compareIndexes($index, $target->findIndex($index->getColumnsWithSort()));
         }
 
         foreach ($target->getIndexes() as $index) {
-            $this->assertTrue(
-                $source->hasIndex($index->getColumnsWithSort()),
-                "Index {$index->getName()} has been removed",
-            );
+            \Testo\Assert::true($source->hasIndex($index->getColumnsWithSort()), "Index {$index->getName()} has been removed");
 
             $this->compareIndexes($index, $source->findIndex($index->getColumnsWithSort()));
         }
 
         // FK
         foreach ($source->getForeignKeys() as $key) {
-            $this->assertTrue(
-                $target->hasForeignKey($key->getColumns()),
-                "FK {$key->getName()} has been removed",
-            );
+            \Testo\Assert::true($target->hasForeignKey($key->getColumns()), "FK {$key->getName()} has been removed");
 
             $this->compareFK($key, $target->findForeignKey($key->getColumns()));
         }
 
         foreach ($target->getForeignKeys() as $key) {
-            $this->assertTrue(
-                $source->hasForeignKey($key->getColumns()),
-                "FK {$key->getName()} has been removed",
-            );
+            \Testo\Assert::true($source->hasForeignKey($key->getColumns()), "FK {$key->getName()} has been removed");
 
             $this->compareFK($key, $source->findForeignKey($key->getColumns()));
         }
@@ -118,91 +81,38 @@ trait TableAssertions
 
     protected function compareColumns(AbstractColumn $a, AbstractColumn $b): void
     {
-        $this->assertSame(
-            $a->getInternalType(),
-            $b->getInternalType(),
-            "Column {$a} type has been changed",
-        );
+        \Testo\Assert::same($b->getInternalType(), $a->getInternalType(), "Column {$a} type has been changed");
 
-        $this->assertSame(
-            $a->getScale(),
-            $b->getScale(),
-            "Column {$a} scale has been changed",
-        );
+        \Testo\Assert::same($b->getScale(), $a->getScale(), "Column {$a} scale has been changed");
 
-        $this->assertSame(
-            $a->getPrecision(),
-            $b->getPrecision(),
-            "Column {$a} precision has been changed",
-        );
+        \Testo\Assert::same($b->getPrecision(), $a->getPrecision(), "Column {$a} precision has been changed");
 
-        $this->assertSame(
-            $a->getEnumValues(),
-            $b->getEnumValues(),
-            "Column {$a} enum values has been changed",
-        );
+        \Testo\Assert::same($b->getEnumValues(), $a->getEnumValues(), "Column {$a} enum values has been changed");
 
-        $this->assertTrue(
-            $a->compare($b),
-            "Column {$a} has been changed",
-        );
+        \Testo\Assert::true($a->compare($b), "Column {$a} has been changed");
     }
 
     protected function compareIndexes(AbstractIndex $a, AbstractIndex $b): void
     {
-        $this->assertSame(
-            $a->getColumns(),
-            $b->getColumns(),
-            "Index {$a->getName()} columns has been changed",
-        );
+        \Testo\Assert::same($b->getColumns(), $a->getColumns(), "Index {$a->getName()} columns has been changed");
 
-        $this->assertSame(
-            $a->isUnique(),
-            $b->isUnique(),
-            "Index {$a->getName()} uniquness has been changed",
-        );
+        \Testo\Assert::same($b->isUnique(), $a->isUnique(), "Index {$a->getName()} uniquness has been changed");
 
-        $this->assertTrue(
-            $a->compare($b),
-            "Index {$a->getName()} has been changed",
-        );
+        \Testo\Assert::true($a->compare($b), "Index {$a->getName()} has been changed");
     }
 
     protected function compareFK(AbstractForeignKey $a, AbstractForeignKey $b): void
     {
-        $this->assertSame(
-            $a->getColumns(),
-            $b->getColumns(),
-            "FK {$a->getName()} column has been changed",
-        );
+        \Testo\Assert::same($b->getColumns(), $a->getColumns(), "FK {$a->getName()} column has been changed");
 
-        $this->assertSame(
-            $a->getForeignKeys(),
-            $b->getForeignKeys(),
-            "FK {$a->getName()} table has been changed",
-        );
+        \Testo\Assert::same($b->getForeignKeys(), $a->getForeignKeys(), "FK {$a->getName()} table has been changed");
 
-        $this->assertSame(
-            $a->getForeignKeys(),
-            $b->getForeignKeys(),
-            "FK {$a->getName()} fk has been changed",
-        );
+        \Testo\Assert::same($b->getForeignKeys(), $a->getForeignKeys(), "FK {$a->getName()} fk has been changed");
 
-        $this->assertSame(
-            $a->getDeleteRule(),
-            $b->getDeleteRule(),
-            "FK {$a->getName()} delete rule has been changed",
-        );
+        \Testo\Assert::same($b->getDeleteRule(), $a->getDeleteRule(), "FK {$a->getName()} delete rule has been changed");
 
-        $this->assertSame(
-            $a->getUpdateRule(),
-            $b->getUpdateRule(),
-            "FK {$a->getName()} update rule has been changed",
-        );
+        \Testo\Assert::same($b->getUpdateRule(), $a->getUpdateRule(), "FK {$a->getName()} update rule has been changed");
 
-        $this->assertTrue(
-            $a->compare($b),
-            "FK {$a->getName()} has been changed",
-        );
+        \Testo\Assert::true($a->compare($b), "FK {$a->getName()} has been changed");
     }
 }

@@ -14,11 +14,12 @@ use Cycle\Database\Tests\Utils\DontGenerateAttribute;
 #[DontGenerateAttribute]
 abstract class PositionColumnTest extends BaseTest
 {
+    #[\Testo\Test]
     public function testPositionFirst(): void
     {
         $schema = $this->sampleSchema('table');
 
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
         $this->assertSameAsInDB($schema);
 
         $schema->string('identifier')->nullable(false)->first();
@@ -41,14 +42,15 @@ abstract class PositionColumnTest extends BaseTest
             'updated_at' => 'updated_at',
         ];
 
-        $this->assertSame($expectedColumnNames, $updatedColumnNames);
+        \Testo\Assert::same($updatedColumnNames, $expectedColumnNames);
     }
 
+    #[\Testo\Test]
     public function testPositionAfter(): void
     {
         $schema = $this->sampleSchema('table');
 
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
         $this->assertSameAsInDB($schema);
 
         $schema->string('identifier')->nullable(false)->after('email');
@@ -71,18 +73,18 @@ abstract class PositionColumnTest extends BaseTest
             'updated_at' => 'updated_at',
         ];
 
-        $this->assertSame($expectedColumnNames, $updatedColumnNames);
+        \Testo\Assert::same($updatedColumnNames, $expectedColumnNames);
     }
 
+    #[\Testo\Test]
     public function testPositionAfterThrowsException(): void
     {
         $schema = $this->sampleSchema('table');
 
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
         $this->assertSameAsInDB($schema);
 
-        $this->expectException(DBALException::class);
-        $this->expectExceptionMessage("Unknown column 'nonexistent'");
+        \Testo\Expect::exception(DBALException::class)->withMessageContaining("Unknown column 'nonexistent'");
 
         $schema->string('identifier')->nullable(false)->after('nonexistent');
         $schema->save();

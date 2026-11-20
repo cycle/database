@@ -10,7 +10,7 @@ use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Injection\JsonExpression;
 use PHPUnit\Framework\TestCase;
 
-final class JsonExpressionTest extends TestCase
+final class JsonExpressionTest
 {
     public static function parseArraySyntaxDataProvider(): \Traversable
     {
@@ -85,100 +85,95 @@ final class JsonExpressionTest extends TestCase
         yield ['options->languages->fr'];
     }
 
-    /**
-     * @dataProvider parseArraySyntaxDataProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('parseArraySyntaxDataProvider')]
     public function testParseArraySyntax(string $path, array $expected): void
     {
         $expression = $this->createExpression();
         $ref = new \ReflectionMethod($expression, 'parseArraySyntax');
         $ref->setAccessible(true);
 
-        $this->assertSame($ref->invoke($expression, $path), $expected);
+        \Testo\Assert::same($expected, $ref->invoke($expression, $path));
     }
 
-    /**
-     * @dataProvider parseArraySyntaxInvalidDataProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('parseArraySyntaxInvalidDataProvider')]
     public function testParseArraySyntaxWithInvalidPath(string $path): void
     {
         $expression = $this->createExpression();
         $ref = new \ReflectionMethod($expression, 'parseArraySyntax');
         $ref->setAccessible(true);
 
-        $this->expectException(DriverException::class);
+        \Testo\Expect::exception(DriverException::class);
         $ref->invoke($expression, $path);
     }
 
-    /**
-     * @dataProvider pathDataProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('pathDataProvider')]
     public function testGetPath(string $statement, string $expected): void
     {
         $expression = $this->createExpression();
         $ref = new \ReflectionMethod($expression, 'getPath');
         $ref->setAccessible(true);
 
-        $this->assertSame($expected, $ref->invoke($expression, $statement));
+        \Testo\Assert::same($ref->invoke($expression, $statement), $expected);
     }
 
-    /**
-     * @dataProvider fieldDataProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('fieldDataProvider')]
     public function testGetField(string $statement): void
     {
         $expression = $this->createExpression();
         $ref = new \ReflectionMethod($expression, 'getField');
         $ref->setAccessible(true);
 
-        $this->assertSame('"options"', $ref->invoke($expression, $statement));
+        \Testo\Assert::same($ref->invoke($expression, $statement), '"options"');
     }
 
-    /**
-     * @dataProvider wrapPathSegmentDataProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('wrapPathSegmentDataProvider')]
     public function testWrapPathSegment(string $segment, string $expected): void
     {
         $expression = $this->createExpression();
         $ref = new \ReflectionMethod($expression, 'wrapPathSegment');
         $ref->setAccessible(true);
 
-        $this->assertSame($expected, $ref->invoke($expression, $segment));
+        \Testo\Assert::same($ref->invoke($expression, $segment), $expected);
     }
 
-    /**
-     * @dataProvider wrapPathDataProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('wrapPathDataProvider')]
     public function testWrapPath(string $value, string $expected): void
     {
         $expression = $this->createExpression();
         $ref = new \ReflectionMethod($expression, 'wrapPath');
         $ref->setAccessible(true);
 
-        $this->assertSame(\sprintf("'%s'", $expected), $ref->invoke($expression, $value));
+        \Testo\Assert::same($ref->invoke($expression, $value), \sprintf("'%s'", $expected));
     }
 
-    /**
-     * @dataProvider quoteStringLiteralDataProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('quoteStringLiteralDataProvider')]
     public function testQuoteStringLiteral(string $value, string $quote, string $expected): void
     {
         $expression = $this->createExpression();
         $ref = new \ReflectionMethod($expression, 'quoteStringLiteral');
         $ref->setAccessible(true);
 
-        $this->assertSame($expected, $ref->invoke($expression, $value, $quote));
+        \Testo\Assert::same($ref->invoke($expression, $value, $quote), $expected);
     }
 
+    #[\Testo\Test]
     public function testDefaultQuotes(): void
     {
         $expression = $this->createExpression();
         $ref = new \ReflectionMethod($expression, 'getQuotes');
         $ref->setAccessible(true);
 
-        $this->assertSame('""', $ref->invoke($expression));
+        \Testo\Assert::same($ref->invoke($expression), '""');
     }
 
+    #[\Testo\Test]
     public function testGetTokens(): void
     {
         $expression = $this->createExpression();
@@ -192,19 +187,21 @@ final class JsonExpressionTest extends TestCase
         $refParameters->setValue($expression, ['bar']);
 
 
-        $this->assertSame([
+        \Testo\Assert::same($expression->getTokens(), [
             'expression' => 'foo',
             'parameters' => ['bar'],
-        ], $expression->getTokens());
+        ]);
     }
 
+    #[\Testo\Test]
     public function testGetType(): void
     {
         $expression = $this->createExpression();
 
-        $this->assertSame(CompilerInterface::JSON_EXPRESSION, $expression->getType());
+        \Testo\Assert::same($expression->getType(), CompilerInterface::JSON_EXPRESSION);
     }
 
+    #[\Testo\Test]
     public function testToString(): void
     {
         $expression = $this->createExpression();
@@ -212,7 +209,7 @@ final class JsonExpressionTest extends TestCase
         $ref->setAccessible(true);
         $ref->setValue($expression, 'foo');
 
-        $this->assertSame('exp:foo', (string) $expression);
+        \Testo\Assert::same((string) $expression, 'exp:foo');
     }
 
     private function createExpression(): JsonExpression

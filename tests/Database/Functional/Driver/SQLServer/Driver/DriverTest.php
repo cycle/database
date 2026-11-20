@@ -10,14 +10,12 @@ use Cycle\Database\Exception\StatementException;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Driver\DriverTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-sqlserver
- */
+#[\Testo\Filter\Group('driver', 'driver-sqlserver')]
 class DriverTest extends CommonClass
 {
     public const DRIVER = 'sqlserver';
 
+    #[\Testo\Test]
     public function testCreateDoesNotReachTheServer(): void
     {
         $config = clone self::$config[static::DRIVER];
@@ -29,10 +27,10 @@ class DriverTest extends CommonClass
 
         $driver = SQLServerDriver::create($config);
 
-        self::assertFalse($driver->isConnected());
+        \Testo\Assert::false($driver->isConnected());
 
         // The failure arrives with the first statement, mapped like a failed connection on any driver.
-        $this->expectException(StatementException::class);
+        \Testo\Expect::exception(StatementException::class);
 
         $driver->query('SELECT 1');
     }

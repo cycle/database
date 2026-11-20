@@ -8,73 +8,75 @@ use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Injection\ParameterInterface;
 use PHPUnit\Framework\TestCase;
 
-class ParameterTest extends TestCase
+class ParameterTest
 {
+    #[\Testo\Test]
     public function testValue(): void
     {
         $parameter = new Parameter('value');
-        $this->assertInstanceOf(ParameterInterface::class, $parameter);
+        \Testo\Assert::instanceOf($parameter, ParameterInterface::class);
 
-        $this->assertSame('value', $parameter->getValue());
+        \Testo\Assert::same($parameter->getValue(), 'value');
 
         $parameter->setValue('new value');
 
-        $this->assertSame('new value', $parameter->getValue());
+        \Testo\Assert::same($parameter->getValue(), 'new value');
     }
 
+    #[\Testo\Test]
     public function testType(): void
     {
         $parameter = new Parameter(123, \PDO::PARAM_INT);
 
-        $this->assertSame(123, $parameter->getValue());
-        $this->assertSame(\PDO::PARAM_INT, $parameter->getType());
+        \Testo\Assert::same($parameter->getValue(), 123);
+        \Testo\Assert::same($parameter->getType(), \PDO::PARAM_INT);
 
         $parameter->setValue(2334);
 
-        $this->assertSame(2334, $parameter->getValue());
-        $this->assertSame(\PDO::PARAM_INT, $parameter->getType());
+        \Testo\Assert::same($parameter->getValue(), 2334);
+        \Testo\Assert::same($parameter->getType(), \PDO::PARAM_INT);
     }
 
+    #[\Testo\Test]
     public function testAutoTyping(): void
     {
         $parameter = new Parameter('abc');
-        $this->assertSame(\PDO::PARAM_STR, $parameter->getType());
+        \Testo\Assert::same($parameter->getType(), \PDO::PARAM_STR);
 
         $parameter = new Parameter(123);
-        $this->assertSame(\PDO::PARAM_INT, $parameter->getType());
+        \Testo\Assert::same($parameter->getType(), \PDO::PARAM_INT);
 
         $parameter = new Parameter(null);
-        $this->assertSame(\PDO::PARAM_NULL, $parameter->getType());
+        \Testo\Assert::same($parameter->getType(), \PDO::PARAM_NULL);
 
         $parameter = new Parameter(false);
-        $this->assertSame(\PDO::PARAM_BOOL, $parameter->getType());
+        \Testo\Assert::same($parameter->getType(), \PDO::PARAM_BOOL);
 
         $parameter = new Parameter(true);
-        $this->assertSame(\PDO::PARAM_BOOL, $parameter->getType());
+        \Testo\Assert::same($parameter->getType(), \PDO::PARAM_BOOL);
     }
 
     /**
      * At this moment arrays values are always treated as STMP parameter.
      */
+    #[\Testo\Test]
     public function testAutoTypingArrays(): void
     {
         $parameter = new Parameter([1, 2, 3]);
-        $this->assertSame(\PDO::PARAM_STR, $parameter->getType());
+        \Testo\Assert::same($parameter->getType(), \PDO::PARAM_STR);
 
         $parameter = new Parameter(['1', '2', '3']);
-        $this->assertSame(\PDO::PARAM_STR, $parameter->getType());
+        \Testo\Assert::same($parameter->getType(), \PDO::PARAM_STR);
     }
 
+    #[\Testo\Test]
     public function testDebugInfo(): void
     {
         $parameter = new Parameter([1, 2, 3]);
 
-        $this->assertSame(
-            [
-                'value' => [1, 2, 3],
-                'type' => \PDO::PARAM_STR,
-            ],
-            $parameter->__debugInfo(),
-        );
+        \Testo\Assert::same($parameter->__debugInfo(), [
+            'value' => [1, 2, 3],
+            'type' => \PDO::PARAM_STR,
+        ]);
     }
 }

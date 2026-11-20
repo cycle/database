@@ -7,7 +7,7 @@ namespace Cycle\Database\Tests\Unit\Driver;
 use Cycle\Database\Driver\Jsoner;
 use PHPUnit\Framework\TestCase;
 
-final class JsonerTest extends TestCase
+final class JsonerTest
 {
     public static function toJsonValuesDataProvider(): \Traversable
     {
@@ -61,20 +61,18 @@ final class JsonerTest extends TestCase
         yield [\fopen(__FILE__, 'rb'), true, true];
     }
 
-    /**
-     * @dataProvider toJsonValuesDataProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('toJsonValuesDataProvider')]
     public function testToJson(mixed $value, mixed $expected, bool $encode, bool $validate): void
     {
-        $this->assertSame($expected, Jsoner::toJson($value, $encode, $validate));
+        \Testo\Assert::same(Jsoner::toJson($value, $encode, $validate), $expected);
     }
 
-    /**
-     * @dataProvider toJsonInvalidValuesDataProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('toJsonInvalidValuesDataProvider')]
     public function testToJsonException(mixed $value, bool $encode, bool $validate): void
     {
-        $this->expectException(\Exception::class);
+        \Testo\Expect::exception(\Exception::class);
         Jsoner::toJson($value, $encode, $validate);
     }
 }

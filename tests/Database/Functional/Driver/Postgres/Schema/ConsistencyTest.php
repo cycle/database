@@ -9,14 +9,12 @@ use Cycle\Database\Driver\Postgres\PostgresDriver;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Tests\Functional\Driver\Common\Schema\ConsistencyTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-postgres
- */
+#[\Testo\Filter\Group('driver', 'driver-postgres')]
 class ConsistencyTest extends CommonClass
 {
     public const DRIVER = 'postgres';
 
+    #[\Testo\Test]
     public function testPrimary(): void
     {
         /**
@@ -25,12 +23,12 @@ class ConsistencyTest extends CommonClass
         $d = $this->database->getDriver();
 
         $schema = $d->getSchema('table');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->string('value');
         $schema->save();
 
-        $this->assertSame(null, $d->getPrimaryKey('', 'table'));
+        \Testo\Assert::same($d->getPrimaryKey('', 'table'), null);
 
         $schema->declareDropped();
         $schema->save();
@@ -40,60 +38,63 @@ class ConsistencyTest extends CommonClass
         $schema->save();
 
         $schema = $d->getSchema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $savedColumn = $schema->getColumns()['target'];
-        $this->assertSame($savedColumn->getInternalType(), $column->getInternalType());
-        $this->assertTrue($this->getPrivatePropertyValue($savedColumn, 'isPrimary'));
-        $this->assertTrue($this->getPrivatePropertyValue($column, 'isPrimary'));
-        $this->assertInstanceOf(FragmentInterface::class, $savedColumn->getDefaultValue());
-        $this->assertSame('target', $d->getPrimaryKey('', 'table'));
+        \Testo\Assert::same($column->getInternalType(), $savedColumn->getInternalType());
+        \Testo\Assert::true($this->getPrivatePropertyValue($savedColumn, 'isPrimary'));
+        \Testo\Assert::true($this->getPrivatePropertyValue($column, 'isPrimary'));
+        \Testo\Assert::instanceOf($savedColumn->getDefaultValue(), FragmentInterface::class);
+        \Testo\Assert::same($d->getPrimaryKey('', 'table'), 'target');
     }
 
+    #[\Testo\Test]
     public function testPrimaryException(): void
     {
         /** @var PostgresDriver $d */
         $d = $this->database->getDriver();
 
-        $this->expectException(\Cycle\Database\Exception\DriverException::class);
+        \Testo\Expect::exception(\Cycle\Database\Exception\DriverException::class);
 
-        $this->assertSame('target', $d->getPrimaryKey('', 'table'));
+        \Testo\Assert::same($d->getPrimaryKey('', 'table'), 'target');
     }
 
+    #[\Testo\Test]
     public function testBigPrimary(): void
     {
         $schema = $this->schema('table');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $column = $schema->bigPrimary('target');
 
         $schema->save();
         $schema = $this->schema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $savedColumn = $schema->getColumns()['target'];
-        $this->assertSame($savedColumn->getInternalType(), $column->getInternalType());
-        $this->assertTrue($this->getPrivatePropertyValue($savedColumn, 'isPrimary'));
-        $this->assertTrue($this->getPrivatePropertyValue($column, 'isPrimary'));
-        $this->assertInstanceOf(FragmentInterface::class, $savedColumn->getDefaultValue());
+        \Testo\Assert::same($column->getInternalType(), $savedColumn->getInternalType());
+        \Testo\Assert::true($this->getPrivatePropertyValue($savedColumn, 'isPrimary'));
+        \Testo\Assert::true($this->getPrivatePropertyValue($column, 'isPrimary'));
+        \Testo\Assert::instanceOf($savedColumn->getDefaultValue(), FragmentInterface::class);
     }
 
+    #[\Testo\Test]
     public function testSmallPrimary(): void
     {
         $schema = $this->schema('table');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $column = $schema->smallPrimary('smallPrimary');
         $schema->save();
         $this->assertSameAsInDB($schema);
 
         $schema = $this->schema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $savedColumn = $schema->getColumns()['smallPrimary'];
-        $this->assertSame($savedColumn->getInternalType(), $column->getInternalType());
-        $this->assertTrue($this->getPrivatePropertyValue($savedColumn, 'isPrimary'));
-        $this->assertTrue($this->getPrivatePropertyValue($column, 'isPrimary'));
-        $this->assertInstanceOf(FragmentInterface::class, $savedColumn->getDefaultValue());
+        \Testo\Assert::same($column->getInternalType(), $savedColumn->getInternalType());
+        \Testo\Assert::true($this->getPrivatePropertyValue($savedColumn, 'isPrimary'));
+        \Testo\Assert::true($this->getPrivatePropertyValue($column, 'isPrimary'));
+        \Testo\Assert::instanceOf($savedColumn->getDefaultValue(), FragmentInterface::class);
     }
 }

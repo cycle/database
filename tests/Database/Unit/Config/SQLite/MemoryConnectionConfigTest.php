@@ -7,8 +7,9 @@ namespace Cycle\Database\Tests\Unit\Config\SQLite;
 use Cycle\Database\Config\SQLite\MemoryConnectionConfig;
 use PHPUnit\Framework\TestCase;
 
-final class MemoryConnectionConfigTest extends TestCase
+final class MemoryConnectionConfigTest
 {
+    #[\Testo\Test]
     public function testSetState(): void
     {
         $testOptionKey = 'option-1';
@@ -22,9 +23,9 @@ final class MemoryConnectionConfigTest extends TestCase
         /** @var MemoryConnectionConfig $recoveredConfig */
         eval('$recoveredConfig = ' . $exported . ';');
 
-        $this->assertSame('sqlite::memory:', $recoveredConfig->getDsn());
-        $this->assertSame(':memory:', $recoveredConfig->getSourceString());
-        $this->assertArrayHasKey($testOptionKey, $recoveredConfig->getOptions());
-        $this->assertSame($testOptionValue, $recoveredConfig->getOptions()[$testOptionKey]);
+        \Testo\Assert::same($recoveredConfig->getDsn(), 'sqlite::memory:');
+        \Testo\Assert::same($recoveredConfig->getSourceString(), ':memory:');
+        \Testo\Assert::array($recoveredConfig->getOptions())->hasKeys($testOptionKey);
+        \Testo\Assert::same($recoveredConfig->getOptions()[$testOptionKey], $testOptionValue);
     }
 }

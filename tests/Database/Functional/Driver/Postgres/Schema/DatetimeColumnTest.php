@@ -10,14 +10,12 @@ use Cycle\Database\Driver\Postgres\Schema\PostgresColumn;
 use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Tests\Functional\Driver\Common\Schema\DatetimeColumnTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-postgres
- */
+#[\Testo\Filter\Group('driver', 'driver-postgres')]
 class DatetimeColumnTest extends CommonClass
 {
     public const DRIVER = 'postgres';
 
+    #[\Testo\Test]
     public function testTimestamptz(): void
     {
         $schema = $this->schema('timestamp_tz');
@@ -29,12 +27,13 @@ class DatetimeColumnTest extends CommonClass
         $this->assertSameAsInDB($schema);
 
         $savedColumn = $this->schema('timestamp_tz')->getColumns()['column_name'];
-        $this->assertTrue($column->getAttributes()['withTimezone']);
-        $this->assertTrue($savedColumn->getAttributes()['withTimezone']);
-        $this->assertSame('timestamptz', $column->getAbstractType());
-        $this->assertSame(0, $column->getSize());
+        \Testo\Assert::true($column->getAttributes()['withTimezone']);
+        \Testo\Assert::true($savedColumn->getAttributes()['withTimezone']);
+        \Testo\Assert::same($column->getAbstractType(), 'timestamptz');
+        \Testo\Assert::same($column->getSize(), 0);
     }
 
+    #[\Testo\Test]
     public function testTimestampWithTimezone(): void
     {
         $schema = $this->schema('timestamp_with_tz');
@@ -46,11 +45,12 @@ class DatetimeColumnTest extends CommonClass
         $this->assertSameAsInDB($schema);
 
         $savedColumn = $this->schema('timestamp_with_tz')->getColumns()['column_name'];
-        $this->assertTrue($column->getAttributes()['withTimezone']);
-        $this->assertTrue($savedColumn->getAttributes()['withTimezone']);
-        $this->assertSame('timestamptz', $column->getAbstractType());
+        \Testo\Assert::true($column->getAttributes()['withTimezone']);
+        \Testo\Assert::true($savedColumn->getAttributes()['withTimezone']);
+        \Testo\Assert::same($column->getAbstractType(), 'timestamptz');
     }
 
+    #[\Testo\Test]
     public function testTimeWithTimezone(): void
     {
         $schema = $this->schema('time_with_tz');
@@ -63,11 +63,12 @@ class DatetimeColumnTest extends CommonClass
 
         $savedColumn = $this->schema('time_with_tz')->getColumns()['timetz'];
 
-        $this->assertTrue($column->getAttributes()['withTimezone']);
-        $this->assertTrue($savedColumn->getAttributes()['withTimezone']);
-        $this->assertSame('timetz', $column->getAbstractType());
+        \Testo\Assert::true($column->getAttributes()['withTimezone']);
+        \Testo\Assert::true($savedColumn->getAttributes()['withTimezone']);
+        \Testo\Assert::same($column->getAbstractType(), 'timetz');
     }
 
+    #[\Testo\Test]
     public function testTimetz(): void
     {
         $schema = $this->schema('time_tz');
@@ -80,12 +81,13 @@ class DatetimeColumnTest extends CommonClass
 
         $savedColumn = $this->schema('time_tz')->getColumns()['column_name'];
 
-        $this->assertTrue($column->getAttributes()['withTimezone']);
-        $this->assertTrue($savedColumn->getAttributes()['withTimezone']);
-        $this->assertSame('timetz', $column->getAbstractType());
-        $this->assertSame(0, $column->getSize());
+        \Testo\Assert::true($column->getAttributes()['withTimezone']);
+        \Testo\Assert::true($savedColumn->getAttributes()['withTimezone']);
+        \Testo\Assert::same($column->getAbstractType(), 'timetz');
+        \Testo\Assert::same($column->getSize(), 0);
     }
 
+    #[\Testo\Test]
     public function testTimestampWithoutTimezone(): void
     {
         $schema = $this->schema('timestamp_without_tz');
@@ -98,12 +100,13 @@ class DatetimeColumnTest extends CommonClass
 
         $savedColumn = $this->schema('timestamp_without_tz')->getColumns()['timestamp'];
 
-        $this->assertFalse($column->getAttributes()['withTimezone']);
-        $this->assertFalse($savedColumn->getAttributes()['withTimezone']);
-        $this->assertSame('timestamp', $column->getAbstractType());
-        $this->assertSame(0, $column->getSize());
+        \Testo\Assert::false($column->getAttributes()['withTimezone']);
+        \Testo\Assert::false($savedColumn->getAttributes()['withTimezone']);
+        \Testo\Assert::same($column->getAbstractType(), 'timestamp');
+        \Testo\Assert::same($column->getSize(), 0);
     }
 
+    #[\Testo\Test]
     public function testTimeWithoutTimezone(): void
     {
         $schema = $this->schema('time_without_tz');
@@ -116,11 +119,12 @@ class DatetimeColumnTest extends CommonClass
 
         $savedColumn = $this->schema('time_without_tz')->getColumns()['time'];
 
-        $this->assertFalse($column->getAttributes()['withTimezone']);
-        $this->assertFalse($savedColumn->getAttributes()['withTimezone']);
-        $this->assertSame('time', $column->getAbstractType());
+        \Testo\Assert::false($column->getAttributes()['withTimezone']);
+        \Testo\Assert::false($savedColumn->getAttributes()['withTimezone']);
+        \Testo\Assert::same($column->getAbstractType(), 'time');
     }
 
+    #[\Testo\Test]
     public function testInterval(): void
     {
         $schema = $this->schema('interval');
@@ -132,13 +136,14 @@ class DatetimeColumnTest extends CommonClass
 
         $savedColumn = $this->schema('interval')->getColumns()['interval'];
 
-        $this->assertNull($column->getAttributes()['intervalType']);
-        $this->assertNull($savedColumn->getAttributes()['intervalType']);
-        $this->assertSame('interval', $column->getAbstractType());
-        $this->assertSame(6, $column->getSize());
-        $this->assertSame(6, $savedColumn->getSize());
+        \Testo\Assert::null($column->getAttributes()['intervalType']);
+        \Testo\Assert::null($savedColumn->getAttributes()['intervalType']);
+        \Testo\Assert::same($column->getAbstractType(), 'interval');
+        \Testo\Assert::same($column->getSize(), 6);
+        \Testo\Assert::same($savedColumn->getSize(), 6);
     }
 
+    #[\Testo\Test]
     public function testIntervalWithType(): void
     {
         $schema = $this->schema('interval');
@@ -150,12 +155,13 @@ class DatetimeColumnTest extends CommonClass
 
         $savedColumn = $this->schema('interval')->getColumns()['interval_with_type'];
 
-        $this->assertSame('YEAR TO MONTH', $column->getAttributes()['intervalType']);
-        $this->assertSame('YEAR TO MONTH', $savedColumn->getAttributes()['intervalType']);
-        $this->assertSame('interval', $column->getAbstractType());
-        $this->assertSame(0, $column->getSize());
+        \Testo\Assert::same($column->getAttributes()['intervalType'], 'YEAR TO MONTH');
+        \Testo\Assert::same($savedColumn->getAttributes()['intervalType'], 'YEAR TO MONTH');
+        \Testo\Assert::same($column->getAbstractType(), 'interval');
+        \Testo\Assert::same($column->getSize(), 0);
     }
 
+    #[\Testo\Test]
     public function testIntervalWithPrecision(): void
     {
         $schema = $this->schema('interval');
@@ -167,13 +173,14 @@ class DatetimeColumnTest extends CommonClass
 
         $savedColumn = $this->schema('interval')->getColumns()['interval_with_size'];
 
-        $this->assertNull($column->getAttributes()['intervalType']);
-        $this->assertNull($savedColumn->getAttributes()['intervalType']);
-        $this->assertSame('interval', $column->getAbstractType());
-        $this->assertSame(6, $column->getSize());
-        $this->assertSame(6, $savedColumn->getSize());
+        \Testo\Assert::null($column->getAttributes()['intervalType']);
+        \Testo\Assert::null($savedColumn->getAttributes()['intervalType']);
+        \Testo\Assert::same($column->getAbstractType(), 'interval');
+        \Testo\Assert::same($column->getSize(), 6);
+        \Testo\Assert::same($savedColumn->getSize(), 6);
     }
 
+    #[\Testo\Test]
     public function testIntervalWithPrecisionAndUnsupportedPrecisionType(): void
     {
         $schema = $this->schema('interval');
@@ -185,13 +192,14 @@ class DatetimeColumnTest extends CommonClass
 
         $savedColumn = $this->schema('interval')->getColumns()['interval_with_size'];
 
-        $this->assertSame('HOUR TO MINUTE', $column->getAttributes()['intervalType']);
-        $this->assertSame('HOUR TO MINUTE', $savedColumn->getAttributes()['intervalType']);
-        $this->assertSame('interval', $column->getAbstractType());
-        $this->assertSame(0, $column->getSize());
-        $this->assertSame(0, $savedColumn->getSize());
+        \Testo\Assert::same($column->getAttributes()['intervalType'], 'HOUR TO MINUTE');
+        \Testo\Assert::same($savedColumn->getAttributes()['intervalType'], 'HOUR TO MINUTE');
+        \Testo\Assert::same($column->getAbstractType(), 'interval');
+        \Testo\Assert::same($column->getSize(), 0);
+        \Testo\Assert::same($savedColumn->getSize(), 0);
     }
 
+    #[\Testo\Test]
     public function testIntervalWithPrecisionAndType(): void
     {
         $schema = $this->schema('interval');
@@ -203,23 +211,25 @@ class DatetimeColumnTest extends CommonClass
 
         $savedColumn = $this->schema('interval')->getColumns()['interval_column'];
 
-        $this->assertSame('SECOND', $column->getAttributes()['intervalType']);
-        $this->assertSame('SECOND', $savedColumn->getAttributes()['intervalType']);
-        $this->assertSame('interval', $column->getAbstractType());
-        $this->assertSame(6, $column->getSize());
-        $this->assertSame(6, $savedColumn->getSize());
+        \Testo\Assert::same($column->getAttributes()['intervalType'], 'SECOND');
+        \Testo\Assert::same($savedColumn->getAttributes()['intervalType'], 'SECOND');
+        \Testo\Assert::same($column->getAbstractType(), 'interval');
+        \Testo\Assert::same($column->getSize(), 6);
+        \Testo\Assert::same($savedColumn->getSize(), 6);
     }
 
+    #[\Testo\Test]
     public function testExceptionWithInvalidIntervalType(): void
     {
         $schema = $this->schema('interval');
 
         $schema->interval('interval_column', intervalType: 'foo');
 
-        $this->expectException(SchemaException::class);
+        \Testo\Expect::exception(SchemaException::class);
         $schema->save();
     }
 
+    #[\Testo\Test]
     public function testDatetime(): void
     {
         $schema = $this->schema('table');
@@ -230,10 +240,11 @@ class DatetimeColumnTest extends CommonClass
 
         $this->assertSameAsInDB($schema);
 
-        $this->assertSame('timestamp', $schema->column('datetime_data')->getInternalType());
-        $this->assertSame(0, $schema->column('datetime_data')->getSize());
+        \Testo\Assert::same($schema->column('datetime_data')->getInternalType(), 'timestamp');
+        \Testo\Assert::same($schema->column('datetime_data')->getSize(), 0);
     }
 
+    #[\Testo\Test]
     public function testDatetimeWithSize(): void
     {
         $schema = $this->schema('table');
@@ -244,10 +255,11 @@ class DatetimeColumnTest extends CommonClass
 
         $this->assertSameAsInDB($schema);
 
-        $this->assertSame('timestamp', $schema->column('datetime_data')->getInternalType());
-        $this->assertSame(6, $schema->column('datetime_data')->getSize());
+        \Testo\Assert::same($schema->column('datetime_data')->getInternalType(), 'timestamp');
+        \Testo\Assert::same($schema->column('datetime_data')->getSize(), 6);
     }
 
+    #[\Testo\Test]
     public function testTime(): void
     {
         $schema = $this->schema('table');
@@ -258,10 +270,11 @@ class DatetimeColumnTest extends CommonClass
 
         $this->assertSameAsInDB($schema);
 
-        $this->assertSame('time', $schema->column('time_data')->getInternalType());
-        $this->assertSame(0, $schema->column('time_data')->getSize());
+        \Testo\Assert::same($schema->column('time_data')->getInternalType(), 'time');
+        \Testo\Assert::same($schema->column('time_data')->getSize(), 0);
     }
 
+    #[\Testo\Test]
     public function testTimeWithSize(): void
     {
         $schema = $this->schema('table');
@@ -272,10 +285,11 @@ class DatetimeColumnTest extends CommonClass
 
         $this->assertSameAsInDB($schema);
 
-        $this->assertSame('time', $schema->column('time_data')->getInternalType());
-        $this->assertSame(6, $schema->column('time_data')->getSize());
+        \Testo\Assert::same($schema->column('time_data')->getInternalType(), 'time');
+        \Testo\Assert::same($schema->column('time_data')->getSize(), 6);
     }
 
+    #[\Testo\Test]
     public function testTimeTzWithSize(): void
     {
         $schema = $this->schema('table');
@@ -286,10 +300,11 @@ class DatetimeColumnTest extends CommonClass
 
         $this->assertSameAsInDB($schema);
 
-        $this->assertSame('time', $schema->column('time_data')->getInternalType());
-        $this->assertSame(6, $schema->column('time_data')->getSize());
+        \Testo\Assert::same($schema->column('time_data')->getInternalType(), 'time');
+        \Testo\Assert::same($schema->column('time_data')->getSize(), 6);
     }
 
+    #[\Testo\Test]
     public function testTimestampWithSize(): void
     {
         $schema = $this->schema('table');
@@ -300,10 +315,11 @@ class DatetimeColumnTest extends CommonClass
 
         $this->assertSameAsInDB($schema);
 
-        $this->assertSame('timestamp', $schema->column('timestamp_data')->getInternalType());
-        $this->assertSame(6, $schema->column('timestamp_data')->getSize());
+        \Testo\Assert::same($schema->column('timestamp_data')->getInternalType(), 'timestamp');
+        \Testo\Assert::same($schema->column('timestamp_data')->getSize(), 6);
     }
 
+    #[\Testo\Test]
     public function testTimestampTzWithSize(): void
     {
         $schema = $this->schema('table');
@@ -314,7 +330,7 @@ class DatetimeColumnTest extends CommonClass
 
         $this->assertSameAsInDB($schema);
 
-        $this->assertSame('timestamp', $schema->column('timestamp_data')->getInternalType());
-        $this->assertSame(6, $schema->column('timestamp_data')->getSize());
+        \Testo\Assert::same($schema->column('timestamp_data')->getInternalType(), 'timestamp');
+        \Testo\Assert::same($schema->column('timestamp_data')->getSize(), 6);
     }
 }

@@ -8,92 +8,94 @@ use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Tests\Functional\Driver\Postgres\Helpers;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @group driver-postgres
- */
-class HasTableWithSchemaTest extends TestCase
+#[\Testo\Filter\Group('driver-postgres')]
+class HasTableWithSchemaTest
 {
     use Helpers;
 
+    #[\Testo\Test]
     public function testGetsTableNamesWithoutSchema(): void
     {
         $driver = $this->getDriver();
         $tables = $this->createTables($driver);
 
-        $this->assertTrue($driver->getSchemaHandler()->hasTable('public.' . $tables['test_pb']));
-        $this->assertTrue($driver->getSchemaHandler()->hasTable($tables['test_pb']));
+        \Testo\Assert::true($driver->getSchemaHandler()->hasTable('public.' . $tables['test_pb']));
+        \Testo\Assert::true($driver->getSchemaHandler()->hasTable($tables['test_pb']));
 
-        $this->assertTrue($driver->getSchemaHandler()->hasTable('schema1.' . $tables['test_sh1']));
-        $this->assertFalse($driver->getSchemaHandler()->hasTable($tables['test_sh1']));
+        \Testo\Assert::true($driver->getSchemaHandler()->hasTable('schema1.' . $tables['test_sh1']));
+        \Testo\Assert::false($driver->getSchemaHandler()->hasTable($tables['test_sh1']));
 
-        $this->assertTrue($driver->getSchemaHandler()->hasTable('schema2.' . $tables['test_sh2']));
-        $this->assertFalse($driver->getSchemaHandler()->hasTable($tables['test_sh2']));
+        \Testo\Assert::true($driver->getSchemaHandler()->hasTable('schema2.' . $tables['test_sh2']));
+        \Testo\Assert::false($driver->getSchemaHandler()->hasTable($tables['test_sh2']));
     }
 
+    #[\Testo\Test]
     public function testGetsTableNamesWithoutSchemaWithDefinedDefaultSchema(): void
     {
         $driver = $this->getDriver(null, 'schema1');
         $tables = $this->createTables($driver);
 
-        $this->assertTrue($driver->getSchemaHandler()->hasTable('public.' . $tables['test_pb']));
-        $this->assertFalse($driver->getSchemaHandler()->hasTable($tables['test_pb']));
+        \Testo\Assert::true($driver->getSchemaHandler()->hasTable('public.' . $tables['test_pb']));
+        \Testo\Assert::false($driver->getSchemaHandler()->hasTable($tables['test_pb']));
 
-        $this->assertTrue($driver->getSchemaHandler()->hasTable('schema1.' . $tables['test_sh1']));
-        $this->assertTrue($driver->getSchemaHandler()->hasTable($tables['test_sh1']));
+        \Testo\Assert::true($driver->getSchemaHandler()->hasTable('schema1.' . $tables['test_sh1']));
+        \Testo\Assert::true($driver->getSchemaHandler()->hasTable($tables['test_sh1']));
 
-        $this->assertTrue($driver->getSchemaHandler()->hasTable('schema2.' . $tables['test_sh2']));
-        $this->assertFalse($driver->getSchemaHandler()->hasTable($tables['test_sh2']));
+        \Testo\Assert::true($driver->getSchemaHandler()->hasTable('schema2.' . $tables['test_sh2']));
+        \Testo\Assert::false($driver->getSchemaHandler()->hasTable($tables['test_sh2']));
     }
 
+    #[\Testo\Test]
     public function testGetsTableNamesWithSpecifiedSchemaAsString(): void
     {
         $driver = $this->getDriver('schema1');
         $tables = $this->createTables($driver);
 
-        $this->assertTrue($driver->getSchemaHandler()->hasTable('public.' . $tables['test_pb']));
-        $this->assertFalse($driver->getSchemaHandler()->hasTable($tables['test_pb']));
+        \Testo\Assert::true($driver->getSchemaHandler()->hasTable('public.' . $tables['test_pb']));
+        \Testo\Assert::false($driver->getSchemaHandler()->hasTable($tables['test_pb']));
 
-        $this->assertTrue($driver->getSchemaHandler()->hasTable('schema1.' . $tables['test_sh1']));
-        $this->assertTrue($driver->getSchemaHandler()->hasTable($tables['test_sh1']));
+        \Testo\Assert::true($driver->getSchemaHandler()->hasTable('schema1.' . $tables['test_sh1']));
+        \Testo\Assert::true($driver->getSchemaHandler()->hasTable($tables['test_sh1']));
 
-        $this->assertTrue($driver->getSchemaHandler()->hasTable('schema2.' . $tables['test_sh2']));
-        $this->assertFalse($driver->getSchemaHandler()->hasTable($tables['test_sh2']));
+        \Testo\Assert::true($driver->getSchemaHandler()->hasTable('schema2.' . $tables['test_sh2']));
+        \Testo\Assert::false($driver->getSchemaHandler()->hasTable($tables['test_sh2']));
     }
 
+    #[\Testo\Test]
     public function testGetsTableNamesWithSpecifiedSchemaAsArray(): void
     {
         $driver = $this->getDriver(['schema1', 'schema2']);
         $tables = $this->createTables($driver);
 
-        $this->assertTrue($driver->getSchemaHandler()->hasTable('public.' . $tables['test_pb']));
-        $this->assertFalse($driver->getSchemaHandler()->hasTable($tables['test_pb']));
+        \Testo\Assert::true($driver->getSchemaHandler()->hasTable('public.' . $tables['test_pb']));
+        \Testo\Assert::false($driver->getSchemaHandler()->hasTable($tables['test_pb']));
 
-        $this->assertTrue($driver->getSchemaHandler()->hasTable('schema1.' . $tables['test_sh1']));
-        $this->assertTrue($driver->getSchemaHandler()->hasTable($tables['test_sh1']));
+        \Testo\Assert::true($driver->getSchemaHandler()->hasTable('schema1.' . $tables['test_sh1']));
+        \Testo\Assert::true($driver->getSchemaHandler()->hasTable($tables['test_sh1']));
 
-        $this->assertTrue($driver->getSchemaHandler()->hasTable('schema2.' . $tables['test_sh2']));
-        $this->assertFalse($driver->getSchemaHandler()->hasTable($tables['test_sh2']));
+        \Testo\Assert::true($driver->getSchemaHandler()->hasTable('schema2.' . $tables['test_sh2']));
+        \Testo\Assert::false($driver->getSchemaHandler()->hasTable($tables['test_sh2']));
     }
 
+    #[\Testo\Test]
     public function testGetsTableNamesWithSpecifiedSchemaAsArrayWithDefinedDefaultSchema(): void
     {
         $driver = $this->getDriver(['schema1', 'schema2'], 'schema2');
         $tables = $this->createTables($driver);
 
-        $this->assertTrue($driver->getSchemaHandler()->hasTable('public.' . $tables['test_pb']));
-        $this->assertFalse($driver->getSchemaHandler()->hasTable($tables['test_pb']));
+        \Testo\Assert::true($driver->getSchemaHandler()->hasTable('public.' . $tables['test_pb']));
+        \Testo\Assert::false($driver->getSchemaHandler()->hasTable($tables['test_pb']));
 
-        $this->assertTrue($driver->getSchemaHandler()->hasTable('schema1.' . $tables['test_sh1']));
-        $this->assertFalse($driver->getSchemaHandler()->hasTable($tables['test_sh1']));
+        \Testo\Assert::true($driver->getSchemaHandler()->hasTable('schema1.' . $tables['test_sh1']));
+        \Testo\Assert::false($driver->getSchemaHandler()->hasTable($tables['test_sh1']));
 
-        $this->assertTrue($driver->getSchemaHandler()->hasTable('schema2.' . $tables['test_sh2']));
-        $this->assertTrue($driver->getSchemaHandler()->hasTable($tables['test_sh2']));
+        \Testo\Assert::true($driver->getSchemaHandler()->hasTable('schema2.' . $tables['test_sh2']));
+        \Testo\Assert::true($driver->getSchemaHandler()->hasTable($tables['test_sh2']));
     }
 
+    #[\Testo\Lifecycle\AfterTest]
     protected function tearDown(): void
     {
-        parent::tearDown();
-
         $this->dropUserSchema();
     }
 

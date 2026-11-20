@@ -7,19 +7,17 @@ namespace Cycle\Database\Tests\Functional\Driver\Postgres\Schema;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Schema\TableTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-postgres
- */
+#[\Testo\Filter\Group('driver', 'driver-postgres')]
 class TableTest extends CommonClass
 {
     public const DRIVER = 'postgres';
 
     //Applause, PG
+    #[\Testo\Test]
     public function testGetColumns(): void
     {
         $table = $this->database->table('table');
-        $this->assertSame(0, $table->count());
+        \Testo\Assert::same($table->count(), 0);
 
         $expected = [
             'id' => 'primary',
@@ -35,13 +33,14 @@ class TableTest extends CommonClass
 
         \arsort($columns);
 
-        $this->assertSame($expected, $columns);
+        \Testo\Assert::same($columns, $expected);
     }
 
+    #[\Testo\Test]
     public function testSelectDistinct(): void
     {
         $table = $this->database->table('table');
-        $this->assertSame(0, $table->count());
+        \Testo\Assert::same($table->count(), 0);
 
         $table->insertMultiple(
             ['name', 'value'],
@@ -54,13 +53,14 @@ class TableTest extends CommonClass
         );
 
         $data = $table->select('name', 'value')->distinct('name')->fetchAll();
-        $this->assertCount(4, $data);
+        \Testo\Assert::count($data, 4);
     }
 
+    #[\Testo\Test]
     public function testSelectDistinctOn(): void
     {
         $table = $this->database->table('table');
-        $this->assertSame(0, $table->count());
+        \Testo\Assert::same($table->count(), 0);
 
         $table->insertMultiple(
             ['name', 'value'],
@@ -73,9 +73,10 @@ class TableTest extends CommonClass
         );
 
         $data = $table->select('name', 'value')->distinctOn('name')->fetchAll();
-        $this->assertCount(3, $data);
+        \Testo\Assert::count($data, 3);
     }
 
+    #[\Testo\Test]
     public function testDependencies(): void
     {
         $schema = $this->database->table('table2')->getSchema();
@@ -86,13 +87,13 @@ class TableTest extends CommonClass
 
         $table = $this->database->table('table');
 
-        $this->assertCount(0, $table->getDependencies());
+        \Testo\Assert::count($table->getDependencies(), 0);
 
         $schema = $table->getSchema();
         $schema->integer('external_id');
         $schema->foreignKey(['external_id'])->references('table2', ['id']);
         $schema->save();
 
-        $this->assertSame(['public.table2'], $table->getDependencies());
+        \Testo\Assert::same($table->getDependencies(), ['public.table2']);
     }
 }

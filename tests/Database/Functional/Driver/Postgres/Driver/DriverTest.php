@@ -7,14 +7,12 @@ namespace Cycle\Database\Tests\Functional\Driver\Postgres\Driver;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Driver\DriverTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-postgres
- */
+#[\Testo\Filter\Group('driver', 'driver-postgres')]
 class DriverTest extends CommonClass
 {
     public const DRIVER = 'postgres';
 
+    #[\Testo\Test]
     public function testSchemaPathAfterReconnect(): void
     {
         $db = $this->db(driverConfig: ['schema' => ['custom']]);
@@ -22,11 +20,11 @@ class DriverTest extends CommonClass
         $ref = new \ReflectionProperty($db->getDriver(), 'searchPath');
         $ref->setAccessible(true);
 
-        $this->assertSame(['custom'], $ref->getValue($db->getDriver()));
+        \Testo\Assert::same($ref->getValue($db->getDriver()), ['custom']);
 
         $db->getDriver()->disconnect();
         $db->getDriver()->connect();
 
-        $this->assertSame(['custom'], $ref->getValue($db->getDriver()));
+        \Testo\Assert::same($ref->getValue($db->getDriver()), ['custom']);
     }
 }

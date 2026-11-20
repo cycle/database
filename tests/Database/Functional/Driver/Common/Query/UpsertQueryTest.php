@@ -17,15 +17,17 @@ use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
  */
 abstract class UpsertQueryTest extends BaseTest
 {
+    #[\Testo\Test]
     public function testOnConflictTurnsInsertIntoUpsertType(): void
     {
         $q = $this->database->insert('table')->values(['email' => 'a@b.c']);
-        $this->assertSame(CompilerInterface::INSERT_QUERY, $q->getType());
+        \Testo\Assert::same($q->getType(), CompilerInterface::INSERT_QUERY);
 
         $q->onConflict('email');
-        $this->assertSame(CompilerInterface::UPSERT_QUERY, $q->getType());
+        \Testo\Assert::same($q->getType(), CompilerInterface::UPSERT_QUERY);
     }
 
+    #[\Testo\Test]
     public function testShorthandIsEquivalentToTargetDoUpdate(): void
     {
         $a = $this->database->insert('t')->values(['email' => 'x', 'name' => 'y'])
@@ -34,36 +36,40 @@ abstract class UpsertQueryTest extends BaseTest
         $b = $this->database->insert('t')->values(['email' => 'x', 'name' => 'y'])
             ->onConflict(OnConflict::target('email')->doUpdate());
 
-        $this->assertSame($a->sqlStatement(), $b->sqlStatement());
+        \Testo\Assert::same($b->sqlStatement(), $a->sqlStatement());
     }
 
+    #[\Testo\Test]
     public function testShorthandAcceptsArrayOfColumns(): void
     {
         $q = $this->database->insert('t')
             ->values(['tenant_id' => 1, 'email' => 'x', 'name' => 'y'])
             ->onConflict(['tenant_id', 'email']);
 
-        $this->assertSame(CompilerInterface::UPSERT_QUERY, $q->getType());
-        $this->assertInstanceOf(InsertQuery::class, $q);
+        \Testo\Assert::same($q->getType(), CompilerInterface::UPSERT_QUERY);
+        \Testo\Assert::instanceOf($q, InsertQuery::class);
     }
 
+    #[\Testo\Test]
     public function testOnConflictReturnsInsertQuery(): void
     {
         $q = $this->database->insert('t')->values(['email' => 'x']);
-        $this->assertSame($q, $q->onConflict('email'));
+        \Testo\Assert::same($q->onConflict('email'), $q);
     }
 
+    #[\Testo\Test]
     public function testEmptyValuesRejected(): void
     {
         $q = $this->database->insert('t')
             ->onConflict(OnConflict::target('email')->doUpdate());
 
-        $this->expectException(CompilerException::class);
+        \Testo\Expect::exception(CompilerException::class);
         (string) $q;
     }
 
     // --- Runtime (execution against a live database) ---
 
+    #[\Testo\Test]
     public function testRuntimeDoUpdateUpdatesExistingRow(): void
     {
         $this->makeUpsertUsersTable();
@@ -75,10 +81,11 @@ abstract class UpsertQueryTest extends BaseTest
             ->run();
 
         $rows = $this->database->select()->from('upsert_users')->fetchAll();
-        $this->assertCount(1, $rows, 'Conflicting row must be updated, not duplicated.');
-        $this->assertSame('New', $rows[0]['name']);
+        \Testo\Assert::count($rows, 1, 'Conflicting row must be updated, not duplicated.');
+        \Testo\Assert::same($rows[0]['name'], 'New');
     }
 
+    #[\Testo\Test]
     public function testRuntimeDoUpdateSelectiveColumns(): void
     {
         $this->makeUpsertUsersTable();
@@ -91,11 +98,12 @@ abstract class UpsertQueryTest extends BaseTest
             ->run();
 
         $rows = $this->database->select()->from('upsert_users')->fetchAll();
-        $this->assertCount(1, $rows);
-        $this->assertSame('New', $rows[0]['name']);
-        $this->assertSame('keep', $rows[0]['tag'], 'Columns outside the update list must be preserved.');
+        \Testo\Assert::count($rows, 1);
+        \Testo\Assert::same($rows[0]['name'], 'New');
+        \Testo\Assert::same($rows[0]['tag'], 'keep', 'Columns outside the update list must be preserved.');
     }
 
+    #[\Testo\Test]
     public function testRuntimeDoNothingPreservesExistingRow(): void
     {
         $this->makeUpsertUsersTable();
@@ -107,10 +115,11 @@ abstract class UpsertQueryTest extends BaseTest
             ->run();
 
         $rows = $this->database->select()->from('upsert_users')->fetchAll();
-        $this->assertCount(1, $rows);
-        $this->assertSame('Old', $rows[0]['name'], 'DO NOTHING must keep the original row.');
+        \Testo\Assert::count($rows, 1);
+        \Testo\Assert::same($rows[0]['name'], 'Old', 'DO NOTHING must keep the original row.');
     }
 
+    #[\Testo\Test]
     public function testRuntimeInsertsWhenNoConflict(): void
     {
         $this->makeUpsertUsersTable();
@@ -121,7 +130,7 @@ abstract class UpsertQueryTest extends BaseTest
             ->onConflict('email')
             ->run();
 
-        $this->assertCount(2, $this->database->select()->from('upsert_users')->fetchAll());
+        \Testo\Assert::count($this->database->select()->from('upsert_users')->fetchAll(), 2);
     }
 
     private function makeUpsertUsersTable(): void

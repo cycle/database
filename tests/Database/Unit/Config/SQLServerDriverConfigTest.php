@@ -9,8 +9,9 @@ use Cycle\Database\Config\SQLServerDriverConfig;
 use Cycle\Database\Driver\SQLServer\SQLServerDriver;
 use PHPUnit\Framework\TestCase;
 
-final class SQLServerDriverConfigTest extends TestCase
+final class SQLServerDriverConfigTest
 {
+    #[\Testo\Test]
     public function testSetState(): void
     {
         $config = new SQLServerDriverConfig(
@@ -28,13 +29,13 @@ final class SQLServerDriverConfigTest extends TestCase
         /** @var SQLServerDriverConfig $recoveredConfig */
         eval('$recoveredConfig = ' . $exported . ';');
 
-        $this->assertInstanceOf(DsnConnectionConfig::class, $recoveredConfig->connection);
-        $this->assertSame("sqlsrv:$dsn", $recoveredConfig->connection->getDsn());
-        $this->assertSame($driver, $recoveredConfig->driver);
-        $this->assertSame($reconnect, $recoveredConfig->reconnect);
-        $this->assertSame($timezone, $recoveredConfig->timezone);
-        $this->assertSame($queryCache, $recoveredConfig->queryCache);
-        $this->assertSame($readonlySchema, $recoveredConfig->readonlySchema);
-        $this->assertSame($readonly, $recoveredConfig->readonly);
+        \Testo\Assert::instanceOf($recoveredConfig->connection, DsnConnectionConfig::class);
+        \Testo\Assert::same($recoveredConfig->connection->getDsn(), "sqlsrv:$dsn");
+        \Testo\Assert::same($recoveredConfig->driver, $driver);
+        \Testo\Assert::same($recoveredConfig->reconnect, $reconnect);
+        \Testo\Assert::same($recoveredConfig->timezone, $timezone);
+        \Testo\Assert::same($recoveredConfig->queryCache, $queryCache);
+        \Testo\Assert::same($recoveredConfig->readonlySchema, $readonlySchema);
+        \Testo\Assert::same($recoveredConfig->readonly, $readonly);
     }
 }

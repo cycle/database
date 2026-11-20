@@ -7,14 +7,12 @@ namespace Cycle\Database\Tests\Functional\Driver\MySQL\Schema;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Schema\IndexesTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-mysql
- */
+#[\Testo\Filter\Group('driver', 'driver-mysql')]
 class IndexesTest extends CommonClass
 {
     public const DRIVER = 'mysql';
 
+    #[\Testo\Test]
     public function testCreateOrderedIndex(): void
     {
         if (!$this->isOrderedIndexSupported()) {
@@ -24,6 +22,7 @@ class IndexesTest extends CommonClass
         parent::testCreateOrderedIndex();
     }
 
+    #[\Testo\Test]
     public function testDropOrderedIndex(): void
     {
         if (!$this->isOrderedIndexSupported()) {

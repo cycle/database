@@ -8,10 +8,7 @@ namespace Cycle\Database\Tests\Functional\Driver\SQLite\Connection;
 use Cycle\Database\Tests\Functional\Driver\Common\Connection\TransactionDisconnectingTest as CommonClass;
 use Cycle\Database\Tests\Stub\Driver\SQLiteWrapDriver;
 
-/**
- * @group driver
- * @group driver-sqlite
- */
+#[\Testo\Filter\Group('driver', 'driver-sqlite')]
 class TransactionDisconnectingTest extends CommonClass
 {
     public const DRIVER = 'sqlite-mock';
@@ -19,6 +16,7 @@ class TransactionDisconnectingTest extends CommonClass
     /**
      * There is different behavior because on disconnect the DB file will be deleted.
      */
+    #[\Testo\Test]
     public function testReconnectionOnBeginTransaction(): void
     {
         $driver = $this->database->getDriver();
@@ -28,10 +26,10 @@ class TransactionDisconnectingTest extends CommonClass
         $driver->exceptionOnTransactionBegin = 1;
         $driver->beginTransaction();
         // Transaction level is 1
-        $this->assertSame(1, $driver->disconnectCalls);
-        $this->assertSame(1, $driver->getTransactionLevel());
+        \Testo\Assert::same($driver->disconnectCalls, 1);
+        \Testo\Assert::same($driver->getTransactionLevel(), 1);
 
         $this->database->commit();
-        $this->assertSame(0, $driver->getTransactionLevel());
+        \Testo\Assert::same($driver->getTransactionLevel(), 0);
     }
 }

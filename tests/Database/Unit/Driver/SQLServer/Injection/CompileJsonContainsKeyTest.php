@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * The last path segment is written into the SQL text, so it must stay inside a string literal.
  */
-final class CompileJsonContainsKeyTest extends TestCase
+final class CompileJsonContainsKeyTest
 {
     public static function provideStatements(): iterable
     {
@@ -53,12 +53,11 @@ final class CompileJsonContainsKeyTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideStatements
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('provideStatements')]
     public function testKeyStaysInsideStringLiteral(string $statement, string $expected): void
     {
-        $this->assertSame($expected, (new CompileJsonContainsKey($statement))->getTokens()['expression']);
-        $this->assertSame('NOT ' . $expected, (new CompileJsonDoesntContainKey($statement))->getTokens()['expression']);
+        \Testo\Assert::same((new CompileJsonContainsKey($statement))->getTokens()['expression'], $expected);
+        \Testo\Assert::same((new CompileJsonDoesntContainKey($statement))->getTokens()['expression'], 'NOT ' . $expected);
     }
 }

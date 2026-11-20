@@ -11,70 +11,59 @@ use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Query\QueryParameters;
 use PHPUnit\Framework\TestCase;
 
-class FragmentTest extends TestCase
+class FragmentTest
 {
+    #[\Testo\Test]
     public function testFragment(): void
     {
         $fragment = new Fragment('some sql');
-        $this->assertInstanceOf(FragmentInterface::class, $fragment);
+        \Testo\Assert::instanceOf($fragment, FragmentInterface::class);
 
         $q = new SQLiteCompiler();
 
-        $this->assertSame(
-            'some sql',
-            $q->compile(new QueryParameters(), '', $fragment),
-        );
+        \Testo\Assert::same($q->compile(new QueryParameters(), '', $fragment), 'some sql');
     }
 
+    #[\Testo\Test]
     public function testExpression(): void
     {
         $fragment = new Expression('some sql');
-        $this->assertInstanceOf(FragmentInterface::class, $fragment);
+        \Testo\Assert::instanceOf($fragment, FragmentInterface::class);
 
         $q = new SQLiteCompiler();
 
-        $this->assertSame(
-            '"some" "sql"',
-            $q->compile(new QueryParameters(), '', $fragment),
-        );
+        \Testo\Assert::same($q->compile(new QueryParameters(), '', $fragment), '"some" "sql"');
     }
 
+    #[\Testo\Test]
     public function testExpressionWithParameters(): void
     {
         $fragment = new Expression('name = ?', 123);
 
         $q = new SQLiteCompiler();
 
-        $this->assertSame(
-            '"name" = ?',
-            $q->compile($p = new QueryParameters(), '', $fragment),
-        );
+        \Testo\Assert::same($q->compile($p = new QueryParameters(), '', $fragment), '"name" = ?');
 
-        $this->assertSame(123, $p->getParameters()[0]->getValue());
+        \Testo\Assert::same($p->getParameters()[0]->getValue(), 123);
     }
 
+    #[\Testo\Test]
     public function testSetState(): void
     {
         $expression = new Expression('some sql');
 
         $exp = eval('return ' . \var_export($expression, true) . ';');
-        $this->assertSame(
-            [
-                'expression' => 'some sql',
-                'parameters' => [],
-            ],
-            $exp->getTokens(),
-        );
+        \Testo\Assert::same($exp->getTokens(), [
+            'expression' => 'some sql',
+            'parameters' => [],
+        ]);
 
         $fragment = new Fragment('some sql');
 
         $f = eval('return ' . \var_export($fragment, true) . ';');
-        $this->assertSame(
-            [
-                'fragment' => 'some sql',
-                'parameters' => [],
-            ],
-            $f->getTokens(),
-        );
+        \Testo\Assert::same($f->getTokens(), [
+            'fragment' => 'some sql',
+            'parameters' => [],
+        ]);
     }
 }

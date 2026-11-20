@@ -7,27 +7,29 @@ namespace Cycle\Database\Tests\Unit\Config;
 use Cycle\Database\Config\Postgres\TcpConnectionConfig;
 use PHPUnit\Framework\TestCase;
 
-final class ConnectionConfigTest extends TestCase
+final class ConnectionConfigTest
 {
+    #[\Testo\Test]
     public function testSetStateWithOnlyRequiredParameters(): void
     {
         $config = TcpConnectionConfig::__set_state(['database' => 'foo']);
 
-        $this->assertSame('foo', $config->database);
-        $this->assertSame('localhost', $config->host);
-        $this->assertSame(5432, $config->port);
-        $this->assertSame([
+        \Testo\Assert::same($config->database, 'foo');
+        \Testo\Assert::same($config->host, 'localhost');
+        \Testo\Assert::same($config->port, 5432);
+        \Testo\Assert::same($config->options, [
             \PDO::ATTR_CASE => \PDO::CASE_NATURAL,
             \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
             \PDO::ATTR_EMULATE_PREPARES => false,
-        ], $config->options);
-        $this->assertNull($config->user);
-        $this->assertNull($config->password);
+        ]);
+        \Testo\Assert::null($config->user);
+        \Testo\Assert::null($config->password);
     }
 
+    #[\Testo\Test]
     public function testSetStateException(): void
     {
-        $this->expectException(\ReflectionException::class);
+        \Testo\Expect::exception(\ReflectionException::class);
         TcpConnectionConfig::__set_state([]);
     }
 }

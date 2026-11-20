@@ -8,14 +8,12 @@ namespace Cycle\Database\Tests\Functional\Driver\Postgres\Query;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Tests\Functional\Driver\Common\Query\SelectWithJoinQueryTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-postgres
- */
+#[\Testo\Filter\Group('driver', 'driver-postgres')]
 class SelectWithJoinQueryTest extends CommonClass
 {
     public const DRIVER = 'postgres';
 
+    #[\Testo\Test]
     public function testCacheLeftJoinLateral(): void
     {
         $compiler = $this->database->select()->getDriver()->getQueryCompiler();
@@ -39,9 +37,6 @@ class SelectWithJoinQueryTest extends CommonClass
         $select->sqlStatement();
 
         // Verify that the join name has a correct format in the cache
-        $this->assertArrayHasKey(
-            's__temperature as t*,jhLEFTLATERALp_s__humidity*,wANDh.date<=?_1_1onANDtruewANDt.date=?_1_1',
-            $ref->getValue($compiler),
-        );
+        \Testo\Assert::array($ref->getValue($compiler))->hasKeys('s__temperature as t*,jhLEFTLATERALp_s__humidity*,wANDh.date<=?_1_1onANDtruewANDt.date=?_1_1');
     }
 }

@@ -26,6 +26,7 @@ abstract class IntrospectionQueryCountTest extends BaseTest
 
     private QueryCounter $counter;
 
+    #[\Testo\Test]
     public function testColumnCountDoesNotAffectQueryCount(): void
     {
         $this->makeParents(1);
@@ -36,19 +37,16 @@ abstract class IntrospectionQueryCountTest extends BaseTest
         $narrow = $this->countIntrospectionQueries('narrow');
         $wide = $this->countIntrospectionQueries('wide');
 
-        $this->assertSame(
-            $narrow[0],
+        \Testo\Assert::same($wide[0], $narrow[0], \sprintf(
+            "Introspection of a 40 column table took %d queries instead of %d.\n\nNarrow:\n%s\n\nWide:\n%s",
             $wide[0],
-            \sprintf(
-                "Introspection of a 40 column table took %d queries instead of %d.\n\nNarrow:\n%s\n\nWide:\n%s",
-                $wide[0],
-                $narrow[0],
-                $narrow[1],
-                $wide[1],
-            ),
-        );
+            $narrow[0],
+            $narrow[1],
+            $wide[1],
+        ));
     }
 
+    #[\Testo\Test]
     public function testForeignKeyCountDoesNotAffectQueryCount(): void
     {
         $this->makeParents(5);
@@ -59,20 +57,17 @@ abstract class IntrospectionQueryCountTest extends BaseTest
         $single = $this->countIntrospectionQueries('single');
         $many = $this->countIntrospectionQueries('many');
 
-        $this->assertSame(
-            $single[0],
+        \Testo\Assert::same($many[0], $single[0], \sprintf(
+            "Introspection of a table with 5 foreign keys took %d queries instead of %d.\n\n"
+            . "Single:\n%s\n\nMany:\n%s",
             $many[0],
-            \sprintf(
-                "Introspection of a table with 5 foreign keys took %d queries instead of %d.\n\n"
-                . "Single:\n%s\n\nMany:\n%s",
-                $many[0],
-                $single[0],
-                $single[1],
-                $many[1],
-            ),
-        );
+            $single[0],
+            $single[1],
+            $many[1],
+        ));
     }
 
+    #[\Testo\Test]
     public function testIndexCountDoesNotAffectQueryCount(): void
     {
         $this->makeTable('single', columns: 5, indexes: 1, foreignKeys: 0);
@@ -81,23 +76,20 @@ abstract class IntrospectionQueryCountTest extends BaseTest
         $single = $this->countIntrospectionQueries('single');
         $many = $this->countIntrospectionQueries('many');
 
-        $this->assertSame(
-            $single[0],
+        \Testo\Assert::same($many[0], $single[0], \sprintf(
+            "Introspection of a table with 5 indexes took %d queries instead of %d.\n\n"
+            . "Single:\n%s\n\nMany:\n%s",
             $many[0],
-            \sprintf(
-                "Introspection of a table with 5 indexes took %d queries instead of %d.\n\n"
-                . "Single:\n%s\n\nMany:\n%s",
-                $many[0],
-                $single[0],
-                $single[1],
-                $many[1],
-            ),
-        );
+            $single[0],
+            $single[1],
+            $many[1],
+        ));
     }
 
     /**
      * Wide table introspection must not degrade into dozens of round trips even in absolute numbers.
      */
+    #[\Testo\Test]
     public function testWideTableIntrospectionIsCheap(): void
     {
         $this->makeParents(static::WIDE_FOREIGN_KEYS);
@@ -110,13 +102,10 @@ abstract class IntrospectionQueryCountTest extends BaseTest
 
         [$count, $queries] = $this->countIntrospectionQueries('wide');
 
-        $this->assertLessThanOrEqual(
-            $this->getIntrospectionQueryLimit(),
-            $count,
-            "Too many introspection queries:\n{$queries}",
-        );
+        \Testo\Assert::numeric($count)->lessThanOrEqual($this->getIntrospectionQueryLimit(), "Too many introspection queries:\n{$queries}");
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         parent::setUp();
@@ -124,6 +113,7 @@ abstract class IntrospectionQueryCountTest extends BaseTest
         $this->counter = new QueryCounter();
     }
 
+    #[\Testo\Lifecycle\AfterTest]
     public function tearDown(): void
     {
         $this->database->getDriver()->setLogger(static::$logger);
@@ -151,7 +141,7 @@ abstract class IntrospectionQueryCountTest extends BaseTest
 
         try {
             $schema = $this->schema($table);
-            $this->assertTrue($schema->exists());
+            \Testo\Assert::true($schema->exists());
         } finally {
             $driver->setLogger(static::$logger);
         }

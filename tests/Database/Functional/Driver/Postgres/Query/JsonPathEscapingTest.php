@@ -7,10 +7,7 @@ namespace Cycle\Database\Tests\Functional\Driver\Postgres\Query;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Query\JsonPathEscapingTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-postgres
- */
+#[\Testo\Filter\Group('driver', 'driver-postgres')]
 class JsonPathEscapingTest extends CommonClass
 {
     public const DRIVER = 'postgres';

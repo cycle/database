@@ -12,28 +12,28 @@ use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
 abstract class DriverTest extends BaseTest
 {
+    #[\Testo\Test]
     public function testTransactionLevel(): void
     {
-        $this->assertSame(0, $this->database->getDriver()->getTransactionLevel());
+        \Testo\Assert::same($this->database->getDriver()->getTransactionLevel(), 0);
 
         $this->database->begin();
-        $this->assertSame(1, $this->database->getDriver()->getTransactionLevel());
+        \Testo\Assert::same($this->database->getDriver()->getTransactionLevel(), 1);
         $this->database->begin();
-        $this->assertSame(2, $this->database->getDriver()->getTransactionLevel());
+        \Testo\Assert::same($this->database->getDriver()->getTransactionLevel(), 2);
         $this->database->begin();
-        $this->assertSame(3, $this->database->getDriver()->getTransactionLevel());
+        \Testo\Assert::same($this->database->getDriver()->getTransactionLevel(), 3);
 
         $this->database->rollback();
-        $this->assertSame(2, $this->database->getDriver()->getTransactionLevel());
+        \Testo\Assert::same($this->database->getDriver()->getTransactionLevel(), 2);
         $this->database->rollback();
-        $this->assertSame(1, $this->database->getDriver()->getTransactionLevel());
+        \Testo\Assert::same($this->database->getDriver()->getTransactionLevel(), 1);
         $this->database->rollback();
-        $this->assertSame(0, $this->database->getDriver()->getTransactionLevel());
+        \Testo\Assert::same($this->database->getDriver()->getTransactionLevel(), 0);
     }
 
-    /**
-     * @dataProvider datetimeDataProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('datetimeDataProvider')]
     public function testFormatDatetime(\DateTimeInterface $value): void
     {
         $original = clone $value;
@@ -47,13 +47,13 @@ abstract class DriverTest extends BaseTest
         $objectFromFormatted = new \DateTimeImmutable($formatted, $driver->getTimezone());
 
         // changed time in the new tz
-        $this->assertSame('2000-01-22 16:23:45', $formatted);
+        \Testo\Assert::same($formatted, '2000-01-22 16:23:45');
 
         // timestamp not changed
-        $this->assertSame($value->getTimestamp(), $objectFromFormatted->getTimestamp());
+        \Testo\Assert::same($objectFromFormatted->getTimestamp(), $value->getTimestamp());
 
         // original timezone object not mutated
-        $this->assertEquals($original->getTimezone(), $value->getTimezone());
+        \Testo\Assert::equals($value->getTimezone(), $original->getTimezone());
     }
 
     public function datetimeDataProvider(): \Traversable
@@ -64,6 +64,7 @@ abstract class DriverTest extends BaseTest
         yield [new class('2000-01-23T01:23:45.678+09:00') extends \DateTime {}];
     }
 
+    #[\Testo\Test]
     public function testClearCache(): void
     {
         $driver = $this->mockDriver();
@@ -76,14 +77,14 @@ abstract class DriverTest extends BaseTest
         self::assertEmpty($driver->testGetCache());
     }
 
+    #[\Testo\Test]
     public function testCursorThrowsByDefault(): void
     {
         if (\in_array(static::DRIVER, ['postgres', 'sqlite', 'sqlserver'], true)) {
-            $this->markTestSkipped(\sprintf('Driver `%s` implements CursorInterface.', static::DRIVER));
+            throw new \Testo\Core\Exception\SkipTest(\sprintf('Driver `%s` implements CursorInterface.', static::DRIVER));
         }
 
-        $this->expectException(DriverException::class);
-        $this->expectExceptionMessageMatches('/cursors are not supported/i');
+        \Testo\Expect::exception(DriverException::class)->withMessageMatchingRegex('/cursors are not supported/i');
 
         // Database::cursor() checks CursorInterface and throws for drivers that don't implement it.
         \iterator_to_array(
@@ -91,6 +92,7 @@ abstract class DriverTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testWithoutCache(): void
     {
         $driver = $this->mockDriver();

@@ -9,8 +9,9 @@ use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\UpdateQuery;
 use PHPUnit\Framework\TestCase;
 
-class UpdateQueryTest extends TestCase
+class UpdateQueryTest
 {
+    #[\Testo\Test]
     public function testBuildQuery(): void
     {
         $delete = new UpdateQuery();
@@ -20,29 +21,23 @@ class UpdateQueryTest extends TestCase
             ->where(['name' => 'Antony'])
             ->orWhere('id', '>', 1);
 
-        $this->assertSame(
-            CompilerInterface::UPDATE_QUERY,
-            $delete->getType(),
-        );
+        \Testo\Assert::same($delete->getType(), CompilerInterface::UPDATE_QUERY);
 
-        $this->assertEquals(
-            [
-                'table' => 'table',
-                'values' => [
-                    'name' => 'John',
+        \Testo\Assert::equals($delete->getTokens(), [
+            'table' => 'table',
+            'values' => [
+                'name' => 'John',
+            ],
+            'where' => [
+                [
+                    'AND',
+                    ['name', '=', new Parameter('Antony')],
                 ],
-                'where' => [
-                    [
-                        'AND',
-                        ['name', '=', new Parameter('Antony')],
-                    ],
-                    [
-                        'OR',
-                        ['id', '>', new Parameter(1)],
-                    ],
+                [
+                    'OR',
+                    ['id', '>', new Parameter(1)],
                 ],
             ],
-            $delete->getTokens(),
-        );
+        ]);
     }
 }

@@ -21,9 +21,8 @@ abstract class ConnectionExceptionTest extends BaseConnectionTest
      */
     abstract public function reconnectableExceptionsProvider(): iterable;
 
-    /**
-     * @dataProvider reconnectableExceptionsProvider()
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('reconnectableExceptionsProvider')]
     public function testConnectionExceptionOutOfTransaction(\Exception $exception): void
     {
         $driver = $this->getDriver();
@@ -31,19 +30,18 @@ abstract class ConnectionExceptionTest extends BaseConnectionTest
 
         $result = $driver->query('SELECT 42')->fetchColumn(0);
 
-        $this->assertSame('42', (string) $result);
+        \Testo\Assert::same((string) $result, '42');
     }
 
-    /**
-     * @dataProvider reconnectableExceptionsProvider()
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('reconnectableExceptionsProvider')]
     public function testConnectionExceptionInTransaction(\Exception $exception): void
     {
         $driver = $this->getDriver();
         $driver->beginTransaction();
         $this->configureExceptionsQuery($driver, [$exception]);
 
-        $this->expectException(ConnectionException::class);
+        \Testo\Expect::exception(ConnectionException::class);
 
         try {
             $driver->query('SELECT 42')->fetchColumn(0);
@@ -52,19 +50,19 @@ abstract class ConnectionExceptionTest extends BaseConnectionTest
         }
     }
 
-    /**
-     * @dataProvider reconnectableExceptionsProvider()
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('reconnectableExceptionsProvider')]
     public function testConnectionExceptionReconnectsOnce(\Exception $exception): void
     {
         $driver = $this->getDriver();
         $this->configureExceptionsQuery($driver, [$exception, $exception]);
 
-        $this->expectException(ConnectionException::class);
+        \Testo\Expect::exception(ConnectionException::class);
 
         $driver->query('SELECT 42')->fetchColumn(0);
     }
 
+    #[\Testo\Test]
     public function testNonConnectionExceptionOutOfTransaction(): void
     {
         $driver = $this->getDriver();
@@ -72,8 +70,7 @@ abstract class ConnectionExceptionTest extends BaseConnectionTest
             new \RuntimeException('Test exception 42.'),
         ]);
 
-        $this->expectException(StatementException::class);
-        $this->expectExceptionMessage('Test exception 42.');
+        \Testo\Expect::exception(StatementException::class)->withMessageContaining('Test exception 42.');
 
         $driver->query('SELECT 42')->fetch();
     }

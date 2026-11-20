@@ -8,6 +8,7 @@ use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
 abstract class StringColumnTest extends BaseTest
 {
+    #[\Testo\Test]
     public function testStringDefaultSize(): void
     {
         $schema = $this->schema('table');
@@ -16,9 +17,10 @@ abstract class StringColumnTest extends BaseTest
         $schema->save();
         $this->assertSameAsInDB($schema);
 
-        $this->assertSame(255, $column->getSize());
+        \Testo\Assert::same($column->getSize(), 255);
     }
 
+    #[\Testo\Test]
     public function testStringDefaultSizeViaMagicMethod(): void
     {
         $schema = $this->schema('table');
@@ -27,9 +29,10 @@ abstract class StringColumnTest extends BaseTest
         $schema->save();
         $this->assertSameAsInDB($schema);
 
-        $this->assertSame(255, $column->getSize());
+        \Testo\Assert::same($column->getSize(), 255);
     }
 
+    #[\Testo\Test]
     public function testStringSize(): void
     {
         $schema = $this->schema('table');
@@ -38,6 +41,6 @@ abstract class StringColumnTest extends BaseTest
         $schema->save();
         $this->assertSameAsInDB($schema);
 
-        $this->assertSame(64, $column->getSize());
+        \Testo\Assert::same($column->getSize(), 64);
     }
 }

@@ -18,11 +18,13 @@ use Cycle\Database\Tests\Utils\QueryCounter;
  */
 abstract class BulkIntrospectionTest extends BaseTest
 {
+    #[\Testo\Test]
     public function testEmptyListReturnsEmptyResult(): void
     {
-        $this->assertSame([], $this->bulkProvider()->getSchemas([]));
+        \Testo\Assert::same($this->bulkProvider()->getSchemas([]), []);
     }
 
+    #[\Testo\Test]
     public function testResultIsKeyedByInputNameInOrder(): void
     {
         $this->makeSampleSchema();
@@ -30,9 +32,10 @@ abstract class BulkIntrospectionTest extends BaseTest
         $names = ['tags', 'authors', 'books'];
         $schemas = $this->bulkProvider()->getSchemas($names);
 
-        $this->assertSame($names, \array_keys($schemas));
+        \Testo\Assert::same(\array_keys($schemas), $names);
     }
 
+    #[\Testo\Test]
     public function testBulkSchemaMatchesPerTableSchema(): void
     {
         $this->makeSampleSchema();
@@ -42,31 +45,34 @@ abstract class BulkIntrospectionTest extends BaseTest
         $bulk = $handler->getSchemas($names);
 
         foreach ($names as $name) {
-            $this->assertTrue($bulk[$name]->exists(), "Table {$name} must be reported as existing");
+            \Testo\Assert::true($bulk[$name]->exists(), "Table {$name} must be reported as existing");
             $this->assertSameAsInDB($handler->getSchema($name), $bulk[$name]);
         }
     }
 
+    #[\Testo\Test]
     public function testNonExistentTableIsReturnedAsNewSchema(): void
     {
         $schemas = $this->bulkProvider()->getSchemas(['this_table_does_not_exist']);
 
-        $this->assertArrayHasKey('this_table_does_not_exist', $schemas);
-        $this->assertFalse($schemas['this_table_does_not_exist']->exists());
-        $this->assertSame(AbstractTable::STATUS_NEW, $schemas['this_table_does_not_exist']->getStatus());
+        \Testo\Assert::array($schemas)->hasKeys('this_table_does_not_exist');
+        \Testo\Assert::false($schemas['this_table_does_not_exist']->exists());
+        \Testo\Assert::same($schemas['this_table_does_not_exist']->getStatus(), AbstractTable::STATUS_NEW);
     }
 
+    #[\Testo\Test]
     public function testMixOfExistingAndMissingTables(): void
     {
         $this->makeSampleSchema();
 
         $schemas = $this->bulkProvider()->getSchemas(['authors', 'missing', 'books']);
 
-        $this->assertTrue($schemas['authors']->exists());
-        $this->assertFalse($schemas['missing']->exists());
-        $this->assertTrue($schemas['books']->exists());
+        \Testo\Assert::true($schemas['authors']->exists());
+        \Testo\Assert::false($schemas['missing']->exists());
+        \Testo\Assert::true($schemas['books']->exists());
     }
 
+    #[\Testo\Test]
     public function testPrefixIsHonored(): void
     {
         $db = $this->db('default', 'pre_');
@@ -78,14 +84,15 @@ abstract class BulkIntrospectionTest extends BaseTest
         $handler = $this->bulkProvider();
         $bulk = $handler->getSchemas(['widgets'], 'pre_');
 
-        $this->assertTrue($bulk['widgets']->exists());
+        \Testo\Assert::true($bulk['widgets']->exists());
         $this->assertSameAsInDB($handler->getSchema('widgets', 'pre_'), $bulk['widgets']);
     }
 
+    #[\Testo\Test]
     public function testBulkIntrospectionQueryCountDoesNotGrowWithTableCount(): void
     {
         if (!$this->isBatchedProvider()) {
-            $this->markTestSkipped('Driver introspects tables one by one.');
+            throw new \Testo\Core\Exception\SkipTest('Driver introspects tables one by one.');
         }
 
         $this->makeSampleSchema();
@@ -101,17 +108,13 @@ abstract class BulkIntrospectionTest extends BaseTest
             ['authors', 'books', 'tags', 'extra_0', 'extra_1', 'extra_2', 'extra_3', 'extra_4', 'extra_5'],
         );
 
-        $this->assertSame(
-            $few[0],
+        \Testo\Assert::same($many[0], $few[0], \sprintf(
+            "Bulk introspection of 9 tables took %d queries instead of %d.\n\nFew:\n%s\n\nMany:\n%s",
             $many[0],
-            \sprintf(
-                "Bulk introspection of 9 tables took %d queries instead of %d.\n\nFew:\n%s\n\nMany:\n%s",
-                $many[0],
-                $few[0],
-                $few[1],
-                $many[1],
-            ),
-        );
+            $few[0],
+            $few[1],
+            $many[1],
+        ));
     }
 
     /**
@@ -119,6 +122,7 @@ abstract class BulkIntrospectionTest extends BaseTest
      * batched query could disagree on column order — the batched queries rely on ORDER BY to
      * reproduce it. The identity assertion compares those orders exactly.
      */
+    #[\Testo\Test]
     public function testCompositeKeysMatchPerTable(): void
     {
         $parent = $this->schema('composite_parent');
@@ -140,7 +144,7 @@ abstract class BulkIntrospectionTest extends BaseTest
         $handler = $this->bulkProvider();
         $bulk = $handler->getSchemas(['composite_parent', 'composite_child']);
 
-        $this->assertSame(['part_a', 'part_b'], $bulk['composite_parent']->getPrimaryKeys());
+        \Testo\Assert::same($bulk['composite_parent']->getPrimaryKeys(), ['part_a', 'part_b']);
         $this->assertSameAsInDB($handler->getSchema('composite_parent'), $bulk['composite_parent']);
         $this->assertSameAsInDB($handler->getSchema('composite_child'), $bulk['composite_child']);
     }
@@ -152,6 +156,7 @@ abstract class BulkIntrospectionTest extends BaseTest
      * when the result set is large enough for the planner to prefer a hash join, hence the dozens
      * of tables with interleaved column types.
      */
+    #[\Testo\Test]
     public function testColumnOrderMatchesPerTable(): void
     {
         $names = [];
@@ -174,14 +179,11 @@ abstract class BulkIntrospectionTest extends BaseTest
         $bulk = $handler->getSchemas($names);
 
         foreach ($names as $name) {
-            $this->assertSame(
-                \array_keys($handler->getSchema($name)->getColumns()),
-                \array_keys($bulk[$name]->getColumns()),
-                "Column order of {$name} diverged between per-table and bulk introspection",
-            );
+            \Testo\Assert::same(\array_keys($bulk[$name]->getColumns()), \array_keys($handler->getSchema($name)->getColumns()), "Column order of {$name} diverged between per-table and bulk introspection");
         }
     }
 
+    #[\Testo\Test]
     public function testReadonlyHandlerDelegatesBulkIntrospection(): void
     {
         $this->makeSampleSchema();
@@ -191,22 +193,24 @@ abstract class BulkIntrospectionTest extends BaseTest
 
         $bulk = $readonly->getSchemas(['authors', 'books']);
 
-        $this->assertSame(['authors', 'books'], \array_keys($bulk));
-        $this->assertTrue($bulk['authors']->exists());
+        \Testo\Assert::same(\array_keys($bulk), ['authors', 'books']);
+        \Testo\Assert::true($bulk['authors']->exists());
         $this->assertSameAsInDB($inner->getSchema('authors'), $bulk['authors']);
     }
 
+    #[\Testo\Test]
     public function testDatabaseGetSchemasWithExplicitList(): void
     {
         $this->makeSampleSchema();
 
         $schemas = $this->database->getSchemas(['authors', 'books']);
 
-        $this->assertSame(['authors', 'books'], \array_keys($schemas));
-        $this->assertTrue($schemas['authors']->exists());
-        $this->assertTrue($schemas['books']->exists());
+        \Testo\Assert::same(\array_keys($schemas), ['authors', 'books']);
+        \Testo\Assert::true($schemas['authors']->exists());
+        \Testo\Assert::true($schemas['books']->exists());
     }
 
+    #[\Testo\Test]
     public function testDatabaseGetSchemasWithoutListReadsWholeDatabase(): void
     {
         $this->makeSampleSchema();
@@ -215,12 +219,12 @@ abstract class BulkIntrospectionTest extends BaseTest
 
         $names = [];
         foreach ($schemas as $schema) {
-            $this->assertTrue($schema->exists());
+            \Testo\Assert::true($schema->exists());
             $names[] = $schema->getName();
         }
 
         \sort($names);
-        $this->assertSame(['authors', 'books', 'tags'], $names);
+        \Testo\Assert::same($names, ['authors', 'books', 'tags']);
     }
 
     /**
@@ -234,7 +238,7 @@ abstract class BulkIntrospectionTest extends BaseTest
     protected function bulkProvider(): BulkSchemaProviderInterface
     {
         $handler = $this->database->getDriver()->getSchemaHandler();
-        $this->assertInstanceOf(BulkSchemaProviderInterface::class, $handler);
+        \Testo\Assert::instanceOf($handler, BulkSchemaProviderInterface::class);
 
         return $handler;
     }

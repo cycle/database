@@ -7,10 +7,7 @@ namespace Cycle\Database\Tests\Functional\Driver\Postgres;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\DatabaseTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-postgres
- */
+#[\Testo\Filter\Group('driver', 'driver-postgres')]
 class DatabaseTest extends CommonClass
 {
     public const DRIVER = 'postgres';

@@ -11,10 +11,11 @@ use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
 abstract class IndexesTest extends BaseTest
 {
+    #[\Testo\Test]
     public function testCreateWithIndex(): void
     {
         $schema = $this->schema('table');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->primary('id');
         $schema->integer('value');
@@ -24,13 +25,14 @@ abstract class IndexesTest extends BaseTest
 
         $this->assertSameAsInDB($schema);
 
-        $this->assertFalse($this->schema('table')->index(['value'])->isUnique());
+        \Testo\Assert::false($this->schema('table')->index(['value'])->isUnique());
     }
 
+    #[\Testo\Test]
     public function testCreateWithUniqueIndex(): void
     {
         $schema = $this->schema('table');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->primary('id');
         $schema->integer('value');
@@ -40,13 +42,14 @@ abstract class IndexesTest extends BaseTest
 
         $this->assertSameAsInDB($schema);
 
-        $this->assertTrue($this->schema('table')->index(['value'])->isUnique());
+        \Testo\Assert::true($this->schema('table')->index(['value'])->isUnique());
     }
 
+    #[\Testo\Test]
     public function testCreateWithComplexIndex(): void
     {
         $schema = $this->schema('table');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->primary('id');
         $schema->integer('value');
@@ -58,10 +61,11 @@ abstract class IndexesTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testCreateOrderedIndex(): void
     {
         $schema = $this->schema('table');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->primary('id');
         $schema->integer('value');
@@ -73,10 +77,11 @@ abstract class IndexesTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testCreateWithComplexUniqueIndex(): void
     {
         $schema = $this->schema('table');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->primary('id');
         $schema->integer('value');
@@ -88,10 +93,11 @@ abstract class IndexesTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testRenameIndexThoughTable(): void
     {
         $schema = $this->schema('table');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->primary('id');
         $schema->integer('value');
@@ -107,13 +113,14 @@ abstract class IndexesTest extends BaseTest
         $schema->save();
         $this->assertSameAsInDB($schema);
 
-        $this->assertSame('new_index_name', $this->fetchSchema($schema)->index(['value', 'subset'])->getName());
+        \Testo\Assert::same($this->fetchSchema($schema)->index(['value', 'subset'])->getName(), 'new_index_name');
     }
 
+    #[\Testo\Test]
     public function testCreateWithMultipleIndexesAndEnum(): void
     {
         $schema = $this->schema('table');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->primary('id');
         $schema->enum('status', ['active', 'disabled']);
@@ -128,10 +135,11 @@ abstract class IndexesTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testAddIndex(): void
     {
         $schema = $this->sampleSchema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema->index(['balance']);
 
@@ -140,10 +148,11 @@ abstract class IndexesTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testNamedAddIndex(): void
     {
         $schema = $this->sampleSchema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema->index(['balance'])->setName('index_for_balance');
 
@@ -152,10 +161,11 @@ abstract class IndexesTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testAddUniqueIndex(): void
     {
         $schema = $this->sampleSchema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema->index(['email'])->unique(true);
 
@@ -164,10 +174,11 @@ abstract class IndexesTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testAddUniqueIndexToEnum(): void
     {
         $schema = $this->sampleSchema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema->index(['status']);
 
@@ -176,10 +187,11 @@ abstract class IndexesTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testAddColumnAndComplexIndex(): void
     {
         $schema = $this->sampleSchema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema->string('password');
         $schema->index(['email', 'password']);
@@ -189,10 +201,11 @@ abstract class IndexesTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testAddColumnAndComplexUniqueIndex(): void
     {
         $schema = $this->sampleSchema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema->string('password');
         $schema->index(['email', 'password'])->unique(true);
@@ -202,10 +215,11 @@ abstract class IndexesTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testAddIndexToDatetime(): void
     {
         $schema = $this->sampleSchema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema->index(['datetime']);
 
@@ -214,10 +228,11 @@ abstract class IndexesTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testDropIndex(): void
     {
         $schema = $this->sampleSchemaWithIndexes('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema->dropIndex(['email']);
 
@@ -226,10 +241,11 @@ abstract class IndexesTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testDropComplexIndex(): void
     {
         $schema = $this->sampleSchemaWithIndexes('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema->dropIndex(['email', 'status']);
 
@@ -238,13 +254,14 @@ abstract class IndexesTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testDropOrderedIndex(): void
     {
         $schema = $this->sampleSchemaWithIndexes('table');
 
         $schema->index(['id', 'balance DESC']);
         $schema->save(Handler::DO_ALL);
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema->dropIndex(['id', 'balance DESC']);
 
@@ -253,10 +270,11 @@ abstract class IndexesTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testDropMultipleIndexes(): void
     {
         $schema = $this->sampleSchemaWithIndexes('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema->dropIndex(['email', 'status']);
         $schema->dropIndex(['balance']);
@@ -266,10 +284,11 @@ abstract class IndexesTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testRenameIndex(): void
     {
         $schema = $this->sampleSchema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema->index(['balance'])->setName('new_balance_name');
 
@@ -278,10 +297,11 @@ abstract class IndexesTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testChangeIndexToUnique(): void
     {
         $schema = $this->sampleSchema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema->index(['balance'])->unique(true);
 
@@ -290,10 +310,11 @@ abstract class IndexesTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testChangeIndexToNonUnique(): void
     {
         $schema = $this->sampleSchema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema->index(['email'])->unique(false);
 
@@ -302,10 +323,11 @@ abstract class IndexesTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testChangeIndexToNonUniqueAndRename(): void
     {
         $schema = $this->sampleSchema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema->index(['email'])->unique(false)->setName('non_unique_email');
 
@@ -314,10 +336,11 @@ abstract class IndexesTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testChangeComplexIndexToUnique(): void
     {
         $schema = $this->sampleSchema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema->index(['email', 'status'])->unique(true);
 
@@ -326,10 +349,11 @@ abstract class IndexesTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testRemoveColumnFromComplexIndex(): void
     {
         $schema = $this->sampleSchema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema->index(['email', 'status'])->columns(['status']);
 
@@ -338,10 +362,11 @@ abstract class IndexesTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testAddColumnFromComplexIndexAndRename(): void
     {
         $schema = $this->sampleSchema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema->index(['email', 'status'])->columns(['email', 'status', 'flagged'])->setName(
             '3d_index',
@@ -352,10 +377,11 @@ abstract class IndexesTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testRenameColumnWithAddedIndex(): void
     {
         $schema = $this->sampleSchema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema->index(['email', 'status']);
         $schema->save(Handler::DO_ALL);
@@ -368,26 +394,27 @@ abstract class IndexesTest extends BaseTest
 
         $schema = $this->fetchSchema($schema);
         //  print_r($schema);
-        $this->assertTrue($schema->hasIndex(['email', 'new_status']));
+        \Testo\Assert::true($schema->hasIndex(['email', 'new_status']));
     }
 
+    #[\Testo\Test]
     public function testChangeColumnTypeWithAttachedIndex(): void
     {
         $schema = $this->sampleSchema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema->index(['email', 'value']);
         $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
-        $this->assertTrue($this->fetchSchema($schema)->hasIndex(['email', 'value']));
+        \Testo\Assert::true($this->fetchSchema($schema)->hasIndex(['email', 'value']));
 
         $schema = $this->fetchSchema($schema);
         $schema->column('value')->bigInteger();
         $schema->save();
 
         $schema = $this->fetchSchema($schema);
-        $this->assertTrue($schema->hasIndex(['email', 'value']));
+        \Testo\Assert::true($schema->hasIndex(['email', 'value']));
     }
 
     protected function sampleSchema(string $table): AbstractTable

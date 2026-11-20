@@ -18,8 +18,9 @@ use Psr\Log\AbstractLogger;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-final class DatabaseManagerLoggerTest extends TestCase
+final class DatabaseManagerLoggerTest
 {
+    #[\Testo\Test]
     public function testSetLoggerBeforeDriversAreCreated(): void
     {
         $dbal = $this->createManager();
@@ -30,6 +31,7 @@ final class DatabaseManagerLoggerTest extends TestCase
         $this->assertLogged($logger, 'SELECT 1');
     }
 
+    #[\Testo\Test]
     public function testSetLoggerAfterDatabaseIsCreated(): void
     {
         $dbal = $this->createManager();
@@ -41,6 +43,7 @@ final class DatabaseManagerLoggerTest extends TestCase
         $this->assertLogged($logger, 'SELECT 1');
     }
 
+    #[\Testo\Test]
     public function testSetLoggerAfterDriverIsCreated(): void
     {
         $dbal = $this->createManager();
@@ -52,6 +55,7 @@ final class DatabaseManagerLoggerTest extends TestCase
         $this->assertLogged($logger, 'SELECT 1');
     }
 
+    #[\Testo\Test]
     public function testSetLoggerAfterGetDrivers(): void
     {
         $dbal = $this->createManager();
@@ -62,9 +66,10 @@ final class DatabaseManagerLoggerTest extends TestCase
             $driver->query('SELECT 1')->fetchAll();
         }
 
-        $this->assertSame(\count($drivers), $logger->count('SELECT 1'));
+        \Testo\Assert::same($logger->count('SELECT 1'), \count($drivers));
     }
 
+    #[\Testo\Test]
     public function testSetLoggerReachesReadDriver(): void
     {
         $dbal = $this->createManager();
@@ -73,10 +78,11 @@ final class DatabaseManagerLoggerTest extends TestCase
 
         $db->getDriver(DatabaseInterface::READ)->query('SELECT 1')->fetchAll();
 
-        $this->assertNotSame($db->getDriver(DatabaseInterface::READ), $db->getDriver(DatabaseInterface::WRITE));
+        \Testo\Assert::notSame($db->getDriver(DatabaseInterface::WRITE), $db->getDriver(DatabaseInterface::READ));
         $this->assertLogged($logger, 'SELECT 1');
     }
 
+    #[\Testo\Test]
     public function testRepeatedSetLoggerReplacesLoggerEverywhere(): void
     {
         $dbal = $this->createManager();
@@ -87,11 +93,12 @@ final class DatabaseManagerLoggerTest extends TestCase
         $db->query('SELECT 1')->fetchAll();
         $dbal->database('other')->query('SELECT 2')->fetchAll();
 
-        $this->assertSame([], $first->messages);
+        \Testo\Assert::same($first->messages, []);
         $this->assertLogged($second, 'SELECT 1');
         $this->assertLogged($second, 'SELECT 2');
     }
 
+    #[\Testo\Test]
     public function testSetLoggerOverridesLoggerSetOnDriver(): void
     {
         $dbal = $this->createManager();
@@ -101,10 +108,11 @@ final class DatabaseManagerLoggerTest extends TestCase
 
         $driver->query('SELECT 1')->fetchAll();
 
-        $this->assertSame([], $own->messages);
+        \Testo\Assert::same($own->messages, []);
         $this->assertLogged($global, 'SELECT 1');
     }
 
+    #[\Testo\Test]
     public function testLoggerFactoryIsUsedForNewDrivers(): void
     {
         $dbal = $this->createManager($factory = new RecordingLoggerFactory());
@@ -114,6 +122,7 @@ final class DatabaseManagerLoggerTest extends TestCase
         $this->assertLogged($factory->loggers['read'], 'SELECT 1');
     }
 
+    #[\Testo\Test]
     public function testSetLoggerWithLoggerFactoryBeforeDriversAreCreated(): void
     {
         $dbal = $this->createManager(new RecordingLoggerFactory());
@@ -124,6 +133,7 @@ final class DatabaseManagerLoggerTest extends TestCase
         $this->assertLogged($logger, 'SELECT 1');
     }
 
+    #[\Testo\Test]
     public function testSetLoggerWithLoggerFactoryAfterDriversAreCreated(): void
     {
         $dbal = $this->createManager(new RecordingLoggerFactory());
@@ -137,6 +147,7 @@ final class DatabaseManagerLoggerTest extends TestCase
         $this->assertLogged($logger, 'SELECT 2');
     }
 
+    #[\Testo\Test]
     public function testDriverAddedAfterSetLogger(): void
     {
         $dbal = $this->createManager();
@@ -148,6 +159,7 @@ final class DatabaseManagerLoggerTest extends TestCase
         $this->assertLogged($logger, 'SELECT 1');
     }
 
+    #[\Testo\Test]
     public function testDriverAddedBeforeSetLogger(): void
     {
         $dbal = $this->createManager();
@@ -159,6 +171,7 @@ final class DatabaseManagerLoggerTest extends TestCase
         $this->assertLogged($logger, 'SELECT 1');
     }
 
+    #[\Testo\Test]
     public function testDatabaseAddedBeforeSetLogger(): void
     {
         $dbal = $this->createManager();
@@ -170,6 +183,7 @@ final class DatabaseManagerLoggerTest extends TestCase
         $this->assertLogged($logger, 'SELECT 1');
     }
 
+    #[\Testo\Test]
     public function testDatabaseAddedAfterSetLogger(): void
     {
         $dbal = $this->createManager();
@@ -181,6 +195,7 @@ final class DatabaseManagerLoggerTest extends TestCase
         $this->assertLogged($logger, 'SELECT 1');
     }
 
+    #[\Testo\Test]
     public function testDatabaseWithoutCacheCreatedBeforeSetLoggerKeepsPreviousLogger(): void
     {
         $dbal = $this->createManager();
@@ -190,10 +205,11 @@ final class DatabaseManagerLoggerTest extends TestCase
 
         $db->query('SELECT 1')->fetchAll();
 
-        $this->assertSame([], $logger->messages);
+        \Testo\Assert::same($logger->messages, []);
         $this->assertLogged($previous, 'SELECT 1');
     }
 
+    #[\Testo\Test]
     public function testDatabaseWithoutCacheCreatedAfterSetLogger(): void
     {
         $dbal = $this->createManager();
@@ -205,6 +221,7 @@ final class DatabaseManagerLoggerTest extends TestCase
         $this->assertLogged($logger, 'SELECT 1');
     }
 
+    #[\Testo\Test]
     public function testDatabaseWithPrefixCreatedBeforeSetLogger(): void
     {
         $dbal = $this->createManager();
@@ -216,6 +233,7 @@ final class DatabaseManagerLoggerTest extends TestCase
         $this->assertLogged($logger, 'SELECT 1');
     }
 
+    #[\Testo\Test]
     public function testSetLoggerSurvivesReconnect(): void
     {
         $dbal = $this->createManager();
@@ -229,6 +247,7 @@ final class DatabaseManagerLoggerTest extends TestCase
         $this->assertLogged($logger, 'SELECT 1');
     }
 
+    #[\Testo\Test]
     public function testSetLoggerLogsTransactions(): void
     {
         $dbal = $this->createManager();
@@ -249,6 +268,7 @@ final class DatabaseManagerLoggerTest extends TestCase
         $this->assertLogged($logger, 'SELECT 1');
     }
 
+    #[\Testo\Test]
     public function testNullLoggerSilencesDrivers(): void
     {
         $dbal = $this->createManager();
@@ -259,9 +279,10 @@ final class DatabaseManagerLoggerTest extends TestCase
         $db->query('SELECT 1')->fetchAll();
         $dbal->database('other')->query('SELECT 2')->fetchAll();
 
-        $this->assertSame([], $logger->messages);
+        \Testo\Assert::same($logger->messages, []);
     }
 
+    #[\Testo\Test]
     public function testNullLoggerIsPassedToNewDrivers(): void
     {
         $dbal = $this->createManager();
@@ -269,7 +290,7 @@ final class DatabaseManagerLoggerTest extends TestCase
 
         $driver = $dbal->driver('write');
 
-        $this->assertSame($logger, (fn() => $this->logger)->call($driver));
+        \Testo\Assert::same((fn() => $this->logger)->call($driver), $logger);
     }
 
     private function createManager(?LoggerFactoryInterface $factory = null): DatabaseManager
@@ -296,13 +317,10 @@ final class DatabaseManagerLoggerTest extends TestCase
         return SQLiteDriver::create(new SQLiteDriverConfig(connection: new MemoryConnectionConfig()));
     }
 
+    #[\Testo\Common\Attribute\AssertMethod]
     private function assertLogged(RecordingLogger $logger, string $message): void
     {
-        $this->assertGreaterThan(
-            0,
-            $logger->count($message),
-            \sprintf("Message '%s' is not logged. Logged: %s", $message, \json_encode($logger->messages)),
-        );
+        \Testo\Assert::numeric($logger->count($message))->greaterThan(0, \sprintf("Message '%s' is not logged. Logged: %s", $message, \json_encode($logger->messages)));
     }
 }
 

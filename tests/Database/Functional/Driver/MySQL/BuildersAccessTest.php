@@ -8,20 +8,15 @@ namespace Cycle\Database\Tests\Functional\Driver\MySQL;
 use Cycle\Database\Driver\MySQL\Schema\MySQLTable;
 use Cycle\Database\Tests\Functional\Driver\Common\BuildersAccessTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-mysql
- */
+#[\Testo\Filter\Group('driver', 'driver-mysql')]
 class BuildersAccessTest extends CommonClass
 {
     public const DRIVER = 'mysql';
 
+    #[\Testo\Test]
     public function testTableSchemaAccess(): void
     {
         parent::testTableSchemaAccess();
-        $this->assertInstanceOf(
-            MySQLTable::class,
-            $this->db()->table('sample')->getSchema(),
-        );
+        \Testo\Assert::instanceOf($this->db()->table('sample')->getSchema(), MySQLTable::class);
     }
 }

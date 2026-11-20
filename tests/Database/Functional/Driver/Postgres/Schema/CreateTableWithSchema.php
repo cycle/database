@@ -8,10 +8,11 @@ use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Tests\Functional\Driver\Postgres\Helpers;
 use PHPUnit\Framework\TestCase;
 
-class CreateTableWithSchema extends TestCase
+class CreateTableWithSchema
 {
     use Helpers;
 
+    #[\Testo\Test]
     public function testCreatesWithPublicSchema(): void
     {
         $driver = $this->getDriver(null, '$user');
@@ -19,11 +20,12 @@ class CreateTableWithSchema extends TestCase
         $this->createTable($driver, 'test');
         $this->createTable($driver, 'schema1.test');
 
-        $this->assertSame([
+        \Testo\Assert::same($driver->getSchemaHandler()->getTableNames(), [
             'public.test', 'postgres.test', 'schema1.test',
-        ], $driver->getSchemaHandler()->getTableNames());
+        ]);
     }
 
+    #[\Testo\Test]
     public function testCreatesWithSingleSchema(): void
     {
         $driver = $this->getDriver('schema1');
@@ -31,12 +33,13 @@ class CreateTableWithSchema extends TestCase
         $this->createTable($driver, 'test');
         $this->createTable($driver, 'schema1.test1');
 
-        $this->assertSame([
+        \Testo\Assert::same($driver->getSchemaHandler()->getTableNames(), [
             'schema1.test',
             'schema1.test1',
-        ], $driver->getSchemaHandler()->getTableNames());
+        ]);
     }
 
+    #[\Testo\Test]
     public function testCreatesWithMultipleSchema(): void
     {
         $driver = $this->getDriver(['schema2', 'schema1']);
@@ -44,32 +47,30 @@ class CreateTableWithSchema extends TestCase
         $this->createTable($driver, 'schema1.test1');
         $this->createTable($driver, 'schema2.test2');
 
-        $this->assertSame([
+        \Testo\Assert::same($driver->getSchemaHandler()->getTableNames(), [
             'schema2.test',
             'schema1.test1',
             'schema2.test2',
-        ], $driver->getSchemaHandler()->getTableNames());
+        ]);
     }
 
+    #[\Testo\Test]
     public function testCreatesTableForNotDefinedSchemaShouldThrowAnException(): void
     {
-        $this->expectException(DriverException::class);
-        $this->expectExceptionMessage('Schema `schema3` has not been defined.');
+        \Testo\Expect::exception(DriverException::class)->withMessageContaining('Schema `schema3` has not been defined.');
         $driver = $this->getDriver(['schema2', 'schema1']);
         $this->createTable($driver, 'schema3.test1');
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     protected function setUp(): void
     {
-        parent::setUp();
-
         $this->setUpSchemas();
     }
 
+    #[\Testo\Lifecycle\AfterTest]
     protected function tearDown(): void
     {
-        parent::tearDown();
-
         $this->dropUserSchema();
     }
 }

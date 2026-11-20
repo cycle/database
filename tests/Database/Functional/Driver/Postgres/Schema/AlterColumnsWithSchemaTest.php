@@ -15,7 +15,7 @@ use Cycle\Database\Tests\Traits\TableAssertions;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 
-class AlterColumnsWithSchemaTest extends TestCase
+class AlterColumnsWithSchemaTest
 {
     use Helpers;
     use Loggable;
@@ -29,32 +29,32 @@ class AlterColumnsWithSchemaTest extends TestCase
         return $this->db->table($table)->getSchema();
     }
 
+    #[\Testo\Test]
     public function testCreatesTableWithSchema(): void
     {
         $schema1 = $this->db->table('test')->getSchema();
         $schema2 = $this->db->table('schema2.test')->getSchema();
 
         $this->createSchema($schema1);
-        $this->assertTrue($schema1->exists());
-        $this->assertFalse($schema2->exists());
+        \Testo\Assert::true($schema1->exists());
+        \Testo\Assert::false($schema2->exists());
 
         $this->createSchema($schema2, true);
-        $this->assertTrue($schema2->exists());
+        \Testo\Assert::true($schema2->exists());
 
         $this->assertSameAsInDB($schema1);
         $this->assertSameAsInDB($schema2);
 
         try {
             $this->assertSameAsInDB($schema2, $schema1);
-            $this->fail('Tables should be different');
+            \Testo\Assert::fail('Tables should be different');
         } catch (ExpectationFailedException $e) {
         }
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     protected function setUp(): void
     {
-        parent::setUp();
-
         $driver = $this->getDriver(['schema1', 'schema2']);
 
         $this->db = new Database('default', '', $driver);

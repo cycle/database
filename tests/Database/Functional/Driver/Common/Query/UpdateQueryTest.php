@@ -9,13 +9,15 @@ use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
 abstract class UpdateQueryTest extends BaseTest
 {
+    #[\Testo\Test]
     public function testQueryInstance(): void
     {
-        $this->assertInstanceOf(UpdateQuery::class, $this->database->update());
-        $this->assertInstanceOf(UpdateQuery::class, $this->database->table('table')->update());
-        $this->assertInstanceOf(UpdateQuery::class, $this->database->table->update());
+        \Testo\Assert::instanceOf($this->database->update(), UpdateQuery::class);
+        \Testo\Assert::instanceOf($this->database->table('table')->update(), UpdateQuery::class);
+        \Testo\Assert::instanceOf($this->database->table->update(), UpdateQuery::class);
     }
 
+    #[\Testo\Test]
     public function testCompileQuery(): void
     {
         $update = $this->db()
@@ -29,6 +31,7 @@ abstract class UpdateQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testSimpleUpdate(): void
     {
         $update = $this->database->update()->in('table')->set('name', 'Anton');
@@ -39,6 +42,7 @@ abstract class UpdateQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testSimpleUpdateAsArray(): void
     {
         $update = $this->database->update()->in('table')->values(['name' => 'Anton']);
@@ -49,6 +53,7 @@ abstract class UpdateQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testUpdateWithWhere(): void
     {
         $update = $this->database->update()->in('table')->set('name', 'Anton')->where('id', 1);
@@ -67,6 +72,7 @@ abstract class UpdateQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testUpdate(): void
     {
         $schema = $this->schema('demo');
@@ -86,18 +92,16 @@ abstract class UpdateQueryTest extends BaseTest
             ],
         )->where('id', $lastID)->run();
 
-        $this->assertSame(1, $updated);
+        \Testo\Assert::same($updated, 1);
 
-        $this->assertSame(
-            'cde',
-            $this->database->select('value')
-                ->from('demo')
-                ->where('id', $lastID)
-                ->run()
-                ->fetchColumn(),
-        );
+        \Testo\Assert::same($this->database->select('value')
+            ->from('demo')
+            ->where('id', $lastID)
+            ->run()
+            ->fetchColumn(), 'cde');
     }
 
+    #[\Testo\Test]
     public function testUpdateToNotNull(): void
     {
         $schema = $this->schema('demo');
@@ -111,14 +115,11 @@ abstract class UpdateQueryTest extends BaseTest
             ],
         )->run();
 
-        $this->assertSame(
-            null,
-            $this->database->select('value')
-                ->from('demo')
-                ->where('id', $lastID)
-                ->run()
-                ->fetchColumn(),
-        );
+        \Testo\Assert::same($this->database->select('value')
+            ->from('demo')
+            ->where('id', $lastID)
+            ->run()
+            ->fetchColumn(), null);
 
         $updated = $this->database->update('demo')->values(
             [
@@ -126,18 +127,16 @@ abstract class UpdateQueryTest extends BaseTest
             ],
         )->where('id', $lastID)->run();
 
-        $this->assertSame(1, $updated);
+        \Testo\Assert::same($updated, 1);
 
-        $this->assertSame(
-            'abc',
-            $this->database->select('value')
-                ->from('demo')
-                ->where('id', $lastID)
-                ->run()
-                ->fetchColumn(),
-        );
+        \Testo\Assert::same($this->database->select('value')
+            ->from('demo')
+            ->where('id', $lastID)
+            ->run()
+            ->fetchColumn(), 'abc');
     }
 
+    #[\Testo\Test]
     public function testUpdateToNull(): void
     {
         $schema = $this->schema('demo');
@@ -157,15 +156,12 @@ abstract class UpdateQueryTest extends BaseTest
             ],
         )->where('id', $lastID)->run();
 
-        $this->assertSame(1, $updated);
+        \Testo\Assert::same($updated, 1);
 
-        $this->assertSame(
-            null,
-            $this->database->select('value')
-                ->from('demo')
-                ->where('id', $lastID)
-                ->run()
-                ->fetchColumn(),
-        );
+        \Testo\Assert::same($this->database->select('value')
+            ->from('demo')
+            ->where('id', $lastID)
+            ->run()
+            ->fetchColumn(), null);
     }
 }

@@ -9,14 +9,12 @@ use Cycle\Database\Exception\DriverException;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Driver\CursorTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-postgres
- */
+#[\Testo\Filter\Group('driver', 'driver-postgres')]
 class CursorTest extends CommonClass
 {
     public const DRIVER = 'postgres';
 
+    #[\Testo\Test]
     public function testCursorYieldsAcrossMultipleFetchChunks(): void
     {
         $this->fillRows(25);
@@ -31,15 +29,16 @@ class CursorTest extends CommonClass
             ),
         );
 
-        $this->assertCount(25, $rows);
+        \Testo\Assert::count($rows, 25);
 
         // 25 rows / chunkSize 10 → three FETCH FORWARD calls: 10 + 10 + 5.
         for ($i = 0; $i < 25; $i++) {
-            $this->assertSame(\md5((string) $i), $rows[$i]['name']);
-            $this->assertSame($i * 10, (int) $rows[$i]['value']);
+            \Testo\Assert::same($rows[$i]['name'], \md5((string) $i));
+            \Testo\Assert::same((int) $rows[$i]['value'], $i * 10);
         }
     }
 
+    #[\Testo\Test]
     public function testCursorYieldsExactlyOneChunk(): void
     {
         $this->fillRows(10);
@@ -54,13 +53,13 @@ class CursorTest extends CommonClass
             ),
         );
 
-        $this->assertCount(10, $rows);
+        \Testo\Assert::count($rows, 10);
     }
 
+    #[\Testo\Test]
     public function testCursorChunkSizeMustBePositive(): void
     {
-        $this->expectException(DriverException::class);
-        $this->expectExceptionMessageMatches('/chunk size/i');
+        \Testo\Expect::exception(DriverException::class)->withMessageMatchingRegex('/chunk size/i');
 
         $this->database->transaction(
             fn() => \iterator_to_array(
@@ -73,6 +72,7 @@ class CursorTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testCursorUsesExplicitName(): void
     {
         $this->fillRows(3);
@@ -88,17 +88,18 @@ class CursorTest extends CommonClass
             ),
         );
 
-        $this->assertCount(3, $rows);
+        \Testo\Assert::count($rows, 3);
     }
 
+    #[\Testo\Test]
     public function testCursorRejectsInvalidName(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessageMatches('/valid postgresql identifier/i');
+        \Testo\Expect::exception(\InvalidArgumentException::class)->withMessageMatchingRegex('/valid postgresql identifier/i');
 
         new PostgresCursorOptions(name: 'bad"name; DROP TABLE');
     }
 
+    #[\Testo\Test]
     public function testCursorWithHoldSurvivesCommit(): void
     {
         $this->fillRows(5);
@@ -113,7 +114,7 @@ class CursorTest extends CommonClass
         // Pull first row inside the transaction.
         $gen->rewind();
         $first = $gen->current();
-        $this->assertSame(\md5('0'), $first['name']);
+        \Testo\Assert::same($first['name'], \md5('0'));
 
         // Commit the transaction. WITH HOLD materializes the rest on the server.
         $this->database->commit();
@@ -126,7 +127,7 @@ class CursorTest extends CommonClass
             $gen->next();
         }
 
-        $this->assertCount(4, $remaining);
-        $this->assertSame(\md5('4'), $remaining[3]['name']);
+        \Testo\Assert::count($remaining, 4);
+        \Testo\Assert::same($remaining[3]['name'], \md5('4'));
     }
 }

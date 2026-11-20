@@ -16,12 +16,13 @@ use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
-class AbstractDriverTest extends TestCase
+class AbstractDriverTest
 {
     use m\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
     private Driver $driver;
 
+    #[\Testo\Test]
     public function testLoggerShouldBeSet(): void
     {
         $logger = m::mock(LoggerInterface::class);
@@ -32,13 +33,14 @@ class AbstractDriverTest extends TestCase
         $this->driver->lastInsertID();
     }
 
+    #[\Testo\Test]
     public function testGetNotSetNameShouldThrowAnException(): void
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Driver name is not defined.');
+        \Testo\Expect::exception(\RuntimeException::class)->withMessageContaining('Driver name is not defined.');
         $this->driver->getName();
     }
 
+    #[\Testo\Test]
     public function testWithName(): void
     {
         $handler = m::mock(HandlerInterface::class);
@@ -57,11 +59,12 @@ class AbstractDriverTest extends TestCase
         $driver->getQueryBuilder()->shouldReceive('withDriver')->once();
 
         $newDriver = $driver->withName('test');
-        $this->assertSame('test', $newDriver->getName());
+        \Testo\Assert::same($newDriver->getName(), 'test');
 
         $this->checkImmutability($driver, $newDriver);
     }
 
+    #[\Testo\Test]
     public function testClone(): void
     {
         $handler = m::mock(HandlerInterface::class);
@@ -84,26 +87,21 @@ class AbstractDriverTest extends TestCase
         $this->checkImmutability($driver, $newDriver);
     }
 
+    #[\Testo\Test]
     public function testLogsWithDisabledInterpolation(): void
     {
-        $pdo = $this->createMock(PDOInterface::class);
-        $pdo
-            ->expects($this->once())
-            ->method('prepare')
-            ->willReturn($this->createMock(PDOStatementInterface::class));
+        $pdo = \Mockery::mock(PDOInterface::class)->shouldIgnoreMissing();
+        $pdo->shouldReceive('prepare')->once()->andReturn(\Mockery::mock(PDOStatementInterface::class)->shouldIgnoreMissing());
 
         $driver = TestDriver::createWith(
             new SQLiteDriverConfig(),
-            $this->createMock(HandlerInterface::class),
-            $this->createMock(BuilderInterface::class),
+            \Mockery::mock(HandlerInterface::class)->shouldIgnoreMissing(),
+            \Mockery::mock(BuilderInterface::class)->shouldIgnoreMissing(),
             $pdo,
         );
 
-        $logger = $this->createMock(LoggerInterface::class);
-        $logger
-            ->expects($this->once())
-            ->method('info')
-            ->with('SELECT * FROM sample_table WHERE id IN (?, ?, ?) ORDER BY id ASC');
+        $logger = \Mockery::mock(LoggerInterface::class)->shouldIgnoreMissing();
+        $logger->shouldReceive('info')->once()->with('SELECT * FROM sample_table WHERE id IN (?, ?, ?) ORDER BY id ASC', \Mockery::andAnyOtherArgs());
         $driver->setLogger($logger);
 
         $driver->query(
@@ -112,26 +110,21 @@ class AbstractDriverTest extends TestCase
         );
     }
 
+    #[\Testo\Test]
     public function testLogsWithEnabledInterpolation(): void
     {
-        $pdo = $this->createMock(PDOInterface::class);
-        $pdo
-            ->expects($this->once())
-            ->method('prepare')
-            ->willReturn($this->createMock(PDOStatementInterface::class));
+        $pdo = \Mockery::mock(PDOInterface::class)->shouldIgnoreMissing();
+        $pdo->shouldReceive('prepare')->once()->andReturn(\Mockery::mock(PDOStatementInterface::class)->shouldIgnoreMissing());
 
         $driver = TestDriver::createWith(
             new SQLiteDriverConfig(options: ['logInterpolatedQueries' => true]),
-            $this->createMock(HandlerInterface::class),
-            $this->createMock(BuilderInterface::class),
+            \Mockery::mock(HandlerInterface::class)->shouldIgnoreMissing(),
+            \Mockery::mock(BuilderInterface::class)->shouldIgnoreMissing(),
             $pdo,
         );
 
-        $logger = $this->createMock(LoggerInterface::class);
-        $logger
-            ->expects($this->once())
-            ->method('info')
-            ->with('SELECT * FROM sample_table WHERE id IN (1, 2, 3) ORDER BY id ASC');
+        $logger = \Mockery::mock(LoggerInterface::class)->shouldIgnoreMissing();
+        $logger->shouldReceive('info')->once()->with('SELECT * FROM sample_table WHERE id IN (1, 2, 3) ORDER BY id ASC', \Mockery::andAnyOtherArgs());
         $driver->setLogger($logger);
 
         $driver->query(
@@ -140,45 +133,37 @@ class AbstractDriverTest extends TestCase
         );
     }
 
+    #[\Testo\Test]
     public function testLogsQueryParameters(): void
     {
-        $pdo = $this->createMock(PDOInterface::class);
-        $pdo
-            ->expects($this->once())
-            ->method('prepare')
-            ->willReturn($this->createMock(PDOStatementInterface::class));
+        $pdo = \Mockery::mock(PDOInterface::class)->shouldIgnoreMissing();
+        $pdo->shouldReceive('prepare')->once()->andReturn(\Mockery::mock(PDOStatementInterface::class)->shouldIgnoreMissing());
 
         $driver = TestDriver::createWith(
             new SQLiteDriverConfig(options: [
                 'logInterpolatedQueries' => false,
                 'logQueryParameters' => true,
             ]),
-            $this->createMock(HandlerInterface::class),
-            $this->createMock(BuilderInterface::class),
+            \Mockery::mock(HandlerInterface::class)->shouldIgnoreMissing(),
+            \Mockery::mock(BuilderInterface::class)->shouldIgnoreMissing(),
             $pdo,
         );
 
-        $logger = $this->createMock(LoggerInterface::class);
-        $logger
-            ->expects($this->once())
-            ->method('info')
-            ->with(
-                $this->equalTo('SELECT * FROM sample_table WHERE id IN (?, ?, ?) ORDER BY id ASC'),
-                $this->callback(static function (array $context) {
-                    if (!isset($context['parameters'])) {
-                        return false;
-                    }
+        $logger = \Mockery::mock(LoggerInterface::class)->shouldIgnoreMissing();
+        $logger->shouldReceive('info')->once()->with('SELECT * FROM sample_table WHERE id IN (?, ?, ?) ORDER BY id ASC', \Mockery::on(static function (array $context) {
+            if (!isset($context['parameters'])) {
+                return false;
+            }
 
-                    $parametersAsString = \array_map('strval', $context['parameters']);
+            $parametersAsString = \array_map('strval', $context['parameters']);
 
-                    $expectedParameters = ['1', '2', '3'];
-                    if ($parametersAsString !== $expectedParameters) {
-                        return false;
-                    }
+            $expectedParameters = ['1', '2', '3'];
+            if ($parametersAsString !== $expectedParameters) {
+                return false;
+            }
 
-                    return isset($context['driver']);
-                }),
-            );
+            return isset($context['driver']);
+        }), \Mockery::andAnyOtherArgs());
         $driver->setLogger($logger);
 
         $driver->query(
@@ -187,45 +172,42 @@ class AbstractDriverTest extends TestCase
         );
     }
 
+    #[\Testo\Test]
     public function testLogsWithEnabledInterpolationAndWithDatetimeMicroseconds(): void
     {
-        $pdo = $this->createMock(PDOInterface::class);
-        $pdo
-            ->expects($this->once())
-            ->method('prepare')
-            ->willReturn($this->createMock(PDOStatementInterface::class));
+        $pdo = \Mockery::mock(PDOInterface::class)->shouldIgnoreMissing();
+        $pdo->shouldReceive('prepare')->once()->andReturn(\Mockery::mock(PDOStatementInterface::class)->shouldIgnoreMissing());
 
         $driver = TestDriver::createWith(
             new SQLiteDriverConfig(options: ['logInterpolatedQueries' => true, 'withDatetimeMicroseconds' => true]),
-            $this->createMock(HandlerInterface::class),
-            $this->createMock(BuilderInterface::class),
+            \Mockery::mock(HandlerInterface::class)->shouldIgnoreMissing(),
+            \Mockery::mock(BuilderInterface::class)->shouldIgnoreMissing(),
             $pdo,
         );
 
         $date = new \DateTime('now');
-        $logger = $this->createMock(LoggerInterface::class);
-        $logger
-            ->expects($this->once())
-            ->method('info')
-            ->with(\sprintf(
-                'SELECT * FROM sample_table WHERE name = \'%s\' AND registered > \'%s\'',
-                'John Doe',
-                $date->format('Y-m-d H:i:s.u'),
-            ));
+        $logger = \Mockery::mock(LoggerInterface::class)->shouldIgnoreMissing();
+        $logger->shouldReceive('info')->once()->with(\sprintf(
+            'SELECT * FROM sample_table WHERE name = \'%s\' AND registered > \'%s\'',
+            'John Doe',
+            $date->format('Y-m-d H:i:s.u'),
+        ), \Mockery::andAnyOtherArgs());
         $driver->setLogger($logger);
 
         $driver->query('SELECT * FROM sample_table WHERE name = ? AND registered > ?', ['John Doe', $date]);
     }
 
+    #[\Testo\Test]
     public function testUseCacheFromConfig(): void
     {
         $ref = new \ReflectionProperty(Driver::class, 'useCache');
         $ref->setAccessible(true);
 
-        $this->assertTrue($ref->getValue(TestDriver::create(new SQLiteDriverConfig(queryCache: true))));
-        $this->assertFalse($ref->getValue(TestDriver::create(new SQLiteDriverConfig(queryCache: false))));
+        \Testo\Assert::true($ref->getValue(TestDriver::create(new SQLiteDriverConfig(queryCache: true))));
+        \Testo\Assert::false($ref->getValue(TestDriver::create(new SQLiteDriverConfig(queryCache: false))));
     }
 
+    #[\Testo\Test]
     public function testWithoutCache(): void
     {
         $ref = new \ReflectionProperty(Driver::class, 'useCache');
@@ -233,26 +215,29 @@ class AbstractDriverTest extends TestCase
 
         $driver = TestDriver::create(new SQLiteDriverConfig(queryCache: true));
 
-        $this->assertTrue($ref->getValue($driver));
-        $this->assertFalse($ref->getValue($driver->withoutCache()));
+        \Testo\Assert::true($ref->getValue($driver));
+        \Testo\Assert::false($ref->getValue($driver->withoutCache()));
     }
 
+    #[\Testo\Test]
     public function testWithoutCacheTwice(): void
     {
         $driver = TestDriver::create(new SQLiteDriverConfig(queryCache: true));
 
         $ncDriver = $driver->withoutCache();
 
-        $this->assertSame($ncDriver, $ncDriver->withoutCache());
+        \Testo\Assert::same($ncDriver->withoutCache(), $ncDriver);
     }
 
+    #[\Testo\Test]
     public function testWithoutCacheOnWithoutCacheInitially(): void
     {
         $driver = TestDriver::create(new SQLiteDriverConfig(queryCache: false));
 
-        $this->assertSame($driver, $driver->withoutCache());
+        \Testo\Assert::same($driver->withoutCache(), $driver);
     }
 
+    #[\Testo\Test]
     public function testPdoNotClonedAfterCacheDisabled(): void
     {
         $ref = new \ReflectionMethod(Driver::class, 'getPDO');
@@ -264,21 +249,20 @@ class AbstractDriverTest extends TestCase
         $driver = $driver->withoutCache();
         $newPDO = $ref->invoke($driver);
 
-        $this->assertSame($oldPDO, $newPDO);
+        \Testo\Assert::same($newPDO, $oldPDO);
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     protected function setUp(): void
     {
-        parent::setUp();
-
         $this->driver = TestDriver::create(new SQLiteDriverConfig());
     }
 
     private function checkImmutability(DriverInterface $driver, DriverInterface $newDriver): void
     {
         // Immutability
-        $this->assertNotSame($driver, $newDriver);
-        $this->assertNotSame($driver->getSchemaHandler(), $newDriver->getSchemaHandler());
-        $this->assertNotSame($driver->getQueryBuilder(), $newDriver->getQueryBuilder());
+        \Testo\Assert::notSame($newDriver, $driver);
+        \Testo\Assert::notSame($newDriver->getSchemaHandler(), $driver->getSchemaHandler());
+        \Testo\Assert::notSame($newDriver->getQueryBuilder(), $driver->getQueryBuilder());
     }
 }

@@ -12,14 +12,12 @@ use Cycle\Database\Query\OnConflict;
 use Cycle\Database\Query\OnConflictWhere;
 use Cycle\Database\Tests\Functional\Driver\Common\Query\UpsertQueryTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-postgres
- */
+#[\Testo\Filter\Group('driver', 'driver-postgres')]
 class UpsertQueryTest extends CommonClass
 {
     public const DRIVER = 'postgres';
 
+    #[\Testo\Test]
     public function testShorthandSingleColumn(): void
     {
         $q = $this->database->insert('users')
@@ -33,6 +31,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testDoUpdateExplicitColumns(): void
     {
         $q = $this->database->insert('users')
@@ -46,6 +45,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testDoUpdateWithFragmentReferencingExcluded(): void
     {
         // EXCLUDED must stay unquoted, so reference it with a raw Fragment (not an
@@ -63,6 +63,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testDoNothing(): void
     {
         $q = $this->database->insert('logs')
@@ -75,6 +76,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testConstraintTarget(): void
     {
         $q = $this->database->insert('users')
@@ -88,6 +90,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testTargetWherePartialIndex(): void
     {
         $q = $this->database->insert('routes')
@@ -106,6 +109,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testTargetWhereVariadicCondition(): void
     {
         $q = $this->database->insert('routes')
@@ -125,6 +129,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testTargetWhereClosureBuilder(): void
     {
         $q = $this->database->insert('routes')
@@ -143,6 +148,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testTargetWhereMultiRow(): void
     {
         // Multi-row upsert is not cached, so the predicate is rendered on the
@@ -167,6 +173,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testConstraintWithPredicateRejected(): void
     {
         $q = $this->database->insert('routes')
@@ -177,10 +184,11 @@ class UpsertQueryTest extends CommonClass
                     ->doUpdate(['route']),
             );
 
-        $this->expectException(CompilerException::class);
+        \Testo\Expect::exception(CompilerException::class);
         (string) $q;
     }
 
+    #[\Testo\Test]
     public function testTargetWherePartialIndexRuntime(): void
     {
         $schema = $this->schema('upsert_routes');
@@ -209,14 +217,15 @@ class UpsertQueryTest extends CommonClass
         // Matching partial index → conflict → update in place.
         $upsert('k', 'new');
         $rows = $this->database->select()->from('upsert_routes')->fetchAll();
-        $this->assertCount(1, $rows);
-        $this->assertSame('new', $rows[0]['body']);
+        \Testo\Assert::count($rows, 1);
+        \Testo\Assert::same($rows[0]['body'], 'new');
 
         // Different key → no conflict → new row inserted.
         $upsert('k2', 'second');
-        $this->assertCount(2, $this->database->select()->from('upsert_routes')->fetchAll());
+        \Testo\Assert::count($this->database->select()->from('upsert_routes')->fetchAll(), 2);
     }
 
+    #[\Testo\Test]
     public function testDoUpdateFragmentExcludedRuntime(): void
     {
         // Locks the documented EXCLUDED-via-Fragment path: an Expression here would
@@ -238,7 +247,7 @@ class UpsertQueryTest extends CommonClass
             ->run();
 
         $rows = $this->database->select()->from('upsert_counters')->fetchAll();
-        $this->assertCount(1, $rows);
-        $this->assertSame(15, (int) $rows[0]['n']);
+        \Testo\Assert::count($rows, 1);
+        \Testo\Assert::same((int) $rows[0]['n'], 15);
     }
 }

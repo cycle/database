@@ -8,41 +8,40 @@ namespace Cycle\Database\Tests\Functional\Driver\MySQL\Schema;
 use Cycle\Database\Driver\MySQL\Schema\MySQLColumn;
 use Cycle\Database\Tests\Functional\Driver\Common\Schema\ConsistencyTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-mysql
- */
+#[\Testo\Filter\Group('driver', 'driver-mysql')]
 class ConsistencyTest extends CommonClass
 {
     public const DRIVER = 'mysql';
 
+    #[\Testo\Test]
     public function testSet(): void
     {
         $schema = $this->schema('table');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         /** @var MySQLColumn $column */
         $column = $schema->set('target', ['a', 'b', 'value']);
 
         $schema->save();
         $schema = $this->schema('table');
-        $this->assertTrue($schema->exists());
-        $this->assertTrue($schema->column('target')->compare($column));
-        $this->assertSame(['a', 'b', 'value'], $column->getEnumValues());
-        $this->assertSame(['a', 'b', 'value'], $schema->column('target')->getEnumValues());
+        \Testo\Assert::true($schema->exists());
+        \Testo\Assert::true($schema->column('target')->compare($column));
+        \Testo\Assert::same($column->getEnumValues(), ['a', 'b', 'value']);
+        \Testo\Assert::same($schema->column('target')->getEnumValues(), ['a', 'b', 'value']);
     }
 
+    #[\Testo\Test]
     public function testSmallPrimary(): void
     {
         $schema = $this->schema('table');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $column = $schema->smallInteger('target');
 
         $schema->save();
         $schema = $this->schema('table');
-        $this->assertTrue($schema->exists());
-        $this->assertTrue($schema->column('target')->compare($column));
-        $this->assertNotSame($column, $schema->column('target'));
+        \Testo\Assert::true($schema->exists());
+        \Testo\Assert::true($schema->column('target')->compare($column));
+        \Testo\Assert::notSame($schema->column('target'), $column);
     }
 }

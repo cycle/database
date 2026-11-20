@@ -9,8 +9,9 @@ use Cycle\Database\Config\PostgresDriverConfig;
 use Cycle\Database\Driver\Postgres\PostgresDriver;
 use PHPUnit\Framework\TestCase;
 
-final class PostgresDriverConfigTest extends TestCase
+final class PostgresDriverConfigTest
 {
+    #[\Testo\Test]
     public function testSetState(): void
     {
         $config = new PostgresDriverConfig(
@@ -29,16 +30,16 @@ final class PostgresDriverConfigTest extends TestCase
         /** @var PostgresDriverConfig $recoveredConfig */
         eval('$recoveredConfig = ' . $exported . ';');
 
-        $this->assertInstanceOf(DsnConnectionConfig::class, $recoveredConfig->connection);
-        $this->assertSame("pgsql:$dsn", $recoveredConfig->connection->getDsn());
-        $this->assertIsArray($recoveredConfig->schema);
-        $this->assertCount(1, $recoveredConfig->schema);
-        $this->assertSame($schema, $recoveredConfig->schema[0]);
-        $this->assertSame($driver, $recoveredConfig->driver);
-        $this->assertSame($reconnect, $recoveredConfig->reconnect);
-        $this->assertSame($timezone, $recoveredConfig->timezone);
-        $this->assertSame($queryCache, $recoveredConfig->queryCache);
-        $this->assertSame($readonlySchema, $recoveredConfig->readonlySchema);
-        $this->assertSame($readonly, $recoveredConfig->readonly);
+        \Testo\Assert::instanceOf($recoveredConfig->connection, DsnConnectionConfig::class);
+        \Testo\Assert::same($recoveredConfig->connection->getDsn(), "pgsql:$dsn");
+        \Testo\Assert::array($recoveredConfig->schema);
+        \Testo\Assert::count($recoveredConfig->schema, 1);
+        \Testo\Assert::same($recoveredConfig->schema[0], $schema);
+        \Testo\Assert::same($recoveredConfig->driver, $driver);
+        \Testo\Assert::same($recoveredConfig->reconnect, $reconnect);
+        \Testo\Assert::same($recoveredConfig->timezone, $timezone);
+        \Testo\Assert::same($recoveredConfig->queryCache, $queryCache);
+        \Testo\Assert::same($recoveredConfig->readonlySchema, $readonlySchema);
+        \Testo\Assert::same($recoveredConfig->readonly, $readonly);
     }
 }

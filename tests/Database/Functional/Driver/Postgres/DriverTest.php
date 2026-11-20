@@ -9,8 +9,9 @@ use Cycle\Database\Config\PostgresDriverConfig;
 use Cycle\Database\Driver\Postgres\PostgresDriver;
 use PHPUnit\Framework\TestCase;
 
-class DriverTest extends TestCase
+class DriverTest
 {
+    #[\Testo\Test]
     public function testIfSchemaOptionsDoesNotPresentUsePublicSchema(): void
     {
         $driver = PostgresDriver::create(
@@ -22,10 +23,11 @@ class DriverTest extends TestCase
 
         $driver->connect();
 
-        $this->assertSame(['postgres', 'public'], $driver->getSearchSchemas());
-        $this->assertSame('"$user", public', $driver->query('SHOW search_path')->fetch()['search_path']);
+        \Testo\Assert::same($driver->getSearchSchemas(), ['postgres', 'public']);
+        \Testo\Assert::same($driver->query('SHOW search_path')->fetch()['search_path'], '"$user", public');
     }
 
+    #[\Testo\Test]
     public function testDefaultSchemaCanBeDefined(): void
     {
         $driver = PostgresDriver::create(
@@ -37,10 +39,11 @@ class DriverTest extends TestCase
 
         $driver->connect();
 
-        $this->assertSame(['private'], $driver->getSearchSchemas());
-        $this->assertSame('private', $driver->query('SHOW search_path')->fetch()['search_path']);
+        \Testo\Assert::same($driver->getSearchSchemas(), ['private']);
+        \Testo\Assert::same($driver->query('SHOW search_path')->fetch()['search_path'], 'private');
     }
 
+    #[\Testo\Test]
     public function testDefaultSchemaCanBeDefinedFromAvailableSchemas(): void
     {
         $driver = PostgresDriver::create(
@@ -52,10 +55,11 @@ class DriverTest extends TestCase
 
         $driver->connect();
 
-        $this->assertSame(['private'], $driver->getSearchSchemas());
-        $this->assertSame('private', $driver->query('SHOW search_path')->fetch()['search_path']);
+        \Testo\Assert::same($driver->getSearchSchemas(), ['private']);
+        \Testo\Assert::same($driver->query('SHOW search_path')->fetch()['search_path'], 'private');
     }
 
+    #[\Testo\Test]
     public function testDefaultSchemaForCurrentUser(): void
     {
         $driver = PostgresDriver::create(
@@ -67,16 +71,17 @@ class DriverTest extends TestCase
 
         $driver->connect();
 
-        $this->assertSame(['postgres', 'test', 'private'], $driver->getSearchSchemas());
-        $this->assertSame('"$user", test, private', $driver->query('SHOW search_path')->fetch()['search_path']);
+        \Testo\Assert::same($driver->getSearchSchemas(), ['postgres', 'test', 'private']);
+        \Testo\Assert::same($driver->query('SHOW search_path')->fetch()['search_path'], '"$user", test, private');
     }
 
     /**
-     * @dataProvider schemaProvider
      * @param mixed $schema
      * @param mixed $available
      * @param mixed $result
      */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('schemaProvider')]
     public function testIfSchemaOptionsPresentsUseIt($schema, $available, $result): void
     {
         $driver = PostgresDriver::create(
@@ -86,9 +91,9 @@ class DriverTest extends TestCase
             ),
         );
 
-        $this->assertSame($available, $driver->getSearchSchemas());
+        \Testo\Assert::same($driver->getSearchSchemas(), $available);
         $driver->connect();
-        $this->assertSame($result, $driver->query('SHOW search_path')->fetch()['search_path']);
+        \Testo\Assert::same($driver->query('SHOW search_path')->fetch()['search_path'], $result);
     }
 
     public function schemaProvider()

@@ -11,6 +11,7 @@ use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
 abstract class SelectWithJoinQueryTest extends BaseTest
 {
+    #[\Testo\Test]
     public function testWhereAndJoin(): void
     {
         $select = $this->database->select()
@@ -28,6 +29,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testWhereAndJoinReverted(): void
     {
         $select = $this->database->select()
@@ -45,6 +47,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testLeftJoin0(): void
     {
         $select = $this->database->select()
@@ -57,6 +60,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testLeftJoin1(): void
     {
         $select = $this->database->select()
@@ -69,6 +73,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testLeftJoin2(): void
     {
         $select = $this->database->select()
@@ -81,6 +86,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testLeftJoin3(): void
     {
         $select = $this->database->select()
@@ -93,6 +99,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testLeftJoin4(): void
     {
         $select = $this->database->select()
@@ -105,6 +112,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testJoinOn1(): void
     {
         $select = $this->database->select()
@@ -121,6 +129,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testJoinOn2(): void
     {
         $select = $this->database->select()
@@ -164,6 +173,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testJoinOn3(): void
     {
         $select = $this->database->select()
@@ -207,6 +217,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testJoinOn4(): void
     {
         $select = $this->database->select()
@@ -229,6 +240,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testJoinOn5(): void
     {
         $select = $this->database->select()
@@ -260,6 +272,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testJoinOn6(): void
     {
         $select = $this->database->select()
@@ -272,6 +285,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testRightJoin0(): void
     {
         $select = $this->database->select()
@@ -284,6 +298,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testRightJoin1(): void
     {
         $select = $this->database->select()
@@ -296,6 +311,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testRightJoin2(): void
     {
         $select = $this->database->select()
@@ -308,6 +324,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testRightJoin3(): void
     {
         $select = $this->database->select()
@@ -320,6 +337,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testInnerJoin0(): void
     {
         $select = $this->database->select()
@@ -332,6 +350,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testInnerJoin1(): void
     {
         $select = $this->database->select()
@@ -344,6 +363,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testInnerJoin2(): void
     {
         $select = $this->database->select()
@@ -356,6 +376,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testInnerJoin3(): void
     {
         $select = $this->database->select()
@@ -368,6 +389,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testJoinWithFullTypeName(): void
     {
         $select = $this->database->select()
@@ -392,6 +414,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
 
     //Join with WHERE
 
+    #[\Testo\Test]
     public function testJoinOnWhereParameterOrder(): void
     {
         $select = $this->database
@@ -423,6 +446,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testJoinWithComplexWhere(): void
     {
         $select = $this->database->select()
@@ -436,6 +460,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testJoinWithComplexOrWhere(): void
     {
         $select = $this->database->select()
@@ -451,6 +476,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testJoinWithComplexAndWhere(): void
     {
         $select = $this->database->select()
@@ -466,6 +492,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testJoinWithComplexAndWhereDefaults(): void
     {
         $select = $this->database->select()
@@ -481,6 +508,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testJoinWithComplexWhereAndOR(): void
     {
         $select = $this->database->select()
@@ -497,6 +525,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testJoinWithComplexWhereAnd(): void
     {
         $select = $this->database->select()
@@ -513,6 +542,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testJoinWithComplexWhereAndDefaults(): void
     {
         $select = $this->database->select()
@@ -531,6 +561,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
 
     //Join aliases
 
+    #[\Testo\Test]
     public function testJoinAliases(): void
     {
         $select = $this->database->select()
@@ -550,6 +581,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testJoinAliasesWithPrefixes(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
@@ -569,6 +601,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testJoinAliasesWithPrefixesAlternative(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
@@ -588,6 +621,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testJoinAliasesWithPrefixesAndAliases(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
@@ -608,6 +642,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
     }
 
     //Complex verification example
+    #[\Testo\Test]
     public function testComplexExample(): void
     {
         $statuses = new Parameter(['active', 'disabled']);
@@ -634,6 +669,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testJoinQuery(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
@@ -654,6 +690,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testWrapOnWhereGroupsAllExistingOnTokens(): void
     {
         // `on()` and `onWhere()` share the same internal token list, so wrapOnWhere
@@ -679,6 +716,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testWrapOnWhereProtectsScopeFromLaterOrOnWhere(): void
     {
         // Mirrors the soft-delete-style scope on a joined relation: condition added
@@ -702,6 +740,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testWrapOnWhereWithNoExistingOnTokensIsNoop(): void
     {
         // Join registered but with no on/onWhere yet — wrapOnWhere does nothing.
@@ -719,6 +758,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testWrapOnWhereTargetsOnlyLastRegisteredJoinInSql(): void
     {
         $select = $this->database->select()
@@ -744,6 +784,7 @@ abstract class SelectWithJoinQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testJoinQueryWithParameters(): void
     {
         $subSelect = $this->db('prefixed', 'prefix_')->select()

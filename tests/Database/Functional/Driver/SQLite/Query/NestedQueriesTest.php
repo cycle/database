@@ -7,10 +7,7 @@ namespace Cycle\Database\Tests\Functional\Driver\SQLite\Query;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Query\NestedQueriesTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-sqlite
- */
+#[\Testo\Filter\Group('driver', 'driver-sqlite')]
 class NestedQueriesTest extends CommonClass
 {
     public const DRIVER = 'sqlite';

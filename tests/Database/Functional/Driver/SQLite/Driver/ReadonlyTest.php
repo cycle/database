@@ -7,10 +7,7 @@ namespace Cycle\Database\Tests\Functional\Driver\SQLite\Driver;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Driver\ReadonlyTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-sqlite
- */
+#[\Testo\Filter\Group('driver', 'driver-sqlite')]
 class ReadonlyTest extends CommonClass
 {
     public const DRIVER = 'sqlite';

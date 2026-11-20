@@ -9,13 +9,14 @@ use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
 abstract class ReflectorTest extends BaseTest
 {
+    #[\Testo\Test]
     public function testCreateNotLinkedTables(): void
     {
         $schemaA = $this->schema('a');
-        $this->assertFalse($schemaA->exists());
+        \Testo\Assert::false($schemaA->exists());
 
         $schemaB = $this->schema('b');
-        $this->assertFalse($schemaB->exists());
+        \Testo\Assert::false($schemaB->exists());
 
         $schemaA->primary('id');
         $schemaA->integer('value');
@@ -29,13 +30,14 @@ abstract class ReflectorTest extends BaseTest
         $this->assertSameAsInDB($schemaB);
     }
 
+    #[\Testo\Test]
     public function testCreateLinkedTablesDirectOrder(): void
     {
         $schemaA = $this->schema('a');
-        $this->assertFalse($schemaA->exists());
+        \Testo\Assert::false($schemaA->exists());
 
         $schemaB = $this->schema('b');
-        $this->assertFalse($schemaB->exists());
+        \Testo\Assert::false($schemaB->exists());
 
         $schemaA->primary('id');
         $schemaA->integer('value');
@@ -51,13 +53,14 @@ abstract class ReflectorTest extends BaseTest
         $this->assertSameAsInDB($schemaB);
     }
 
+    #[\Testo\Test]
     public function testCreateLinkedTablesReversedOrder(): void
     {
         $schemaA = $this->schema('a');
-        $this->assertFalse($schemaA->exists());
+        \Testo\Assert::false($schemaA->exists());
 
         $schemaB = $this->schema('b');
-        $this->assertFalse($schemaB->exists());
+        \Testo\Assert::false($schemaB->exists());
 
         $schemaA->primary('id');
         $schemaA->integer('value');
@@ -73,13 +76,14 @@ abstract class ReflectorTest extends BaseTest
         $this->assertSameAsInDB($schemaB);
     }
 
+    #[\Testo\Test]
     public function testCreateRecursiveLinkedTables(): void
     {
         $schemaA = $this->schema('a');
-        $this->assertFalse($schemaA->exists());
+        \Testo\Assert::false($schemaA->exists());
 
         $schemaB = $this->schema('b');
-        $this->assertFalse($schemaB->exists());
+        \Testo\Assert::false($schemaB->exists());
 
         $schemaA->primary('id');
         $schemaA->integer('value');
@@ -99,13 +103,14 @@ abstract class ReflectorTest extends BaseTest
         $this->assertSameAsInDB($schemaB);
     }
 
+    #[\Testo\Test]
     public function testCreateTableAndLinkItAfter(): void
     {
         $schemaA = $this->schema('a');
-        $this->assertFalse($schemaA->exists());
+        \Testo\Assert::false($schemaA->exists());
 
         $schemaB = $this->schema('b');
-        $this->assertFalse($schemaB->exists());
+        \Testo\Assert::false($schemaB->exists());
 
         $schemaA->primary('id');
         $schemaA->integer('value');
@@ -130,13 +135,14 @@ abstract class ReflectorTest extends BaseTest
         $this->assertSameAsInDB($schemaB);
     }
 
+    #[\Testo\Test]
     public function testCreateLinkedAndDropForeign(): void
     {
         $schemaA = $this->schema('a');
-        $this->assertFalse($schemaA->exists());
+        \Testo\Assert::false($schemaA->exists());
 
         $schemaB = $this->schema('b');
-        $this->assertFalse($schemaB->exists());
+        \Testo\Assert::false($schemaB->exists());
 
         $schemaA->primary('id');
         $schemaA->integer('value');
@@ -160,16 +166,17 @@ abstract class ReflectorTest extends BaseTest
         $this->assertSameAsInDB($schemaB);
     }
 
+    #[\Testo\Test]
     public function testCreate3LinkedTables(): void
     {
         $schemaA = $this->schema('a');
-        $this->assertFalse($schemaA->exists());
+        \Testo\Assert::false($schemaA->exists());
 
         $schemaB = $this->schema('b');
-        $this->assertFalse($schemaB->exists());
+        \Testo\Assert::false($schemaB->exists());
 
         $schemaC = $this->schema('c');
-        $this->assertFalse($schemaC->exists());
+        \Testo\Assert::false($schemaC->exists());
 
         $schemaA->primary('id');
         $schemaA->integer('value');
@@ -196,13 +203,14 @@ abstract class ReflectorTest extends BaseTest
         $this->assertSameAsInDB($schemaC);
     }
 
+    #[\Testo\Test]
     public function testAddColumnsToTables(): void
     {
         $schemaA = $this->schema('a');
-        $this->assertFalse($schemaA->exists());
+        \Testo\Assert::false($schemaA->exists());
 
         $schemaB = $this->schema('b');
-        $this->assertFalse($schemaB->exists());
+        \Testo\Assert::false($schemaB->exists());
 
         $schemaA->primary('id');
         $schemaA->integer('value');
@@ -224,13 +232,14 @@ abstract class ReflectorTest extends BaseTest
         $this->assertSameAsInDB($schemaB);
     }
 
+    #[\Testo\Test]
     public function testDropColumnsFromTables(): void
     {
         $schemaA = $this->schema('a');
-        $this->assertFalse($schemaA->exists());
+        \Testo\Assert::false($schemaA->exists());
 
         $schemaB = $this->schema('b');
-        $this->assertFalse($schemaB->exists());
+        \Testo\Assert::false($schemaB->exists());
 
         $schemaA->primary('id');
         $schemaA->integer('value');
@@ -253,13 +262,14 @@ abstract class ReflectorTest extends BaseTest
         $this->assertSameAsInDB($schemaB);
     }
 
+    #[\Testo\Test]
     public function testRenameColumnsInTables(): void
     {
         $schemaA = $this->schema('a');
-        $this->assertFalse($schemaA->exists());
+        \Testo\Assert::false($schemaA->exists());
 
         $schemaB = $this->schema('b');
-        $this->assertFalse($schemaB->exists());
+        \Testo\Assert::false($schemaB->exists());
 
         $schemaA->primary('id');
         $schemaA->integer('value');
@@ -282,13 +292,14 @@ abstract class ReflectorTest extends BaseTest
         $this->assertSameAsInDB($schemaB);
     }
 
+    #[\Testo\Test]
     public function testAddIndexesToTables(): void
     {
         $schemaA = $this->schema('a');
-        $this->assertFalse($schemaA->exists());
+        \Testo\Assert::false($schemaA->exists());
 
         $schemaB = $this->schema('b');
-        $this->assertFalse($schemaB->exists());
+        \Testo\Assert::false($schemaB->exists());
 
         $schemaA->primary('id');
         $schemaA->integer('value');
@@ -312,13 +323,14 @@ abstract class ReflectorTest extends BaseTest
         $this->assertSameAsInDB($schemaB);
     }
 
+    #[\Testo\Test]
     public function testDropIndexesFromTables(): void
     {
         $schemaA = $this->schema('a');
-        $this->assertFalse($schemaA->exists());
+        \Testo\Assert::false($schemaA->exists());
 
         $schemaB = $this->schema('b');
-        $this->assertFalse($schemaB->exists());
+        \Testo\Assert::false($schemaB->exists());
 
         $schemaA->primary('id');
         $schemaA->integer('value');
@@ -345,10 +357,11 @@ abstract class ReflectorTest extends BaseTest
         $this->assertSameAsInDB($schemaB);
     }
 
+    #[\Testo\Test]
     public function testDeleteTables(): void
     {
         $schemaA = $this->schema('a');
-        $this->assertFalse($schemaA->exists());
+        \Testo\Assert::false($schemaA->exists());
 
         $schemaA->primary('id');
         $schemaA->integer('value');
@@ -361,17 +374,18 @@ abstract class ReflectorTest extends BaseTest
         $schemaA->declareDropped();
         $this->saveTables([$schemaA]);
 
-        $this->assertFalse($schemaA->exists());
-        $this->assertFalse($this->fetchSchema($schemaA)->exists());
+        \Testo\Assert::false($schemaA->exists());
+        \Testo\Assert::false($this->fetchSchema($schemaA)->exists());
     }
 
+    #[\Testo\Test]
     public function testDeleteTablesWithForeignKeys(): void
     {
         $schemaA = $this->schema('a');
-        $this->assertFalse($schemaA->exists());
+        \Testo\Assert::false($schemaA->exists());
 
         $schemaB = $this->schema('b');
-        $this->assertFalse($schemaB->exists());
+        \Testo\Assert::false($schemaB->exists());
 
         $schemaA->primary('id');
         $schemaA->integer('value');
@@ -395,8 +409,8 @@ abstract class ReflectorTest extends BaseTest
         $this->saveTables([$schemaA]);
         $this->assertSameAsInDB($schemaB);
 
-        $this->assertFalse($schemaA->exists());
-        $this->assertFalse($this->fetchSchema($schemaA)->exists());
+        \Testo\Assert::false($schemaA->exists());
+        \Testo\Assert::false($this->fetchSchema($schemaA)->exists());
     }
 
     protected function saveTables(array $tables): void
@@ -407,7 +421,7 @@ abstract class ReflectorTest extends BaseTest
             $reflector->addTable($table);
         }
 
-        $this->assertSame($tables, $reflector->getTables());
+        \Testo\Assert::same($reflector->getTables(), $tables);
         $reflector->run();
     }
 }

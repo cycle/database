@@ -7,14 +7,12 @@ namespace Cycle\Database\Tests\Functional\Driver\SQLite\Query;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Query\SelectWithJoinQueryTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-sqlite
- */
+#[\Testo\Filter\Group('driver', 'driver-sqlite')]
 class SelectWithJoinQueryTest extends CommonClass
 {
     public const DRIVER = 'sqlite';
 
+    #[\Testo\Test]
     public function testCacheJoinWithFullTypeName(): void
     {
         $compiler = $this->database->select()->getDriver()->getQueryCompiler();
@@ -37,8 +35,8 @@ class SelectWithJoinQueryTest extends CommonClass
         $sql2 = $select->sqlStatement();
         $cache2 = $ref->getValue($compiler);
 
-        $this->assertCount(1, $ref->getValue($compiler));
-        $this->assertSame($sql1, $sql2);
-        $this->assertSame($cache1, $cache2);
+        \Testo\Assert::count($ref->getValue($compiler), 1);
+        \Testo\Assert::same($sql2, $sql1);
+        \Testo\Assert::same($cache2, $cache1);
     }
 }

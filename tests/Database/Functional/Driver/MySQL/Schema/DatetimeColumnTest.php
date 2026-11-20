@@ -9,24 +9,23 @@ use Cycle\Database\Driver\Handler;
 use Cycle\Database\Exception\HandlerException;
 use Cycle\Database\Tests\Functional\Driver\Common\Schema\DatetimeColumnTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-mysql
- */
+#[\Testo\Filter\Group('driver', 'driver-mysql')]
 class DatetimeColumnTest extends CommonClass
 {
     public const DRIVER = 'mysql';
 
+    #[\Testo\Test]
     public function testTimestampDatetimeZero(): void
     {
         $this->expectExceptionMessage(
             "SQLSTATE[42000]: Syntax error or access violation: 1067 Invalid default value for 'target'",
         );
 
-        $this->expectException(HandlerException::class);
+        \Testo\Expect::exception(HandlerException::class);
         parent::testTimestampDatetimeZero();
     }
 
+    #[\Testo\Test]
     public function testTimeWithSize(): void
     {
         $schema = $this->schema('table');
@@ -37,10 +36,11 @@ class DatetimeColumnTest extends CommonClass
 
         $this->assertSameAsInDB($schema);
 
-        $this->assertSame('time', $schema->column('time_data')->getInternalType());
-        $this->assertSame(3, $schema->column('time_data')->getSize());
+        \Testo\Assert::same($schema->column('time_data')->getInternalType(), 'time');
+        \Testo\Assert::same($schema->column('time_data')->getSize(), 3);
     }
 
+    #[\Testo\Test]
     public function testTimestampWithSize(): void
     {
         $schema = $this->schema('table');
@@ -51,10 +51,11 @@ class DatetimeColumnTest extends CommonClass
 
         $this->assertSameAsInDB($schema);
 
-        $this->assertSame('timestamp', $schema->column('timestamp_data')->getInternalType());
-        $this->assertSame(3, $schema->column('timestamp_data')->getSize());
+        \Testo\Assert::same($schema->column('timestamp_data')->getInternalType(), 'timestamp');
+        \Testo\Assert::same($schema->column('timestamp_data')->getSize(), 3);
     }
 
+    #[\Testo\Test]
     public function testDatetimeWithSize(): void
     {
         $schema = $this->schema('table');
@@ -65,7 +66,7 @@ class DatetimeColumnTest extends CommonClass
 
         $this->assertSameAsInDB($schema);
 
-        $this->assertSame('datetime', $schema->column('datetime_data')->getInternalType());
-        $this->assertSame(3, $schema->column('datetime_data')->getSize());
+        \Testo\Assert::same($schema->column('datetime_data')->getInternalType(), 'datetime');
+        \Testo\Assert::same($schema->column('datetime_data')->getSize(), 3);
     }
 }

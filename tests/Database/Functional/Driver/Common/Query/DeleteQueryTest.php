@@ -9,24 +9,17 @@ use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
 abstract class DeleteQueryTest extends BaseTest
 {
+    #[\Testo\Test]
     public function testQueryInstance(): void
     {
-        $this->assertInstanceOf(
-            DeleteQuery::class,
-            $this->database->delete(),
-        );
+        \Testo\Assert::instanceOf($this->database->delete(), DeleteQuery::class);
 
-        $this->assertInstanceOf(
-            DeleteQuery::class,
-            $this->database->table('table')->delete(),
-        );
+        \Testo\Assert::instanceOf($this->database->table('table')->delete(), DeleteQuery::class);
 
-        $this->assertInstanceOf(
-            DeleteQuery::class,
-            $this->database->table->delete(),
-        );
+        \Testo\Assert::instanceOf($this->database->table->delete(), DeleteQuery::class);
     }
 
+    #[\Testo\Test]
     public function testCompileQuery(): void
     {
         $delete = $this->db()->delete('table')
@@ -38,6 +31,7 @@ abstract class DeleteQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testSimpleDeletion(): void
     {
         $delete = $this->database->delete()->from('table');
@@ -48,6 +42,7 @@ abstract class DeleteQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testDeletionWithWhere(): void
     {
         $delete = $this->database->delete()->from('table')->where('name', 'Anton');
@@ -58,6 +53,7 @@ abstract class DeleteQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testDeletionWithShortWhere(): void
     {
         $delete = $this->database->delete()->from('table')->where(['name' => 'Anton']);

@@ -8,10 +8,7 @@ namespace Cycle\Database\Tests\Functional\Driver\SQLite\Connection;
 use Cycle\Database\Exception\StatementException\ConnectionException;
 use Cycle\Database\Tests\Functional\Driver\Common\Connection\ConnectionExceptionTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-sqlite
- */
+#[\Testo\Filter\Group('driver', 'driver-sqlite')]
 class ConnectionExceptionTest extends CommonClass
 {
     public const DRIVER = 'sqlite-mock';

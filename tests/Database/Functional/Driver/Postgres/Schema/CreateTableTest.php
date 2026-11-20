@@ -7,30 +7,28 @@ namespace Cycle\Database\Tests\Functional\Driver\Postgres\Schema;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Schema\CreateTableTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-postgres
- */
+#[\Testo\Filter\Group('driver', 'driver-postgres')]
 class CreateTableTest extends CommonClass
 {
     public const DRIVER = 'postgres';
 
+    #[\Testo\Test]
     public function testCreateAndDrop(): void
     {
         $schema = $this->schema('table');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->primary('id');
         $schema->save();
 
-        $this->assertSame('public.table', $schema->column('id')->getTable());
+        \Testo\Assert::same($schema->column('id')->getTable(), 'public.table');
 
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema->declareDropped();
         $schema->save();
 
         $schema = $this->schema('table');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
     }
 }

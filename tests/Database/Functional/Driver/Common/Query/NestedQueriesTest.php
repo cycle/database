@@ -11,6 +11,7 @@ use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
 abstract class NestedQueriesTest extends BaseTest
 {
+    #[\Testo\Test]
     public function testSubQuery(): void
     {
         $select = $this->database->select()
@@ -42,6 +43,7 @@ abstract class NestedQueriesTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testSubQueryPrefixed(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
@@ -71,6 +73,7 @@ abstract class NestedQueriesTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testSubQueryPrefixedAsIndentifier(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
@@ -103,6 +106,7 @@ abstract class NestedQueriesTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testSubQueryPrefixedRawIdentifier(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
@@ -135,6 +139,7 @@ abstract class NestedQueriesTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testSubQueryPrefixedRaw(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
@@ -165,6 +170,7 @@ abstract class NestedQueriesTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testSubQueryPrefixedWithExpression(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
@@ -196,6 +202,7 @@ abstract class NestedQueriesTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testSubQueryPrefixedWithExpressionId(): void
     {
         $select = $this->db('prefixed', 'prefix_')->select()
@@ -229,6 +236,7 @@ abstract class NestedQueriesTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testUnionWithPrefixes(): void
     {
         $select = $this->db('prefixed', 'prefix_')
@@ -261,6 +269,7 @@ abstract class NestedQueriesTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testUnionWithPrefixes1(): void
     {
         $select = $this->db('prefixed', 'prefix_')
@@ -293,6 +302,7 @@ abstract class NestedQueriesTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testUnionWithPrefixes2(): void
     {
         $select = $this->db('prefixed', 'prefix_')
@@ -335,6 +345,7 @@ abstract class NestedQueriesTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testIntersectWithPrefixes(): void
     {
         $select = $this->db('prefixed', 'prefix_')
@@ -367,6 +378,7 @@ abstract class NestedQueriesTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testIntersectWithPrefixes1(): void
     {
         $select = $this->db('prefixed', 'prefix_')
@@ -399,6 +411,7 @@ abstract class NestedQueriesTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testIntersectWithPrefixes2(): void
     {
         $select = $this->db('prefixed', 'prefix_')
@@ -441,6 +454,7 @@ abstract class NestedQueriesTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testExceptWithPrefixes(): void
     {
         $select = $this->db('prefixed', 'prefix_')
@@ -473,6 +487,7 @@ abstract class NestedQueriesTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testExceptWithPrefixes1(): void
     {
         $select = $this->db('prefixed', 'prefix_')
@@ -505,6 +520,7 @@ abstract class NestedQueriesTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testExceptWithPrefixes2(): void
     {
         $select = $this->db('prefixed', 'prefix_')
@@ -547,6 +563,7 @@ abstract class NestedQueriesTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testSubQueryInUpdate(): void
     {
         $select = $this->database->update()

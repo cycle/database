@@ -9,8 +9,9 @@ use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\SelectQuery;
 use PHPUnit\Framework\TestCase;
 
-class SelectQueryTest extends TestCase
+class SelectQueryTest
 {
+    #[\Testo\Test]
     public function testBuildQuery(): void
     {
         $select = new SelectQuery();
@@ -27,55 +28,51 @@ class SelectQueryTest extends TestCase
                 'COALESCE(name, test)',
             ]);
 
-        $this->assertSame(
-            CompilerInterface::SELECT_QUERY,
-            $select->getType(),
-        );
+        \Testo\Assert::same($select->getType(), CompilerInterface::SELECT_QUERY);
 
-        $this->assertEquals(
-            [
-                'forUpdate' => false,
-                'from' => ['table'],
-                'join' => [],
-                'columns' => ['name', 'value'],
-                'distinct' => false,
-                'where' => [
-                    [
-                        'AND',
-                        ['name', '=', new Parameter('Antony')],
-                    ],
-                    [
-                        'OR',
-                        ['id', '>', new Parameter(1)],
-                    ],
+        \Testo\Assert::equals($select->getTokens(), [
+            'forUpdate' => false,
+            'from' => ['table'],
+            'join' => [],
+            'columns' => ['name', 'value'],
+            'distinct' => false,
+            'where' => [
+                [
+                    'AND',
+                    ['name', '=', new Parameter('Antony')],
                 ],
-                'having' => [],
-                'groupBy' => [],
-                'orderBy' => [
-                    ['name', 'ASC'],
-                    ['id', 'DESC'],
-                    ['RAND()', null],
-                    ['FOO()', null],
-                    ['COALESCE(name, test)', null],
+                [
+                    'OR',
+                    ['id', '>', new Parameter(1)],
                 ],
-                'limit' => null,
-                'offset' => null,
-                'union' => [],
-                'intersect' => [],
-                'except' => [],
             ],
-            $select->getTokens(),
-        );
+            'having' => [],
+            'groupBy' => [],
+            'orderBy' => [
+                ['name', 'ASC'],
+                ['id', 'DESC'],
+                ['RAND()', null],
+                ['FOO()', null],
+                ['COALESCE(name, test)', null],
+            ],
+            'limit' => null,
+            'offset' => null,
+            'union' => [],
+            'intersect' => [],
+            'except' => [],
+        ]);
     }
 
+    #[\Testo\Test]
     public function testWrapWhereOnEmptyIsNoop(): void
     {
         $select = (new SelectQuery())->from('table');
         $select->wrapWhere();
 
-        $this->assertSame([], $select->getTokens()['where']);
+        \Testo\Assert::same($select->getTokens()['where'], []);
     }
 
+    #[\Testo\Test]
     public function testWrapWhereEnclosesExistingTokens(): void
     {
         $select = (new SelectQuery())
@@ -85,18 +82,16 @@ class SelectQueryTest extends TestCase
             ->wrapWhere()
             ->where('b', 3);
 
-        $this->assertEquals(
-            [
-                ['AND', '('],
-                ['AND', ['a', '=', new Parameter(1)]],
-                ['OR', ['a', '=', new Parameter(2)]],
-                ['', ')'],
-                ['AND', ['b', '=', new Parameter(3)]],
-            ],
-            $select->getTokens()['where'],
-        );
+        \Testo\Assert::equals($select->getTokens()['where'], [
+            ['AND', '('],
+            ['AND', ['a', '=', new Parameter(1)]],
+            ['OR', ['a', '=', new Parameter(2)]],
+            ['', ')'],
+            ['AND', ['b', '=', new Parameter(3)]],
+        ]);
     }
 
+    #[\Testo\Test]
     public function testWrapWhereProtectsAgainstLaterOrWhere(): void
     {
         // Simulates a scope condition guarded by wrapWhere against a later user `orWhere`.
@@ -106,25 +101,24 @@ class SelectQueryTest extends TestCase
             ->wrapWhere()
             ->orWhere('id', 5);
 
-        $this->assertEquals(
-            [
-                ['AND', '('],
-                ['AND', ['deleted_at', '=', new Parameter(null)]],
-                ['', ')'],
-                ['OR', ['id', '=', new Parameter(5)]],
-            ],
-            $select->getTokens()['where'],
-        );
+        \Testo\Assert::equals($select->getTokens()['where'], [
+            ['AND', '('],
+            ['AND', ['deleted_at', '=', new Parameter(null)]],
+            ['', ')'],
+            ['OR', ['id', '=', new Parameter(5)]],
+        ]);
     }
 
+    #[\Testo\Test]
     public function testWrapOnWhereWithoutAnyJoinIsNoop(): void
     {
         $select = (new SelectQuery())->from('table');
         $select->wrapOnWhere();
 
-        $this->assertSame([], $select->getTokens()['join']);
+        \Testo\Assert::same($select->getTokens()['join'], []);
     }
 
+    #[\Testo\Test]
     public function testWrapOnWhereWithEmptyOnTokensIsNoop(): void
     {
         $select = (new SelectQuery())
@@ -132,9 +126,10 @@ class SelectQueryTest extends TestCase
             ->leftJoin('joined');
         $select->wrapOnWhere();
 
-        $this->assertSame([], $select->getTokens()['join'][1]['on']);
+        \Testo\Assert::same($select->getTokens()['join'][1]['on'], []);
     }
 
+    #[\Testo\Test]
     public function testWrapOnWhereEnclosesExistingOnTokens(): void
     {
         $select = (new SelectQuery())
@@ -145,18 +140,16 @@ class SelectQueryTest extends TestCase
             ->wrapOnWhere()
             ->onWhere('joined.b', 3);
 
-        $this->assertEquals(
-            [
-                ['AND', '('],
-                ['AND', ['joined.a', '=', new Parameter(1)]],
-                ['OR', ['joined.a', '=', new Parameter(2)]],
-                ['', ')'],
-                ['AND', ['joined.b', '=', new Parameter(3)]],
-            ],
-            $select->getTokens()['join'][1]['on'],
-        );
+        \Testo\Assert::equals($select->getTokens()['join'][1]['on'], [
+            ['AND', '('],
+            ['AND', ['joined.a', '=', new Parameter(1)]],
+            ['OR', ['joined.a', '=', new Parameter(2)]],
+            ['', ')'],
+            ['AND', ['joined.b', '=', new Parameter(3)]],
+        ]);
     }
 
+    #[\Testo\Test]
     public function testWrapOnWhereTargetsOnlyLastRegisteredJoin(): void
     {
         $select = (new SelectQuery())
@@ -167,25 +160,20 @@ class SelectQueryTest extends TestCase
 
         $joins = $select->getTokens()['join'];
 
-        $this->assertEquals(
-            [
-                ['AND', ['first.x', '=', new Parameter(1)]],
-                ['OR', ['first.x', '=', new Parameter(2)]],
-            ],
-            $joins[1]['on'],
-        );
+        \Testo\Assert::equals($joins[1]['on'], [
+            ['AND', ['first.x', '=', new Parameter(1)]],
+            ['OR', ['first.x', '=', new Parameter(2)]],
+        ]);
 
-        $this->assertEquals(
-            [
-                ['AND', '('],
-                ['AND', ['second.y', '=', new Parameter(10)]],
-                ['OR', ['second.y', '=', new Parameter(20)]],
-                ['', ')'],
-            ],
-            $joins[2]['on'],
-        );
+        \Testo\Assert::equals($joins[2]['on'], [
+            ['AND', '('],
+            ['AND', ['second.y', '=', new Parameter(10)]],
+            ['OR', ['second.y', '=', new Parameter(20)]],
+            ['', ')'],
+        ]);
     }
 
+    #[\Testo\Test]
     public function testWrapOnWhereDoesNotAffectWhereTokens(): void
     {
         $select = (new SelectQuery())
@@ -196,12 +184,9 @@ class SelectQueryTest extends TestCase
             ->wrapOnWhere();
 
         // WHERE stays flat — only the join's ON gets wrapped.
-        $this->assertEquals(
-            [
-                ['AND', ['a', '=', new Parameter(1)]],
-                ['OR', ['a', '=', new Parameter(2)]],
-            ],
-            $select->getTokens()['where'],
-        );
+        \Testo\Assert::equals($select->getTokens()['where'], [
+            ['AND', ['a', '=', new Parameter(1)]],
+            ['OR', ['a', '=', new Parameter(2)]],
+        ]);
     }
 }

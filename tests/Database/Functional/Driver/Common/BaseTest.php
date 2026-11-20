@@ -19,7 +19,7 @@ use Cycle\Database\Tests\Traits\Loggable;
 use Cycle\Database\Tests\Traits\TableAssertions;
 use PHPUnit\Framework\TestCase;
 
-abstract class BaseTest extends TestCase
+abstract class BaseTest
 {
     use Loggable;
     use TableAssertions;
@@ -30,6 +30,7 @@ abstract class BaseTest extends TestCase
     protected Database $database;
     private static array $memoizedDrivers = [];
 
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         $this->database ??= $this->db();
@@ -39,6 +40,7 @@ abstract class BaseTest extends TestCase
         }
     }
 
+    #[\Testo\Lifecycle\AfterTest]
     public function tearDown(): void
     {
         $this->disableProfiling();
@@ -60,6 +62,7 @@ abstract class BaseTest extends TestCase
      * @param string                   $parameters
      * @param FragmentInterface|string $fragment
      */
+    #[\Testo\Common\Attribute\AssertMethod]
     protected function assertSameQueryWithParameters(string $query, array $parameters, $fragment): void
     {
         $this->assertSameQuery($query, $fragment);
@@ -71,6 +74,7 @@ abstract class BaseTest extends TestCase
      *
      * @param FragmentInterface|string $fragment
      */
+    #[\Testo\Common\Attribute\AssertMethod]
     protected function assertSameQuery(string $query, $fragment): void
     {
         if ($fragment instanceof ActiveQuery) {
@@ -84,10 +88,7 @@ abstract class BaseTest extends TestCase
             $query,
         );
 
-        $this->assertSame(
-            \preg_replace('/\s+/', '', $query),
-            \preg_replace('/\s+/', '', (string) $fragment),
-        );
+        \Testo\Assert::same(\preg_replace('/\s+/', '', (string) $fragment), \preg_replace('/\s+/', '', $query));
     }
 
     protected function dropDatabase(?Database $database = null): void
@@ -157,6 +158,7 @@ abstract class BaseTest extends TestCase
         return "Table '{$table}' not synced, no idea why, add more messages :P";
     }
 
+    #[\Testo\Common\Attribute\AssertMethod]
     protected function assertSameParameters(array $parameters, ActiveQuery $query): void
     {
         $queryParams = new QueryParameters();
@@ -171,7 +173,7 @@ abstract class BaseTest extends TestCase
             $builderParameters[] = $param;
         }
 
-        $this->assertEquals($parameters, $builderParameters);
+        \Testo\Assert::equals($builderParameters, $parameters);
     }
 
     protected function schema(string $table, string $prefix = '', array $driverConfig = []): AbstractTable

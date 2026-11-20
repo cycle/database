@@ -6,10 +6,7 @@ namespace Cycle\Database\Tests\Functional\Driver\Common\Query;
 
 use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
-/**
- * @group driver
- * @group driver-mysql
- */
+#[\Testo\Filter\Group('driver', 'driver-mysql')]
 class MysqlTransactionsTest extends BaseTest
 {
     public const DRIVER = 'mysql';
@@ -17,6 +14,7 @@ class MysqlTransactionsTest extends BaseTest
     /**
      * The atomic DDL of MySQL 8.0 is non transactional.
      */
+    #[\Testo\Test]
     public function testRollbackDDLChanges(): void
     {
         // Creating a new table with primary field
@@ -31,7 +29,7 @@ class MysqlTransactionsTest extends BaseTest
         $schema->integer('value');
         $schema->save();
 
-        $this->assertTrue($table->hasColumn('value'));
+        \Testo\Assert::true($table->hasColumn('value'));
 
         // Nested savepoint
         $this->database->begin();
@@ -40,7 +38,7 @@ class MysqlTransactionsTest extends BaseTest
         $schema->integer('new_value');
         $schema->save();
 
-        $this->assertTrue($table->hasColumn('new_value'));
+        \Testo\Assert::true($table->hasColumn('new_value'));
 
         // Revert changes on the second level
         $this->database->rollback();
@@ -48,8 +46,8 @@ class MysqlTransactionsTest extends BaseTest
         // Commit changes on the first level
         $this->database->commit();
 
-        $this->assertTrue($table->hasColumn('value'));
+        \Testo\Assert::true($table->hasColumn('value'));
         // This column will exist after rollback
-        $this->assertTrue($table->hasColumn('new_value'));
+        \Testo\Assert::true($table->hasColumn('new_value'));
     }
 }

@@ -7,10 +7,7 @@ namespace Cycle\Database\Tests\Functional\Driver\SQLServer\Schema;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Schema\IndexesTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-sqlserver
- */
+#[\Testo\Filter\Group('driver', 'driver-sqlserver')]
 class IndexesTest extends CommonClass
 {
     public const DRIVER = 'sqlserver';

@@ -13,14 +13,12 @@ use Cycle\Database\Query\OnConflict;
 use Cycle\Database\Query\OnConflictWhere;
 use Cycle\Database\Tests\Functional\Driver\Common\Query\UpsertQueryTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-sqlite
- */
+#[\Testo\Filter\Group('driver', 'driver-sqlite')]
 class UpsertQueryTest extends CommonClass
 {
     public const DRIVER = 'sqlite';
 
+    #[\Testo\Test]
     public function testShorthandSingleColumn(): void
     {
         $q = $this->database->insert('users')
@@ -33,6 +31,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testDoUpdateExplicitColumns(): void
     {
         $q = $this->database->insert('users')
@@ -46,6 +45,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testDoUpdateWithFragmentReferencingExcluded(): void
     {
         // EXCLUDED must stay unquoted, so reference it with a raw Fragment (not an
@@ -63,6 +63,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testDoNothing(): void
     {
         $q = $this->database->insert('logs')
@@ -75,6 +76,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testMultiRowUpsert(): void
     {
         $q = $this->database->insert('users')
@@ -91,6 +93,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testTargetWherePartialIndex(): void
     {
         $q = $this->database->insert('routes')
@@ -109,6 +112,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testTargetWhereClosureBuilder(): void
     {
         $q = $this->database->insert('routes')
@@ -127,6 +131,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testTargetWhereParameterOrder(): void
     {
         // Values, then the predicate parameter, then the DO UPDATE parameter — the
@@ -149,6 +154,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testTargetWherePartialIndexRuntime(): void
     {
         $this->makePartialIndexTable();
@@ -167,14 +173,15 @@ class UpsertQueryTest extends CommonClass
         // Matching partial index → conflict → update in place.
         $upsert('k', 'new');
         $rows = $this->database->select()->from('upsert_routes')->fetchAll();
-        $this->assertCount(1, $rows);
-        $this->assertSame('new', $rows[0]['body']);
+        \Testo\Assert::count($rows, 1);
+        \Testo\Assert::same($rows[0]['body'], 'new');
 
         // Different key → no conflict → new row inserted.
         $upsert('k2', 'second');
-        $this->assertCount(2, $this->database->select()->from('upsert_routes')->fetchAll());
+        \Testo\Assert::count($this->database->select()->from('upsert_routes')->fetchAll(), 2);
     }
 
+    #[\Testo\Test]
     public function testUpsertWithReturningColumn(): void
     {
         /** @var SQLiteInsertQuery $q */
@@ -190,6 +197,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testUpsertWithMultipleReturningColumns(): void
     {
         /** @var SQLiteInsertQuery $q */

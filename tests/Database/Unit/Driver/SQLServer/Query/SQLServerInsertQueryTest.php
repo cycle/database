@@ -9,13 +9,14 @@ use Cycle\Database\Driver\SQLServer\Query\SQLServerInsertQuery;
 use Cycle\Database\Exception\BuilderException;
 use PHPUnit\Framework\TestCase;
 
-final class SQLServerInsertQueryTest extends TestCase
+final class SQLServerInsertQueryTest
 {
+    #[\Testo\Test]
     public function testWithDriverException(): void
     {
         $insert = new SQLServerInsertQuery();
 
-        $this->expectException(BuilderException::class);
-        $insert->withDriver($this->createMock(DriverInterface::class));
+        \Testo\Expect::exception(BuilderException::class);
+        $insert->withDriver(\Mockery::mock(DriverInterface::class)->shouldIgnoreMissing());
     }
 }

@@ -7,25 +7,23 @@ namespace Cycle\Database\Tests\Functional\Driver\MySQL\Driver;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Driver\DriverTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-mysql
- */
+#[\Testo\Filter\Group('driver', 'driver-mysql')]
 class DriverTest extends CommonClass
 {
     public const DRIVER = 'mysql';
 
+    #[\Testo\Test]
     public function testDDLResetTransactionLevel(): void
     {
-        $this->assertSame(0, $this->database->getDriver()->getTransactionLevel());
+        \Testo\Assert::same($this->database->getDriver()->getTransactionLevel(), 0);
 
         $this->database->begin();
-        $this->assertSame(1, $this->database->getDriver()->getTransactionLevel());
+        \Testo\Assert::same($this->database->getDriver()->getTransactionLevel(), 1);
 
         $schema = $this->database->table('table')->getSchema();
         $schema->primary('id');
         $schema->save();
 
-        $this->assertSame(0, $this->database->getDriver()->getTransactionLevel());
+        \Testo\Assert::same($this->database->getDriver()->getTransactionLevel(), 0);
     }
 }

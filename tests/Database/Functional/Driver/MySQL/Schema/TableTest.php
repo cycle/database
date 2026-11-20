@@ -7,14 +7,12 @@ namespace Cycle\Database\Tests\Functional\Driver\MySQL\Schema;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Schema\TableTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-mysql
- */
+#[\Testo\Filter\Group('driver', 'driver-mysql')]
 class TableTest extends CommonClass
 {
     public const DRIVER = 'mysql';
 
+    #[\Testo\Test]
     public function testInsertOneSetValue(): void
     {
         $table = $this->database->table('set_table');
@@ -23,16 +21,14 @@ class TableTest extends CommonClass
             'value' => 'one',
         ]);
 
-        $this->assertNotNull($id);
+        \Testo\Assert::notNull($id);
 
-        $this->assertEquals(
-            [
-                ['id' => 1, 'value' => 'one'],
-            ],
-            $table->fetchAll(),
-        );
+        \Testo\Assert::equals($table->fetchAll(), [
+            ['id' => 1, 'value' => 'one'],
+        ]);
     }
 
+    #[\Testo\Test]
     public function testInsertMultipleSetValue(): void
     {
         $table = $this->database->table('set_table');
@@ -41,16 +37,14 @@ class TableTest extends CommonClass
             'value' => 'one,two',
         ]);
 
-        $this->assertNotNull($id);
+        \Testo\Assert::notNull($id);
 
-        $this->assertEquals(
-            [
-                ['id' => 1, 'value' => 'one,two'],
-            ],
-            $table->fetchAll(),
-        );
+        \Testo\Assert::equals($table->fetchAll(), [
+            ['id' => 1, 'value' => 'one,two'],
+        ]);
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         parent::setUp();

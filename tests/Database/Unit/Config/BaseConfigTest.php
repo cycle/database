@@ -6,7 +6,7 @@ namespace Cycle\Database\Tests\Unit\Config;
 
 use PHPUnit\Framework\TestCase;
 
-abstract class BaseConfigTest extends TestCase
+abstract class BaseConfigTest
 {
     public function portDataProvider(): \Traversable
     {

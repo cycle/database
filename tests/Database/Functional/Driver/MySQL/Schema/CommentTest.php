@@ -7,10 +7,7 @@ namespace Cycle\Database\Tests\Functional\Driver\MySQL\Schema;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Schema\CommentTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-mysql
- */
+#[\Testo\Filter\Group('driver', 'driver-mysql')]
 class CommentTest extends CommonClass
 {
     public const DRIVER = 'mysql';

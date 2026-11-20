@@ -7,10 +7,7 @@ namespace Cycle\Database\Tests\Functional\Driver\Postgres\Connection;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Connection\ConnectionExceptionTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-postgres
- */
+#[\Testo\Filter\Group('driver', 'driver-postgres')]
 class ConnectionExceptionTest extends CommonClass
 {
     public const DRIVER = 'postgres-mock';

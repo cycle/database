@@ -41,10 +41,11 @@ abstract class DatetimeColumnTest extends BaseTest
 
     //timestamp
 
+    #[\Testo\Test]
     public function testTimestampWithNullDefaultAndNullable(): void
     {
         $schema = $this->schema('sampleSchema');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->timestamp('target')->nullable(true)->defaultValue(null);
         $schema->save();
@@ -52,10 +53,11 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testTimestampCurrentTimestamp(): void
     {
         $schema = $this->schema('sampleSchema');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->timestamp('target')->defaultValue(AbstractColumn::DATETIME_NOW);
         $schema->save();
@@ -63,10 +65,11 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testTimestampCurrentTimestampNotNull(): void
     {
         $schema = $this->schema('sampleSchema');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->timestamp('target')->nullable(false)->defaultValue(AbstractColumn::DATETIME_NOW);
         $schema->save();
@@ -74,10 +77,11 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testMultipleTimestampCurrentTimestamp(): void
     {
         $schema = $this->schema('sampleSchema');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->timestamp('target')->defaultValue(AbstractColumn::DATETIME_NOW);
         $schema->timestamp('target2')->defaultValue(AbstractColumn::DATETIME_NOW);
@@ -86,27 +90,26 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testTimestampDatetimeZero(): void
     {
         $schema = $this->schema('sampleSchema');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->timestamp('target')->defaultValue(0);
         $schema->save();
 
         $savedSchema = $this->schema('sampleSchema');
-        $this->assertSame(
-            $schema->column('target')->getDefaultValue()->getTimestamp(),
-            $savedSchema->column('target')->getDefaultValue()->getTimestamp(),
-        );
+        \Testo\Assert::same($savedSchema->column('target')->getDefaultValue()->getTimestamp(), $schema->column('target')->getDefaultValue()->getTimestamp());
     }
 
     //datetime
 
+    #[\Testo\Test]
     public function testDatetimeWithNullDefaultAndNullable(): void
     {
         $schema = $this->schema('sampleSchema');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->datetime('target')->nullable(true)->defaultValue(null);
         $schema->save();
@@ -114,10 +117,11 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testDatetimeCurrentTimestamp(): void
     {
         $schema = $this->schema('sampleSchema');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->datetime('target')->defaultValue(AbstractColumn::DATETIME_NOW);
         $schema->save();
@@ -125,10 +129,11 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testDatetimeCurrentTimestampNotNull(): void
     {
         $schema = $this->schema('sampleSchema');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->datetime('target')->nullable(false)->defaultValue(AbstractColumn::DATETIME_NOW);
         $schema->save();
@@ -136,10 +141,11 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testMultipleDatetimeCurrentTimestamp(): void
     {
         $schema = $this->schema('sampleSchema');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->datetime('target')->defaultValue(AbstractColumn::DATETIME_NOW);
         $schema->datetime('target2')->defaultValue(AbstractColumn::DATETIME_NOW);
@@ -149,10 +155,11 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testDatetimeDatetimeWithTimezone(): void
     {
         $schema = $this->schema('sampleSchema');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->datetime('target')->defaultValue(
             new \DateTime('1980-01-01 19:00:00', new \DateTimeZone('UTC')),
@@ -160,48 +167,42 @@ abstract class DatetimeColumnTest extends BaseTest
         $schema->save();
 
         $savedSchema = $this->schema('sampleSchema');
-        $this->assertEquals(
-            $schema->column('target')->getDefaultValue(),
-            $savedSchema->column('target')->getDefaultValue(),
-        );
+        \Testo\Assert::equals($savedSchema->column('target')->getDefaultValue(), $schema->column('target')->getDefaultValue());
     }
 
+    #[\Testo\Test]
     public function testDatetimeDatetimeString(): void
     {
         $schema = $this->schema('sampleSchema');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->datetime('target')->defaultValue('1980-01-01 19:00:00');
         $schema->save();
 
         $savedSchema = $this->schema('sampleSchema');
-        $this->assertSame(
-            $schema->column('target')->getDefaultValue()->getTimestamp(),
-            $savedSchema->column('target')->getDefaultValue()->getTimestamp(),
-        );
+        \Testo\Assert::same($savedSchema->column('target')->getDefaultValue()->getTimestamp(), $schema->column('target')->getDefaultValue()->getTimestamp());
     }
 
+    #[\Testo\Test]
     public function testDatetimeDatetimeZero(): void
     {
         $schema = $this->schema('sampleSchema');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->datetime('target')->defaultValue(0);
         $schema->save();
 
         $savedSchema = $this->schema('sampleSchema');
-        $this->assertSame(
-            $schema->column('target')->getDefaultValue()->getTimestamp(),
-            $savedSchema->column('target')->getDefaultValue()->getTimestamp(),
-        );
+        \Testo\Assert::same($savedSchema->column('target')->getDefaultValue()->getTimestamp(), $schema->column('target')->getDefaultValue()->getTimestamp());
     }
 
     //time
 
+    #[\Testo\Test]
     public function testTimeWithNullValue(): void
     {
         $schema = $this->schema('sampleSchema');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->time('target')->defaultValue(null);
         $schema->save();
@@ -209,10 +210,11 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testTimeWithZeroValue(): void
     {
         $schema = $this->schema('sampleSchema');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->time('target')->defaultValue(0);
         $schema->save();
@@ -220,10 +222,11 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testTimeWithStringValue(): void
     {
         $schema = $this->schema('sampleSchema');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->time('target')->defaultValue('12:00');
         $schema->save();
@@ -231,10 +234,11 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testTimeWithCustomStringValue(): void
     {
         $schema = $this->schema('sampleSchema');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->time('target')->defaultValue('12am');
         $schema->save();
@@ -242,10 +246,11 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testTimeWithLongStringValue(): void
     {
         $schema = $this->schema('sampleSchema');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->time('target')->defaultValue('1910-11-10 12am');
         $schema->save();
@@ -253,10 +258,11 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testDateWithNullValue(): void
     {
         $schema = $this->schema('sampleSchema');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->time('target')->defaultValue(null);
         $schema->save();
@@ -264,10 +270,11 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testDateWithZeroValue(): void
     {
         $schema = $this->schema('sampleSchema');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->time('target')->defaultValue(0);
         $schema->save();
@@ -275,10 +282,11 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testDateWithStringValue(): void
     {
         $schema = $this->schema('sampleSchema');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->time('target')->defaultValue('last friday');
         $schema->save();
@@ -286,10 +294,11 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testDateWithCustomStringValue(): void
     {
         $schema = $this->schema('sampleSchema');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->time('target')->defaultValue('1910-11-10');
         $schema->save();
@@ -297,10 +306,11 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testDateWithLongStringValue(): void
     {
         $schema = $this->schema('sampleSchema');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->time('target')->defaultValue('1910-11-10 12am');
         $schema->save();
@@ -308,10 +318,11 @@ abstract class DatetimeColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testDateWithLongStringValueOtherFormat(): void
     {
         $schema = $this->schema('sampleSchema');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->time('target')->defaultValue('May 10, 2010');
         $schema->save();

@@ -9,14 +9,12 @@ use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Tests\Functional\Driver\Common\Schema\AlterColumnTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-postgres
- */
+#[\Testo\Filter\Group('driver', 'driver-postgres')]
 class AlterColumnTest extends CommonClass
 {
     public const DRIVER = 'postgres';
 
+    #[\Testo\Test]
     public function testNativeEnums(): void
     {
         $driver = $this->database->getDriver();
@@ -36,8 +34,8 @@ class AlterColumnTest extends CommonClass
         }
 
         $schema = $driver->getSchema('person');
-        $this->assertSame('enum', $schema->column('current_mood')->getAbstractType());
-        $this->assertSame(['sad', 'ok', 'happy'], $schema->column('current_mood')->getEnumValues());
+        \Testo\Assert::same($schema->column('current_mood')->getAbstractType(), 'enum');
+        \Testo\Assert::same($schema->column('current_mood')->getEnumValues(), ['sad', 'ok', 'happy']);
 
         // convert to internal type
         $schema->save();
@@ -52,40 +50,44 @@ class AlterColumnTest extends CommonClass
         $driver->execute('DROP TYPE mood');
     }
 
+    #[\Testo\Test]
     public function testDatetimeColumnSizeException(): void
     {
-        $this->expectException(SchemaException::class);
+        \Testo\Expect::exception(SchemaException::class);
         $schema = $this->sampleSchema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema->datetime('other_datetime', -1);
         $schema->save();
     }
 
+    #[\Testo\Test]
     public function testDatetimeColumnSize2Exception(): void
     {
-        $this->expectException(SchemaException::class);
+        \Testo\Expect::exception(SchemaException::class);
         $schema = $this->sampleSchema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema->datetime('other_datetime', 7);
         $schema->save();
     }
 
+    #[\Testo\Test]
     public function testChangeDatetimeSize(): void
     {
         $schema = $this->sampleSchema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
-        $this->assertSame(0, $this->fetchSchema($schema)->column('other_datetime')->getSize());
+        \Testo\Assert::same($this->fetchSchema($schema)->column('other_datetime')->getSize(), 0);
 
         $schema->other_datetime->datetime(6);
         $schema->save();
 
         $this->assertSameAsInDB($schema);
-        $this->assertSame(6, $this->fetchSchema($schema)->column('other_datetime')->getSize());
+        \Testo\Assert::same($this->fetchSchema($schema)->column('other_datetime')->getSize(), 6);
     }
 
+    #[\Testo\Test]
     public function testAddSerialColumn(): void
     {
         $schema = $this->sampleSchema('table');
@@ -100,21 +102,19 @@ class AlterColumnTest extends CommonClass
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testAddCustomColumnTypeWithOptions(): void
     {
         $schema = $this->sampleSchema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema->type('vector_column', 'vector(3)');
         $column = $schema->column('vector_column');
 
-        $this->assertSame('vector(3)', $column->getDeclaredType());
-        $this->assertSame('vector(3)', $column->getInternalType());
-        $this->assertSame('string', $column->getType());
-        $this->assertSame('unknown', $column->getAbstractType());
-        $this->assertSame(
-            '"vector_column" vector(3) NULL',
-            $schema->column('vector_column')->sqlStatement($this->database->getDriver()),
-        );
+        \Testo\Assert::same($column->getDeclaredType(), 'vector(3)');
+        \Testo\Assert::same($column->getInternalType(), 'vector(3)');
+        \Testo\Assert::same($column->getType(), 'string');
+        \Testo\Assert::same($column->getAbstractType(), 'unknown');
+        \Testo\Assert::same($schema->column('vector_column')->sqlStatement($this->database->getDriver()), '"vector_column" vector(3) NULL');
     }
 }

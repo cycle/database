@@ -7,14 +7,12 @@ namespace Cycle\Database\Tests\Functional\Driver\MySQL\Query;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Query\SelectQueryTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-mysql
- */
+#[\Testo\Filter\Group('driver', 'driver-mysql')]
 class SelectQueryTest extends CommonClass
 {
     public const DRIVER = 'mysql';
 
+    #[\Testo\Test]
     public function testOffsetNoLimit(): void
     {
         $select = $this->database->select()->from(['users'])->offset(20);
@@ -27,6 +25,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters([20], $select);
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereJson(): void
     {
         $select = $this->database
@@ -41,6 +40,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters(['dark'], $select);
     }
 
+    #[\Testo\Test]
     public function testSelectWithOrWhereJson(): void
     {
         $select = $this->database
@@ -56,6 +56,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters([1, 'dark'], $select);
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereJsonNested(): void
     {
         $select = $this->database
@@ -70,6 +71,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters(['+1234567890'], $select);
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereJsonArray(): void
     {
         $select = $this->database
@@ -84,6 +86,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters(['+1234567890'], $select);
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereJsonNestedArray(): void
     {
         $select = $this->database
@@ -98,6 +101,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters(['+1234567890'], $select);
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereJsonContains(): void
     {
         $select = $this->database
@@ -112,6 +116,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters([\json_encode('en')], $select);
     }
 
+    #[\Testo\Test]
     public function testSelectWithOrWhereJsonContains(): void
     {
         $select = $this->database
@@ -127,6 +132,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters([1, \json_encode('en')], $select);
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereJsonContainsNested(): void
     {
         $select = $this->database
@@ -141,6 +147,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters([\json_encode('+1234567890')], $select);
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereJsonContainsSinglePath(): void
     {
         $select = $this->database
@@ -152,6 +159,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters([\json_encode([])], $select);
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereJsonContainsArray(): void
     {
         $select = $this->database
@@ -166,6 +174,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters([\json_encode('+1234567890')], $select);
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereJsonContainsNestedArray(): void
     {
         $select = $this->database
@@ -180,6 +189,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters([\json_encode('+1234567890')], $select);
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereJsonDoesntContain(): void
     {
         $select = $this->database
@@ -194,6 +204,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters([\json_encode('en')], $select);
     }
 
+    #[\Testo\Test]
     public function testSelectWithOrWhereJsonDoesntContain(): void
     {
         $select = $this->database
@@ -209,6 +220,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters([1, \json_encode('en')], $select);
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereJsonDoesntContainNested(): void
     {
         $select = $this->database
@@ -223,6 +235,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters([\json_encode('+1234567890')], $select);
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereJsonDoesntContainSinglePath(): void
     {
         $select = $this->database
@@ -234,6 +247,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters([\json_encode([])], $select);
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereJsonDoesntContainArray(): void
     {
         $select = $this->database
@@ -248,6 +262,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters([\json_encode('+1234567890')], $select);
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereJsonDoesntContainNestedArray(): void
     {
         $select = $this->database
@@ -262,6 +277,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters([\json_encode('+1234567890')], $select);
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereJsonContainsKey(): void
     {
         $select = $this->database
@@ -276,6 +292,7 @@ class SelectQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testSelectWithOrWhereJsonContainsKey(): void
     {
         $select = $this->database
@@ -290,6 +307,7 @@ class SelectQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereJsonContainsKeyNested(): void
     {
         $select = $this->database
@@ -303,6 +321,7 @@ class SelectQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereJsonContainsKeyArray(): void
     {
         $select = $this->database
@@ -316,6 +335,7 @@ class SelectQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereJsonContainsKeyNestedArray(): void
     {
         $select = $this->database
@@ -329,6 +349,7 @@ class SelectQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereJsonDoesntContainKey(): void
     {
         $select = $this->database
@@ -343,6 +364,7 @@ class SelectQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testSelectWithOrWhereJsonDoesntContainKey(): void
     {
         $select = $this->database
@@ -357,6 +379,7 @@ class SelectQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereJsonDoesntContainKeyNested(): void
     {
         $select = $this->database
@@ -370,6 +393,7 @@ class SelectQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereJsonDoesntContainKeyArray(): void
     {
         $select = $this->database
@@ -383,6 +407,7 @@ class SelectQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereJsonDoesntContainKeyNestedArray(): void
     {
         $select = $this->database
@@ -396,6 +421,7 @@ class SelectQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereJsonLengthAndCustomOperator(): void
     {
         $select = $this->database
@@ -410,6 +436,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters([1], $select);
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereJsonLength(): void
     {
         $select = $this->database
@@ -425,6 +452,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters([1, 3], $select);
     }
 
+    #[\Testo\Test]
     public function testSelectWithOrWhereJsonJsonLength(): void
     {
         $select = $this->database
@@ -440,6 +468,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters([1, 4], $select);
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereJsonLengthNested(): void
     {
         $select = $this->database
@@ -454,6 +483,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters([1], $select);
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereJsonLengthArray(): void
     {
         $select = $this->database
@@ -468,6 +498,7 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters([2], $select);
     }
 
+    #[\Testo\Test]
     public function testSelectWithWhereJsonLengthNestedArray(): void
     {
         $select = $this->database
@@ -482,10 +513,10 @@ class SelectQueryTest extends CommonClass
         $this->assertSameParameters([5], $select);
     }
 
+    #[\Testo\Test]
     public function testOrderByCompileException(): void
     {
-        $this->expectException(\Cycle\Database\Exception\CompilerException::class);
-        $this->expectExceptionMessage('Invalid sorting direction, only `ASC`, `DESC` are allowed');
+        \Testo\Expect::exception(\Cycle\Database\Exception\CompilerException::class)->withMessageContaining('Invalid sorting direction, only `ASC`, `DESC` are allowed');
 
         $this->database
             ->select()
@@ -494,6 +525,7 @@ class SelectQueryTest extends CommonClass
             ->sqlStatement();
     }
 
+    #[\Testo\Test]
     public function testOrderByJson(): void
     {
         $select = $this->database

@@ -16,6 +16,7 @@ abstract class ReadonlyTest extends BaseTest
      */
     protected $table = 'readonly_tests';
 
+    #[\Testo\Test]
     public function testTableAllowSelection(): void
     {
         $this->expectNotToPerformAssertions();
@@ -26,6 +27,7 @@ abstract class ReadonlyTest extends BaseTest
         ;
     }
 
+    #[\Testo\Test]
     public function testTableAllowCount(): void
     {
         $this->expectNotToPerformAssertions();
@@ -35,6 +37,7 @@ abstract class ReadonlyTest extends BaseTest
         ;
     }
 
+    #[\Testo\Test]
     public function testTableAllowExists(): void
     {
         $this->expectNotToPerformAssertions();
@@ -44,6 +47,7 @@ abstract class ReadonlyTest extends BaseTest
         ;
     }
 
+    #[\Testo\Test]
     public function testTableAllowGetPrimaryKeys(): void
     {
         $this->expectNotToPerformAssertions();
@@ -53,6 +57,7 @@ abstract class ReadonlyTest extends BaseTest
         ;
     }
 
+    #[\Testo\Test]
     public function testTableAllowHasColumn(): void
     {
         $this->expectNotToPerformAssertions();
@@ -62,6 +67,7 @@ abstract class ReadonlyTest extends BaseTest
         ;
     }
 
+    #[\Testo\Test]
     public function testTableAllowGetColumns(): void
     {
         $this->expectNotToPerformAssertions();
@@ -71,6 +77,7 @@ abstract class ReadonlyTest extends BaseTest
         ;
     }
 
+    #[\Testo\Test]
     public function testTableAllowHasIndex(): void
     {
         $this->expectNotToPerformAssertions();
@@ -80,6 +87,7 @@ abstract class ReadonlyTest extends BaseTest
         ;
     }
 
+    #[\Testo\Test]
     public function testTableAllowGetIndexes(): void
     {
         $this->expectNotToPerformAssertions();
@@ -89,6 +97,7 @@ abstract class ReadonlyTest extends BaseTest
         ;
     }
 
+    #[\Testo\Test]
     public function testTableAllowHasForeignKey(): void
     {
         $this->expectNotToPerformAssertions();
@@ -98,6 +107,7 @@ abstract class ReadonlyTest extends BaseTest
         ;
     }
 
+    #[\Testo\Test]
     public function testTableAllowGetForeignKeys(): void
     {
         $this->expectNotToPerformAssertions();
@@ -107,6 +117,7 @@ abstract class ReadonlyTest extends BaseTest
         ;
     }
 
+    #[\Testo\Test]
     public function testTableAllowGetDependencies(): void
     {
         $this->expectNotToPerformAssertions();
@@ -116,27 +127,30 @@ abstract class ReadonlyTest extends BaseTest
         ;
     }
 
+    #[\Testo\Test]
     public function testTableRejectInsertOne(): void
     {
-        $this->expectException(ReadonlyConnectionException::class);
+        \Testo\Expect::exception(ReadonlyConnectionException::class);
 
         $this->table()
             ->insertOne(['value' => 'example'])
         ;
     }
 
+    #[\Testo\Test]
     public function testTableRejectInsertMultiple(): void
     {
-        $this->expectException(ReadonlyConnectionException::class);
+        \Testo\Expect::exception(ReadonlyConnectionException::class);
 
         $this->table()
             ->insertMultiple(['value'], ['example'])
         ;
     }
 
+    #[\Testo\Test]
     public function testTableRejectInsert(): void
     {
-        $this->expectException(ReadonlyConnectionException::class);
+        \Testo\Expect::exception(ReadonlyConnectionException::class);
 
         $this->table()
             ->insert()
@@ -145,9 +159,10 @@ abstract class ReadonlyTest extends BaseTest
             ->run();
     }
 
+    #[\Testo\Test]
     public function testTableRejectUpdate(): void
     {
-        $this->expectException(ReadonlyConnectionException::class);
+        \Testo\Expect::exception(ReadonlyConnectionException::class);
 
         $this->table()
             ->update(['value' => 'updated'])
@@ -155,9 +170,10 @@ abstract class ReadonlyTest extends BaseTest
         ;
     }
 
+    #[\Testo\Test]
     public function testTableRejectDelete(): void
     {
-        $this->expectException(ReadonlyConnectionException::class);
+        \Testo\Expect::exception(ReadonlyConnectionException::class);
 
         $this->table()
             ->delete()
@@ -165,18 +181,20 @@ abstract class ReadonlyTest extends BaseTest
         ;
     }
 
+    #[\Testo\Test]
     public function testTableRejectEraseData(): void
     {
-        $this->expectException(ReadonlyConnectionException::class);
+        \Testo\Expect::exception(ReadonlyConnectionException::class);
 
         $this->table()
             ->eraseData()
         ;
     }
 
+    #[\Testo\Test]
     public function testSchemaRejectSaving(): void
     {
-        $this->expectException(ReadonlyConnectionException::class);
+        \Testo\Expect::exception(ReadonlyConnectionException::class);
 
         $table = $this->database
             ->table('not_allowed_to_creation');
@@ -187,6 +205,7 @@ abstract class ReadonlyTest extends BaseTest
         $schema->save();
     }
 
+    #[\Testo\Test]
     public function testDatabaseAllowSelection(): void
     {
         $this->expectNotToPerformAssertions();
@@ -197,18 +216,20 @@ abstract class ReadonlyTest extends BaseTest
         ;
     }
 
+    #[\Testo\Test]
     public function testDatabaseRejectUpdate(): void
     {
-        $this->expectException(ReadonlyConnectionException::class);
+        \Testo\Expect::exception(ReadonlyConnectionException::class);
 
         $this->database->update($this->table, ['value' => 'example'])
             ->run()
         ;
     }
 
+    #[\Testo\Test]
     public function testDatabaseRejectInsert(): void
     {
-        $this->expectException(ReadonlyConnectionException::class);
+        \Testo\Expect::exception(ReadonlyConnectionException::class);
 
         $this->database->insert($this->table)
             ->columns('value')
@@ -217,15 +238,17 @@ abstract class ReadonlyTest extends BaseTest
         ;
     }
 
+    #[\Testo\Test]
     public function testDatabaseRejectDelete(): void
     {
-        $this->expectException(ReadonlyConnectionException::class);
+        \Testo\Expect::exception(ReadonlyConnectionException::class);
 
         $this->database->delete($this->table)
             ->run()
         ;
     }
 
+    #[\Testo\Test]
     public function testDatabaseAllowRawQuery(): void
     {
         $this->expectNotToPerformAssertions();
@@ -233,13 +256,15 @@ abstract class ReadonlyTest extends BaseTest
         $this->database->query('SELECT 1');
     }
 
+    #[\Testo\Test]
     public function testDatabaseRejectRawExecution(): void
     {
-        $this->expectException(ReadonlyConnectionException::class);
+        \Testo\Expect::exception(ReadonlyConnectionException::class);
 
         $this->database->execute("DROP TABLE {$this->table}");
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         $this->database = $this->db('default', '', ['readonly' => true]);
@@ -253,6 +278,7 @@ abstract class ReadonlyTest extends BaseTest
         });
     }
 
+    #[\Testo\Lifecycle\AfterTest]
     public function tearDown(): void
     {
         $this->allowWrite(function (): void {

@@ -9,8 +9,9 @@ use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\InsertQuery;
 use PHPUnit\Framework\TestCase;
 
-class InsertQueryTest extends TestCase
+class InsertQueryTest
 {
+    #[\Testo\Test]
     public function testBuildQuery(): void
     {
         $insert = new InsertQuery();
@@ -19,19 +20,13 @@ class InsertQueryTest extends TestCase
             ->columns('name', 'value')
             ->values(['Antony', 1]);
 
-        $this->assertSame(
-            CompilerInterface::INSERT_QUERY,
-            $insert->getType(),
-        );
+        \Testo\Assert::same($insert->getType(), CompilerInterface::INSERT_QUERY);
 
-        $this->assertEquals(
-            [
-                'table' => 'table',
-                'columns' => ['name', 'value'],
-                'values' => [new Parameter(['Antony', 1])],
-                'onConflict' => null,
-            ],
-            $insert->getTokens(),
-        );
+        \Testo\Assert::equals($insert->getTokens(), [
+            'table' => 'table',
+            'columns' => ['name', 'value'],
+            'values' => [new Parameter(['Antony', 1])],
+            'onConflict' => null,
+        ]);
     }
 }

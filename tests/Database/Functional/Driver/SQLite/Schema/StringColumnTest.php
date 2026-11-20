@@ -7,10 +7,7 @@ namespace Cycle\Database\Tests\Functional\Driver\SQLite\Schema;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Schema\StringColumnTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-sqlite
- */
+#[\Testo\Filter\Group('driver', 'driver-sqlite')]
 class StringColumnTest extends CommonClass
 {
     public const DRIVER = 'sqlite';

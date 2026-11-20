@@ -7,8 +7,9 @@ namespace Cycle\Database\Tests\Unit\Config\MySQL;
 use Cycle\Database\Config\MySQL\DsnConnectionConfig;
 use PHPUnit\Framework\TestCase;
 
-final class DsnConnectionConfigTest extends TestCase
+final class DsnConnectionConfigTest
 {
+    #[\Testo\Test]
     public function testSetState(): void
     {
         $testOptionKey = 'option-1';
@@ -25,11 +26,11 @@ final class DsnConnectionConfigTest extends TestCase
         /** @var DsnConnectionConfig $recoveredConfig */
         eval('$recoveredConfig = ' . $exported . ';');
 
-        $this->assertSame("mysql:$dsn", $recoveredConfig->getDsn());
-        $this->assertSame('*', $recoveredConfig->getSourceString());
-        $this->assertSame($user, $recoveredConfig->getUsername());
-        $this->assertSame($password, $recoveredConfig->getPassword());
-        $this->assertArrayHasKey($testOptionKey, $recoveredConfig->getOptions());
-        $this->assertSame($testOptionValue, $recoveredConfig->getOptions()[$testOptionKey]);
+        \Testo\Assert::same($recoveredConfig->getDsn(), "mysql:$dsn");
+        \Testo\Assert::same($recoveredConfig->getSourceString(), '*');
+        \Testo\Assert::same($recoveredConfig->getUsername(), $user);
+        \Testo\Assert::same($recoveredConfig->getPassword(), $password);
+        \Testo\Assert::array($recoveredConfig->getOptions())->hasKeys($testOptionKey);
+        \Testo\Assert::same($recoveredConfig->getOptions()[$testOptionKey], $testOptionValue);
     }
 }

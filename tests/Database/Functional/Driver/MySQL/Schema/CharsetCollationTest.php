@@ -7,18 +7,16 @@ namespace Cycle\Database\Tests\Functional\Driver\MySQL\Schema;
 use Cycle\Database\Driver\MySQL\Schema\MySQLColumn;
 use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
-/**
- * @group driver
- * @group driver-mysql
- */
+#[\Testo\Filter\Group('driver', 'driver-mysql')]
 class CharsetCollationTest extends BaseTest
 {
     public const DRIVER = 'mysql';
 
+    #[\Testo\Test]
     public function testStringColumnWithCharsetAndCollation(): void
     {
         $schema = $this->schema('table');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->primary('id');
         $column = $schema->string('email', size: 255);
@@ -28,15 +26,16 @@ class CharsetCollationTest extends BaseTest
         $schema->save();
 
         $schema = $this->schema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $emailColumn = $schema->column('email');
         \assert($emailColumn instanceof MySQLColumn);
 
-        $this->assertSame('ascii', $emailColumn->getCharset());
-        $this->assertSame('ascii_bin', $emailColumn->getCollation());
+        \Testo\Assert::same($emailColumn->getCharset(), 'ascii');
+        \Testo\Assert::same($emailColumn->getCollation(), 'ascii_bin');
     }
 
+    #[\Testo\Test]
     public function testStringColumnCharsetCollationPersistsAfterReload(): void
     {
         $schema = $this->schema('table');
@@ -52,11 +51,12 @@ class CharsetCollationTest extends BaseTest
         $nameColumn = $schema->column('name');
         \assert($nameColumn instanceof MySQLColumn);
 
-        $this->assertSame('utf8mb4', $nameColumn->getCharset());
-        $this->assertSame('utf8mb4_unicode_ci', $nameColumn->getCollation());
+        \Testo\Assert::same($nameColumn->getCharset(), 'utf8mb4');
+        \Testo\Assert::same($nameColumn->getCollation(), 'utf8mb4_unicode_ci');
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testChangeCollation(): void
     {
         $schema = $this->schema('table');
@@ -70,7 +70,7 @@ class CharsetCollationTest extends BaseTest
         $schema = $this->schema('table');
         $titleColumn = $schema->column('title');
         \assert($titleColumn instanceof MySQLColumn);
-        $this->assertSame('ascii_general_ci', $titleColumn->getCollation());
+        \Testo\Assert::same($titleColumn->getCollation(), 'ascii_general_ci');
 
         // Change collation
         $titleColumn->collation('ascii_bin');
@@ -79,9 +79,10 @@ class CharsetCollationTest extends BaseTest
         $schema = $this->schema('table');
         $titleColumn = $schema->column('title');
         \assert($titleColumn instanceof MySQLColumn);
-        $this->assertSame('ascii_bin', $titleColumn->getCollation());
+        \Testo\Assert::same($titleColumn->getCollation(), 'ascii_bin');
     }
 
+    #[\Testo\Test]
     public function testTextColumnWithCharsetAndCollation(): void
     {
         $schema = $this->schema('table');
@@ -97,10 +98,11 @@ class CharsetCollationTest extends BaseTest
         $contentColumn = $schema->column('content');
         \assert($contentColumn instanceof MySQLColumn);
 
-        $this->assertSame('utf8mb4', $contentColumn->getCharset());
-        $this->assertSame('utf8mb4_bin', $contentColumn->getCollation());
+        \Testo\Assert::same($contentColumn->getCharset(), 'utf8mb4');
+        \Testo\Assert::same($contentColumn->getCollation(), 'utf8mb4_bin');
     }
 
+    #[\Testo\Test]
     public function testColumnWithoutExplicitCharsetInheritsDefault(): void
     {
         $schema = $this->schema('table');
@@ -116,10 +118,11 @@ class CharsetCollationTest extends BaseTest
         \assert($nameColumn instanceof MySQLColumn);
 
         // Column should have inherited charset/collation from table/database defaults
-        $this->assertNotEmpty($nameColumn->getCharset());
-        $this->assertNotEmpty($nameColumn->getCollation());
+        \Testo\Assert::false(empty($nameColumn->getCharset()));
+        \Testo\Assert::false(empty($nameColumn->getCollation()));
     }
 
+    #[\Testo\Test]
     public function testCompareColumnsWithSameCharset(): void
     {
         $schema = $this->schema('table');
@@ -134,6 +137,6 @@ class CharsetCollationTest extends BaseTest
         $schema = $this->schema('table');
         $dbColumn = $schema->column('email');
 
-        $this->assertTrue($column->compare($dbColumn));
+        \Testo\Assert::true($column->compare($dbColumn));
     }
 }

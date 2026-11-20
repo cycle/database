@@ -47,11 +47,12 @@ abstract class ForeignKeysTest extends BaseTest
         return $schema;
     }
 
+    #[\Testo\Test]
     public function testCreateWithReferenceToExistedTable(): void
     {
         $schema = $this->schema('schema');
-        $this->assertFalse($schema->exists());
-        $this->assertTrue($this->sampleSchema('external')->exists());
+        \Testo\Assert::false($schema->exists());
+        \Testo\Assert::true($this->sampleSchema('external')->exists());
 
         $schema->primary('id');
         $schema->integer('external_id');
@@ -60,14 +61,15 @@ abstract class ForeignKeysTest extends BaseTest
         $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
-        $this->assertTrue($this->schema('schema')->hasForeignKey(['external_id']));
+        \Testo\Assert::true($this->schema('schema')->hasForeignKey(['external_id']));
     }
 
+    #[\Testo\Test]
     public function testCreateWithReferenceToExistedTableWithName(): void
     {
         $schema = $this->schema('schema');
-        $this->assertFalse($schema->exists());
-        $this->assertTrue($this->sampleSchema('external')->exists());
+        \Testo\Assert::false($schema->exists());
+        \Testo\Assert::true($this->sampleSchema('external')->exists());
 
         $schema->primary('id');
         $schema->integer('external_id');
@@ -76,14 +78,15 @@ abstract class ForeignKeysTest extends BaseTest
         $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
-        $this->assertTrue($this->schema('schema')->hasForeignKey(['external_id']));
+        \Testo\Assert::true($this->schema('schema')->hasForeignKey(['external_id']));
     }
 
+    #[\Testo\Test]
     public function testCreateWithReferenceToExistedTableCascade(): void
     {
         $schema = $this->schema('schema');
-        $this->assertFalse($schema->exists());
-        $this->assertTrue($this->sampleSchema('external')->exists());
+        \Testo\Assert::false($schema->exists());
+        \Testo\Assert::true($this->sampleSchema('external')->exists());
 
         $schema->primary('id');
         $schema->integer('external_id');
@@ -95,14 +98,15 @@ abstract class ForeignKeysTest extends BaseTest
         $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
-        $this->assertTrue($this->schema('schema')->hasForeignKey(['external_id']));
+        \Testo\Assert::true($this->schema('schema')->hasForeignKey(['external_id']));
     }
 
+    #[\Testo\Test]
     public function testCreateWithReferenceToExistedTableNoAction(): void
     {
         $schema = $this->schema('schema');
-        $this->assertFalse($schema->exists());
-        $this->assertTrue($this->sampleSchema('external')->exists());
+        \Testo\Assert::false($schema->exists());
+        \Testo\Assert::true($this->sampleSchema('external')->exists());
 
         $schema->primary('id');
         $schema->integer('external_id');
@@ -114,14 +118,15 @@ abstract class ForeignKeysTest extends BaseTest
         $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
-        $this->assertTrue($this->schema('schema')->hasForeignKey(['external_id']));
+        \Testo\Assert::true($this->schema('schema')->hasForeignKey(['external_id']));
     }
 
+    #[\Testo\Test]
     public function testDropExistedReference(): void
     {
         $schema = $this->schema('schema');
-        $this->assertFalse($schema->exists());
-        $this->assertTrue($this->sampleSchema('external')->exists());
+        \Testo\Assert::false($schema->exists());
+        \Testo\Assert::true($this->sampleSchema('external')->exists());
 
         $schema->primary('id');
         $schema->integer('external_id');
@@ -131,19 +136,20 @@ abstract class ForeignKeysTest extends BaseTest
             ->onUpdate(AbstractForeignKey::NO_ACTION);
 
         $schema->save(Handler::DO_ALL);
-        $this->assertTrue($this->schema('schema')->hasForeignKey(['external_id']));
+        \Testo\Assert::true($this->schema('schema')->hasForeignKey(['external_id']));
 
         $schema->dropForeignKey(['external_id']);
         $schema->save(Handler::DO_ALL);
 
-        $this->assertFalse($this->schema('schema')->hasForeignKey(['external_id']));
+        \Testo\Assert::false($this->schema('schema')->hasForeignKey(['external_id']));
     }
 
+    #[\Testo\Test]
     public function testChangeReferenceForeignKey(): void
     {
         $schema = $this->schema('schema');
-        $this->assertFalse($schema->exists());
-        $this->assertTrue($this->sampleSchema('external')->exists());
+        \Testo\Assert::false($schema->exists());
+        \Testo\Assert::true($this->sampleSchema('external')->exists());
 
         $schema->primary('id');
         $schema->integer('external_id');
@@ -153,7 +159,7 @@ abstract class ForeignKeysTest extends BaseTest
             ->onUpdate(AbstractForeignKey::NO_ACTION);
 
         $schema->save(Handler::DO_ALL);
-        $this->assertTrue($this->schema('schema')->hasForeignKey(['external_id']));
+        \Testo\Assert::true($this->schema('schema')->hasForeignKey(['external_id']));
 
         $schema->foreignKey(['external_id'])->references('external', ['secondary_id']);
         $schema->save(Handler::DO_ALL);
@@ -161,11 +167,12 @@ abstract class ForeignKeysTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testChangeReferenceForeignTable(): void
     {
         $schema = $this->schema('schema');
-        $this->assertFalse($schema->exists());
-        $this->assertTrue($this->sampleSchema('external')->exists());
+        \Testo\Assert::false($schema->exists());
+        \Testo\Assert::true($this->sampleSchema('external')->exists());
 
         $schema->primary('id');
         $schema->integer('external_id');
@@ -175,9 +182,9 @@ abstract class ForeignKeysTest extends BaseTest
             ->onUpdate(AbstractForeignKey::NO_ACTION);
 
         $schema->save(Handler::DO_ALL);
-        $this->assertTrue($this->schema('schema')->hasForeignKey(['external_id']));
+        \Testo\Assert::true($this->schema('schema')->hasForeignKey(['external_id']));
 
-        $this->assertTrue($this->sampleSchema('external2')->exists());
+        \Testo\Assert::true($this->sampleSchema('external2')->exists());
 
         $schema->foreignKey(['external_id'])->references('external2', ['secondary_id']);
         $schema->save(Handler::DO_ALL);
@@ -185,11 +192,12 @@ abstract class ForeignKeysTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testChangeUpdateRuleToCascade(): void
     {
         $schema = $this->schema('schema');
-        $this->assertFalse($schema->exists());
-        $this->assertTrue($this->sampleSchema('external')->exists());
+        \Testo\Assert::false($schema->exists());
+        \Testo\Assert::true($this->sampleSchema('external')->exists());
 
         $schema->primary('id');
         $schema->integer('external_id');
@@ -199,7 +207,7 @@ abstract class ForeignKeysTest extends BaseTest
             ->onUpdate(AbstractForeignKey::NO_ACTION);
 
         $schema->save(Handler::DO_ALL);
-        $this->assertTrue($this->schema('schema')->hasForeignKey(['external_id']));
+        \Testo\Assert::true($this->schema('schema')->hasForeignKey(['external_id']));
 
         $schema->foreignKey(['external_id'])->onUpdate(AbstractForeignKey::CASCADE);
         $schema->save(Handler::DO_ALL);
@@ -207,11 +215,12 @@ abstract class ForeignKeysTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testChangeUpdateRuleToNoAction(): void
     {
         $schema = $this->schema('schema');
-        $this->assertFalse($schema->exists());
-        $this->assertTrue($this->sampleSchema('external')->exists());
+        \Testo\Assert::false($schema->exists());
+        \Testo\Assert::true($this->sampleSchema('external')->exists());
 
         $schema->primary('id');
         $schema->integer('external_id');
@@ -221,7 +230,7 @@ abstract class ForeignKeysTest extends BaseTest
             ->onUpdate(AbstractForeignKey::CASCADE);
 
         $schema->save(Handler::DO_ALL);
-        $this->assertTrue($this->schema('schema')->hasForeignKey(['external_id']));
+        \Testo\Assert::true($this->schema('schema')->hasForeignKey(['external_id']));
 
         $schema->foreignKey(['external_id'])->onUpdate(AbstractForeignKey::NO_ACTION);
         $schema->save(Handler::DO_ALL);
@@ -229,11 +238,12 @@ abstract class ForeignKeysTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testChangeDeleteRuleToCascade(): void
     {
         $schema = $this->schema('schema');
-        $this->assertFalse($schema->exists());
-        $this->assertTrue($this->sampleSchema('external')->exists());
+        \Testo\Assert::false($schema->exists());
+        \Testo\Assert::true($this->sampleSchema('external')->exists());
 
         $schema->primary('id');
         $schema->integer('external_id');
@@ -243,7 +253,7 @@ abstract class ForeignKeysTest extends BaseTest
             ->onUpdate(AbstractForeignKey::NO_ACTION);
 
         $schema->save(Handler::DO_ALL);
-        $this->assertTrue($this->schema('schema')->hasForeignKey(['external_id']));
+        \Testo\Assert::true($this->schema('schema')->hasForeignKey(['external_id']));
 
         $schema->foreignKey(['external_id'])->onDelete(AbstractForeignKey::CASCADE);
         $schema->save(Handler::DO_ALL);
@@ -251,11 +261,12 @@ abstract class ForeignKeysTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testChangeDeleteRuleToNoAction(): void
     {
         $schema = $this->schema('schema');
-        $this->assertFalse($schema->exists());
-        $this->assertTrue($this->sampleSchema('external')->exists());
+        \Testo\Assert::false($schema->exists());
+        \Testo\Assert::true($this->sampleSchema('external')->exists());
 
         $schema->primary('id');
         $schema->integer('external_id');
@@ -265,7 +276,7 @@ abstract class ForeignKeysTest extends BaseTest
             ->onUpdate(AbstractForeignKey::CASCADE);
 
         $schema->save(Handler::DO_ALL);
-        $this->assertTrue($this->schema('schema')->hasForeignKey(['external_id']));
+        \Testo\Assert::true($this->schema('schema')->hasForeignKey(['external_id']));
 
         $schema->foreignKey(['external_id'])->onDelete(AbstractForeignKey::NO_ACTION);
         $schema->save(Handler::DO_ALL);
@@ -273,11 +284,12 @@ abstract class ForeignKeysTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testCompositeKeys(): void
     {
         $schema = $this->schema('schema');
-        $this->assertFalse($schema->exists());
-        $this->assertTrue($this->sampleSchema('external')->exists());
+        \Testo\Assert::false($schema->exists());
+        \Testo\Assert::true($this->sampleSchema('external')->exists());
 
         $schema->primary('id');
         $schema->integer('external_id');
@@ -291,7 +303,7 @@ abstract class ForeignKeysTest extends BaseTest
 
         $schema->save(Handler::DO_ALL);
 
-        $this->assertTrue($this->schema('schema')->hasForeignKey(['external_id', 'external_id_2']));
+        \Testo\Assert::true($this->schema('schema')->hasForeignKey(['external_id', 'external_id_2']));
 
         $schema->foreignKey(['external_id', 'external_id_2'])->onDelete(AbstractForeignKey::NO_ACTION);
         $schema->save(Handler::DO_ALL);
@@ -299,11 +311,12 @@ abstract class ForeignKeysTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testCreateWithIndex(): void
     {
         $schema = $this->schema('schema');
-        $this->assertFalse($schema->exists());
-        $this->assertTrue($this->sampleSchema('external')->exists());
+        \Testo\Assert::false($schema->exists());
+        \Testo\Assert::true($this->sampleSchema('external')->exists());
 
         $schema->primary('id');
         $schema->integer('external_id');
@@ -312,7 +325,7 @@ abstract class ForeignKeysTest extends BaseTest
         $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
-        $this->assertTrue($this->schema('schema')->hasForeignKey(['external_id']));
-        $this->assertTrue($this->schema('schema')->hasIndex(['external_id']));
+        \Testo\Assert::true($this->schema('schema')->hasForeignKey(['external_id']));
+        \Testo\Assert::true($this->schema('schema')->hasIndex(['external_id']));
     }
 }

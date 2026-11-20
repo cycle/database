@@ -9,18 +9,20 @@ use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
 abstract class TransactionsTest extends BaseTest
 {
+    #[\Testo\Test]
     public function testCommitTransactionInsert(): void
     {
         $this->database->begin();
 
         $this->database->table->insertOne(['name' => 'Anton', 'value' => 123]);
-        $this->assertSame(1, $this->database->table->count());
+        \Testo\Assert::same($this->database->table->count(), 1);
 
         $this->database->commit();
 
-        $this->assertSame(1, $this->database->table->count());
+        \Testo\Assert::same($this->database->table->count(), 1);
     }
 
+    #[\Testo\Test]
     public function testCommitTransactionInsertClosure(): void
     {
         $db = $this->database;
@@ -28,13 +30,14 @@ abstract class TransactionsTest extends BaseTest
         $this->database->transaction(
             function () use ($db): void {
                 $db->table->insertOne(['name' => 'Anton', 'value' => 123]);
-                $this->assertSame(1, $this->database->table->count());
+                \Testo\Assert::same($this->database->table->count(), 1);
             },
         );
 
-        $this->assertSame(1, $this->database->table->count());
+        \Testo\Assert::same($this->database->table->count(), 1);
     }
 
+    #[\Testo\Test]
     public function testCommitTransactionInsertClosureIsolationLevel(): void
     {
         $db = $this->database;
@@ -42,14 +45,15 @@ abstract class TransactionsTest extends BaseTest
         $this->database->transaction(
             function () use ($db): void {
                 $db->table->insertOne(['name' => 'Anton', 'value' => 123]);
-                $this->assertSame(1, $this->database->table->count());
+                \Testo\Assert::same($this->database->table->count(), 1);
             },
             Database::ISOLATION_READ_COMMITTED,
         );
 
-        $this->assertSame(1, $this->database->table->count());
+        \Testo\Assert::same($this->database->table->count(), 1);
     }
 
+    #[\Testo\Test]
     public function testCommitTransactionInsertClosureIsolationLevel1(): void
     {
         $db = $this->database;
@@ -57,14 +61,15 @@ abstract class TransactionsTest extends BaseTest
         $this->database->transaction(
             function () use ($db): void {
                 $db->table->insertOne(['name' => 'Anton', 'value' => 123]);
-                $this->assertSame(1, $this->database->table->count());
+                \Testo\Assert::same($this->database->table->count(), 1);
             },
             Database::ISOLATION_READ_UNCOMMITTED,
         );
 
-        $this->assertSame(1, $this->database->table->count());
+        \Testo\Assert::same($this->database->table->count(), 1);
     }
 
+    #[\Testo\Test]
     public function testCommitTransactionInsertClosureIsolationLevel2(): void
     {
         $db = $this->database;
@@ -72,14 +77,15 @@ abstract class TransactionsTest extends BaseTest
         $this->database->transaction(
             function () use ($db): void {
                 $db->table->insertOne(['name' => 'Anton', 'value' => 123]);
-                $this->assertSame(1, $this->database->table->count());
+                \Testo\Assert::same($this->database->table->count(), 1);
             },
             Database::ISOLATION_REPEATABLE_READ,
         );
 
-        $this->assertSame(1, $this->database->table->count());
+        \Testo\Assert::same($this->database->table->count(), 1);
     }
 
+    #[\Testo\Test]
     public function testCommitTransactionInsertClosureIsolationLevel3(): void
     {
         $db = $this->database;
@@ -87,26 +93,28 @@ abstract class TransactionsTest extends BaseTest
         $this->database->transaction(
             function () use ($db): void {
                 $db->table->insertOne(['name' => 'Anton', 'value' => 123]);
-                $this->assertSame(1, $this->database->table->count());
+                \Testo\Assert::same($this->database->table->count(), 1);
             },
             Database::ISOLATION_SERIALIZABLE,
         );
 
-        $this->assertSame(1, $this->database->table->count());
+        \Testo\Assert::same($this->database->table->count(), 1);
     }
 
+    #[\Testo\Test]
     public function testRollbackTransactionInsert(): void
     {
         $this->database->begin();
 
         $this->database->table->insertOne(['name' => 'Anton', 'value' => 123]);
-        $this->assertSame(1, $this->database->table->count());
+        \Testo\Assert::same($this->database->table->count(), 1);
 
         $this->database->rollback();
 
-        $this->assertSame(0, $this->database->table->count());
+        \Testo\Assert::same($this->database->table->count(), 0);
     }
 
+    #[\Testo\Test]
     public function testRollbackTransactionInsertClosure(): void
     {
         $db = $this->database;
@@ -115,62 +123,65 @@ abstract class TransactionsTest extends BaseTest
             $this->database->transaction(
                 function () use ($db): void {
                     $db->table->insertOne(['name' => 'Anton', 'value' => 123]);
-                    $this->assertSame(1, $this->database->table->count());
+                    \Testo\Assert::same($this->database->table->count(), 1);
 
                     throw new \Error('Something happen');
                 },
             );
         } catch (\Error $e) {
-            $this->assertSame('Something happen', $e->getMessage());
+            \Testo\Assert::same($e->getMessage(), 'Something happen');
         }
 
-        $this->assertSame(0, $this->database->table->count());
+        \Testo\Assert::same($this->database->table->count(), 0);
     }
 
+    #[\Testo\Test]
     public function testCommitTransactionNestedInsert(): void
     {
         $this->database->begin();
 
         $this->database->table->insertOne(['name' => 'Anton', 'value' => 123]);
-        $this->assertSame(1, $this->database->table->count());
+        \Testo\Assert::same($this->database->table->count(), 1);
 
         //Nested savepoint
         $this->database->begin();
 
         $this->database->table->insertOne(['name' => 'John', 'value' => 456]);
-        $this->assertSame(2, $this->database->table->count());
+        \Testo\Assert::same($this->database->table->count(), 2);
 
         $this->database->commit();
-        $this->assertSame(2, $this->database->table->count());
+        \Testo\Assert::same($this->database->table->count(), 2);
 
         $this->database->commit();
-        $this->assertSame(2, $this->database->table->count());
+        \Testo\Assert::same($this->database->table->count(), 2);
     }
 
+    #[\Testo\Test]
     public function testRollbackTransactionNestedInsert(): void
     {
         $this->database->begin();
 
         $this->database->table->insertOne(['name' => 'Anton', 'value' => 123]);
-        $this->assertSame(1, $this->database->table->count());
+        \Testo\Assert::same($this->database->table->count(), 1);
 
         //Nested savepoint
         $this->database->begin();
 
         $this->database->table->insertOne(['name' => 'John', 'value' => 456]);
-        $this->assertSame(2, $this->database->table->count());
+        \Testo\Assert::same($this->database->table->count(), 2);
 
         $this->database->rollback();
-        $this->assertSame(1, $this->database->table->count());
+        \Testo\Assert::same($this->database->table->count(), 1);
 
         $this->database->commit();
-        $this->assertSame(1, $this->database->table->count());
+        \Testo\Assert::same($this->database->table->count(), 1);
     }
 
+    #[\Testo\Test]
     public function testRollbackDDLChanges(): void
     {
         if (static::DRIVER === 'mysql') {
-            $this->markTestSkipped('MySQL does not support DDL transactions.');
+            throw new \Testo\Core\Exception\SkipTest('MySQL does not support DDL transactions.');
         }
 
         // Creating a new table with primary field
@@ -185,7 +196,7 @@ abstract class TransactionsTest extends BaseTest
         $schema->integer('value');
         $schema->save();
 
-        $this->assertTrue($table->hasColumn('value'));
+        \Testo\Assert::true($table->hasColumn('value'));
 
         // Nested savepoint
         $this->database->begin();
@@ -194,7 +205,7 @@ abstract class TransactionsTest extends BaseTest
         $schema->integer('new_value');
         $schema->save();
 
-        $this->assertTrue($table->hasColumn('new_value'));
+        \Testo\Assert::true($table->hasColumn('new_value'));
 
         // Revert changes on the second level
         $this->database->rollback();
@@ -202,14 +213,15 @@ abstract class TransactionsTest extends BaseTest
         // Commit changes on the first level
         $this->database->commit();
 
-        $this->assertTrue($table->hasColumn('value'));
-        $this->assertFalse($table->hasColumn('new_value'));
+        \Testo\Assert::true($table->hasColumn('value'));
+        \Testo\Assert::false($table->hasColumn('new_value'));
     }
 
+    #[\Testo\Test]
     public function testSelectForUpdateException(): void
     {
         $id = $this->database->table->insertOne(['name' => 'Anton', 'value' => 123]);
-        $this->assertSame(1, $this->database->table->count());
+        \Testo\Assert::same($this->database->table->count(), 1);
 
         $this->database->begin();
         $user = $this->database->table
@@ -224,9 +236,10 @@ abstract class TransactionsTest extends BaseTest
         $this->database->table->update(['value' => 234], ['id' => $user['id']])->run();
         $this->database->commit();
 
-        $this->assertEquals(234, (int) $this->database->table->select()->run()->fetchColumn(2));
+        \Testo\Assert::equals((int) $this->database->table->select()->run()->fetchColumn(2), 234);
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         parent::setUp();

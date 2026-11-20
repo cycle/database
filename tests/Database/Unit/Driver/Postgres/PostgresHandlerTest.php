@@ -8,28 +8,24 @@ use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\Postgres\PostgresHandler;
 use PHPUnit\Framework\TestCase;
 
-final class PostgresHandlerTest extends TestCase
+final class PostgresHandlerTest
 {
+    #[\Testo\Test]
     public function testEnableForeignKeyConstraints(): void
     {
-        $driver = $this->createMock(DriverInterface::class);
-        $driver
-            ->expects($this->once())
-            ->method('execute')
-            ->with('SET CONSTRAINTS ALL IMMEDIATE;');
+        $driver = \Mockery::mock(DriverInterface::class)->shouldIgnoreMissing();
+        $driver->shouldReceive('execute')->once()->with('SET CONSTRAINTS ALL IMMEDIATE;', \Mockery::andAnyOtherArgs());
 
         $handler = (new PostgresHandler())->withDriver($driver);
 
         $handler->enableForeignKeyConstraints();
     }
 
+    #[\Testo\Test]
     public function testDisableForeignKeyConstraints(): void
     {
-        $driver = $this->createMock(DriverInterface::class);
-        $driver
-            ->expects($this->once())
-            ->method('execute')
-            ->with('SET CONSTRAINTS ALL DEFERRED;');
+        $driver = \Mockery::mock(DriverInterface::class)->shouldIgnoreMissing();
+        $driver->shouldReceive('execute')->once()->with('SET CONSTRAINTS ALL DEFERRED;', \Mockery::andAnyOtherArgs());
 
         $handler = (new PostgresHandler())->withDriver($driver);
 

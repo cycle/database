@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
  * Every exception below is a verbatim capture from the server it names: the messages carry the
  * user data the server echoes back, which is what makes classifying on them unsafe.
  */
-final class MapExceptionTest extends TestCase
+final class MapExceptionTest
 {
     public function postgresProvider(): iterable
     {
@@ -257,9 +257,8 @@ final class MapExceptionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider postgresProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('postgresProvider')]
     public function testPostgres(
         string $sqlState,
         string $message,
@@ -270,9 +269,8 @@ final class MapExceptionTest extends TestCase
         $this->assertMapsTo(PostgresDriver::class, $sqlState, $message, $expected, $code, $driverCode);
     }
 
-    /**
-     * @dataProvider sqlServerProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('sqlServerProvider')]
     public function testSQLServer(
         string $sqlState,
         string $message,
@@ -283,9 +281,8 @@ final class MapExceptionTest extends TestCase
         $this->assertMapsTo(SQLServerDriver::class, $sqlState, $message, $expected, $code, $driverCode);
     }
 
-    /**
-     * @dataProvider mySQLProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('mySQLProvider')]
     public function testMySQL(
         string $sqlState,
         string $message,
@@ -296,9 +293,8 @@ final class MapExceptionTest extends TestCase
         $this->assertMapsTo(MySQLDriver::class, $sqlState, $message, $expected, $code, $driverCode);
     }
 
-    /**
-     * @dataProvider sqLiteProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('sqLiteProvider')]
     public function testSQLite(
         string $sqlState,
         string $message,
@@ -309,16 +305,15 @@ final class MapExceptionTest extends TestCase
         $this->assertMapsTo(SQLiteDriver::class, $sqlState, $message, $expected, $code, $driverCode);
     }
 
+    #[\Testo\Test]
     public function testSqlStateIsReadFromTheMessageWhenErrorInfoIsMissing(): void
     {
         $exception = new \PDOException('SQLSTATE[23505]: Unique violation: 7 ERROR:  duplicate key');
 
-        self::assertInstanceOf(
-            StatementException\ConstrainException::class,
-            $this->map(PostgresDriver::class, $exception),
-        );
+        \Testo\Assert::instanceOf($this->map(PostgresDriver::class, $exception), StatementException\ConstrainException::class);
     }
 
+    #[\Testo\Test]
     public function testSqlStateReadFromTheMessageStillBlocksTheMySQLNeedles(): void
     {
         // No errorInfo, so there is no errno to gate on; the state in the prefix has to.
@@ -326,29 +321,22 @@ final class MapExceptionTest extends TestCase
             "SQLSTATE[42S02]: Base table or view not found: 1146 Table 'spiral.no_such_connections_table' doesn't exist",
         );
 
-        self::assertSame(
-            StatementException::class,
-            $this->map(MySQLDriver::class, $exception)::class,
-        );
+        \Testo\Assert::same($this->map(MySQLDriver::class, $exception)::class, StatementException::class);
     }
 
+    #[\Testo\Test]
     public function testExceptionWithoutAnySqlStateFallsBackToTheMessage(): void
     {
-        self::assertInstanceOf(
-            StatementException\ConnectionException::class,
-            $this->map(PostgresDriver::class, new \RuntimeException('Broken pipe')),
-        );
+        \Testo\Assert::instanceOf($this->map(PostgresDriver::class, new \RuntimeException('Broken pipe')), StatementException\ConnectionException::class);
 
-        self::assertNotInstanceOf(
-            StatementException\ConnectionException::class,
-            $this->map(PostgresDriver::class, new \RuntimeException('Something else entirely')),
-        );
+        \Testo\Assert::false($this->map(PostgresDriver::class, new \RuntimeException('Something else entirely')) instanceof StatementException\ConnectionException);
     }
 
     /**
      * @param class-string<Driver> $driver
      * @param class-string<StatementException> $expected
      */
+    #[\Testo\Common\Attribute\AssertMethod]
     private function assertMapsTo(
         string $driver,
         string $sqlState,
@@ -363,10 +351,10 @@ final class MapExceptionTest extends TestCase
 
         $mapped = $this->map($driver, $exception);
 
-        self::assertInstanceOf($expected, $mapped);
+        \Testo\Assert::instanceOf($mapped, $expected);
         // ConstrainException and ConnectionException both extend StatementException, so an
         // assertInstanceOf against the base class alone would pass for either of them.
-        self::assertSame($expected, $mapped::class);
+        \Testo\Assert::same($mapped::class, $expected);
     }
 
     /**

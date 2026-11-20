@@ -7,25 +7,20 @@ namespace Cycle\Database\Tests\Functional\Driver\Postgres\Schema;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\BaseTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-postgres
- * @group driver-postgres-array
- */
+#[\Testo\Filter\Group('driver', 'driver-postgres', 'driver-postgres-array')]
 final class ArrayColumnTest extends CommonClass
 {
     public const DRIVER = 'postgres';
 
-    /**
-     * @dataProvider typesDataProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('typesDataProvider')]
     public function testArrayType(string $postgres_type, string $internal_type): void
     {
         $driver = $this->database->getDriver();
         $driver->execute("DROP TABLE IF EXISTS array_test");
         $driver->execute("CREATE TABLE array_test ( test $postgres_type )");
         $column = $this->schema('array_test')->column('test');
-        $this->assertSame($internal_type, $column->getInternalType());
+        \Testo\Assert::same($column->getInternalType(), $internal_type);
     }
 
     public function typesDataProvider(): \Traversable

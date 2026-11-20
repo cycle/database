@@ -8,19 +8,17 @@ namespace Cycle\Database\Tests\Functional\Driver\Postgres\Schema;
 use Cycle\Database\Driver\Handler;
 use Cycle\Database\Tests\Functional\Driver\Common\Schema\ForeignKeysTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-postgres
- */
+#[\Testo\Filter\Group('driver', 'driver-postgres')]
 class ForeignKeysTest extends CommonClass
 {
     public const DRIVER = 'postgres';
 
+    #[\Testo\Test]
     public function testCreateWithoutIndex(): void
     {
         $schema = $this->schema('schema');
-        $this->assertFalse($schema->exists());
-        $this->assertTrue($this->sampleSchema('external')->exists());
+        \Testo\Assert::false($schema->exists());
+        \Testo\Assert::true($this->sampleSchema('external')->exists());
 
         $schema->primary('id');
         $schema->integer('external_id');
@@ -29,7 +27,7 @@ class ForeignKeysTest extends CommonClass
         $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
-        $this->assertTrue($this->schema('schema')->hasForeignKey(['external_id']));
-        $this->assertFalse($this->schema('schema')->hasIndex(['external_id']));
+        \Testo\Assert::true($this->schema('schema')->hasForeignKey(['external_id']));
+        \Testo\Assert::false($this->schema('schema')->hasIndex(['external_id']));
     }
 }

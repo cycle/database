@@ -7,10 +7,7 @@ namespace Cycle\Database\Tests\Functional\Driver\MySQL\Connection;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Connection\ConnectionExceptionTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-mysql
- */
+#[\Testo\Filter\Group('driver', 'driver-mysql')]
 class ConnectionExceptionTest extends CommonClass
 {
     public const DRIVER = 'mysql-mock';

@@ -15,14 +15,12 @@ use Cycle\Database\Query\ConflictAction;
 use Cycle\Database\Query\OnConflict;
 use Cycle\Database\Tests\Functional\Driver\Common\Query\UpsertQueryTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-sqlserver
- */
+#[\Testo\Filter\Group('driver', 'driver-sqlserver')]
 class UpsertQueryTest extends CommonClass
 {
     public const DRIVER = 'sqlserver';
 
+    #[\Testo\Test]
     public function testShorthandSingleColumn(): void
     {
         $q = $this->database->insert('users')
@@ -39,6 +37,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testDoUpdateExplicitColumns(): void
     {
         $q = $this->database->insert('users')
@@ -56,6 +55,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testDoUpdateWithExpression(): void
     {
         $q = $this->database->insert('counters')
@@ -74,6 +74,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testDoNothing(): void
     {
         $q = $this->database->insert('logs')
@@ -89,16 +90,18 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testPostgresOnConflictRejected(): void
     {
         $q = $this->database->insert('users')
             ->values(['email' => 'a@b.c'])
             ->onConflict(PostgresOnConflict::target('email')->doUpdate());
 
-        $this->expectException(BuilderException::class);
+        \Testo\Expect::exception(BuilderException::class);
         (string) $q;
     }
 
+    #[\Testo\Test]
     public function testUpsertWithReturningColumn(): void
     {
         /** @var SQLServerInsertQuery $q */
@@ -118,6 +121,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testUpsertWithMultipleReturningColumns(): void
     {
         /** @var SQLServerInsertQuery $q */
@@ -136,6 +140,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testEmptyConflictTargetIsRejected(): void
     {
         // OnConflict::target() rejects empty input, so the compiler's empty-target guard
@@ -151,11 +156,11 @@ class UpsertQueryTest extends CommonClass
             ->values(['email' => 'a@b.c'])
             ->onConflict($onConflict);
 
-        $this->expectException(CompilerException::class);
-        $this->expectExceptionMessage('Upsert query must define a conflict target.');
+        \Testo\Expect::exception(CompilerException::class)->withMessageContaining('Upsert query must define a conflict target.');
         (string) $q;
     }
 
+    #[\Testo\Test]
     public function testUpsertWithReturningFragment(): void
     {
         /** @var SQLServerInsertQuery $q */

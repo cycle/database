@@ -8,6 +8,7 @@ use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
 abstract class JsonColumnTest extends BaseTest
 {
+    #[\Testo\Test]
     public function testColumnSizeIsIgnored(): void
     {
         $schema = $this->schema('table');
@@ -17,6 +18,6 @@ abstract class JsonColumnTest extends BaseTest
 
         $this->assertSameAsInDB($schema);
 
-        $this->assertSame(0, $schema->column('json_data')->getSize());
+        \Testo\Assert::same($schema->column('json_data')->getSize(), 0);
     }
 }

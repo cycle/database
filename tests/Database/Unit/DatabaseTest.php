@@ -12,90 +12,88 @@ use Cycle\Database\Driver\HandlerInterface;
 use Cycle\Database\Schema\AbstractTable;
 use PHPUnit\Framework\TestCase;
 
-final class DatabaseTest extends TestCase
+final class DatabaseTest
 {
+    #[\Testo\Test]
     public function testWithoutCacheWithoutReadDriver(): void
     {
-        $driver = $this->createMock(Driver::class);
+        $driver = \Mockery::mock(Driver::class)->shouldIgnoreMissing();
 
-        $driver
-            ->expects($this->once())
-            ->method('withoutCache');
+        $driver->shouldReceive('withoutCache')->once();
 
         $database = new Database('default', '', $driver);
 
         $newDb = $database->withoutCache();
 
-        $this->assertNull($this->readProperty($newDb, 'readDriver'));
-        $this->assertsame($driver, $database->getDriver());
-        $this->assertNotSame($driver, $newDb->getDriver());
+        \Testo\Assert::null($this->readProperty($newDb, 'readDriver'));
+        \Testo\Assert::same($database->getDriver(), $driver);
+        \Testo\Assert::notSame($newDb->getDriver(), $driver);
     }
 
+    #[\Testo\Test]
     public function testWithoutCacheWithSameDriverAndReadDriver(): void
     {
-        $driver = $this->createMock(Driver::class);
+        $driver = \Mockery::mock(Driver::class)->shouldIgnoreMissing();
 
-        $driver
-            ->expects($this->once())
-            ->method('withoutCache');
+        $driver->shouldReceive('withoutCache')->once();
 
         $db = new Database('default', '', $driver, $driver);
 
         $newDb = $db->withoutCache();
 
-        $this->assertSame($db->getDriver(DatabaseInterface::WRITE), $db->getDriver(DatabaseInterface::READ));
-        $this->assertSame($newDb->getDriver(DatabaseInterface::WRITE), $newDb->getDriver(DatabaseInterface::READ));
+        \Testo\Assert::same($db->getDriver(DatabaseInterface::READ), $db->getDriver(DatabaseInterface::WRITE));
+        \Testo\Assert::same($newDb->getDriver(DatabaseInterface::READ), $newDb->getDriver(DatabaseInterface::WRITE));
     }
 
+    #[\Testo\Test]
     public function testWithoutCacheWithDriverAndReadDriver(): void
     {
-        $driver = $this->createMock(Driver::class);
-        $readDriver = $this->createMock(Driver::class);
+        $driver = \Mockery::mock(Driver::class)->shouldIgnoreMissing();
+        $readDriver = \Mockery::mock(Driver::class)->shouldIgnoreMissing();
 
-        $driver
-            ->expects($this->once())
-            ->method('withoutCache');
+        $driver->shouldReceive('withoutCache')->once();
 
-        $readDriver
-            ->expects($this->once())
-            ->method('withoutCache');
+        $readDriver->shouldReceive('withoutCache')->once();
 
         $db = new Database('default', '', $driver, $readDriver);
 
         $newDb = $db->withoutCache();
 
-        $this->assertNotSame($newDb->getDriver(DatabaseInterface::WRITE), $newDb->getDriver(DatabaseInterface::READ));
-        $this->assertNotSame($driver, $newDb->getDriver(DatabaseInterface::WRITE));
-        $this->assertNotSame($readDriver, $newDb->getDriver(DatabaseInterface::READ));
+        \Testo\Assert::notSame($newDb->getDriver(DatabaseInterface::READ), $newDb->getDriver(DatabaseInterface::WRITE));
+        \Testo\Assert::notSame($newDb->getDriver(DatabaseInterface::WRITE), $driver);
+        \Testo\Assert::notSame($newDb->getDriver(DatabaseInterface::READ), $readDriver);
     }
 
+    #[\Testo\Test]
     public function testWithoutCacheWithoutReadDriverAndWithoutMethod(): void
     {
-        $driver = $this->createMock(DriverInterface::class);
+        $driver = \Mockery::mock(DriverInterface::class)->shouldIgnoreMissing();
         $database = new Database('default', '', $driver);
 
         $newDb = $database->withoutCache();
 
-        $this->assertNull($this->readProperty($newDb, 'readDriver'));
-        $this->assertSame($driver, $newDb->getDriver());
+        \Testo\Assert::null($this->readProperty($newDb, 'readDriver'));
+        \Testo\Assert::same($newDb->getDriver(), $driver);
     }
 
+    #[\Testo\Test]
     public function testWithoutCacheWithDriverAndReadDriverWithoutMethod(): void
     {
-        $driver = $this->createMock(DriverInterface::class);
-        $readDriver = $this->createMock(DriverInterface::class);
+        $driver = \Mockery::mock(DriverInterface::class)->shouldIgnoreMissing();
+        $readDriver = \Mockery::mock(DriverInterface::class)->shouldIgnoreMissing();
         $database = new Database('default', '', $driver, $readDriver);
 
         $newDb = $database->withoutCache();
 
-        $this->assertNotSame($newDb->getDriver(DatabaseInterface::WRITE), $newDb->getDriver(DatabaseInterface::READ));
-        $this->assertSame($driver, $newDb->getDriver(DatabaseInterface::WRITE));
-        $this->assertSame($readDriver, $newDb->getDriver(DatabaseInterface::READ));
+        \Testo\Assert::notSame($newDb->getDriver(DatabaseInterface::READ), $newDb->getDriver(DatabaseInterface::WRITE));
+        \Testo\Assert::same($newDb->getDriver(DatabaseInterface::WRITE), $driver);
+        \Testo\Assert::same($newDb->getDriver(DatabaseInterface::READ), $readDriver);
     }
 
+    #[\Testo\Test]
     public function testWithoutCacheWithSameDriversAndWithoutMethod(): void
     {
-        $driver = $this->createMock(DriverInterface::class);
+        $driver = \Mockery::mock(DriverInterface::class)->shouldIgnoreMissing();
 
         $database = new Database('default', '', $driver, $driver);
 
@@ -107,32 +105,33 @@ final class DatabaseTest extends TestCase
         $refReadDriver = new \ReflectionProperty($newDb, 'readDriver');
         $refReadDriver->setAccessible(true);
 
-        $this->assertSame($newDb->getDriver(DatabaseInterface::WRITE), $newDb->getDriver(DatabaseInterface::READ));
-        $this->assertSame($driver, $newDb->getDriver(DatabaseInterface::WRITE));
-        $this->assertSame($driver, $newDb->getDriver(DatabaseInterface::READ));
+        \Testo\Assert::same($newDb->getDriver(DatabaseInterface::READ), $newDb->getDriver(DatabaseInterface::WRITE));
+        \Testo\Assert::same($newDb->getDriver(DatabaseInterface::WRITE), $driver);
+        \Testo\Assert::same($newDb->getDriver(DatabaseInterface::READ), $driver);
     }
 
     /**
      * When the driver's handler does not implement BulkSchemaProviderInterface, Database::getSchemas()
      * must fall back to a per-table getSchema() loop, applying the database prefix.
      */
+    #[\Testo\Test]
     public function testGetSchemasFallsBackToPerTableWhenHandlerIsNotBulkProvider(): void
     {
-        $tableA = $this->createMock(AbstractTable::class);
-        $tableB = $this->createMock(AbstractTable::class);
+        $tableA = \Mockery::mock(AbstractTable::class)->shouldIgnoreMissing();
+        $tableB = \Mockery::mock(AbstractTable::class)->shouldIgnoreMissing();
 
-        $handler = $this->createMock(HandlerInterface::class);
-        $handler->method('getSchema')->willReturnMap([
+        $handler = \Mockery::mock(HandlerInterface::class)->shouldIgnoreMissing();
+        $handler->shouldReceive('getSchema')->andReturnUsing(fn(...$args) => array_column(array_filter([
             ['a', 'pre_', $tableA],
             ['b', 'pre_', $tableB],
-        ]);
+        ], fn($row) => array_slice($row, 0, -1) === $args), count($args))[0] ?? null);
 
-        $driver = $this->createMock(DriverInterface::class);
-        $driver->method('getSchemaHandler')->willReturn($handler);
+        $driver = \Mockery::mock(DriverInterface::class)->shouldIgnoreMissing();
+        $driver->shouldReceive('getSchemaHandler')->andReturn($handler);
 
         $database = new Database('default', 'pre_', $driver);
 
-        $this->assertSame(['a' => $tableA, 'b' => $tableB], $database->getSchemas(['a', 'b']));
+        \Testo\Assert::same($database->getSchemas(['a', 'b']), ['a' => $tableA, 'b' => $tableB]);
     }
 
     private function readProperty(object $object, string $property): mixed

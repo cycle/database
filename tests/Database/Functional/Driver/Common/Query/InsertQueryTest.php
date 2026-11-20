@@ -13,19 +13,15 @@ use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
 abstract class InsertQueryTest extends BaseTest
 {
+    #[\Testo\Test]
     public function testQueryInstance(): void
     {
-        $this->assertInstanceOf(
-            InsertQuery::class,
-            $this->database->insert(),
-        );
+        \Testo\Assert::instanceOf($this->database->insert(), InsertQuery::class);
 
-        $this->assertInstanceOf(
-            InsertQuery::class,
-            $this->database->table->insert(),
-        );
+        \Testo\Assert::instanceOf($this->database->table->insert(), InsertQuery::class);
     }
 
+    #[\Testo\Test]
     public function testCompileQuery(): void
     {
         $insert = $this->db()->insert('table')->values(['name' => 'Antony']);
@@ -36,6 +32,7 @@ abstract class InsertQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testCompileQueryDefaults(): void
     {
         $insert = $this->db()->insert('table')->values([]);
@@ -46,6 +43,7 @@ abstract class InsertQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testSimpleInsert(): void
     {
         $insert = $this->database->insert()->into('table')->values(['name' => 'Anton']);
@@ -56,6 +54,7 @@ abstract class InsertQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testSimpleInsertEmptyDataset(): void
     {
         $insert = $this->database->insert()->into('table')->values([]);
@@ -66,6 +65,7 @@ abstract class InsertQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testSimpleInsertWithStatesValues(): void
     {
         $insert = $this->database->insert()->into('table')
@@ -78,6 +78,7 @@ abstract class InsertQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testSimpleInsertMultipleRows(): void
     {
         $insert = $this->database->insert()->into('table')
@@ -91,6 +92,7 @@ abstract class InsertQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testInsertMultipleRowsAsArray(): void
     {
         $insert = $this->database->insert()->into('table')->values([
@@ -104,6 +106,7 @@ abstract class InsertQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testInsertWithExpressions(): void
     {
         $insert = $this->database->insert()->into('table')->values([
@@ -131,6 +134,7 @@ abstract class InsertQueryTest extends BaseTest
         $this->assertSameParameters(['Anton', null], $insert);
     }
 
+    #[\Testo\Test]
     public function testInsertWithFragmentsThatHaveDifferentStatements(): void
     {
         $insert = $this->database->insert()->into('table')->values([
@@ -156,11 +160,12 @@ abstract class InsertQueryTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testInsertWithCustomFragment(): void
     {
-        $fragment = $this->createMock(FragmentInterface::class);
-        $fragment->method('getType')->willReturn(CompilerInterface::FRAGMENT);
-        $fragment->method('getTokens')->willReturn([
+        $fragment = \Mockery::mock(FragmentInterface::class)->shouldIgnoreMissing();
+        $fragment->shouldReceive('getType')->andReturn(CompilerInterface::FRAGMENT);
+        $fragment->shouldReceive('getTokens')->andReturn([
             'fragment' => 'NOW()',
             'parameters' => [],
         ]);

@@ -7,10 +7,7 @@ namespace Cycle\Database\Tests\Functional\Driver\SQLServer\Query;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Query\ExceptionsTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-sqlserver
- */
+#[\Testo\Filter\Group('driver', 'driver-sqlserver')]
 class ExceptionsTest extends CommonClass
 {
     public const DRIVER = 'sqlserver';

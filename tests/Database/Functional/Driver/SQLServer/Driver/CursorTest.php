@@ -9,17 +9,13 @@ use Cycle\Database\Driver\SQLServer\SQLServerCursorOptions;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Driver\CursorTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-sqlserver
- */
+#[\Testo\Filter\Group('driver', 'driver-sqlserver')]
 class CursorTest extends CommonClass
 {
     public const DRIVER = 'sqlserver';
 
-    /**
-     * @dataProvider cursorTypes
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('cursorTypes')]
     public function testCursorRespectsTypeOption(CursorType $type): void
     {
         $this->fillRows(5);
@@ -34,11 +30,12 @@ class CursorTest extends CommonClass
             ),
         );
 
-        $this->assertCount(5, $rows);
-        $this->assertSame(\md5('0'), $rows[0]['name']);
-        $this->assertSame(40, (int) $rows[4]['value']);
+        \Testo\Assert::count($rows, 5);
+        \Testo\Assert::same($rows[0]['name'], \md5('0'));
+        \Testo\Assert::same((int) $rows[4]['value'], 40);
     }
 
+    #[\Testo\Test]
     public function testCursorUsesExplicitName(): void
     {
         $this->fillRows(3);
@@ -53,13 +50,13 @@ class CursorTest extends CommonClass
             ),
         );
 
-        $this->assertCount(3, $rows);
+        \Testo\Assert::count($rows, 3);
     }
 
+    #[\Testo\Test]
     public function testCursorRejectsInvalidName(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessageMatches('/valid t-sql identifier/i');
+        \Testo\Expect::exception(\InvalidArgumentException::class)->withMessageMatchingRegex('/valid t-sql identifier/i');
 
         new SQLServerCursorOptions(name: 'bad name');
     }

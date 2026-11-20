@@ -11,14 +11,13 @@ use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
  * Table introspection queries are scoped by the table name only, so a same-named table in another
  * schema contributes its rows too. The constraint batches must stay correct for every row: each
  * column must resolve the CHECK (emulated enum) and DEFAULT constraints of its own table.
- *
- * @group driver
- * @group driver-sqlserver
  */
+#[\Testo\Filter\Group('driver', 'driver-sqlserver')]
 class CrossSchemaIntrospectionTest extends BaseTest
 {
     public const DRIVER = 'sqlserver';
 
+    #[\Testo\Test]
     public function testSameNamedTablesInDifferentSchemas(): void
     {
         $driver = $this->database->getDriver();
@@ -46,18 +45,19 @@ class CrossSchemaIntrospectionTest extends BaseTest
         $schema = $driver->getSchema('intro_dup');
 
         $status = $schema->column('status');
-        $this->assertSame('enum', $status->getAbstractType());
-        $this->assertSame(['active', 'disabled'], $status->getEnumValues());
-        $this->assertContains('intro_dup_status_default', $status->getConstraints());
-        $this->assertContains('intro_dup_status_check', $status->getConstraints());
+        \Testo\Assert::same($status->getAbstractType(), 'enum');
+        \Testo\Assert::same($status->getEnumValues(), ['active', 'disabled']);
+        \Testo\Assert::contains($status->getConstraints(), 'intro_dup_status_default');
+        \Testo\Assert::contains($status->getConstraints(), 'intro_dup_status_check');
 
         $mode = $schema->column('mode');
-        $this->assertSame('enum', $mode->getAbstractType());
-        $this->assertSame(['x', 'y'], $mode->getEnumValues());
-        $this->assertContains('intro_dup_mode_default', $mode->getConstraints());
-        $this->assertContains('intro_dup_mode_check', $mode->getConstraints());
+        \Testo\Assert::same($mode->getAbstractType(), 'enum');
+        \Testo\Assert::same($mode->getEnumValues(), ['x', 'y']);
+        \Testo\Assert::contains($mode->getConstraints(), 'intro_dup_mode_default');
+        \Testo\Assert::contains($mode->getConstraints(), 'intro_dup_mode_check');
     }
 
+    #[\Testo\Lifecycle\AfterTest]
     public function tearDown(): void
     {
         $driver = $this->database->getDriver();

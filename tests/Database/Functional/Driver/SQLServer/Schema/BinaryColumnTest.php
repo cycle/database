@@ -7,14 +7,12 @@ namespace Cycle\Database\Tests\Functional\Driver\SQLServer\Schema;
 use Cycle\Database\Driver\Handler;
 use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
-/**
- * @group driver
- * @group driver-sqlserver
- */
+#[\Testo\Filter\Group('driver', 'driver-sqlserver')]
 class BinaryColumnTest extends BaseTest
 {
     public const DRIVER = 'sqlserver';
 
+    #[\Testo\Test]
     public function testBinary(): void
     {
         $schema = $this->schema('table');
@@ -25,10 +23,11 @@ class BinaryColumnTest extends BaseTest
 
         $this->assertSameAsInDB($schema);
 
-        $this->assertSame('varbinary', $schema->column('binary_data')->getInternalType());
-        $this->assertSame(0, $schema->column('binary_data')->getSize());
+        \Testo\Assert::same($schema->column('binary_data')->getInternalType(), 'varbinary');
+        \Testo\Assert::same($schema->column('binary_data')->getSize(), 0);
     }
 
+    #[\Testo\Test]
     public function testBinaryWithSize(): void
     {
         $schema = $this->schema('table');
@@ -39,10 +38,11 @@ class BinaryColumnTest extends BaseTest
 
         $this->assertSameAsInDB($schema);
 
-        $this->assertSame('varbinary', $schema->column('binary_data')->getInternalType());
-        $this->assertSame(16, $schema->column('binary_data')->getSize());
+        \Testo\Assert::same($schema->column('binary_data')->getInternalType(), 'varbinary');
+        \Testo\Assert::same($schema->column('binary_data')->getSize(), 16);
     }
 
+    #[\Testo\Test]
     public function testVarbinary(): void
     {
         $schema = $this->schema('table');
@@ -53,10 +53,11 @@ class BinaryColumnTest extends BaseTest
 
         $this->assertSameAsInDB($schema);
 
-        $this->assertSame('varbinary', $schema->column('binary_data')->getInternalType());
-        $this->assertSame(0, $schema->column('binary_data')->getSize());
+        \Testo\Assert::same($schema->column('binary_data')->getInternalType(), 'varbinary');
+        \Testo\Assert::same($schema->column('binary_data')->getSize(), 0);
     }
 
+    #[\Testo\Test]
     public function testVarbinaryWithSize(): void
     {
         $schema = $this->schema('table');
@@ -67,7 +68,7 @@ class BinaryColumnTest extends BaseTest
 
         $this->assertSameAsInDB($schema);
 
-        $this->assertSame('varbinary', $schema->column('binary_data')->getInternalType());
-        $this->assertSame(16, $schema->column('binary_data')->getSize());
+        \Testo\Assert::same($schema->column('binary_data')->getInternalType(), 'varbinary');
+        \Testo\Assert::same($schema->column('binary_data')->getSize(), 16);
     }
 }

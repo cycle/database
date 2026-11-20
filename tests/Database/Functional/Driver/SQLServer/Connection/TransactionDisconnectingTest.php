@@ -7,10 +7,7 @@ namespace Cycle\Database\Tests\Functional\Driver\SQLServer\Connection;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Connection\TransactionDisconnectingTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-sqlserver
- */
+#[\Testo\Filter\Group('driver', 'driver-sqlserver')]
 class TransactionDisconnectingTest extends CommonClass
 {
     public const DRIVER = 'sqlserver-mock';

@@ -8,42 +8,36 @@ namespace Cycle\Database\Tests\Functional\Driver\Postgres\Schema;
 use Cycle\Database\Driver\Postgres\Exception\PostgresException;
 use Cycle\Database\Tests\Functional\Driver\Common\Schema\DefaultValueTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-postgres
- */
+#[\Testo\Filter\Group('driver', 'driver-postgres')]
 class DefaultValueTest extends CommonClass
 {
     public const DRIVER = 'postgres';
 
+    #[\Testo\Test]
     public function testJsonDefaultValueEmpty(): void
     {
-        $this->expectException(PostgresException::class);
-        $this->expectExceptionMessage(
-            'Column `public.table.target` of type json/jsonb has an invalid default json value.',
-        );
+        \Testo\Expect::exception(PostgresException::class)->withMessageContaining('Column `public.table.target` of type json/jsonb has an invalid default json value.');
         parent::testJsonDefaultValueEmpty();
     }
 
+    #[\Testo\Test]
     public function testJsonDefaultValueString(): void
     {
-        $this->expectException(PostgresException::class);
-        $this->expectExceptionMessage(
-            'Column `public.table.target` of type json/jsonb has an invalid default json value.',
-        );
+        \Testo\Expect::exception(PostgresException::class)->withMessageContaining('Column `public.table.target` of type json/jsonb has an invalid default json value.');
         parent::testJsonDefaultValueString();
     }
 
+    #[\Testo\Test]
     public function testJsonDefaultValueValidJsonString(): void
     {
         $schema = $this->schema('table');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $column = $schema->json('target')->defaultValue('{"foo":"bar","baz":100.5}');
 
         $schema->save();
         $schema = $this->schema('table');
-        $this->assertTrue($schema->exists());
-        $this->assertTrue($schema->column('target')->compare($column));
+        \Testo\Assert::true($schema->exists());
+        \Testo\Assert::true($schema->column('target')->compare($column));
     }
 }

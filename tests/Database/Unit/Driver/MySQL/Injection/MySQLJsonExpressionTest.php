@@ -8,7 +8,7 @@ use Cycle\Database\Driver\MySQL\Injection\CompileJson;
 use Cycle\Database\Driver\MySQL\Injection\MySQLJsonExpression;
 use PHPUnit\Framework\TestCase;
 
-final class MySQLJsonExpressionTest extends TestCase
+final class MySQLJsonExpressionTest
 {
     public static function provideStatements(): iterable
     {
@@ -32,21 +32,21 @@ final class MySQLJsonExpressionTest extends TestCase
         ];
     }
 
+    #[\Testo\Test]
     public function testGetQuotes(): void
     {
         $expression = $this->createExpression();
         $ref = new \ReflectionMethod($expression, 'getQuotes');
         $ref->setAccessible(true);
 
-        $this->assertSame('``', $ref->invoke($expression));
+        \Testo\Assert::same($ref->invoke($expression), '``');
     }
 
-    /**
-     * @dataProvider provideStatements
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('provideStatements')]
     public function testPathLiteralCannotBeEndedEarly(string $statement, string $expected): void
     {
-        $this->assertSame($expected, (new CompileJson($statement))->getTokens()['expression']);
+        \Testo\Assert::same((new CompileJson($statement))->getTokens()['expression'], $expected);
     }
 
     private function createExpression(): MySQLJsonExpression

@@ -21,30 +21,29 @@ abstract class JsonPathEscapingTest extends BaseTest
         yield 'line feed' => ["data->a\nb", true];
     }
 
-    /**
-     * @dataProvider provideKeys
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('provideKeys')]
     public function testWhereJson(string $path, bool $escaped): void
     {
         $escaped and $this->skipUnlessEscapedKeysSupported();
 
         $select = $this->database->select('tenant_id')->from('documents')->whereJson($path, 'yes');
 
-        $this->assertSame([10], $this->tenants($select->fetchAll()));
+        \Testo\Assert::same($this->tenants($select->fetchAll()), [10]);
     }
 
-    /**
-     * @dataProvider provideKeys
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('provideKeys')]
     public function testWhereJsonContainsKey(string $path, bool $escaped): void
     {
         $escaped and $this->skipUnlessEscapedKeysSupported();
 
         $select = $this->database->select('tenant_id')->from('documents')->whereJsonContainsKey($path);
 
-        $this->assertSame([10], $this->tenants($select->fetchAll()));
+        \Testo\Assert::same($this->tenants($select->fetchAll()), [10]);
     }
 
+    #[\Testo\Test]
     public function testQuoteInKeyReadsThatKey(): void
     {
         $this->skipUnlessEscapedKeysSupported();
@@ -53,10 +52,11 @@ abstract class JsonPathEscapingTest extends BaseTest
             $this->database->select('tenant_id')->from('documents')->whereJson('data->a"."secret', $value)->fetchAll(),
         );
 
-        $this->assertSame([10], $select('literal'));
-        $this->assertSame([], $select('nested'));
+        \Testo\Assert::same($select('literal'), [10]);
+        \Testo\Assert::same($select('nested'), []);
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         parent::setUp();
@@ -91,7 +91,7 @@ abstract class JsonPathEscapingTest extends BaseTest
 
     private function skipUnlessEscapedKeysSupported(): void
     {
-        $this->supportsEscapedPathKeys() or $this->markTestSkipped('The JSON path parser does not read escaped keys.');
+        $this->supportsEscapedPathKeys() or (throw new \Testo\Core\Exception\SkipTest('The JSON path parser does not read escaped keys.'));
     }
 
     private function tenants(array $rows): array

@@ -7,14 +7,12 @@ namespace Cycle\Database\Tests\Functional\Driver\MySQL\Schema;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Schema\BooleanColumnTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-mysql
- */
+#[\Testo\Filter\Group('driver', 'driver-mysql')]
 class BooleanColumnTest extends CommonClass
 {
     public const DRIVER = 'mysql';
 
+    #[\Testo\Test]
     public function testBooleanDefaultSize(): void
     {
         $schema = $this->schema('table');
@@ -23,10 +21,11 @@ class BooleanColumnTest extends CommonClass
 
         $column = $this->fetchSchema($schema)->column('column');
 
-        $this->assertSame('boolean', $column->getAbstractType());
-        $this->assertSame(1, $column->getSize());
+        \Testo\Assert::same($column->getAbstractType(), 'boolean');
+        \Testo\Assert::same($column->getSize(), 1);
     }
 
+    #[\Testo\Test]
     public function testBooleanComparisonWithSize(): void
     {
         $schema = $this->schema('table');
@@ -37,21 +36,22 @@ class BooleanColumnTest extends CommonClass
         $schema->save();
 
         $schema = $this->schema('table');
-        $this->assertTrue($schema->exists());
-        $this->assertSame(1, $foo->getSize());
-        $this->assertSame(1, $bar->getSize());
-        $this->assertSame(1, $baz->getSize());
-        $this->assertSame(1, $mux->getSize());
-        $this->assertSame(1, $schema->column('foo')->getSize());
-        $this->assertSame(1, $schema->column('bar')->getSize());
-        $this->assertTrue(\in_array($schema->column('baz')->getSize(), [1, 4], true));
-        $this->assertSame(1, $schema->column('mux')->getSize());
-        $this->assertTrue($foo->compare($schema->column('foo')));
-        $this->assertTrue($bar->compare($schema->column('bar')));
-        $this->assertTrue($baz->compare($schema->column('baz')));
-        $this->assertTrue($mux->compare($schema->column('mux')));
+        \Testo\Assert::true($schema->exists());
+        \Testo\Assert::same($foo->getSize(), 1);
+        \Testo\Assert::same($bar->getSize(), 1);
+        \Testo\Assert::same($baz->getSize(), 1);
+        \Testo\Assert::same($mux->getSize(), 1);
+        \Testo\Assert::same($schema->column('foo')->getSize(), 1);
+        \Testo\Assert::same($schema->column('bar')->getSize(), 1);
+        \Testo\Assert::true(\in_array($schema->column('baz')->getSize(), [1, 4], true));
+        \Testo\Assert::same($schema->column('mux')->getSize(), 1);
+        \Testo\Assert::true($foo->compare($schema->column('foo')));
+        \Testo\Assert::true($bar->compare($schema->column('bar')));
+        \Testo\Assert::true($baz->compare($schema->column('baz')));
+        \Testo\Assert::true($mux->compare($schema->column('mux')));
     }
 
+    #[\Testo\Test]
     public function testBooleanWithProblematicValues(): void
     {
         $schema = $this->schema('table');
@@ -64,29 +64,29 @@ class BooleanColumnTest extends CommonClass
 
         $schema->save();
 
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema = $this->schema('table');
         $target = $schema->column('target');
 
-        $this->assertSame(1, $column->getSize());
-        $this->assertSame(4, $target->getSize());
-        $this->assertFalse($column->isNullable());
-        $this->assertFalse($target->isNullable());
-        $this->assertTrue($column->isUnsigned());
-        $this->assertTrue($target->isUnsigned());
+        \Testo\Assert::same($column->getSize(), 1);
+        \Testo\Assert::same($target->getSize(), 4);
+        \Testo\Assert::false($column->isNullable());
+        \Testo\Assert::false($target->isNullable());
+        \Testo\Assert::true($column->isUnsigned());
+        \Testo\Assert::true($target->isUnsigned());
 
         $object = new \ReflectionObject($target);
         $property = $object->getProperty('defaultValue');
         $property->setAccessible(true);
         $defaultValue = $property->getValue($target);
 
-        $this->assertSame(false, $column->getDefaultValue());
-        $this->assertSame(0, $target->getDefaultValue());
-        $this->assertSame('0', $defaultValue);
-        $this->assertTrue($column->compare($target));
-        $this->assertTrue($target->compare($column));
+        \Testo\Assert::same($column->getDefaultValue(), false);
+        \Testo\Assert::same($target->getDefaultValue(), 0);
+        \Testo\Assert::same($defaultValue, '0');
+        \Testo\Assert::true($column->compare($target));
+        \Testo\Assert::true($target->compare($column));
         // The size was not changed
-        $this->assertSame(4, $target->getSize());
+        \Testo\Assert::same($target->getSize(), 4);
     }
 }

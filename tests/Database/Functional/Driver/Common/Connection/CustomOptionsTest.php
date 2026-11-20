@@ -11,19 +11,20 @@ use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
 abstract class CustomOptionsTest extends BaseTest
 {
+    #[\Testo\Test]
     public function testDecimalSizes(): void
     {
         $schema = $this->sampleSchema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema->decimal('double_2', 10, 1);
         $schema->save();
 
         $this->assertSameAsInDB($schema);
-        $this->assertSame(10, $this->fetchSchema($schema)->column('double_2')->getPrecision());
-        $this->assertSame(1, $this->fetchSchema($schema)->column('double_2')->getScale());
+        \Testo\Assert::same($this->fetchSchema($schema)->column('double_2')->getPrecision(), 10);
+        \Testo\Assert::same($this->fetchSchema($schema)->column('double_2')->getScale(), 1);
 
-        $this->assertIsArray($schema->decimal('double_2', 10, 1)->__debugInfo());
+        \Testo\Assert::array($schema->decimal('double_2', 10, 1)->__debugInfo());
     }
 
     public function sampleSchema(string $table): AbstractTable
@@ -55,6 +56,7 @@ abstract class CustomOptionsTest extends BaseTest
         return $schema;
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         $this->database = $this->db(connectionConfig: [

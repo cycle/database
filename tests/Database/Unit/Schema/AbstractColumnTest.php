@@ -7,24 +7,27 @@ namespace Cycle\Database\Tests\Unit\Schema;
 use Cycle\Database\Schema\AbstractColumn;
 use PHPUnit\Framework\TestCase;
 
-final class AbstractColumnTest extends TestCase
+final class AbstractColumnTest
 {
     private AbstractColumn $column;
 
+    #[\Testo\Test]
     public function testReadonlySchemaFalseByDefault(): void
     {
-        $this->assertFalse($this->column->isReadonlySchema());
+        \Testo\Assert::false($this->column->isReadonlySchema());
     }
 
+    #[\Testo\Test]
     public function testReadonlySchema(): void
     {
-        $this->assertFalse($this->column->isReadonlySchema());
+        \Testo\Assert::false($this->column->isReadonlySchema());
 
         $this->column->setAttributes(['readonlySchema' => true]);
 
-        $this->assertTrue($this->column->isReadonlySchema());
+        \Testo\Assert::true($this->column->isReadonlySchema());
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     protected function setUp(): void
     {
         $this->column = new class('foo', 'bar') extends AbstractColumn {};

@@ -11,10 +11,8 @@ use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
 /**
  * JSON path segments that contain apostrophes must stay inside the SQL string literal.
- *
- * @group driver
- * @group driver-postgres
  */
+#[\Testo\Filter\Group('driver', 'driver-postgres')]
 class JsonPathQuotingTest extends BaseTest
 {
     public const DRIVER = 'postgres';
@@ -51,20 +49,18 @@ class JsonPathQuotingTest extends BaseTest
         ];
     }
 
-    /**
-     * @dataProvider provideJsonConditions
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('provideJsonConditions')]
     public function testSelectDoesNotEscapeTenantScope(\Closure $condition): void
     {
         $select = $this->database->select('tenant_id')->from('documents')->where('tenant_id', 10);
         $condition($select);
 
-        $this->assertNotContains(20, \array_column($select->fetchAll(), 'tenant_id'));
+        \Testo\Assert::iterable(\array_column($select->fetchAll(), 'tenant_id'))->notContains(20);
     }
 
-    /**
-     * @dataProvider provideJsonConditions
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('provideJsonConditions')]
     public function testUpdateDoesNotEscapeTenantScope(\Closure $condition): void
     {
         $update = $this->database->update('documents', ['data' => '{}'])->where('tenant_id', 10);
@@ -72,35 +68,37 @@ class JsonPathQuotingTest extends BaseTest
         $update->run();
 
         $data = $this->database->select('data')->from('documents')->where('tenant_id', 20)->run()->fetchColumn();
-        $this->assertStringContainsString('confidential', $data);
+        \Testo\Assert::string($data)->contains('confidential');
     }
 
-    /**
-     * @dataProvider provideJsonConditions
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('provideJsonConditions')]
     public function testDeleteDoesNotEscapeTenantScope(\Closure $condition): void
     {
         $delete = $this->database->delete('documents')->where('tenant_id', 10);
         $condition($delete);
         $delete->run();
 
-        $this->assertSame(1, $this->database->select()->from('documents')->where('tenant_id', 20)->count());
+        \Testo\Assert::same($this->database->select()->from('documents')->where('tenant_id', 20)->count(), 1);
     }
 
+    #[\Testo\Test]
     public function testWhereJsonWithApostropheInKey(): void
     {
         $select = $this->database->select('tenant_id')->from('documents')->whereJson("data->it's", 'yes');
 
-        $this->assertSame([10], \array_column($select->fetchAll(), 'tenant_id'));
+        \Testo\Assert::same(\array_column($select->fetchAll(), 'tenant_id'), [10]);
     }
 
+    #[\Testo\Test]
     public function testWhereJsonContainsKeyWithApostropheInKey(): void
     {
         $select = $this->database->select('tenant_id')->from('documents')->whereJsonContainsKey("data->it's");
 
-        $this->assertSame([10], \array_column($select->fetchAll(), 'tenant_id'));
+        \Testo\Assert::same(\array_column($select->fetchAll(), 'tenant_id'), [10]);
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         parent::setUp();

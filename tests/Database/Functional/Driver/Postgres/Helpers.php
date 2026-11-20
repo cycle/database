@@ -14,6 +14,7 @@ use Cycle\Database\Schema\AbstractTable;
 
 trait Helpers
 {
+    #[\Testo\Lifecycle\BeforeTest]
     protected function setUp(): void
     {
         parent::setUp();

@@ -15,84 +15,85 @@ use Cycle\Database\Table;
 
 abstract class BuildersAccessTest extends BaseTest
 {
+    #[\Testo\Test]
     public function testDriverAccess(): void
     {
-        $this->assertInstanceOf(Driver::class, $this->db()->getDriver());
+        \Testo\Assert::instanceOf($this->db()->getDriver(), Driver::class);
     }
 
+    #[\Testo\Test]
     public function testTableAccess(): void
     {
-        $this->assertInstanceOf(
-            Table::class,
-            $this->db()->table('sample'),
-        );
+        \Testo\Assert::instanceOf($this->db()->table('sample'), Table::class);
     }
 
+    #[\Testo\Test]
     public function testTableSchemaAccess(): void
     {
-        $this->assertInstanceOf(
-            AbstractTable::class,
-            $this->db()->table('sample')->getSchema(),
-        );
+        \Testo\Assert::instanceOf($this->db()->table('sample')->getSchema(), AbstractTable::class);
     }
 
+    #[\Testo\Test]
     public function testTableDatabaseAccess(): void
     {
-        $this->assertEquals(
-            $this->db(),
-            $this->db()->table('sample')->getDatabase(),
-        );
+        \Testo\Assert::equals($this->db()->table('sample')->getDatabase(), $this->db());
     }
 
+    #[\Testo\Test]
     public function testCompilerAccess(): void
     {
-        $this->assertInstanceOf(
-            CompilerInterface::class,
-            $this->db()->getDriver()->getQueryCompiler(''),
-        );
+        \Testo\Assert::instanceOf($this->db()->getDriver()->getQueryCompiler(''), CompilerInterface::class);
     }
 
     //via db
 
+    #[\Testo\Test]
     public function testSelectQueryAccess(): void
     {
-        $this->assertInstanceOf(SelectQuery::class, $this->db()->select());
+        \Testo\Assert::instanceOf($this->db()->select(), SelectQuery::class);
     }
 
+    #[\Testo\Test]
     public function testInsertQueryAccess(): void
     {
-        $this->assertInstanceOf(InsertQuery::class, $this->db()->insert());
+        \Testo\Assert::instanceOf($this->db()->insert(), InsertQuery::class);
     }
 
+    #[\Testo\Test]
     public function testUpdateQueryAccess(): void
     {
-        $this->assertInstanceOf(UpdateQuery::class, $this->db()->update());
+        \Testo\Assert::instanceOf($this->db()->update(), UpdateQuery::class);
     }
 
+    #[\Testo\Test]
     public function testDeleteQueryAccess(): void
     {
-        $this->assertInstanceOf(DeleteQuery::class, $this->db()->delete());
+        \Testo\Assert::instanceOf($this->db()->delete(), DeleteQuery::class);
     }
 
     //via table
 
+    #[\Testo\Test]
     public function testSelectQueryAccessThoughtTable(): void
     {
-        $this->assertInstanceOf(SelectQuery::class, $this->db()->table('sample')->select());
+        \Testo\Assert::instanceOf($this->db()->table('sample')->select(), SelectQuery::class);
     }
 
+    #[\Testo\Test]
     public function testSelectQueryAccessThoughtTableIterator(): void
     {
-        $this->assertInstanceOf(SelectQuery::class, $this->db()->table('sample')->getIterator());
+        \Testo\Assert::instanceOf($this->db()->table('sample')->getIterator(), SelectQuery::class);
     }
 
+    #[\Testo\Test]
     public function testUpdateQueryAccessThoughtTable(): void
     {
-        $this->assertInstanceOf(UpdateQuery::class, $this->db()->table('sample')->update());
+        \Testo\Assert::instanceOf($this->db()->table('sample')->update(), UpdateQuery::class);
     }
 
+    #[\Testo\Test]
     public function testDeleteQueryAccessThoughtTable(): void
     {
-        $this->assertInstanceOf(DeleteQuery::class, $this->db()->table('sample')->delete());
+        \Testo\Assert::instanceOf($this->db()->table('sample')->delete(), DeleteQuery::class);
     }
 }

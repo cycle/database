@@ -10,14 +10,12 @@ use Cycle\Database\Injection\Expression;
 use Cycle\Database\Query\OnConflict;
 use Cycle\Database\Tests\Functional\Driver\Common\Query\UpsertQueryTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-mysql
- */
+#[\Testo\Filter\Group('driver', 'driver-mysql')]
 class UpsertQueryTest extends CommonClass
 {
     public const DRIVER = 'mysql';
 
+    #[\Testo\Test]
     public function testShorthandSingleColumn(): void
     {
         $q = $this->database->insert('users')
@@ -31,6 +29,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testDoUpdateExplicitColumns(): void
     {
         $q = $this->database->insert('users')
@@ -44,6 +43,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testDoUpdateWithExpression(): void
     {
         $q = $this->database->insert('counters')
@@ -59,6 +59,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testDoNothingEmulated(): void
     {
         $q = $this->database->insert('logs')
@@ -72,6 +73,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testDoNothingUsesTargetWhenItIsNotFirstColumn(): void
     {
         // payload comes first in the inserted column list; the conventional no-op
@@ -88,6 +90,7 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testCustomRowAlias(): void
     {
         $q = $this->database->insert('users')
@@ -101,13 +104,14 @@ class UpsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testPostgresOnConflictRejected(): void
     {
         $q = $this->database->insert('users')
             ->values(['email' => 'a@b.c'])
             ->onConflict(\Cycle\Database\Driver\Postgres\PostgresOnConflict::target('email')->doUpdate());
 
-        $this->expectException(BuilderException::class);
+        \Testo\Expect::exception(BuilderException::class);
         (string) $q;
     }
 }

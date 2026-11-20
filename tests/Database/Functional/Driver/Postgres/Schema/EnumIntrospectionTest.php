@@ -10,14 +10,13 @@ use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 /**
  * Native enums and enums emulated via a CHECK constraint are resolved with two batched queries,
  * so their combinations in a single table need explicit coverage.
- *
- * @group driver
- * @group driver-postgres
  */
+#[\Testo\Filter\Group('driver', 'driver-postgres')]
 class EnumIntrospectionTest extends BaseTest
 {
     public const DRIVER = 'postgres';
 
+    #[\Testo\Test]
     public function testNativeAndEmulatedEnumsInSingleTable(): void
     {
         $driver = $this->database->getDriver();
@@ -40,21 +39,21 @@ class EnumIntrospectionTest extends BaseTest
         $schema = $driver->getSchema('mixed_enums');
 
         // Two different native enum types
-        $this->assertSame('enum', $schema->column('current_mood')->getAbstractType());
-        $this->assertSame(['sad', 'ok', 'happy'], $schema->column('current_mood')->getEnumValues());
+        \Testo\Assert::same($schema->column('current_mood')->getAbstractType(), 'enum');
+        \Testo\Assert::same($schema->column('current_mood')->getEnumValues(), ['sad', 'ok', 'happy']);
 
-        $this->assertSame('enum', $schema->column('forecast')->getAbstractType());
-        $this->assertSame(['rain', 'sun'], $schema->column('forecast')->getEnumValues());
+        \Testo\Assert::same($schema->column('forecast')->getAbstractType(), 'enum');
+        \Testo\Assert::same($schema->column('forecast')->getEnumValues(), ['rain', 'sun']);
 
         // Enum emulated via a CHECK constraint
-        $this->assertSame('enum', $schema->column('status')->getAbstractType());
-        $this->assertSame(['active', 'disabled'], $schema->column('status')->getEnumValues());
+        \Testo\Assert::same($schema->column('status')->getAbstractType(), 'enum');
+        \Testo\Assert::same($schema->column('status')->getEnumValues(), ['active', 'disabled']);
 
         // A varchar without a constraint must stay a plain string
-        $this->assertSame('string', $schema->column('plain_string')->getAbstractType());
-        $this->assertSame([], $schema->column('plain_string')->getEnumValues());
+        \Testo\Assert::same($schema->column('plain_string')->getAbstractType(), 'string');
+        \Testo\Assert::same($schema->column('plain_string')->getEnumValues(), []);
 
-        $this->assertSame(['id'], $schema->getPrimaryKeys());
+        \Testo\Assert::same($schema->getPrimaryKeys(), ['id']);
     }
 
     /**
@@ -62,6 +61,7 @@ class EnumIntrospectionTest extends BaseTest
      * same-named enum types from other schemas must not interfere, and a type outside of the
      * `search_path` must still be resolvable.
      */
+    #[\Testo\Test]
     public function testSameNamedEnumsInDifferentSchemas(): void
     {
         $driver = $this->database->getDriver();
@@ -80,11 +80,11 @@ class EnumIntrospectionTest extends BaseTest
 
         $schema = $driver->getSchema('mixed_enums');
 
-        $this->assertSame('enum', $schema->column('public_mood')->getAbstractType());
-        $this->assertSame(['sad', 'ok', 'happy'], $schema->column('public_mood')->getEnumValues());
+        \Testo\Assert::same($schema->column('public_mood')->getAbstractType(), 'enum');
+        \Testo\Assert::same($schema->column('public_mood')->getEnumValues(), ['sad', 'ok', 'happy']);
 
-        $this->assertSame('enum', $schema->column('foreign_mood')->getAbstractType());
-        $this->assertSame(['angry', 'calm'], $schema->column('foreign_mood')->getEnumValues());
+        \Testo\Assert::same($schema->column('foreign_mood')->getAbstractType(), 'enum');
+        \Testo\Assert::same($schema->column('foreign_mood')->getEnumValues(), ['angry', 'calm']);
     }
 
     /**
@@ -92,6 +92,7 @@ class EnumIntrospectionTest extends BaseTest
      * are returned verbatim. The former `enum_range()` parsing split the textual range by a comma
      * and mangled such labels.
      */
+    #[\Testo\Test]
     public function testLabelsWithSpecialCharacters(): void
     {
         $driver = $this->database->getDriver();
@@ -109,17 +110,15 @@ class EnumIntrospectionTest extends BaseTest
 
         $schema = $driver->getSchema('mixed_enums');
 
-        $this->assertSame('enum', $schema->column('label')->getAbstractType());
-        $this->assertSame(
-            ["it's", 'a,b', 'with "quotes"', ' spaced '],
-            $schema->column('label')->getEnumValues(),
-        );
+        \Testo\Assert::same($schema->column('label')->getAbstractType(), 'enum');
+        \Testo\Assert::same($schema->column('label')->getEnumValues(), ["it's", 'a,b', 'with "quotes"', ' spaced ']);
     }
 
     /**
      * An enum type without labels has no values, so the column must not be reported as an enum.
      * The former `enum_range()` parsing produced a single empty-string value for it.
      */
+    #[\Testo\Test]
     public function testEmptyEnumType(): void
     {
         $driver = $this->database->getDriver();
@@ -135,10 +134,11 @@ class EnumIntrospectionTest extends BaseTest
 
         $schema = $driver->getSchema('mixed_enums');
 
-        $this->assertNotSame('enum', $schema->column('hollow')->getAbstractType());
-        $this->assertSame([], $schema->column('hollow')->getEnumValues());
+        \Testo\Assert::notSame($schema->column('hollow')->getAbstractType(), 'enum');
+        \Testo\Assert::same($schema->column('hollow')->getEnumValues(), []);
     }
 
+    #[\Testo\Test]
     public function testCompositePrimaryKeyWithEmulatedEnum(): void
     {
         $driver = $this->database->getDriver();
@@ -155,12 +155,13 @@ class EnumIntrospectionTest extends BaseTest
 
         $schema = $driver->getSchema('mixed_enums');
 
-        $this->assertSame(['left_id', 'right_id'], $schema->getPrimaryKeys());
-        $this->assertSame(['active', 'disabled'], $schema->column('status')->getEnumValues());
+        \Testo\Assert::same($schema->getPrimaryKeys(), ['left_id', 'right_id']);
+        \Testo\Assert::same($schema->column('status')->getEnumValues(), ['active', 'disabled']);
         // The composite PK constraint must not be reported as a regular index
-        $this->assertSame([], $schema->getIndexes());
+        \Testo\Assert::same($schema->getIndexes(), []);
     }
 
+    #[\Testo\Lifecycle\AfterTest]
     public function tearDown(): void
     {
         $driver = $this->database->getDriver();

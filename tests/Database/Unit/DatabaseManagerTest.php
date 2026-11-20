@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 
-class DatabaseManagerTest extends TestCase
+class DatabaseManagerTest
 {
     public const DEFAULT_OPTIONS = [
         'default' => 'default',
@@ -30,6 +30,7 @@ class DatabaseManagerTest extends TestCase
         'connections' => [],
     ];
 
+    #[\Testo\Test]
     public function testAddDatabase(): void
     {
         $driver = m::mock(DriverInterface::class);
@@ -39,9 +40,10 @@ class DatabaseManagerTest extends TestCase
         $dbal = new DatabaseManager(new DatabaseConfig(self::DEFAULT_OPTIONS));
         $dbal->addDatabase($db);
 
-        $this->assertSame($db, $dbal->database('default'));
+        \Testo\Assert::same($dbal->database('default'), $db);
     }
 
+    #[\Testo\Test]
     public function testAddDatabaseException(): void
     {
         $driver = m::mock(DriverInterface::class);
@@ -49,11 +51,12 @@ class DatabaseManagerTest extends TestCase
         $dbal = new DatabaseManager(new DatabaseConfig(self::DEFAULT_OPTIONS));
         $dbal->addDatabase($db);
 
-        $this->expectException(DBALException::class);
+        \Testo\Expect::exception(DBALException::class);
 
         $dbal->addDatabase($db);
     }
 
+    #[\Testo\Test]
     public function testAddDriver(): void
     {
         $driver = m::mock(DriverInterface::class);
@@ -61,27 +64,30 @@ class DatabaseManagerTest extends TestCase
         $dbal = new DatabaseManager(new DatabaseConfig(self::DEFAULT_OPTIONS));
         $dbal->addDriver('default', $driver);
 
-        $this->assertSame($driver, $dbal->driver('default'));
+        \Testo\Assert::same($dbal->driver('default'), $driver);
     }
 
+    #[\Testo\Test]
     public function testAddDriverException(): void
     {
         $driver = m::mock(DriverInterface::class);
         $dbal = new DatabaseManager(new DatabaseConfig(self::DEFAULT_OPTIONS));
         $dbal->addDriver('default', $driver);
 
-        $this->expectException(DBALException::class);
+        \Testo\Expect::exception(DBALException::class);
 
         $dbal->addDriver('default', $driver);
     }
 
+    #[\Testo\Test]
     public function testDatabaseException(): void
     {
         $dbal = new DatabaseManager(new DatabaseConfig(self::DEFAULT_OPTIONS));
-        $this->expectException(DBALException::class);
+        \Testo\Expect::exception(DBALException::class);
         $dbal->database('default');
     }
 
+    #[\Testo\Test]
     public function testDatabaseDrivers(): void
     {
         $read = m::mock(DriverInterface::class);
@@ -93,10 +99,11 @@ class DatabaseManagerTest extends TestCase
 
         $db = $dbal->database('default');
 
-        $this->assertSame($read, $db->getDriver(Database::READ));
-        $this->assertSame($write, $db->getDriver(Database::WRITE));
+        \Testo\Assert::same($db->getDriver(Database::READ), $read);
+        \Testo\Assert::same($db->getDriver(Database::WRITE), $write);
     }
 
+    #[\Testo\Test]
     public function testGetDrivers(): void
     {
         $read = m::mock(DriverInterface::class);
@@ -104,14 +111,15 @@ class DatabaseManagerTest extends TestCase
 
         $dbal = new DatabaseManager(new DatabaseConfig(self::DEFAULT_OPTIONS));
 
-        $this->assertCount(0, $dbal->getDrivers());
+        \Testo\Assert::count($dbal->getDrivers(), 0);
 
         $dbal->addDriver('read', $read);
         $dbal->addDriver('write', $write);
 
-        $this->assertCount(2, $dbal->getDrivers());
+        \Testo\Assert::count($dbal->getDrivers(), 2);
     }
 
+    #[\Testo\Test]
     public function testSetLogger(): void
     {
         $logger = m::mock(LoggerInterface::class);
@@ -121,7 +129,7 @@ class DatabaseManagerTest extends TestCase
         $driverWithLogger = m::mock(DriverInterface::class, LoggerAwareInterface::class)
             ->shouldReceive('setLogger')->with($logger)->once()->andReturnNull()
             ->getMock();
-        self::assertInstanceOf(LoggerAwareInterface::class, $driverWithLogger);
+        \Testo\Assert::instanceOf($driverWithLogger, LoggerAwareInterface::class);
 
         $dbal = new DatabaseManager(new DatabaseConfig(self::DEFAULT_OPTIONS));
 
@@ -133,6 +141,7 @@ class DatabaseManagerTest extends TestCase
         m::close();
     }
 
+    #[\Testo\Test]
     public function testGetDatabases(): void
     {
         $read = m::mock(DriverInterface::class);
@@ -143,27 +152,30 @@ class DatabaseManagerTest extends TestCase
         $dbal->addDriver('read', $read);
         $dbal->addDriver('write', $write);
 
-        $this->assertCount(1, $dbal->getDatabases());
+        \Testo\Assert::count($dbal->getDatabases(), 1);
     }
 
+    #[\Testo\Test]
     public function testGetDatabaseException(): void
     {
         $dbal = new DatabaseManager(new DatabaseConfig(self::DEFAULT_OPTIONS));
 
-        $this->expectException(DBALException::class);
+        \Testo\Expect::exception(DBALException::class);
 
         $dbal->database('other');
     }
 
+    #[\Testo\Test]
     public function testGetDriverException(): void
     {
         $dbal = new DatabaseManager(new DatabaseConfig(self::DEFAULT_OPTIONS));
 
-        $this->expectException(DBALException::class);
+        \Testo\Expect::exception(DBALException::class);
 
         $dbal->driver('other');
     }
 
+    #[\Testo\Test]
     public function testConfigured(): void
     {
         $dbal = new DatabaseManager(
@@ -185,10 +197,11 @@ class DatabaseManagerTest extends TestCase
             ),
         );
 
-        $this->assertInstanceOf(SQLiteDriver::class, $dbal->driver('default'));
-        $this->assertInstanceOf(SQLiteDriver::class, $dbal->database('default')->getDriver());
+        \Testo\Assert::instanceOf($dbal->driver('default'), SQLiteDriver::class);
+        \Testo\Assert::instanceOf($dbal->database('default')->getDriver(), SQLiteDriver::class);
     }
 
+    #[\Testo\Test]
     public function testCountDrivers(): void
     {
         $dbal = new DatabaseManager(
@@ -210,9 +223,10 @@ class DatabaseManagerTest extends TestCase
             ),
         );
 
-        $this->assertCount(1, $dbal->getDrivers());
+        \Testo\Assert::count($dbal->getDrivers(), 1);
     }
 
+    #[\Testo\Test]
     public function testCountDatabase(): void
     {
         $dbal = new DatabaseManager(
@@ -234,15 +248,16 @@ class DatabaseManagerTest extends TestCase
             ),
         );
 
-        $this->assertCount(2, $dbal->getDatabases());
+        \Testo\Assert::count($dbal->getDatabases(), 2);
 
         $driver = m::mock(DriverInterface::class);
         $db = new Database('default2', '', $driver);
         $dbal->addDatabase($db);
 
-        $this->assertCount(3, $dbal->getDatabases());
+        \Testo\Assert::count($dbal->getDatabases(), 3);
     }
 
+    #[\Testo\Test]
     public function testBadDriver(): void
     {
         $dbal = new DatabaseManager(
@@ -253,7 +268,7 @@ class DatabaseManagerTest extends TestCase
             ]),
         );
 
-        $this->expectException(\InvalidArgumentException::class);
+        \Testo\Expect::exception(\InvalidArgumentException::class);
 
         $dbal->driver('default');
     }

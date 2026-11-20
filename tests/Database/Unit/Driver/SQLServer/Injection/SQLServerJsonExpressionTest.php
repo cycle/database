@@ -7,15 +7,16 @@ namespace Cycle\Database\Tests\Unit\Driver\SQLServer\Injection;
 use Cycle\Database\Driver\SQLServer\Injection\SQLServerJsonExpression;
 use PHPUnit\Framework\TestCase;
 
-final class SQLServerJsonExpressionTest extends TestCase
+final class SQLServerJsonExpressionTest
 {
+    #[\Testo\Test]
     public function testGetQuotes(): void
     {
         $expression = $this->createExpression();
         $ref = new \ReflectionMethod($expression, 'getQuotes');
         $ref->setAccessible(true);
 
-        $this->assertSame('[]', $ref->invoke($expression));
+        \Testo\Assert::same($ref->invoke($expression), '[]');
     }
 
     private function createExpression(): SQLServerJsonExpression

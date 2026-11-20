@@ -7,8 +7,9 @@ namespace Cycle\Database\Tests\Unit\Config\MySQL;
 use Cycle\Database\Config\MySQL\SocketConnectionConfig;
 use PHPUnit\Framework\TestCase;
 
-final class SocketConnectionConfigTest extends TestCase
+final class SocketConnectionConfigTest
 {
+    #[\Testo\Test]
     public function testSetState(): void
     {
         $testOptionKey = 'option-1';
@@ -27,11 +28,11 @@ final class SocketConnectionConfigTest extends TestCase
         /** @var SocketConnectionConfig $recoveredConfig */
         eval('$recoveredConfig = ' . $exported . ';');
 
-        $this->assertSame("mysql:unix_socket=$socket;dbname=$database;charset=$charset", $recoveredConfig->getDsn());
-        $this->assertSame($database, $recoveredConfig->getSourceString());
-        $this->assertSame($user, $recoveredConfig->getUsername());
-        $this->assertSame($password, $recoveredConfig->getPassword());
-        $this->assertArrayHasKey($testOptionKey, $recoveredConfig->getOptions());
-        $this->assertSame($testOptionValue, $recoveredConfig->getOptions()[$testOptionKey]);
+        \Testo\Assert::same($recoveredConfig->getDsn(), "mysql:unix_socket=$socket;dbname=$database;charset=$charset");
+        \Testo\Assert::same($recoveredConfig->getSourceString(), $database);
+        \Testo\Assert::same($recoveredConfig->getUsername(), $user);
+        \Testo\Assert::same($recoveredConfig->getPassword(), $password);
+        \Testo\Assert::array($recoveredConfig->getOptions())->hasKeys($testOptionKey);
+        \Testo\Assert::same($recoveredConfig->getOptions()[$testOptionKey], $testOptionValue);
     }
 }

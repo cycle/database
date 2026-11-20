@@ -6,14 +6,12 @@ namespace Cycle\Database\Tests\Functional\Driver\Postgres\Schema;
 
 use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
-/**
- * @group driver
- * @group driver-postgres
- */
+#[\Testo\Filter\Group('driver', 'driver-postgres')]
 final class BinaryColumnTest extends BaseTest
 {
     public const DRIVER = 'postgres';
 
+    #[\Testo\Test]
     public function testBit(): void
     {
         $schema = $this->schema('table');
@@ -24,16 +22,17 @@ final class BinaryColumnTest extends BaseTest
 
         $savedColumn = $this->schema('table')->getColumns()['column'];
 
-        $this->assertSame('string', $column->getType());
-        $this->assertSame('string', $savedColumn->getType());
-        $this->assertSame('bit', $column->getAbstractType());
-        $this->assertSame('bit', $savedColumn->getAbstractType());
-        $this->assertSame('bit', $column->getInternalType());
-        $this->assertSame('bit', $savedColumn->getInternalType());
-        $this->assertSame(1, $savedColumn->getSize());
-        $this->assertSame(1, $column->getSize());
+        \Testo\Assert::same($column->getType(), 'string');
+        \Testo\Assert::same($savedColumn->getType(), 'string');
+        \Testo\Assert::same($column->getAbstractType(), 'bit');
+        \Testo\Assert::same($savedColumn->getAbstractType(), 'bit');
+        \Testo\Assert::same($column->getInternalType(), 'bit');
+        \Testo\Assert::same($savedColumn->getInternalType(), 'bit');
+        \Testo\Assert::same($savedColumn->getSize(), 1);
+        \Testo\Assert::same($column->getSize(), 1);
     }
 
+    #[\Testo\Test]
     public function testBitWithSize(): void
     {
         $schema = $this->schema('table');
@@ -44,16 +43,17 @@ final class BinaryColumnTest extends BaseTest
 
         $savedColumn = $this->schema('table')->getColumns()['column'];
 
-        $this->assertSame('string', $column->getType());
-        $this->assertSame('string', $savedColumn->getType());
-        $this->assertSame('bit', $column->getAbstractType());
-        $this->assertSame('bit', $savedColumn->getAbstractType());
-        $this->assertSame('bit', $column->getInternalType());
-        $this->assertSame('bit', $savedColumn->getInternalType());
-        $this->assertSame(10, $savedColumn->getSize());
-        $this->assertSame(10, $column->getSize());
+        \Testo\Assert::same($column->getType(), 'string');
+        \Testo\Assert::same($savedColumn->getType(), 'string');
+        \Testo\Assert::same($column->getAbstractType(), 'bit');
+        \Testo\Assert::same($savedColumn->getAbstractType(), 'bit');
+        \Testo\Assert::same($column->getInternalType(), 'bit');
+        \Testo\Assert::same($savedColumn->getInternalType(), 'bit');
+        \Testo\Assert::same($savedColumn->getSize(), 10);
+        \Testo\Assert::same($column->getSize(), 10);
     }
 
+    #[\Testo\Test]
     public function testBitVarying(): void
     {
         $schema = $this->schema('table');
@@ -64,16 +64,17 @@ final class BinaryColumnTest extends BaseTest
 
         $savedColumn = $this->schema('table')->getColumns()['column'];
 
-        $this->assertSame('string', $column->getType());
-        $this->assertSame('string', $savedColumn->getType());
-        $this->assertSame('bit', $column->getAbstractType());
-        $this->assertSame('bit', $savedColumn->getAbstractType());
-        $this->assertSame('bit varying', $column->getInternalType());
-        $this->assertSame('bit varying', $savedColumn->getInternalType());
-        $this->assertSame(0, $savedColumn->getSize());
-        $this->assertSame(0, $column->getSize());
+        \Testo\Assert::same($column->getType(), 'string');
+        \Testo\Assert::same($savedColumn->getType(), 'string');
+        \Testo\Assert::same($column->getAbstractType(), 'bit');
+        \Testo\Assert::same($savedColumn->getAbstractType(), 'bit');
+        \Testo\Assert::same($column->getInternalType(), 'bit varying');
+        \Testo\Assert::same($savedColumn->getInternalType(), 'bit varying');
+        \Testo\Assert::same($savedColumn->getSize(), 0);
+        \Testo\Assert::same($column->getSize(), 0);
     }
 
+    #[\Testo\Test]
     public function testBitVaryingWithSize(): void
     {
         $schema = $this->schema('table');
@@ -84,13 +85,13 @@ final class BinaryColumnTest extends BaseTest
 
         $savedColumn = $this->schema('table')->getColumns()['column'];
 
-        $this->assertSame('string', $column->getType());
-        $this->assertSame('string', $savedColumn->getType());
-        $this->assertSame('bit', $column->getAbstractType());
-        $this->assertSame('bit', $savedColumn->getAbstractType());
-        $this->assertSame('bit varying', $column->getInternalType());
-        $this->assertSame('bit varying', $savedColumn->getInternalType());
-        $this->assertSame(10, $savedColumn->getSize());
-        $this->assertSame(10, $column->getSize());
+        \Testo\Assert::same($column->getType(), 'string');
+        \Testo\Assert::same($savedColumn->getType(), 'string');
+        \Testo\Assert::same($column->getAbstractType(), 'bit');
+        \Testo\Assert::same($savedColumn->getAbstractType(), 'bit');
+        \Testo\Assert::same($column->getInternalType(), 'bit varying');
+        \Testo\Assert::same($savedColumn->getInternalType(), 'bit varying');
+        \Testo\Assert::same($savedColumn->getSize(), 10);
+        \Testo\Assert::same($column->getSize(), 10);
     }
 }

@@ -8,17 +8,13 @@ namespace Cycle\Database\Tests\Functional\Driver\MySQL\Connection;
 use Cycle\Database\Driver\MySQL\Schema\MySQLColumn;
 use Cycle\Database\Tests\Functional\Driver\Common\Connection\CustomOptionsTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-mysql
- */
+#[\Testo\Filter\Group('driver', 'driver-mysql')]
 class CustomOptionsTest extends CommonClass
 {
     public const DRIVER = 'mysql';
 
-    /**
-     * @dataProvider dataUnsignedAndZerofillAttributes
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('dataUnsignedAndZerofillAttributes')]
     public function testUnsignedAndZerofillAttributes(
         string $type,
         string $columnName,
@@ -29,11 +25,11 @@ class CustomOptionsTest extends CommonClass
         \call_user_func_array([$schema, $type], \array_merge([$columnName], $attributes));
         $schema->save();
 
-        $this->assertInstanceOf(MySQLColumn::class, $column = $this->fetchSchema($schema)->column($columnName));
+        \Testo\Assert::instanceOf($column = $this->fetchSchema($schema)->column($columnName), MySQLColumn::class);
         foreach ($expectedAttributes as $k => $v) {
-            $this->assertSame($v, $column->{(\is_bool($v) ? 'is' : 'get') . \ucwords($k)}());
-            $this->assertArrayHasKey($k, $column->getAttributes());
-            $this->assertSame($v, $column->getAttributes()[$k]);
+            \Testo\Assert::same($column->{(\is_bool($v) ? 'is' : 'get') . \ucwords($k)}(), $v);
+            \Testo\Assert::array($column->getAttributes())->hasKeys($k);
+            \Testo\Assert::same($column->getAttributes()[$k], $v);
         }
     }
 
@@ -72,6 +68,7 @@ class CustomOptionsTest extends CommonClass
         }
     }
 
+    #[\Testo\Test]
     public function testNamedArgumentsToConfigureInteger(): void
     {
         $schema = $this->schema('foo');
@@ -79,21 +76,22 @@ class CustomOptionsTest extends CommonClass
         $schema->bigInteger('foo', nullable: true, unsigned: true, zerofill: true, size: 18);
         $schema->save();
 
-        $this->assertInstanceOf(MySQLColumn::class, $id = $this->fetchSchema($schema)->column('id'));
-        $this->assertInstanceOf(MySQLColumn::class, $foo = $this->fetchSchema($schema)->column('foo'));
+        \Testo\Assert::instanceOf($id = $this->fetchSchema($schema)->column('id'), MySQLColumn::class);
+        \Testo\Assert::instanceOf($foo = $this->fetchSchema($schema)->column('foo'), MySQLColumn::class);
 
         \assert($id instanceof MySQLColumn);
         \assert($foo instanceof MySQLColumn);
-        $this->assertTrue($id->isZerofill());
-        $this->assertTrue($foo->isZerofill());
-        $this->assertTrue($id->isUnsigned());
-        $this->assertTrue($foo->isUnsigned());
-        $this->assertSame(20, $id->getSize());
-        $this->assertSame(18, $foo->getSize());
-        $this->assertFalse($id->isNullable());
-        $this->assertTrue($foo->isNullable());
+        \Testo\Assert::true($id->isZerofill());
+        \Testo\Assert::true($foo->isZerofill());
+        \Testo\Assert::true($id->isUnsigned());
+        \Testo\Assert::true($foo->isUnsigned());
+        \Testo\Assert::same($id->getSize(), 20);
+        \Testo\Assert::same($foo->getSize(), 18);
+        \Testo\Assert::false($id->isNullable());
+        \Testo\Assert::true($foo->isNullable());
     }
 
+    #[\Testo\Test]
     public function testNamedArgumentsToConfigureBoolean(): void
     {
         $schema = $this->schema('foo');
@@ -103,45 +101,46 @@ class CustomOptionsTest extends CommonClass
         $schema->boolean('quux', nullable: false);
         $schema->save();
 
-        $this->assertInstanceOf(MySQLColumn::class, $bar = $this->fetchSchema($schema)->column('bar'));
-        $this->assertInstanceOf(MySQLColumn::class, $baz = $this->fetchSchema($schema)->column('baz'));
-        $this->assertInstanceOf(MySQLColumn::class, $qux = $this->fetchSchema($schema)->column('qux'));
-        $this->assertInstanceOf(MySQLColumn::class, $quux = $this->fetchSchema($schema)->column('quux'));
+        \Testo\Assert::instanceOf($bar = $this->fetchSchema($schema)->column('bar'), MySQLColumn::class);
+        \Testo\Assert::instanceOf($baz = $this->fetchSchema($schema)->column('baz'), MySQLColumn::class);
+        \Testo\Assert::instanceOf($qux = $this->fetchSchema($schema)->column('qux'), MySQLColumn::class);
+        \Testo\Assert::instanceOf($quux = $this->fetchSchema($schema)->column('quux'), MySQLColumn::class);
 
-        self::assertInstanceOf(MySQLColumn::class, $bar);
-        self::assertInstanceOf(MySQLColumn::class, $baz);
-        self::assertInstanceOf(MySQLColumn::class, $qux);
-        self::assertInstanceOf(MySQLColumn::class, $quux);
-        $this->assertTrue($bar->isZerofill());
-        $this->assertTrue($baz->isZerofill());
-        $this->assertFalse($qux->isZerofill());
-        $this->assertFalse($quux->isZerofill());
-        $this->assertTrue($bar->isUnsigned());
-        $this->assertTrue($baz->isUnsigned());
-        $this->assertTrue($qux->isUnsigned());
-        $this->assertFalse($quux->isUnsigned());
+        \Testo\Assert::instanceOf($bar, MySQLColumn::class);
+        \Testo\Assert::instanceOf($baz, MySQLColumn::class);
+        \Testo\Assert::instanceOf($qux, MySQLColumn::class);
+        \Testo\Assert::instanceOf($quux, MySQLColumn::class);
+        \Testo\Assert::true($bar->isZerofill());
+        \Testo\Assert::true($baz->isZerofill());
+        \Testo\Assert::false($qux->isZerofill());
+        \Testo\Assert::false($quux->isZerofill());
+        \Testo\Assert::true($bar->isUnsigned());
+        \Testo\Assert::true($baz->isUnsigned());
+        \Testo\Assert::true($qux->isUnsigned());
+        \Testo\Assert::false($quux->isUnsigned());
 
-        $this->assertSame(1, $bar->getSize());
-        $this->assertSame(1, $baz->getSize());
+        \Testo\Assert::same($bar->getSize(), 1);
+        \Testo\Assert::same($baz->getSize(), 1);
         // In case of zerofill=false and unsigned=true the size value might be resolved to 4
-        $this->assertTrue(\in_array($qux->getSize(), [1, 4], true));
-        $this->assertSame(1, $quux->getSize());
+        \Testo\Assert::true(\in_array($qux->getSize(), [1, 4], true));
+        \Testo\Assert::same($quux->getSize(), 1);
 
-        $this->assertFalse($bar->isNullable());
-        $this->assertTrue($baz->isNullable());
-        $this->assertFalse($qux->isNullable());
-        $this->assertFalse($quux->isNullable());
+        \Testo\Assert::false($bar->isNullable());
+        \Testo\Assert::true($baz->isNullable());
+        \Testo\Assert::false($qux->isNullable());
+        \Testo\Assert::false($quux->isNullable());
     }
 
     /**
      * The `text` have no  the `unsigned` attribute. It will be stored in the additional attributes.
      */
+    #[\Testo\Test]
     public function testTextWithUnsigned(): void
     {
         $schema = $this->schema('foo');
         $column = $schema->text('text')->unsigned(true);
 
-        $this->assertFalse($column->isUnsigned());
-        $this->assertArrayHasKey('unsigned', $column->getAttributes());
+        \Testo\Assert::false($column->isUnsigned());
+        \Testo\Assert::array($column->getAttributes())->hasKeys('unsigned');
     }
 }

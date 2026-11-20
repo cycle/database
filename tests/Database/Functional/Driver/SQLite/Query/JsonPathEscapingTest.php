@@ -8,10 +8,7 @@ use Cycle\Database\Exception\StatementException;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Query\JsonPathEscapingTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-sqlite
- */
+#[\Testo\Filter\Group('driver', 'driver-sqlite')]
 class JsonPathEscapingTest extends CommonClass
 {
     public const DRIVER = 'sqlite';

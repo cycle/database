@@ -8,19 +8,17 @@ namespace Cycle\Database\Tests\Functional\Driver\SQLServer\Schema;
 use Cycle\Database\Driver\Handler;
 use Cycle\Database\Tests\Functional\Driver\Common\Schema\ForeignKeysTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-sqlserver
- */
+#[\Testo\Filter\Group('driver', 'driver-sqlserver')]
 class ForeignKeysTest extends CommonClass
 {
     public const DRIVER = 'sqlserver';
 
+    #[\Testo\Test]
     public function testCreateWithoutIndex(): void
     {
         $schema = $this->schema('schema');
-        $this->assertFalse($schema->exists());
-        $this->assertTrue($this->sampleSchema('external')->exists());
+        \Testo\Assert::false($schema->exists());
+        \Testo\Assert::true($this->sampleSchema('external')->exists());
 
         $schema->primary('id');
         $schema->integer('external_id');
@@ -29,10 +27,11 @@ class ForeignKeysTest extends CommonClass
         $schema->save(Handler::DO_ALL);
 
         $this->assertSameAsInDB($schema);
-        $this->assertTrue($this->schema('schema')->hasForeignKey(['external_id']));
-        $this->assertFalse($this->schema('schema')->hasIndex(['external_id']));
+        \Testo\Assert::true($this->schema('schema')->hasForeignKey(['external_id']));
+        \Testo\Assert::false($this->schema('schema')->hasIndex(['external_id']));
     }
 
+    #[\Testo\Test]
     public function testDisableForeignKeyConstraints(): void
     {
         $schema = $this->schema('schema');
@@ -44,13 +43,14 @@ class ForeignKeysTest extends CommonClass
         $schema->save(Handler::DO_ALL);
 
         $result = $schema->getDriver()->query('select * from sys.foreign_keys')->fetch();
-        $this->assertSame(0, (int) $result['is_disabled']);
+        \Testo\Assert::same((int) $result['is_disabled'], 0);
 
         $schema->getDriver()->getSchemaHandler()->disableForeignKeyConstraints();
         $result = $schema->getDriver()->query('select * from sys.foreign_keys')->fetch();
-        $this->assertSame(1, (int) $result['is_disabled']);
+        \Testo\Assert::same((int) $result['is_disabled'], 1);
     }
 
+    #[\Testo\Test]
     public function testEnableForeignKeyConstraints(): void
     {
         $schema = $this->schema('schema');
@@ -63,11 +63,11 @@ class ForeignKeysTest extends CommonClass
 
         $schema->getDriver()->getSchemaHandler()->disableForeignKeyConstraints();
         $result = $schema->getDriver()->query('select * from sys.foreign_keys')->fetch();
-        $this->assertSame(1, (int) $result['is_disabled']);
+        \Testo\Assert::same((int) $result['is_disabled'], 1);
         $schema->save(Handler::DO_ALL);
 
         $schema->getDriver()->getSchemaHandler()->enableForeignKeyConstraints();
         $result = $schema->getDriver()->query('select * from sys.foreign_keys')->fetch();
-        $this->assertSame(0, (int) $result['is_disabled']);
+        \Testo\Assert::same((int) $result['is_disabled'], 0);
     }
 }

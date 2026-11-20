@@ -7,10 +7,7 @@ namespace Cycle\Database\Tests\Functional\Driver\MySQL\Query;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Query\NestedQueriesTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-mysql
- */
+#[\Testo\Filter\Group('driver', 'driver-mysql')]
 class NestedQueriesTest extends CommonClass
 {
     public const DRIVER = 'mysql';

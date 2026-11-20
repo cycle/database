@@ -7,18 +7,16 @@ namespace Cycle\Database\Tests\Functional\Driver\MySQL\Schema;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Schema\CreateTableTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-mysql
- */
+#[\Testo\Filter\Group('driver', 'driver-mysql')]
 class CreateTableTest extends CommonClass
 {
     public const DRIVER = 'mysql';
 
+    #[\Testo\Test]
     public function testMultipleColumnsWithJson(): void
     {
         $schema = $this->schema('table');
-        $this->assertFalse($schema->exists());
+        \Testo\Assert::false($schema->exists());
 
         $schema->primary('id');
         $schema->string('name');
@@ -29,10 +27,10 @@ class CreateTableTest extends CommonClass
         $schema->save();
 
         $schema = $this->schema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
         $this->assertSameAsInDB($schema);
 
-        $this->assertSame(['active', 'disabled'], $schema->column('status')->getEnumValues());
-        $this->assertSame('json', $schema->column('data')->getAbstractType());
+        \Testo\Assert::same($schema->column('status')->getEnumValues(), ['active', 'disabled']);
+        \Testo\Assert::same($schema->column('data')->getAbstractType(), 'json');
     }
 }

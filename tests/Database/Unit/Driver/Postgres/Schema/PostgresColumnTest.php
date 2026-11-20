@@ -7,7 +7,7 @@ namespace Cycle\Database\Tests\Unit\Driver\Postgres\Schema;
 use Cycle\Database\Driver\Postgres\Schema\PostgresColumn;
 use PHPUnit\Framework\TestCase;
 
-final class PostgresColumnTest extends TestCase
+final class PostgresColumnTest
 {
     public static function enumConstrainsDataProvider(): \Traversable
     {
@@ -59,9 +59,8 @@ final class PostgresColumnTest extends TestCase
         yield ["CHECK (((log_type)::foo = ANY (ARRAY['catalog'::bar, 'view'::baz])))", ['catalog', 'view']];
     }
 
-    /**
-     * @dataProvider enumConstrainsDataProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('enumConstrainsDataProvider')]
     public function testParseEnumValues(string $constrain, array $expected): void
     {
         $column = new PostgresColumn('', '');
@@ -69,6 +68,6 @@ final class PostgresColumnTest extends TestCase
         $ref = new \ReflectionMethod($column, 'parseEnumValues');
         $ref->setAccessible(true);
 
-        $this->assertSame($expected, $ref->invoke($column, $constrain));
+        \Testo\Assert::same($ref->invoke($column, $constrain), $expected);
     }
 }

@@ -13,14 +13,16 @@ use Cycle\Database\Driver\SQLite\SQLiteDriver;
 use Cycle\Database\Exception\ConfigException;
 use PHPUnit\Framework\TestCase;
 
-class ConfigTest extends TestCase
+class ConfigTest
 {
+    #[\Testo\Test]
     public function testMakeDatabaseWithoutConfig(): void
     {
         $config = new DatabaseConfig();
-        $this->assertInstanceOf(DatabaseConfig::class, $config);
+        \Testo\Assert::instanceOf($config, DatabaseConfig::class);
     }
 
+    #[\Testo\Test]
     public function testDefaultDatabase(): void
     {
         $config = new DatabaseConfig(
@@ -29,9 +31,10 @@ class ConfigTest extends TestCase
             ],
         );
 
-        $this->assertSame('database-1', $config->getDefaultDatabase());
+        \Testo\Assert::same($config->getDefaultDatabase(), 'database-1');
     }
 
+    #[\Testo\Test]
     public function testHasDatabase(): void
     {
         $config = new DatabaseConfig(
@@ -44,11 +47,12 @@ class ConfigTest extends TestCase
             ],
         );
 
-        $this->assertTrue($config->hasDatabase('test'));
-        $this->assertTrue($config->hasDatabase('test2'));
-        $this->assertFalse($config->hasDatabase('database-1'));
+        \Testo\Assert::true($config->hasDatabase('test'));
+        \Testo\Assert::true($config->hasDatabase('test2'));
+        \Testo\Assert::false($config->hasDatabase('database-1'));
     }
 
+    #[\Testo\Test]
     public function testDatabaseException(): void
     {
         $config = new DatabaseConfig(
@@ -61,11 +65,12 @@ class ConfigTest extends TestCase
             ],
         );
 
-        $this->expectException(ConfigException::class);
+        \Testo\Expect::exception(ConfigException::class);
 
         $config->getDatabase('test3');
     }
 
+    #[\Testo\Test]
     public function testDatabaseDriver(): void
     {
         $config = new DatabaseConfig(
@@ -82,10 +87,11 @@ class ConfigTest extends TestCase
             ],
         );
 
-        $this->assertSame('abc', $config->getDatabase('test')->getDriver());
-        $this->assertSame('bce', $config->getDatabase('test2')->getDriver());
+        \Testo\Assert::same($config->getDatabase('test')->getDriver(), 'abc');
+        \Testo\Assert::same($config->getDatabase('test2')->getDriver(), 'bce');
     }
 
+    #[\Testo\Test]
     public function testDatabaseReadDriver(): void
     {
         $config = new DatabaseConfig(
@@ -107,11 +113,12 @@ class ConfigTest extends TestCase
             ],
         );
 
-        $this->assertSame('abc', $config->getDatabase('test')->getReadDriver());
-        $this->assertSame(null, $config->getDatabase('test1')->getReadDriver());
-        $this->assertSame('bce', $config->getDatabase('test2')->getReadDriver());
+        \Testo\Assert::same($config->getDatabase('test')->getReadDriver(), 'abc');
+        \Testo\Assert::same($config->getDatabase('test1')->getReadDriver(), null);
+        \Testo\Assert::same($config->getDatabase('test2')->getReadDriver(), 'bce');
     }
 
+    #[\Testo\Test]
     public function testDatabasePrefix(): void
     {
         $config = new DatabaseConfig(
@@ -133,12 +140,13 @@ class ConfigTest extends TestCase
             ],
         );
 
-        $this->assertSame('test', $config->getDatabase('test')->getName());
-        $this->assertSame('abc', $config->getDatabase('test')->getPrefix());
-        $this->assertSame('bce', $config->getDatabase('test2')->getPrefix());
-        $this->assertSame('', $config->getDatabase('test3')->getPrefix());
+        \Testo\Assert::same($config->getDatabase('test')->getName(), 'test');
+        \Testo\Assert::same($config->getDatabase('test')->getPrefix(), 'abc');
+        \Testo\Assert::same($config->getDatabase('test2')->getPrefix(), 'bce');
+        \Testo\Assert::same($config->getDatabase('test3')->getPrefix(), '');
     }
 
+    #[\Testo\Test]
     public function testDatabaseNames(): void
     {
         $config = new DatabaseConfig(
@@ -155,9 +163,10 @@ class ConfigTest extends TestCase
             ],
         );
 
-        $this->assertSame(['test', 'test2'], \array_keys($config->getDatabases()));
+        \Testo\Assert::same(\array_keys($config->getDatabases()), ['test', 'test2']);
     }
 
+    #[\Testo\Test]
     public function testAliases(): void
     {
         $config = new DatabaseConfig(
@@ -178,19 +187,20 @@ class ConfigTest extends TestCase
             ],
         );
 
-        $this->assertTrue($config->hasDatabase('test'));
-        $this->assertTrue($config->hasDatabase('test2'));
-        $this->assertFalse($config->hasDatabase('test4'));
-        $this->assertFalse($config->hasDatabase('test5'));
-        $this->assertFalse($config->hasDatabase('test6'));
+        \Testo\Assert::true($config->hasDatabase('test'));
+        \Testo\Assert::true($config->hasDatabase('test2'));
+        \Testo\Assert::false($config->hasDatabase('test4'));
+        \Testo\Assert::false($config->hasDatabase('test5'));
+        \Testo\Assert::false($config->hasDatabase('test6'));
 
-        $this->assertSame('test2', $config->resolveAlias('test3'));
+        \Testo\Assert::same($config->resolveAlias('test3'), 'test2');
 
-        $this->assertSame('test', $config->resolveAlias('test6'));
-        $this->assertSame('test', $config->resolveAlias('test5'));
-        $this->assertSame('test', $config->resolveAlias('test4'));
+        \Testo\Assert::same($config->resolveAlias('test6'), 'test');
+        \Testo\Assert::same($config->resolveAlias('test5'), 'test');
+        \Testo\Assert::same($config->resolveAlias('test4'), 'test');
     }
 
+    #[\Testo\Test]
     public function testHasDriver(): void
     {
         $config = new DatabaseConfig(
@@ -202,9 +212,9 @@ class ConfigTest extends TestCase
             ],
         );
 
-        $this->assertTrue($config->hasDriver('test'));
-        $this->assertTrue($config->hasDriver('test2'));
-        $this->assertFalse($config->hasDriver('database-1'));
+        \Testo\Assert::true($config->hasDriver('test'));
+        \Testo\Assert::true($config->hasDriver('test2'));
+        \Testo\Assert::false($config->hasDriver('database-1'));
 
         $config = new DatabaseConfig(
             [
@@ -215,11 +225,12 @@ class ConfigTest extends TestCase
             ],
         );
 
-        $this->assertTrue($config->hasDriver('test'));
-        $this->assertTrue($config->hasDriver('test2'));
-        $this->assertFalse($config->hasDriver('database-1'));
+        \Testo\Assert::true($config->hasDriver('test'));
+        \Testo\Assert::true($config->hasDriver('test2'));
+        \Testo\Assert::false($config->hasDriver('database-1'));
     }
 
+    #[\Testo\Test]
     public function testDriverException(): void
     {
         $config = new DatabaseConfig(
@@ -228,11 +239,12 @@ class ConfigTest extends TestCase
             ],
         );
 
-        $this->expectException(ConfigException::class);
+        \Testo\Expect::exception(ConfigException::class);
 
         $config->getDriver('test3');
     }
 
+    #[\Testo\Test]
     public function testGetDriver(): void
     {
         $config = new DatabaseConfig(
@@ -252,10 +264,11 @@ class ConfigTest extends TestCase
             ],
         );
 
-        $this->assertInstanceOf(SQLiteDriver::class, $config->getDriver('test'));
-        $this->assertInstanceOf(MySQLDriver::class, $config->getDriver('test2'));
+        \Testo\Assert::instanceOf($config->getDriver('test'), SQLiteDriver::class);
+        \Testo\Assert::instanceOf($config->getDriver('test2'), MySQLDriver::class);
     }
 
+    #[\Testo\Test]
     public function testDriverNames(): void
     {
         $config = new DatabaseConfig(
@@ -275,6 +288,6 @@ class ConfigTest extends TestCase
             ],
         );
 
-        $this->assertSame(['test', 'test2'], \array_keys($config->getDrivers()));
+        \Testo\Assert::same(\array_keys($config->getDrivers()), ['test', 'test2']);
     }
 }

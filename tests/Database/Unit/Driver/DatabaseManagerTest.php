@@ -15,11 +15,12 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
-class DatabaseManagerTest extends TestCase
+class DatabaseManagerTest
 {
     private LoggerFactoryInterface|MockObject $loggerFactory;
     private LoggerInterface|MockObject $logger;
 
+    #[\Testo\Test]
     public function testDriverShouldHaveNameIfITHasNamedInterface(): void
     {
         $manager = new DatabaseManager(
@@ -33,12 +34,10 @@ class DatabaseManagerTest extends TestCase
             ]),
         );
 
-        $this->assertSame(
-            'driver_with_name',
-            $manager->driver('driver_with_name')->getName(),
-        );
+        \Testo\Assert::same($manager->driver('driver_with_name')->getName(), 'driver_with_name');
     }
 
+    #[\Testo\Test]
     public function testSetsLoggerShouldPassLoggerToDrivers(): void
     {
         $manager = new DatabaseManager(
@@ -47,37 +46,39 @@ class DatabaseManagerTest extends TestCase
         );
         $manager->addDriver(
             'driver1',
-            $driver1 = $this->createMock(Driver::class),
+            $driver1 = \Mockery::mock(Driver::class)->shouldIgnoreMissing(),
         );
 
-        $driver1->expects($this->once())->method('setLogger')->with($this->logger);
+        $driver1->shouldReceive('setLogger')->once()->with($this->logger, \Mockery::andAnyOtherArgs());
 
         $manager->addDriver(
             'driver2',
-            $driver2 = $this->createMock(Driver::class),
+            $driver2 = \Mockery::mock(Driver::class)->shouldIgnoreMissing(),
         );
-        $driver2->expects($this->once())->method('setLogger')->with($this->logger);
+        $driver2->shouldReceive('setLogger')->once()->with($this->logger, \Mockery::andAnyOtherArgs());
 
         $manager->addDriver(
             'driverWithoutLogger',
-            $driver3 = $this->createMock(DriverInterface::class),
+            $driver3 = \Mockery::mock(DriverInterface::class)->shouldIgnoreMissing(),
         );
 
         $manager->setLogger($this->logger);
     }
 
+    #[\Testo\Test]
     public function testDatabaseManagerWithoutLoggerAndLoggerFactoryShouldReturnNullLogger(): void
     {
         $manager = new DatabaseManager($this->getDatabaseConfig());
 
-        $this->assertInstanceOf(TestDriver::class, $driver = $manager->driver('test'));
+        \Testo\Assert::instanceOf($driver = $manager->driver('test'), TestDriver::class);
 
         $refl = new \ReflectionClass($driver);
         $property = $refl->getProperty('logger');
         $property->setAccessible(true);
-        $this->assertNull($property->getValue($driver));
+        \Testo\Assert::null($property->getValue($driver));
     }
 
+    #[\Testo\Test]
     public function testDatabaseManagerWithLoggerAndWithoutLoggerFactoryShouldReturnLogger(): void
     {
         $manager = new DatabaseManager($this->getDatabaseConfig());
@@ -88,9 +89,10 @@ class DatabaseManagerTest extends TestCase
         $refl = new \ReflectionClass($driver);
         $property = $refl->getProperty('logger');
         $property->setAccessible(true);
-        $this->assertSame($this->logger, $property->getValue($driver));
+        \Testo\Assert::same($property->getValue($driver), $this->logger);
     }
 
+    #[\Testo\Test]
     public function testDatabaseManagerWithLoggerAndWithLoggerFactoryShouldReturnLogger(): void
     {
         $manager = new DatabaseManager(
@@ -98,7 +100,7 @@ class DatabaseManagerTest extends TestCase
             $this->loggerFactory,
         );
 
-        $this->loggerFactory->expects($this->never())->method('getLogger');
+        $this->loggerFactory->shouldReceive('getLogger')->never();
 
         $manager->setLogger($this->logger);
         $driver = $manager->driver('test');
@@ -106,9 +108,10 @@ class DatabaseManagerTest extends TestCase
         $refl = new \ReflectionClass($driver);
         $property = $refl->getProperty('logger');
         $property->setAccessible(true);
-        $this->assertSame($this->logger, $property->getValue($driver));
+        \Testo\Assert::same($property->getValue($driver), $this->logger);
     }
 
+    #[\Testo\Test]
     public function testDatabaseManagerWithoutLoggerAndWithLoggerFactoryShouldReturnLoggerFromFactory(): void
     {
         $manager = new DatabaseManager(
@@ -116,27 +119,23 @@ class DatabaseManagerTest extends TestCase
             $this->loggerFactory,
         );
 
-        $loggerFromFactory = $this->createMock(LoggerInterface::class);
+        $loggerFromFactory = \Mockery::mock(LoggerInterface::class)->shouldIgnoreMissing();
 
-        $this->loggerFactory->expects($this->once())
-            ->method('getLogger')
-            ->with($this->isInstanceOf(TestDriver::class))
-            ->willReturn($loggerFromFactory);
+        $this->loggerFactory->shouldReceive('getLogger')->once()->with(\Mockery::type(TestDriver::class), \Mockery::andAnyOtherArgs())->andReturn($loggerFromFactory);
 
         $driver = $manager->driver('test');
 
         $refl = new \ReflectionClass($driver);
         $property = $refl->getProperty('logger');
         $property->setAccessible(true);
-        $this->assertSame($loggerFromFactory, $property->getValue($driver));
+        \Testo\Assert::same($property->getValue($driver), $loggerFromFactory);
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     protected function setUp(): void
     {
-        parent::setUp();
-
-        $this->loggerFactory = $this->createMock(LoggerFactoryInterface::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->loggerFactory = \Mockery::mock(LoggerFactoryInterface::class)->shouldIgnoreMissing();
+        $this->logger = \Mockery::mock(LoggerInterface::class)->shouldIgnoreMissing();
     }
 
     private function getDatabaseConfig(): DatabaseConfig

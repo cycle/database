@@ -29,31 +29,28 @@ abstract class StatementTest extends BaseTest
         }
     }
 
+    #[\Testo\Test]
     public function testInstance(): void
     {
         $table = $this->database->table('sample_table');
 
-        $this->assertInstanceOf(
-            StatementInterface::class,
-            $table->select()->getIterator(),
-        );
+        \Testo\Assert::instanceOf($table->select()->getIterator(), StatementInterface::class);
 
-        $this->assertInstanceOf(
-            \PDOStatement::class,
-            $table->select()->run()->getPDOStatement(),
-        );
+        \Testo\Assert::instanceOf($table->select()->run()->getPDOStatement(), \PDOStatement::class);
     }
 
     //We are testing only extended functionality, there is no need to test PDOStatement
 
+    #[\Testo\Test]
     public function testCountColumns(): void
     {
         $table = $this->database->table('sample_table');
         $result = $table->select()->getIterator();
 
-        $this->assertSame(3, $result->columnCount());
+        \Testo\Assert::same($result->columnCount(), 3);
     }
 
+    #[\Testo\Test]
     public function testIterateOver(): void
     {
         $table = $this->database->table('sample_table');
@@ -63,8 +60,8 @@ abstract class StatementTest extends BaseTest
 
         $i = 0;
         foreach ($result as $item) {
-            $this->assertEquals(\md5((string) $i), $item['name']);
-            $this->assertEquals($i * 10, $item['value']);
+            \Testo\Assert::equals($item['name'], \md5((string) $i));
+            \Testo\Assert::equals($item['value'], $i * 10);
 
             $i++;
         }
@@ -74,9 +71,10 @@ abstract class StatementTest extends BaseTest
             $result->getQueryString(),
         );
 
-        $this->assertSame(10, $i);
+        \Testo\Assert::same($i, 10);
     }
 
+    #[\Testo\Test]
     public function testIterateOverLimit(): void
     {
         $table = $this->database->table('sample_table');
@@ -86,15 +84,16 @@ abstract class StatementTest extends BaseTest
 
         $i = 0;
         foreach ($result as $item) {
-            $this->assertEquals(\md5((string) $i), $item['name']);
-            $this->assertEquals($i * 10, $item['value']);
+            \Testo\Assert::equals($item['name'], \md5((string) $i));
+            \Testo\Assert::equals($item['value'], $i * 10);
 
             $i++;
         }
 
-        $this->assertSame(5, $i);
+        \Testo\Assert::same($i, 5);
     }
 
+    #[\Testo\Test]
     public function testIterateOverOffset(): void
     {
         $table = $this->database->table('sample_table');
@@ -104,15 +103,16 @@ abstract class StatementTest extends BaseTest
 
         $i = 5;
         foreach ($result as $item) {
-            $this->assertEquals(\md5((string) $i), $item['name']);
-            $this->assertEquals($i * 10, $item['value']);
+            \Testo\Assert::equals($item['name'], \md5((string) $i));
+            \Testo\Assert::equals($item['value'], $i * 10);
 
             $i++;
         }
 
-        $this->assertSame(10, $i);
+        \Testo\Assert::same($i, 10);
     }
 
+    #[\Testo\Test]
     public function testIterateOverOffsetAndLimit(): void
     {
         $table = $this->database->table('sample_table');
@@ -122,15 +122,16 @@ abstract class StatementTest extends BaseTest
 
         $i = 5;
         foreach ($result as $item) {
-            $this->assertEquals(\md5((string) $i), $item['name']);
-            $this->assertEquals($i * 10, $item['value']);
+            \Testo\Assert::equals($item['name'], \md5((string) $i));
+            \Testo\Assert::equals($item['value'], $i * 10);
 
             $i++;
         }
 
-        $this->assertSame(7, $i);
+        \Testo\Assert::same($i, 7);
     }
 
+    #[\Testo\Test]
     public function testPaginate(): void
     {
         $table = $this->database->table('sample_table');
@@ -143,38 +144,38 @@ abstract class StatementTest extends BaseTest
 
         $i = 0;
         foreach ($select as $item) {
-            $this->assertEquals(\md5((string) $i), $item['name']);
-            $this->assertEquals($i * 10, $item['value']);
+            \Testo\Assert::equals($item['name'], \md5((string) $i));
+            \Testo\Assert::equals($item['value'], $i * 10);
 
             $i++;
         }
 
-        $this->assertSame(2, $i);
+        \Testo\Assert::same($i, 2);
 
         $select = $table->select();
         $paginator->withPage(2)->paginate($select);
         $i = 2;
         foreach ($select as $item) {
-            $this->assertEquals(\md5((string) $i), $item['name']);
-            $this->assertEquals($i * 10, $item['value']);
+            \Testo\Assert::equals($item['name'], \md5((string) $i));
+            \Testo\Assert::equals($item['value'], $i * 10);
 
             $i++;
         }
 
-        $this->assertSame(4, $i);
+        \Testo\Assert::same($i, 4);
 
         $select = $table->select();
         $paginator->withPage(3)->paginate($select);
 
         $i = 4;
         foreach ($select as $item) {
-            $this->assertEquals(\md5((string) $i), $item['name']);
-            $this->assertEquals($i * 10, $item['value']);
+            \Testo\Assert::equals($item['name'], \md5((string) $i));
+            \Testo\Assert::equals($item['value'], $i * 10);
 
             $i++;
         }
 
-        $this->assertSame(6, $i);
+        \Testo\Assert::same($i, 6);
 
         $paginator = $paginator->withLimit(6);
 
@@ -183,15 +184,16 @@ abstract class StatementTest extends BaseTest
 
         $i = 6;
         foreach ($select as $item) {
-            $this->assertEquals(\md5((string) $i), $item['name']);
-            $this->assertEquals($i * 10, $item['value']);
+            \Testo\Assert::equals($item['name'], \md5((string) $i));
+            \Testo\Assert::equals($item['value'], $i * 10);
 
             $i++;
         }
 
-        $this->assertSame(10, $i);
+        \Testo\Assert::same($i, 10);
     }
 
+    #[\Testo\Test]
     public function testDebugString(): void
     {
         $table = $this->database->table('sample_table');
@@ -203,6 +205,7 @@ abstract class StatementTest extends BaseTest
         );
     }
 
+    #[\Testo\Test]
     public function testToArray(): void
     {
         $table = $this->database->table('sample_table');
@@ -210,14 +213,12 @@ abstract class StatementTest extends BaseTest
 
         $result = $table->select()->limit(1)->getIterator();
 
-        $this->assertEquals(
-            [
-                ['id' => 1, 'name' => \md5('0'), 'value' => 0],
-            ],
-            $result->fetchAll(),
-        );
+        \Testo\Assert::equals($result->fetchAll(), [
+            ['id' => 1, 'name' => \md5('0'), 'value' => 0],
+        ]);
     }
 
+    #[\Testo\Test]
     public function testToObj(): void
     {
         $table = $this->database->table('sample_table');
@@ -225,29 +226,32 @@ abstract class StatementTest extends BaseTest
 
         $result = $table->limit(1)->fetchAll(StatementInterface::FETCH_OBJ);
 
-        $this->assertIsObject($result[0]);
+        \Testo\Assert::object($result[0]);
     }
 
+    #[\Testo\Test]
     public function testClose(): void
     {
         $table = $this->database->table('sample_table');
         $this->fillData();
         $result = $table->select()->getIterator();
 
-        $this->assertNull($result->close());
+        \Testo\Assert::null($result->close());
     }
 
+    #[\Testo\Test]
     public function testSpanishInquisition(): void
     {
         $driver = $this->database->getDriver();
         $driver->connect();
-        $this->assertTrue($driver->isConnected());
+        \Testo\Assert::true($driver->isConnected());
 
         //And now something different
         $driver->disconnect();
-        $this->assertFalse($driver->isConnected());
+        \Testo\Assert::false($driver->isConnected());
     }
 
+    #[\Testo\Test]
     public function testChunks(): void
     {
         $table = $this->database->table('sample_table');
@@ -259,16 +263,17 @@ abstract class StatementTest extends BaseTest
         $select->runChunks(
             1,
             function ($result) use (&$count): void {
-                $this->assertInstanceOf(StatementInterface::class, $result);
-                $this->assertEquals($count + 1, $result->fetchColumn());
+                \Testo\Assert::instanceOf($result, StatementInterface::class);
+                \Testo\Assert::equals($result->fetchColumn(), $count + 1);
 
                 $count++;
             },
         );
 
-        $this->assertSame(10, $count);
+        \Testo\Assert::same($count, 10);
     }
 
+    #[\Testo\Test]
     public function testChunksExif(): void
     {
         $table = $this->database->table('sample_table');
@@ -280,7 +285,7 @@ abstract class StatementTest extends BaseTest
         $select->runChunks(
             1,
             function ($result) use (&$count) {
-                $this->assertInstanceOf(StatementInterface::class, $result);
+                \Testo\Assert::instanceOf($result, StatementInterface::class);
 
                 $count++;
                 if ($count == 5) {
@@ -289,9 +294,10 @@ abstract class StatementTest extends BaseTest
             },
         );
 
-        $this->assertSame(5, $count);
+        \Testo\Assert::same($count, 5);
     }
 
+    #[\Testo\Test]
     public function testChunksProcessLastPartialChunk(): void
     {
         $table = $this->database->table('sample_table');
@@ -310,9 +316,10 @@ abstract class StatementTest extends BaseTest
             },
         );
 
-        $this->assertEquals(\range(1, 10), $visited);
+        \Testo\Assert::equals($visited, \range(1, 10));
     }
 
+    #[\Testo\Test]
     public function testChunksWithLimitGreaterThanCount(): void
     {
         $table = $this->database->table('sample_table');
@@ -333,10 +340,11 @@ abstract class StatementTest extends BaseTest
             },
         );
 
-        $this->assertSame(1, $chunks);
-        $this->assertEquals(\range(1, 10), $visited);
+        \Testo\Assert::same($chunks, 1);
+        \Testo\Assert::equals($visited, \range(1, 10));
     }
 
+    #[\Testo\Test]
     public function testChunksOnEmptyResultNeverInvokesCallback(): void
     {
         $table = $this->database->table('sample_table');
@@ -352,9 +360,10 @@ abstract class StatementTest extends BaseTest
             },
         );
 
-        $this->assertFalse($invoked);
+        \Testo\Assert::false($invoked);
     }
 
+    #[\Testo\Test]
     public function testChunksPassOffsetAndCountToCallback(): void
     {
         $table = $this->database->table('sample_table');
@@ -372,10 +381,11 @@ abstract class StatementTest extends BaseTest
             },
         );
 
-        $this->assertSame([0, 3, 6, 9], $offsets);
-        $this->assertSame([10, 10, 10, 10], $counts);
+        \Testo\Assert::same($offsets, [0, 3, 6, 9]);
+        \Testo\Assert::same($counts, [10, 10, 10, 10]);
     }
 
+    #[\Testo\Test]
     public function testNativeParameters(): void
     {
         $this->fillData();
@@ -386,8 +396,8 @@ abstract class StatementTest extends BaseTest
         )->fetch();
 
         $i = 5;
-        $this->assertEquals(\md5((string) $i), $row['name']);
-        $this->assertEquals($i * 10, $row['value']);
+        \Testo\Assert::equals($row['name'], \md5((string) $i));
+        \Testo\Assert::equals($row['value'], $i * 10);
 
         $row = $this->database->query(
             'SELECT * FROM sample_table WHERE id = :id',
@@ -395,34 +405,31 @@ abstract class StatementTest extends BaseTest
         )->fetch();
 
         $i = 4;
-        $this->assertEquals(\md5((string) $i), $row['name']);
-        $this->assertEquals($i * 10, $row['value']);
+        \Testo\Assert::equals($row['name'], \md5((string) $i));
+        \Testo\Assert::equals($row['value'], $i * 10);
     }
 
+    #[\Testo\Test]
     public function testDatetimeInQuery(): void
     {
         $this->fillData();
 
-        $this->assertSame(
-            10,
-            $this->database->sample_table->select()
-                ->where('name', '!=', new \DateTime('1990-01-01'))
-                ->count(),
-        );
+        \Testo\Assert::same($this->database->sample_table->select()
+            ->where('name', '!=', new \DateTime('1990-01-01'))
+            ->count(), 10);
     }
 
+    #[\Testo\Test]
     public function testIntegerEnumInQuery(): void
     {
         $this->fillData();
 
-        $this->assertSame(
-            1,
-            $this->database->sample_table->select()
-                ->where('value', '=', IntegerEnum::TEN)
-                ->count(),
-        );
+        \Testo\Assert::same($this->database->sample_table->select()
+            ->where('value', '=', IntegerEnum::TEN)
+            ->count(), 1);
     }
 
+    #[\Testo\Test]
     public function testStringEnumInQuery(): void
     {
         $table = $this->database->table('sample_table');
@@ -434,30 +441,29 @@ abstract class StatementTest extends BaseTest
             ],
         );
 
-        $this->assertSame(
-            1,
-            $this->database->sample_table->select()
-                ->where('name', '=', FooBarEnum::FOO)
-                ->count(),
-        );
+        \Testo\Assert::same($this->database->sample_table->select()
+            ->where('name', '=', FooBarEnum::FOO)
+            ->count(), 1);
     }
 
+    #[\Testo\Test]
     public function testUntypedEnumInQuery(): void
     {
         $this->fillData();
 
-        $this->expectException(StatementException::class);
+        \Testo\Expect::exception(StatementException::class);
 
         $this->database->sample_table->select()
             ->where('value', '=', UntypedEnum::FOO)
             ->count();
     }
 
+    #[\Testo\Test]
     public function testNativeParametersError(): void
     {
         $this->fillData();
 
-        $this->expectException(StatementException::class);
+        \Testo\Expect::exception(StatementException::class);
 
         $this->database->query(
             'SELECT * FROM sample_table WHERE id = :id',
@@ -465,6 +471,7 @@ abstract class StatementTest extends BaseTest
         )->fetch();
     }
 
+    #[\Testo\Test]
     public function testUnpackArrayFromParameter(): void
     {
         $this->fillData();
@@ -475,18 +482,19 @@ abstract class StatementTest extends BaseTest
         )->fetchAll();
 
         $i = 0;
-        $this->assertEquals(\md5((string) $i), $rows[0]['name']);
-        $this->assertEquals($i * 10, $rows[0]['value']);
+        \Testo\Assert::equals($rows[0]['name'], \md5((string) $i));
+        \Testo\Assert::equals($rows[0]['value'], $i * 10);
 
         $i = 1;
-        $this->assertEquals(\md5((string) $i), $rows[1]['name']);
-        $this->assertEquals($i * 10, $rows[1]['value']);
+        \Testo\Assert::equals($rows[1]['name'], \md5((string) $i));
+        \Testo\Assert::equals($rows[1]['value'], $i * 10);
 
         $i = 2;
-        $this->assertEquals(\md5((string) $i), $rows[2]['name']);
-        $this->assertEquals($i * 10, $rows[2]['value']);
+        \Testo\Assert::equals($rows[2]['name'], \md5((string) $i));
+        \Testo\Assert::equals($rows[2]['value'], $i * 10);
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         parent::setUp();

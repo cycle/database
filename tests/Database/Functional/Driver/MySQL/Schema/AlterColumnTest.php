@@ -8,45 +8,45 @@ namespace Cycle\Database\Tests\Functional\Driver\MySQL\Schema;
 use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Tests\Functional\Driver\Common\Schema\AlterColumnTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-mysql
- */
+#[\Testo\Filter\Group('driver', 'driver-mysql')]
 class AlterColumnTest extends CommonClass
 {
     public const DRIVER = 'mysql';
 
+    #[\Testo\Test]
     public function testDatetimeColumnSizeException(): void
     {
-        $this->expectException(SchemaException::class);
+        \Testo\Expect::exception(SchemaException::class);
         $schema = $this->sampleSchema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema->datetime('datetime', size: -1);
         $schema->save();
     }
 
+    #[\Testo\Test]
     public function testDatetimeColumnSize2Exception(): void
     {
-        $this->expectException(SchemaException::class);
+        \Testo\Expect::exception(SchemaException::class);
         $schema = $this->sampleSchema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
         $schema->datetime('datetime', 7);
         $schema->save();
     }
 
+    #[\Testo\Test]
     public function testChangeDatetimeSize(): void
     {
         $schema = $this->sampleSchema('table');
-        $this->assertTrue($schema->exists());
+        \Testo\Assert::true($schema->exists());
 
-        $this->assertSame(0, $this->fetchSchema($schema)->column('datetime')->getSize());
+        \Testo\Assert::same($this->fetchSchema($schema)->column('datetime')->getSize(), 0);
 
         $schema->datetime->string(6);
         $schema->save();
 
         $this->assertSameAsInDB($schema);
-        $this->assertSame(6, $this->fetchSchema($schema)->column('datetime')->getSize());
+        \Testo\Assert::same($this->fetchSchema($schema)->column('datetime')->getSize(), 6);
     }
 }

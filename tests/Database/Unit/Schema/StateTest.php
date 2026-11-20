@@ -8,8 +8,9 @@ use Cycle\Database\Driver\Postgres\Schema\PostgresColumn;
 use Cycle\Database\Schema\State;
 use PHPUnit\Framework\TestCase;
 
-final class StateTest extends TestCase
+final class StateTest
 {
+    #[\Testo\Test]
     public function testGetPrimaryKeys(): void
     {
         $state = new State('foo');
@@ -22,6 +23,6 @@ final class StateTest extends TestCase
 
         $state->setPrimaryKeys(['foo', 'bar']);
 
-        $this->assertSame(['foo', 'bar', 'smallPrimary', 'primary', 'bigPrimary'], $state->getPrimaryKeys());
+        \Testo\Assert::same($state->getPrimaryKeys(), ['foo', 'bar', 'smallPrimary', 'primary', 'bigPrimary']);
     }
 }

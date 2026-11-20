@@ -11,20 +11,19 @@ use Cycle\Database\Exception\BuilderException;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Tests\Functional\Driver\Common\Query\InsertQueryTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-postgres
- */
+#[\Testo\Filter\Group('driver', 'driver-postgres')]
 class InsertQueryTest extends CommonClass
 {
     public const DRIVER = 'postgres';
 
+    #[\Testo\Test]
     public function testQueryInstance(): void
     {
         parent::testQueryInstance();
-        $this->assertInstanceOf(PostgresInsertQuery::class, $this->database->insert());
+        \Testo\Assert::instanceOf($this->database->insert(), PostgresInsertQuery::class);
     }
 
+    #[\Testo\Test]
     public function testSimpleInsert(): void
     {
         $insert = $this->database->insert()->into('target_table')->values(
@@ -39,6 +38,7 @@ class InsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testSimpleInsertWithStatesValues(): void
     {
         $insert = $this->database->insert()->into('target_table')
@@ -51,6 +51,7 @@ class InsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testSimpleInsertMultipleRows(): void
     {
         $insert = $this->database->insert()->into('target_table')
@@ -64,6 +65,7 @@ class InsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testCustomReturning(): void
     {
         $insert = $this->database->insert()->into('table')
@@ -77,6 +79,7 @@ class InsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testCustomMultipleReturning(): void
     {
         $insert = $this->database->insert()->into('table')
@@ -90,6 +93,7 @@ class InsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testCustomReturningWithFragment(): void
     {
         $insert = $this->database->insert()->into('table')
@@ -103,6 +107,7 @@ class InsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testCustomReturningWithFragmentWithParameter(): void
     {
         $insert = $this->database->insert()->into('table')
@@ -116,6 +121,7 @@ class InsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testCustomMultipleReturningWithFragment(): void
     {
         $insert = $this->database->insert()->into('table')
@@ -129,6 +135,7 @@ class InsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testReturningValuesFromDatabase(): void
     {
         $schema = $this->schema('returning_values');
@@ -144,9 +151,9 @@ class InsertQueryTest extends CommonClass
             ->returning('sort', 'datetime')
             ->run();
 
-        $this->assertSame(1, $returning['sort']);
-        $this->assertIsString($returning['datetime']);
-        $this->assertNotFalse(\strtotime($returning['datetime']));
+        \Testo\Assert::same($returning['sort'], 1);
+        \Testo\Assert::string($returning['datetime']);
+        \Testo\Assert::notSame(\strtotime($returning['datetime']), false);
 
         $returning = $this->database
             ->insert('returning_values')
@@ -154,11 +161,12 @@ class InsertQueryTest extends CommonClass
             ->returning('sort', new Fragment('"datetime" as "created_at"'))
             ->run();
 
-        $this->assertSame(2, $returning['sort']);
-        $this->assertIsString($returning['created_at']);
-        $this->assertNotFalse(\strtotime($returning['created_at']));
+        \Testo\Assert::same($returning['sort'], 2);
+        \Testo\Assert::string($returning['created_at']);
+        \Testo\Assert::notSame(\strtotime($returning['created_at']), false);
     }
 
+    #[\Testo\Test]
     public function testReturningSingleValueFromDatabase(): void
     {
         $schema = $this->schema('returning_value');
@@ -173,7 +181,7 @@ class InsertQueryTest extends CommonClass
             ->returning('sort')
             ->run();
 
-        $this->assertSame(1, $returning);
+        \Testo\Assert::same($returning, 1);
 
         $returning = $this->database
             ->insert('returning_value')
@@ -181,9 +189,10 @@ class InsertQueryTest extends CommonClass
             ->returning(new Fragment('"sort" as "number"'))
             ->run();
 
-        $this->assertSame(2, $returning);
+        \Testo\Assert::same($returning, 2);
     }
 
+    #[\Testo\Test]
     public function testReturningFromDatabaseWithFragmentWithParameter(): void
     {
         $schema = $this->schema('returning_value');
@@ -197,13 +206,13 @@ class InsertQueryTest extends CommonClass
             ->returning('some_int', new Fragment('"some_int" + ? as "cnt"', 5))
             ->run();
 
-        $this->assertSame(9, (int) $returning['cnt']);
+        \Testo\Assert::same((int) $returning['cnt'], 9);
     }
 
+    #[\Testo\Test]
     public function testCustomReturningShouldContainColumns(): void
     {
-        $this->expectException(BuilderException::class);
-        $this->expectExceptionMessage('RETURNING clause should contain at least 1 column.');
+        \Testo\Expect::exception(BuilderException::class)->withMessageContaining('RETURNING clause should contain at least 1 column.');
 
         $this->database->insert()->into('table')
             ->columns('name', 'balance')
@@ -211,6 +220,7 @@ class InsertQueryTest extends CommonClass
             ->returning();
     }
 
+    #[\Testo\Test]
     public function testInsertMicroseconds(): void
     {
         $schema = $this->schema(
@@ -237,9 +247,10 @@ class InsertQueryTest extends CommonClass
             ->run()
             ->fetch();
 
-        $this->assertStringContainsString('.', $result['datetime']);
+        \Testo\Assert::string($result['datetime'])->contains('.');
     }
 
+    #[\Testo\Test]
     public function testInsertDatetimeWithoutMicroseconds(): void
     {
         $schema = $this->schema('without_microseconds');
@@ -259,12 +270,10 @@ class InsertQueryTest extends CommonClass
             ->run()
             ->fetch();
 
-        $this->assertSame(
-            $expected->setTimezone($this->database->getDriver()->getTimezone())->format('Y-m-d H:i:s'),
-            $result['datetime'],
-        );
+        \Testo\Assert::same($result['datetime'], $expected->setTimezone($this->database->getDriver()->getTimezone())->format('Y-m-d H:i:s'));
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         parent::setUp();
@@ -275,6 +284,7 @@ class InsertQueryTest extends CommonClass
         $schema->save();
     }
 
+    #[\Testo\Lifecycle\AfterTest]
     public function tearDown(): void
     {
         $this->dropDatabase($this->database);

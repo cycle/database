@@ -11,32 +11,33 @@ use Mockery as m;
 
 abstract class DatabaseTest extends BaseTest
 {
+    #[\Testo\Test]
     public function testConnect(): void
     {
         $this->database->getDriver()->connect();
-        $this->assertTrue($this->database->getDriver()->isConnected());
+        \Testo\Assert::true($this->database->getDriver()->isConnected());
     }
 
+    #[\Testo\Test]
     public function testGetName(): void
     {
         $db = $this->db();
-        $this->assertSame('default', $db->getName());
+        \Testo\Assert::same($db->getName(), 'default');
 
         $db = $this->db('test');
-        $this->assertSame('test', $db->getName());
+        \Testo\Assert::same($db->getName(), 'test');
     }
 
+    #[\Testo\Test]
     public function testGetType(): void
     {
         $db = $this->db();
-        $this->assertSame(
-            $db->getDriver()->getType(),
-            $db->getType(),
-        );
+        \Testo\Assert::same($db->getType(), $db->getDriver()->getType());
 
-        $this->assertSame(\strtolower(static::DRIVER), \strtolower($db->getType()));
+        \Testo\Assert::same(\strtolower($db->getType()), \strtolower(static::DRIVER));
     }
 
+    #[\Testo\Test]
     public function testReadWrite(): void
     {
         $wDriver = m::mock(DriverInterface::class);
@@ -44,11 +45,12 @@ abstract class DatabaseTest extends BaseTest
 
         $db = new Database('default', '', $wDriver, $rDriver);
 
-        $this->assertSame($wDriver, $db->getDriver());
-        $this->assertSame($wDriver, $db->getDriver(DatabaseInterface::WRITE));
-        $this->assertSame($rDriver, $db->getDriver(DatabaseInterface::READ));
+        \Testo\Assert::same($db->getDriver(), $wDriver);
+        \Testo\Assert::same($db->getDriver(DatabaseInterface::WRITE), $wDriver);
+        \Testo\Assert::same($db->getDriver(DatabaseInterface::READ), $rDriver);
     }
 
+    #[\Testo\Test]
     public function testExecute(): void
     {
         $wDriver = m::mock(DriverInterface::class);
@@ -57,14 +59,15 @@ abstract class DatabaseTest extends BaseTest
         $db = new Database('default', '', $wDriver, $rDriver);
 
         $wDriver->expects('execute')->with('test', ['param'])->andReturn(1);
-        $this->assertSame(1, $db->execute('test', ['param']));
+        \Testo\Assert::same($db->execute('test', ['param']), 1);
     }
 
+    #[\Testo\Test]
     public function testPrefix(): void
     {
         $db = $this->db();
-        $this->assertFalse($db->hasTable('test'));
-        $this->assertFalse($db->hasTable('prefix_test'));
+        \Testo\Assert::false($db->hasTable('test'));
+        \Testo\Assert::false($db->hasTable('prefix_test'));
 
         $schema = $db->test->getSchema();
         $schema->primary('id');
@@ -74,28 +77,29 @@ abstract class DatabaseTest extends BaseTest
         $schema->primary('id');
         $schema->save();
 
-        $this->assertTrue($db->hasTable('test'));
-        $this->assertTrue($db->hasTable('prefix_test'));
+        \Testo\Assert::true($db->hasTable('test'));
+        \Testo\Assert::true($db->hasTable('prefix_test'));
 
-        $this->assertCount(2, $db->getTables());
+        \Testo\Assert::count($db->getTables(), 2);
 
         $db = $db->withPrefix('pre');
 
-        $this->assertFalse($db->hasTable('test'));
-        $this->assertTrue($db->hasTable('fix_test'));
+        \Testo\Assert::false($db->hasTable('test'));
+        \Testo\Assert::true($db->hasTable('fix_test'));
 
-        $this->assertCount(1, $db->getTables());
+        \Testo\Assert::count($db->getTables(), 1);
 
         $db = $db->withPrefix('fix_');
 
-        $this->assertTrue($db->hasTable('test'));
+        \Testo\Assert::true($db->hasTable('test'));
 
         $db = $db->withPrefix('', false);
-        $this->assertTrue($db->hasTable('test'));
-        $this->assertTrue($db->hasTable('prefix_test'));
-        $this->assertCount(2, $db->getTables());
+        \Testo\Assert::true($db->hasTable('test'));
+        \Testo\Assert::true($db->hasTable('prefix_test'));
+        \Testo\Assert::count($db->getTables(), 2);
     }
 
+    #[\Testo\Lifecycle\AfterTest]
     public function tearDown(): void
     {
         $this->dropDatabase($this->db());

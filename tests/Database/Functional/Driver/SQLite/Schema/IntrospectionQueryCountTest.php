@@ -8,10 +8,7 @@ namespace Cycle\Database\Tests\Functional\Driver\SQLite\Schema;
 use Cycle\Database\Tests\Functional\Driver\Common\Schema\IntrospectionQueryCountTest as CommonClass;
 use Cycle\Database\Tests\Utils\QueryCounter;
 
-/**
- * @group driver
- * @group driver-sqlite
- */
+#[\Testo\Filter\Group('driver', 'driver-sqlite')]
 class IntrospectionQueryCountTest extends CommonClass
 {
     public const DRIVER = 'sqlite';
@@ -33,6 +30,7 @@ class IntrospectionQueryCountTest extends CommonClass
      * network round trips, so the per-index cost is acceptable, and the growth is asserted
      * to be exactly linear instead of constant.
      */
+    #[\Testo\Test]
     public function testIndexCountDoesNotAffectQueryCount(): void
     {
         $singleIndexes = 1;
@@ -44,7 +42,7 @@ class IntrospectionQueryCountTest extends CommonClass
         [$single] = $this->countIntrospectionQueries('single');
         [$many] = $this->countIntrospectionQueries('many');
 
-        $this->assertSame(self::QUERIES_PER_INDEX * ($manyIndexes - $singleIndexes), $many - $single);
+        \Testo\Assert::same($many - $single, self::QUERIES_PER_INDEX * ($manyIndexes - $singleIndexes));
     }
 
     /**
@@ -52,6 +50,7 @@ class IntrospectionQueryCountTest extends CommonClass
      * cost described in {@see testIndexCountDoesNotAffectQueryCount()}. The foreign keys themselves
      * are still read with a single `PRAGMA foreign_key_list`.
      */
+    #[\Testo\Test]
     public function testForeignKeyCountDoesNotAffectQueryCount(): void
     {
         $singleForeignKeys = 1;
@@ -65,12 +64,9 @@ class IntrospectionQueryCountTest extends CommonClass
         [$single, $singleQueries] = $this->countIntrospectionQueries('single');
         [$many, $manyQueries] = $this->countIntrospectionQueries('many');
 
-        $this->assertSame(
-            self::QUERIES_PER_INDEX * ($manyForeignKeys - $singleForeignKeys),
-            $many - $single,
-        );
-        $this->assertSame(1, $this->countMatching($singleQueries, 'foreign_key_list'));
-        $this->assertSame(1, $this->countMatching($manyQueries, 'foreign_key_list'));
+        \Testo\Assert::same($many - $single, self::QUERIES_PER_INDEX * ($manyForeignKeys - $singleForeignKeys));
+        \Testo\Assert::same($this->countMatching($singleQueries, 'foreign_key_list'), 1);
+        \Testo\Assert::same($this->countMatching($manyQueries, 'foreign_key_list'), 1);
     }
 
     /**

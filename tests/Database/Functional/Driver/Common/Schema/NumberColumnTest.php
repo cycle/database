@@ -8,6 +8,7 @@ use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
 abstract class NumberColumnTest extends BaseTest
 {
+    #[\Testo\Test]
     public function testSetPrecisionAndScaleViaAttribute(): void
     {
         $schema = $this->schema('table');
@@ -16,7 +17,7 @@ abstract class NumberColumnTest extends BaseTest
         $schema->save();
         $this->assertSameAsInDB($schema);
 
-        $this->assertSame(8, $column->getPrecision());
-        $this->assertSame(2, $column->getScale());
+        \Testo\Assert::same($column->getPrecision(), 8);
+        \Testo\Assert::same($column->getScale(), 2);
     }
 }

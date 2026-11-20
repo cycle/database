@@ -12,18 +12,19 @@ use Cycle\Database\Tests\Utils\DontGenerateAttribute;
 #[DontGenerateAttribute]
 abstract class CursorTest extends BaseTest
 {
+    #[\Testo\Test]
     public function testCursorRequiresActiveTransaction(): void
     {
         $this->fillRows(3);
 
-        $this->expectException(DriverException::class);
-        $this->expectExceptionMessageMatches('/active transaction/i');
+        \Testo\Expect::exception(DriverException::class)->withMessageMatchingRegex('/active transaction/i');
 
         $gen = $this->database->cursor($this->database->select()->from('sample_table'));
         // Generator is lazy — must iterate to trigger the check.
         \iterator_to_array($gen);
     }
 
+    #[\Testo\Test]
     public function testCursorYieldsAllRowsForSmallDataset(): void
     {
         $this->fillRows(5);
@@ -37,11 +38,12 @@ abstract class CursorTest extends BaseTest
             ),
         );
 
-        $this->assertCount(5, $rows);
-        $this->assertSame(\md5('0'), $rows[0]['name']);
-        $this->assertSame(40, (int) $rows[4]['value']);
+        \Testo\Assert::count($rows, 5);
+        \Testo\Assert::same($rows[0]['name'], \md5('0'));
+        \Testo\Assert::same((int) $rows[4]['value'], 40);
     }
 
+    #[\Testo\Test]
     public function testCursorYieldsAllRowsForLargerDataset(): void
     {
         $this->fillRows(25);
@@ -55,14 +57,15 @@ abstract class CursorTest extends BaseTest
             ),
         );
 
-        $this->assertCount(25, $rows);
+        \Testo\Assert::count($rows, 25);
 
         for ($i = 0; $i < 25; $i++) {
-            $this->assertSame(\md5((string) $i), $rows[$i]['name']);
-            $this->assertSame($i * 10, (int) $rows[$i]['value']);
+            \Testo\Assert::same($rows[$i]['name'], \md5((string) $i));
+            \Testo\Assert::same((int) $rows[$i]['value'], $i * 10);
         }
     }
 
+    #[\Testo\Test]
     public function testCursorEmptyResult(): void
     {
         $rows = $this->database->transaction(
@@ -74,9 +77,10 @@ abstract class CursorTest extends BaseTest
             ),
         );
 
-        $this->assertSame([], $rows);
+        \Testo\Assert::same($rows, []);
     }
 
+    #[\Testo\Test]
     public function testCursorRespectsFetchNumMode(): void
     {
         $this->fillRows(2);
@@ -91,12 +95,13 @@ abstract class CursorTest extends BaseTest
             ),
         );
 
-        $this->assertCount(2, $rows);
-        $this->assertArrayHasKey(0, $rows[0]);
-        $this->assertArrayNotHasKey('id', $rows[0]);
-        $this->assertSame(\md5('0'), $rows[0][1]);
+        \Testo\Assert::count($rows, 2);
+        \Testo\Assert::array($rows[0])->hasKeys(0);
+        \Testo\Assert::array($rows[0])->doesNotHaveKeys('id');
+        \Testo\Assert::same($rows[0][1], \md5('0'));
     }
 
+    #[\Testo\Test]
     public function testCursorWithBoundParameters(): void
     {
         $this->fillRows(10);
@@ -113,11 +118,12 @@ abstract class CursorTest extends BaseTest
             ),
         );
 
-        $this->assertCount(5, $rows);
-        $this->assertSame(50, (int) $rows[0]['value']);
-        $this->assertSame(90, (int) $rows[4]['value']);
+        \Testo\Assert::count($rows, 5);
+        \Testo\Assert::same((int) $rows[0]['value'], 50);
+        \Testo\Assert::same((int) $rows[4]['value'], 90);
     }
 
+    #[\Testo\Test]
     public function testCursorReleasesOnEarlyBreak(): void
     {
         $this->fillRows(50);
@@ -142,10 +148,11 @@ abstract class CursorTest extends BaseTest
             return ['count' => $count, 'total' => (int) $follow[0]];
         });
 
-        $this->assertSame(3, $seen['count']);
-        $this->assertSame(50, $seen['total']);
+        \Testo\Assert::same($seen['count'], 3);
+        \Testo\Assert::same($seen['total'], 50);
     }
 
+    #[\Testo\Test]
     public function testCursorFinishesCleanlyAndAllowsNextQuery(): void
     {
         $this->fillRows(7);
@@ -157,14 +164,15 @@ abstract class CursorTest extends BaseTest
                 ),
                 false,
             );
-            $this->assertCount(7, $rows);
+            \Testo\Assert::count($rows, 7);
 
             // Same transaction, fresh query — must work
             $next = $this->database->select('COUNT(*)')->from('sample_table')->run()->fetch(StatementInterface::FETCH_NUM);
-            $this->assertSame(7, (int) $next[0]);
+            \Testo\Assert::same((int) $next[0], 7);
         });
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         parent::setUp();

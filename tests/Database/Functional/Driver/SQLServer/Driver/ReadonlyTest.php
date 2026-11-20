@@ -7,10 +7,7 @@ namespace Cycle\Database\Tests\Functional\Driver\SQLServer\Driver;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Driver\ReadonlyTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-sqlserver
- */
+#[\Testo\Filter\Group('driver', 'driver-sqlserver')]
 class ReadonlyTest extends CommonClass
 {
     public const DRIVER = 'sqlserver';

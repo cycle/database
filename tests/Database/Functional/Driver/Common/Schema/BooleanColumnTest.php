@@ -8,6 +8,7 @@ use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
 abstract class BooleanColumnTest extends BaseTest
 {
+    #[\Testo\Test]
     public function testBooleanSchema(): void
     {
         $schema = $this->schema('table');
@@ -17,6 +18,7 @@ abstract class BooleanColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
     }
 
+    #[\Testo\Test]
     public function testBooleanAbstractType(): void
     {
         $schema = $this->schema('table');
@@ -26,6 +28,6 @@ abstract class BooleanColumnTest extends BaseTest
 
         $column = $this->fetchSchema($schema)->column('column');
 
-        $this->assertSame('boolean', $column->getAbstractType());
+        \Testo\Assert::same($column->getAbstractType(), 'boolean');
     }
 }

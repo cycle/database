@@ -14,6 +14,7 @@ use Cycle\Database\Tests\Utils\DontGenerateAttribute;
 #[DontGenerateAttribute]
 abstract class BaseConnectionTest extends BaseTest
 {
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         parent::setUp();
@@ -25,6 +26,7 @@ abstract class BaseConnectionTest extends BaseTest
         $schema->save();
     }
 
+    #[\Testo\Lifecycle\AfterTest]
     public function tearDown(): void
     {
         $driver = $this->getDriver();

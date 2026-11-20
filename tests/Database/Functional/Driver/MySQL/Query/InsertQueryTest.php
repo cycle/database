@@ -7,14 +7,12 @@ namespace Cycle\Database\Tests\Functional\Driver\MySQL\Query;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Query\InsertQueryTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-mysql
- */
+#[\Testo\Filter\Group('driver', 'driver-mysql')]
 class InsertQueryTest extends CommonClass
 {
     public const DRIVER = 'mysql';
 
+    #[\Testo\Test]
     public function testCompileQueryDefaults(): void
     {
         $insert = $this->db()->insert('table')->values([]);
@@ -25,6 +23,7 @@ class InsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testSimpleInsertEmptyDataset(): void
     {
         $insert = $this->database->insert()->into('table')->values([]);
@@ -35,6 +34,7 @@ class InsertQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testInsertMicroseconds(): void
     {
         $schema = $this->schema(
@@ -61,12 +61,10 @@ class InsertQueryTest extends CommonClass
             ->run()
             ->fetch();
 
-        $this->assertSame(
-            $expected->setTimezone($this->database->getDriver()->getTimezone())->format('Y-m-d H:i:s.u'),
-            $result['datetime'],
-        );
+        \Testo\Assert::same($result['datetime'], $expected->setTimezone($this->database->getDriver()->getTimezone())->format('Y-m-d H:i:s.u'));
     }
 
+    #[\Testo\Test]
     public function testInsertDatetimeWithoutMicroseconds(): void
     {
         $schema = $this->schema('without_microseconds');
@@ -86,9 +84,6 @@ class InsertQueryTest extends CommonClass
             ->run()
             ->fetch();
 
-        $this->assertSame(
-            $expected->setTimezone($this->database->getDriver()->getTimezone())->format('Y-m-d H:i:s'),
-            $result['datetime'],
-        );
+        \Testo\Assert::same($result['datetime'], $expected->setTimezone($this->database->getDriver()->getTimezone())->format('Y-m-d H:i:s'));
     }
 }

@@ -7,8 +7,9 @@ namespace Cycle\Database\Tests\Unit\Config\SQLite;
 use Cycle\Database\Config\SQLite\DsnConnectionConfig;
 use PHPUnit\Framework\TestCase;
 
-final class DsnConnectionConfigTest extends TestCase
+final class DsnConnectionConfigTest
 {
+    #[\Testo\Test]
     public function testSetState(): void
     {
         $testOptionKey = 'option-1';
@@ -23,9 +24,9 @@ final class DsnConnectionConfigTest extends TestCase
         /** @var DsnConnectionConfig $recoveredConfig */
         eval('$recoveredConfig = ' . $exported . ';');
 
-        $this->assertSame("sqlite:$dsn", $recoveredConfig->getDsn());
-        $this->assertSame($dsn, $recoveredConfig->getSourceString());
-        $this->assertArrayHasKey($testOptionKey, $recoveredConfig->getOptions());
-        $this->assertSame($testOptionValue, $recoveredConfig->getOptions()[$testOptionKey]);
+        \Testo\Assert::same($recoveredConfig->getDsn(), "sqlite:$dsn");
+        \Testo\Assert::same($recoveredConfig->getSourceString(), $dsn);
+        \Testo\Assert::array($recoveredConfig->getOptions())->hasKeys($testOptionKey);
+        \Testo\Assert::same($recoveredConfig->getOptions()[$testOptionKey], $testOptionValue);
     }
 }

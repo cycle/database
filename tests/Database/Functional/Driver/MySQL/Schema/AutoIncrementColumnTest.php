@@ -8,10 +8,7 @@ namespace Cycle\Database\Tests\Functional\Driver\MySQL\Schema;
 use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Tests\Functional\Driver\Common\BaseTest;
 
-/**
- * @group driver
- * @group driver-mysql
- */
+#[\Testo\Filter\Group('driver', 'driver-mysql')]
 final class AutoIncrementColumnTest extends BaseTest
 {
     public const DRIVER = 'mysql';
@@ -23,6 +20,7 @@ final class AutoIncrementColumnTest extends BaseTest
         yield 'bigPrimary' => ['bigPrimary', 'bigPrimary'];
     }
 
+    #[\Testo\Test]
     public function testAutoIncrementColumnIsNotAddedToPrimaryKey(): void
     {
         $schema = $this->schema('auto_increment');
@@ -31,11 +29,12 @@ final class AutoIncrementColumnTest extends BaseTest
         $schema->bigInteger('big_number', autoIncrement: true);
         $schema->setPrimaryKeys(['id']);
 
-        $this->assertSame(['id'], $schema->getPrimaryKeys());
-        $this->assertSame('integer', $schema->column('number')->getAbstractType());
-        $this->assertSame('bigInteger', $schema->column('big_number')->getAbstractType());
+        \Testo\Assert::same($schema->getPrimaryKeys(), ['id']);
+        \Testo\Assert::same($schema->column('number')->getAbstractType(), 'integer');
+        \Testo\Assert::same($schema->column('big_number')->getAbstractType(), 'bigInteger');
     }
 
+    #[\Testo\Test]
     public function testCreateTableWithAutoIncrementColumnOutsidePrimaryKey(): void
     {
         $schema = $this->schema('auto_increment');
@@ -49,19 +48,17 @@ final class AutoIncrementColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
 
         $saved = $this->schema('auto_increment');
-        $this->assertSame(['id'], $saved->getPrimaryKeys());
-        $this->assertSame('integer', $saved->column('number')->getAbstractType());
-        $this->assertTrue($saved->hasIndex(['number']));
+        \Testo\Assert::same($saved->getPrimaryKeys(), ['id']);
+        \Testo\Assert::same($saved->column('number')->getAbstractType(), 'integer');
+        \Testo\Assert::true($saved->hasIndex(['number']));
 
         $table = $this->database->table('auto_increment');
         $table->insertOne(['id' => 'a', 'title' => 'first']);
         $table->insertOne(['id' => 'b', 'title' => 'second']);
-        $this->assertSame(
-            [['id' => 'a', 'number' => 1], ['id' => 'b', 'number' => 2]],
-            $table->select('id', 'number')->orderBy('id')->fetchAll(),
-        );
+        \Testo\Assert::same($table->select('id', 'number')->orderBy('id')->fetchAll(), [['id' => 'a', 'number' => 1], ['id' => 'b', 'number' => 2]]);
     }
 
+    #[\Testo\Test]
     public function testCreateTableWithNonUniqueIndexOnAutoIncrementColumn(): void
     {
         $schema = $this->schema('auto_increment');
@@ -72,9 +69,10 @@ final class AutoIncrementColumnTest extends BaseTest
         $schema->save();
 
         $this->assertSameAsInDB($schema);
-        $this->assertSame(['id'], $this->schema('auto_increment')->getPrimaryKeys());
+        \Testo\Assert::same($this->schema('auto_increment')->getPrimaryKeys(), ['id']);
     }
 
+    #[\Testo\Test]
     public function testCreateTableWithAutoIncrementColumnNotFirstInPrimaryKey(): void
     {
         $schema = $this->schema('auto_increment');
@@ -85,9 +83,10 @@ final class AutoIncrementColumnTest extends BaseTest
         $schema->save();
 
         $this->assertSameAsInDB($schema);
-        $this->assertSame(['id', 'number'], $this->schema('auto_increment')->getPrimaryKeys());
+        \Testo\Assert::same($this->schema('auto_increment')->getPrimaryKeys(), ['id', 'number']);
     }
 
+    #[\Testo\Test]
     public function testAutoIncrementColumnWithoutKeyThrowsException(): void
     {
         $schema = $this->schema('auto_increment');
@@ -95,12 +94,12 @@ final class AutoIncrementColumnTest extends BaseTest
         $schema->integer('number', autoIncrement: true)->nullable(false);
         $schema->setPrimaryKeys(['id']);
 
-        $this->expectException(SchemaException::class);
-        $this->expectExceptionMessage('`number`');
+        \Testo\Expect::exception(SchemaException::class)->withMessageContaining('`number`');
 
         $schema->save();
     }
 
+    #[\Testo\Test]
     public function testExistingTableIsReflectedWithItsPrimaryKey(): void
     {
         $this->database->execute(
@@ -113,17 +112,18 @@ final class AutoIncrementColumnTest extends BaseTest
         );
 
         $schema = $this->schema('auto_increment');
-        $this->assertSame(['id'], $schema->getPrimaryKeys());
-        $this->assertSame('integer', $schema->column('number')->getAbstractType());
+        \Testo\Assert::same($schema->getPrimaryKeys(), ['id']);
+        \Testo\Assert::same($schema->column('number')->getAbstractType(), 'integer');
 
         $schema->string('id', 36)->nullable(false);
         $schema->integer('number', autoIncrement: true)->nullable(false);
         $schema->index(['number'])->unique()->setName('auto_increment_number');
         $schema->setPrimaryKeys(['id']);
 
-        $this->assertFalse($schema->getComparator()->hasChanges());
+        \Testo\Assert::false($schema->getComparator()->hasChanges());
     }
 
+    #[\Testo\Test]
     public function testPrimaryKeyListedExplicitlyIsReflectedWithoutChanges(): void
     {
         $schema = $this->schema('auto_increment');
@@ -133,19 +133,18 @@ final class AutoIncrementColumnTest extends BaseTest
         $schema->save();
 
         $this->assertSameAsInDB($schema);
-        $this->assertSame(['number', 'id'], $this->schema('auto_increment')->getPrimaryKeys());
+        \Testo\Assert::same($this->schema('auto_increment')->getPrimaryKeys(), ['number', 'id']);
 
         $schema = $this->schema('auto_increment');
         $schema->string('id', 36)->nullable(false);
         $schema->integer('number', autoIncrement: true)->nullable(false);
         $schema->setPrimaryKeys(['number', 'id']);
 
-        $this->assertFalse($schema->getComparator()->hasChanges());
+        \Testo\Assert::false($schema->getComparator()->hasChanges());
     }
 
-    /**
-     * @dataProvider primaryTypesProvider
-     */
+    #[\Testo\Test]
+    #[\Testo\Data\DataProvider('primaryTypesProvider')]
     public function testPrimaryTypesStayInPrimaryKey(string $type, string $abstractType): void
     {
         $schema = $this->schema('auto_increment');
@@ -156,7 +155,7 @@ final class AutoIncrementColumnTest extends BaseTest
         $this->assertSameAsInDB($schema);
 
         $saved = $this->schema('auto_increment');
-        $this->assertSame(['id'], $saved->getPrimaryKeys());
-        $this->assertSame($abstractType, $saved->column('id')->getAbstractType());
+        \Testo\Assert::same($saved->getPrimaryKeys(), ['id']);
+        \Testo\Assert::same($saved->column('id')->getAbstractType(), $abstractType);
     }
 }

@@ -7,8 +7,9 @@ namespace Cycle\Database\Tests\Unit\Config\SQLite;
 use Cycle\Database\Config\SQLite\TempFileConnectionConfig;
 use PHPUnit\Framework\TestCase;
 
-final class TempFileConnectionConfigTest extends TestCase
+final class TempFileConnectionConfigTest
 {
+    #[\Testo\Test]
     public function testSetState(): void
     {
         $testOptionKey = 'option-1';
@@ -22,9 +23,9 @@ final class TempFileConnectionConfigTest extends TestCase
         /** @var TempFileConnectionConfig $recoveredConfig */
         eval('$recoveredConfig = ' . $exported . ';');
 
-        $this->assertSame('sqlite:', $recoveredConfig->getDsn());
-        $this->assertSame('', $recoveredConfig->getSourceString());
-        $this->assertArrayHasKey($testOptionKey, $recoveredConfig->getOptions());
-        $this->assertSame($testOptionValue, $recoveredConfig->getOptions()[$testOptionKey]);
+        \Testo\Assert::same($recoveredConfig->getDsn(), 'sqlite:');
+        \Testo\Assert::same($recoveredConfig->getSourceString(), '');
+        \Testo\Assert::array($recoveredConfig->getOptions())->hasKeys($testOptionKey);
+        \Testo\Assert::same($recoveredConfig->getOptions()[$testOptionKey], $testOptionValue);
     }
 }

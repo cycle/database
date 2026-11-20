@@ -7,14 +7,12 @@ namespace Cycle\Database\Tests\Functional\Driver\SQLServer\Query;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Query\UpdateQueryTest as CommonClass;
 
-/**
- * @group driver
- * @group driver-sqlserver
- */
+#[\Testo\Filter\Group('driver', 'driver-sqlserver')]
 class UpdateQueryTest extends CommonClass
 {
     public const DRIVER = 'sqlserver';
 
+    #[\Testo\Test]
     public function testUpdateWithWhereJson(): void
     {
         $select = $this->database
@@ -30,6 +28,7 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', 1, 'dark'], $select);
     }
 
+    #[\Testo\Test]
     public function testUpdateWithOrWhereJson(): void
     {
         $select = $this->database
@@ -45,6 +44,7 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', 1, 'dark'], $select);
     }
 
+    #[\Testo\Test]
     public function testUpdateWithWhereJsonNested(): void
     {
         $select = $this->database
@@ -59,6 +59,7 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', '+1234567890'], $select);
     }
 
+    #[\Testo\Test]
     public function testUpdateWithWhereJsonArray(): void
     {
         $select = $this->database
@@ -73,6 +74,7 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', '+1234567890'], $select);
     }
 
+    #[\Testo\Test]
     public function testUpdateWithWhereJsonNestedArray(): void
     {
         $select = $this->database
@@ -87,6 +89,7 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', '+1234567890'], $select);
     }
 
+    #[\Testo\Test]
     public function testUpdateWithWhereJsonContains(): void
     {
         $select = $this->database
@@ -102,6 +105,7 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', 1, 'en'], $select);
     }
 
+    #[\Testo\Test]
     public function testUpdateWithOrWhereJsonContains(): void
     {
         $select = $this->database
@@ -117,6 +121,7 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', 1, 'en'], $select);
     }
 
+    #[\Testo\Test]
     public function testUpdateWithWhereJsonContainsNested(): void
     {
         $select = $this->database
@@ -131,6 +136,7 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', '+1234567890'], $select);
     }
 
+    #[\Testo\Test]
     public function testUpdateWithWhereJsonContainsArray(): void
     {
         $select = $this->database
@@ -145,6 +151,7 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', '+1234567890'], $select);
     }
 
+    #[\Testo\Test]
     public function testUpdateWithWhereJsonContainsNestedArray(): void
     {
         $select = $this->database
@@ -159,6 +166,7 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', '+1234567890'], $select);
     }
 
+    #[\Testo\Test]
     public function testUpdateWithWhereJsonDoesntContain(): void
     {
         $select = $this->database
@@ -174,6 +182,7 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', 1, 'en'], $select);
     }
 
+    #[\Testo\Test]
     public function testUpdateWithOrWhereJsonDoesntContain(): void
     {
         $select = $this->database
@@ -189,6 +198,7 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', 1, 'en'], $select);
     }
 
+    #[\Testo\Test]
     public function testUpdateWithWhereJsonDoesntContainNested(): void
     {
         $select = $this->database
@@ -203,6 +213,7 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', '+1234567890'], $select);
     }
 
+    #[\Testo\Test]
     public function testUpdateWithWhereJsonDoesntContainArray(): void
     {
         $select = $this->database
@@ -217,6 +228,7 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', '+1234567890'], $select);
     }
 
+    #[\Testo\Test]
     public function testUpdateWithWhereJsonDoesntContainNestedArray(): void
     {
         $select = $this->database
@@ -231,6 +243,7 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', '+1234567890'], $select);
     }
 
+    #[\Testo\Test]
     public function testUpdateWithWhereJsonContainsKey(): void
     {
         $select = $this->database
@@ -245,6 +258,7 @@ class UpdateQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testUpdateWithOrWhereJsonContainsKey(): void
     {
         $select = $this->database
@@ -259,6 +273,7 @@ class UpdateQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testUpdateWithWhereJsonContainsKeyNested(): void
     {
         $select = $this->database
@@ -272,6 +287,7 @@ class UpdateQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testUpdateWithWhereJsonContainsKeyArray(): void
     {
         $select = $this->database
@@ -285,6 +301,7 @@ class UpdateQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testUpdateWithWhereJsonContainsKeyNestedArray(): void
     {
         $select = $this->database
@@ -298,6 +315,7 @@ class UpdateQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testUpdateWithWhereJsonDoesntContainKey(): void
     {
         $select = $this->database
@@ -312,6 +330,7 @@ class UpdateQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testUpdateWithOrWhereJsonDoesntContainKey(): void
     {
         $select = $this->database
@@ -326,6 +345,7 @@ class UpdateQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testUpdateWithWhereJsonDoesntContainKeyNested(): void
     {
         $select = $this->database
@@ -339,6 +359,7 @@ class UpdateQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testUpdateWithWhereJsonDoesntContainKeyArray(): void
     {
         $select = $this->database
@@ -352,6 +373,7 @@ class UpdateQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testUpdateWithWhereJsonDoesntContainKeyNestedArray(): void
     {
         $select = $this->database
@@ -365,6 +387,7 @@ class UpdateQueryTest extends CommonClass
         );
     }
 
+    #[\Testo\Test]
     public function testUpdateWithWhereJsonLengthAndCustomOperator(): void
     {
         $select = $this->database
@@ -379,6 +402,7 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', 1], $select);
     }
 
+    #[\Testo\Test]
     public function testUpdateWithWhereJsonLength(): void
     {
         $select = $this->database
@@ -394,6 +418,7 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', 1, 3], $select);
     }
 
+    #[\Testo\Test]
     public function testUpdateWithOrWhereJsonJsonLength(): void
     {
         $select = $this->database
@@ -409,6 +434,7 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', 1, 4], $select);
     }
 
+    #[\Testo\Test]
     public function testUpdateWithWhereJsonLengthNested(): void
     {
         $select = $this->database
@@ -423,6 +449,7 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', 1], $select);
     }
 
+    #[\Testo\Test]
     public function testUpdateWithWhereJsonLengthArray(): void
     {
         $select = $this->database
@@ -437,6 +464,7 @@ class UpdateQueryTest extends CommonClass
         $this->assertSameParameters(['value', 2], $select);
     }
 
+    #[\Testo\Test]
     public function testUpdateWithWhereJsonLengthNestedArray(): void
     {
         $select = $this->database
