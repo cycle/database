@@ -7,11 +7,12 @@ namespace Cycle\Database\Tests\Unit\Query\Tokens;
 use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\DeleteQuery;
-use PHPUnit\Framework\TestCase;
+use Testo\Assert;
+use Testo\Test;
 
-class DeleteQueryTest
+#[Test]
+final class DeleteQueryTest
 {
-    #[\Testo\Test]
     public function testBuildQuery(): void
     {
         $delete = new DeleteQuery();
@@ -20,9 +21,9 @@ class DeleteQueryTest
             ->where(['name' => 'Antony'])
             ->orWhere('id', '>', 1);
 
-        \Testo\Assert::same($delete->getType(), CompilerInterface::DELETE_QUERY);
+        Assert::same($delete->getType(), CompilerInterface::DELETE_QUERY);
 
-        \Testo\Assert::equals($delete->getTokens(), [
+        Assert::equals($delete->getTokens(), [
             'table' => 'table',
             'where' => [
                 [

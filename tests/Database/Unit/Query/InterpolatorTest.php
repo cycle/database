@@ -6,14 +6,16 @@ namespace Cycle\Database\Tests\Unit\Query;
 
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\Interpolator;
-use Cycle\Database\Tests\Stub\FooBarEnum;
-use Cycle\Database\Tests\Stub\IntegerEnum;
-use Cycle\Database\Tests\Stub\UntypedEnum;
-use PHPUnit\Framework\TestCase;
+use Cycle\Database\Tests\Fixtures\FooBarEnum;
+use Cycle\Database\Tests\Fixtures\IntegerEnum;
+use Cycle\Database\Tests\Fixtures\UntypedEnum;
+use Testo\Assert;
+use Testo\Core\Exception\SkipTest;
+use Testo\Test;
 
-class InterpolatorTest
+#[Test]
+final class InterpolatorTest
 {
-    #[\Testo\Test]
     public function testInterpolation(): void
     {
         $query = 'SELECT * FROM table WHERE name = ? AND id IN(?, ?, ?) AND balance > ?';
@@ -28,10 +30,9 @@ class InterpolatorTest
 
         $interpolated = Interpolator::interpolate($query, $parameters);
 
-        \Testo\Assert::same($interpolated, 'SELECT * FROM table WHERE name = \'Anton\' AND id IN(1, 2, 3) AND balance > 120');
+        Assert::same($interpolated, 'SELECT * FROM table WHERE name = \'Anton\' AND id IN(1, 2, 3) AND balance > 120');
     }
 
-    #[\Testo\Test]
     public function testEnumInterpolation(): void
     {
         $query = 'SELECT * FROM table WHERE enums = :str OR enumi = :int';
@@ -43,10 +44,9 @@ class InterpolatorTest
 
         $interpolated = Interpolator::interpolate($query, $parameters);
 
-        \Testo\Assert::same($interpolated, "SELECT * FROM table WHERE enums = 'bar' OR enumi = 42");
+        Assert::same($interpolated, "SELECT * FROM table WHERE enums = 'bar' OR enumi = 42");
     }
 
-    #[\Testo\Test]
     public function testUntypedEnumInterpolation(): void
     {
         $query = 'SELECT * FROM table WHERE enum = :enum';
@@ -57,10 +57,9 @@ class InterpolatorTest
 
         $interpolated = Interpolator::interpolate($query, $parameters);
 
-        \Testo\Assert::same($interpolated, 'SELECT * FROM table WHERE enum = [UNRESOLVED]');
+        Assert::same($interpolated, 'SELECT * FROM table WHERE enum = [UNRESOLVED]');
     }
 
-    #[\Testo\Test]
     public function testDatesInterpolation(): void
     {
         $query = 'SELECT * FROM table WHERE name = :name AND registered > :registered';
@@ -72,11 +71,10 @@ class InterpolatorTest
 
         $interpolated = Interpolator::interpolate($query, $parameters);
 
-        \Testo\Assert::same($interpolated, 'SELECT * FROM table WHERE name = \'Anton\' AND registered > \''
+        Assert::same($interpolated, 'SELECT * FROM table WHERE name = \'Anton\' AND registered > \''
         . $date->format(\DateTime::ATOM) . '\'');
     }
 
-    #[\Testo\Test]
     public function testDatesWithMicrosecondsInterpolation(): void
     {
         $query = 'SELECT * FROM table WHERE name = :name AND registered > :registered';
@@ -88,11 +86,10 @@ class InterpolatorTest
 
         $interpolated = Interpolator::interpolate($query, $parameters, ['withDatetimeMicroseconds' => true]);
 
-        \Testo\Assert::same($interpolated, 'SELECT * FROM table WHERE name = \'John Doe\' AND registered > \''
+        Assert::same($interpolated, 'SELECT * FROM table WHERE name = \'John Doe\' AND registered > \''
         . $date->format('Y-m-d H:i:s.u') . '\'');
     }
 
-    #[\Testo\Test]
     public function testDateInterpolationWithDateTimeImmutable(): void
     {
         $query = 'SELECT * FROM table WHERE name = :name AND registered > :registered';
@@ -104,12 +101,11 @@ class InterpolatorTest
 
         $interpolated = Interpolator::interpolate($query, $parameters);
 
-        \Testo\Assert::same($interpolated, 'SELECT * FROM table WHERE name = \'Anton\' AND registered > \''
+        Assert::same($interpolated, 'SELECT * FROM table WHERE name = \'Anton\' AND registered > \''
         . $date->format(\DateTime::ATOM)
         . '\'');
     }
 
-    #[\Testo\Test]
     public function testInterpolationUseNamedParameterTwice(): void
     {
         $query = 'SELECT :name as prefix, name FROM table WHERE name LIKE (CONCAT(:name, "%"))';
@@ -120,10 +116,9 @@ class InterpolatorTest
 
         $interpolated = Interpolator::interpolate($query, $parameters);
 
-        \Testo\Assert::same($interpolated, "SELECT 'John' as prefix, name FROM table WHERE name LIKE (CONCAT('John', \"%\"))");
+        Assert::same($interpolated, "SELECT 'John' as prefix, name FROM table WHERE name LIKE (CONCAT('John', \"%\"))");
     }
 
-    #[\Testo\Test]
     public function testInterpolateNamedParametersWhenFirstIsPrefixOfSecond(): void
     {
         $query = 'SELECT * FROM table WHERE parameter = :parameter AND param = :param';
@@ -135,10 +130,9 @@ class InterpolatorTest
 
         $interpolated = Interpolator::interpolate($query, $parameters);
 
-        \Testo\Assert::same($interpolated, "SELECT * FROM table WHERE parameter = 'bar' AND param = 'foo'");
+        Assert::same($interpolated, "SELECT * FROM table WHERE parameter = 'bar' AND param = 'foo'");
     }
 
-    #[\Testo\Test]
     public function testInterpolateParametersInStrings(): void
     {
         $query = 'SELECT \'?\', \'?\\\'?\', "?\\"?" as qq FROM table ' .
@@ -151,11 +145,10 @@ class InterpolatorTest
 
         $interpolated = Interpolator::interpolate($query, $parameters);
 
-        \Testo\Assert::same($interpolated, 'SELECT \'?\', \'?\\\'?\', "?\\"?" as qq FROM table ' .
+        Assert::same($interpolated, 'SELECT \'?\', \'?\\\'?\', "?\\"?" as qq FROM table ' .
         'WHERE parameter = (":param", \':param\\\':param\', \'foo\', 42)');
     }
 
-    #[\Testo\Test]
     public function testNestedInterpolation(): void
     {
         $query = 'SELECT * FROM table WHERE name = ? AND ' .
@@ -170,12 +163,11 @@ class InterpolatorTest
 
         $interpolated = Interpolator::interpolate($query, $parameters);
 
-        \Testo\Assert::same($interpolated, 'SELECT * FROM table WHERE name = 42 ' .
+        Assert::same($interpolated, 'SELECT * FROM table WHERE name = 42 ' .
         "AND id IN(\"in dq ?\", 'in \n\n sq ?', 'foo') " .
         "AND balance > IN(\"in dq :p\", 'in sq :p', 'bar')");
     }
 
-    #[\Testo\Test]
     public function testNamedParameterNotProvided(): void
     {
         $query = 'SELECT * FROM table WHERE name = :name';
@@ -184,10 +176,9 @@ class InterpolatorTest
 
         $interpolated = Interpolator::interpolate($query, $parameters);
 
-        \Testo\Assert::same($interpolated, 'SELECT * FROM table WHERE name = :name');
+        Assert::same($interpolated, 'SELECT * FROM table WHERE name = :name');
     }
 
-    #[\Testo\Test]
     public function testUnnamedParameterNotProvided(): void
     {
         $query = 'SELECT * FROM table WHERE name = ? OR value > ?';
@@ -196,10 +187,9 @@ class InterpolatorTest
 
         $interpolated = Interpolator::interpolate($query, $parameters);
 
-        \Testo\Assert::same($interpolated, 'SELECT * FROM table WHERE name = ? OR value > ?');
+        Assert::same($interpolated, 'SELECT * FROM table WHERE name = ? OR value > ?');
     }
 
-    #[\Testo\Test]
     public function testStringableObjectInterpolation(): void
     {
         $query = 'SELECT * FROM table WHERE name = :name';
@@ -213,10 +203,9 @@ class InterpolatorTest
 
         $interpolated = Interpolator::interpolate($query, $parameters);
 
-        \Testo\Assert::same($interpolated, "SELECT * FROM table WHERE name = 'foo'");
+        Assert::same($interpolated, "SELECT * FROM table WHERE name = 'foo'");
     }
 
-    #[\Testo\Test]
     public function testNotStringableObjectInterpolation(): void
     {
         $query = 'SELECT * FROM table WHERE name = :name';
@@ -225,10 +214,9 @@ class InterpolatorTest
 
         $interpolated = Interpolator::interpolate($query, $parameters);
 
-        \Testo\Assert::same($interpolated, 'SELECT * FROM table WHERE name = [UNRESOLVED]');
+        Assert::same($interpolated, 'SELECT * FROM table WHERE name = [UNRESOLVED]');
     }
 
-    #[\Testo\Test]
     public function testFloatValueInterpolation(): void
     {
         $query = 'SELECT * FROM table WHERE value > :value1 OR value < :value2';
@@ -237,10 +225,9 @@ class InterpolatorTest
 
         $interpolated = Interpolator::interpolate($query, $parameters);
 
-        \Testo\Assert::same($interpolated, 'SELECT * FROM table WHERE value > 0.001000 OR value < 0.000000');
+        Assert::same($interpolated, 'SELECT * FROM table WHERE value > 0.001000 OR value < 0.000000');
     }
 
-    #[\Testo\Test]
     public function testNullBoolValueInterpolation(): void
     {
         $query = 'SELECT * FROM table WHERE value = :value1 OR value = :value2 OR value = ?';
@@ -249,10 +236,9 @@ class InterpolatorTest
 
         $interpolated = Interpolator::interpolate($query, $parameters);
 
-        \Testo\Assert::same($interpolated, 'SELECT * FROM table WHERE value = TRUE OR value = FALSE OR value = NULL');
+        Assert::same($interpolated, 'SELECT * FROM table WHERE value = TRUE OR value = FALSE OR value = NULL');
     }
 
-    #[\Testo\Test]
     public function testNoParametersPassed(): void
     {
         $query = 'SELECT * FROM table WHERE name = :name';
@@ -261,10 +247,9 @@ class InterpolatorTest
 
         $interpolated = Interpolator::interpolate($query, $parameters);
 
-        \Testo\Assert::same($interpolated, 'SELECT * FROM table WHERE name = :name');
+        Assert::same($interpolated, 'SELECT * FROM table WHERE name = :name');
     }
 
-    #[\Testo\Test]
     public function testBackslashEscaping(): void
     {
         $query = 'SELECT :c26, :c0, :sq, :dq, :b, :bs, :n, :r, :t, :pc, :us, :pc_esc';
@@ -286,10 +271,9 @@ class InterpolatorTest
 
         $interpolated = Interpolator::interpolate($query, $parameters);
 
-        \Testo\Assert::same($interpolated, "SELECT '\\Z', '\\0', '\\'', '\"', '\\b', '\\\\', '\\n', '\\r', '\\t', '%', '_', '\\%\\_'");
+        Assert::same($interpolated, "SELECT '\\Z', '\\0', '\\'', '\"', '\\b', '\\\\', '\\n', '\\r', '\\t', '%', '_', '\\%\\_'");
     }
 
-    #[\Testo\Test]
     public function testLargeInterpolation(): void
     {
         $query = null;
@@ -299,15 +283,14 @@ class InterpolatorTest
         include \dirname(__DIR__) . '/Stub/InterpolatorTestLargeFixture.php';
 
         if (!\is_string($query) || !\is_array($parameters) || !\is_string($expected)) {
-            throw new \Testo\Core\Exception\SkipTest('no test data');
+            throw new SkipTest('no test data');
         }
 
         $interpolated = Interpolator::interpolate($query, $parameters);
 
-        \Testo\Assert::same($interpolated, $expected);
+        Assert::same($interpolated, $expected);
     }
 
-    #[\Testo\Test]
     public function testNoRecursiveInterpolation(): void
     {
         $query = 'SELECT * FROM table WHERE name = :name AND str = ? AND number = :number';
@@ -320,6 +303,6 @@ class InterpolatorTest
 
         $interpolated = Interpolator::interpolate($query, $parameters);
 
-        \Testo\Assert::same($interpolated, 'SELECT * FROM table WHERE name = \'Hello?\' AND str = \':number\' AND number = 42');
+        Assert::same($interpolated, 'SELECT * FROM table WHERE name = \'Hello?\' AND str = \':number\' AND number = 42');
     }
 }

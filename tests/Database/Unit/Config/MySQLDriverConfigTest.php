@@ -7,11 +7,12 @@ namespace Cycle\Database\Tests\Unit\Config;
 use Cycle\Database\Config\MySQL\DsnConnectionConfig;
 use Cycle\Database\Config\MySQLDriverConfig;
 use Cycle\Database\Driver\MySQL\MySQLDriver;
-use PHPUnit\Framework\TestCase;
+use Testo\Assert;
+use Testo\Test;
 
+#[Test]
 final class MySQLDriverConfigTest
 {
-    #[\Testo\Test]
     public function testSetState(): void
     {
         $config = new MySQLDriverConfig(
@@ -29,13 +30,13 @@ final class MySQLDriverConfigTest
         /** @var MySQLDriverConfig $recoveredConfig */
         eval('$recoveredConfig = ' . $exported . ';');
 
-        \Testo\Assert::instanceOf($recoveredConfig->connection, DsnConnectionConfig::class);
-        \Testo\Assert::same($recoveredConfig->connection->getDsn(), "mysql:$dsn");
-        \Testo\Assert::same($recoveredConfig->driver, $driver);
-        \Testo\Assert::same($recoveredConfig->reconnect, $reconnect);
-        \Testo\Assert::same($recoveredConfig->timezone, $timezone);
-        \Testo\Assert::same($recoveredConfig->queryCache, $queryCache);
-        \Testo\Assert::same($recoveredConfig->readonlySchema, $readonlySchema);
-        \Testo\Assert::same($recoveredConfig->readonly, $readonly);
+        Assert::instanceOf($recoveredConfig->connection, DsnConnectionConfig::class);
+        Assert::same($recoveredConfig->connection->getDsn(), "mysql:$dsn");
+        Assert::same($recoveredConfig->driver, $driver);
+        Assert::same($recoveredConfig->reconnect, $reconnect);
+        Assert::same($recoveredConfig->timezone, $timezone);
+        Assert::same($recoveredConfig->queryCache, $queryCache);
+        Assert::same($recoveredConfig->readonlySchema, $readonlySchema);
+        Assert::same($recoveredConfig->readonly, $readonly);
     }
 }

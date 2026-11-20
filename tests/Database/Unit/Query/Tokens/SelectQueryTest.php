@@ -7,11 +7,12 @@ namespace Cycle\Database\Tests\Unit\Query\Tokens;
 use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\SelectQuery;
-use PHPUnit\Framework\TestCase;
+use Testo\Assert;
+use Testo\Test;
 
-class SelectQueryTest
+#[Test]
+final class SelectQueryTest
 {
-    #[\Testo\Test]
     public function testBuildQuery(): void
     {
         $select = new SelectQuery();
@@ -28,9 +29,9 @@ class SelectQueryTest
                 'COALESCE(name, test)',
             ]);
 
-        \Testo\Assert::same($select->getType(), CompilerInterface::SELECT_QUERY);
+        Assert::same($select->getType(), CompilerInterface::SELECT_QUERY);
 
-        \Testo\Assert::equals($select->getTokens(), [
+        Assert::equals($select->getTokens(), [
             'forUpdate' => false,
             'from' => ['table'],
             'join' => [],
@@ -63,16 +64,14 @@ class SelectQueryTest
         ]);
     }
 
-    #[\Testo\Test]
     public function testWrapWhereOnEmptyIsNoop(): void
     {
         $select = (new SelectQuery())->from('table');
         $select->wrapWhere();
 
-        \Testo\Assert::same($select->getTokens()['where'], []);
+        Assert::same($select->getTokens()['where'], []);
     }
 
-    #[\Testo\Test]
     public function testWrapWhereEnclosesExistingTokens(): void
     {
         $select = (new SelectQuery())
@@ -82,7 +81,7 @@ class SelectQueryTest
             ->wrapWhere()
             ->where('b', 3);
 
-        \Testo\Assert::equals($select->getTokens()['where'], [
+        Assert::equals($select->getTokens()['where'], [
             ['AND', '('],
             ['AND', ['a', '=', new Parameter(1)]],
             ['OR', ['a', '=', new Parameter(2)]],
@@ -91,7 +90,6 @@ class SelectQueryTest
         ]);
     }
 
-    #[\Testo\Test]
     public function testWrapWhereProtectsAgainstLaterOrWhere(): void
     {
         // Simulates a scope condition guarded by wrapWhere against a later user `orWhere`.
@@ -101,7 +99,7 @@ class SelectQueryTest
             ->wrapWhere()
             ->orWhere('id', 5);
 
-        \Testo\Assert::equals($select->getTokens()['where'], [
+        Assert::equals($select->getTokens()['where'], [
             ['AND', '('],
             ['AND', ['deleted_at', '=', new Parameter(null)]],
             ['', ')'],
@@ -109,16 +107,14 @@ class SelectQueryTest
         ]);
     }
 
-    #[\Testo\Test]
     public function testWrapOnWhereWithoutAnyJoinIsNoop(): void
     {
         $select = (new SelectQuery())->from('table');
         $select->wrapOnWhere();
 
-        \Testo\Assert::same($select->getTokens()['join'], []);
+        Assert::same($select->getTokens()['join'], []);
     }
 
-    #[\Testo\Test]
     public function testWrapOnWhereWithEmptyOnTokensIsNoop(): void
     {
         $select = (new SelectQuery())
@@ -126,10 +122,9 @@ class SelectQueryTest
             ->leftJoin('joined');
         $select->wrapOnWhere();
 
-        \Testo\Assert::same($select->getTokens()['join'][1]['on'], []);
+        Assert::same($select->getTokens()['join'][1]['on'], []);
     }
 
-    #[\Testo\Test]
     public function testWrapOnWhereEnclosesExistingOnTokens(): void
     {
         $select = (new SelectQuery())
@@ -140,7 +135,7 @@ class SelectQueryTest
             ->wrapOnWhere()
             ->onWhere('joined.b', 3);
 
-        \Testo\Assert::equals($select->getTokens()['join'][1]['on'], [
+        Assert::equals($select->getTokens()['join'][1]['on'], [
             ['AND', '('],
             ['AND', ['joined.a', '=', new Parameter(1)]],
             ['OR', ['joined.a', '=', new Parameter(2)]],
@@ -149,7 +144,6 @@ class SelectQueryTest
         ]);
     }
 
-    #[\Testo\Test]
     public function testWrapOnWhereTargetsOnlyLastRegisteredJoin(): void
     {
         $select = (new SelectQuery())
@@ -160,12 +154,12 @@ class SelectQueryTest
 
         $joins = $select->getTokens()['join'];
 
-        \Testo\Assert::equals($joins[1]['on'], [
+        Assert::equals($joins[1]['on'], [
             ['AND', ['first.x', '=', new Parameter(1)]],
             ['OR', ['first.x', '=', new Parameter(2)]],
         ]);
 
-        \Testo\Assert::equals($joins[2]['on'], [
+        Assert::equals($joins[2]['on'], [
             ['AND', '('],
             ['AND', ['second.y', '=', new Parameter(10)]],
             ['OR', ['second.y', '=', new Parameter(20)]],
@@ -173,7 +167,6 @@ class SelectQueryTest
         ]);
     }
 
-    #[\Testo\Test]
     public function testWrapOnWhereDoesNotAffectWhereTokens(): void
     {
         $select = (new SelectQuery())
@@ -184,7 +177,7 @@ class SelectQueryTest
             ->wrapOnWhere();
 
         // WHERE stays flat — only the join's ON gets wrapped.
-        \Testo\Assert::equals($select->getTokens()['where'], [
+        Assert::equals($select->getTokens()['where'], [
             ['AND', ['a', '=', new Parameter(1)]],
             ['OR', ['a', '=', new Parameter(2)]],
         ]);

@@ -7,8 +7,11 @@ namespace Cycle\Database\Tests\Unit\Schema;
 use Cycle\Database\Driver\SQLite\Schema\SQLiteColumn;
 use Cycle\Database\Schema\Comparator;
 use Cycle\Database\Schema\State;
-use PHPUnit\Framework\TestCase;
+use Testo\Assert;
+use Testo\Data\DataProvider;
+use Testo\Test;
 
+#[Test]
 final class ComparatorTest
 {
     public static function addedColumnsDataProvider(): \Traversable
@@ -66,17 +69,15 @@ final class ComparatorTest
         yield [[new SQLiteColumn('c', 'd')], $current];
     }
 
-    #[\Testo\Test]
-    #[\Testo\Data\DataProvider('addedColumnsDataProvider')]
+    #[DataProvider('addedColumnsDataProvider')]
     public function testAddedColumns(array $expected, State $current): void
     {
         $comparator = new Comparator(new State(''), $current);
 
-        \Testo\Assert::equals($comparator->addedColumns(), $expected);
+        Assert::equals($comparator->addedColumns(), $expected);
     }
 
-    #[\Testo\Test]
-    #[\Testo\Data\DataProvider('alteredColumnsDataProvider')]
+    #[DataProvider('alteredColumnsDataProvider')]
     public function testAlteredColumns(array $expected, State $current): void
     {
         $initial = new State('');
@@ -85,11 +86,10 @@ final class ComparatorTest
 
         $comparator = new Comparator($initial, $current);
 
-        \Testo\Assert::equals($comparator->alteredColumns(), $expected);
+        Assert::equals($comparator->alteredColumns(), $expected);
     }
 
-    #[\Testo\Test]
-    #[\Testo\Data\DataProvider('droppedColumnsDataProvider')]
+    #[DataProvider('droppedColumnsDataProvider')]
     public function testDroppedColumns(array $expected, State $current): void
     {
         $initial = new State('');
@@ -98,6 +98,6 @@ final class ComparatorTest
 
         $comparator = new Comparator($initial, $current);
 
-        \Testo\Assert::equals($comparator->droppedColumns(), $expected);
+        Assert::equals($comparator->droppedColumns(), $expected);
     }
 }

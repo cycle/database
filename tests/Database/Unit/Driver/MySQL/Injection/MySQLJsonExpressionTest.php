@@ -6,8 +6,11 @@ namespace Cycle\Database\Tests\Unit\Driver\MySQL\Injection;
 
 use Cycle\Database\Driver\MySQL\Injection\CompileJson;
 use Cycle\Database\Driver\MySQL\Injection\MySQLJsonExpression;
-use PHPUnit\Framework\TestCase;
+use Testo\Assert;
+use Testo\Data\DataProvider;
+use Testo\Test;
 
+#[Test]
 final class MySQLJsonExpressionTest
 {
     public static function provideStatements(): iterable
@@ -32,21 +35,19 @@ final class MySQLJsonExpressionTest
         ];
     }
 
-    #[\Testo\Test]
     public function testGetQuotes(): void
     {
         $expression = $this->createExpression();
         $ref = new \ReflectionMethod($expression, 'getQuotes');
         $ref->setAccessible(true);
 
-        \Testo\Assert::same($ref->invoke($expression), '``');
+        Assert::same($ref->invoke($expression), '``');
     }
 
-    #[\Testo\Test]
-    #[\Testo\Data\DataProvider('provideStatements')]
+    #[DataProvider('provideStatements')]
     public function testPathLiteralCannotBeEndedEarly(string $statement, string $expected): void
     {
-        \Testo\Assert::same((new CompileJson($statement))->getTokens()['expression'], $expected);
+        Assert::same((new CompileJson($statement))->getTokens()['expression'], $expected);
     }
 
     private function createExpression(): MySQLJsonExpression

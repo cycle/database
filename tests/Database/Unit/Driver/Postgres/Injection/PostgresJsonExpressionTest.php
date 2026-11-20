@@ -7,8 +7,12 @@ namespace Cycle\Database\Tests\Unit\Driver\Postgres\Injection;
 use Cycle\Database\Driver\Postgres\Injection\PostgresJsonExpression;
 use Cycle\Database\Driver\Quoter;
 use Cycle\Database\Exception\DriverException;
-use PHPUnit\Framework\TestCase;
+use Testo\Assert;
+use Testo\Data\DataProvider;
+use Testo\Expect;
+use Testo\Test;
 
+#[Test]
 final class PostgresJsonExpressionTest
 {
     public static function pathDataProvider(): \Traversable
@@ -27,36 +31,33 @@ final class PostgresJsonExpressionTest
         yield ['options->personal->phones->3', 3];
     }
 
-    #[\Testo\Test]
-    #[\Testo\Data\DataProvider('pathDataProvider')]
+    #[DataProvider('pathDataProvider')]
     public function testGetPath(string $statement, string $expected): void
     {
         $expression = $this->createExpression();
         $ref = new \ReflectionMethod($expression, 'getPath');
         $ref->setAccessible(true);
 
-        \Testo\Assert::same($ref->invoke($expression, $statement), $expected);
+        Assert::same($ref->invoke($expression, $statement), $expected);
     }
 
-    #[\Testo\Test]
-    #[\Testo\Data\DataProvider('attributeDataProvider')]
+    #[DataProvider('attributeDataProvider')]
     public function testGetAttribute(string $statement, string|int $expected): void
     {
         $expression = $this->createExpression();
         $ref = new \ReflectionMethod($expression, 'getAttribute');
         $ref->setAccessible(true);
 
-        \Testo\Assert::same($ref->invoke($expression, $statement), $expected);
+        Assert::same($ref->invoke($expression, $statement), $expected);
     }
 
-    #[\Testo\Test]
     public function testGetAttributeException(): void
     {
         $expression = $this->createExpression();
         $ref = new \ReflectionMethod($expression, 'getAttribute');
         $ref->setAccessible(true);
 
-        \Testo\Expect::exception(DriverException::class);
+        Expect::exception(DriverException::class);
         $ref->invoke($expression, 'options');
     }
 

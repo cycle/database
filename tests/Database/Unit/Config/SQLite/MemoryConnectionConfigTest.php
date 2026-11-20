@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Unit\Config\SQLite;
 
 use Cycle\Database\Config\SQLite\MemoryConnectionConfig;
-use PHPUnit\Framework\TestCase;
+use Testo\Assert;
+use Testo\Test;
 
+#[Test]
 final class MemoryConnectionConfigTest
 {
-    #[\Testo\Test]
     public function testSetState(): void
     {
         $testOptionKey = 'option-1';
@@ -23,9 +24,9 @@ final class MemoryConnectionConfigTest
         /** @var MemoryConnectionConfig $recoveredConfig */
         eval('$recoveredConfig = ' . $exported . ';');
 
-        \Testo\Assert::same($recoveredConfig->getDsn(), 'sqlite::memory:');
-        \Testo\Assert::same($recoveredConfig->getSourceString(), ':memory:');
-        \Testo\Assert::array($recoveredConfig->getOptions())->hasKeys($testOptionKey);
-        \Testo\Assert::same($recoveredConfig->getOptions()[$testOptionKey], $testOptionValue);
+        Assert::same($recoveredConfig->getDsn(), 'sqlite::memory:');
+        Assert::same($recoveredConfig->getSourceString(), ':memory:');
+        Assert::array($recoveredConfig->getOptions())->hasKeys($testOptionKey);
+        Assert::same($recoveredConfig->getOptions()[$testOptionKey], $testOptionValue);
     }
 }

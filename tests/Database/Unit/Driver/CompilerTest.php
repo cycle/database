@@ -7,11 +7,12 @@ namespace Cycle\Database\Tests\Unit\Driver;
 use Cycle\Database\Driver\Compiler;
 use Cycle\Database\Driver\Quoter;
 use Cycle\Database\Query\QueryParameters;
-use PHPUnit\Framework\TestCase;
+use Testo\Assert;
+use Testo\Test;
 
+#[Test]
 final class CompilerTest
 {
-    #[\Testo\Test]
     public function testCompileJsonOrderByShouldReturnOriginalStatement(): void
     {
         $compiler = new class extends Compiler {
@@ -21,6 +22,6 @@ final class CompilerTest
         $ref = new \ReflectionMethod($compiler, 'compileJsonOrderBy');
         $ref->setAccessible(true);
 
-        \Testo\Assert::same($ref->invoke($compiler, 'foo-bar'), 'foo-bar');
+        Assert::same($ref->invoke($compiler, 'foo-bar'), 'foo-bar');
     }
 }

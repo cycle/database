@@ -8,18 +8,19 @@ use Cycle\Database\Driver\CompilerCache;
 use Cycle\Database\Driver\Postgres\PostgresCompiler;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Query\QueryParameters;
-use PHPUnit\Framework\TestCase;
+use Testo\Assert;
+use Testo\Test;
 
+#[Test]
 final class CompilerCacheTest
 {
-    #[\Testo\Test]
     public function testHashInsertQueryWithReturningFragment(): void
     {
         $compiler = new CompilerCache(new PostgresCompiler());
         $ref = new \ReflectionMethod($compiler, 'hashInsertQuery');
         $ref->setAccessible(true);
 
-        \Testo\Assert::same($ref->invoke($compiler, new QueryParameters(), [
+        Assert::same($ref->invoke($compiler, new QueryParameters(), [
             'table' => 'some_table',
             'columns' => ['name', 'full_name'],
             'values' => ['Foo'],

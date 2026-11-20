@@ -6,11 +6,11 @@ namespace Cycle\Database\Tests\Unit\Driver\Postgres;
 
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\Postgres\PostgresHandler;
-use PHPUnit\Framework\TestCase;
+use Testo\Test;
 
+#[Test]
 final class PostgresHandlerTest
 {
-    #[\Testo\Test]
     public function testEnableForeignKeyConstraints(): void
     {
         $driver = \Mockery::mock(DriverInterface::class)->shouldIgnoreMissing();
@@ -21,7 +21,6 @@ final class PostgresHandlerTest
         $handler->enableForeignKeyConstraints();
     }
 
-    #[\Testo\Test]
     public function testDisableForeignKeyConstraints(): void
     {
         $driver = \Mockery::mock(DriverInterface::class)->shouldIgnoreMissing();

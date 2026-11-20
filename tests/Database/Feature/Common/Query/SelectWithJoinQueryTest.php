@@ -1,0 +1,685 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Cycle\Database\Tests\Feature\Common\Query;
+
+use Cycle\Database\Injection\Expression;
+use Cycle\Database\Injection\Fragment;
+use Cycle\Database\Injection\Parameter;
+use Cycle\Testing\Database\Assert\SqlAssert;
+use Cycle\Testing\Database\Attribute\ExceptDriver;
+use Cycle\Testing\Database\DatabaseTestCase;
+use Cycle\Testing\Database\Driver;
+use Testo\Test;
+
+#[ExceptDriver(Driver::SQLite, Driver::Postgres)]
+class SelectWithJoinQueryTest extends DatabaseTestCase
+{
+    #[Test]
+    public function testWhereAndJoin(): void
+    {
+        $select = $this->database->select()
+            ->from('table')
+            ->leftJoin('external')->onWhere(['name' => 'test'])
+            ->where('id', 1);
+
+        SqlAssert::sameWithParameters($select, 'SELECT * FROM {table} LEFT JOIN {external} ON {name} = ? WHERE {id} = ?', [
+            'test',
+            1,
+        ]);
+    }
+
+    #[Test]
+    public function testWhereAndJoinReverted(): void
+    {
+        $select = $this->database->select()
+            ->from('table')
+            ->where('id', 1)
+            ->leftJoin('external')->onWhere(['name' => 'test']);
+
+        SqlAssert::sameWithParameters($select, 'SELECT * FROM {table} LEFT JOIN {external} ON {name} = ? WHERE {id} = ?', [
+            'test',
+            1,
+        ]);
+    }
+
+    #[Test]
+    public function testLeftJoin0(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->join('LEFT', 'photos')->on(['photos.user_id' => 'users.id']);
+
+        SqlAssert::same($select, 'SELECT * FROM {users} LEFT JOIN {photos} ON {photos}.{user_id} = {users}.{id}');
+    }
+
+    #[Test]
+    public function testLeftJoin1(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->join('LEFT', 'photos')->on('photos.user_id', 'users.id');
+
+        SqlAssert::same($select, 'SELECT * FROM {users} LEFT JOIN {photos} ON {photos}.{user_id} = {users}.{id}');
+    }
+
+    #[Test]
+    public function testLeftJoin2(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->leftJoin('photos')->on('photos.user_id', 'users.id');
+
+        SqlAssert::same($select, 'SELECT * FROM {users} LEFT JOIN {photos} ON {photos}.{user_id} = {users}.{id}');
+    }
+
+    #[Test]
+    public function testLeftJoin3(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->leftJoin('photos')->on(['photos.user_id' => 'users.id']);
+
+        SqlAssert::same($select, 'SELECT * FROM {users} LEFT JOIN {photos} ON {photos}.{user_id} = {users}.{id}');
+    }
+
+    #[Test]
+    public function testLeftJoin4(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->join('LEFT', 'photos', 'pht', ['pht.user_id', 'users.id']);
+
+        SqlAssert::same($select, 'SELECT * FROM {users} LEFT JOIN {photos} AS {pht} ON {pht}.{user_id} = {users}.{id}');
+    }
+
+    #[Test]
+    public function testJoinOn1(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->join('LEFT', 'photos', 'pht', [
+                '@and' => [
+                    ['pht.user_id' => 'users.id'],
+                ],
+            ]);
+
+        SqlAssert::same($select, 'SELECT * FROM {users} LEFT JOIN {photos} AS {pht} ON ({pht}.{user_id} = {users}.{id})');
+    }
+
+    #[Test]
+    public function testJoinOn2(): void
+    {
+        $select = $this->database->select()
+            ->from(['users', 'admins'])
+            ->join('LEFT', 'photos', 'pht', [
+                [
+                    '@or' => [
+                        [
+                            'pht.user_id' => 'users.id',
+                            'users.is_admin' => new Parameter(true),
+                        ],
+                        [
+                            '@or' => [
+                                ['pht.user_id' => 'users.parent_id'],
+                                ['users.is_admin' => new Parameter(false)],
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+
+        SqlAssert::sameWithParameters($select, 'SELECT * FROM {users}, {admins} LEFT JOIN {photos} AS {pht}
+                    ON (
+                        (
+                        {pht}.{user_id} = {users}.{id}
+                        AND
+                        {users}.{is_admin} = ?
+                        )
+                        OR (
+                        {pht}.{user_id} = {users}.{parent_id}
+                        OR
+                        {users}.{is_admin} = ?
+                        )
+                    )', [
+            true,
+            false,
+        ]);
+    }
+
+    #[Test]
+    public function testJoinOn3(): void
+    {
+        $select = $this->database->select()
+            ->from(['users', 'admins'])
+            ->join('LEFT', 'photos', 'pht', [
+                'pht.user_id' => 'admins.id',
+                'users.is_admin' => 'pht.is_admin',
+                '@or' => [
+                    [
+                        'users.name' => new Parameter('Anton'),
+                        'users.is_admin' => 'pht.is_admin',
+                    ],
+                    [
+                        'users.status' => new Parameter('disabled'),
+                    ],
+                ],
+            ]);
+
+        SqlAssert::sameWithParameters($select, 'SELECT * FROM {users}, {admins} LEFT JOIN {photos} AS {pht}
+                    ON (
+                        {pht}.{user_id} = {admins}.{id}
+                        AND
+                        {users}.{is_admin} = {pht}.{is_admin}
+                        AND
+                        (
+                            (
+                            {users}.{name} = ?
+                            AND
+                            {users}.{is_admin} = {pht}.{is_admin}
+                            )
+                            OR
+                            {users}.{status} = ?
+                        )
+                    )', [
+            'Anton',
+            'disabled',
+        ]);
+    }
+
+    #[Test]
+    public function testJoinOn4(): void
+    {
+        $select = $this->database->select()
+            ->from(['users', 'admins'])
+            ->join('LEFT', 'photos', 'pht', static fn($select, string $boolean, callable $wrapper) => $select
+                ->on('photos.user_id', 'users.id')
+                ->onWhere('photos.type', 'avatar'));
+
+        SqlAssert::sameWithParameters($select, 'SELECT * FROM {users}, {admins} LEFT JOIN {photos} AS {pht}
+                    ON (
+                        {photos}.{user_id} = {users}.{id}
+                        AND
+                        {photos}.{type} = ?
+                        )', [
+            'avatar',
+        ]);
+    }
+
+    #[Test]
+    public function testJoinOn5(): void
+    {
+        $select = $this->database->select()
+            ->from(['users', 'admins'])
+            ->join('LEFT', 'photos', 'pht', [
+                'pht.user_id' => 'users.id',
+                'users.is_admin' => 'pht.is_admin',
+                static fn($select, string $boolean, callable $wrapper) => $select
+                    ->on('photos.user_id', 'users.id')
+                    ->onWhere('photos.type', 'avatar'),
+            ]);
+
+        SqlAssert::sameWithParameters($select, 'SELECT * FROM {users}, {admins} LEFT JOIN {photos} AS {pht}
+                    ON (
+                        {pht}.{user_id} = {users}.{id}
+                        AND
+                        {users}.{is_admin} = {pht}.{is_admin}
+                        AND (
+                            {photos}.{user_id} = {users}.{id}
+                            AND
+                            {photos}.{type} = ?
+                        )
+                        )', [
+            'avatar',
+        ]);
+    }
+
+    #[Test]
+    public function testJoinOn6(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->join('LEFT', 'photos', 'pht', [['pht.user_id' => 'users.id']]);
+
+        SqlAssert::same($select, 'SELECT * FROM {users} LEFT JOIN {photos} AS {pht} ON {pht}.{user_id} = {users}.{id}');
+    }
+
+    #[Test]
+    public function testRightJoin0(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->join('RIGHT', 'photos')->on(['photos.user_id' => 'users.id']);
+
+        SqlAssert::same($select, 'SELECT * FROM {users} RIGHT JOIN {photos} ON {photos}.{user_id} = {users}.{id}');
+    }
+
+    #[Test]
+    public function testRightJoin1(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->join('RIGHT', 'photos')->on('photos.user_id', 'users.id');
+
+        SqlAssert::same($select, 'SELECT * FROM {users} RIGHT JOIN {photos} ON {photos}.{user_id} = {users}.{id}');
+    }
+
+    #[Test]
+    public function testRightJoin2(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->rightJoin('photos')->on('photos.user_id', 'users.id');
+
+        SqlAssert::same($select, 'SELECT * FROM {users} RIGHT JOIN {photos} ON {photos}.{user_id} = {users}.{id}');
+    }
+
+    #[Test]
+    public function testRightJoin3(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->rightJoin('photos')->on(['photos.user_id' => 'users.id']);
+
+        SqlAssert::same($select, 'SELECT * FROM {users} RIGHT JOIN {photos} ON {photos}.{user_id} = {users}.{id}');
+    }
+
+    #[Test]
+    public function testInnerJoin0(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->join('INNER', 'photos')->on(['photos.user_id' => 'users.id']);
+
+        SqlAssert::same($select, 'SELECT * FROM {users} INNER JOIN {photos} ON {photos}.{user_id} = {users}.{id}');
+    }
+
+    #[Test]
+    public function testInnerJoin1(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->join('INNER', 'photos')->on('photos.user_id', 'users.id');
+
+        SqlAssert::same($select, 'SELECT * FROM {users} INNER JOIN {photos} ON {photos}.{user_id} = {users}.{id}');
+    }
+
+    #[Test]
+    public function testInnerJoin2(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->innerJoin('photos')->on('photos.user_id', 'users.id');
+
+        SqlAssert::same($select, 'SELECT * FROM {users} INNER JOIN {photos} ON {photos}.{user_id} = {users}.{id}');
+    }
+
+    #[Test]
+    public function testInnerJoin3(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->innerJoin('photos')->on(['photos.user_id' => 'users.id']);
+
+        SqlAssert::same($select, 'SELECT * FROM {users} INNER JOIN {photos} ON {photos}.{user_id} = {users}.{id}');
+    }
+
+    #[Test]
+    public function testJoinWithFullTypeName(): void
+    {
+        $select = $this->database->select()
+            ->from('temperature as t')
+            ->where('t.date', '2022-01-05')
+            ->join(
+                type: 'LEFT JOIN LATERAL',
+                outer: $this->database->select()
+                    ->from('humidity')
+                    ->where('h.date', '<=', 't.date'),
+                alias: 'h',
+                on: new Fragment('true'),
+            );
+
+        SqlAssert::same($select, 'SELECT * FROM {temperature} AS {t}
+            LEFT JOIN LATERAL (SELECT * FROM {humidity} WHERE {h}.{date} <= ?) AS {h}
+            ON true WHERE {t}.{date} = ?');
+    }
+
+    //Join with WHERE
+
+    #[Test]
+    public function testJoinOnWhereParameterOrder(): void
+    {
+        $select = $this->database
+            ->select()
+            ->columns([
+                'users.id as memberId',
+                'users.name as name',
+                new Fragment('? as memberType', 1),
+                new Fragment('? as accessType', 3),
+                new Fragment('IF(admins.id, ?, ?) as invited', 1, 0),
+            ])
+            ->from(['users', 'admins'])
+            ->leftJoin('admins', 'admins')
+            ->on('users.admin_id', 'admins.id')
+            ->onWhere('admins.id', 37);
+
+        SqlAssert::sameWithParameters($select, <<<'SQL'
+                SELECT {users}.{id} AS {memberId},
+                    {users}.{name} AS {name},
+                    ? as memberType,
+                    ? as accessType,
+                    IF(admins.id, ?, ?) as invited
+                FROM {users}, {admins}
+                LEFT JOIN {admins} AS {admins} ON {users}.{admin_id}={admins}.{id} AND {admins}.{id} = ?
+                SQL, [1, 3, 1, 0, 37]);
+    }
+
+    #[Test]
+    public function testJoinWithComplexWhere(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->leftJoin('photos')->on('photos.user_id', 'users.id')->onWhere('photos.public', true);
+
+        SqlAssert::same($select, 'SELECT * FROM {users} LEFT JOIN {photos}
+                    ON {photos}.{user_id} = {users}.{id} AND {photos}.{public} = ?');
+    }
+
+    #[Test]
+    public function testJoinWithComplexOrWhere(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->leftJoin('photos')
+            ->on('photos.user_id', 'users.id')
+            ->orOn('photos.group_id', 'users.group_id');
+
+        SqlAssert::same($select, 'SELECT * FROM {users} LEFT JOIN {photos}
+                    ON {photos}.{user_id} = {users}.{id} OR {photos}.{group_id} = {users}.{group_id}');
+    }
+
+    #[Test]
+    public function testJoinWithComplexAndWhere(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->leftJoin('photos')
+            ->on('photos.user_id', 'users.id')
+            ->andOn('photos.group_id', 'users.group_id');
+
+        SqlAssert::same($select, 'SELECT * FROM {users} LEFT JOIN {photos}
+                    ON {photos}.{user_id} = {users}.{id} AND {photos}.{group_id} = {users}.{group_id}');
+    }
+
+    #[Test]
+    public function testJoinWithComplexAndWhereDefaults(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->leftJoin('photos')
+            ->on('photos.user_id', 'users.id')
+            ->on('photos.group_id', 'users.group_id');
+
+        SqlAssert::same($select, 'SELECT * FROM {users} LEFT JOIN {photos}
+                    ON {photos}.{user_id} = {users}.{id} AND {photos}.{group_id} = {users}.{group_id}');
+    }
+
+    #[Test]
+    public function testJoinWithComplexWhereAndOR(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->leftJoin('photos')
+            ->on('photos.user_id', 'users.id')
+            ->onWhere('photos.public', true)
+            ->orOnWhere('photos.magic', '>', 900);
+
+        SqlAssert::same($select, 'SELECT * FROM {users} LEFT JOIN {photos}
+                    ON {photos}.{user_id} = {users}.{id} AND {photos}.{public} = ? OR {photos}.{magic} > ?');
+    }
+
+    #[Test]
+    public function testJoinWithComplexWhereAnd(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->leftJoin('photos')
+            ->on('photos.user_id', 'users.id')
+            ->onWhere('photos.public', true)
+            ->andOnWhere('photos.magic', '>', 900);
+
+        SqlAssert::same($select, 'SELECT * FROM {users} LEFT JOIN {photos}
+                    ON {photos}.{user_id} = {users}.{id} AND {photos}.{public} = ? AND {photos}.{magic} > ?');
+    }
+
+    #[Test]
+    public function testJoinWithComplexWhereAndDefaults(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->leftJoin('photos')
+            ->on('photos.user_id', 'users.id')
+            ->onWhere('photos.public', true)
+            ->onWhere('photos.magic', '>', 900);
+
+        SqlAssert::same($select, 'SELECT * FROM {users} LEFT JOIN {photos}
+                    ON {photos}.{user_id} = {users}.{id} AND {photos}.{public} = ? AND {photos}.{magic} > ?');
+    }
+
+    //Join aliases
+
+    #[Test]
+    public function testJoinAliases(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->leftJoin('photos as p')
+            ->on(
+                [
+                    'p.user_id' => 'users.id',
+                    'p.public' => new Parameter(true),
+                ],
+            );
+
+        SqlAssert::same($select, 'SELECT * FROM {users} LEFT JOIN {photos} AS {p}
+                    ON ({p}.{user_id} = {users}.{id} AND {p}.{public} = ?)');
+    }
+
+    #[Test]
+    public function testJoinAliasesWithPrefixes(): void
+    {
+        $select = $this->db('prefixed', 'prefix_')->select()
+            ->from(['users'])
+            ->leftJoin('photos as p')
+            ->on(
+                [
+                    'p.user_id' => 'users.id',
+                    'p.public' => new Parameter(true),
+                ],
+            );
+
+        SqlAssert::same($select, 'SELECT * FROM {prefix_users} LEFT JOIN {prefix_photos} AS {p}
+                    ON ({p}.{user_id} = {prefix_users}.{id} AND {p}.{public} = ?)');
+    }
+
+    #[Test]
+    public function testJoinAliasesWithPrefixesAlternative(): void
+    {
+        $select = $this->db('prefixed', 'prefix_')->select()
+            ->from(['users'])
+            ->leftJoin('photos', 'p')
+            ->on(
+                [
+                    'p.user_id' => 'users.id',
+                    'p.public' => new Parameter(true),
+                ],
+            );
+
+        SqlAssert::same($select, 'SELECT * FROM {prefix_users} LEFT JOIN {prefix_photos} AS {p}
+                    ON ({p}.{user_id} = {prefix_users}.{id} AND {p}.{public} = ?)');
+    }
+
+    #[Test]
+    public function testJoinAliasesWithPrefixesAndAliases(): void
+    {
+        $select = $this->db('prefixed', 'prefix_')->select()
+            ->from(['users as u'])
+            ->leftJoin('photos as p')
+            ->on(
+                [
+                    'p.user_id' => 'u.id',
+                    'p.public' => new Parameter(true),
+                ],
+            );
+
+        SqlAssert::same($select, 'SELECT * FROM {prefix_users} AS {u} LEFT JOIN {prefix_photos} AS {p}
+                    ON ({p}.{user_id} = {u}.{id} AND {p}.{public} = ?)');
+    }
+
+    //Complex verification example
+    #[Test]
+    public function testComplexExample(): void
+    {
+        $statuses = new Parameter(['active', 'disabled']);
+
+        $select = $this->db('prefixed', 'prefix_')
+            ->select('COUNT(*)', 'groups.id', 'u.id', 'SUM(t.amount)')
+            ->from(['users as u'])
+            ->leftJoin('transactions as t')->on(['t.user_id' => 'u.id'])
+            ->rightJoin('groups')->on(['groups.id' => 'u.group_id'])
+            ->onWhere('groups.public', true)
+            ->where('u.status', 'IN', $statuses)
+            ->orderBy('u.name', 'DESC')
+            ->groupBy('u.id');
+
+        SqlAssert::same($select, 'SELECT COUNT(*), {prefix_groups}.{id}, {u}.{id}, SUM({t}.{amount}) '
+        . 'FROM {prefix_users} AS {u}'
+        . 'LEFT JOIN {prefix_transactions} AS {t} ON {t}.{user_id} = {u}.{id}'
+        . 'RIGHT JOIN {prefix_groups} ON {prefix_groups}.{id} = {u}.{group_id} AND {prefix_groups}.{public} = ?'
+        . 'WHERE {u}.{status} IN (?,?)'
+        . 'GROUP BY {u}.{id}'
+        . 'ORDER BY {u}.{name} DESC');
+    }
+
+    #[Test]
+    public function testJoinQuery(): void
+    {
+        $select = $this->db('prefixed', 'prefix_')->select()
+            ->from(['users as u'])
+            ->leftJoin(
+                $this->db('prefixed', 'prefix_')
+                    ->select()->from('posts AS p')
+                    ->where('p.user_id', new Expression('u.id')),
+                'sub_posts',
+            );
+
+        SqlAssert::same($select, 'SELECT * FROM {prefix_users} AS {u} LEFT JOIN (
+                    SELECT * FROM {prefix_posts} AS {p}
+                    WHERE {p}.{user_id} = {u}.{id}
+                  ) AS {sub_posts} ');
+    }
+
+    #[Test]
+    public function testWrapOnWhereGroupsAllExistingOnTokens(): void
+    {
+        // `on()` and `onWhere()` share the same internal token list, so wrapOnWhere
+        // encloses the join key together with onWhere conditions. This is harmless
+        // (equality join key inside the group keeps the same logical result) and
+        // even more protective against later orOnWhere additions.
+        $select = $this->database->select()
+            ->from(['users'])
+            ->leftJoin('posts')
+            ->on('posts.user_id', 'users.id')
+            ->onWhere('posts.published', true)
+            ->orOnWhere('posts.featured', true)
+            ->wrapOnWhere()
+            ->onWhere('posts.archived', false);
+
+        SqlAssert::sameWithParameters($select, 'SELECT * FROM {users} LEFT JOIN {posts}
+                ON ({posts}.{user_id} = {users}.{id}
+                    AND {posts}.{published} = ? OR {posts}.{featured} = ?)
+                AND {posts}.{archived} = ?', [true, true, false]);
+    }
+
+    #[Test]
+    public function testWrapOnWhereProtectsScopeFromLaterOrOnWhere(): void
+    {
+        // Mirrors the soft-delete-style scope on a joined relation: condition added
+        // first, then wrapped, then a user-supplied orOnWhere — without wrapOnWhere
+        // the scope would be lost on the OR arm.
+        $select = $this->database->select()
+            ->from(['users'])
+            ->leftJoin('posts')
+            ->on('posts.user_id', 'users.id')
+            ->onWhere('posts.deleted_at', null)
+            ->wrapOnWhere()
+            ->orOnWhere('posts.id', 5);
+
+        SqlAssert::sameWithParameters($select, 'SELECT * FROM {users} LEFT JOIN {posts}
+                ON ({posts}.{user_id} = {users}.{id}
+                    AND {posts}.{deleted_at} IS NULL)
+                OR {posts}.{id} = ?', [5]);
+    }
+
+    #[Test]
+    public function testWrapOnWhereWithNoExistingOnTokensIsNoop(): void
+    {
+        // Join registered but with no on/onWhere yet — wrapOnWhere does nothing.
+        $select = $this->database->select()
+            ->from(['users'])
+            ->leftJoin('posts')
+            ->wrapOnWhere()
+            ->onWhere('posts.published', true);
+
+        SqlAssert::sameWithParameters($select, 'SELECT * FROM {users} LEFT JOIN {posts}
+                ON {posts}.{published} = ?', [true]);
+    }
+
+    #[Test]
+    public function testWrapOnWhereTargetsOnlyLastRegisteredJoinInSql(): void
+    {
+        $select = $this->database->select()
+            ->from(['users'])
+            ->leftJoin('posts')
+            ->on('posts.user_id', 'users.id')
+            ->onWhere('posts.published', true)
+            ->orOnWhere('posts.featured', true)
+            ->leftJoin('comments')
+            ->on('comments.user_id', 'users.id')
+            ->onWhere('comments.approved', true)
+            ->orOnWhere('comments.pinned', true)
+            ->wrapOnWhere(); // affects only the second join
+
+        SqlAssert::sameWithParameters($select, 'SELECT * FROM {users}
+                LEFT JOIN {posts} ON {posts}.{user_id} = {users}.{id}
+                    AND {posts}.{published} = ? OR {posts}.{featured} = ?
+                LEFT JOIN {comments} ON ({comments}.{user_id} = {users}.{id}
+                    AND {comments}.{approved} = ? OR {comments}.{pinned} = ?)', [true, true, true, true]);
+    }
+
+    #[Test]
+    public function testJoinQueryWithParameters(): void
+    {
+        $subSelect = $this->db('prefixed', 'prefix_')->select()
+            ->from('posts AS p')
+            ->where('p.feed', 'news');
+
+        $select = $this->db('prefixed', 'prefix_')->select()
+            ->columns('u.id, u.name, p.feed, p.title')
+            ->from(['users as u'])
+            ->innerJoin($subSelect, 'p')
+            ->on('p.user_id', 'u.id')
+            ->onWhere('p.channel', 'internal')
+            ->where('u.status', 'active');
+
+        SqlAssert::sameWithParameters($select, 'SELECT {u}.{id}, {u}.{name}, {p}.{feed}, {p}.{title}
+                FROM {prefix_users} AS {u}
+                INNER JOIN (
+                  SELECT *
+                  FROM {prefix_posts} AS {p}
+                  WHERE {p}.{feed} = ?
+                ) AS {p} ON {p}.{user_id} = {u}.{id} AND {p}.{channel} = ?
+              WHERE {u}.{status} = ?', ['news', 'internal', 'active']);
+    }
+}

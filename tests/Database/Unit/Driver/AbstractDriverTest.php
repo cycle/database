@@ -11,18 +11,19 @@ use Cycle\Database\Driver\HandlerInterface;
 use Cycle\Database\Driver\PDOInterface;
 use Cycle\Database\Driver\PDOStatementInterface;
 use Cycle\Database\Query\BuilderInterface;
-use Cycle\Database\Tests\Unit\Stub\TestDriver;
+use Cycle\Testing\Database\Mock\StubDriver;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Testo\Assert;
+use Testo\Expect;
+use Testo\Lifecycle\BeforeTest;
+use Testo\Test;
 
-class AbstractDriverTest
+#[Test]
+final class AbstractDriverTest
 {
-    use m\Adapter\Phpunit\MockeryPHPUnitIntegration;
-
     private Driver $driver;
 
-    #[\Testo\Test]
     public function testLoggerShouldBeSet(): void
     {
         $logger = m::mock(LoggerInterface::class);
@@ -33,14 +34,12 @@ class AbstractDriverTest
         $this->driver->lastInsertID();
     }
 
-    #[\Testo\Test]
     public function testGetNotSetNameShouldThrowAnException(): void
     {
-        \Testo\Expect::exception(\RuntimeException::class)->withMessageContaining('Driver name is not defined.');
+        Expect::exception(\RuntimeException::class)->withMessageContaining('Driver name is not defined.');
         $this->driver->getName();
     }
 
-    #[\Testo\Test]
     public function testWithName(): void
     {
         $handler = m::mock(HandlerInterface::class);
@@ -49,22 +48,21 @@ class AbstractDriverTest
         $handler->shouldReceive('withDriver')->once();
         $builder->shouldReceive('withDriver')->once();
 
-        $driver = TestDriver::createWith(
-            new SQLiteDriverConfig(),
-            $handler,
-            $builder,
+        $driver = StubDriver::make(
+            config: new SQLiteDriverConfig(),
+            handler: $handler,
+            builder: $builder,
         );
 
         $driver->getSchemaHandler()->shouldReceive('withDriver')->once();
         $driver->getQueryBuilder()->shouldReceive('withDriver')->once();
 
         $newDriver = $driver->withName('test');
-        \Testo\Assert::same($newDriver->getName(), 'test');
+        Assert::same($newDriver->getName(), 'test');
 
         $this->checkImmutability($driver, $newDriver);
     }
 
-    #[\Testo\Test]
     public function testClone(): void
     {
         $handler = m::mock(HandlerInterface::class);
@@ -73,10 +71,10 @@ class AbstractDriverTest
         $handler->shouldReceive('withDriver')->once();
         $builder->shouldReceive('withDriver')->once();
 
-        $driver = TestDriver::createWith(
-            new SQLiteDriverConfig(),
-            $handler,
-            $builder,
+        $driver = StubDriver::make(
+            config: new SQLiteDriverConfig(),
+            handler: $handler,
+            builder: $builder,
         );
 
         $driver->getSchemaHandler()->shouldReceive('withDriver')->once();
@@ -87,21 +85,20 @@ class AbstractDriverTest
         $this->checkImmutability($driver, $newDriver);
     }
 
-    #[\Testo\Test]
     public function testLogsWithDisabledInterpolation(): void
     {
-        $pdo = \Mockery::mock(PDOInterface::class)->shouldIgnoreMissing();
-        $pdo->shouldReceive('prepare')->once()->andReturn(\Mockery::mock(PDOStatementInterface::class)->shouldIgnoreMissing());
+        $pdo = m::mock(PDOInterface::class)->shouldIgnoreMissing();
+        $pdo->shouldReceive('prepare')->once()->andReturn(m::mock(PDOStatementInterface::class)->shouldIgnoreMissing());
 
-        $driver = TestDriver::createWith(
-            new SQLiteDriverConfig(),
-            \Mockery::mock(HandlerInterface::class)->shouldIgnoreMissing(),
-            \Mockery::mock(BuilderInterface::class)->shouldIgnoreMissing(),
-            $pdo,
+        $driver = StubDriver::make(
+            config: new SQLiteDriverConfig(),
+            handler: m::mock(HandlerInterface::class)->shouldIgnoreMissing(),
+            builder: m::mock(BuilderInterface::class)->shouldIgnoreMissing(),
+            pdo: $pdo,
         );
 
-        $logger = \Mockery::mock(LoggerInterface::class)->shouldIgnoreMissing();
-        $logger->shouldReceive('info')->once()->with('SELECT * FROM sample_table WHERE id IN (?, ?, ?) ORDER BY id ASC', \Mockery::andAnyOtherArgs());
+        $logger = m::mock(LoggerInterface::class)->shouldIgnoreMissing();
+        $logger->shouldReceive('info')->once()->with('SELECT * FROM sample_table WHERE id IN (?, ?, ?) ORDER BY id ASC', m::andAnyOtherArgs());
         $driver->setLogger($logger);
 
         $driver->query(
@@ -110,21 +107,20 @@ class AbstractDriverTest
         );
     }
 
-    #[\Testo\Test]
     public function testLogsWithEnabledInterpolation(): void
     {
-        $pdo = \Mockery::mock(PDOInterface::class)->shouldIgnoreMissing();
-        $pdo->shouldReceive('prepare')->once()->andReturn(\Mockery::mock(PDOStatementInterface::class)->shouldIgnoreMissing());
+        $pdo = m::mock(PDOInterface::class)->shouldIgnoreMissing();
+        $pdo->shouldReceive('prepare')->once()->andReturn(m::mock(PDOStatementInterface::class)->shouldIgnoreMissing());
 
-        $driver = TestDriver::createWith(
-            new SQLiteDriverConfig(options: ['logInterpolatedQueries' => true]),
-            \Mockery::mock(HandlerInterface::class)->shouldIgnoreMissing(),
-            \Mockery::mock(BuilderInterface::class)->shouldIgnoreMissing(),
-            $pdo,
+        $driver = StubDriver::make(
+            config: new SQLiteDriverConfig(options: ['logInterpolatedQueries' => true]),
+            handler: m::mock(HandlerInterface::class)->shouldIgnoreMissing(),
+            builder: m::mock(BuilderInterface::class)->shouldIgnoreMissing(),
+            pdo: $pdo,
         );
 
-        $logger = \Mockery::mock(LoggerInterface::class)->shouldIgnoreMissing();
-        $logger->shouldReceive('info')->once()->with('SELECT * FROM sample_table WHERE id IN (1, 2, 3) ORDER BY id ASC', \Mockery::andAnyOtherArgs());
+        $logger = m::mock(LoggerInterface::class)->shouldIgnoreMissing();
+        $logger->shouldReceive('info')->once()->with('SELECT * FROM sample_table WHERE id IN (1, 2, 3) ORDER BY id ASC', m::andAnyOtherArgs());
         $driver->setLogger($logger);
 
         $driver->query(
@@ -133,24 +129,23 @@ class AbstractDriverTest
         );
     }
 
-    #[\Testo\Test]
     public function testLogsQueryParameters(): void
     {
-        $pdo = \Mockery::mock(PDOInterface::class)->shouldIgnoreMissing();
-        $pdo->shouldReceive('prepare')->once()->andReturn(\Mockery::mock(PDOStatementInterface::class)->shouldIgnoreMissing());
+        $pdo = m::mock(PDOInterface::class)->shouldIgnoreMissing();
+        $pdo->shouldReceive('prepare')->once()->andReturn(m::mock(PDOStatementInterface::class)->shouldIgnoreMissing());
 
-        $driver = TestDriver::createWith(
-            new SQLiteDriverConfig(options: [
+        $driver = StubDriver::make(
+            config: new SQLiteDriverConfig(options: [
                 'logInterpolatedQueries' => false,
                 'logQueryParameters' => true,
             ]),
-            \Mockery::mock(HandlerInterface::class)->shouldIgnoreMissing(),
-            \Mockery::mock(BuilderInterface::class)->shouldIgnoreMissing(),
-            $pdo,
+            handler: m::mock(HandlerInterface::class)->shouldIgnoreMissing(),
+            builder: m::mock(BuilderInterface::class)->shouldIgnoreMissing(),
+            pdo: $pdo,
         );
 
-        $logger = \Mockery::mock(LoggerInterface::class)->shouldIgnoreMissing();
-        $logger->shouldReceive('info')->once()->with('SELECT * FROM sample_table WHERE id IN (?, ?, ?) ORDER BY id ASC', \Mockery::on(static function (array $context) {
+        $logger = m::mock(LoggerInterface::class)->shouldIgnoreMissing();
+        $logger->shouldReceive('info')->once()->with('SELECT * FROM sample_table WHERE id IN (?, ?, ?) ORDER BY id ASC', m::on(static function (array $context) {
             if (!isset($context['parameters'])) {
                 return false;
             }
@@ -163,7 +158,7 @@ class AbstractDriverTest
             }
 
             return isset($context['driver']);
-        }), \Mockery::andAnyOtherArgs());
+        }), m::andAnyOtherArgs());
         $driver->setLogger($logger);
 
         $driver->query(
@@ -172,97 +167,91 @@ class AbstractDriverTest
         );
     }
 
-    #[\Testo\Test]
     public function testLogsWithEnabledInterpolationAndWithDatetimeMicroseconds(): void
     {
-        $pdo = \Mockery::mock(PDOInterface::class)->shouldIgnoreMissing();
-        $pdo->shouldReceive('prepare')->once()->andReturn(\Mockery::mock(PDOStatementInterface::class)->shouldIgnoreMissing());
+        $pdo = m::mock(PDOInterface::class)->shouldIgnoreMissing();
+        $pdo->shouldReceive('prepare')->once()->andReturn(m::mock(PDOStatementInterface::class)->shouldIgnoreMissing());
 
-        $driver = TestDriver::createWith(
-            new SQLiteDriverConfig(options: ['logInterpolatedQueries' => true, 'withDatetimeMicroseconds' => true]),
-            \Mockery::mock(HandlerInterface::class)->shouldIgnoreMissing(),
-            \Mockery::mock(BuilderInterface::class)->shouldIgnoreMissing(),
-            $pdo,
+        $driver = StubDriver::make(
+            config: new SQLiteDriverConfig(options: ['logInterpolatedQueries' => true, 'withDatetimeMicroseconds' => true]),
+            handler: m::mock(HandlerInterface::class)->shouldIgnoreMissing(),
+            builder: m::mock(BuilderInterface::class)->shouldIgnoreMissing(),
+            pdo: $pdo,
         );
 
         $date = new \DateTime('now');
-        $logger = \Mockery::mock(LoggerInterface::class)->shouldIgnoreMissing();
+        $logger = m::mock(LoggerInterface::class)->shouldIgnoreMissing();
         $logger->shouldReceive('info')->once()->with(\sprintf(
             'SELECT * FROM sample_table WHERE name = \'%s\' AND registered > \'%s\'',
             'John Doe',
             $date->format('Y-m-d H:i:s.u'),
-        ), \Mockery::andAnyOtherArgs());
+        ), m::andAnyOtherArgs());
         $driver->setLogger($logger);
 
         $driver->query('SELECT * FROM sample_table WHERE name = ? AND registered > ?', ['John Doe', $date]);
     }
 
-    #[\Testo\Test]
     public function testUseCacheFromConfig(): void
     {
         $ref = new \ReflectionProperty(Driver::class, 'useCache');
         $ref->setAccessible(true);
 
-        \Testo\Assert::true($ref->getValue(TestDriver::create(new SQLiteDriverConfig(queryCache: true))));
-        \Testo\Assert::false($ref->getValue(TestDriver::create(new SQLiteDriverConfig(queryCache: false))));
+        Assert::true($ref->getValue(StubDriver::create(new SQLiteDriverConfig(queryCache: true))));
+        Assert::false($ref->getValue(StubDriver::create(new SQLiteDriverConfig(queryCache: false))));
     }
 
-    #[\Testo\Test]
     public function testWithoutCache(): void
     {
         $ref = new \ReflectionProperty(Driver::class, 'useCache');
         $ref->setAccessible(true);
 
-        $driver = TestDriver::create(new SQLiteDriverConfig(queryCache: true));
+        $driver = StubDriver::create(new SQLiteDriverConfig(queryCache: true));
 
-        \Testo\Assert::true($ref->getValue($driver));
-        \Testo\Assert::false($ref->getValue($driver->withoutCache()));
+        Assert::true($ref->getValue($driver));
+        Assert::false($ref->getValue($driver->withoutCache()));
     }
 
-    #[\Testo\Test]
     public function testWithoutCacheTwice(): void
     {
-        $driver = TestDriver::create(new SQLiteDriverConfig(queryCache: true));
+        $driver = StubDriver::create(new SQLiteDriverConfig(queryCache: true));
 
         $ncDriver = $driver->withoutCache();
 
-        \Testo\Assert::same($ncDriver->withoutCache(), $ncDriver);
+        Assert::same($ncDriver->withoutCache(), $ncDriver);
     }
 
-    #[\Testo\Test]
     public function testWithoutCacheOnWithoutCacheInitially(): void
     {
-        $driver = TestDriver::create(new SQLiteDriverConfig(queryCache: false));
+        $driver = StubDriver::create(new SQLiteDriverConfig(queryCache: false));
 
-        \Testo\Assert::same($driver->withoutCache(), $driver);
+        Assert::same($driver->withoutCache(), $driver);
     }
 
-    #[\Testo\Test]
     public function testPdoNotClonedAfterCacheDisabled(): void
     {
         $ref = new \ReflectionMethod(Driver::class, 'getPDO');
         $ref->setAccessible(true);
 
-        $driver = TestDriver::create(new SQLiteDriverConfig(queryCache: true));
+        $driver = StubDriver::create(new SQLiteDriverConfig(queryCache: true));
         $oldPDO = $ref->invoke($driver);
 
         $driver = $driver->withoutCache();
         $newPDO = $ref->invoke($driver);
 
-        \Testo\Assert::same($newPDO, $oldPDO);
+        Assert::same($newPDO, $oldPDO);
     }
 
-    #[\Testo\Lifecycle\BeforeTest]
+    #[BeforeTest]
     protected function setUp(): void
     {
-        $this->driver = TestDriver::create(new SQLiteDriverConfig());
+        $this->driver = StubDriver::create(new SQLiteDriverConfig());
     }
 
     private function checkImmutability(DriverInterface $driver, DriverInterface $newDriver): void
     {
         // Immutability
-        \Testo\Assert::notSame($newDriver, $driver);
-        \Testo\Assert::notSame($newDriver->getSchemaHandler(), $driver->getSchemaHandler());
-        \Testo\Assert::notSame($newDriver->getQueryBuilder(), $driver->getQueryBuilder());
+        Assert::notSame($newDriver, $driver);
+        Assert::notSame($newDriver->getSchemaHandler(), $driver->getSchemaHandler());
+        Assert::notSame($newDriver->getQueryBuilder(), $driver->getQueryBuilder());
     }
 }

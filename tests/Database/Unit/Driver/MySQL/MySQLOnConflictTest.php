@@ -9,69 +9,66 @@ use Cycle\Database\Driver\Postgres\PostgresOnConflict;
 use Cycle\Database\Exception\BuilderException;
 use Cycle\Database\Query\OnConflict;
 use Cycle\Database\Query\QueryParameters;
-use PHPUnit\Framework\TestCase;
+use Testo\Assert;
+use Testo\Assert\ExpectException;
+use Testo\Expect;
+use Testo\Test;
 
-class MySQLOnConflictTest
+#[Test]
+final class MySQLOnConflictTest
 {
-    #[\Testo\Test]
     public function testDefaultRowAlias(): void
     {
         $c = MySQLOnConflict::target('email');
 
-        \Testo\Assert::same($c->getRowAlias(), MySQLOnConflict::DEFAULT_ROW_ALIAS);
+        Assert::same($c->getRowAlias(), MySQLOnConflict::DEFAULT_ROW_ALIAS);
     }
 
-    #[\Testo\Test]
     public function testWithRowAlias(): void
     {
         $c = MySQLOnConflict::target('email')->withRowAlias('updated');
 
-        \Testo\Assert::same($c->getRowAlias(), 'updated');
+        Assert::same($c->getRowAlias(), 'updated');
     }
 
-    #[\Testo\Test]
+    #[ExpectException(BuilderException::class)]
     public function testWithRowAliasEmptyRejected(): void
     {
-        \Testo\Expect::exception(BuilderException::class);
         MySQLOnConflict::target('email')->withRowAlias('');
     }
 
-    #[\Testo\Test]
     public function testWithRowAliasIsImmutable(): void
     {
         $base = MySQLOnConflict::target('email');
         $modified = $base->withRowAlias('updated');
 
-        \Testo\Assert::same($base->getRowAlias(), MySQLOnConflict::DEFAULT_ROW_ALIAS);
-        \Testo\Assert::same($modified->getRowAlias(), 'updated');
+        Assert::same($base->getRowAlias(), MySQLOnConflict::DEFAULT_ROW_ALIAS);
+        Assert::same($modified->getRowAlias(), 'updated');
     }
 
-    #[\Testo\Test]
     public function testFromBase(): void
     {
         $base = OnConflict::target('email')->doUpdate(['name']);
         $mysql = MySQLOnConflict::from($base);
 
-        \Testo\Assert::instanceOf($mysql, MySQLOnConflict::class);
-        \Testo\Assert::same($mysql->getTarget(), ['email']);
-        \Testo\Assert::same($mysql->getRowAlias(), MySQLOnConflict::DEFAULT_ROW_ALIAS);
+        Assert::instanceOf($mysql, MySQLOnConflict::class);
+        Assert::same($mysql->getTarget(), ['email']);
+        Assert::same($mysql->getRowAlias(), MySQLOnConflict::DEFAULT_ROW_ALIAS);
     }
 
-    #[\Testo\Test]
     public function testFromOtherDriverSubclassRejected(): void
     {
         $pg = PostgresOnConflict::target('email');
 
-        \Testo\Expect::exception(BuilderException::class);
+        Expect::exception(BuilderException::class);
         MySQLOnConflict::from($pg);
     }
 
-    #[\Testo\Test]
     public function testCacheKeyIncludesRowAlias(): void
     {
         $a = MySQLOnConflict::target('email')->doUpdate(['name']);
         $b = MySQLOnConflict::target('email')->withRowAlias('custom')->doUpdate(['name']);
 
-        \Testo\Assert::notSame($b->getCacheKey(new QueryParameters()), $a->getCacheKey(new QueryParameters()));
+        Assert::notSame($b->getCacheKey(new QueryParameters()), $a->getCacheKey(new QueryParameters()));
     }
 }

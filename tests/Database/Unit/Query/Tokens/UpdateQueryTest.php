@@ -7,11 +7,12 @@ namespace Cycle\Database\Tests\Unit\Query\Tokens;
 use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\UpdateQuery;
-use PHPUnit\Framework\TestCase;
+use Testo\Assert;
+use Testo\Test;
 
-class UpdateQueryTest
+#[Test]
+final class UpdateQueryTest
 {
-    #[\Testo\Test]
     public function testBuildQuery(): void
     {
         $delete = new UpdateQuery();
@@ -21,9 +22,9 @@ class UpdateQueryTest
             ->where(['name' => 'Antony'])
             ->orWhere('id', '>', 1);
 
-        \Testo\Assert::same($delete->getType(), CompilerInterface::UPDATE_QUERY);
+        Assert::same($delete->getType(), CompilerInterface::UPDATE_QUERY);
 
-        \Testo\Assert::equals($delete->getTokens(), [
+        Assert::equals($delete->getTokens(), [
             'table' => 'table',
             'values' => [
                 'name' => 'John',

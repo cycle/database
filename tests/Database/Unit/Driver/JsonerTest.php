@@ -5,8 +5,12 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Unit\Driver;
 
 use Cycle\Database\Driver\Jsoner;
-use PHPUnit\Framework\TestCase;
+use Testo\Assert;
+use Testo\Assert\ExpectException;
+use Testo\Data\DataProvider;
+use Testo\Test;
 
+#[Test]
 final class JsonerTest
 {
     public static function toJsonValuesDataProvider(): \Traversable
@@ -61,18 +65,16 @@ final class JsonerTest
         yield [\fopen(__FILE__, 'rb'), true, true];
     }
 
-    #[\Testo\Test]
-    #[\Testo\Data\DataProvider('toJsonValuesDataProvider')]
+    #[DataProvider('toJsonValuesDataProvider')]
     public function testToJson(mixed $value, mixed $expected, bool $encode, bool $validate): void
     {
-        \Testo\Assert::same(Jsoner::toJson($value, $encode, $validate), $expected);
+        Assert::same(Jsoner::toJson($value, $encode, $validate), $expected);
     }
 
-    #[\Testo\Test]
-    #[\Testo\Data\DataProvider('toJsonInvalidValuesDataProvider')]
+    #[DataProvider('toJsonInvalidValuesDataProvider')]
+    #[ExpectException(\Exception::class)]
     public function testToJsonException(mixed $value, bool $encode, bool $validate): void
     {
-        \Testo\Expect::exception(\Exception::class);
         Jsoner::toJson($value, $encode, $validate);
     }
 }

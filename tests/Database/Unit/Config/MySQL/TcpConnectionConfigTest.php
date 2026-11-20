@@ -6,10 +6,13 @@ namespace Cycle\Database\Tests\Unit\Config\MySQL;
 
 use Cycle\Database\Config\MySQL\TcpConnectionConfig;
 use Cycle\Database\Tests\Unit\Config\BaseConfigTest;
+use Testo\Assert;
+use Testo\Data\DataProvider;
+use Testo\Test;
 
+#[Test]
 final class TcpConnectionConfigTest extends BaseConfigTest
 {
-    #[\Testo\Test]
     public function testSetState(): void
     {
         $testOptionKey = 'option-1';
@@ -29,16 +32,15 @@ final class TcpConnectionConfigTest extends BaseConfigTest
         /** @var TcpConnectionConfig $recoveredConfig */
         eval('$recoveredConfig = ' . $exported . ';');
 
-        \Testo\Assert::same($recoveredConfig->getDsn(), "mysql:host=$host;port=$port;dbname=$database;charset=$charset");
-        \Testo\Assert::same($recoveredConfig->getSourceString(), $database);
-        \Testo\Assert::same($recoveredConfig->getUsername(), $user);
-        \Testo\Assert::same($recoveredConfig->getPassword(), $password);
-        \Testo\Assert::array($recoveredConfig->getOptions())->hasKeys($testOptionKey);
-        \Testo\Assert::same($recoveredConfig->getOptions()[$testOptionKey], $testOptionValue);
+        Assert::same($recoveredConfig->getDsn(), "mysql:host=$host;port=$port;dbname=$database;charset=$charset");
+        Assert::same($recoveredConfig->getSourceString(), $database);
+        Assert::same($recoveredConfig->getUsername(), $user);
+        Assert::same($recoveredConfig->getPassword(), $password);
+        Assert::array($recoveredConfig->getOptions())->hasKeys($testOptionKey);
+        Assert::same($recoveredConfig->getOptions()[$testOptionKey], $testOptionValue);
     }
 
-    #[\Testo\Test]
-    #[\Testo\Data\DataProvider('portDataProvider')]
+    #[DataProvider('portDataProvider')]
     public function testPort(int|string $port, int $expected): void
     {
         $config = new TcpConnectionConfig(
@@ -46,6 +48,6 @@ final class TcpConnectionConfigTest extends BaseConfigTest
             port: $port,
         );
 
-        \Testo\Assert::same($config->port, $expected);
+        Assert::same($config->port, $expected);
     }
 }

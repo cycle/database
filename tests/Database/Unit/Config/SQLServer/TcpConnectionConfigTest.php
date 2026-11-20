@@ -6,10 +6,13 @@ namespace Cycle\Database\Tests\Unit\Config\SQLServer;
 
 use Cycle\Database\Config\SQLServer\TcpConnectionConfig;
 use Cycle\Database\Tests\Unit\Config\BaseConfigTest;
+use Testo\Assert;
+use Testo\Data\DataProvider;
+use Testo\Test;
 
+#[Test]
 final class TcpConnectionConfigTest extends BaseConfigTest
 {
-    #[\Testo\Test]
     public function testSetState(): void
     {
         $testOptionKey = 'option-1';
@@ -40,7 +43,7 @@ final class TcpConnectionConfigTest extends BaseConfigTest
         /** @var TcpConnectionConfig $recoveredConfig */
         eval('$recoveredConfig = ' . $exported . ';');
 
-        \Testo\Assert::same($recoveredConfig->getDsn(), \sprintf(
+        Assert::same($recoveredConfig->getDsn(), \sprintf(
             'sqlsrv:APP=%s;ConnectionPooling=%s;Database=%s;Encrypt=%s;Failover_Partner=%s;LoginTimeout=%s;MultipleActiveResultSets=%s;QuotedId=%s;Server=%s,%s;TraceFile=%s;TraceOn=%s;TransactionIsolation=%s;TrustServerCertificate=%s;WSID=%s',
             $app,
             (int) $pooling,
@@ -58,16 +61,15 @@ final class TcpConnectionConfigTest extends BaseConfigTest
             (int) $trustServerCertificate,
             $wsid,
         ));
-        \Testo\Assert::same($recoveredConfig->getSourceString(), $database);
-        \Testo\Assert::same($recoveredConfig->getUsername(), $user);
-        \Testo\Assert::same($recoveredConfig->getPassword(), $password);
-        \Testo\Assert::array($recoveredConfig->getOptions())->hasKeys($testOptionKey);
-        \Testo\Assert::same($recoveredConfig->getOptions()[$testOptionKey], $testOptionValue);
+        Assert::same($recoveredConfig->getSourceString(), $database);
+        Assert::same($recoveredConfig->getUsername(), $user);
+        Assert::same($recoveredConfig->getPassword(), $password);
+        Assert::array($recoveredConfig->getOptions())->hasKeys($testOptionKey);
+        Assert::same($recoveredConfig->getOptions()[$testOptionKey], $testOptionValue);
     }
 
-    #[\Testo\Test]
-    #[\Testo\Data\DataProvider('portDataProvider')]
-    #[\Testo\Data\DataProvider('nullPortDataProvider')]
+    #[DataProvider('portDataProvider')]
+    #[DataProvider('nullPortDataProvider')]
     public function testPort(int|string|null $port, ?int $expected): void
     {
         $config = new TcpConnectionConfig(
@@ -75,7 +77,7 @@ final class TcpConnectionConfigTest extends BaseConfigTest
             port: $port,
         );
 
-        \Testo\Assert::same($config->port, $expected);
+        Assert::same($config->port, $expected);
     }
 
     public function nullPortDataProvider(): \Traversable

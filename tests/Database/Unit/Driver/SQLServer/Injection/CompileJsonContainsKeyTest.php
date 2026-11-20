@@ -6,11 +6,14 @@ namespace Cycle\Database\Tests\Unit\Driver\SQLServer\Injection;
 
 use Cycle\Database\Driver\SQLServer\Injection\CompileJsonContainsKey;
 use Cycle\Database\Driver\SQLServer\Injection\CompileJsonDoesntContainKey;
-use PHPUnit\Framework\TestCase;
+use Testo\Assert;
+use Testo\Data\DataProvider;
+use Testo\Test;
 
 /**
  * The last path segment is written into the SQL text, so it must stay inside a string literal.
  */
+#[Test]
 final class CompileJsonContainsKeyTest
 {
     public static function provideStatements(): iterable
@@ -53,11 +56,10 @@ final class CompileJsonContainsKeyTest
         ];
     }
 
-    #[\Testo\Test]
-    #[\Testo\Data\DataProvider('provideStatements')]
+    #[DataProvider('provideStatements')]
     public function testKeyStaysInsideStringLiteral(string $statement, string $expected): void
     {
-        \Testo\Assert::same((new CompileJsonContainsKey($statement))->getTokens()['expression'], $expected);
-        \Testo\Assert::same((new CompileJsonDoesntContainKey($statement))->getTokens()['expression'], 'NOT ' . $expected);
+        Assert::same((new CompileJsonContainsKey($statement))->getTokens()['expression'], $expected);
+        Assert::same((new CompileJsonDoesntContainKey($statement))->getTokens()['expression'], 'NOT ' . $expected);
     }
 }

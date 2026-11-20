@@ -6,11 +6,12 @@ namespace Cycle\Database\Tests\Unit\Schema;
 
 use Cycle\Database\Driver\Postgres\Schema\PostgresColumn;
 use Cycle\Database\Schema\State;
-use PHPUnit\Framework\TestCase;
+use Testo\Assert;
+use Testo\Test;
 
+#[Test]
 final class StateTest
 {
-    #[\Testo\Test]
     public function testGetPrimaryKeys(): void
     {
         $state = new State('foo');
@@ -23,6 +24,6 @@ final class StateTest
 
         $state->setPrimaryKeys(['foo', 'bar']);
 
-        \Testo\Assert::same($state->getPrimaryKeys(), ['foo', 'bar', 'smallPrimary', 'primary', 'bigPrimary']);
+        Assert::same($state->getPrimaryKeys(), ['foo', 'bar', 'smallPrimary', 'primary', 'bigPrimary']);
     }
 }

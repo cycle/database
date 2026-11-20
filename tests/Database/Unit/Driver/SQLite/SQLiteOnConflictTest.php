@@ -11,60 +11,57 @@ use Cycle\Database\Exception\BuilderException;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Query\OnConflict;
 use Cycle\Database\Query\OnConflictWhere;
-use PHPUnit\Framework\TestCase;
+use Testo\Assert;
+use Testo\Expect;
+use Testo\Test;
 
-class SQLiteOnConflictTest
+#[Test]
+final class SQLiteOnConflictTest
 {
-    #[\Testo\Test]
     public function testTargetReturnsSubclassInstance(): void
     {
         $c = SQLiteOnConflict::target('email');
 
-        \Testo\Assert::instanceOf($c, SQLiteOnConflict::class);
+        Assert::instanceOf($c, SQLiteOnConflict::class);
     }
 
-    #[\Testo\Test]
     public function testTargetWhereWrapsString(): void
     {
         $c = SQLiteOnConflict::target('resource_key', 'route')
             ->targetWhere('resource_key IS NOT NULL');
 
         $tokens = $c->getIndexPredicate();
-        \Testo\Assert::count($tokens, 1);
-        \Testo\Assert::instanceOf($tokens[0][1], Fragment::class);
-        \Testo\Assert::same((string) $tokens[0][1], 'resource_key IS NOT NULL');
+        Assert::count($tokens, 1);
+        Assert::instanceOf($tokens[0][1], Fragment::class);
+        Assert::same((string) $tokens[0][1], 'resource_key IS NOT NULL');
     }
 
-    #[\Testo\Test]
     public function testTargetWhereAcceptsClosureBuilder(): void
     {
         $c = SQLiteOnConflict::target('resource_key')
             ->targetWhere(static fn(OnConflictWhere $w) => $w->where('resource_key', '!=', null));
 
-        \Testo\Assert::notSame($c->getIndexPredicate(), []);
+        Assert::notSame($c->getIndexPredicate(), []);
     }
 
-    #[\Testo\Test]
     public function testFromBase(): void
     {
         $base = OnConflict::target('email')->doUpdate(['name']);
         $sqlite = SQLiteOnConflict::from($base);
 
-        \Testo\Assert::instanceOf($sqlite, SQLiteOnConflict::class);
-        \Testo\Assert::same($sqlite->getTarget(), ['email']);
-        \Testo\Assert::same($sqlite->getUpdate(), ['name']);
-        \Testo\Assert::same($sqlite->getIndexPredicate(), []);
+        Assert::instanceOf($sqlite, SQLiteOnConflict::class);
+        Assert::same($sqlite->getTarget(), ['email']);
+        Assert::same($sqlite->getUpdate(), ['name']);
+        Assert::same($sqlite->getIndexPredicate(), []);
     }
 
-    #[\Testo\Test]
     public function testFromSelfReturnsSameInstance(): void
     {
         $sqlite = SQLiteOnConflict::target('email');
 
-        \Testo\Assert::same(SQLiteOnConflict::from($sqlite), $sqlite);
+        Assert::same(SQLiteOnConflict::from($sqlite), $sqlite);
     }
 
-    #[\Testo\Test]
     public function testFromPostgresSiblingCarriesPredicate(): void
     {
         $pg = PostgresOnConflict::target('resource_key', 'route')
@@ -73,26 +70,24 @@ class SQLiteOnConflictTest
 
         $sqlite = SQLiteOnConflict::from($pg);
 
-        \Testo\Assert::instanceOf($sqlite, SQLiteOnConflict::class);
-        \Testo\Assert::same($sqlite->getTarget(), ['resource_key', 'route']);
-        \Testo\Assert::same((string) $sqlite->getIndexPredicate()[0][1], 'resource_key IS NOT NULL');
+        Assert::instanceOf($sqlite, SQLiteOnConflict::class);
+        Assert::same($sqlite->getTarget(), ['resource_key', 'route']);
+        Assert::same((string) $sqlite->getIndexPredicate()[0][1], 'resource_key IS NOT NULL');
     }
 
-    #[\Testo\Test]
     public function testFromPostgresConstraintRejected(): void
     {
         $pg = PostgresOnConflict::onConstraint('users_email_unique')->doUpdate(['name']);
 
-        \Testo\Expect::exception(BuilderException::class);
+        Expect::exception(BuilderException::class);
         SQLiteOnConflict::from($pg);
     }
 
-    #[\Testo\Test]
     public function testFromOtherDriverSubclassRejected(): void
     {
         $mysql = MySQLOnConflict::target('email');
 
-        \Testo\Expect::exception(BuilderException::class);
+        Expect::exception(BuilderException::class);
         SQLiteOnConflict::from($mysql);
     }
 }

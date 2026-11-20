@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Unit\Config\SQLite;
 
 use Cycle\Database\Config\SQLite\DsnConnectionConfig;
-use PHPUnit\Framework\TestCase;
+use Testo\Assert;
+use Testo\Test;
 
+#[Test]
 final class DsnConnectionConfigTest
 {
-    #[\Testo\Test]
     public function testSetState(): void
     {
         $testOptionKey = 'option-1';
@@ -24,9 +25,9 @@ final class DsnConnectionConfigTest
         /** @var DsnConnectionConfig $recoveredConfig */
         eval('$recoveredConfig = ' . $exported . ';');
 
-        \Testo\Assert::same($recoveredConfig->getDsn(), "sqlite:$dsn");
-        \Testo\Assert::same($recoveredConfig->getSourceString(), $dsn);
-        \Testo\Assert::array($recoveredConfig->getOptions())->hasKeys($testOptionKey);
-        \Testo\Assert::same($recoveredConfig->getOptions()[$testOptionKey], $testOptionValue);
+        Assert::same($recoveredConfig->getDsn(), "sqlite:$dsn");
+        Assert::same($recoveredConfig->getSourceString(), $dsn);
+        Assert::array($recoveredConfig->getOptions())->hasKeys($testOptionKey);
+        Assert::same($recoveredConfig->getOptions()[$testOptionKey], $testOptionValue);
     }
 }
