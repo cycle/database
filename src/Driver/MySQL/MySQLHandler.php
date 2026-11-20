@@ -19,6 +19,7 @@ use Cycle\Database\Schema\AbstractColumn;
 use Cycle\Database\Schema\AbstractForeignKey;
 use Cycle\Database\Schema\AbstractIndex;
 use Cycle\Database\Schema\AbstractTable;
+use Cycle\Database\Schema\ComparatorInterface;
 
 class MySQLHandler extends Handler
 {
@@ -158,19 +159,53 @@ class MySQLHandler extends Handler
         return $statement . " ENGINE {$table->getEngine()}";
     }
 
+    #[\Override]
+    protected function createColumns(AbstractTable $table, ComparatorInterface $comparator): void
+    {
+        foreach ($comparator->addedColumns() as $column) {
+            $this->assertValid($column);
+
+            // MySQL rejects an AUTO_INCREMENT column without a key, so its index is added in the same statement.
+            $statement = "ALTER TABLE {$this->identify($table)} ADD COLUMN {$column->sqlStatement($this->getDriver())}";
+            foreach ($this->autoIncrementIndexes($table, [$column], $comparator->addedIndexes()) as $index) {
+                $statement .= ", ADD {$index->sqlStatement($this->getDriver(), false)}";
+            }
+
+            $this->run($statement);
+        }
+    }
+
+    #[\Override]
+    protected function createIndexes(AbstractTable $table, ComparatorInterface $comparator): void
+    {
+        $created = $this->autoIncrementIndexes($table, $comparator->addedColumns(), $comparator->addedIndexes());
+        foreach ($comparator->addedIndexes() as $index) {
+            if (!\in_array($index, $created, true)) {
+                $this->createIndex($table, $index);
+            }
+        }
+    }
+
     /**
      * Indexes covering AUTO_INCREMENT columns that do not lead the primary key.
+     *
+     * @param AbstractColumn[]|null $columns Columns to check, all table columns by default.
+     * @param AbstractIndex[]|null $indexes Indexes to search, all table indexes by default.
      *
      * @return list<AbstractIndex>
      *
      * @throws SchemaException When such a column is neither in the primary key nor in an index.
      */
-    protected function autoIncrementIndexes(AbstractTable $table): array
-    {
+    protected function autoIncrementIndexes(
+        AbstractTable $table,
+        ?array $columns = null,
+        ?array $indexes = null,
+    ): array {
         $primaryKeys = $table->getPrimaryKeys();
+        $indexes ??= $table->getIndexes();
 
         $result = [];
-        foreach ($table->getColumns() as $column) {
+        foreach ($columns ?? $table->getColumns() as $column) {
             if (
                 ($column->getAttributes()['autoIncrement'] ?? false) !== true
                 || ($primaryKeys[0] ?? null) === $column->getName()
@@ -179,7 +214,7 @@ class MySQLHandler extends Handler
             }
 
             $found = \in_array($column->getName(), $primaryKeys, true);
-            foreach ($table->getIndexes() as $index) {
+            foreach ($indexes as $index) {
                 if (\in_array($column->getName(), $index->getColumns(), true)) {
                     $found = true;
                     \in_array($index, $result, true) or $result[] = $index;

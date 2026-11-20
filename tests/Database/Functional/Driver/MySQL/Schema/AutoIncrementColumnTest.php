@@ -23,6 +23,12 @@ final class AutoIncrementColumnTest extends BaseTest
         yield 'bigPrimary' => ['bigPrimary', 'bigPrimary'];
     }
 
+    public static function addedIndexProvider(): iterable
+    {
+        yield 'unique index' => [true];
+        yield 'index' => [false];
+    }
+
     public function testAutoIncrementColumnIsNotAddedToPrimaryKey(): void
     {
         $schema = $this->schema('auto_increment');
@@ -99,6 +105,63 @@ final class AutoIncrementColumnTest extends BaseTest
         $this->expectExceptionMessage('`number`');
 
         $schema->save();
+    }
+
+    /**
+     * @dataProvider addedIndexProvider
+     */
+    public function testAddAutoIncrementColumnToExistingTable(bool $unique): void
+    {
+        $schema = $this->schema('auto_increment');
+        $schema->string('id', 36)->nullable(false);
+        $schema->string('title')->nullable(true);
+        $schema->setPrimaryKeys(['id']);
+        $schema->index(['title']);
+        $schema->save();
+
+        $table = $this->database->table('auto_increment');
+        $table->insertOne(['id' => 'a', 'title' => 'first']);
+        $table->insertOne(['id' => 'b', 'title' => 'second']);
+
+        $schema = $this->schema('auto_increment');
+        $schema->integer('number', autoIncrement: true)->nullable(false);
+        $schema->index(['number'])->unique($unique);
+        $schema->string('note')->nullable(true);
+        $schema->index(['note']);
+        $schema->save();
+
+        $this->assertSameAsInDB($schema);
+
+        $saved = $this->schema('auto_increment');
+        $this->assertSame(['id'], $saved->getPrimaryKeys());
+        $this->assertTrue($saved->hasIndex(['number']));
+        $this->assertTrue($saved->hasIndex(['note']));
+
+        $table->insertOne(['id' => 'c', 'title' => 'third']);
+        $this->assertSame(
+            [['id' => 'a', 'number' => 1], ['id' => 'b', 'number' => 2], ['id' => 'c', 'number' => 3]],
+            $table->select('id', 'number')->orderBy('id')->fetchAll(),
+        );
+    }
+
+    public function testAddAutoIncrementColumnWithoutKeyThrowsException(): void
+    {
+        $schema = $this->schema('auto_increment');
+        $schema->string('id', 36)->nullable(false);
+        $schema->setPrimaryKeys(['id']);
+        $schema->save();
+
+        $schema = $this->schema('auto_increment');
+        $schema->integer('number', autoIncrement: true)->nullable(false);
+
+        try {
+            $schema->save();
+            $this->fail('SchemaException expected');
+        } catch (SchemaException $e) {
+            $this->assertStringContainsString('`number`', $e->getMessage());
+        }
+
+        $this->assertFalse($this->schema('auto_increment')->hasColumn('number'));
     }
 
     public function testExistingTableIsReflectedWithItsPrimaryKey(): void
