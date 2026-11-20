@@ -6,8 +6,8 @@ namespace Cycle\Database\Tests\Unit\Injection;
 
 use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Driver\Quoter;
-use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Driver\SQLite\Injection\CompileJson;
+use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Injection\JsonExpression;
 use Cycle\Database\Injection\Parameter;
 use Testo\Assert;
