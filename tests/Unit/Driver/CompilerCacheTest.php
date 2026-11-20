@@ -86,6 +86,16 @@ final class CompilerCacheTest
                 $db('')->insert('t')->values(['x' => 1, 'y' => 2])->onConflict(OnConflict::target('x')->doUpdate(['v' => 3])),
             ],
         ];
+        yield 'set operations with plain fragments' => [
+            static fn(\Closure $db): array => [
+                $db('')->select()->from('t')->union(new Fragment('SELECT 1'))
+                    ->intersect(new Fragment('SELECT 2'))
+                    ->except(new Fragment('SELECT 3')),
+                $db('')->select()->from('t')->union(new Fragment('SELECT 4'))
+                    ->intersect(new Fragment('SELECT 5'))
+                    ->except(new Fragment('SELECT 6')),
+            ],
+        ];
         yield 'upsert updating a fragment followed by another column' => [
             static fn(\Closure $db): array => [
                 $db('')->insert('t')->values(['x' => 1])->onConflict(OnConflict::target('x')->doUpdate(['y' => new Fragment('?', 3), 'z' => 4])),

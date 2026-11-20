@@ -9,12 +9,16 @@ use Cycle\Database\Config\SQLServer\TcpConnectionConfig;
 use Cycle\Database\Config\SQLServerDriverConfig;
 use Cycle\Database\Database;
 use Cycle\Database\Driver\Compiler;
+use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Driver\Quoter;
+use Cycle\Database\Driver\SQLite\SQLiteCompiler;
 use Cycle\Database\Driver\SQLite\SQLiteDriver;
 use Cycle\Database\Driver\SQLServer\SQLServerDriver;
 use Cycle\Database\Exception\BuilderException;
+use Cycle\Database\Exception\CompilerException;
 use Cycle\Database\Injection\Expression;
 use Cycle\Database\Injection\Fragment;
+use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Query\QueryInterface;
 use Cycle\Database\Query\QueryParameters;
@@ -198,6 +202,65 @@ final class CompilerTest
             . 'WHEN NOT MATCHED THEN INSERT ([a], [b]) VALUES ([source].[a], [source].[b]);',
             [1, 2],
         );
+    }
+
+    public function refusesAFragmentOfAnUnknownType(): never
+    {
+        Expect::exception(CompilerException::class)->withMessage('Unknown fragment type 999');
+
+        (new SQLiteCompiler())->compile(new QueryParameters(), '', self::fragment(999, []));
+    }
+
+    public function refusesAnUpsertWithoutConflictState(): never
+    {
+        $tokens = ['table' => 't', 'columns' => ['a'], 'values' => [new Parameter([1])], 'onConflict' => null];
+
+        Expect::exception(CompilerException::class)->withMessage('Upsert query requires onConflict state to be configured.');
+
+        (new SQLiteCompiler())->compile(new QueryParameters(), '', self::fragment(CompilerInterface::UPSERT_QUERY, $tokens));
+    }
+
+    public function refusesAConditionValueThatIsNeitherAParameterNorAFragment(): never
+    {
+        $db = new Database('default', '', SQLiteDriver::create(new SQLiteDriverConfig(queryCache: false)));
+        $tokens = $db->select()->from('t')->where('a', 1)->getTokens();
+        $tokens['where'][0][1][2] = 1;
+
+        Expect::exception(CompilerException::class)->withMessage('Invalid value format, fragment or parameter is expected');
+
+        (new SQLiteCompiler())->compile(new QueryParameters(), '', self::fragment(CompilerInterface::SELECT_QUERY, $tokens));
+    }
+
+    public function rendersTheConflictTargetAsAColumnListByDefault(): void
+    {
+        $compiler = new class extends Compiler {
+            protected function limit(QueryParameters $params, Quoter $q, ?int $limit = null, ?int $offset = null): string {}
+        };
+        $db = new Database('default', '', SQLiteDriver::create(new SQLiteDriverConfig()));
+
+        $sql = $compiler->compile(new QueryParameters(), '', $db->insert('t')->values(['a' => 1, 'b' => 2])->onConflict('a'));
+
+        Assert::same($sql, 'INSERT INTO "t" ("a", "b") VALUES (?, ?) ON CONFLICT ("a") DO UPDATE SET "b" = EXCLUDED."b"');
+    }
+
+    private static function fragment(int $type, array $tokens): FragmentInterface
+    {
+        return new class($type, $tokens) implements FragmentInterface {
+            public function __construct(
+                private readonly int $type,
+                private readonly array $tokens,
+            ) {}
+
+            public function getType(): int
+            {
+                return $this->type;
+            }
+
+            public function getTokens(): array
+            {
+                return $this->tokens;
+            }
+        };
     }
 
     private function assertCompiles(QueryInterface $query, string $sql, array $parameters): void
