@@ -227,6 +227,13 @@ final class MapExceptionTest
             1045,
             1045,
         ];
+        yield 'packet over max_allowed_packet drops the connection' => [
+            '08S01',
+            "SQLSTATE[08S01]: Communication link failure: 1153 Got a packet bigger than 'max_allowed_packet' bytes",
+            StatementException\ConnectionException::class,
+            null,
+            1153,
+        ];
         yield 'server has gone away' => [
             'HY000',
             'SQLSTATE[HY000]: General error: 2006 MySQL server has gone away',
