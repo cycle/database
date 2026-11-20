@@ -77,6 +77,8 @@ jobs:
 
       - name: 📥 Install dependencies with composer
         uses: ramsey/composer-install@v3
+        env:
+          COMPOSER_ROOT_VERSION: 2.x-dev
         with:
           dependency-versions: ${{ matrix.dependencies }}
 

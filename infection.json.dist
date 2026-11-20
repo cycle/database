@@ -8,6 +8,7 @@
             "resources"
         ]
     },
+    "testFramework": "testo",
     "timeout": 10,
     "logs": {
         "text": "php:\/\/stderr"
