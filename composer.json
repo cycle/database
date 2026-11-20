@@ -86,7 +86,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Cycle\\Database\\Tests\\": "tests/Database"
+            "Cycle\\Database\\Tests\\": "tests/"
         }
     },
     "config": {

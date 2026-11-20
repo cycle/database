@@ -47,7 +47,7 @@ To set up a local development environment for testing:
     `composer test:mysql`, `test:postgres` and `test:sqlserver` run one server driver;
     `composer db:down` stops the databases.
 
-Tests live in `tests/Database`: `Unit/` needs no database, `Feature/Common/` runs on every driver and
+Tests live in `tests/`: `Unit/` needs no database, `Feature/Common/` runs on every driver and
 `Feature/<Driver>/` on one driver only.
 
 ### → Workflow
