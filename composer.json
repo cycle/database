@@ -103,6 +103,9 @@
             "bin-links": true,
             "forward-command": false,
             "target-directory": "vendor-bin"
+        },
+        "branch-alias": {
+            "dev-2.x": "2.x-dev"
         }
     },
     "scripts": {
