@@ -60,11 +60,8 @@
         "ergebnis/composer-normalize": "^2.58",
         "llm/skills": "^1.20",
         "mockery/mockery": "^1.6",
-        "phpunit/phpunit": "^9.6",
         "roxblnfk/unpoly": "^1.8",
-        "spiral/tokenizer": "^3.14",
         "testo/bridge-mockery": "^0.1.2",
-        "testo/bridge-rector": "^0.3.6",
         "testo/testo": "^0.10.60"
     },
     "conflict": {
@@ -113,6 +110,8 @@
     "scripts": {
         "cs:diff": "php-cs-fixer fix --dry-run -v --diff --config=vendor-bin/code-style/.php-cs-fixer.dist.php",
         "cs:fix": "php-cs-fixer fix -v --config=vendor-bin/code-style/.php-cs-fixer.dist.php",
+        "db:down": "docker compose -f vendor/cycle/testing/resources/docker/compose.yaml down -v",
+        "db:up": "docker compose -f vendor/cycle/testing/resources/docker/compose.yaml up -d --wait",
         "infect": [
             "@putenv XDEBUG_MODE=coverage",
             "infection --threads=max --configuration=infection.json.dist"
@@ -120,6 +119,11 @@
         "psalm": "psalm -c vendor-bin/psalm/psalm.xml",
         "psalm:baseline": "psalm -c vendor-bin/psalm/psalm.xml --set-baseline=vendor-bin/psalm/psalm-baseline.xml",
         "psalm:ci": "psalm -c vendor-bin/psalm/psalm.xml --output-format=github --shepherd --show-info=false --stats --threads=4",
-        "test": "phpunit --color=always"
+        "test": "testo",
+        "test:mysql": "testo --suite=Feature/MySQL",
+        "test:postgres": "testo --suite=Feature/Postgres",
+        "test:sqlite": "testo --suite=Feature/SQLite",
+        "test:sqlserver": "testo --suite=Feature/SQLServer",
+        "test:unit": "testo --suite=Unit"
     }
 }
