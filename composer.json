@@ -109,7 +109,13 @@
         "db:up": "docker compose -f vendor/cycle/testing/resources/docker/compose.yaml up -d --wait",
         "infect": [
             "@putenv XDEBUG_MODE=coverage",
-            "infection --threads=max --configuration=infection.json.dist"
+            "@putenv DB_DRIVERS=sqlite",
+            "infection --configuration=infection.json --threads=max"
+        ],
+        "infect:ci": [
+            "@putenv XDEBUG_MODE=coverage",
+            "@putenv DB_DRIVERS=sqlite",
+            "infection --ansi --configuration=infection.json --logger-github --threads=max --show-mutations=0 --min-msi=72 --min-covered-msi=72"
         ],
         "psalm": "psalm -c vendor-bin/psalm/psalm.xml",
         "psalm:baseline": "psalm -c vendor-bin/psalm/psalm.xml --set-baseline=vendor-bin/psalm/psalm-baseline.xml",
@@ -123,6 +129,8 @@
         "test:unit": "testo --suite=Unit"
     },
     "scripts-descriptions": {
+        "infect": "Run mutation testing with Infection on the Unit and SQLite suites",
+        "infect:ci": "Run mutation testing in CI, failing below the minimum MSI",
         "test:new-case": "Create a regression case for an issue: composer test:new-case -- <issue>"
     }
 }

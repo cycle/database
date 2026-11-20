@@ -1,0 +1,27 @@
+---
+
+on:  # yamllint disable-line rule:truthy
+  pull_request:
+  push:
+    branches:
+      - 2.x
+
+name: 🧬 Mutation Tests
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  infection:
+    name: Infection
+    uses: cycle/gh-actions/.github/workflows/infection.yml@master
+    with:
+      # cycle/testing requires cycle/database back.
+      composer-root-version: 2.x-dev
+    secrets: inherit
+
+...

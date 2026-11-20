@@ -1,17 +1,17 @@
 {
+    "$schema": "vendor-bin/infection/vendor/infection/infection/resources/schema.json",
     "source": {
         "directories": [
             "src"
-        ],
-        "excludes": [
-            ".github",
-            "resources"
         ]
     },
-    "testFramework": "testo",
     "timeout": 10,
+    "testFramework": "testo",
+    "tmpDir": "runtime",
     "logs": {
-        "text": "php:\/\/stderr"
+        "stryker": {
+            "report": "2.x"
+        }
     },
     "mutators": {
         "@default": true,
