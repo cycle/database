@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Feature\Common\Schema;
 
+use Cycle\Database\Exception\HandlerException;
 use Cycle\Database\Schema\Reflector;
 use Cycle\Testing\Database\Assert\SchemaAssert;
 use Cycle\Testing\Database\DatabaseTestCase;
@@ -414,6 +415,29 @@ final class ReflectorTest extends DatabaseTestCase
 
         Assert::false($schemaA->exists());
         Assert::false($this->fetchSchema($schemaA)->exists());
+    }
+
+    #[Test]
+    public function testFailedSaveRollsBackTheTransaction(): void
+    {
+        $stale = $this->schema('a');
+        $stale->primary('id');
+
+        $existing = $this->schema('a');
+        $existing->primary('id');
+        $existing->save();
+
+        $reflector = new Reflector();
+        $reflector->addTable($stale);
+
+        $error = null;
+        try {
+            $reflector->run();
+        } catch (\Throwable $error) {
+        }
+
+        Assert::instanceOf($error, HandlerException::class);
+        Assert::same($this->database->getDriver()->getTransactionLevel(), 0);
     }
 
     protected function saveTables(array $tables): void

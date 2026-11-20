@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Feature\Common\Schema;
 
 use Cycle\Database\Driver\Handler;
+use Cycle\Database\Exception\DBALException;
 use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Schema\AbstractColumn;
@@ -45,6 +46,19 @@ abstract class AlterColumnTest extends DatabaseTestCase
         }
 
         return $schema;
+    }
+
+    #[Test]
+    public function testChangingPrimaryKeysOfExistingTableIsRejected(): never
+    {
+        $schema = $this->sampleSchema('table');
+        $schema->string('nickname')->nullable(true);
+        $schema->setPrimaryKeys(['id', 'email']);
+
+        Expect::exception(DBALException::class)
+            ->withMessage('Unable to change primary keys for existed table');
+
+        $schema->save();
     }
 
     //Verification test #1
