@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Unit\Driver;
 
+use Cycle\Database\Config\ConnectionConfig;
+use Cycle\Database\Config\DriverConfig;
 use Cycle\Database\Config\SQLiteDriverConfig;
 use Cycle\Database\Driver\Driver;
 use Cycle\Database\Driver\DriverInterface;
@@ -13,6 +15,7 @@ use Cycle\Database\Driver\PDOStatementInterface;
 use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Query\BuilderInterface;
 use Cycle\Database\StatementInterface;
+use Cycle\Database\Tests\Fixtures\FooBarEnum;
 use Cycle\Testing\Database\Mock\StubDriver;
 use Mockery as m;
 use Psr\Log\LoggerInterface;
@@ -311,6 +314,69 @@ final class AbstractDriverTest
 
         Assert::false($driver->beginTransaction());
         Assert::same($driver->getTransactionLevel(), 1);
+    }
+
+    public function testGivesUpWhenBeginFailsAgainAfterReconnecting(): void
+    {
+        $pdo = m::mock(PDOInterface::class);
+        $pdo->shouldReceive('beginTransaction')->twice()->andThrow(new \PDOException('server has gone away'));
+        $driver = ConnectionLossDriver::make(config: new SQLiteDriverConfig(reconnect: true), pdo: $pdo);
+
+        try {
+            $driver->beginTransaction();
+            Assert::fail('The second lost connection must be thrown.');
+        } catch (StatementException\ConnectionException) {
+        }
+
+        Assert::same($driver->getTransactionLevel(), 0);
+    }
+
+    public function testMapsAFailedCommit(): never
+    {
+        $pdo = m::mock(PDOInterface::class);
+        $pdo->shouldReceive('beginTransaction')->andReturn(true);
+        $pdo->shouldReceive('inTransaction')->andReturn(true);
+        $pdo->shouldReceive('commit')->andThrow(new \PDOException('commit failed'));
+        $driver = ConnectionLossDriver::make(config: new SQLiteDriverConfig(), pdo: $pdo);
+        $driver->beginTransaction();
+
+        Expect::exception(StatementException::class)->withMessage('commit failed');
+
+        $driver->commitTransaction();
+    }
+
+    public function testMapsAFailedRollback(): never
+    {
+        $pdo = m::mock(PDOInterface::class);
+        $pdo->shouldReceive('beginTransaction')->andReturn(true);
+        $pdo->shouldReceive('inTransaction')->andReturn(true);
+        $pdo->shouldReceive('rollBack')->andThrow(new \PDOException('rollback failed'));
+        $driver = ConnectionLossDriver::make(config: new SQLiteDriverConfig(), pdo: $pdo);
+        $driver->beginTransaction();
+
+        Expect::exception(StatementException::class)->withMessage('rollback failed');
+
+        $driver->rollbackTransaction();
+    }
+
+    public function testQuotesTheValueOfABackedEnum(): void
+    {
+        $pdo = m::mock(PDOInterface::class);
+        $pdo->shouldReceive('quote')->once()->with('foo', \PDO::PARAM_STR)->andReturn("'foo'");
+        $driver = StubDriver::make(pdo: $pdo);
+
+        Assert::same($driver->quote(FooBarEnum::FOO), "'foo'");
+    }
+
+    public function testRefusesToConnectWithoutAPdoConnectionConfig(): never
+    {
+        $config = new class(new class extends ConnectionConfig {}, StubDriver::class) extends DriverConfig {};
+        $driver = StubDriver::create($config);
+
+        Expect::exception(\InvalidArgumentException::class)
+            ->withMessage('Could not establish PDO connection using non-PDO configuration');
+
+        $driver->connect();
     }
 
     #[BeforeTest]
