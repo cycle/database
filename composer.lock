@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "abd449862d6208bf546ad30cb1032a4f",
+    "content-hash": "530888fce1ca2a00b8d5720454f9e8aa",
     "packages": [
         {
             "name": "psr/container",
@@ -785,16 +785,16 @@
         },
         {
             "name": "cycle/testing",
-            "version": "0.1.0",
+            "version": "0.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cycle/testing.git",
-                "reference": "2dcdec68cfb3c80884ca64c2c069d8d652d6f5e1"
+                "reference": "c6914f07437fc07608d4d8fe54b179811f668710"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cycle/testing/zipball/2dcdec68cfb3c80884ca64c2c069d8d652d6f5e1",
-                "reference": "2dcdec68cfb3c80884ca64c2c069d8d652d6f5e1",
+                "url": "https://api.github.com/repos/cycle/testing/zipball/c6914f07437fc07608d4d8fe54b179811f668710",
+                "reference": "c6914f07437fc07608d4d8fe54b179811f668710",
                 "shasum": ""
             },
             "require": {
@@ -808,6 +808,7 @@
             "require-dev": {
                 "bamarni/composer-bin-plugin": "^1.9",
                 "cycle/annotated": "^4.6",
+                "cycle/entity-behavior": "^1.7",
                 "cycle/orm": "^2.18",
                 "cycle/schema-builder": "^2.12",
                 "doctrine/collections": "^2.6 || ^3.0",
@@ -822,6 +823,9 @@
                 "llm/skills": "Installs the cycle-testing and testo-* agent skills",
                 "testo/bridge-mockery": "Config adds MockeryPlugin to every suite when installed"
             },
+            "bin": [
+                "bin/cycle-testing"
+            ],
             "type": "library",
             "extra": {
                 "bamarni-bin": {
@@ -920,7 +924,7 @@
                     "url": "https://github.com/sponsors/cycle"
                 }
             ],
-            "time": "2026-11-20T11:42:47+00:00"
+            "time": "2026-11-20T12:54:50+00:00"
         },
         {
             "name": "ergebnis/composer-normalize",
