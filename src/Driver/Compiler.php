@@ -266,9 +266,6 @@ abstract class Compiler implements CompilerInterface
         return '(' . $this->columns($params, $q, $onConflict->getTarget()) . ')';
     }
 
-    /**
-     * @psalm-assert OnConflict $tokens['onConflict']
-     */
     protected function requireOnConflict(array $tokens): OnConflict
     {
         $onConflict = $tokens['onConflict'] ?? null;
