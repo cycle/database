@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Functional\Driver\SQLServer\Driver;
 
-use Cycle\Database\Driver\SQLServer\SQLServerCursorOptions;
 use Cycle\Database\Driver\SQLServer\CursorType;
+use Cycle\Database\Driver\SQLServer\SQLServerCursorOptions;
 // phpcs:ignore
 use Cycle\Database\Tests\Functional\Driver\Common\Driver\CursorTest as CommonClass;
 

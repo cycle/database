@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Unit;
 
-use Mockery as m;
-use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerInterface;
 use Cycle\Database\Config\DatabaseConfig;
 use Cycle\Database\Config\SQLiteDriverConfig;
 use Cycle\Database\Database;
@@ -15,6 +11,10 @@ use Cycle\Database\DatabaseManager;
 use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\SQLite\SQLiteDriver;
 use Cycle\Database\Exception\DBALException;
+use Mockery as m;
+use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 
 class DatabaseManagerTest extends TestCase
 {

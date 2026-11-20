@@ -1,4 +1,11 @@
 <?xml version="1.0"?>
+<!--
+    Lives next to the isolated Psalm install in vendor-bin/psalm/. resolveFromConfigFile is off, so paths
+    below resolve against the project root (where `composer psalm` runs) and Psalm loads the
+    project's own vendor/autoload.php from there.
+    loadLibraryPlugins is off: the bundled psalm/plugin-phpunit needs PHPUnit 11+, the tests use PHPUnit 9,
+    and only src/ is analysed.
+-->
 <psalm
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
@@ -7,12 +14,13 @@
     findUnusedBaselineEntry="true"
     findUnusedCode="false"
     hoistConstants="true"
-    resolveFromConfigFile="true"
+    resolveFromConfigFile="false"
     findUnusedPsalmSuppress="true"
     findUnusedVariablesAndParams="true"
     ensureArrayStringOffsetsExist="true"
     addParamDefaultToDocblockType="true"
-    errorBaseline="psalm-baseline.xml"
+    errorBaseline="vendor-bin/psalm/psalm-baseline.xml"
+    loadLibraryPlugins="false"
 >
     <issueHandlers>
         <LessSpecificReturnStatement errorLevel="suppress" />

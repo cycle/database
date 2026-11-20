@@ -1,0 +1,28 @@
+---
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - 2.x
+  pull_request: null
+
+name: Static Analysis
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  psalm:
+    uses: spiral/gh-actions/.github/workflows/psalm.yml@master
+    with:
+      os: >-
+        ['ubuntu-latest']
+      php: '["8.4"]'
+      bin-tool: psalm
+      command: composer psalm:ci
+
+...

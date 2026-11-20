@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Unit\Injection;
 
-use PHPUnit\Framework\TestCase;
 use Cycle\Database\Driver\SQLite\SQLiteCompiler;
 use Cycle\Database\Injection\Expression;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Query\QueryParameters;
+use PHPUnit\Framework\TestCase;
 
 class FragmentTest extends TestCase
 {

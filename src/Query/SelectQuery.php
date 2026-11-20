@@ -11,15 +11,15 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Query;
 
+use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Injection\Expression;
 use Cycle\Database\Injection\Fragment;
-use Cycle\Database\Injection\SubQuery;
-use Cycle\Database\Query\Traits\WhereJsonTrait;
-use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Injection\FragmentInterface;
+use Cycle\Database\Injection\SubQuery;
 use Cycle\Database\Query\Traits\HavingTrait;
 use Cycle\Database\Query\Traits\JoinTrait;
 use Cycle\Database\Query\Traits\TokenTrait;
+use Cycle\Database\Query\Traits\WhereJsonTrait;
 use Cycle\Database\Query\Traits\WhereTrait;
 use Cycle\Database\StatementInterface;
 use Spiral\Pagination\PaginableInterface;

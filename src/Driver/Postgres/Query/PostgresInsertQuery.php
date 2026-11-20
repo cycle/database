@@ -16,10 +16,10 @@ use Cycle\Database\Driver\Postgres\PostgresDriver;
 use Cycle\Database\Exception\BuilderException;
 use Cycle\Database\Exception\ReadonlyConnectionException;
 use Cycle\Database\Injection\FragmentInterface;
-use Cycle\Database\Query\ReturningInterface;
 use Cycle\Database\Query\InsertQuery;
 use Cycle\Database\Query\QueryInterface;
 use Cycle\Database\Query\QueryParameters;
+use Cycle\Database\Query\ReturningInterface;
 use Cycle\Database\StatementInterface;
 
 /**

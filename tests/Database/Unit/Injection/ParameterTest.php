@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Unit\Injection;
 
-use PHPUnit\Framework\TestCase;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Injection\ParameterInterface;
+use PHPUnit\Framework\TestCase;
 
 class ParameterTest extends TestCase
 {

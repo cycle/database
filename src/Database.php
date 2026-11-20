@@ -12,17 +12,17 @@ declare(strict_types=1);
 namespace Cycle\Database;
 
 use Cycle\Database\Driver\BulkSchemaProviderInterface;
-use Cycle\Database\Driver\Driver;
-use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\CursorInterface;
 use Cycle\Database\Driver\CursorOptions;
+use Cycle\Database\Driver\Driver;
+use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Exception\DriverException;
-use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\Query\DeleteQuery;
 use Cycle\Database\Query\InsertQuery;
 use Cycle\Database\Query\QueryParameters;
 use Cycle\Database\Query\SelectQuery;
 use Cycle\Database\Query\UpdateQuery;
+use Cycle\Database\Schema\AbstractTable;
 
 /**
  * Database class is high level abstraction at top of Driver. Databases usually linked to real

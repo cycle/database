@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Driver;
 
-use PDOStatement;
 use Cycle\Database\StatementInterface;
+use PDOStatement;
 
 /**
  * Adds few quick methods to PDOStatement and fully compatible with it. By default uses

@@ -1,7 +1,11 @@
 /.idea/
+/.agents/
+/.claude/
 /.dolt/
 /runtime/
 /vendor/
 /tests/runtime/*
 /.env
 *.db
+/vendor-bin/*/vendor/
+/vendor-bin/*/composer.lock
