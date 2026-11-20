@@ -286,6 +286,11 @@ final class AbstractColumnTest
         Assert::same($column->__debugInfo()['enumValues'], ['a', 'b']);
     }
 
+    public function hasNoCommentWhereTheDriverKeepsNone(): void
+    {
+        Assert::same((new SQLiteColumn('t', 'c'))->getComment(), '');
+    }
+
     #[BeforeTest]
     protected function setUp(): void
     {

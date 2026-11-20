@@ -6,9 +6,11 @@ namespace Cycle\Database\Tests\Unit\Schema;
 
 use Cycle\Database\Config\SQLiteDriverConfig;
 use Cycle\Database\Database;
+use Cycle\Database\Driver\SQLite\Schema\SQLiteTable;
 use Cycle\Database\Driver\SQLite\SQLiteDriver;
 use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\Schema\Reflector;
+use Cycle\Database\Tests\Unit\Stub\DecoratedDriver;
 use Psr\Log\AbstractLogger;
 use Testo\Assert;
 use Testo\Lifecycle\BeforeTest;
@@ -97,6 +99,20 @@ final class ReflectorTest
 
         Assert::false($this->db->hasTable('a'));
         Assert::true($this->db->hasTable('b'));
+    }
+
+    public function beginsATransactionOnADriverThatOnlyImplementsTheInterface(): void
+    {
+        $driver = DecoratedDriver::create(new SQLiteDriverConfig());
+        $table = new SQLiteTable($driver, 't', '');
+        $table->primary('id');
+        $reflector = new Reflector();
+        $reflector->addTable($table);
+
+        $reflector->run();
+
+        Assert::same($driver->transactionCalls, [['begin', [null]], ['commit', []]]);
+        Assert::true($driver->getSchemaHandler()->hasTable('t'));
     }
 
     public function dropsARemovedForeignKey(): void
