@@ -261,6 +261,97 @@ final class MapExceptionTest
         ];
     }
 
+    /**
+     * Synthetic exceptions on the edges of the mysql classification: the CR_* code range, the
+     * server errno ranges, and states that only look like a SQLSTATE.
+     */
+    public function mySQLEdgeProvider(): iterable
+    {
+        yield 'code 2000 is below the CR_* range' => [
+            'HY000',
+            'SQLSTATE[HY000] [2000] Unknown MySQL error',
+            StatementException::class,
+            2000,
+            2000,
+        ];
+        yield 'code 2100 is above the CR_* range' => [
+            'HY000',
+            'SQLSTATE[HY000] [2100] Unknown client error',
+            StatementException::class,
+            2100,
+            2100,
+        ];
+        yield 'needles are matched case-insensitively' => [
+            'HY000',
+            'SQLSTATE[HY000]: General error: Broken Pipe',
+            StatementException\ConnectionException::class,
+        ];
+        yield 'connection needle alone' => [
+            'HY000',
+            'SQLSTATE[HY000]: General error: lost connection',
+            StatementException\ConnectionException::class,
+        ];
+        yield 'packets needle alone' => [
+            'HY000',
+            'SQLSTATE[HY000]: General error: got packets out of order',
+            StatementException\ConnectionException::class,
+        ];
+        yield 'inactivity needle alone, without an errno' => [
+            'HY000',
+            'SQLSTATE[HY000]: General error: the client was disconnected by the server because of inactivity',
+            StatementException\ConnectionException::class,
+        ];
+        yield 'errno below the server range' => [
+            'HY000',
+            'SQLSTATE[HY000]: General error: 500 lost connection',
+            StatementException\ConnectionException::class,
+            null,
+            500,
+        ];
+        yield 'errno 1000 opens the server range' => [
+            'HY000',
+            'SQLSTATE[HY000]: General error: 1000 lost connection',
+            StatementException::class,
+            null,
+            1000,
+        ];
+        yield 'errno 2000 opens the client range' => [
+            'HY000',
+            'SQLSTATE[HY000]: General error: 2000 lost connection',
+            StatementException\ConnectionException::class,
+            null,
+            2000,
+        ];
+        yield 'errno inside the client range' => [
+            'HY000',
+            'SQLSTATE[HY000]: General error: 2500 lost connection',
+            StatementException\ConnectionException::class,
+            null,
+            2500,
+        ];
+        yield 'errno 3000 reopens the server range' => [
+            'HY000',
+            'SQLSTATE[HY000]: General error: 3000 lost connection',
+            StatementException::class,
+            null,
+            3000,
+        ];
+        yield 'state with a leading extra character is no SQLSTATE' => [
+            'X08006',
+            'General error: lost connection',
+            StatementException\ConnectionException::class,
+            0,
+            0,
+        ];
+        yield 'state with a trailing extra character is no SQLSTATE' => [
+            '08006X',
+            'General error: query failed',
+            StatementException::class,
+            0,
+            0,
+        ];
+    }
+
     #[DataProvider('postgresProvider')]
     public function testPostgres(
         string $sqlState,
@@ -303,6 +394,33 @@ final class MapExceptionTest
         ?int $driverCode = null,
     ): void {
         $this->assertMapsTo(SQLiteDriver::class, $sqlState, $message, $expected, $code, $driverCode);
+    }
+
+    #[DataProvider('mySQLEdgeProvider')]
+    public function testMySQLEdges(
+        string $sqlState,
+        string $message,
+        string $expected,
+        int|string|null $code = null,
+        ?int $driverCode = null,
+    ): void {
+        $this->assertMapsTo(MySQLDriver::class, $sqlState, $message, $expected, $code, $driverCode);
+    }
+
+    public function testSqlStateInErrorInfoWinsOverAMessageWithoutOne(): void
+    {
+        $exception = new \PDOException('ERROR:  duplicate key value violates unique constraint "users_email_key"');
+        $exception->errorInfo = ['23505', 7, $exception->getMessage()];
+        $this->setCode($exception, 7);
+
+        Assert::same($this->map(PostgresDriver::class, $exception)::class, StatementException\ConstrainException::class);
+    }
+
+    public function testSqlStateIsReadOnlyFromTheMessagePrefix(): void
+    {
+        $exception = new \PDOException('ERROR:  wrapped failure SQLSTATE[23505] in the middle');
+
+        Assert::same($this->map(PostgresDriver::class, $exception)::class, StatementException::class);
     }
 
     public function testSqlStateIsReadFromTheMessageWhenErrorInfoIsMissing(): void

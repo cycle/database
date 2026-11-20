@@ -10,7 +10,9 @@ use Cycle\Database\Driver\DriverInterface;
 use Cycle\Database\Driver\HandlerInterface;
 use Cycle\Database\Driver\PDOInterface;
 use Cycle\Database\Driver\PDOStatementInterface;
+use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Query\BuilderInterface;
+use Cycle\Database\StatementInterface;
 use Cycle\Testing\Database\Mock\StubDriver;
 use Mockery as m;
 use Psr\Log\LoggerInterface;
@@ -241,10 +243,92 @@ final class AbstractDriverTest
         Assert::same($newPDO, $oldPDO);
     }
 
+    public function testPreparesARepeatedQueryOnce(): void
+    {
+        $pdo = m::mock(PDOInterface::class);
+        $pdo->shouldReceive('prepare')->once()->andReturn(m::mock(PDOStatementInterface::class)->shouldIgnoreMissing());
+        $driver = StubDriver::make(config: new SQLiteDriverConfig(queryCache: true), pdo: $pdo);
+
+        $driver->query('SELECT 1');
+        $driver->query('SELECT 1');
+    }
+
+    public function testRetriesAStatementOnceAfterALostConnection(): void
+    {
+        $pdo = m::mock(PDOInterface::class);
+        $pdo->shouldReceive('prepare')->twice()->andReturnUsing(
+            self::failingFirst(new \PDOException('server has gone away'), m::mock(PDOStatementInterface::class)->shouldIgnoreMissing()),
+        );
+        $driver = ConnectionLossDriver::make(config: new SQLiteDriverConfig(queryCache: false), pdo: $pdo);
+
+        Assert::instanceOf($driver->query('SELECT 1'), StatementInterface::class);
+    }
+
+    public function testGivesUpWhenTheConnectionIsLostAgain(): never
+    {
+        $pdo = m::mock(PDOInterface::class);
+        $pdo->shouldReceive('prepare')->twice()->andThrow(new \PDOException('server has gone away'));
+        $driver = ConnectionLossDriver::make(config: new SQLiteDriverConfig(queryCache: false), pdo: $pdo);
+
+        Expect::exception(StatementException\ConnectionException::class);
+
+        $driver->query('SELECT 1');
+    }
+
+    public function testDoesNotRetryAStatementInsideATransaction(): never
+    {
+        $pdo = m::mock(PDOInterface::class);
+        $pdo->shouldReceive('beginTransaction')->andReturn(true);
+        $pdo->shouldReceive('prepare')->andReturnUsing(
+            self::failingFirst(new \PDOException('server has gone away'), m::mock(PDOStatementInterface::class)->shouldIgnoreMissing()),
+        );
+        $driver = ConnectionLossDriver::make(config: new SQLiteDriverConfig(queryCache: false), pdo: $pdo);
+        $driver->beginTransaction();
+
+        Expect::exception(StatementException\ConnectionException::class);
+
+        $driver->query('SELECT 1');
+    }
+
+    public function testDoesNotReconnectWhenBeginFailsForAnotherReason(): never
+    {
+        $pdo = m::mock(PDOInterface::class);
+        $pdo->shouldReceive('beginTransaction')->andReturnUsing(self::failingFirst(new \PDOException('boom'), true));
+        $driver = ConnectionLossDriver::make(config: new SQLiteDriverConfig(reconnect: true), pdo: $pdo);
+
+        Expect::exception(StatementException::class)->withMessage('boom');
+
+        $driver->beginTransaction();
+    }
+
+    public function testReturnsTheResultOfBeginAfterReconnecting(): void
+    {
+        $pdo = m::mock(PDOInterface::class);
+        $pdo->shouldReceive('beginTransaction')->twice()->andReturnUsing(
+            self::failingFirst(new \PDOException('server has gone away'), false),
+        );
+        $driver = ConnectionLossDriver::make(config: new SQLiteDriverConfig(reconnect: true), pdo: $pdo);
+
+        Assert::false($driver->beginTransaction());
+        Assert::same($driver->getTransactionLevel(), 1);
+    }
+
     #[BeforeTest]
     protected function setUp(): void
     {
         $this->driver = StubDriver::create(new SQLiteDriverConfig());
+    }
+
+    /**
+     * A callback that throws on its first call and returns the result on every later one.
+     */
+    private static function failingFirst(\Throwable $exception, mixed $result): \Closure
+    {
+        $calls = 0;
+
+        return static function () use (&$calls, $exception, $result): mixed {
+            return ++$calls === 1 ? throw $exception : $result;
+        };
     }
 
     private function checkImmutability(DriverInterface $driver, DriverInterface $newDriver): void
@@ -253,5 +337,18 @@ final class AbstractDriverTest
         Assert::notSame($newDriver, $driver);
         Assert::notSame($newDriver->getSchemaHandler(), $driver->getSchemaHandler());
         Assert::notSame($newDriver->getQueryBuilder(), $driver->getQueryBuilder());
+    }
+}
+
+/**
+ * Maps a "gone away" failure to a lost connection and anything else to a plain statement error.
+ */
+final class ConnectionLossDriver extends StubDriver
+{
+    protected function mapException(\Throwable $exception, string $query): StatementException
+    {
+        return \str_contains($exception->getMessage(), 'gone away')
+            ? new StatementException\ConnectionException($exception, $query)
+            : new StatementException($exception, $query);
     }
 }
