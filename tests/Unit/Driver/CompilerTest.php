@@ -12,6 +12,7 @@ use Cycle\Database\Driver\Compiler;
 use Cycle\Database\Driver\Quoter;
 use Cycle\Database\Driver\SQLite\SQLiteDriver;
 use Cycle\Database\Driver\SQLServer\SQLServerDriver;
+use Cycle\Database\Exception\BuilderException;
 use Cycle\Database\Injection\Expression;
 use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Injection\Parameter;
@@ -19,6 +20,7 @@ use Cycle\Database\Query\QueryInterface;
 use Cycle\Database\Query\QueryParameters;
 use Testo\Assert;
 use Testo\Data\DataProvider;
+use Testo\Expect;
 use Testo\Test;
 
 /**
@@ -147,6 +149,33 @@ final class CompilerTest
             "SELECT *\nFROM \"p_t\" \nLEFT JOIN \"p_u\"\n    ON \"p_u\".\"id\" = \"p_t\".\"id\"  \nWHERE \"x\" = ? ",
             [1],
         ];
+        yield 'between in an array condition' => [
+            static fn(Database $db): QueryInterface => $db->select()->from('t')->where(['a' => ['between' => [1, 2]]]),
+            "SELECT *\nFROM \"p_t\"\nWHERE \"a\" BETWEEN ? AND ? ",
+            [1, 2],
+        ];
+        yield 'closure followed by a column in an array condition' => [
+            static fn(Database $db): QueryInterface => $db->select()->from('t')
+                ->where([static fn($q) => $q->where('a', 1), 'b' => 2]),
+            "SELECT *\nFROM \"p_t\"\nWHERE ((\"a\" = ?  )AND \"b\" = ?  )",
+            [1, 2],
+        ];
+        yield 'or group followed by a column in an array condition' => [
+            static fn(Database $db): QueryInterface => $db->select()->from('t')
+                ->where(['@or' => [['a' => 1], ['b' => 2]], 'c' => 3]),
+            "SELECT *\nFROM \"p_t\"\nWHERE ((\"a\" = ? OR \"b\" = ?  )AND \"c\" = ?  )",
+            [1, 2, 3],
+        ];
+    }
+
+    public function rejectsASecondValueForAnOperatorOtherThanBetween(): never
+    {
+        $db = new Database('default', '', SQLiteDriver::create(new SQLiteDriverConfig()));
+
+        Expect::exception(BuilderException::class)
+            ->withMessage('Only "BETWEEN" or "NOT BETWEEN" can define second comparision value');
+
+        $db->select()->from('t')->where('a', '>', 1, 2);
     }
 
     #[DataProvider('queries')]
