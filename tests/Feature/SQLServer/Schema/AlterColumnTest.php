@@ -49,4 +49,46 @@ final class AlterColumnTest extends CommonClass
         SchemaAssert::sameAsInDb($schema);
         Assert::same($this->fetchSchema($schema)->column('datetime')->getSize(), 7);
     }
+
+    #[Test]
+    public function testMakeEnumNotNullable(): void
+    {
+        $schema = $this->sampleSchema('table');
+        $schema->enum('status', ['active', 'disabled'])->nullable(false)->defaultValue('active');
+        $schema->save();
+
+        $column = $this->fetchSchema($schema)->column('status');
+        Assert::false($column->isNullable());
+        Assert::same($column->getEnumValues(), ['active', 'disabled']);
+    }
+
+    #[Test]
+    public function testChangeDecimalPrecision(): void
+    {
+        $schema = $this->sampleSchema('table');
+        $schema->decimal('amount', 10, 2);
+        $schema->save();
+
+        $schema = $this->schema('table');
+        $schema->decimal('amount', 12, 4);
+        $schema->save();
+
+        $column = $this->schema('table')->column('amount');
+        Assert::same($column->getPrecision(), 12);
+        Assert::same($column->getScale(), 4);
+    }
+
+    #[Test]
+    public function testAddDefaultToExistingColumn(): void
+    {
+        $schema = $this->sampleSchema('table');
+        $schema->integer('counter')->nullable(true);
+        $schema->save();
+
+        $schema = $this->schema('table');
+        $schema->integer('counter')->nullable(true)->defaultValue(5);
+        $schema->save();
+
+        Assert::same($this->schema('table')->column('counter')->getDefaultValue(), 5);
+    }
 }
