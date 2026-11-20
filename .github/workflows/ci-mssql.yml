@@ -46,7 +46,6 @@ jobs:
       - name: 🤖 Validate composer.json and composer.lock
         run: composer validate --ansi --strict
 
-      # TODO(cycle/testing): switch to the released package
       - name: 📥 Install dependencies with composer
         uses: ramsey/composer-install@v3
         with:
