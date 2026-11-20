@@ -7,7 +7,9 @@ namespace Cycle\Database\Tests\Unit\Injection;
 use Cycle\Database\Driver\CompilerInterface;
 use Cycle\Database\Driver\Quoter;
 use Cycle\Database\Exception\DriverException;
+use Cycle\Database\Driver\SQLite\Injection\CompileJson;
 use Cycle\Database\Injection\JsonExpression;
+use Cycle\Database\Injection\Parameter;
 use Testo\Assert;
 use Testo\Data\DataProvider;
 use Testo\Expect;
@@ -203,6 +205,16 @@ final class JsonExpressionTest
         $ref->setValue($expression, 'foo');
 
         Assert::same((string) $expression, 'exp:foo');
+    }
+
+    public function restoresFromExportedStateKeepingAGivenParameterInstance(): void
+    {
+        $parameter = new Parameter(1);
+
+        $expression = CompileJson::__set_state(['statement' => 'a->b', 'parameters' => [$parameter]]);
+
+        Assert::same($expression->getTokens(), (new CompileJson('a->b', $parameter))->getTokens());
+        Assert::same($expression->getTokens()['parameters'], [$parameter]);
     }
 
     private function createExpression(): JsonExpression
