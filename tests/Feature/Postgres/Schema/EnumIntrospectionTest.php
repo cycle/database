@@ -161,6 +161,26 @@ final class EnumIntrospectionTest extends DatabaseTestCase
         Assert::same($schema->getIndexes(), []);
     }
 
+    #[Test]
+    public function testNativeEnumWithDefaultReadInBulk(): void
+    {
+        $driver = $this->database->getDriver();
+
+        $driver->execute("CREATE TYPE mood AS ENUM ('sad', 'ok', 'happy')");
+        $driver->execute(
+            "CREATE TABLE mixed_enums (
+                id serial NOT NULL,
+                current_mood mood NOT NULL DEFAULT 'ok',
+                CONSTRAINT mixed_enums_pkey PRIMARY KEY (id)
+            )",
+        );
+
+        $schema = $this->database->getSchemas(['mixed_enums'])['mixed_enums'];
+
+        Assert::same($schema->column('current_mood')->getEnumValues(), ['sad', 'ok', 'happy']);
+        Assert::same($schema->column('current_mood')->getDefaultValue(), 'ok');
+    }
+
     #[AfterTest]
     public function tearDown(): void
     {

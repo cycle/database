@@ -132,4 +132,22 @@ final class CursorTest extends CommonClass
         Assert::count($remaining, 4);
         Assert::same($remaining[3]['name'], \md5('4'));
     }
+
+    #[Test]
+    public function testCursorAbandonedAfterRollbackClosesQuietly(): void
+    {
+        $this->fillRows(3);
+
+        $this->database->begin();
+        $gen = $this->database->cursor(
+            $this->database->select()->from('sample_table')->orderBy('id'),
+            new PostgresCursorOptions(chunkSize: 1),
+        );
+        $gen->rewind();
+        $this->database->rollback();
+
+        unset($gen);
+
+        Assert::same($this->database->select()->from('sample_table')->count(), 3);
+    }
 }
