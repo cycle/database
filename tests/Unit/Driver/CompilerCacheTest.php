@@ -18,6 +18,7 @@ use Cycle\Database\Injection\Fragment;
 use Cycle\Database\Injection\FragmentInterface;
 use Cycle\Database\Injection\Parameter;
 use Cycle\Database\Injection\SubQuery;
+use Cycle\Database\Query\OnConflict;
 use Cycle\Database\Query\QueryInterface;
 use Cycle\Database\Query\QueryParameters;
 use Testo\Assert;
@@ -57,6 +58,38 @@ final class CompilerCacheTest
             static fn(\Closure $db): array => [
                 $db('a_')->insert('t')->values(['x' => 1])->onConflict('x'),
                 $db('b_')->insert('t')->values(['x' => 1])->onConflict('x'),
+            ],
+        ];
+        yield 'upsert on another target' => [
+            static fn(\Closure $db): array => [
+                $db('')->insert('t')->values(['x' => 1, 'y' => 2])->onConflict('x'),
+                $db('')->insert('t')->values(['x' => 1, 'y' => 2])->onConflict('y'),
+            ],
+        ];
+        yield 'upsert updating listed columns on another target' => [
+            static fn(\Closure $db): array => [
+                $db('')->insert('t')->values(['x' => 1, 'y' => 2])->onConflict(OnConflict::target('x')->doUpdate(['y'])),
+                $db('')->insert('t')->values(['x' => 1, 'y' => 2])->onConflict(OnConflict::target('y')->doUpdate(['y'])),
+            ],
+        ];
+        yield 'upsert updating mapped columns on another target' => [
+            static fn(\Closure $db): array => [
+                $db('')->insert('t')->values(['x' => 1, 'y' => 2])->onConflict(OnConflict::target('x')->doUpdate(['y' => 3])),
+                $db('')->insert('t')->values(['x' => 1, 'y' => 2])->onConflict(OnConflict::target('y')->doUpdate(['y' => 3])),
+            ],
+        ];
+        yield 'upsert updating other mapped columns' => [
+            static fn(\Closure $db): array => [
+                $db('')->insert('t')->values(['x' => 1, 'y' => 2])->onConflict(OnConflict::target('x')->doUpdate(['y' => 3, 'z' => 4])),
+                $db('')->insert('t')->values(['x' => 1, 'y' => 2])->onConflict(OnConflict::target('x')->doUpdate(['w' => 3, 'z' => 4])),
+                $db('')->insert('t')->values(['x' => 1, 'y' => 2])->onConflict(OnConflict::target('x')->doUpdate(['w' => 3])),
+                $db('')->insert('t')->values(['x' => 1, 'y' => 2])->onConflict(OnConflict::target('x')->doUpdate(['v' => 3])),
+            ],
+        ];
+        yield 'upsert updating a fragment followed by another column' => [
+            static fn(\Closure $db): array => [
+                $db('')->insert('t')->values(['x' => 1])->onConflict(OnConflict::target('x')->doUpdate(['y' => new Fragment('?', 3), 'z' => 4])),
+                $db('')->insert('t')->values(['x' => 1])->onConflict(OnConflict::target('x')->doUpdate(['y' => new Fragment('?', 3), 'w' => 4])),
             ],
         ];
     }
