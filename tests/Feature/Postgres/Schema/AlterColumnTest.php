@@ -103,6 +103,45 @@ final class AlterColumnTest extends CommonClass
     }
 
     #[Test]
+    public function testPrimaryTypesOnExistingColumnsChangeTheIntegerSize(): void
+    {
+        $schema = $this->schema('table');
+        $schema->integer('id');
+        $schema->integer('small');
+        $schema->bigInteger('regular');
+        $schema->integer('big');
+        $schema->save();
+
+        $schema = $this->schema('table');
+        $schema->column('small')->smallPrimary();
+        $schema->column('regular')->primary();
+        $schema->column('big')->bigPrimary();
+        $schema->save();
+
+        $columns = $this->schema('table')->getColumns();
+        Assert::same($columns['small']->getInternalType(), 'smallint');
+        Assert::same($columns['regular']->getInternalType(), 'integer');
+        Assert::same($columns['big']->getInternalType(), 'bigint');
+    }
+
+    #[Test]
+    public function testChangeDecimalPrecision(): void
+    {
+        $schema = $this->schema('table');
+        $schema->integer('id');
+        $schema->decimal('amount', 10, 2);
+        $schema->save();
+
+        $schema = $this->schema('table');
+        $schema->decimal('amount', 12, 4);
+        $schema->save();
+
+        $column = $this->schema('table')->column('amount');
+        Assert::same($column->getPrecision(), 12);
+        Assert::same($column->getScale(), 4);
+    }
+
+    #[Test]
     public function testAddCustomColumnTypeWithOptions(): void
     {
         $schema = $this->sampleSchema('table');
