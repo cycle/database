@@ -83,6 +83,26 @@ final class CharsetCollationTest extends DatabaseTestCase
     }
 
     #[Test]
+    public function testChangeCharset(): void
+    {
+        $schema = $this->schema('table');
+        $schema->primary('id');
+        $schema->string('title', size: 255)->charset('ascii');
+        $schema->save();
+
+        $schema = $this->schema('table');
+        $schema->column('title')->charset('latin1')->collation('latin1_bin');
+
+        Assert::count($schema->getComparator()->alteredColumns(), 1);
+
+        $schema->save();
+
+        $titleColumn = $this->schema('table')->column('title');
+        \assert($titleColumn instanceof MySQLColumn);
+        Assert::same($titleColumn->getCharset(), 'latin1');
+    }
+
+    #[Test]
     public function testTextColumnWithCharsetAndCollation(): void
     {
         $schema = $this->schema('table');
