@@ -7,7 +7,9 @@ namespace Cycle\Database\Tests\Unit\Schema;
 use Cycle\Database\Config\SQLiteDriverConfig;
 use Cycle\Database\Database;
 use Cycle\Database\Driver\HandlerInterface;
+use Cycle\Database\Driver\SQLite\Schema\SQLiteTable;
 use Cycle\Database\Driver\SQLite\SQLiteDriver;
+use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Exception\SchemaException;
 use Cycle\Database\Schema\AbstractTable;
 use Cycle\Database\Schema\State;
@@ -277,6 +279,78 @@ final class AbstractTableTest
         $table->save(HandlerInterface::DO_ALL ^ HandlerInterface::CREATE_FOREIGN_KEYS);
 
         Assert::false($this->table('t')->hasForeignKey(['a']));
+    }
+
+    public function restoresADroppedColumnFromTheInitialState(): void
+    {
+        $table = $this->table('t');
+        $table->primary('id');
+        $table->integer('a');
+        $table->save();
+        $table->dropColumn('a');
+
+        $column = $table->column('a');
+
+        Assert::same($column->getAbstractType(), 'integer');
+        Assert::notSame($column, $table->getState()->findColumn('a'));
+        Assert::false($table->getComparator()->hasChanges());
+    }
+
+    public function keepsTheNameOfARedeclaredIndex(): void
+    {
+        $table = $this->table('t');
+        $table->primary('id');
+        $table->integer('a');
+        $name = $table->index(['a'])->getName();
+        $table->save();
+        $table->dropIndex(['a']);
+
+        Assert::same($table->index(['a'])->getName(), $name);
+    }
+
+    public function keepsTheNameOfARedeclaredForeignKey(): void
+    {
+        $parent = $this->table('p');
+        $parent->primary('id');
+        $parent->save();
+        $table = $this->table('t');
+        $table->primary('id');
+        $table->integer('a');
+        $name = $table->foreignKey(['a'])->references('p', ['id'])->getName();
+        $table->save();
+        $table->dropForeignKey(['a']);
+
+        Assert::same($table->foreignKey(['a'])->getName(), $name);
+    }
+
+    public function rejectsDroppingAMissingForeignKey(): never
+    {
+        Expect::exception(SchemaException::class)->withMessage("Undefined FK on 'a','b' in 't'");
+
+        $this->table('t')->dropForeignKey(['a', 'b']);
+    }
+
+    public function rejectsASortedIndexWhereTheDriverCannotSortIndexColumns(): never
+    {
+        $table = new class($this->db->getDriver(), 't', '') extends SQLiteTable {
+            protected function isIndexColumnSortingSupported(): bool
+            {
+                return false;
+            }
+        };
+        $table->integer('a');
+
+        Expect::exception(DriverException::class)
+            ->withMessage('Failed to create index with `a DESC` on `t`, column sorting is not supported');
+
+        $table->index(['a DESC']);
+    }
+
+    public function convertsToItsFullName(): void
+    {
+        $table = (new Database('default', 'p_', $this->db->getDriver()))->table('t')->getSchema();
+
+        Assert::same((string) $table, 'p_t');
     }
 
     private function table(string $name): AbstractTable

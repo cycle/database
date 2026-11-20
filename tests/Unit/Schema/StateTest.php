@@ -76,6 +76,17 @@ final class StateTest
         Assert::false($state->hasForeignKey(['b']));
     }
 
+    public function testForgetsAForeignKeyThroughTheDeprecatedMethod(): void
+    {
+        $state = new State('t');
+        $foreignKey = (new SQLiteForeignKey('t', '', 'f_a'))->columns(['a'])->references('p', ['id']);
+        $state->registerForeignKey($foreignKey);
+
+        $state->forgerForeignKey($foreignKey);
+
+        Assert::false($state->hasForeignKey(['a']));
+    }
+
     public function testCloneCopiesEveryElement(): void
     {
         $state = new State('t');

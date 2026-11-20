@@ -22,6 +22,15 @@ final class AbstractIndexTest
         Assert::same(AbstractIndex::parseColumn($expression), $expected);
     }
 
+    public function readsTheColumnsOfAnSQLiteIndexFromTheLegacyListWithoutExtendedInfo(): void
+    {
+        $index = SQLiteIndex::createInstance('t', ['name' => 'i', 'unique' => 1], [], [['name' => 'a'], ['name' => 'b']]);
+
+        Assert::same($index->getColumns(), ['a', 'b']);
+        Assert::true($index->isUnique());
+        Assert::same($index->getSort(), []);
+    }
+
     public function columnsAcceptsVariadicNames(): void
     {
         $index = new SQLiteIndex('users', 'users_index');
