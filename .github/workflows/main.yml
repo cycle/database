@@ -35,12 +35,6 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: 🛠️ Setup DB services
-        run: |
-          cd tests
-          docker compose up -d
-          cd ..
-
       - name: 🛠️ Setup PHP ${{ matrix.php-versions }}
         uses: shivammathur/setup-php@v2
         with:
@@ -52,14 +46,19 @@ jobs:
       - name: 🤖 Validate composer.json and composer.lock
         run: composer validate --ansi --strict
 
+      # TODO(cycle/testing): switch to the released package
       - name: 📥 Install dependencies with composer
         uses: ramsey/composer-install@v3
         with:
           dependency-versions: ${{ matrix.dependencies }}
 
+      - name: 🛠️ Start the databases
+        run: composer db:up
+
       - name: 🚀 Execute Tests
-        run: |
-          vendor/bin/phpunit --coverage-clover=coverage.clover
+        env:
+          DB_REQUIRED: 1
+        run: composer test -- --coverage-clover=coverage.clover
 
       - name: 🦆 Upload coverage to Codecov
         continue-on-error: true  # if is fork
@@ -93,6 +92,7 @@ jobs:
       - name: 🤖 Validate composer.json and composer.lock
         run: composer validate --ansi --strict
 
+      # TODO(cycle/testing): switch to the released package
       - name: 📥 Install dependencies with composer
         uses: ramsey/composer-install@v3
         with:
@@ -100,8 +100,8 @@ jobs:
 
       - name: 🚀 Execute Tests
         env:
-          DB: sqlite
-        run: |
-          vendor/bin/phpunit --group driver-sqlite --colors=always
+          DB_DRIVERS: sqlite
+          DB_REQUIRED: 1
+        run: composer test
 
 ...

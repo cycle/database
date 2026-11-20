@@ -24,24 +24,31 @@ To set up a local development environment for testing:
     ```bash
     git clone git@github.com:cycle/database.git
     ```
-2. Navigate to the `tests/` directory and start the Docker containers:
+2. Install the dependencies and start the test databases (MySQL, Postgres and SQL Server in Docker):
 
     ```bash
-    cd tests/
-    docker compose up
+    composer install
+    composer db:up
     ```
 
-3. To run the full test suite:
+3. To run the full test suite on [Testo](https://github.com/php-testo/testo):
 
     ```bash
-    ./vendor/bin/phpunit
+    composer test
     ```
 
-4. For a quicker test suite, focusing on SQLite:
+4. For a quicker run that needs no Docker, the unit tests and SQLite:
 
     ```bash
-    ./vendor/bin/phpunit --group driver-sqlite
+    composer test:unit
+    composer test:sqlite
     ```
+
+    `composer test:mysql`, `test:postgres` and `test:sqlserver` run one server driver;
+    `composer db:down` stops the databases.
+
+Tests live in `tests/Database`: `Unit/` needs no database, `Feature/Common/` runs on every driver and
+`Feature/<Driver>/` on one driver only.
 
 ### → Workflow
 

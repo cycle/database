@@ -98,6 +98,7 @@
             "ergebnis/composer-normalize": true,
             "llm/skills": true
         },
+        "process-timeout": 0,
         "sort-packages": true
     },
     "extra": {
