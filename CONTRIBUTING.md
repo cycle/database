@@ -48,7 +48,8 @@ To set up a local development environment for testing:
     `composer db:down` stops the databases.
 
 Tests live in `tests/`: `Unit/` needs no database, `Feature/Common/` runs on every driver and
-`Feature/<Driver>/` on one driver only.
+`Feature/<Driver>/` on one driver only. To reproduce a reported issue, generate a case:
+`composer test:new-case -- 123` writes `tests/Regression/Issue123`.
 
 ### → Workflow
 
