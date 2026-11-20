@@ -499,9 +499,6 @@
       <code><![CDATA[$tokens['where']]]></code>
       <code><![CDATA[$tokens['where']]]></code>
     </PossiblyUndefinedStringArrayOffset>
-    <RedundantConditionGivenDocblockType>
-      <code><![CDATA[requireOnConflict]]></code>
-    </RedundantConditionGivenDocblockType>
     <UndefinedInterfaceMethod>
       <code><![CDATA[getPrefix]]></code>
       <code><![CDATA[getPrefix]]></code>
@@ -970,9 +967,6 @@
       <code><![CDATA[$tokens['columns']]]></code>
       <code><![CDATA[$tokens['table']]]></code>
     </PossiblyUndefinedStringArrayOffset>
-    <RedundantConditionGivenDocblockType>
-      <code><![CDATA[requireOnConflict]]></code>
-    </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/Driver/MySQL/MySQLDriver.php">
     <ClassMustBeFinal>
@@ -1393,9 +1387,6 @@
     <MixedAssignment>
       <code><![CDATA[$value]]></code>
     </MixedAssignment>
-    <RedundantConditionGivenDocblockType>
-      <code><![CDATA[requireOnConflict]]></code>
-    </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/Driver/Postgres/PostgresDriver.php">
     <ArgumentTypeCoercion>
@@ -2198,9 +2189,6 @@
       <code><![CDATA[$tokens['values']]]></code>
       <code><![CDATA[$tokens['where']]]></code>
     </PossiblyUndefinedStringArrayOffset>
-    <RedundantConditionGivenDocblockType>
-      <code><![CDATA[requireOnConflict]]></code>
-    </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/Driver/SQLServer/SQLServerDriver.php">
     <ClassMustBeFinal>
