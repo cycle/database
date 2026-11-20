@@ -56,16 +56,28 @@
     "require-dev": {
         "bamarni/composer-bin-plugin": "^1.9",
         "buggregator/trap": "^1.20",
+        "cycle/testing": "1.x-dev",
         "ergebnis/composer-normalize": "^2.58",
         "llm/skills": "^1.20",
         "mockery/mockery": "^1.6",
         "phpunit/phpunit": "^9.6",
         "roxblnfk/unpoly": "^1.8",
-        "spiral/tokenizer": "^3.14"
+        "spiral/tokenizer": "^3.14",
+        "testo/bridge-mockery": "^0.1.2",
+        "testo/testo": "^0.10.60"
     },
     "conflict": {
         "spiral/database": "*"
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../../testing",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
     "minimum-stability": "dev",
     "prefer-stable": true,
     "autoload": {
