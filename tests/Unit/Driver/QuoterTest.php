@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Cycle\Database\Tests\Unit\Driver;
 
 use Cycle\Database\Driver\Quoter;
+use Cycle\Database\Exception\CompilerException;
 use Testo\Assert;
+use Testo\Expect;
 use Testo\Test;
 
 #[Test]
@@ -228,6 +230,26 @@ final class QuoterTest
 
         $quoter = clone $quoter;
         Assert::equals($quoter->quote('table_name AS table_name', true), '[p_table_name] AS [table_name]');
+    }
+
+    public function testEscapesQuotesInsideAnIdentifier(): void
+    {
+        Assert::same($this->makeQuoter('', '[]')->identifier('a[b]c.d'), '[a[[b]]c].[d]');
+    }
+
+    public function testDoesNotPrefixAPrefixedTableTwice(): void
+    {
+        $quoter = $this->makeQuoter('p_');
+        $quoter->quote('users', true);
+
+        Assert::same($quoter->quote('p_users', true), '"p_users"');
+    }
+
+    public function testRejectsQuotesOtherThanAPair(): never
+    {
+        Expect::exception(CompilerException::class)->withMessage('Invalid quoter quotes, expected 2 characters string');
+
+        $this->makeQuoter('', '"');
     }
 
     protected function makeQuoter(string $prefix = '', string $quote = '""'): Quoter
