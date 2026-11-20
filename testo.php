@@ -6,5 +6,5 @@ use Cycle\Testing\Config;
 
 return Config::forPackage('cycle/database', root: __DIR__)
     ->unit('tests/Database/Unit')
-    ->acceptance('tests/Database/Acceptance')
+    ->feature('tests/Database/Feature')
     ->build();
