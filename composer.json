@@ -67,12 +67,6 @@
     "conflict": {
         "spiral/database": "*"
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/cycle/testing"
-        }
-    ],
     "minimum-stability": "dev",
     "prefer-stable": true,
     "autoload": {

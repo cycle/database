@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "530888fce1ca2a00b8d5720454f9e8aa",
+    "content-hash": "5e2af4649a4a249f453e8b94de3ab46b",
     "packages": [
         {
             "name": "psr/container",
@@ -828,6 +828,9 @@
             ],
             "type": "library",
             "extra": {
+                "skills": {
+                    "source": "skills"
+                },
                 "bamarni-bin": {
                     "bin-links": true,
                     "forward-command": false,
@@ -835,9 +838,6 @@
                 },
                 "branch-alias": {
                     "dev-1.x": "1.x-dev"
-                },
-                "skills": {
-                    "source": "skills"
                 }
             },
             "autoload": {
@@ -845,56 +845,7 @@
                     "Cycle\\Testing\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Cycle\\Testing\\Tests\\": "tests/"
-                }
-            },
-            "scripts": {
-                "db:down": [
-                    "docker compose -f resources/docker/compose.yaml down -v"
-                ],
-                "db:up": [
-                    "docker compose -f resources/docker/compose.yaml up -d --wait"
-                ],
-                "cs:diff": [
-                    "php-cs-fixer fix --dry-run -v --diff --config=vendor-bin/code-style/.php-cs-fixer.dist.php"
-                ],
-                "cs:fix": [
-                    "php-cs-fixer fix -v --config=vendor-bin/code-style/.php-cs-fixer.dist.php"
-                ],
-                "psalm": [
-                    "psalm -c vendor-bin/psalm/psalm.xml"
-                ],
-                "psalm:baseline": [
-                    "psalm -c vendor-bin/psalm/psalm.xml --set-baseline=vendor-bin/psalm/psalm-baseline.xml"
-                ],
-                "psalm:ci": [
-                    "psalm -c vendor-bin/psalm/psalm.xml --output-format=github --shepherd --show-info=false --stats --threads=4"
-                ],
-                "test": [
-                    "testo"
-                ],
-                "test:cc": [
-                    "@putenv XDEBUG_MODE=coverage",
-                    "testo --suite=Unit --suite=Feature/SQLite --suite=Acceptance/SQLite --suite=Regression/SQLite --coverage"
-                ],
-                "test:mysql": [
-                    "testo --suite=Feature/MySQL --suite=Acceptance/MySQL --suite=Regression/MySQL"
-                ],
-                "test:postgres": [
-                    "testo --suite=Feature/Postgres --suite=Acceptance/Postgres --suite=Regression/Postgres"
-                ],
-                "test:sqlite": [
-                    "testo --suite=Feature/SQLite --suite=Acceptance/SQLite --suite=Regression/SQLite"
-                ],
-                "test:sqlserver": [
-                    "testo --suite=Feature/SQLServer --suite=Acceptance/SQLServer --suite=Regression/SQLServer"
-                ],
-                "test:unit": [
-                    "testo --suite=Unit"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -920,11 +871,12 @@
             },
             "funding": [
                 {
-                    "type": "github",
-                    "url": "https://github.com/sponsors/cycle"
+                    "url": "https://github.com/sponsors/cycle",
+                    "type": "github"
                 }
             ],
-            "time": "2026-11-20T12:54:50+00:00"
+            "time": "2026-11-20T12:54:50+00:00",
+            "published-time": "2026-11-20T15:09:37+00:00"
         },
         {
             "name": "ergebnis/composer-normalize",
