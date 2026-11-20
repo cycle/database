@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Cycle\Database\Tests\Feature\SQLite\Query;
 
+use Cycle\Database\Exception\DriverException;
 use Cycle\Database\Tests\Feature\Common\Query\SelectQueryTest as CommonClass;
 use Cycle\Testing\Database\Assert\SqlAssert;
+use Testo\Data\DataSet;
+use Testo\Expect;
 use Testo\Test;
 
 final class SelectQueryTest extends CommonClass
@@ -279,6 +282,19 @@ final class SelectQueryTest extends CommonClass
 
         SqlAssert::same($select, "SELECT * FROM {table} WHERE json_array_length({settings}, '$.\"phones\"[1].\"numbers\"[3]') = ?");
         SqlAssert::sameParameters($select, [5]);
+    }
+
+    #[Test]
+    #[DataSet(['whereJsonContains'])]
+    #[DataSet(['orWhereJsonContains'])]
+    #[DataSet(['whereJsonDoesntContain'])]
+    #[DataSet(['orWhereJsonDoesntContain'])]
+    public function testJsonContainsIsNotSupported(string $method): never
+    {
+        Expect::exception(DriverException::class)
+            ->withMessage('This SQLite does not support JSON contains operations.');
+
+        $this->database->select()->from('table')->$method('settings->languages', 'en');
     }
 
     #[Test]

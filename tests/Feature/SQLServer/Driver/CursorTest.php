@@ -6,6 +6,7 @@ namespace Cycle\Database\Tests\Feature\SQLServer\Driver;
 
 use Cycle\Database\Driver\SQLServer\CursorType;
 use Cycle\Database\Driver\SQLServer\SQLServerCursorOptions;
+use Cycle\Database\Exception\StatementException;
 use Cycle\Database\Tests\Feature\Common\Driver\CursorTest as CommonClass;
 use Cycle\Testing\Database\Attribute\OnlyDriver;
 use Cycle\Testing\Database\Driver;
@@ -54,6 +55,33 @@ final class CursorTest extends CommonClass
         );
 
         Assert::count($rows, 3);
+    }
+
+    #[Test]
+    public function testFailedDeclareSurfacesItsOwnError(): void
+    {
+        $this->fillRows(2);
+
+        $rows = $this->database->transaction(function (): array {
+            $error = null;
+            try {
+                \iterator_to_array($this->database->cursor(
+                    $this->database->select()->from('missing_table'),
+                    new SQLServerCursorOptions(name: 'reused_cursor'),
+                ));
+            } catch (\Throwable $error) {
+            }
+
+            Assert::instanceOf($error, StatementException::class);
+            Assert::string($error->getMessage())->contains('missing_table');
+
+            return \iterator_to_array($this->database->cursor(
+                $this->database->select()->from('sample_table'),
+                new SQLServerCursorOptions(name: 'reused_cursor'),
+            ), false);
+        });
+
+        Assert::count($rows, 2);
     }
 
     #[Test]
