@@ -385,6 +385,18 @@ abstract class AlterColumnTest extends DatabaseTestCase
     }
 
     #[Test]
+    public function testDropEnumColumn(): void
+    {
+        $this->sampleSchema('table');
+
+        $schema = $this->schema('table');
+        $schema->dropColumn('status');
+        $schema->save();
+
+        Assert::false($this->schema('table')->hasColumn('status'));
+    }
+
+    #[Test]
     public function testDropMultipleColumns(): void
     {
         $schema = $this->sampleSchema('table');
