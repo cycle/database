@@ -11,6 +11,7 @@ use Cycle\Database\Config\SQLiteDriverConfig;
 use Cycle\Database\Driver\MySQL\MySQLDriver;
 use Cycle\Database\Driver\SQLite\SQLiteDriver;
 use Cycle\Database\Exception\ConfigException;
+use Cycle\Database\Tests\Unit\Stub\DecoratedDriver;
 use Testo\Assert;
 use Testo\Expect;
 use Testo\Test;
@@ -257,6 +258,15 @@ final class ConfigTest
 
         Assert::instanceOf($config->getDriver('test'), SQLiteDriver::class);
         Assert::instanceOf($config->getDriver('test2'), MySQLDriver::class);
+    }
+
+    public function returnsADriverWithoutANameAsCreated(): void
+    {
+        $config = new DatabaseConfig([
+            'connections' => ['test' => new SQLiteDriverConfig(driver: DecoratedDriver::class)],
+        ]);
+
+        Assert::instanceOf($config->getDriver('test'), DecoratedDriver::class);
     }
 
     public function testDriverNames(): void

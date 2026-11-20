@@ -43,4 +43,11 @@ final class PostgresDriverConfigTest
         Assert::same($recoveredConfig->readonlySchema, $readonlySchema);
         Assert::same($recoveredConfig->readonly, $readonly);
     }
+
+    public function fallsBackToTheDefaultSchemaForAnEmptyList(): void
+    {
+        $config = new PostgresDriverConfig(new DsnConnectionConfig('dsn'), schema: []);
+
+        Assert::same($config->schema, [PostgresDriverConfig::DEFAULT_SCHEMA]);
+    }
 }
