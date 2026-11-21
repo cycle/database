@@ -608,12 +608,7 @@ abstract class Driver implements DriverInterface, NamedInterface, LoggerAwareInt
     protected function formatDatetime(\DateTimeInterface $value): string
     {
         try {
-            $datetime = match (true) {
-                $value instanceof \DateTimeImmutable => $value->setTimezone($this->getTimezone()),
-                $value instanceof \DateTime => \DateTimeImmutable::createFromMutable($value)
-                    ->setTimezone($this->getTimezone()),
-                default => (new \DateTimeImmutable('now', $this->getTimezone()))->setTimestamp($value->getTimestamp()),
-            };
+            $datetime = \DateTimeImmutable::createFromInterface($value)->setTimezone($this->getTimezone());
         } catch (\Throwable $e) {
             throw new DriverException($e->getMessage(), (int) $e->getCode(), $e);
         }
