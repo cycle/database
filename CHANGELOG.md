@@ -1,5 +1,70 @@
 # Changelog
 
+## [2.24.0](https://github.com/cycle/database/compare/2.23.5...2.24.0) (2026-11-21)
+
+
+### Features
+
+* require PHP 8.2 and polish the tooling ([#287](https://github.com/cycle/database/issues/287)) ([5b8b7d9](https://github.com/cycle/database/commit/5b8b7d9fec0341a88b5d7b9eba44fc778325093b))
+
+
+### Documentation
+
+* add the mutation testing badge ([449aac8](https://github.com/cycle/database/commit/449aac8845100520890f623b60f15f2e22f0293f))
+* move the Discord badge to the first row ([#289](https://github.com/cycle/database/issues/289)) ([0c46485](https://github.com/cycle/database/commit/0c4648542549a9c547c7aa7fdda3a30de5a65bf7))
+* restructure the README with the Cycle header and current badges ([#288](https://github.com/cycle/database/issues/288)) ([c3b2470](https://github.com/cycle/database/commit/c3b2470301c0d46647e3ca8a36b510c714fb0698))
+
+
+### Dependencies
+
+* require cycle/testing ^0.1.2 ([#308](https://github.com/cycle/database/issues/308)) ([f3f1a36](https://github.com/cycle/database/commit/f3f1a36d9d5dc61991fbab52a59c8bd8e8755594))
+
+
+### Code Refactoring
+
+* convert dates with DateTimeImmutable::createFromInterface ([#309](https://github.com/cycle/database/issues/309)) ([cf393e0](https://github.com/cycle/database/commit/cf393e0253d300eca71aa4211b878fd32845f011))
+
+
+### Tests
+
+* **Config:** cover the DSN builder, hidden passwords and the database read from a DSN ([d165078](https://github.com/cycle/database/commit/d1650784855c2ae0062b535bd1d8a9dddc44c85e))
+* **Config:** cover the precedence of connection and database keys ([6750c96](https://github.com/cycle/database/commit/6750c96c53ae55fed0002a3375f59b92cb17cec6))
+* convert PHPUnit tests to Testo with Rector ([5165a04](https://github.com/cycle/database/commit/5165a04126f32e3d541515203e805f1ae1070c9d))
+* **Driver:** cover reconnects, savepoints, query caching and error mapping edges ([6750c96](https://github.com/cycle/database/commit/6750c96c53ae55fed0002a3375f59b92cb17cec6))
+* **Driver:** pin the exact SQL of the compiler and identifier quoting ([6750c96](https://github.com/cycle/database/commit/6750c96c53ae55fed0002a3375f59b92cb17cec6))
+* drop the never-run Postgres CreateTableWithSchema tests ([5165a04](https://github.com/cycle/database/commit/5165a04126f32e3d541515203e805f1ae1070c9d))
+* drop the PHPUnit harness ([5165a04](https://github.com/cycle/database/commit/5165a04126f32e3d541515203e805f1ae1070c9d))
+* generate regression cases with cycle-testing new-case ([5165a04](https://github.com/cycle/database/commit/5165a04126f32e3d541515203e805f1ae1070c9d))
+* kill escaped mutants ([#298](https://github.com/cycle/database/issues/298)) ([6750c96](https://github.com/cycle/database/commit/6750c96c53ae55fed0002a3375f59b92cb17cec6))
+* move the test suites up to tests/ ([5165a04](https://github.com/cycle/database/commit/5165a04126f32e3d541515203e805f1ae1070c9d))
+* **OnConflict:** cover conflict targets and cache keys of upserts ([6750c96](https://github.com/cycle/database/commit/6750c96c53ae55fed0002a3375f59b92cb17cec6))
+* raise line coverage ([#301](https://github.com/cycle/database/issues/301)) ([d165078](https://github.com/cycle/database/commit/d1650784855c2ae0062b535bd1d8a9dddc44c85e))
+* run the tests on Testo with cycle/testing ([#293](https://github.com/cycle/database/issues/293)) ([5165a04](https://github.com/cycle/database/commit/5165a04126f32e3d541515203e805f1ae1070c9d))
+* run the tests on the cycle/testing harness ([5165a04](https://github.com/cycle/database/commit/5165a04126f32e3d541515203e805f1ae1070c9d))
+* **Schema:** cover column options, state copies and comparator listings ([6750c96](https://github.com/cycle/database/commit/6750c96c53ae55fed0002a3375f59b92cb17cec6))
+* **Schema:** cover rejected primary key changes, reflector rollback and index columns ([d165078](https://github.com/cycle/database/commit/d1650784855c2ae0062b535bd1d8a9dddc44c85e))
+* **Schema:** cover table declarations, state handling and schema normalization ([6750c96](https://github.com/cycle/database/commit/6750c96c53ae55fed0002a3375f59b92cb17cec6))
+* **Schema:** cover the readonly schema handler ([d165078](https://github.com/cycle/database/commit/d1650784855c2ae0062b535bd1d8a9dddc44c85e))
+* **Schema:** cover the reflector run and table ordering ([6750c96](https://github.com/cycle/database/commit/6750c96c53ae55fed0002a3375f59b92cb17cec6))
+* **SelectQuery:** cover array conditions, row locks and query copies of aggregates ([6750c96](https://github.com/cycle/database/commit/6750c96c53ae55fed0002a3375f59b92cb17cec6))
+* split Testo suites into Feature and Regression ([5165a04](https://github.com/cycle/database/commit/5165a04126f32e3d541515203e805f1ae1070c9d))
+* **SQLServer:** cover binary LOB parameters and a cursor whose declaration fails ([d165078](https://github.com/cycle/database/commit/d1650784855c2ae0062b535bd1d8a9dddc44c85e))
+* wire cycle/testing and Testo ([5165a04](https://github.com/cycle/database/commit/5165a04126f32e3d541515203e805f1ae1070c9d))
+
+
+### Continuous Integration
+
+* align the security workflow with the reference ([#291](https://github.com/cycle/database/issues/291)) ([15af19a](https://github.com/cycle/database/commit/15af19a1d132f8772958a09869bb14374190f78f))
+* pin the root version so composer resolves cycle/testing ([5165a04](https://github.com/cycle/database/commit/5165a04126f32e3d541515203e805f1ae1070c9d))
+* pin the shared cycle/gh-actions workflows to v4.2.0 ([#303](https://github.com/cycle/database/issues/303)) ([fe58b51](https://github.com/cycle/database/commit/fe58b51d213b4a568ad33f9f06a0ed79333726fe))
+* raise the mutation score gate ([6750c96](https://github.com/cycle/database/commit/6750c96c53ae55fed0002a3375f59b92cb17cec6))
+* run mutation testing through the shared cycle/gh-actions workflow ([449aac8](https://github.com/cycle/database/commit/449aac8845100520890f623b60f15f2e22f0293f))
+* run mutation testing with Infection ([#296](https://github.com/cycle/database/issues/296)) ([449aac8](https://github.com/cycle/database/commit/449aac8845100520890f623b60f15f2e22f0293f))
+* run tests through the shared cycle/gh-actions workflow ([5165a04](https://github.com/cycle/database/commit/5165a04126f32e3d541515203e805f1ae1070c9d))
+* run the tests on Testo with the cycle/testing databases ([5165a04](https://github.com/cycle/database/commit/5165a04126f32e3d541515203e805f1ae1070c9d))
+* send only the mutation score to the Stryker dashboard ([#297](https://github.com/cycle/database/issues/297)) ([68115cb](https://github.com/cycle/database/commit/68115cb106524ec5227a11727cc31ba45176a50f))
+* show the test job as Testo ([5165a04](https://github.com/cycle/database/commit/5165a04126f32e3d541515203e805f1ae1070c9d))
+
 ## [2.23.5](https://github.com/cycle/database/compare/2.23.4...2.23.5) (2026-11-19)
 
 
