@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5e2af4649a4a249f453e8b94de3ab46b",
+    "content-hash": "b6c871858863cbf486b7fe9087b44b87",
     "packages": [
         {
             "name": "psr/container",
@@ -785,16 +785,16 @@
         },
         {
             "name": "cycle/testing",
-            "version": "0.1.1",
+            "version": "0.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cycle/testing.git",
-                "reference": "c6914f07437fc07608d4d8fe54b179811f668710"
+                "reference": "d97a886a507d6232032b67a3afb3c549b403e2c9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cycle/testing/zipball/c6914f07437fc07608d4d8fe54b179811f668710",
-                "reference": "c6914f07437fc07608d4d8fe54b179811f668710",
+                "url": "https://api.github.com/repos/cycle/testing/zipball/d97a886a507d6232032b67a3afb3c549b403e2c9",
+                "reference": "d97a886a507d6232032b67a3afb3c549b403e2c9",
                 "shasum": ""
             },
             "require": {
@@ -875,8 +875,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-11-20T12:54:50+00:00",
-            "published-time": "2026-11-20T15:09:37+00:00"
+            "time": "2026-11-21T11:08:05+00:00",
+            "published-time": "2026-11-21T11:08:18+00:00"
         },
         {
             "name": "ergebnis/composer-normalize",
