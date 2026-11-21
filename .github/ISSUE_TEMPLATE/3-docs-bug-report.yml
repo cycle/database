@@ -5,9 +5,6 @@ description: Report an issue in the project's documentation or README.md file.
 title: '[Docs]: '
 labels: ['type: documentation', 'type: maintenance']
 
-assignees:
-  - lotyp
-
 body:
   - type: markdown
     attributes:
