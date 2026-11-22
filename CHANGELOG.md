@@ -1,5 +1,30 @@
 # Changelog
 
+## [2.24.1](https://github.com/cycle/database/compare/2.24.0...2.24.1) (2026-11-22)
+
+
+### Documentation
+
+* drop the public issue step from the security policy ([69ec5d7](https://github.com/cycle/database/commit/69ec5d7660de71a3ef40b0cbf86f174fa500e8d8))
+
+
+### Styles
+
+* **php-cs-fixer:** fix coding standards ([a51fea3](https://github.com/cycle/database/commit/a51fea3aaed49014e174c9c48634a71eed189ca3))
+
+
+### Tests
+
+* **Config:** cover the default Postgres schema and a driver without a name ([b794853](https://github.com/cycle/database/commit/b794853bdab987907241b64de4b90c714e1629c2))
+* **Driver:** cover a failed reconnect on begin, begin without reconnect and dropping an enum column ([96ad79d](https://github.com/cycle/database/commit/96ad79ddc44b627a4f1d5b65915affaf80a2c7e8))
+* **Driver:** cover failed transaction calls, enum quoting and the compiler's rejected fragments ([6d047b3](https://github.com/cycle/database/commit/6d047b36dee70e1b625df7fc5d39b4c3f2d8256a))
+* **Injection:** cover given parameter instances and restoring a JSON expression ([151dcb4](https://github.com/cycle/database/commit/151dcb4d7f34fe64963b22cb90ec6b7178ab2385))
+* **MySQL:** cover table engines, bit and zero timestamp defaults, charset changes and a dropped link ([b787061](https://github.com/cycle/database/commit/b7870611ec36e400e977f21e3bb67d255c13127c))
+* **Postgres:** cover native enums read in bulk, primary types on existing columns, abandoned cursors and the $user schema ([cf3b35e](https://github.com/cycle/database/commit/cf3b35e810f6c4a8fad4d3c49518dd317b08e01f))
+* **Query:** cover where argument checks, a full join and the state given to query constructors ([758233b](https://github.com/cycle/database/commit/758233b4193d068304161bbca52f8a3d441784b2))
+* **Schema:** cover redeclared elements, unsupported index sorting and a driver outside the Driver hierarchy ([8711198](https://github.com/cycle/database/commit/871119834d7b6b863f16b544a3951a404910c075))
+* **SQLServer:** cover enum, decimal and default changes of existing columns ([6e9d60d](https://github.com/cycle/database/commit/6e9d60d7f382834fca4d17855154c14357d29328))
+
 ## [2.24.0](https://github.com/cycle/database/compare/2.23.5...2.24.0) (2026-11-21)
 
 
