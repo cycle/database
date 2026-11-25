@@ -1,0 +1,66 @@
+---
+
+name: pgrust
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - 2.x
+  pull_request: null
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  DB_REQUIRED: 1
+
+jobs:
+  postgres:
+    # pgrust is a Postgres-compatible server, so the Postgres suites run unchanged against it.
+    name: Postgres suites on pgrust · PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        php:
+          - '8.4'
+        image:
+          - malisper/pgrust:v0.4-beta
+    steps:
+      - name: 📦 Check out the codebase
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: 🛠️ Setup PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: pdo, pdo_sqlite, pdo_pgsql, mbstring
+          ini-values: error_reporting=E_ALL, memory_limit=-1
+          coverage: none
+
+      - name: 📥 Install dependencies with composer
+        uses: ramsey/composer-install@v4
+        env:
+          COMPOSER_ROOT_VERSION: 2.x-dev
+        with:
+          dependency-versions: highest
+
+      - name: 🛢️ Start pgrust
+        env:
+          DB_POSTGRES_IMAGE: ${{ matrix.image }}
+        run: composer db:up -- postgres
+
+      - name: ℹ️ Server version
+        run: docker compose -f vendor/cycle/testing/resources/docker/compose.yaml exec -T postgres psql -U postgres -c 'select version()'
+
+      - name: 🧪 Postgres tests
+        run: composer test:postgres
+
+...
