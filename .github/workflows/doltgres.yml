@@ -1,0 +1,94 @@
+---
+
+name: doltgres
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - 2.x
+  pull_request: null
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  DB_REQUIRED: 1
+  DB_POSTGRES_PORT: 15432
+  # Doltgres ignores the user section of its config and keeps the default credentials.
+  DB_POSTGRES_PASSWORD: password
+
+jobs:
+  postgres:
+    # Doltgres is a Postgres-compatible server, so the Postgres suites run unchanged against it.
+    name: Postgres suites on Doltgres · PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        php:
+          - '8.4'
+    steps:
+      - name: 📦 Check out the codebase
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: 🛠️ Setup PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: pdo, pdo_sqlite, pdo_pgsql, mbstring
+          ini-values: error_reporting=E_ALL, memory_limit=-1
+          coverage: none
+
+      - name: 📥 Install dependencies with composer
+        uses: ramsey/composer-install@v4
+        env:
+          COMPOSER_ROOT_VERSION: 2.x-dev
+        with:
+          dependency-versions: locked
+
+      - name: 📥 Download Doltgres
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: vendor/bin/dload get doltgres --path=runtime/bin
+
+      - name: 🛢️ Start Doltgres
+        run: |
+          mkdir -p runtime/doltgres/data
+          cat > runtime/doltgres/config.yaml <<EOF
+          log_level: warning
+          listener:
+            host: 127.0.0.1
+            port: $DB_POSTGRES_PORT
+          data_dir: ./data
+          EOF
+          cd runtime/doltgres
+          nohup ../bin/doltgres -config config.yaml > server.log 2>&1 &
+          cd ../..
+          php -r '
+            for ($i = 0; $i < 60; $i++) {
+              try {
+                $pdo = new PDO("pgsql:host=127.0.0.1;dbname=postgres;port=" . getenv("DB_POSTGRES_PORT"), "postgres", getenv("DB_POSTGRES_PASSWORD"));
+                $pdo->exec("CREATE DATABASE spiral");
+                echo $pdo->query("SELECT dolt_version()")->fetchColumn(), PHP_EOL;
+                exit(0);
+              } catch (PDOException $e) { usleep(500000); }
+            }
+            fwrite(STDERR, $e->getMessage() . PHP_EOL);
+            exit(1);
+          '
+
+      - name: 🧪 Postgres tests
+        run: composer test:postgres
+
+      - name: 📄 Doltgres server log
+        if: ${{ !cancelled() }}
+        run: cat runtime/doltgres/server.log
+
+...
