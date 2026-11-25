@@ -58,6 +58,7 @@
         "buggregator/trap": "^1.20",
         "cycle/testing": "^0.1.2",
         "ergebnis/composer-normalize": "^2.58",
+        "internal/dload": "^1.19",
         "llm/skills": "^1.20",
         "mockery/mockery": "^1.6",
         "roxblnfk/unpoly": "^1.8",

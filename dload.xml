@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<dload
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="vendor/internal/dload/dload.xsd"
+    temp-dir="./runtime"
+>
+    <actions>
+        <download software="doltlite" extract-path="./runtime/doltlite" />
+    </actions>
+    <registry overwrite="false">
+        <!-- A SQLite fork exporting the sqlite3_* API: pdo_sqlite runs on it in place of libsqlite3. -->
+        <software name="DoltLite" alias="doltlite" description="SQLite with Git-style version control" homepage="https://github.com/dolthub/doltlite">
+            <repository type="github" uri="dolthub/doltlite" asset-pattern="/^doltlite-lib-.*\.zip$/" />
+            <file pattern="/^libdoltlite\.(so|dll|dylib)$/" />
+        </software>
+    </registry>
+</dload>
