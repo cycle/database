@@ -1,0 +1,97 @@
+---
+
+name: dolt
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - 2.x
+  pull_request: null
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  DB_REQUIRED: 1
+  DB_MYSQL_PORT: 13306
+  DB_MYSQL_PASSWORD: YourStrong!Passw0rd
+
+jobs:
+  mysql:
+    # Dolt is a MySQL-compatible server, so the MySQL suites run unchanged against it.
+    name: MySQL suites on Dolt · PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        php:
+          - '8.4'
+    steps:
+      - name: 📦 Check out the codebase
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: 🛠️ Setup PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: pdo, pdo_sqlite, pdo_mysql, mbstring
+          ini-values: error_reporting=E_ALL, memory_limit=-1
+          coverage: none
+
+      - name: 📥 Install dependencies with composer
+        uses: ramsey/composer-install@v4
+        env:
+          COMPOSER_ROOT_VERSION: 2.x-dev
+        with:
+          dependency-versions: locked
+
+      - name: 📥 Download Dolt
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: vendor/bin/dload get dolt --path=runtime/bin
+
+      - name: 🛢️ Start Dolt
+        # sql-server config files no longer take users: DOLT_ROOT_* creates a root reachable over TCP.
+        env:
+          DOLT_ROOT_HOST: '%'
+          DOLT_ROOT_PASSWORD: ${{ env.DB_MYSQL_PASSWORD }}
+        run: |
+          mkdir -p runtime/dolt/data
+          cat > runtime/dolt/config.yaml <<EOF
+          log_level: warning
+          listener:
+            host: 127.0.0.1
+            port: $DB_MYSQL_PORT
+          data_dir: ./data
+          EOF
+          cd runtime/dolt
+          nohup ../bin/dolt sql-server --config config.yaml > server.log 2>&1 &
+          cd ../..
+          php -r '
+            for ($i = 0; $i < 60; $i++) {
+              try {
+                $pdo = new PDO("mysql:host=127.0.0.1;port=" . getenv("DB_MYSQL_PORT"), "root", getenv("DB_MYSQL_PASSWORD"));
+                $pdo->exec("CREATE DATABASE IF NOT EXISTS spiral");
+                echo $pdo->query("SELECT dolt_version()")->fetchColumn(), PHP_EOL;
+                exit(0);
+              } catch (PDOException $e) { usleep(500000); }
+            }
+            fwrite(STDERR, $e->getMessage() . PHP_EOL);
+            exit(1);
+          '
+
+      - name: 🧪 MySQL tests
+        run: composer test:mysql
+
+      - name: 📄 Dolt server log
+        if: ${{ !cancelled() }}
+        run: cat runtime/dolt/server.log
+
+...
