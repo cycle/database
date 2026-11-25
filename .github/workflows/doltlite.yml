@@ -1,0 +1,67 @@
+---
+
+name: doltlite
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - 2.x
+  pull_request: null
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  sqlite:
+    # DoltLite is a SQLite fork exporting the sqlite3_* API: preloaded, it replaces libsqlite3 under pdo_sqlite.
+    # The preload does not reach setup-php's pdo_sqlite, so the tests run in the official image, whose pdo_sqlite
+    # links libsqlite3 dynamically; Composer and dload stay on the host PHP.
+    name: SQLite suites on DoltLite · PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        php:
+          - '8.4'
+    steps:
+      - name: 📦 Check out the codebase
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: 🛠️ Setup PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: pdo, pdo_sqlite, mbstring
+          ini-values: error_reporting=E_ALL, memory_limit=-1
+          coverage: none
+
+      - name: 📥 Install dependencies with composer
+        uses: ramsey/composer-install@v4
+        env:
+          COMPOSER_ROOT_VERSION: 2.x-dev
+        with:
+          dependency-versions: locked
+
+      - name: 📥 Download DoltLite
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: vendor/bin/dload get doltlite --path=runtime/doltlite
+
+      - name: ℹ️ Check that pdo_sqlite runs on DoltLite
+        run: >-
+          docker run --rm -v "$PWD:/app" -w /app -e LD_PRELOAD=/app/runtime/doltlite/libdoltlite.so php:${{ matrix.php }}-cli
+          php -r 'echo (new PDO("sqlite::memory:"))->query("SELECT dolt_version()")->fetchColumn(), PHP_EOL;'
+
+      - name: 🧪 SQLite tests
+        run: >-
+          docker run --rm -v "$PWD:/app" -w /app -e LD_PRELOAD=/app/runtime/doltlite/libdoltlite.so php:${{ matrix.php }}-cli
+          php vendor/bin/testo --suite=Feature/SQLite --suite=Regression/SQLite
+
+...
